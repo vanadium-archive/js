@@ -502,116 +502,106 @@ describe('IDL', function() {
     });
   });
 
-  describe('generateIDL', function() {
-    it('generates an empty package if there are no services', function() {
-      expect(idlHelper.generateIDL('PN', {})).to.equal(
-          'package PN\n\n');
-    });
-
+  describe('generateIdlWireDescription', function() {
     it('generates an empty interface for an empty service', function() {
-      expect(idlHelper.generateIDL('PN', {
-        'SN': new idlHelper.ServiceWrapper({})
-      })).to.equal(
-          'package PN\n\n' +
-          'type SN interface {\n' +
-          '}\n');
+      expect(idlHelper.generateIdlWireDescription(
+        new idlHelper.ServiceWrapper({})
+      )).to.deep.equal({});
     });
 
     it('generates a correct idl for an empty exported method', function() {
-      expect(idlHelper.generateIDL('PN', {'SN': new idlHelper.ServiceWrapper({
-        AMethod: function() {
-        }
-      })})).to.equal(
-          'package PN\n\n' +
-          'type SN interface {\n' +
-          ' AMethod() (result anydata, err error)\n' +
-          '}\n');
+      expect(idlHelper.generateIdlWireDescription(
+        new idlHelper.ServiceWrapper({
+          AMethod: function() {
+          }
+        })
+      )).to.deep.equal({
+          'AMethod': {
+            'InArgs': [],
+            'NumOutArgs': 1,
+            'IsStreaming': false
+          }
+        });
     });
 
     it('generates a correct idl for an exported method with args',
         function() {
-          expect(idlHelper.generateIDL('PN', {
-            'SN': new idlHelper.ServiceWrapper({
+          expect(idlHelper.generateIdlWireDescription(
+            new idlHelper.ServiceWrapper({
               BMethod: function(arg1, arg2) {
                 return arg1;
               }
-            })
-          })).to.equal(
-              'package PN\n\n' +
-              'type SN interface {\n' +
-              ' BMethod(arg1 anydata, arg2 anydata) (result anydata, ' +
-              'err error)\n' +
-              '}\n');
+            }))).to.deep.equal({
+              'BMethod': {
+                'InArgs': ['arg1', 'arg2'],
+                'NumOutArgs': 1,
+                'IsStreaming': false
+              }
+            });
         });
 
     it('generated a correct idl when there are multiple methods',
         function() {
-          expect(idlHelper.generateIDL('PN', {
-            'SN': new idlHelper.ServiceWrapper({
+          expect(idlHelper.generateIdlWireDescription(
+            new idlHelper.ServiceWrapper({
               amethod: function() {},
               BMethod: function(arg1, arg2) {
                 return arg1;
               }
-            })
-          })).to.equal(
-             'package PN\n\n' +
-             'type SN interface {\n' +
-             ' Amethod() (result anydata, err error)\n' +
-             ' BMethod(arg1 anydata, arg2 anydata) (result anydata, ' +
-             'err error)\n' +
-             '}\n');
+            }))).to.deep.equal({
+              'Amethod': {
+                'InArgs': [],
+                'NumOutArgs': 1,
+                'IsStreaming': false
+              },
+              'BMethod': {
+                'InArgs': ['arg1', 'arg2'],
+                'NumOutArgs': 1,
+                'IsStreaming': false
+              }
+            });
         });
     it('skips methods with names starting with \'_\'', function() {
-      expect(idlHelper.generateIDL('PN', {'SN': new idlHelper.ServiceWrapper({
+      expect(idlHelper.generateIdlWireDescription(new idlHelper.ServiceWrapper({
         _SkipMe: function() {
         },
         BMethod: function(arg1, arg2) {
           return arg1;
         }
-      })})).to.equal(
-          'package PN\n\n' +
-          'type SN interface {\n' +
-          ' BMethod(arg1 anydata, arg2 anydata) (result anydata, err error)\n' +
-          '}\n');
+      }))).to.deep.equal({
+        'BMethod': {
+          'InArgs': ['arg1', 'arg2'],
+          'NumOutArgs': 1,
+          'IsStreaming': false
+        }
+      });
     });
 
     it('skips args names starting with \'$\'', function() {
-      expect(idlHelper.generateIDL('PN', {'SN': new idlHelper.ServiceWrapper({
+      expect(idlHelper.generateIdlWireDescription(new idlHelper.ServiceWrapper({
         AMethod: function($First, Scnd, $Third, Frth) {
         }
-      })})).to.equal(
-          'package PN\n\n' +
-          'type SN interface {\n' +
-          ' AMethod(Scnd anydata, Frth anydata) (result anydata, err error)\n' +
-          '}\n');
+      }))).to.deep.equal({
+        'AMethod': {
+          'InArgs': ['Scnd', 'Frth'],
+          'NumOutArgs': 1,
+          'IsStreaming': false
+        }
+      });
     });
 
-    it('has an output stream when outstream is set', function() {
+    it('has a stream when $stream is in the argument list', function() {
       var srvc = new idlHelper.ServiceWrapper({
         meth: function(arg, $stream) {
         }
       });
-      expect(idlHelper.generateIDL('PN', {'SN': srvc})).to.equal(
-          'package PN\n\n' +
-          'type SN interface {\n Meth(arg anydata) stream<anydata, anydata>' +
-          ' (result anydata, err error)\n' +
-          '}\n');
-    });
-
-    it('can generate an idl for multiple services', function() {
-      var aStr = 'type A interface {\n' +
-          ' M() (result anydata, err error)\n' +
-          '}\n';
-      var bStr = 'type B interface {\n' +
-          ' W(arg anydata) (result anydata, err error)\n' +
-          '}\n';
-      var packageHeader = 'package PN\n\n';
-      expect(
-        [packageHeader + aStr + bStr, packageHeader + bStr + aStr]
-      ).to.include(idlHelper.generateIDL('PN', {
-        A: new idlHelper.ServiceWrapper({'M' : function() {}}),
-        B: new idlHelper.ServiceWrapper({'W' : function(arg) {}})
-      }));
+      expect(idlHelper.generateIdlWireDescription(srvc)).to.deep.equal({
+        'Meth': {
+          'InArgs': ['arg'],
+          'NumOutArgs': 1,
+          'IsStreaming': true
+        }
+      });
     });
   });
 });

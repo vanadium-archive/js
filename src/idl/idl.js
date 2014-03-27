@@ -144,58 +144,43 @@ function renameToBeExported(name) {
 }
 
 /**
- * Generates an IDL for a given service by iterating over the methods in the
- * service object.
+ * Generates an IDL wire description for a given service by iterating over the
+ * methods in the service object.
  * Method names beginning with '_' are considered private and skipped.
  * Arg names beginning with '$' are not part of the idl and are filled in by
  * the veyron libraries (e.g. $context).
- * Method objects with instream fields set to true will have an input stream.
- * Method objects with outstream fields set to true will have an output stream.
- * @param {string} packageName the name of the go package the service resides in
- * @param {object} services a map of service name to service.
- * @return {string} a text representation of the idl
+ * @param {object} service a description of the service. This is a map from
+ * method name to method description.
+ * @return {object} a representation of the idl. This must match the format of
+ * JSONServiceSignature in Veyron's go code.
  */
-idlHelper.generateIDL = function(packageName, services) {
-  var idl = 'package ' + packageName + '\n\n';
+idlHelper.generateIdlWireDescription = function(service) {
+  var idlWire = {};
+  var metadata = service.metadata;
+  for (var methodName in metadata) {
+    if (metadata.hasOwnProperty(methodName)) {
+      var methodMetadata = metadata[methodName];
+      var exportedName = renameToBeExported(methodName);
 
-  for (var serviceName in services) {
-    if (services.hasOwnProperty(serviceName)) {
-      idl += 'type ' + serviceName + ' interface {\n';
-      var service = services[serviceName].metadata;
-      for (var methodName in service) {
-        if (service.hasOwnProperty(methodName)) {
-          var metadata = service[methodName];
-          idl += ' ' + renameToBeExported(methodName) + '(';
-
-          var firstParam = true;
-          var params = metadata.params;
-          for (var i = 0; i < params.length; i++) {
-            var param = params[i];
-            if (param[0] !== '$') {
-              if (!firstParam) {
-                idl += ', ';
-              }
-              idl += param + ' anydata';
-              firstParam = false;
-            }
-          }
-
-          idl += ') ';
-
-          if (metadata.injections['$stream'] !== undefined) {
-            idl += 'stream<anydata, anydata> ';
-          }
-
-          idl += '(result anydata, err error)\n';
+      var params = methodMetadata.params;
+      var inArgs = [];
+      for (var i = 0; i < params.length; i++) {
+        var param = params[i];
+        if (param[0] !== '$') {
+          inArgs.push(param);
         }
       }
-      idl += '}\n';
+
+      idlWire[exportedName] = {
+        'InArgs' : inArgs,
+        'NumOutArgs': 1,
+        'IsStreaming': methodMetadata.injections['$stream'] !== undefined
+      };
     }
   }
 
-  return idl;
+  return idlWire;
 };
-
 
 /**
  * Returns an array of parameter names for a function.

@@ -376,12 +376,11 @@ VeyronWSClient.prototype.publishServer = function(name) {
   //TODO(aghassemi) Handle publish under multiple names
 
   // Generate IDL for the registered services
-  var idl = this.generateIDL();
+  var idl = this.generateIdlWireDescription();
 
   var messageJSON = {
     'Name': name,
-    'IDL': idl,
-    'Services': Object.keys(this.registeredServices)
+    'Services': idl
   };
 
   var def = getDeferred();
@@ -393,13 +392,21 @@ VeyronWSClient.prototype.publishServer = function(name) {
 };
 
 /**
- * Generates an IDL for all the registered services
- * @return {string} Generated IDL
+ * Generates an IDL wire description for all the registered services
+ * @return {object} map from service name to idl wire description
  */
-VeyronWSClient.prototype.generateIDL = function() {
-  //TOOD(aghassemi) Add support for getting optional package name on register
-  var packageName = 'auto_generated_idl_by_js_api';
-  return IdlHelper.generateIDL(packageName, this.registeredServices);
+VeyronWSClient.prototype.generateIdlWireDescription = function() {
+  var servicesIdlWire = {};
+
+  for (var serviceName in this.registeredServices) {
+    if (this.registeredServices.hasOwnProperty(serviceName)) {
+      var serviceMetadata = this.registeredServices[serviceName];
+      servicesIdlWire[serviceName] =
+          IdlHelper.generateIdlWireDescription(serviceMetadata);
+    }
+  }
+
+  return servicesIdlWire;
 };
 
 /**
