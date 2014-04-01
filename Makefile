@@ -25,6 +25,11 @@ test: setup
 debug: setup
 	$(GRUNT) debug
 
+# Runs the tests outputting xml test results that jenkins can understand
+# Four files are outputted in dist/test. One for each combination of (specs, integration)*(nodeJS, browser)
+jenkins: setup
+	$(GRUNT) jenkins --force
+
 # Removes all build and testing artifacts
 clean:
 	rm -rf ./node_modules && rm -rf dist && rm -rf .tmp && rm -rf logs

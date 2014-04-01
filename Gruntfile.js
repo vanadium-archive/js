@@ -166,10 +166,11 @@ module.exports = function(grunt) {
     },
 
     // Server-side testing in NodeJS
+    reporter: 'spec',
     nodeTest: {
       // Spec tests
       options: {
-        reporter: 'spec',
+        reporter: '<%= reporter %>',
         clearRequireCache: true,
         require: [
           'test/node_init.js',
@@ -177,10 +178,16 @@ module.exports = function(grunt) {
         ]
       },
       specs: {
+        options: {
+          captureFile: '<%= dirs.dist %>/test/test_results_node_spec.out',
+        },
         src: ['test/specs/both/**/*.js', 'test/specs/node_only/**/*.js']
       },
       // Integration tests
       integration: {
+        options: {
+          captureFile: '<%= dirs.dist %>/test/test_results_node_integration.out',
+        },
         src: ['test/integration/**/*.js']
       }
     },
@@ -193,7 +200,7 @@ module.exports = function(grunt) {
       options: {
         singleRun: '<%= browserTestSingleRun %>',
         browsers: ['Chrome'],
-        reporters: ['spec'],
+        reporters: ['spec','junit'],
         frameworks: ['mocha', 'chai', 'chai-as-promised'],
         basePath: '',
         mocha: {
@@ -203,6 +210,9 @@ module.exports = function(grunt) {
       // Spec tests
       specs: {
         options: {
+          junitReporter: {
+            outputFile: '<%= dirs.dist %>/test/test_results_browser_spec.out'
+          },
           files: [
             '<%= dirs.dist %>/test/veyron.test.config.js',
             '<%= dirs.dist %>/test/veyron.test.specs.browserify.js'
@@ -212,6 +222,9 @@ module.exports = function(grunt) {
       // Integration tests
       integration: {
         options: {
+          junitReporter: {
+            outputFile: '<%= dirs.dist %>/test/test_results_browser_integration.out'
+          },
           files: [
             '<%= dirs.dist %>/veyron.js',
             '<%= dirs.dist %>/test/veyron.test.config.js',
@@ -290,7 +303,13 @@ module.exports = function(grunt) {
       grunt.config.set('browserTestSingleRun', false);
       grunt.task.run('test');
     }
+  );
 
+  grunt.task.registerTask(
+    'jenkins', 'Runs the tests outputting xml test results that jenkins can understand', function() {
+      grunt.config.set('reporter', 'xunit');
+      grunt.task.run(['subtask_runSpecTests', 'subtask_runIntegrationTests']);
+    }
   );
 
 };
