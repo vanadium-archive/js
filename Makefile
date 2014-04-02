@@ -6,7 +6,7 @@
 # Add node to path
 PATH:=$(PATH):$(VEYRON_DEV)/cout/node/bin
 
-NPM=npm
+NPM=$(VEYRON_DEV)/cout/node/bin/npm
 GRUNT= ./node_modules/.bin/grunt
 
 # Builds and tests everything
