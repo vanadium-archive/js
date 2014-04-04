@@ -12,7 +12,8 @@
 describe('Server', function(done) {
 
   var veyronConfig = {
-    'proxy': testconfig['HTTP_PROXY_SERVER_URL']
+    'proxy': testconfig['HTTP_PROXY_SERVER_URL'],
+    logLevel: Veyron.logLevels.INFO
   };
 
   var veyron = new Veyron(veyronConfig);

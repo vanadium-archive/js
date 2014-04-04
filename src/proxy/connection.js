@@ -7,6 +7,7 @@
 var WebSocket = require('./websocket');
 var Deferred = require('./../lib/deferred');
 var Promise = require('./../lib/promise');
+var vLog = require('./../lib/vlog');
 var IdlHelper = require('./../idl/idl');
 var ServiceWrapper = IdlHelper.ServiceWrapper;
 
@@ -80,7 +81,7 @@ VeyronWSClient.prototype.getWebSocket = function() {
     try {
       message = JSON.parse(frame.data);
     } catch (e) {
-      console.log('Failed to parse ' + frame.data);
+      vLog.warn('Failed to parse ' + frame.data);
       return;
     }
 
@@ -102,7 +103,7 @@ VeyronWSClient.prototype.getWebSocket = function() {
     // If we don't know about this flow, just drop the message. Unless it
     // originated from the sever.
     if (!isServerOriginatedMessage && !def) {
-      console.log('Dropping message for unknown flow ' + message.ID + ' ' +
+      vLog.info('Dropping message for unknown flow ' + message.ID + ' ' +
           message.Data);
       return;
     }

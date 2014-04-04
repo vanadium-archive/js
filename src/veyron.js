@@ -10,6 +10,7 @@ var Server = require('./ipc/server');
 var Client = require('./ipc/client');
 var Deferred = require('./lib/deferred');
 var Promise = require('./lib/promise');
+var vLog = require('./lib/vlog');
 
 /**
  * Veyron constructor.
@@ -21,8 +22,11 @@ function Veyron(config) {
   //TODO(aghassemi) Have default config and have these override those.
   config = config || {};
   config.proxy = config.proxy || 'vonery.com:8125';
+  // TODO(aghassemi) change default to NOLOG before release
+  config.logLevel = config.logLevel || Veyron.logLevels.DEBUG;
 
   this._config = config;
+  vLog.level = config.logLevel;
 }
 
 /**
@@ -101,6 +105,18 @@ Veyron.Deferred = Deferred;
  * A EcmaScript6-compatible implementation of Promise/A spec
  */
 Veyron.Promise = Promise;
+
+/**
+ * Enum for different log levels:
+ *   NOLOG //No logging
+ *   ERROR //Only errors are written
+ *   WARN  //Only errors and warnings are written
+ *   DEBUG //Errors, warnings and debug messages are written
+ *   INFO  //All logs are written,
+ * @readonly
+ * @enum {number}
+ */
+Veyron.logLevels = vLog.levels;
 
 /**
  * Export Veyron
