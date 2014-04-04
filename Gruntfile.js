@@ -306,9 +306,15 @@ module.exports = function(grunt) {
   );
 
   grunt.task.registerTask(
-    'jenkins', 'Runs the tests outputting xml test results that jenkins can understand', function() {
+    'jenkins', 'Runs the tests outputting xml test results that jenkins can understand', function(testType) {
       grunt.config.set('reporter', 'xunit');
-      grunt.task.run(['subtask_runSpecTests', 'subtask_runIntegrationTests']);
+      var testsToRun = ['subtask_runSpecTests', 'subtask_runIntegrationTests'];
+      if (testType === 'specs') {
+        testsToRun = ['subtask_runSpecTests']
+      } else if (testType === 'integration') {
+        testsToRun = ['subtask_runIntegrationTests']
+      }
+      grunt.task.run(testsToRun);
     }
   );
 

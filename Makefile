@@ -28,7 +28,13 @@ debug: setup
 # Runs the tests outputting xml test results that jenkins can understand
 # Four files are outputted in dist/test. One for each combination of (specs, integration)*(nodeJS, browser)
 jenkins: setup
-	$(GRUNT) jenkins --force
+	$(GRUNT) jenkins:all --force
+# only run specs tests
+jenkins_specs: setup
+	$(GRUNT) jenkins:specs --force
+# only run integration tests
+jenkins_integration: setup
+	$(GRUNT) jenkins:integration --force
 
 # Removes all build and testing artifacts
 clean:
