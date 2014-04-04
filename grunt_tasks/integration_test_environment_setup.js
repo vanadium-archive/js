@@ -29,31 +29,33 @@ module.exports = function(grunt) {
     // Binary location of http proxy and other processes to run
     var VEYRON_BIN_DIR = path.resolve('../../v/bin');
     var HTTP_PROXY_BIN = VEYRON_BIN_DIR + '/http_proxyd';
+    var IDENTITYD_BIN = VEYRON_BIN_DIR + '/identityd';
     var SAMPLE_GO_SERVICE_BIN = VEYRON_BIN_DIR + '/sampled';
 
-    var HTTP_PROXY_PORT = 3224; // What port to run HTTP proxy on
+    var HTTP_PROXY_PORT = 3224; // The port for the HTTP proxy.
+    var IDENTITYD_PORT = 8125; // The port for the identityd server.
     var TIMEOUT = 2000; // Time to fail if processes do not spawn
 
     var LOGS_DIR = path.resolve('logs');
 
     // Ensure binaries exist
-    if (!fs.existsSync(HTTP_PROXY_BIN) ||
+    if (!fs.existsSync(HTTP_PROXY_BIN) || !fs.existsSync(IDENTITYD_BIN) ||
        !fs.existsSync(SAMPLE_GO_SERVICE_BIN)) {
 
       var errorMessage = 'Veyron binaries not found. Ensure "veyron" and ' +
         '"veyron2" are built and installed in ' + VEYRON_BIN_DIR + ' by ' +
         'running go-amd64 install \n' +
-        HTTP_PROXY_BIN + ' and ' + SAMPLE_GO_SERVICE_BIN + ' are required for' +
-        'integration testing';
+        HTTP_PROXY_BIN + ', ' + IDENTITYD_BIN + ' and ' +
+        SAMPLE_GO_SERVICE_BIN + ' are required for integration testing';
 
       fail(errorMessage);
     }
     // Run the http proxy
     var http_proxy_process = exec(HTTP_PROXY_BIN +
       ' -v=3 -vv=3 -log_dir=' + LOGS_DIR + ' -port=' + HTTP_PROXY_PORT, {
-        maxBuffer: 4 *1024 * 1024
+        maxBuffer: 4 * 1024 * 1024
       },
-      function(error, stdout, stderror) {
+      function(error, stdout, stderr) {
           if (error && !cleaningUp) {
             var errorMessage = 'Running http proxy failed because:\n' + error +
               '\nIntegration tests can not continue without running ' +
@@ -64,11 +66,23 @@ module.exports = function(grunt) {
           }
       });
     runningChildProcesses.push(http_proxy_process);
+    // Run identityd
+    var identityd_process = exec(IDENTITYD_BIN + ' -port=' + IDENTITYD_PORT, {
+      maxBuffer: 4 * 1024 * 1024
+    }, function(error, stdout, stderr) {
+      if (error) {
+        var errorMessage = 'Running identityd failed because:\n' + error +
+          '\nIntegration tests can not continue without running ' +
+          'identityd. Please fix the issue. Temporarily, you can run ' +
+          'the build without running tests (make build)';
+      }
+    });
+    runningChildProcesses.push(identityd_process);
     // Run the sample go service proxy, we use the sampled example service
     var sample_service_process = exec(SAMPLE_GO_SERVICE_BIN +
       ' -v=3 -vv=3 -log_dir=' + LOGS_DIR,
       [{timeout: TIMEOUT, maxBuffer: 4 * 1024 * 1024}],
-      function(error, stdout, stderror) {
+      function(error, stdout, stderr) {
         if (error && !cleaningUp) {
           var errorMessage = 'Running ' + SAMPLE_GO_SERVICE_BIN +
             ' failed because:\n' + error +
@@ -102,6 +116,8 @@ module.exports = function(grunt) {
 
       testConfigs['HTTP_PROXY_SERVER_URL'] = 'http://localhost:' +
         HTTP_PROXY_PORT;
+      testConfigs['IDENTITY_SERVER_URL'] = 'http://localhost:' +
+        IDENTITYD_PORT + '/random/';
 
       testConfigs['SAMPLE_VEYRON_GO_SERVICE_NAME'] = 'cache';
       testConfigs['SAMPLE_VEYRON_GO_SERVICE_ENDPOINT'] = endpoint;

@@ -34,7 +34,8 @@ describe('Signature, when service is in JS getServiceSignature', function() {
 
     var veyronConfig = {
       'proxy': testconfig['HTTP_PROXY_SERVER_URL'],
-      logLevel: testconfig['LOG_LEVEL']
+      'identityServer': testconfig['IDENTITY_SERVER_URL'],
+      'logLevel': testconfig['LOG_LEVEL']
     };
 
     var veyron = new Veyron(veyronConfig);

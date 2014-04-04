@@ -20,8 +20,9 @@ describe('Cache Service', function() {
   beforeEach(function(done) {
 
     var veyronConfig = {
-      proxy: testconfig['HTTP_PROXY_SERVER_URL'],
-      logLevel: testconfig['LOG_LEVEL']
+      'proxy': testconfig['HTTP_PROXY_SERVER_URL'],
+      'logLevel': testconfig['LOG_LEVEL'],
+      'identityServer': testconfig['IDENTITY_SERVER_URL']
     };
 
     // Create veyron object and publish the service
@@ -36,7 +37,7 @@ describe('Cache Service', function() {
     client.bind(absoluteVeyronName).then(function(service) {
       cacheService = service;
       done();
-    }).catch (done);
+    }).catch(done);
 
   });
 
@@ -79,7 +80,7 @@ describe('Cache Service', function() {
       cacheService.SomeNonExistingMethod('bar');
     };
 
-    expect(fn).to.throw(/has no method/);
+    expect(fn).to.throw();
   });
 
   it('Should be able to do streaming gets and sets', function(done) {

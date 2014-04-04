@@ -11,6 +11,7 @@ var Client = require('./ipc/client');
 var Deferred = require('./lib/deferred');
 var Promise = require('./lib/promise');
 var vLog = require('./lib/vlog');
+var http = require('./lib/http');
 
 /**
  * Veyron constructor.
@@ -24,9 +25,14 @@ function Veyron(config) {
   config.proxy = config.proxy || 'vonery.com:8125';
   // TODO(aghassemi) change default to NOLOG before release
   config.logLevel = config.logLevel || Veyron.logLevels.DEBUG;
+  config.identityServer = config.identityServer ||
+    'http://www.vonery.com:8125/random/';
 
   this._config = config;
   vLog.level = config.logLevel;
+
+  // Preload the idenity.
+  this._getIdentityPromise();
 }
 
 /**
@@ -35,7 +41,7 @@ function Veyron(config) {
  *
  * Usage:
  * var videoService = {
- *   play: {
+ *   play: function(videoName) {
  *     // Play video
  *   }
  * };
@@ -91,7 +97,19 @@ Veyron.prototype.getEnvironment = function() {
  * @return {ProxyConnection} A new proxy connection
  */
 Veyron.prototype._newProxyConnection = function() {
-  return new ProxyConnection(this._config.proxy, null);
+  return new ProxyConnection(this._config.proxy, this._getIdentityPromise());
+};
+
+Veyron.prototype._getIdentityPromise = function() {
+  if (!this._identityPromise) {
+    this._identityPromise = http.Request(this._config.identityServer).then(
+      function(res) {
+        // TODO(bprosnitz) Consider performing validation on the identity.
+        return res.body;
+      }
+    );
+  }
+  return this._identityPromise;
 };
 
 /**

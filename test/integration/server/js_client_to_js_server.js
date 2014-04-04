@@ -54,7 +54,8 @@ describe('Server and client in JS', function() {
 
     var veyronConfig = {
       'proxy': testconfig['HTTP_PROXY_SERVER_URL'],
-      logLevel: testconfig['LOG_LEVEL']
+      'identityServer': testconfig['IDENTITY_SERVER_URL'],
+      'logLevel': testconfig['LOG_LEVEL']
     };
 
     var veyron = new Veyron(veyronConfig);
@@ -144,7 +145,7 @@ describe('Server and client in JS', function() {
       cacheServiceClient.SomeNonExistingMethod('bar');
     };
 
-    expect(fn).to.throw(/has no method/);
+    expect(fn).to.throw();
   });
 
   it('Should be able to invoke methods after the service is published ' +

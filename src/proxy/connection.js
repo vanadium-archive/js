@@ -37,9 +37,9 @@ var IncomingPayloadType = {
  * @param {string} [ privateIdentity = null ] private key for the user's veyron
  * identity
  */
-function VeyronWSClient(url, privateIdentity) {
+function ProxyConnection(url, privateIdentityPromise) {
   this.url = url.replace(/^(http|https)/, 'ws') + '/ws';
-  this.privateIdentity = privateIdentity;
+  this.privateIdentityPromise = privateIdentityPromise;
   // We use odd numbers for the message ids, so that the server can use even
   // numbers.
   this.id = 1;
@@ -57,7 +57,7 @@ function getDeferred() {
  * @return {promise} a promise that will be fulfilled with a websocket object
  * when the connection is established.
  */
-VeyronWSClient.prototype.getWebSocket = function() {
+ProxyConnection.prototype.getWebSocket = function() {
 
   // We are either connecting or already connected, return the same promise
   if (this.currentWebSocketPromise) {
@@ -90,6 +90,7 @@ VeyronWSClient.prototype.getWebSocket = function() {
     var isServerOriginatedMessage = (message.ID % 2) === 0;
 
     var def = self.outstandingRequests[message.ID];
+
     var payload;
     try {
       payload = JSON.parse(message.Data);
@@ -104,7 +105,7 @@ VeyronWSClient.prototype.getWebSocket = function() {
     // If we don't know about this flow, just drop the message. Unless it
     // originated from the sever.
     if (!isServerOriginatedMessage && !def) {
-      vLog.info('Dropping message for unknown flow ' + message.ID + ' ' +
+      vLog.warn('Dropping message for unknown flow ' + message.ID + ' ' +
           message.Data);
       return;
     }
@@ -205,24 +206,29 @@ Stream.prototype.close = function() {
  * @return {promise} a promise to a return argument key value map
  * (for multiple return arguments)
  */
-VeyronWSClient.prototype.promiseInvokeMethod = function(name,
+ProxyConnection.prototype.promiseInvokeMethod = function(name,
     methodName, mapOfArgs, numOutArgs, isStreaming) {
-  var message = this.constructMessage(name,
-      methodName, mapOfArgs, numOutArgs, isStreaming,
-      this.privateIdentity);
-
   var def = getDeferred();
-  var promise = def.promise;
 
-  if (isStreaming) {
-    var stream = new Stream(this.id, this.getWebSocket());
-    def.resolve(stream);
-    def = stream;
-  }
+  var self = this;
+  this.privateIdentityPromise.then(function(privateIdentity) {
+    var message = self.constructMessage(name,
+        methodName, mapOfArgs, numOutArgs, isStreaming,
+        privateIdentity);
 
-  this.sendRequest(message, MessageType.REQUEST, def);
+    if (isStreaming) {
+      var stream = new Stream(self.id, self.getWebSocket());
+      def.resolve(stream);
+      def = stream;
+    }
 
-  return promise;
+    self.sendRequest(message, MessageType.REQUEST, def);
+  }, function(msg) {
+      def.reject(msg);
+    }
+  );
+
+  return def.promise;
 };
 
 /**
@@ -233,7 +239,7 @@ VeyronWSClient.prototype.promiseInvokeMethod = function(name,
  * @param {MessageType} type Type of message to send
  * @param {Deferred} def Deferred to add to outstandingRequests
  */
-VeyronWSClient.prototype.sendRequest = function(message, type, def) {
+ProxyConnection.prototype.sendRequest = function(message, type, def) {
 
   this.outstandingRequests[this.id] = def;
 
@@ -259,7 +265,7 @@ VeyronWSClient.prototype.sendRequest = function(message, type, def) {
  *   'Args': [] // Array of positional arguments to be passed into the method
  * }
  */
-VeyronWSClient.prototype.handleIncomingInvokeRequest = function(messageId,
+ProxyConnection.prototype.handleIncomingInvokeRequest = function(messageId,
     request) {
 
   var self = this;
@@ -321,7 +327,7 @@ VeyronWSClient.prototype.handleIncomingInvokeRequest = function(messageId,
  * @param {Object} value Result of the call
  * @param {Object} error Error from the call
  */
-VeyronWSClient.prototype.sendInvokeRequestResult = function(messageId, value,
+ProxyConnection.prototype.sendInvokeRequestResult = function(messageId, value,
     error) {
 
   // JavaScript functions always return one result even if null or undefined
@@ -350,7 +356,7 @@ VeyronWSClient.prototype.sendInvokeRequestResult = function(messageId, value,
  * @param {Object} serviceObj service object.
  * @return {Promise} Promise to be called when register completes or fails
  */
-VeyronWSClient.prototype.registerService = function(name, serviceObj) {
+ProxyConnection.prototype.registerService = function(name, serviceObj) {
   //TODO(aghassemi) Handle registering after publishing
 
   var def = getDeferred();
@@ -372,7 +378,7 @@ VeyronWSClient.prototype.registerService = function(name, serviceObj) {
  * @return {Promise} Promise to be called when publish completes or fails
  * the endpoint string of the server will be returned as the value of promise
  */
-VeyronWSClient.prototype.publishServer = function(name) {
+ProxyConnection.prototype.publishServer = function(name) {
   //TODO(aghassemi) Handle publish under multiple names
 
   // Generate IDL for the registered services
@@ -397,7 +403,7 @@ VeyronWSClient.prototype.publishServer = function(name) {
  * @param {string} name the veyron name of the service to get signature for.
  * @return {Promise} Signature of the service in JSON format
  */
-VeyronWSClient.prototype.getServiceSignature = function(name) {
+ProxyConnection.prototype.getServiceSignature = function(name) {
 
   var messageJSON = {
     'Name': name,
@@ -416,7 +422,7 @@ VeyronWSClient.prototype.getServiceSignature = function(name) {
  * Generates an IDL wire description for all the registered services
  * @return {object} map from service name to idl wire description
  */
-VeyronWSClient.prototype.generateIdlWireDescription = function() {
+ProxyConnection.prototype.generateIdlWireDescription = function() {
   var servicesIdlWire = {};
 
   for (var serviceName in this.registeredServices) {
@@ -440,7 +446,7 @@ VeyronWSClient.prototype.generateIdlWireDescription = function() {
  * @param {string} privateIdentity The private identity
  * @return {string} json string to send to the http proxy
  */
-VeyronWSClient.prototype.constructMessage = function(name, methodName,
+ProxyConnection.prototype.constructMessage = function(name, methodName,
     mapOfArgs, numOutArgs, isStreaming, privateIdentity) {
   var jsonMessage = {
     'Name' : name,
@@ -456,4 +462,4 @@ VeyronWSClient.prototype.constructMessage = function(name, methodName,
 /**
  * Export the module
  */
-module.exports = VeyronWSClient;
+module.exports = ProxyConnection;
