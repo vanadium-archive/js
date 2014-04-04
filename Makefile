@@ -4,9 +4,9 @@
 #
 
 # Add node to path
-PATH:=$(PATH):$(VEYRON_DEV)/cout/node/bin
+PATH:=$(PATH):$(VEYRON_ENV)/cout/node/bin
 
-NPM=$(VEYRON_DEV)/cout/node/bin/npm
+NPM=$(VEYRON_ENV)/cout/node/bin/npm
 GRUNT= ./node_modules/.bin/grunt
 
 # Builds and tests everything
@@ -47,7 +47,7 @@ setup: check_node
 
 # Is NodeJS installed?
 check_node:
-	@if [[ ! -e $(VEYRON_DEV)/cout/node/bin ]]; then \
+	@if [[ ! -e $(VEYRON_ENV)/cout/node/bin ]]; then \
 		echo "You don't have NodeJS installed. Please sync and rerun veyron/dev/install/init.sh"; \
 		exit 1; \
 	fi
