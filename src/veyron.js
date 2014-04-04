@@ -87,7 +87,7 @@ Veyron.prototype.getEnvironment = function() {
  * @return {ProxyConnection} A new proxy connection
  */
 Veyron.prototype._newProxyConnection = function() {
-  return new ProxyConnection(this._config.proxy, 'websocket', null);
+  return new ProxyConnection(this._config.proxy, null);
 };
 
 /**
