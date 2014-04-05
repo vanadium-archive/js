@@ -38,8 +38,8 @@ module.exports = function(grunt) {
     if (!fs.existsSync(HTTP_PROXY_BIN) ||
        !fs.existsSync(SAMPLE_GO_SERVICE_BIN)) {
 
-      var errorMessage = 'Veyron binaries not found. Ensure veyron2 and ' +
-        'examples are built and installed in ' + VEYRON_BIN_DIR + ' by ' +
+      var errorMessage = 'Veyron binaries not found. Ensure "veyron" and ' +
+        '"veyron2" are built and installed in ' + VEYRON_BIN_DIR + ' by ' +
         'running go-amd64 install \n' +
         HTTP_PROXY_BIN + ' and ' + SAMPLE_GO_SERVICE_BIN + ' are required for' +
         'integration testing';
