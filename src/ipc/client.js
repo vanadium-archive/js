@@ -45,7 +45,7 @@ client.prototype.bind = function(name, optServiceSignature) {
   if (optServiceSignature !== undefined) {
     serviceSignaturePromise = Promise.cast(optServiceSignature);
   } else {
-    serviceSignaturePromise = this._getServiceSignature();
+    serviceSignaturePromise = self._proxyConnection.getServiceSignature(name);
   }
 
   serviceSignaturePromise.then(function(serviceSignature) {
@@ -53,18 +53,18 @@ client.prototype.bind = function(name, optServiceSignature) {
     var bindMethod = function(methodName) {
       if (serviceSignature.hasOwnProperty(methodName)) {
         var methodInfo = serviceSignature[methodName];
-        var numOutParams = methodInfo.numReturnArgs;
+        var numOutParams = methodInfo.NumOutArgs;
 
         boundObject[methodName] = function() {
           var args = Array.prototype.slice.call(arguments, 0);
-          if (args.length !== methodInfo.numParams) {
+          if (args.length !== methodInfo.InArgs.length) {
             throw new Error('Invalid number of arguments to "' +
-              methodName + '". Expected ' + methodInfo.numParams +
+              methodName + '". Expected ' + methodInfo.InArgs.length +
               ' but there were ' + args.length);
           }
           return self._proxyConnection.promiseInvokeMethod(
             name, methodName, args, numOutParams,
-            methodInfo.isStreaming || false);
+            methodInfo.IsStreaming || false);
         };
       }
     };
@@ -79,17 +79,6 @@ client.prototype.bind = function(name, optServiceSignature) {
   }).catch (def.reject);
 
   return def.promise;
-};
-
-/**
- * Gets the signature including methods names, number of arguments for a given
- * service name.
- * @param {string} name the veyron name of the service to get signature for.
- * @return {Promise} Signature of the service in JSON format
- */
-client.prototype._getServiceSignature = function(name) {
-  //TODO(aghassemi)
-  return '';
 };
 
 /**

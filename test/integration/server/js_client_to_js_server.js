@@ -11,9 +11,9 @@
  */
 
 describe('Server and client in JS', function() {
+  var client;
   var cacheServiceClient;
   var cacheServiceClientUsingEndpoint;
-  var cacheServiceClientUsingWrongName;
   before(function(done) {
 
     // Our cache service
@@ -51,24 +51,6 @@ describe('Server and client in JS', function() {
         return def.promise;
       }
     };
-    var cacheServiceSignature = {
-      'Set': {
-        name: 'Set',
-        numParams: 2,
-        numReturnArgs: 0
-      },
-      'Get': {
-        name: 'Get',
-        numParams: 1,
-        numReturnArgs: 1
-      },
-      'MultiGet': {
-        name: 'MultiGet',
-        numParams: 0,
-        numReturnArgs: 0,
-        isStreaming: true
-      }
-    };
 
     var veyronConfig = {
       'proxy': testconfig['HTTP_PROXY_SERVER_URL'],
@@ -87,26 +69,18 @@ describe('Server and client in JS', function() {
       expect(endpoint).to.have.string('@1@tcp@127.0.0.1');
 
       // Create a client to the returned endpoint
-      var client = veyron.newClient();
+      client = veyron.newClient();
 
       var cacheServiceClientPromise = client.bind(
-          'myCache/Cache',
-          cacheServiceSignature);
+          'myCache/Cache');
 
       var cacheServiceClientUsingEndpointPromise = client.bind(
-          '/' + endpoint + '/Cache',
-          cacheServiceSignature);
-
-      var cacheServiceClientUsingWrongNamePromise = client.bind(
-          'nonexisting/name',
-          cacheServiceSignature);
+          '/' + endpoint + '/Cache');
 
       Veyron.Promise.all([cacheServiceClientPromise,
-        cacheServiceClientUsingEndpointPromise,
-        cacheServiceClientUsingWrongNamePromise]).then(function(results) {
+        cacheServiceClientUsingEndpointPromise]).then(function(results) {
         cacheServiceClient = results[0];
         cacheServiceClientUsingEndpoint = results[1];
-        cacheServiceClientUsingWrongName = results[2];
         done();
       }).catch (done);
 
@@ -165,6 +139,14 @@ describe('Server and client in JS', function() {
     return expect(result).to.eventually.be.rejected;
   });
 
+  it('Should get an exception calling non-existing methods', function() {
+    var fn = function() {
+      cacheServiceClient.SomeNonExistingMethod('bar');
+    };
+
+    expect(fn).to.throw(/has no method/);
+  });
+
   it('Should be able to invoke methods after the service is published ' +
       'using the endpoint name', function() {
         var result = cacheServiceClientUsingEndpoint.Set('foo', 'bar')
@@ -176,9 +158,9 @@ describe('Server and client in JS', function() {
 
       });
 
-  it('Should fail to invoke methods on the wrong name', function() {
-    var result = cacheServiceClientUsingWrongName.Set('foo', 'bar');
-    return expect(result).to.eventually.be.rejected;
+  it('Should fail to bind to the wrong name', function() {
+    var service = client.bind('nonexisting/name');
+    return expect(service).to.eventually.be.rejected;
   });
 
   // TODO(aghassemi) tests and implementation for:

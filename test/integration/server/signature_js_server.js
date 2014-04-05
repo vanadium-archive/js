@@ -9,23 +9,23 @@
  * Only the public 'veyron' module is available for integration tests.
  * All globals (veyron, expect, testconfig) are injected by test runners.
  */
-describe.skip('When service in JS, client\'s GetServiceSignature', function() {
+describe('Signature, when service is in JS getServiceSignature', function() {
 
   var expectedSignature = {
     'Get': {
-      numParams: 1,
-      numReturnArgs: 1,
-      isStreaming: 0
+      InArgs: ['key'],
+      NumOutArgs: 1,
+      IsStreaming: false
     },
     'Set': {
-      numParams: 2,
-      numReturnArgs: 0,
-      isStreaming: 0
+      InArgs: ['key', 'value'],
+      NumOutArgs: 1,
+      IsStreaming: false
     },
     'MultiGet': {
-      numParams: 0,
-      numReturnArgs: 0,
-      isStreaming: 1
+      InArgs: [],
+      NumOutArgs: 1,
+      IsStreaming: true
     }
   };
 
@@ -54,7 +54,8 @@ describe.skip('When service in JS, client\'s GetServiceSignature', function() {
       // Create a client and bind to it
       var client = veyron.newClient();
 
-      client._getServiceSignature('myCache/Cache').then(function(sig) {
+      client._proxyConnection.getServiceSignature('myCache/Cache')
+      .then(function(sig) {
         signature = sig;
         done();
       }).catch (done);
@@ -68,7 +69,7 @@ describe.skip('When service in JS, client\'s GetServiceSignature', function() {
   });
 
   it('Should be able to get all method names', function() {
-    expect(signature).to.include.keys(Object.Keys(expectedSignature));
+    expect(signature).to.include.keys(Object.keys(expectedSignature));
   });
 
   it('Should be able to get number of in params for each method', function() {
@@ -77,8 +78,26 @@ describe.skip('When service in JS, client\'s GetServiceSignature', function() {
     for (var methodName in signature) {
       if(signature.hasOwnProperty(methodName)) {
         var methodInfo = signature[methodName];
-        expect(methodInfo.numParams).to.equal(
-          expectedSignature[methodName].numParams);
+        expect(methodInfo).to.exists;
+        expect(methodInfo.InArgs).to.exists;
+        expect(methodInfo.InArgs.length).to.equal(
+          expectedSignature[methodName].InArgs.length);
+      }
+    }
+  });
+
+  it('Should be able to get name of in params for each method', function() {
+    expect(Object.keys(signature)).to.have.length(3);
+
+    for (var methodName in signature) {
+      if(signature.hasOwnProperty(methodName)) {
+        var methodInfo = signature[methodName];
+        expect(methodInfo).to.exists;
+        expect(methodInfo.InArgs).to.exists;
+        for(var i=0; i < methodInfo.InArgs.length; i++) {
+          expect(methodInfo.InArgs[i]).to.equal(
+            expectedSignature[methodName].InArgs[i]);
+        }
       }
     }
   });
@@ -89,8 +108,10 @@ describe.skip('When service in JS, client\'s GetServiceSignature', function() {
     for (var methodName in signature) {
       if(signature.hasOwnProperty(methodName)) {
         var methodInfo = signature[methodName];
-        expect(methodInfo.numReturnArgs).to.equal(
-          expectedSignature[methodName].numReturnArgs);
+        expect(methodInfo).to.exists;
+        expect(methodInfo.NumOutArgs).to.exists;
+        expect(methodInfo.NumOutArgs).to.equal(
+          expectedSignature[methodName].NumOutArgs);
       }
     }
   });
@@ -101,8 +122,10 @@ describe.skip('When service in JS, client\'s GetServiceSignature', function() {
     for (var methodName in signature) {
       if(signature.hasOwnProperty(methodName)) {
         var methodInfo = signature[methodName];
-        expect(methodInfo.isStreaming).to.equal(
-          expectedSignature[methodName].isStreaming);
+        expect(methodInfo).to.exists;
+        expect(methodInfo.IsStreaming).to.exists;
+        expect(methodInfo.IsStreaming).to.equal(
+          expectedSignature[methodName].IsStreaming);
       }
     }
   });

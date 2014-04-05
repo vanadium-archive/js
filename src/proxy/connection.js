@@ -17,7 +17,8 @@ var MessageType = {
   REGISTER: 2, // Request to register a service in JavaScript under a prefix
   RESPONSE: 3, // Indicates a response from a registered service in JavaScript
   STREAM_VALUE: 4, // Indicates a stream value
-  STREAM_CLOSE: 5 // Request to close a stream
+  STREAM_CLOSE: 5, // Request to close a stream
+  SIGNATURE: 6 // Request to get signature of a remote server
 };
 
 var IncomingPayloadType = {
@@ -323,10 +324,8 @@ VeyronWSClient.prototype.handleIncomingInvokeRequest = function(messageId,
 VeyronWSClient.prototype.sendInvokeRequestResult = function(messageId, value,
     error) {
 
-  var results = [];
-  if (value !== undefined) {
-    results.push(value);
-  }
+  // JavaScript functions always return one result even if null or undefined
+  var results = [value];
 
   var responseData = {
     'Results' : results,
@@ -388,6 +387,27 @@ VeyronWSClient.prototype.publishServer = function(name) {
   var message = JSON.stringify(messageJSON);
   // Send the publish request to the proxy
   this.sendRequest(message, MessageType.PUBLISH, def);
+
+  return def.promise;
+};
+
+/**
+ * Gets the signature including methods names, number of arguments for a given
+ * service name.
+ * @param {string} name the veyron name of the service to get signature for.
+ * @return {Promise} Signature of the service in JSON format
+ */
+VeyronWSClient.prototype.getServiceSignature = function(name) {
+
+  var messageJSON = {
+    'Name': name,
+    'PrivateID': this.privateIdentity
+  };
+
+  var def = getDeferred();
+  var message = JSON.stringify(messageJSON);
+  // Send the get signature request to the proxy
+  this.sendRequest(message, MessageType.SIGNATURE, def);
 
   return def.promise;
 };

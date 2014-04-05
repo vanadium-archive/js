@@ -13,12 +13,6 @@
  * Only the public 'veyron' module is available for integration tests.
  * All globals (veyron, expect, testconfig) are injected by test runners.
  */
-
-// TODO(aghassemi):
-// As the API evolves, this test should get merged into the complete e2e
-// bind and call methods of the public API, eliminating the need to know
-// end point or idl
-
 describe('Cache Service', function() {
 
   var cacheService;
@@ -39,11 +33,7 @@ describe('Cache Service', function() {
         '/' + testconfig['SAMPLE_VEYRON_GO_SERVICE_ENDPOINT'] +
         '/' + testconfig['SAMPLE_VEYRON_GO_SERVICE_NAME'];
 
-    var serviceIDL = testconfig['SAMPLE_VEYRON_GO_SERVICE_IDL'];
-    var serviceName = testconfig['SAMPLE_VEYRON_GO_SERVICE_NAME'];
-    var serviceSignature = serviceIDL[serviceName];
-
-    client.bind(absoluteVeyronName, serviceSignature).then(function(service) {
+    client.bind(absoluteVeyronName).then(function(service) {
       cacheService = service;
       done();
     }).catch (done);
@@ -65,14 +55,12 @@ describe('Cache Service', function() {
   });
 
   it('Should be able to set a value', function() {
-
     var resultPromise = cacheService.Set('foo', 'bar');
 
     return expect(resultPromise).to.eventually.be.fulfilled;
   });
 
   it('Should be able to set and get a value', function() {
-
     var resultPromise = cacheService.Set('foo', 'bar').then(function() {
       return cacheService.Get('foo');
     });
@@ -84,6 +72,14 @@ describe('Cache Service', function() {
     var resultPromise = cacheService.Get('baz');
 
     return expect(resultPromise).to.eventually.be.rejected;
+  });
+
+  it('Should get an exception calling non-existing methods', function() {
+    var fn = function() {
+      cacheService.SomeNonExistingMethod('bar');
+    };
+
+    expect(fn).to.throw(/has no method/);
   });
 
   it('Should be able to do streaming gets and sets', function(done) {

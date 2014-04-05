@@ -266,12 +266,25 @@ module.exports = function(grunt) {
     'browserTest:specs'
   ]);
 
-  grunt.registerTask('subtask_runIntegrationTests', [
+  grunt.registerTask('subtask_runNodeIntegrationTests', [
     'subtask_setupIntegrationTestEnvironment',
     'subtask_writeTestConfigFile',
     'nodeTest:integration',
+    'subtask_teardownIntegrationTestEnvironment'
+  ]);
+
+  grunt.registerTask('subtask_runBrowserIntegrationTests', [
+    'subtask_setupIntegrationTestEnvironment',
+    'subtask_writeTestConfigFile',
     'browserTest:integration',
     'subtask_teardownIntegrationTestEnvironment'
+  ]);
+
+  // Browser and node integration tests do their own setup and tear down
+  // otherwise states would be shared
+  grunt.registerTask('subtask_runIntegrationTests', [
+    'subtask_runNodeIntegrationTests',
+    'subtask_runBrowserIntegrationTests'
   ]);
 
   grunt.registerTask('subtask_buildForBrowser', [

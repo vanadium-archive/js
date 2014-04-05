@@ -7,6 +7,8 @@ module.exports = function(grunt) {
 
   // List of processes we have spawned so we can kill them on teardown
   var runningChildProcesses = [];
+  // Whether cleanup is in progress
+  var cleaningUp = false;
 
   /**
    * Setups the required environment for integration testing such as
@@ -48,11 +50,11 @@ module.exports = function(grunt) {
     }
     // Run the http proxy
     var http_proxy_process = exec(HTTP_PROXY_BIN +
-      ' -v=3 -log_dir=' + LOGS_DIR + ' -port=' + HTTP_PROXY_PORT, {
+      ' -v=3 -vv=3 -log_dir=' + LOGS_DIR + ' -port=' + HTTP_PROXY_PORT, {
         maxBuffer: 4 *1024 * 1024
       },
       function(error, stdout, stderror) {
-          if (error) {
+          if (error && !cleaningUp) {
             var errorMessage = 'Running http proxy failed because:\n' + error +
               '\nIntegration tests can not continue without running ' +
               'http proxy. Please fix the issue. Temporarily, you can run ' +
@@ -67,7 +69,7 @@ module.exports = function(grunt) {
       ' -v=3 -vv=3 -log_dir=' + LOGS_DIR,
       [{timeout: TIMEOUT, maxBuffer: 4 * 1024 * 1024}],
       function(error, stdout, stderror) {
-        if (error) {
+        if (error && !cleaningUp) {
           var errorMessage = 'Running ' + SAMPLE_GO_SERVICE_BIN +
             ' failed because:\n' + error +
             '\nIntegration tests can not continue without running ' +
@@ -102,32 +104,7 @@ module.exports = function(grunt) {
         HTTP_PROXY_PORT;
 
       testConfigs['SAMPLE_VEYRON_GO_SERVICE_NAME'] = 'cache';
-
-      // TODO(aghassemi) as mentioned in the client.js test file, most of these
-      // should go away soon when we have more of the API such as getting IDL
-      // directly from service and name resolution figured out.
       testConfigs['SAMPLE_VEYRON_GO_SERVICE_ENDPOINT'] = endpoint;
-      testConfigs['SAMPLE_VEYRON_GO_SERVICE_IDL'] =
-      {
-        'cache': {
-          'Set': {
-            name: 'Set',
-            numParams: 2,
-            numReturnArgs: 0
-          },
-          'Get': {
-            name: 'Get',
-            numParams: 1,
-            numReturnArgs: 1
-          },
-          'MultiGet': {
-            name: 'MultiGet',
-            numParams: 0,
-            numReturnArgs: 0,
-            isStreaming: true
-          }
-        }
-      };
 
       // Return with success, allowing sometime for proxy to fully start
       setTimeout(function() { done(true); }, 1000);
@@ -137,9 +114,13 @@ module.exports = function(grunt) {
 
   // Kills any running process we started
   var cleanUp = function() {
+    cleaningUp = true;
     runningChildProcesses.forEach(function(runningProcess) {
       runningProcess.kill('SIGTERM');
     });
+    setTimeout(function(){
+      cleaningUp = false;
+    }, 500);
   };
 
   // Fails the task after cleaning up
