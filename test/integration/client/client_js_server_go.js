@@ -27,7 +27,7 @@ describe('Cache Service', function() {
 
     var veyronConfig = {
       proxy: testconfig['HTTP_PROXY_SERVER_URL'],
-      logLevel: Veyron.logLevels.INFO
+      logLevel: testconfig['LOG_LEVEL']
     };
 
     // Create veyron object and publish the service

@@ -9,7 +9,9 @@ module.exports = function(grunt) {
 
   // Any key, value in this object will be available to all test files.
   // Values can be added dynamically from other tasks also.
-  grunt.testConfigs = {},
+  grunt.testConfigs = {
+    "LOG_LEVEL": 4 // Level for outputting JavaScript logs. Set to highest level
+  },
 
   // Project configuration.
   grunt.initConfig({
@@ -308,6 +310,9 @@ module.exports = function(grunt) {
   grunt.task.registerTask(
     'jenkins', 'Runs the tests outputting xml test results that jenkins can understand', function(testType) {
       grunt.config.set('reporter', 'xunit');
+      // Set to no logging since logs interfere with xUnit result output
+      grunt.testConfigs['LOG_LEVEL'] = 0
+
       var testsToRun = ['subtask_runSpecTests', 'subtask_runIntegrationTests'];
       if (testType === 'specs') {
         testsToRun = ['subtask_runSpecTests']
