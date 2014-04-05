@@ -71,7 +71,8 @@ describe('Server and client in JS', function() {
     };
 
     var veyronConfig = {
-      'proxy': testconfig['HTTP_PROXY_SERVER_URL']
+      'proxy': testconfig['HTTP_PROXY_SERVER_URL'],
+      logLevel: Veyron.logLevels.INFO
     };
 
     var veyron = new Veyron(veyronConfig);
