@@ -10,7 +10,7 @@ module.exports = function(grunt) {
   // Any key, value in this object will be available to all test files.
   // Values can be added dynamically from other tasks also.
   grunt.testConfigs = {
-    "LOG_LEVEL": 4 // Level for outputting JavaScript logs. Set to highest level
+    "LOG_LEVEL": 1 // Level for outputting JavaScript logs. Set to error level
   },
 
   // Project configuration.

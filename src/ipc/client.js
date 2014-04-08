@@ -19,6 +19,7 @@
 
 var Deferred = require('../lib/deferred');
 var Promise = require('../lib/promise');
+var vLog = require('../lib/vlog');
 
 /**
  * Client for the veyron service.
@@ -45,10 +46,12 @@ client.prototype.bind = function(name, optServiceSignature) {
   if (optServiceSignature !== undefined) {
     serviceSignaturePromise = Promise.cast(optServiceSignature);
   } else {
+    vLog.debug('Requesting service signature for:', name);
     serviceSignaturePromise = self._proxyConnection.getServiceSignature(name);
   }
 
   serviceSignaturePromise.then(function(serviceSignature) {
+    vLog.debug('Received signature for:', name, serviceSignature);
     var boundObject = {};
     var bindMethod = function(methodName) {
       if (serviceSignature.hasOwnProperty(methodName)) {
