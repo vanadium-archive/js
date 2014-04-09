@@ -22,6 +22,7 @@ module.exports = function(grunt) {
       temp: 'temp',
       tempBrowserify: '<%= dirs.temp %>/browserify',
       dist: 'dist',
+      docs: 'docs',
       logs: 'logs',
       distTest: '<%= dirs.dist %>/test'
     },
@@ -163,6 +164,17 @@ module.exports = function(grunt) {
         },
         options: {
           sourceMap: true
+        }
+      }
+    },
+
+    // JSDoc
+    jsdoc: {
+      dist: {
+        src: ['src/**/*.js'],
+        options: {
+          destination: '<%= dirs.docs %>',
+          template: 'node_modules/ink-docstrap/template'
         }
       }
     },

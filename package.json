@@ -30,6 +30,8 @@
     "karma-mocha": "~0.1",
     "karma-spec-reporter": "~0.0.4",
     "karma-junit-reporter": "~0.1",
-    "merge": "^1.1.2"
+    "merge": "^1.1.2",
+    "grunt-jsdoc": "~0.5.4",
+    "ink-docstrap": "~0.3.0-0"
   }
 }

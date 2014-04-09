@@ -25,6 +25,10 @@ test: setup
 debug: setup
 	$(GRUNT) debug
 
+# Build JSDoc.
+doc: setup
+	$(GRUNT) jsdoc
+
 # Runs the tests outputting xml test results that jenkins can understand
 # Four files are outputted in dist/test. One for each combination of (specs, integration)*(nodeJS, browser)
 jenkins: setup
