@@ -121,7 +121,7 @@ module.exports = function(grunt) {
     browserify: {
       source: {
         src: ['<%= dirs.tempBrowserify %>/src/**/*.js'],
-        dest: '<%= dirs.dist %>/veyron.browserify.js',
+        dest: '<%= dirs.tempBrowserify %>/veyron.browserify.js',
         alias: {
           src: '<%= dirs.tempBrowserify %>/src/veyron.js',
           name: 'veyron'
@@ -146,7 +146,7 @@ module.exports = function(grunt) {
           banner: '(function(g){\n',
           footer: '\ng.Veyron=require(\'veyron\');})(window);'
         },
-        src: ['<%= dirs.dist %>/veyron.browserify.js'],
+        src: ['<%= dirs.tempBrowserify %>/veyron.browserify.js'],
         dest: '<%= dirs.dist %>/veyron.js'
       },
       // concats all the integration files together
