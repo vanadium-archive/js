@@ -28,10 +28,12 @@ module.exports = function(grunt) {
 
     // Binary location of http proxy and other processes to run
     var VEYRON_BIN_DIR = path.resolve('../../v/bin');
+    var VEYRON_PROXY_BIN = VEYRON_BIN_DIR + '/proxy';
     var HTTP_PROXY_BIN = VEYRON_BIN_DIR + '/http_proxyd';
     var IDENTITYD_BIN = VEYRON_BIN_DIR + '/identityd';
     var SAMPLE_GO_SERVICE_BIN = VEYRON_BIN_DIR + '/sampled';
 
+    var VEYRON_PROXY_PORT = 3111;
     var HTTP_PROXY_PORT = 3224; // The port for the HTTP proxy.
     var IDENTITYD_PORT = 8125; // The port for the identityd server.
     var TIMEOUT = 2000; // Time to fail if processes do not spawn
@@ -50,9 +52,27 @@ module.exports = function(grunt) {
 
       fail(errorMessage);
     }
+    
+    var veyron_proxy_process = exec(VEYRON_PROXY_BIN +
+      ' -log_dir=' + LOGS_DIR + ' -addr=127.0.0.1:' + VEYRON_PROXY_PORT, {
+        maxBuffer: 4 * 1024 * 1024
+      },
+      function(error, stdout, stderr) {
+          if (error && !cleaningUp) {
+            var errorMessage = 'Running veyron proxy failed because:\n' + error +
+              '\nIntegration tests can not continue without running ' +
+              'veyron proxy. Please fix the issue. Temporarily, you can run ' +
+              'the build without running tests (make build)';
+
+            fail(errorMessage);
+          }
+      });
+    runningChildProcesses.push(veyron_proxy_process);
+    
     // Run the http proxy
     var http_proxy_process = exec(HTTP_PROXY_BIN +
-      ' -v=3 -vv=3 -log_dir=' + LOGS_DIR + ' -port=' + HTTP_PROXY_PORT, {
+      ' -v=3 -vv=3 -log_dir=' + LOGS_DIR + ' -port=' + HTTP_PROXY_PORT +
+      ' -vproxy=127.0.0.1:' + VEYRON_PROXY_PORT, {
         maxBuffer: 4 * 1024 * 1024
       },
       function(error, stdout, stderr) {
@@ -66,6 +86,7 @@ module.exports = function(grunt) {
           }
       });
     runningChildProcesses.push(http_proxy_process);
+    
     // Run identityd
     var identityd_process = exec(IDENTITYD_BIN + ' -port=' + IDENTITYD_PORT, {
       maxBuffer: 4 * 1024 * 1024
@@ -80,7 +101,7 @@ module.exports = function(grunt) {
     runningChildProcesses.push(identityd_process);
     // Run the sample go service proxy, we use the sampled example service
     var sample_service_process = exec(SAMPLE_GO_SERVICE_BIN +
-      ' -v=3 -vv=3 -log_dir=' + LOGS_DIR,
+      ' -log_dir=' + LOGS_DIR,
       [{timeout: TIMEOUT, maxBuffer: 4 * 1024 * 1024}],
       function(error, stdout, stderr) {
         if (error && !cleaningUp) {
