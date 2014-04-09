@@ -51,8 +51,12 @@ setup: check_node
 
 # Is NodeJS installed?
 check_node:
+	@if [[ "$(VEYRON_ENV)" == "" ]]; then \
+		echo "VEYRON_ENV must be set."; \
+		exit 1; \
+	fi
 	@if [[ ! -e $(VEYRON_ENV)/cout/node/bin ]]; then \
-		echo "You don't have NodeJS installed. Please sync and rerun veyron/dev/install/init.sh"; \
+		echo "Could not find NodeJS in $(VEYRON_ENV)/cout/node/bin. Please sync and rerun <VEYRON_ENV>/scripts/machine/init.sh"; \
 		exit 1; \
 	fi
 
