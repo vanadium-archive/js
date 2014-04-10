@@ -70,10 +70,12 @@ ProxyConnection.prototype.getWebSocket = function() {
   var deferred = getDeferred();
   this.currentWebSocketPromise = deferred.promise;
   websocket.onopen = function() {
+    vLog.info('Connected to proxy at', self.url);
     deferred.resolve(websocket);
   };
 
   websocket.onerror = function(e) {
+    vLog.error('Failed to connect to proxy at url:', self.url);
     deferred.reject(e);
   };
 
@@ -380,6 +382,8 @@ ProxyConnection.prototype.registerService = function(name, serviceObj) {
  */
 ProxyConnection.prototype.publishServer = function(name) {
   //TODO(aghassemi) Handle publish under multiple names
+
+  vLog.info('Publishing a server under name: ', name);
 
   // Generate IDL for the registered services
   var idl = this.generateIdlWireDescription();
