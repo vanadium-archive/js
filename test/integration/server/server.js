@@ -12,7 +12,7 @@
 describe('Server', function(done) {
 
   var veyronConfig = {
-    'proxy': testconfig['HTTP_PROXY_SERVER_URL'],
+    'proxy': testconfig['WSPR_SERVER_URL'],
     'identityServer': testconfig['IDENTITY_SERVER_URL'],
     'logLevel': testconfig['LOG_LEVEL']
   };
