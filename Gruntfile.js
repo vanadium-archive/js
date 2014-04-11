@@ -336,7 +336,7 @@ module.exports = function(grunt) {
     'jenkins', 'Runs the tests outputting xml test results that jenkins can understand', function(testType) {
       grunt.config.set('reporter', 'xunit');
       // Set to no logging since logs interfere with xUnit result output
-      grunt.testConfigs['LOG_LEVEL'] = 0
+      grunt.testConfigs['LOG_LEVEL'] = 0;
 
       var testsToRun = ['subtask_runSpecTests', 'subtask_runIntegrationTests'];
       if (testType === 'specs') {

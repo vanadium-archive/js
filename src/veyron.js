@@ -24,7 +24,9 @@ function Veyron(config) {
   config = config || {};
   config.proxy = config.proxy || 'vonery.com:8125';
   // TODO(aghassemi) change default to NOLOG before release
-  config.logLevel = config.logLevel || Veyron.logLevels.DEBUG;
+  if (typeof config.logLevel === 'undefined' || config.logLevel === null) {
+    config.logLevel =  Veyron.logLevels.DEBUG;
+  }
   config.identityServer = config.identityServer ||
     'http://www.vonery.com:8125/random/';
 

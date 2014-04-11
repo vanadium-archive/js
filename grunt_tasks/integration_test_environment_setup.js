@@ -7,8 +7,6 @@ module.exports = function(grunt) {
 
   // List of processes we have spawned so we can kill them on teardown
   var runningChildProcesses = [];
-  // Whether cleanup is in progress
-  var cleaningUp = false;
 
   /**
    * Setups the required environment for integration testing such as
@@ -17,15 +15,17 @@ module.exports = function(grunt) {
    */
   grunt.registerTask('subtask_setupIntegrationTestEnvironment', function() {
 
-    var exec = require('child_process').exec;
+    var spawn = require('child_process').spawn;
     var fs = require('fs');
     var path = require('path');
 
     // Indicate this is a async grunt task
     var done = this.async();
 
-    // Constants
+    // Reset state
+    runningChildProcesses = [];
 
+    // Constants
     // Binary location of http proxy and other processes to run
     var VEYRON_BIN_DIR = path.resolve('../../v/bin');
     var VEYRON_PROXY_BIN = VEYRON_BIN_DIR + '/proxy';
@@ -36,7 +36,6 @@ module.exports = function(grunt) {
     var VEYRON_PROXY_PORT = 3111;
     var HTTP_PROXY_PORT = 3224; // The port for the HTTP proxy.
     var IDENTITYD_PORT = 8125; // The port for the identityd server.
-    var TIMEOUT = 2000; // Time to fail if processes do not spawn
 
     var LOGS_DIR = path.resolve('logs');
 
@@ -52,75 +51,33 @@ module.exports = function(grunt) {
 
       fail(errorMessage);
     }
-    
-    var veyron_proxy_process = exec(VEYRON_PROXY_BIN +
-      ' -log_dir=' + LOGS_DIR + ' -addr=127.0.0.1:' + VEYRON_PROXY_PORT, {
-        maxBuffer: 4 * 1024 * 1024
-      },
-      function(error, stdout, stderr) {
-          if (error && !cleaningUp) {
-            var errorMessage = 'Running veyron proxy failed because:\n' + error +
-              '\nIntegration tests can not continue without running ' +
-              'veyron proxy. Please fix the issue. Temporarily, you can run ' +
-              'the build without running tests (make build)';
 
-            fail(errorMessage);
-          }
-      });
+    var veyron_proxy_process = spawn(VEYRON_PROXY_BIN,
+      ['-log_dir=' + LOGS_DIR, '-addr=127.0.0.1:' + VEYRON_PROXY_PORT]);
+    veyron_proxy_process.stderr.on('data', grunt.log.debug);
     runningChildProcesses.push(veyron_proxy_process);
-    
+
     // Run the http proxy
-    var http_proxy_process = exec(HTTP_PROXY_BIN +
-      ' -v=3 -vv=3 -log_dir=' + LOGS_DIR + ' -port=' + HTTP_PROXY_PORT +
-      ' -vproxy=127.0.0.1:' + VEYRON_PROXY_PORT, {
-        maxBuffer: 4 * 1024 * 1024
-      },
-      function(error, stdout, stderr) {
-          if (error && !cleaningUp) {
-            var errorMessage = 'Running http proxy failed because:\n' + error +
-              '\nIntegration tests can not continue without running ' +
-              'http proxy. Please fix the issue. Temporarily, you can run ' +
-              'the build without running tests (make build)';
-
-            fail(errorMessage);
-          }
-      });
+    var http_proxy_process = spawn(HTTP_PROXY_BIN,
+      ['-v=3', '-vv=3', '-log_dir=' + LOGS_DIR, '-port=' + HTTP_PROXY_PORT,
+       '-vproxy=127.0.0.1:' + VEYRON_PROXY_PORT ]);
+    http_proxy_process.stderr.on('data', grunt.log.debug);
     runningChildProcesses.push(http_proxy_process);
-    
+
     // Run identityd
-    var identityd_process = exec(IDENTITYD_BIN + ' -port=' + IDENTITYD_PORT, {
-      maxBuffer: 4 * 1024 * 1024
-    }, function(error, stdout, stderr) {
-      if (error) {
-        var errorMessage = 'Running identityd failed because:\n' + error +
-          '\nIntegration tests can not continue without running ' +
-          'identityd. Please fix the issue. Temporarily, you can run ' +
-          'the build without running tests (make build)';
-      }
-    });
+    var identityd_process = spawn(IDENTITYD_BIN, ['-port=' + IDENTITYD_PORT]);
+    identityd_process.stderr.on('data', grunt.log.debug);
     runningChildProcesses.push(identityd_process);
+
     // Run the sample go service proxy, we use the sampled example service
-    var sample_service_process = exec(SAMPLE_GO_SERVICE_BIN +
-      ' -log_dir=' + LOGS_DIR,
-      [{timeout: TIMEOUT, maxBuffer: 4 * 1024 * 1024}],
-      function(error, stdout, stderr) {
-        if (error && !cleaningUp) {
-          var errorMessage = 'Running ' + SAMPLE_GO_SERVICE_BIN +
-            ' failed because:\n' + error +
-            '\nIntegration tests can not continue without running ' +
-            SAMPLE_GO_SERVICE_BIN + '.' +
-            'Please fix the issue. Temporarily, you can run ' +
-            'the build without running tests (make build)';
-
-          fail(errorMessage);
-        }
-      });
-
+    var sample_service_process = spawn(SAMPLE_GO_SERVICE_BIN,
+      ['-v=3', '-vv=3', '-log_dir=' + LOGS_DIR]);
     runningChildProcesses.push(sample_service_process);
 
     // Wait until we get the sample service endpoint from the process stdout
     sample_service_process.stdout.on('data', function(data) {
-      var endpoint = data.replace(('Listening at: '), '').trim();
+
+      var endpoint = data.toString().replace(('Listening at: '), '').trim();
       if (!endpoint.match(/^@.*@$/)) {
         var errorMessage = SAMPLE_GO_SERVICE_BIN + ' did not print the ' +
           'endpoint address on stdout. Expected stdout: ' +
@@ -129,8 +86,6 @@ module.exports = function(grunt) {
 
         fail(errorMessage);
       }
-
-      grunt.log.debug('Got this endpoint from sample service: ' + data);
 
       // Success, set the config vars that tests rely on and return
       var testConfigs = grunt.testConfigs;
@@ -142,22 +97,19 @@ module.exports = function(grunt) {
 
       testConfigs['SAMPLE_VEYRON_GO_SERVICE_NAME'] = 'cache';
       testConfigs['SAMPLE_VEYRON_GO_SERVICE_ENDPOINT'] = endpoint;
-
-      // Return with success, allowing sometime for proxy to fully start
-      setTimeout(function() { done(true); }, 1000);
     });
+    sample_service_process.stderr.on('data', grunt.log.debug);
+
+    // Return with success, allowing sometime for proxy to fully start
+    setTimeout(function() { done(true); }, 500);
 
   });
 
   // Kills any running process we started
   var cleanUp = function() {
-    cleaningUp = true;
     runningChildProcesses.forEach(function(runningProcess) {
       runningProcess.kill('SIGTERM');
     });
-    setTimeout(function(){
-      cleaningUp = false;
-    }, 500);
   };
 
   // Fails the task after cleaning up

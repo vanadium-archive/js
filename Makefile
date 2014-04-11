@@ -23,7 +23,7 @@ test: setup
 
 # Runs a HTTP server and opens the test reporters in the browser for debugging
 debug: setup
-	$(GRUNT) debug
+	$(GRUNT) debug --debug
 
 # Build JSDoc.
 doc: setup
