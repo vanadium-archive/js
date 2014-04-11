@@ -242,7 +242,6 @@ ProxyConnection.prototype.promiseInvokeMethod = function(name,
  * @param {Deferred} def Deferred to add to outstandingRequests
  */
 ProxyConnection.prototype.sendRequest = function(message, type, def) {
-
   this.outstandingRequests[this.id] = def;
 
   var body = JSON.stringify({ id: this.id, data: message, type: type });
@@ -409,15 +408,21 @@ ProxyConnection.prototype.publishServer = function(name) {
  */
 ProxyConnection.prototype.getServiceSignature = function(name) {
 
-  var messageJSON = {
-    'Name': name,
-    'PrivateID': this.privateIdentity
-  };
-
   var def = getDeferred();
-  var message = JSON.stringify(messageJSON);
-  // Send the get signature request to the proxy
-  this.sendRequest(message, MessageType.SIGNATURE, def);
+
+  var self = this;
+  this.privateIdentityPromise.then(function(privateIdentity) {
+    var messageJSON = {
+      'Name': name,
+      'PrivateID': privateIdentity
+    };
+    var message = JSON.stringify(messageJSON);
+
+    // Send the get signature request to the proxy
+    self.sendRequest(message, MessageType.SIGNATURE, def);
+  }, function(reason) {
+    def.reject('Failed to get service signature: ' + reason);
+  });
 
   return def.promise;
 };
