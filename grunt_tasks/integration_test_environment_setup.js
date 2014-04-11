@@ -1,6 +1,6 @@
 /**
  * Provides two tasks for setup and tear down of integration tests. For instance
- * processes like http proxy can be spawned & then killed in setup and teardown
+ * processes like wspr can be spawned & then killed in setup and teardown
  * @param {object} grunt the Grunt module
  */
 module.exports = function(grunt) {
@@ -10,7 +10,7 @@ module.exports = function(grunt) {
 
   /**
    * Setups the required environment for integration testing such as
-   * running http proxy and sample Veyron services written in Go that are
+   * running wspr and sample Veyron services written in Go that are
    * expected in the integration tests.
    */
   grunt.registerTask('subtask_setupIntegrationTestEnvironment', function() {
@@ -26,27 +26,27 @@ module.exports = function(grunt) {
     runningChildProcesses = [];
 
     // Constants
-    // Binary location of http proxy and other processes to run
+    // Binary location of wspr and other processes to run
     var VEYRON_BIN_DIR = path.resolve('../../v/bin');
     var VEYRON_PROXY_BIN = VEYRON_BIN_DIR + '/proxy';
-    var HTTP_PROXY_BIN = VEYRON_BIN_DIR + '/http_proxyd';
+    var WSPR_BIN = VEYRON_BIN_DIR + '/wsprd';
     var IDENTITYD_BIN = VEYRON_BIN_DIR + '/identityd';
     var SAMPLE_GO_SERVICE_BIN = VEYRON_BIN_DIR + '/sampled';
 
     var VEYRON_PROXY_PORT = 3111;
-    var HTTP_PROXY_PORT = 3224; // The port for the HTTP proxy.
+    var WSPR_PORT = 3224; // The port for WSPR.
     var IDENTITYD_PORT = 8125; // The port for the identityd server.
 
     var LOGS_DIR = path.resolve('logs');
 
     // Ensure binaries exist
-    if (!fs.existsSync(HTTP_PROXY_BIN) || !fs.existsSync(IDENTITYD_BIN) ||
+    if (!fs.existsSync(WSPR_BIN) || !fs.existsSync(IDENTITYD_BIN) ||
        !fs.existsSync(SAMPLE_GO_SERVICE_BIN)) {
 
       var errorMessage = 'Veyron binaries not found. Ensure "veyron" and ' +
         '"veyron2" are built and installed in ' + VEYRON_BIN_DIR + ' by ' +
         'running go-amd64 install \n' +
-        HTTP_PROXY_BIN + ', ' + IDENTITYD_BIN + ' and ' +
+        WSPR_BIN + ', ' + IDENTITYD_BIN + ' and ' +
         SAMPLE_GO_SERVICE_BIN + ' are required for integration testing';
 
       fail(errorMessage);
@@ -57,12 +57,12 @@ module.exports = function(grunt) {
     veyron_proxy_process.stderr.on('data', grunt.log.debug);
     runningChildProcesses.push(veyron_proxy_process);
 
-    // Run the http proxy
-    var http_proxy_process = spawn(HTTP_PROXY_BIN,
-      ['-v=3', '-vv=3', '-log_dir=' + LOGS_DIR, '-port=' + HTTP_PROXY_PORT,
+    // Run wspr
+    var wspr_process = spawn(WSPR_BIN,
+      ['-v=3', '-vv=3', '-log_dir=' + LOGS_DIR, '-port=' + WSPR_PORT,
        '-vproxy=127.0.0.1:' + VEYRON_PROXY_PORT ]);
-    http_proxy_process.stderr.on('data', grunt.log.debug);
-    runningChildProcesses.push(http_proxy_process);
+    wspr_process.stderr.on('data', grunt.log.debug);
+    runningChildProcesses.push(wspr_process);
 
     // Run identityd
     var identityd_process = spawn(IDENTITYD_BIN, ['-port=' + IDENTITYD_PORT]);
@@ -90,8 +90,8 @@ module.exports = function(grunt) {
       // Success, set the config vars that tests rely on and return
       var testConfigs = grunt.testConfigs;
 
-      testConfigs['HTTP_PROXY_SERVER_URL'] = 'http://localhost:' +
-        HTTP_PROXY_PORT;
+      testConfigs['WSPR_SERVER_URL'] = 'http://localhost:' +
+        WSPR_PORT;
       testConfigs['IDENTITY_SERVER_URL'] = 'http://localhost:' +
         IDENTITYD_PORT + '/random/';
 
@@ -126,7 +126,7 @@ module.exports = function(grunt) {
 
   /**
    * Tears down anything setup in subtask_setupIntegrationTestEnvironment
-   * such as killing the http proxy and other services spawned for testing
+   * such as killing wspr and other services spawned for testing
    */
   grunt.registerTask('subtask_teardownIntegrationTestEnvironment', function() {
     cleanUp();
