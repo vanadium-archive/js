@@ -5,29 +5,15 @@
 'use strict';
 
 var WebSocket = require('./websocket');
+var Stream = require('./stream');
+var MessageType = require('./message_type');
+var IncomingPayloadType = require('./incoming_payload_type');
 var Deferred = require('./../lib/deferred');
 var Promise = require('./../lib/promise');
 var vLog = require('./../lib/vlog');
 var IdlHelper = require('./../idl/idl');
 var ServiceWrapper = IdlHelper.ServiceWrapper;
 
-var MessageType = {
-  REQUEST: 0, // Request to invoke a method on a Veyron name
-  PUBLISH: 1, // Request to publish a server in JavaScript under a Veyron name
-  REGISTER: 2, // Request to register a service in JavaScript under a prefix
-  RESPONSE: 3, // Indicates a response from a registered service in JavaScript
-  STREAM_VALUE: 4, // Indicates a stream value
-  STREAM_CLOSE: 5, // Request to close a stream
-  SIGNATURE: 6 // Request to get signature of a remote server
-};
-
-var IncomingPayloadType = {
-  FINAL_RESPONSE: 0, // Final response to a call originating from JS
-  STREAM_RESPONSE: 1, // Stream response to a call originating from JS
-  ERROR_RESPONSE: 2, // Error response to a call originating from JS
-  INVOKE_REQUEST: 3, // Request to invoke a method in JS originating from server
-  STREAM_CLOSE: 4  // Response saying that the stream is closed.
-};
 
 /**
  * A client for the veyron service using websockets. Connects to the veyron HTTP
@@ -146,56 +132,6 @@ ProxyConnection.prototype.getWebSocket = function() {
   };
 
   return deferred.promise;
-};
-
-/**
- * A stream that allows sending and recieving data for a streaming rpc.  If
- * onmessage is set and a function, it will be called whenever there is data on.
- * the stream. The stream implements the promise api.  When the rpc is complete,
- * the stream will be fulfilled.  If there is an error, then the stream will be
- * rejected.
- * @constructor
- *
- * @param {number} flowId flow id
- * @param {Promise} webSocketPromise Promise of a websocket connection when
- * it's established
- */
-var Stream = function(flowId, webSocketPromise) {
-  // Call the deferred constructor.
-  Deferred.call(this);
-  this.flowId = flowId;
-  this.webSocketPromise = webSocketPromise;
-  this.onmessage = null;
-};
-
-Stream.prototype = Object.create(Deferred.prototype);
-
-/**
- * Send data down the stream
- * @param {*} data the data to send to the other side.
- */
-Stream.prototype.send = function(data) {
-  var flowId = this.flowId;
-  this.webSocketPromise.then(function(websocket) {
-    websocket.send(JSON.stringify({
-      id: flowId,
-      data: JSON.stringify(data),
-      type: MessageType.STREAM_VALUE
-    }));
-  });
-};
-
-/**
- * Closes the stream, telling the other side that there is no more data.
- */
-Stream.prototype.close = function() {
-  var flowId = this.flowId;
-  this.webSocketPromise.then(function(websocket) {
-    websocket.send(JSON.stringify({
-      id: flowId,
-      type: MessageType.STREAM_CLOSE
-    }));
-  });
 };
 
 /**
