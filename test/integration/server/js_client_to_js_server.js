@@ -100,6 +100,15 @@ describe('Server and client in JS', function() {
         return expect(result).to.eventually.become('bar');
       });
 
+  it('Should be able to use objects as arguments and returns', function() {
+      var expected = { a: 'foo', b: 2 };
+      var result = cacheServiceClient.Set('objkey', expected).then(function() {
+        return cacheServiceClient.Get('objkey');
+      });
+
+      return expect(result).to.eventually.become(expected);
+    });
+
   it('Should be able to invoke streaming methods after the service is ' +
       'published', function(done) {
         var promise = cacheServiceClient.Set('foo', 'bar');
