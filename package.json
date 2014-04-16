@@ -1,8 +1,9 @@
 {
-  "name": "veyron-js-api",
+  "name": "veyron",
   "description": "Veyron JavaScript API",
   "version": "0.0.1",
   "main": "./src/veyron",
+  "private": true,
   "dependencies": {
     "ws": "~0.4.31"
   },
