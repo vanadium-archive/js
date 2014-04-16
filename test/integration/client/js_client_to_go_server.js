@@ -45,32 +45,32 @@ describe('Cache Service', function() {
 
     expect(cacheService).to.exist;
 
-    expect(cacheService.Set).to.exist;
-    expect(cacheService.Set).to.be.a('function');
+    expect(cacheService.set).to.exist;
+    expect(cacheService.set).to.be.a('function');
 
-    expect(cacheService.Get).to.exist;
-    expect(cacheService.Get).to.be.a('function');
+    expect(cacheService.get).to.exist;
+    expect(cacheService.get).to.be.a('function');
 
-    expect(cacheService.MultiGet).to.exist;
-    expect(cacheService.MultiGet).to.be.a('function');
+    expect(cacheService.multiGet).to.exist;
+    expect(cacheService.multiGet).to.be.a('function');
   });
 
   it('Should be able to set a value', function() {
-    var resultPromise = cacheService.Set('foo', 'bar');
+    var resultPromise = cacheService.set('foo', 'bar');
 
     return expect(resultPromise).to.eventually.be.fulfilled;
   });
 
   it('Should be able to set and get a value', function() {
-    var resultPromise = cacheService.Set('foo', 'bar').then(function() {
-      return cacheService.Get('foo');
+    var resultPromise = cacheService.set('foo', 'bar').then(function() {
+      return cacheService.get('foo');
     });
 
     return expect(resultPromise).to.eventually.equal('bar');
   });
 
   it('Should be able to handle failure', function() {
-    var resultPromise = cacheService.Get('baz');
+    var resultPromise = cacheService.get('baz');
 
     return expect(resultPromise).to.eventually.be.rejected;
   });
@@ -84,10 +84,10 @@ describe('Cache Service', function() {
   });
 
   it('Should be able to do streaming gets and sets', function(done) {
-    var promise = cacheService.Set('foo', 'bar');
+    var promise = cacheService.set('foo', 'bar');
     var thenGenerator = function(i) {
       return function() {
-        cacheService.Set('' + i, '' + (i + 1));
+        cacheService.set('' + i, '' + (i + 1));
       };
     };
 
@@ -97,7 +97,7 @@ describe('Cache Service', function() {
 
     var nextNumber = 1;
     promise.then(function() {
-      return cacheService.MultiGet();
+      return cacheService.multiGet();
     }).then(function(stream) {
       stream.onmessage = function(value) {
         expect(value).to.equal('' + nextNumber);
@@ -118,9 +118,9 @@ describe('Cache Service', function() {
   });
 
   it('Should propogate errors from onmessage callback', function(done) {
-    var promise = cacheService.Set('foo', 'bar');
+    var promise = cacheService.set('foo', 'bar');
     promise.then(function() {
-      return cacheService.MultiGet();
+      return cacheService.multiGet();
     }).then(function(stream) {
       stream.onmessage = function(value) {
         value();

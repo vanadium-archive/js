@@ -12,17 +12,17 @@
 describe('Signature, when service is in JS getServiceSignature', function() {
 
   var expectedSignature = {
-    'Get': {
+    'get': {
       InArgs: ['key'],
       NumOutArgs: 1,
       IsStreaming: false
     },
-    'Set': {
+    'set': {
       InArgs: ['key', 'value'],
       NumOutArgs: 1,
       IsStreaming: false
     },
-    'MultiGet': {
+    'multiGet': {
       InArgs: [],
       NumOutArgs: 1,
       IsStreaming: true
@@ -40,9 +40,9 @@ describe('Signature, when service is in JS getServiceSignature', function() {
 
     var veyron = new Veyron(veyronConfig);
     var cache = {
-      Set: function(key, value) {},
-      Get: function(key) {},
-      MultiGet: function($stream) {}
+      set: function(key, value) {},
+      get: function(key) {},
+      multiGet: function($stream) {}
     };
 
     // Create server object and publish the service

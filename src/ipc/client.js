@@ -54,22 +54,20 @@ client.prototype.bind = function(name, optServiceSignature) {
     vLog.debug('Received signature for:', name, serviceSignature);
     var boundObject = {};
     var bindMethod = function(methodName) {
-      if (serviceSignature.hasOwnProperty(methodName)) {
-        var methodInfo = serviceSignature[methodName];
-        var numOutParams = methodInfo.NumOutArgs;
+      var methodInfo = serviceSignature[methodName];
+      var numOutParams = methodInfo.NumOutArgs;
 
-        boundObject[methodName] = function() {
-          var args = Array.prototype.slice.call(arguments, 0);
-          if (args.length !== methodInfo.InArgs.length) {
-            throw new Error('Invalid number of arguments to "' +
-              methodName + '". Expected ' + methodInfo.InArgs.length +
-              ' but there were ' + args.length);
-          }
-          return self._proxyConnection.promiseInvokeMethod(
-            name, methodName, args, numOutParams,
-            methodInfo.IsStreaming || false);
-        };
-      }
+      boundObject[methodName] = function() {
+        var args = Array.prototype.slice.call(arguments, 0);
+        if (args.length !== methodInfo.InArgs.length) {
+          throw new Error('Invalid number of arguments to "' +
+            methodName + '". Expected ' + methodInfo.InArgs.length +
+            ' but there were ' + args.length);
+        }
+        return self._proxyConnection.promiseInvokeMethod(
+          name, methodName, args, numOutParams,
+          methodInfo.IsStreaming || false);
+      };
     };
 
     for (var methodName in serviceSignature) {

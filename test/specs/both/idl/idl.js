@@ -509,14 +509,14 @@ describe('IDL', function() {
       )).to.deep.equal({});
     });
 
-    it('generates a correct idl for an empty exported method', function() {
+    it('generates a correct idl for an empty method', function() {
       expect(idlHelper.generateIdlWireDescription(
         new idlHelper.ServiceWrapper({
-          AMethod: function() {
+          aMethod: function() {
           }
         })
       )).to.deep.equal({
-          'AMethod': {
+          'aMethod': {
             'InArgs': [],
             'NumOutArgs': 1,
             'IsStreaming': false
@@ -524,15 +524,15 @@ describe('IDL', function() {
         });
     });
 
-    it('generates a correct idl for an exported method with args',
+    it('generates a correct idl for a method with args',
         function() {
           expect(idlHelper.generateIdlWireDescription(
             new idlHelper.ServiceWrapper({
-              BMethod: function(arg1, arg2) {
+              bMethod: function(arg1, arg2) {
                 return arg1;
               }
             }))).to.deep.equal({
-              'BMethod': {
+              'bMethod': {
                 'InArgs': ['arg1', 'arg2'],
                 'NumOutArgs': 1,
                 'IsStreaming': false
@@ -545,16 +545,16 @@ describe('IDL', function() {
           expect(idlHelper.generateIdlWireDescription(
             new idlHelper.ServiceWrapper({
               amethod: function() {},
-              BMethod: function(arg1, arg2) {
+              bMethod: function(arg1, arg2) {
                 return arg1;
               }
             }))).to.deep.equal({
-              'Amethod': {
+              'amethod': {
                 'InArgs': [],
                 'NumOutArgs': 1,
                 'IsStreaming': false
               },
-              'BMethod': {
+              'bMethod': {
                 'InArgs': ['arg1', 'arg2'],
                 'NumOutArgs': 1,
                 'IsStreaming': false
@@ -565,11 +565,11 @@ describe('IDL', function() {
       expect(idlHelper.generateIdlWireDescription(new idlHelper.ServiceWrapper({
         _SkipMe: function() {
         },
-        BMethod: function(arg1, arg2) {
+        bMethod: function(arg1, arg2) {
           return arg1;
         }
       }))).to.deep.equal({
-        'BMethod': {
+        'bMethod': {
           'InArgs': ['arg1', 'arg2'],
           'NumOutArgs': 1,
           'IsStreaming': false
@@ -579,10 +579,10 @@ describe('IDL', function() {
 
     it('skips args names starting with \'$\'', function() {
       expect(idlHelper.generateIdlWireDescription(new idlHelper.ServiceWrapper({
-        AMethod: function($First, Scnd, $Third, Frth) {
+        aMethod: function($First, Scnd, $Third, Frth) {
         }
       }))).to.deep.equal({
-        'AMethod': {
+        'aMethod': {
           'InArgs': ['Scnd', 'Frth'],
           'NumOutArgs': 1,
           'IsStreaming': false
@@ -596,13 +596,22 @@ describe('IDL', function() {
         }
       });
       expect(idlHelper.generateIdlWireDescription(srvc)).to.deep.equal({
-        'Meth': {
+        'meth': {
           'InArgs': ['arg'],
           'NumOutArgs': 1,
           'IsStreaming': true
         }
       });
     });
+
+    it('should fail when a method name starts with an uppercase letter',
+      function() {
+        expect(function(){
+          idlHelper.ServiceWrapper({
+            UppercaseMethod: function() {}
+          });
+        }).to.throw();
+      });
   });
 });
 

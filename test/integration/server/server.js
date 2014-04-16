@@ -20,13 +20,13 @@ describe('Server', function(done) {
   var veyron = new Veyron(veyronConfig);
 
   var greeter = {
-    SayHi: function() {
+    sayHi: function() {
       console.log('Hello');
     }
   };
 
   var repeater = {
-    Say: function(t) {
+    say: function(t) {
       console.log(t);
     }
   };

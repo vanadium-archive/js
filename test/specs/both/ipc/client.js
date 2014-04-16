@@ -35,11 +35,11 @@ describe('Client-side binding', function() {
     var testService;
     beforeEach(function(done) {
       var testServiceSignature = {
-        'TestMethod': {
+        'testMethod': {
           InArgs: ['a', 'b', 'c'],
           NumOutArgs: 0
         },
-        'TestMethod2': {
+        'testMethod2': {
           InArgs: ['a'],
           NumOutArgs: 1
         }
@@ -56,30 +56,30 @@ describe('Client-side binding', function() {
 
     });
 
-    describe('TestMethod', function() {
+    describe('testMethod', function() {
       it('Should succeed with correct number of arguments', function() {
-        var result = testService.TestMethod(3, 'X', null);
-        expect(result.methodName).to.equal('TestMethod');
+        var result = testService.testMethod(3, 'X', null);
+        expect(result.methodName).to.equal('testMethod');
         expect(result.args).to.eql([3, 'X', null]);
       });
 
       it('Should throw an error with wrong number of arguments', function() {
         expect(function() {
-          testService.TestMethod(3, 'X');
+          testService.testMethod(3, 'X');
         }).to.throw(Error);
       });
     });
 
-    describe('TestMethod2', function() {
+    describe('testMethod2', function() {
       it('Should succeed with correct number of arguments', function() {
-        var result = testService.TestMethod2(1);
-        expect(result.methodName).to.equal('TestMethod2');
+        var result = testService.testMethod2(1);
+        expect(result.methodName).to.equal('testMethod2');
         expect(result.args).to.eql([1]);
       });
 
       it('Should throw an error with wrong number of arguments', function() {
         expect(function() {
-          testService.TestMethod2(1, 'X', 'Y');
+          testService.testMethod2(1, 'X', 'Y');
         }).to.throw(Error);
       });
     });

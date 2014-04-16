@@ -135,15 +135,6 @@ idlHelper.stripComments = function(file) {
 };
 
 /**
- * Renames a symbol to be exported (first letter is upper case).
- * @param {string} name the name to convert to be exported
- * @return {string} the input argument, but with the first letter capitalized
- */
-function renameToBeExported(name) {
-  return name[0].toUpperCase() + name.substring(1);
-}
-
-/**
  * Generates an IDL wire description for a given service by iterating over the
  * methods in the service object.
  * Method names beginning with '_' are considered private and skipped.
@@ -160,7 +151,6 @@ idlHelper.generateIdlWireDescription = function(service) {
   for (var methodName in metadata) {
     if (metadata.hasOwnProperty(methodName)) {
       var methodMetadata = metadata[methodName];
-      var exportedName = renameToBeExported(methodName);
 
       var params = methodMetadata.params;
       var inArgs = [];
@@ -171,7 +161,7 @@ idlHelper.generateIdlWireDescription = function(service) {
         }
       }
 
-      idlWire[exportedName] = {
+      idlWire[methodName] = {
         'InArgs' : inArgs,
         'NumOutArgs': 1,
         'IsStreaming': methodMetadata.injections['$stream'] !== undefined
@@ -212,6 +202,12 @@ idlHelper.ServiceWrapper = function(service) {
   for (var methodName in service) {
     if (service.hasOwnProperty(methodName) &&
         methodName.length > 0 && methodName[0] !== '_') {
+      if (methodName[0] >= 'A' && methodName[0] <= 'Z') {
+        var camelCaseName = methodName.charAt(0).toLowerCase() +
+          methodName.slice(1);
+        throw new Error('Method names must be camel case. Perhaps rename \'' +
+          methodName + '\' to \'' + camelCaseName + '\'');
+      }
       var method = service[methodName];
       if (typeof method === 'function') {
         var params = getParamNames(method);

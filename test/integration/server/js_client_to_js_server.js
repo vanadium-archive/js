@@ -19,10 +19,10 @@ describe('Server and client in JS', function() {
     // Our cache service
     var cache = {
       cacheMap: {},
-      Set: function(key, value) {
+      set: function(key, value) {
         this.cacheMap[key] = value;
       },
-      Get: function(key) {
+      get: function(key) {
         var def = new Veyron.Deferred();
         var val = this.cacheMap[key];
         if (val === undefined) {
@@ -32,7 +32,7 @@ describe('Server and client in JS', function() {
         }
         return def.promise;
       } ,
-      MultiGet: function($stream) {
+      multiGet: function($stream) {
         var def = new Veyron.Deferred();
         $stream.promise.then(function() {
           def.resolve();
@@ -93,8 +93,8 @@ describe('Server and client in JS', function() {
 
   it('Should be able to invoke methods after the service is published ' +
      'using published name', function() {
-        var result = cacheServiceClient.Set('foo', 'bar').then(function() {
-          return cacheServiceClient.Get('foo');
+        var result = cacheServiceClient.set('foo', 'bar').then(function() {
+          return cacheServiceClient.get('foo');
         });
 
         return expect(result).to.eventually.become('bar');
@@ -102,8 +102,8 @@ describe('Server and client in JS', function() {
 
   it('Should be able to use objects as arguments and returns', function() {
       var expected = { a: 'foo', b: 2 };
-      var result = cacheServiceClient.Set('objkey', expected).then(function() {
-        return cacheServiceClient.Get('objkey');
+      var result = cacheServiceClient.set('objkey', expected).then(function() {
+        return cacheServiceClient.get('objkey');
       });
 
       return expect(result).to.eventually.become(expected);
@@ -111,10 +111,10 @@ describe('Server and client in JS', function() {
 
   it('Should be able to invoke streaming methods after the service is ' +
       'published', function(done) {
-        var promise = cacheServiceClient.Set('foo', 'bar');
+        var promise = cacheServiceClient.set('foo', 'bar');
         var thenGenerator = function(i) {
           return function() {
-            cacheServiceClient.Set('' + i, '' + (i + 1));
+            cacheServiceClient.set('' + i, '' + (i + 1));
           };
         };
 
@@ -124,7 +124,7 @@ describe('Server and client in JS', function() {
 
         var nextNumber = 1;
         promise.then(function() {
-          return cacheServiceClient.MultiGet();
+          return cacheServiceClient.multiGet();
         }).then(function(stream) {
           stream.onmessage = function(value) {
             expect(value).to.equal('' + nextNumber);
@@ -145,7 +145,7 @@ describe('Server and client in JS', function() {
       });
 
   it('Should be able to return errors', function() {
-    var result = cacheServiceClient.Get('bar');
+    var result = cacheServiceClient.get('bar');
     return expect(result).to.eventually.be.rejected;
   });
 
@@ -159,9 +159,9 @@ describe('Server and client in JS', function() {
 
   it('Should be able to invoke methods after the service is published ' +
       'using the endpoint name', function() {
-        var result = cacheServiceClientUsingEndpoint.Set('foo', 'bar')
+        var result = cacheServiceClientUsingEndpoint.set('foo', 'bar')
             .then(function() {
-              return cacheServiceClientUsingEndpoint.Get('foo');
+              return cacheServiceClientUsingEndpoint.get('foo');
             });
 
         return expect(result).to.eventually.equal('bar');
