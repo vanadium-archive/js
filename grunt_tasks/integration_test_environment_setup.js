@@ -95,7 +95,6 @@ module.exports = function(grunt) {
       testConfigs['IDENTITY_SERVER_URL'] = 'http://localhost:' +
         IDENTITYD_PORT + '/random/';
 
-      testConfigs['SAMPLE_VEYRON_GO_SERVICE_NAME'] = 'cache';
       testConfigs['SAMPLE_VEYRON_GO_SERVICE_ENDPOINT'] = endpoint;
     });
     sample_service_process.stderr.on('data', grunt.log.debug);

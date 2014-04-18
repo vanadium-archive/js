@@ -132,7 +132,8 @@ module.exports = function(grunt) {
         clearRequireCache: true,
         require: [
           'test/node_init.js',
-          '<%= dirs.dist %>/test/veyron.test.config.js'
+          '<%= dirs.dist %>/test/veyron.test.config.js',
+          'test/test_helper.js'
         ]
       },
       specs: {
@@ -144,7 +145,7 @@ module.exports = function(grunt) {
       // Integration tests
       integration: {
         options: {
-          captureFile: '<%= dirs.dist %>/test/test_results_node_integration.out',
+          captureFile: '<%= dirs.dist %>/test/test_results_node_integration.out'
         },
         src: ['test/integration/**/*.js']
       }
@@ -173,6 +174,7 @@ module.exports = function(grunt) {
           },
           files: [
             '<%= dirs.dist %>/test/veyron.test.config.js',
+            'test/test_helper.js',
             '<%= dirs.dist %>/test/veyron.test.specs.browserify.js'
           ]
         }
@@ -186,6 +188,7 @@ module.exports = function(grunt) {
           files: [
             '<%= dirs.dist %>/veyron.js',
             '<%= dirs.dist %>/test/veyron.test.config.js',
+            'test/test_helper.js',
             '<%= dirs.dist %>/test/veyron.test.integration.js'
           ]
         }

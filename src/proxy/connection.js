@@ -8,6 +8,7 @@ var WebSocket = require('./websocket');
 var Stream = require('./stream');
 var MessageType = require('./message_type');
 var IncomingPayloadType = require('./incoming_payload_type');
+var ErrorConversion = require('./error_conversion');
 var Deferred = require('./../lib/deferred');
 var Promise = require('./../lib/promise');
 var vLog = require('./../lib/vlog');
@@ -111,7 +112,7 @@ ProxyConnection.prototype.getWebSocket = function() {
         }
         break;
       case IncomingPayloadType.ERROR_RESPONSE:
-        def.reject(payload.Message);
+        def.reject(ErrorConversion.toJSerror(payload.Message));
         break;
       case IncomingPayloadType.INVOKE_REQUEST:
         self.handleIncomingInvokeRequest(message.ID, payload.Message);
@@ -269,6 +270,17 @@ ProxyConnection.prototype.handleIncomingInvokeRequest = function(messageId,
   }
   var metadata = serviceWrapper.metadata[request.Method];
 
+  var sendInvocationError = function(e) {
+    var stackTrace;
+    if (e instanceof Error && e.stack !== undefined) {
+      stackTrace = e.stack;
+    }
+    vLog.debug('Requested method ' + request.Method +
+      ' threw an exception on invoke: ', e, stackTrace);
+
+    self.sendInvokeRequestResult(messageId, null, e);
+  };
+
   // Invoke the method
   try {
     var args = request.Args;
@@ -297,6 +309,10 @@ ProxyConnection.prototype.handleIncomingInvokeRequest = function(messageId,
     // Call the registered method on the requested service
     // TODO(aghassemi) Context injection for special arguments like $PATH
     var result = serviceMethod.apply(serviceObject, args);
+    if (result instanceof Error) {
+      sendInvocationError(result);
+      return;
+    }
 
     // Normalize result to be a promise
     var resultPromise = Promise.cast(result);
@@ -319,13 +335,10 @@ ProxyConnection.prototype.handleIncomingInvokeRequest = function(messageId,
         return;
       }
       finished = true;
-      self.sendInvokeRequestResult(messageId, null, err);
+      sendInvocationError(err);
     });
   } catch (e) {
-    // Frame any exceptions from method invocation
-    err = new Error('Requested method ' + request.Method +
-        ' threw an exception on invoke' + e);
-    self.sendInvokeRequestResult(messageId, null, err);
+    sendInvocationError(e);
   }
 };
 
@@ -333,17 +346,22 @@ ProxyConnection.prototype.handleIncomingInvokeRequest = function(messageId,
  * Sends the result of a requested invocation back to the http proxy
  * @param {string} messageId Message id of the original invocation request
  * @param {Object} value Result of the call
- * @param {Object} error Error from the call
+ * @param {Object} err Error from the call
  */
 ProxyConnection.prototype.sendInvokeRequestResult = function(messageId, value,
-    error) {
+    err) {
 
   // JavaScript functions always return one result even if null or undefined
   var results = [value];
 
+  var errorStruct = null;
+  if (err !== undefined && err !== null) {
+    errorStruct = ErrorConversion.toStandardErrorStruct(err);
+  }
+
   var responseData = {
     'Results' : results,
-    'Err' : (error !== null) ? error + '' : null // Stringify the error
+    'Err' : errorStruct
   };
 
   var responseDataJSON = JSON.stringify(responseData);

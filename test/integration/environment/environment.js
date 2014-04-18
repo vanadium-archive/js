@@ -7,14 +7,8 @@
  * All globals (veyron, expect) are injected by test runners.
  */
 describe('Environment', function() {
-  // TODO(bprosnitz) Add a default config for tests.
-  var veyronConfig = {
-    'proxy': testconfig['WSPR_SERVER_URL'],
-    'identityServer': testconfig['IDENTITY_SERVER_URL'],
-    'logLevel': testconfig['LOG_LEVEL']
-  };
 
-  var veyron = new Veyron(veyronConfig);
+  var veyron = new Veyron(TestHelper.veyronConfig);
   var environment = veyron.getEnvironment();
 
   it('should have a supportsWebSockets property', function() {

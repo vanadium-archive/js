@@ -18,7 +18,6 @@ chai.use(chaiAsPromised);
  */
 global.Veyron = require('../src/veyron');
 
-
 /**
  * expose Expect as global
  */
@@ -28,4 +27,3 @@ global.expect = chai.expect;
  * expose Assert as global
  */
 global.assert = chai.assert;
-

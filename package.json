@@ -6,7 +6,8 @@
   "browser": {
     "./src/environment/environment.js": "./src/environment/browser_only/environment.js",
     "./src/proxy/websocket.js": "./src/proxy/browser_only/websocket.js",
-    "./src/lib/http.js": "./src/lib/browser_only/http.js"
+    "./src/lib/http.js": "./src/lib/browser_only/http.js",
+    "./src/lib/inherits.js": "./src/lib/browser_only/inherits.js"
   },
   "private": true,
   "dependencies": {

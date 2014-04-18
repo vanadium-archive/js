@@ -33,18 +33,11 @@ describe('Signature, when service is in GO, getServiceSignature', function() {
   var signature;
   beforeEach(function(done) {
 
-    var veyronConfig = {
-      'proxy': testconfig['WSPR_SERVER_URL'],
-      'identityServer': testconfig['IDENTITY_SERVER_URL'],
-      'logLevel': testconfig['LOG_LEVEL']
-    };
-
-    var veyron = new Veyron(veyronConfig);
+    var veyron = new Veyron(TestHelper.veyronConfig);
     var client = veyron.newClient();
 
     var absoluteVeyronName =
-        '/' + testconfig['SAMPLE_VEYRON_GO_SERVICE_ENDPOINT'] +
-        '/' + testconfig['SAMPLE_VEYRON_GO_SERVICE_NAME'];
+        '/' + testconfig['SAMPLE_VEYRON_GO_SERVICE_ENDPOINT'] + '/cache';
 
     client._proxyConnection.getServiceSignature(absoluteVeyronName)
     .then(function(sig) {

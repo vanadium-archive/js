@@ -20,20 +20,13 @@ describe('Cache Service', function() {
   var absoluteVeyronName;
   beforeEach(function(done) {
 
-    var veyronConfig = {
-      'proxy': testconfig['WSPR_SERVER_URL'],
-      'logLevel': testconfig['LOG_LEVEL'],
-      'identityServer': testconfig['IDENTITY_SERVER_URL']
-    };
-
     // Create veyron object and publish the service
-    var veyron = new Veyron(veyronConfig);
+    var veyron = new Veyron(TestHelper.veyronConfig);
 
     client = veyron.newClient();
 
     absoluteVeyronName =
-        '/' + testconfig['SAMPLE_VEYRON_GO_SERVICE_ENDPOINT'] +
-        '/' + testconfig['SAMPLE_VEYRON_GO_SERVICE_NAME'];
+        '/' + testconfig['SAMPLE_VEYRON_GO_SERVICE_ENDPOINT'] + '/cache';
 
     client.bind(absoluteVeyronName).then(function(service) {
       cacheService = service;
@@ -101,8 +94,8 @@ describe('Cache Service', function() {
 
   it('Should be able to handle failure', function() {
     var resultPromise = cacheService.get('baz');
-
-    return expect(resultPromise).to.eventually.be.rejected;
+    return expect(resultPromise).to.eventually.be.rejectedWith(
+      /key not found: baz/);
   });
 
   it('Should be able to handle failure with cb', function(done) {

@@ -117,7 +117,7 @@ describe('vLog', function() {
     expect(mockConsole.numInfoCalls).to.equal(1);
   });
 
-  it('Should be ablt to write multiple arguments', function() {
+  it('Should be able to write multiple arguments', function() {
     vLog.level = vLog.levels.INFO;
 
     vLog.debug('foo_debug', 42, [1,2]);

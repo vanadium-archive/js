@@ -52,13 +52,7 @@ describe('Server and client in JS', function() {
       }
     };
 
-    var veyronConfig = {
-      'proxy': testconfig['WSPR_SERVER_URL'],
-      'identityServer': testconfig['IDENTITY_SERVER_URL'],
-      'logLevel': testconfig['LOG_LEVEL']
-    };
-
-    var veyron = new Veyron(veyronConfig);
+    var veyron = new Veyron(TestHelper.veyronConfig);
     // Create server object and publish the service
     var server = veyron.newServer();
 

@@ -32,6 +32,8 @@
     "after": true,
     "afterEach": true,
     "expect": true,
+    "assert": true,
+    "TestHelper": true,
     "XMLHttpRequest": true
   }
 }

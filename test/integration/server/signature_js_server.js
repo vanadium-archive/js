@@ -32,13 +32,7 @@ describe('Signature, when service is in JS getServiceSignature', function() {
   var signature;
   beforeEach(function(done) {
 
-    var veyronConfig = {
-      'proxy': testconfig['WSPR_SERVER_URL'],
-      'identityServer': testconfig['IDENTITY_SERVER_URL'],
-      'logLevel': testconfig['LOG_LEVEL']
-    };
-
-    var veyron = new Veyron(veyronConfig);
+    var veyron = new Veyron(TestHelper.veyronConfig);
     var cache = {
       set: function(key, value) {},
       get: function(key) {},

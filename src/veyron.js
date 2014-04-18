@@ -11,6 +11,7 @@ var Client = require('./ipc/client');
 var Deferred = require('./lib/deferred');
 var Promise = require('./lib/promise');
 var vLog = require('./lib/vlog');
+var vError = require('./lib/verror');
 var http = require('./lib/http');
 
 /**
@@ -19,6 +20,9 @@ var http = require('./lib/http');
  * @param {Object} config Configuration options
  */
 function Veyron(config) {
+  if (!(this instanceof Veyron)) {
+    return new Veyron(config);
+  }
 
   //TODO(aghassemi) Have default config and have these override those.
   config = config || {};
@@ -131,6 +135,12 @@ Veyron.Promise = Promise;
  * @enum {number}
  */
 Veyron.logLevels = vLog.levels;
+
+/**
+ * Errors exposes a group of constructor functions to easily make common
+ * Error objects with predefined names.
+ */
+Veyron.Errors = vError;
 
 /**
  * Export Veyron
