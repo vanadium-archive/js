@@ -150,26 +150,32 @@ ProxyConnection.prototype.getWebSocket = function() {
 ProxyConnection.prototype.promiseInvokeMethod = function(name,
     methodName, mapOfArgs, numOutArgs, isStreaming, callback) {
   var def = getDeferred(callback);
+  var promise = def.promise;
 
+  var streamingDeferred = null;
+  if (isStreaming) {
+    streamingDeferred = getDeferred();
+    def = new Stream(this.id, streamingDeferred.promise, callback);
+    promise = def;
+  }
   var self = this;
   this.privateIdentityPromise.then(function(privateIdentity) {
     var message = self.constructMessage(name,
         methodName, mapOfArgs, numOutArgs, isStreaming,
         privateIdentity);
 
-    if (isStreaming) {
-      var stream = new Stream(self.id, self.getWebSocket(), callback);
-      def.resolve(stream);
-      def = stream;
-    }
-
     self.sendRequest(message, MessageType.REQUEST, def);
+    if (streamingDeferred) {
+      self.currentWebSocketPromise.then(function(ws) {
+        streamingDeferred.resolve(ws);
+      });
+    }
   }, function(msg) {
       def.reject(msg);
     }
   );
 
-  return def.promise;
+  return promise;
 };
 
 /**

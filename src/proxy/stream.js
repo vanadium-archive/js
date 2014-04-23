@@ -4,8 +4,7 @@
 
 var Deferred = require('./../lib/deferred');
 var MessageType = require('./message_type');
-
-/**
+/*
  * A stream that allows sending and recieving data for a streaming rpc.  If
  * onmessage is set and a function, it will be called whenever there is data on.
  * the stream. The stream implements the promise api.  When the rpc is complete,
@@ -54,6 +53,20 @@ Stream.prototype.close = function() {
       type: MessageType.STREAM_CLOSE
     }));
   });
+};
+
+/**
+ * Implements the PromiseA then function
+ */
+Stream.prototype.then = function() {
+  return this.promise.then.apply(this.promise, arguments);
+};
+
+/**
+ * Implements the PromiseA catch function
+ */
+Stream.prototype.catch = function() {
+  return this.promise.catch.apply(this.promise, arguments);
 };
 
 module.exports = Stream;

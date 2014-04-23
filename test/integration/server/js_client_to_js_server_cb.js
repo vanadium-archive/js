@@ -105,8 +105,7 @@ describe('Server and client in JS cb', function() {
 
         var nextNumber = 1;
         promise.then(function() {
-          return cacheServiceClient.multiGet();
-        }).then(function(stream) {
+          var stream = cacheServiceClient.multiGet();
           stream.onmessage = function(value) {
             expect(value).to.equal('' + nextNumber);
             nextNumber += 2;

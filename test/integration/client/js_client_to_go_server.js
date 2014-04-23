@@ -137,8 +137,7 @@ describe('Cache Service', function() {
 
     var nextNumber = 1;
     promise.then(function() {
-      return cacheService.multiGet();
-    }).then(function(stream) {
+      var stream = cacheService.multiGet();
       stream.onmessage = function(value) {
         expect(value).to.equal('' + nextNumber);
         nextNumber += 2;
@@ -157,11 +156,43 @@ describe('Cache Service', function() {
     }).catch (done);
   });
 
+  it('Should be able to treat stream as a promise', function(done) {
+    var promise = cacheService.set('foo', 'bar');
+    var thenGenerator = function(i) {
+      return function() {
+        cacheService.set('' + i, '' + (i + 1));
+      };
+    };
+
+    for (var i = 0; i < 10; i++) {
+      promise = promise.then(thenGenerator(i));
+    }
+
+    var nextNumber = 1;
+    promise.then(function() {
+      var stream = cacheService.multiGet();
+      stream.onmessage = function(value) {
+        expect(value).to.equal('' + nextNumber);
+        nextNumber += 2;
+      };
+
+      // Now let's send some requests.
+      for (var i = 0; i < 10; i += 2) {
+        stream.send('' + i);
+      }
+
+      stream.close();
+      return stream;
+    }).then(function() {
+      expect(nextNumber).to.equal(11);
+      done();
+    }).catch (done);
+  });
+
   it('Should propogate errors from onmessage callback', function(done) {
     var promise = cacheService.set('foo', 'bar');
     promise.then(function() {
-      return cacheService.multiGet();
-    }).then(function(stream) {
+      var stream = cacheService.multiGet();
       stream.onmessage = function(value) {
         value();
       };
