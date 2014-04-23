@@ -41,11 +41,13 @@ var server = function(proxyConnection) {
  * multiple names.
  *
  * @param {string} name Name to publish under
+ * @param {function} cb if provided, the function will be called on completion.
+ * The only argument is an error if there was one.
  * @return {Promise} Promise to be called when publish completes or fails
  * the endpoint address of the server will be returned as the value of promise
  */
-server.prototype.publish = function(name) {
-  return this._proxyConnection.publishServer(name);
+server.prototype.publish = function(name, cb) {
+  return this._proxyConnection.publishServer(name, cb);
 };
 
 /**
@@ -66,10 +68,12 @@ server.prototype.publish = function(name) {
  *
  * @param {string} name The name to register the service under
  * @param {Object} serviceObject service object to register
+ * @param {function} cb if provided, the function will be called on completion.
+ * The only argument is an error if there was one.
  * @return {Promise} Promise to be called when register completes or fails
  */
-server.prototype.register = function(name, serviceObject) {
-  return this._proxyConnection.registerService(name, serviceObject);
+server.prototype.register = function(name, serviceObject, cb) {
+  return this._proxyConnection.registerService(name, serviceObject, cb);
 };
 
 //TODO(aghassemi) Implement stop()

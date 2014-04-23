@@ -9,13 +9,20 @@
 
 var Promise = require('./promise');
 
-var deferred = function() {
+var deferred = function(cb) {
   var self = this;
 
   this.promise = new Promise(function(resolve, reject) {
     self.resolve = resolve;
     self.reject = reject;
   });
+  if (cb) {
+    this.promise.then(function resolve(v) {
+      cb(null, v);
+    }, function error(e) {
+      cb(e);
+    });
+  }
 };
 
 /**

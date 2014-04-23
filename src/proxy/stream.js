@@ -16,10 +16,11 @@ var MessageType = require('./message_type');
  * @param {number} flowId flow id
  * @param {Promise} webSocketPromise Promise of a websocket connection when
  * it's established
+ * @param {function} cb a callback to call when the stream has completed.
  */
-var Stream = function(flowId, webSocketPromise) {
+var Stream = function(flowId, webSocketPromise, cb) {
   // Call the deferred constructor.
-  Deferred.call(this);
+  Deferred.call(this, cb);
   this.flowId = flowId;
   this.webSocketPromise = webSocketPromise;
   this.onmessage = null;

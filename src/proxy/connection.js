@@ -34,8 +34,8 @@ function ProxyConnection(url, privateIdentityPromise) {
   this.registeredServices = {};
 }
 
-function getDeferred() {
-  return new Deferred();
+function getDeferred(cb) {
+  return new Deferred(cb);
 }
 
 /**
@@ -141,12 +141,15 @@ ProxyConnection.prototype.getWebSocket = function() {
  * @param {object} [ mapOfArgs = {} ] key-value map of argument names to values
  * @param {number} numOutArgs Number of expected outputs by the method
  * @param {boolean} isStreaming true if this rpc is streaming.
+ * @param {function} [callback] a callback that should take two arguments:
+ * an error and the result.  If the rpc returns multiple arguments result will
+ * be an array of values.
  * @return {promise} a promise to a return argument key value map
  * (for multiple return arguments)
  */
 ProxyConnection.prototype.promiseInvokeMethod = function(name,
-    methodName, mapOfArgs, numOutArgs, isStreaming) {
-  var def = getDeferred();
+    methodName, mapOfArgs, numOutArgs, isStreaming, callback) {
+  var def = getDeferred(callback);
 
   var self = this;
   this.privateIdentityPromise.then(function(privateIdentity) {
@@ -155,7 +158,7 @@ ProxyConnection.prototype.promiseInvokeMethod = function(name,
         privateIdentity);
 
     if (isStreaming) {
-      var stream = new Stream(self.id, self.getWebSocket());
+      var stream = new Stream(self.id, self.getWebSocket(), callback);
       def.resolve(stream);
       def = stream;
     }
@@ -189,6 +192,37 @@ ProxyConnection.prototype.sendRequest = function(message, type, def) {
   });
 
   this.id += 2;
+};
+
+/**
+ * Injects the injections into the right positions in args and
+ * returns what was injected.
+ * @param {Array} args The arguments to inject into.
+ * @param {Object} injectionPositions A map of injected variables to the
+ * position to put in args.
+ * @param {Object} injections A map of injected variables to values.
+ * @return {Array} the array of variables that were injected.
+ */
+var inject = function(args, injectionPositions, injections) {
+  var keys = Object.keys(injectionPositions);
+  var invertedMap = {};
+  keys.forEach(function(key) {
+    invertedMap[injectionPositions[key]] = key;
+  });
+  var values = keys.map(function getValue(k) {
+    return injectionPositions[k];
+  });
+  values.filter(function removeUndefined(value) {
+    return value !== undefined;
+  });
+  values.sort();
+  var keysInserted = [];
+  values.forEach(function actuallyInject(pos) {
+    var key = invertedMap[pos];
+    args.splice(pos, 0, injections[key]);
+    keysInserted.push(key);
+  });
+  return keysInserted;
 };
 
 /**
@@ -231,12 +265,28 @@ ProxyConnection.prototype.handleIncomingInvokeRequest = function(messageId,
   // Invoke the method
   try {
     var args = request.Args;
-    var streamingPosition = metadata.injections['$stream'];
-    if (streamingPosition !== undefined) {
-      var stream = new Stream(messageId, this.getWebSocket());
-      self.outstandingRequests[messageId] = stream;
-      args.splice(streamingPosition, 0, stream);
+    var finished = false;
+
+    var cb = function callback(e, v) {
+      if (finished) {
+        return;
+      }
+      finished = true;
+      self.sendInvokeRequestResult(messageId, v, e);
+    };
+    var injections = {
+      '$stream' : new Stream(messageId, this.getWebSocket()),
+      '$callback': cb
+    };
+
+    if (request.Method === 'MultiGet') {
+      console.log('foo');
     }
+    var variables = inject(args, metadata.injections, injections);
+    if (variables.indexOf('$stream') !== -1) {
+      self.outstandingRequests[messageId] = injections['$stream'];
+    }
+    
     // Call the registered method on the requested service
     // TODO(aghassemi) Context injection for special arguments like $PATH
     var result = serviceMethod.apply(serviceObject, args);
@@ -244,10 +294,24 @@ ProxyConnection.prototype.handleIncomingInvokeRequest = function(messageId,
     // Normalize result to be a promise
     var resultPromise = Promise.cast(result);
 
+    if (variables.indexOf('$callback') !== -1) {
+      // The callback takes care of sending the result, so we don't use the
+      // promises.
+      return;
+    }
+
     // Send the result back to the server
     resultPromise.then(function(value) {
+      if (finished) {
+        return;
+      }
+      finished = true;
       self.sendInvokeRequestResult(messageId, value, null);
     }, function(err) {
+      if (finished) {
+        return;
+      }
+      finished = true;
       self.sendInvokeRequestResult(messageId, null, err);
     });
   } catch (e) {
@@ -291,12 +355,17 @@ ProxyConnection.prototype.sendInvokeRequestResult = function(messageId, value,
  * Registers a service object under a prefix name
  * @param {string} name The name to register the service under
  * @param {Object} serviceObj service object.
+ * @param {function} [callback] if provided, the function will be called on
+ * completion. The only argument is an error if there was one.
  * @return {Promise} Promise to be called when register completes or fails
  */
-ProxyConnection.prototype.registerService = function(name, serviceObj) {
+ProxyConnection.prototype.registerService = function(
+  name, serviceObj, callback) {
   //TODO(aghassemi) Handle registering after publishing
 
-  var def = getDeferred();
+  var def = getDeferred(callback);
+
+  var promise = def.promise;
 
   if (this.registeredServices[name] !== undefined) {
     var err = new Error('Service already registered under name: ' + name);
@@ -306,16 +375,19 @@ ProxyConnection.prototype.registerService = function(name, serviceObj) {
     def.resolve();
   }
 
-  return def.promise;
+  return promise;
 };
 
 /**
  * Publishes the server under a name
  * @param {string} name Name to publish under
+ * @param {function} [callback] If provided, the function will be called when
+ * the  publish completes.  The first argument passed in is the error if there
+ * was any and the second argument is the endpoint.
  * @return {Promise} Promise to be called when publish completes or fails
  * the endpoint string of the server will be returned as the value of promise
  */
-ProxyConnection.prototype.publishServer = function(name) {
+ProxyConnection.prototype.publishServer = function(name, callback) {
   //TODO(aghassemi) Handle publish under multiple names
 
   vLog.info('Publishing a server under name: ', name);
@@ -328,12 +400,15 @@ ProxyConnection.prototype.publishServer = function(name) {
     'Services': idl
   };
 
-  var def = getDeferred();
+  var def = getDeferred(callback);
+
+  var promise = def.promise;
+
   var message = JSON.stringify(messageJSON);
   // Send the publish request to the proxy
   this.sendRequest(message, MessageType.PUBLISH, def);
-
-  return def.promise;
+  
+  return promise;
 };
 
 /**

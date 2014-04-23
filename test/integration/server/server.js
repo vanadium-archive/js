@@ -41,6 +41,21 @@ describe('Server', function(done) {
     return expect(endpoint).to.eventually.have.string('@1@tcp@127.0.0.1');
   });
 
+  it('Should get an endpoint after publish with cb', function(done) {
+    var server = veyron.newServer();
+
+    server.register('Hi', greeter, function registerDone(e) {
+      if (e) {
+        done(e);
+      } else {
+        server.publish('tv', function publishDone(e, endpoint) {
+          expect(endpoint).to.have.string('@1@tcp@127.0.0.1');
+          done();
+        });
+      }
+    });
+  });
+
   it('Should be able to register multiple services', function() {
     var server = veyron.newServer();
 

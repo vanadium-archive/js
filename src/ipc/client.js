@@ -34,13 +34,23 @@ var client = function(proxyConnection) {
  * Performs client side binding of a remote service to a native javascript
  * stub object.
  * @param {string} name the veyron name of the service to bind to.
- * @param {object} optServiceSignature javascript signature of methods available
- * in the remote service.
+ * @param {object} optServiceSignature if set, javascript signature of methods
+ * available in the remote service.
+ * @param {function} [callback] if given, this function will be called on
+ * completion of the bind.  The first argument will be an error if there is
+ * one, and the second argument is an object with methods that perform rpcs to
+ * service
+ * methods.
  * @return {Promise} An object with methods that perform rpcs to service methods
  */
-client.prototype.bind = function(name, optServiceSignature) {
+client.prototype.bind = function(name, optServiceSignature, callback) {
   var self = this;
-  var def = new Deferred();
+  if (typeof(optServiceSignature) === 'function') {
+    callback = optServiceSignature;
+    optServiceSignature = undefined;
+  }
+
+  var def = new Deferred(callback);
   var serviceSignaturePromise;
 
   if (optServiceSignature !== undefined) {
@@ -50,15 +60,20 @@ client.prototype.bind = function(name, optServiceSignature) {
     serviceSignaturePromise = self._proxyConnection.getServiceSignature(name);
   }
 
+  var promise = def.promise;
   serviceSignaturePromise.then(function(serviceSignature) {
     vLog.debug('Received signature for:', name, serviceSignature);
     var boundObject = {};
     var bindMethod = function(methodName) {
       var methodInfo = serviceSignature[methodName];
       var numOutParams = methodInfo.NumOutArgs;
-
       boundObject[methodName] = function() {
         var args = Array.prototype.slice.call(arguments, 0);
+        var cb = null;
+        if (args.length === methodInfo.InArgs.length + 1) {
+          cb = args[args.length - 1];
+          args = args.slice(0, methodInfo.InArgs.length);
+        }
         if (args.length !== methodInfo.InArgs.length) {
           throw new Error('Invalid number of arguments to "' +
             methodName + '". Expected ' + methodInfo.InArgs.length +
@@ -66,7 +81,7 @@ client.prototype.bind = function(name, optServiceSignature) {
         }
         return self._proxyConnection.promiseInvokeMethod(
           name, methodName, args, numOutParams,
-          methodInfo.IsStreaming || false);
+          methodInfo.IsStreaming || false, cb);
       };
     };
 
@@ -79,7 +94,7 @@ client.prototype.bind = function(name, optServiceSignature) {
     def.resolve(boundObject);
   }).catch (def.reject);
 
-  return def.promise;
+  return promise;
 };
 
 /**

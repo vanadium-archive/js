@@ -17,6 +17,7 @@ describe('Cache Service', function() {
 
   var cacheService;
   var client;
+  var absoluteVeyronName;
   beforeEach(function(done) {
 
     var veyronConfig = {
@@ -30,7 +31,7 @@ describe('Cache Service', function() {
 
     client = veyron.newClient();
 
-    var absoluteVeyronName =
+    absoluteVeyronName =
         '/' + testconfig['SAMPLE_VEYRON_GO_SERVICE_ENDPOINT'] +
         '/' + testconfig['SAMPLE_VEYRON_GO_SERVICE_NAME'];
 
@@ -55,10 +56,30 @@ describe('Cache Service', function() {
     expect(cacheService.multiGet).to.be.a('function');
   });
 
+  it('Should be able to bind to the sevice with a callback', function(done) {
+    client.bind(absoluteVeyronName, function cb(e, cacheService) {
+      expect(cacheService).to.exist;
+
+      expect(cacheService.set).to.exist;
+      expect(cacheService.set).to.be.a('function');
+
+      expect(cacheService.get).to.exist;
+      expect(cacheService.get).to.be.a('function');
+
+      expect(cacheService.multiGet).to.exist;
+      expect(cacheService.multiGet).to.be.a('function');
+      done();
+    });
+  });
+
   it('Should be able to set a value', function() {
     var resultPromise = cacheService.set('foo', 'bar');
 
     return expect(resultPromise).to.eventually.be.fulfilled;
+  });
+
+  it('Should be able to set a value with cb', function(done) {
+    cacheService.set('foo', 'bar', done);
   });
 
   it('Should be able to set and get a value', function() {
@@ -69,10 +90,29 @@ describe('Cache Service', function() {
     return expect(resultPromise).to.eventually.equal('bar');
   });
 
+  it('Should be able to set and get a value with cb', function(done) {
+    cacheService.set('foo', 'bar', function d1(e, v) {
+      cacheService.get('foo', function d2(e, v) {
+        expect(v).to.equal('bar');
+        done(e);
+      });
+    });
+  });
+
   it('Should be able to handle failure', function() {
     var resultPromise = cacheService.get('baz');
 
     return expect(resultPromise).to.eventually.be.rejected;
+  });
+
+  it('Should be able to handle failure with cb', function(done) {
+    cacheService.get('baz', function(e) {
+      if (!e) {
+        done('an error should have occurred');
+      } else {
+        done();
+      }
+    });
   });
 
   it('Should get an exception calling non-existing methods', function() {
