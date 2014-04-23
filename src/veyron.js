@@ -32,9 +32,6 @@ function Veyron(config) {
 
   this._config = config;
   vLog.level = config.logLevel;
-
-  // Preload the idenity.
-  this._getIdentityPromise();
 }
 
 /**
@@ -54,10 +51,7 @@ function Veyron(config) {
  * @return {Object} A server object
  */
 Veyron.prototype.newServer = function() {
-  // We can not cache proxy connection for servers since each proxy connection
-  // can only be tied to a single server
-  var proxyConnection = this._newProxyConnection();
-  return new Server(proxyConnection);
+  return new Server(this._getProxyConnection());
 };
 
 /**
@@ -78,11 +72,7 @@ Veyron.prototype.newServer = function() {
  * @return {Object} A client object
  */
 Veyron.prototype.newClient = function() {
-  // We can cache the proxy used for client
-  if (this._proxyForClient === undefined) {
-    this._proxyForClient = this._newProxyConnection();
-  }
-  return new Client(this._proxyForClient);
+  return new Client(this._getProxyConnection());
 };
 
 /**
@@ -98,8 +88,12 @@ Veyron.prototype.getEnvironment = function() {
  * Creates a new proxy connection
  * @return {ProxyConnection} A new proxy connection
  */
-Veyron.prototype._newProxyConnection = function() {
-  return new ProxyConnection(this._config.proxy, this._getIdentityPromise());
+Veyron.prototype._getProxyConnection = function() {
+  if (!this._proxyConnection) {
+    this._proxyConnection =
+      new ProxyConnection(this._config.proxy, this._getIdentityPromise());
+  }
+  return this._proxyConnection;
 };
 
 Veyron.prototype._getIdentityPromise = function() {

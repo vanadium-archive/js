@@ -16,6 +16,12 @@
 
 'use strict';
 
+var Deferred = require('./../lib/deferred');
+var IdlHelper = require('./../idl/idl');
+var ServiceWrapper = IdlHelper.ServiceWrapper;
+
+var nextServerID = 1; // The ID for the next server.
+
 /**
  * represents a veyron server which allows registration of services that can be
  * invoked remotely via RPCs.
@@ -24,6 +30,8 @@
  */
 var server = function(proxyConnection) {
   this._proxyConnection = proxyConnection;
+  this.id = nextServerID++;
+  this.registeredServices = {};
 };
 
 /**
@@ -41,13 +49,13 @@ var server = function(proxyConnection) {
  * multiple names.
  *
  * @param {string} name Name to publish under
- * @param {function} cb if provided, the function will be called on completion.
- * The only argument is an error if there was one.
+ * @param {function} callback if provided, the function will be called on
+ * completion. The only argument is an error if there was one.
  * @return {Promise} Promise to be called when publish completes or fails
  * the endpoint address of the server will be returned as the value of promise
  */
-server.prototype.publish = function(name, cb) {
-  return this._proxyConnection.publishServer(name, cb);
+server.prototype.publish = function(name, callback) {
+  return this._proxyConnection.publishServer(name, this, callback);
 };
 
 /**
@@ -68,12 +76,52 @@ server.prototype.publish = function(name, cb) {
  *
  * @param {string} name The name to register the service under
  * @param {Object} serviceObject service object to register
- * @param {function} cb if provided, the function will be called on completion.
- * The only argument is an error if there was one.
+ * @param {function} callback if provided, the function will be called on
+ * completion. The only argument is an error if there was one.
  * @return {Promise} Promise to be called when register completes or fails
  */
-server.prototype.register = function(name, serviceObject, cb) {
-  return this._proxyConnection.registerService(name, serviceObject, cb);
+server.prototype.register = function(name, serviceObject, callback) {
+  //TODO(aghassemi) Handle registering after publishing
+
+  var def = new Deferred(callback);
+
+  if (this.registeredServices[name] !== undefined) {
+    var err = new Error('Service already registered under name: ' + name);
+    def.reject(err);
+  } else {
+    this.registeredServices[name] = new ServiceWrapper(serviceObject);
+    def.resolve();
+  }
+
+  return def.promise;
+};
+
+/**
+ * Generates an IDL wire description for all the registered services
+ * @return {Object.<string, Object>} map from service name to idl wire
+ * description
+ */
+server.prototype.generateIdlWireDescription = function() {
+  var servicesIdlWire = {};
+
+  for (var serviceName in this.registeredServices) {
+    if (this.registeredServices.hasOwnProperty(serviceName)) {
+      var serviceMetadata = this.registeredServices[serviceName];
+      servicesIdlWire[serviceName] =
+          IdlHelper.generateIdlWireDescription(serviceMetadata);
+    }
+  }
+
+  return servicesIdlWire;
+};
+
+/**
+ * Get a service object for the specified service name.
+ * @param {string} serviceName The service name.
+ * @return {Object} The service definition, or undefined if not found.
+ */
+server.prototype.getServiceObject = function(serviceName) {
+  return this.registeredServices[serviceName];
 };
 
 //TODO(aghassemi) Implement stop()
