@@ -30,10 +30,6 @@ module.exports = function(grunt) {
       // Destination bundle file
       var dest = this.data.dest;
 
-      // Configuration that allows a single module to be exposed globally
-      // such as ./veyron.js becoming globally available as "veyron"
-      var alias = this.data.alias;
-
       var options = {
         builtins: false, // Do not include any of the core libraries
         entries: [] // Files to transpile, will be populated later
@@ -51,14 +47,6 @@ module.exports = function(grunt) {
 
       // Create a browsifier
       var b = new browserify(options);
-
-      // Apply the alias if specified
-      if (alias) {
-        b.require(
-          path.resolve(alias.src),
-          { expose: alias.name }
-        );
-      }
 
       // We don't want to allow anything from node_modules in common
       // or browser only code. We use the transform event proved by Browserify
@@ -91,9 +79,7 @@ module.exports = function(grunt) {
               grunt.fail.fatal(errorMessage);
               done(false);
             }
-
           }
-
           return through();
         });
       }
@@ -101,6 +87,7 @@ module.exports = function(grunt) {
       var bundleOptions = {
         detectGlobals: false, // Do not include globals like "process"
         insertGlobals: false,
+        standalone: this.data.standalone,
         insertGlobalVars: ['none']
       };
 

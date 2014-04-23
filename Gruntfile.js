@@ -20,7 +20,6 @@ module.exports = function(grunt) {
     // Directory variables
     dirs: {
       temp: 'temp',
-      tempBrowserify: '<%= dirs.temp %>/browserify',
       dist: 'dist',
       docs: 'docs',
       logs: 'logs',
@@ -33,7 +32,6 @@ module.exports = function(grunt) {
         options: {
           create: [
             '<%= dirs.temp %>',
-            '<%= dirs.tempBrowserify %>',
             '<%= dirs.dist %>',
             '<%= dirs.distTest %>',
             '<%= dirs.logs %>'
@@ -55,14 +53,6 @@ module.exports = function(grunt) {
       // Clean logs
       logs: [
         '<%= dirs.logs %>'
-      ],
-      // Delete node-specific files before browsifying
-      browserify: [
-        // Deletes node_only files
-        '<%= dirs.tempBrowserify %>/**/*node_only*',
-
-        // Delete *.browseroverride.js files after they have been copied over
-        '<%= dirs.tempBrowserify %>/**/*.browseroverride.js'
       ]
     },
 
@@ -74,14 +64,12 @@ module.exports = function(grunt) {
         options: {
           jshintrc: 'jshintrc.json',
           ignores: ['src/**/browser_only/**',
-                    'src/**/*browseroverride.js',
                     'test/**/browser_only/**']
         }
       },
       browser_only: {
         files: {
           src: ['src/**/browser_only/**/*.js',
-                'src/**/*.browseroverride.js',
                 'test/**/browser_only/**/*.js']
         },
         options: merge({}, require('./jshintrc.json'), {
@@ -90,65 +78,21 @@ module.exports = function(grunt) {
       }
     },
 
-    // Copy tasks
-    copy: {
-      // Copies source files into temp folder to be browserified
-      browserify: {
-        files: [
-          {
-            expand: true,
-            src: ['src/**', 'test/**'],
-            dest: '<%= dirs.tempBrowserify %>'
-          }
-        ]
-      },
-      // Rename *.browseroverrides.js to override same-named NodeJS files
-      browserify_overrides: {
-        files: [
-          {
-            expand: true,
-            cwd: '<%= dirs.tempBrowserify %>',
-            src: ['**/*.js'],
-            dest: '<%= dirs.tempBrowserify %>',
-            rename: function(dest, src) {
-              return dest + '/' + src.replace('.browseroverride', '');
-            }
-          }
-        ]
-      }
-    },
-
     browserify: {
       source: {
-        src: ['<%= dirs.tempBrowserify %>/src/**/*.js'],
-        dest: '<%= dirs.tempBrowserify %>/veyron.browserify.js',
-        alias: {
-          src: '<%= dirs.tempBrowserify %>/src/veyron.js',
-          name: 'veyron'
-        },
+        src: ['src/veyron.js'],
+        dest: '<%= dirs.dist %>/veyron.js',
+        standalone: 'Veyron',
         detectExternalNodeModules: true
       },
       tests: {
-        src: ['<%= dirs.tempBrowserify %>/test/specs/**/*.js'],
+        src: ['test/specs/both/**/*.js', 'test/specs/browser_only/**/*.js'],
         dest: '<%= dirs.dist %>/test/veyron.test.specs.browserify.js'
       }
     },
 
     // Combine files and add closure around the Veyron
     concat: {
-      // Wraps the browserified veyron js code in a closure and exposes
-      // the ./veyron modules as a single global which is the entry
-      // point to Veyron API. We wrap in closure so we don't leak anything
-      // to global namespace and also to keep private modules, private. Only
-      // veyron.* is exposed as the public API and accessible.
-      wrap_in_closure: {
-        options: {
-          banner: '(function(g){\n',
-          footer: '\ng.Veyron=require(\'veyron\');})(window);'
-        },
-        src: ['<%= dirs.tempBrowserify %>/veyron.browserify.js'],
-        dest: '<%= dirs.dist %>/veyron.js'
-      },
       // concats all the integration files together
       integration_tests: {
         src: ['test/integration/**/*.js', '!test/integration/node_globals.js'],
@@ -300,9 +244,6 @@ module.exports = function(grunt) {
   ]);
 
   grunt.registerTask('subtask_buildForBrowser', [
-    'copy:browserify',
-    'copy:browserify_overrides',
-    'clean:browserify',
     'browserify',
     'concat',
     'uglify'

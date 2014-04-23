@@ -3,7 +3,7 @@
  */
 'use strict';
 
-var NodeVersion = require('../../../../src/environment/node_only/nodeversion');
+var NodeVersion = require('../../../../src/environment/nodeversion');
 
 describe('NodeVersion', function() {
 

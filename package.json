@@ -3,6 +3,11 @@
   "description": "Veyron JavaScript API",
   "version": "0.0.1",
   "main": "./src/veyron",
+  "browser": {
+    "./src/environment/environment.js": "./src/environment/browser_only/environment.js",
+    "./src/proxy/websocket.js": "./src/proxy/browser_only/websocket.js",
+    "./src/lib/http.js": "./src/lib/browser_only/http.js"
+  },
   "private": true,
   "dependencies": {
     "ws": "~0.4.31"
@@ -14,10 +19,9 @@
     "chai": "~1.9.0",
     "chai-as-promised": "~4.1.1",
     "karma-chai-plugins": "0.2.0",
-    "grunt-contrib-copy": "~0.5.0",
     "load-grunt-tasks": "~0.3.0",
     "grunt-mocha-test": "~0.10.0",
-    "browserify": "~3.41.0",
+    "browserify": "~3.44.0",
     "grunt-contrib-clean": "~0.5.0",
     "grunt-contrib-concat": "~0.3.0",
     "grunt-contrib-uglify": "~0.3.2",

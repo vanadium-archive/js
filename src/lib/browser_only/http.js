@@ -1,6 +1,6 @@
 'use strict';
 
-var Promise = require('./promise');
+var Promise = require('../promise');
 
 module.exports = {
   /**

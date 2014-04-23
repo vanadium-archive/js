@@ -4,7 +4,7 @@
 
 'use strict';
 
-var nodeVersion = require('./node_only/nodeversion');
+var nodeVersion = require('./nodeversion');
 
 var Environment = function() {
 
