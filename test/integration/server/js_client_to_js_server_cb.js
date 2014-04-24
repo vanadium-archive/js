@@ -11,7 +11,7 @@
  * All globals (veyron, expect, testconfig) are injected by test runners.
  */
 
-describe('Server and client in JS cb', function() {
+describe('Server and client in JS w/ callback', function() {
   var client;
   var cacheServiceClient;
   before(function(done) {

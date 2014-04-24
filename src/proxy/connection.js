@@ -11,8 +11,6 @@ var IncomingPayloadType = require('./incoming_payload_type');
 var Deferred = require('./../lib/deferred');
 var Promise = require('./../lib/promise');
 var vLog = require('./../lib/vlog');
-var IdlHelper = require('./../idl/idl');
-var ServiceWrapper = IdlHelper.ServiceWrapper;
 
 
 /**
@@ -31,11 +29,7 @@ function ProxyConnection(url, privateIdentityPromise) {
   this.id = 1;
   this.outstandingRequests = {};
   this.currentWebSocketPromise;
-  this.registeredServices = {};
-}
-
-function getDeferred(cb) {
-  return new Deferred(cb);
+  this.servers = {};
 }
 
 /**
@@ -53,7 +47,7 @@ ProxyConnection.prototype.getWebSocket = function() {
   // TODO(bjornick): Implement a timeout mechanism.
   var websocket = new WebSocket(this.url);
   var self = this;
-  var deferred = getDeferred();
+  var deferred = new Deferred();
   this.currentWebSocketPromise = deferred.promise;
   websocket.onopen = function() {
     vLog.info('Connected to proxy at', self.url);
@@ -149,12 +143,12 @@ ProxyConnection.prototype.getWebSocket = function() {
  */
 ProxyConnection.prototype.promiseInvokeMethod = function(name,
     methodName, mapOfArgs, numOutArgs, isStreaming, callback) {
-  var def = getDeferred(callback);
+  var def = new Deferred(callback);
   var promise = def.promise;
 
   var streamingDeferred = null;
   if (isStreaming) {
-    streamingDeferred = getDeferred();
+    streamingDeferred = new Deferred();
     def = new Stream(this.id, streamingDeferred.promise, callback);
     promise = def;
   }
@@ -248,10 +242,17 @@ ProxyConnection.prototype.handleIncomingInvokeRequest = function(messageId,
   var self = this;
   var err;
 
+  var server = this.servers[request.ServerID];
+  if (server === undefined) {
+    err = new Error(request.ServerName + ' is not a configured server');
+    this.sendInvokeRequestResult(messageId, null, err);
+    return;
+  }
+
   // Find the service
-  var serviceWrapper = this.registeredServices[request.Name];
+  var serviceWrapper = server.getServiceObject(request.ServiceName);
   if (serviceWrapper === undefined) {
-    err = new Error('No registered service found for ' + request.Name);
+    err = new Error('No registered service found for ' + request.ServiceName);
     this.sendInvokeRequestResult(messageId, null, err);
     return;
   }
@@ -262,7 +263,7 @@ ProxyConnection.prototype.handleIncomingInvokeRequest = function(messageId,
   var serviceMethod = serviceObject[request.Method];
   if (serviceMethod === undefined) {
     err = new Error('Requested method ' + request.Method +
-        ' not found on the service registered under ' + request.Name);
+        ' not found on the service registered under ' + request.ServiceName);
     this.sendInvokeRequestResult(messageId, null, err);
     return;
   }
@@ -292,7 +293,7 @@ ProxyConnection.prototype.handleIncomingInvokeRequest = function(messageId,
     if (variables.indexOf('$stream') !== -1) {
       self.outstandingRequests[messageId] = injections['$stream'];
     }
-    
+
     // Call the registered method on the requested service
     // TODO(aghassemi) Context injection for special arguments like $PATH
     var result = serviceMethod.apply(serviceObject, args);
@@ -358,63 +359,35 @@ ProxyConnection.prototype.sendInvokeRequestResult = function(messageId, value,
 };
 
 /**
- * Registers a service object under a prefix name
- * @param {string} name The name to register the service under
- * @param {Object} serviceObj service object.
- * @param {function} [callback] if provided, the function will be called on
- * completion. The only argument is an error if there was one.
- * @return {Promise} Promise to be called when register completes or fails
- */
-ProxyConnection.prototype.registerService = function(
-  name, serviceObj, callback) {
-  //TODO(aghassemi) Handle registering after publishing
-
-  var def = getDeferred(callback);
-
-  var promise = def.promise;
-
-  if (this.registeredServices[name] !== undefined) {
-    var err = new Error('Service already registered under name: ' + name);
-    def.reject(err);
-  } else {
-    this.registeredServices[name] = new ServiceWrapper(serviceObj);
-    def.resolve();
-  }
-
-  return promise;
-};
-
-/**
  * Publishes the server under a name
  * @param {string} name Name to publish under
+ * @param {Object.<string, Object>} services Map of service name to idl wire
+ * description.
  * @param {function} [callback] If provided, the function will be called when
  * the  publish completes.  The first argument passed in is the error if there
  * was any and the second argument is the endpoint.
  * @return {Promise} Promise to be called when publish completes or fails
  * the endpoint string of the server will be returned as the value of promise
  */
-ProxyConnection.prototype.publishServer = function(name, callback) {
+ProxyConnection.prototype.publishServer = function(name, server, callback) {
   //TODO(aghassemi) Handle publish under multiple names
 
   vLog.info('Publishing a server under name: ', name);
 
-  // Generate IDL for the registered services
-  var idl = this.generateIdlWireDescription();
-
   var messageJSON = {
     'Name': name,
-    'Services': idl
+    'ServerID': server.id,
+    'Services': server.generateIdlWireDescription()
   };
 
-  var def = getDeferred(callback);
+  this.servers[server.id] = server;
 
-  var promise = def.promise;
-
+  var def = new Deferred(callback);
   var message = JSON.stringify(messageJSON);
   // Send the publish request to the proxy
   this.sendRequest(message, MessageType.PUBLISH, def);
-  
-  return promise;
+
+  return def.promise;
 };
 
 /**
@@ -425,7 +398,7 @@ ProxyConnection.prototype.publishServer = function(name, callback) {
  */
 ProxyConnection.prototype.getServiceSignature = function(name) {
 
-  var def = getDeferred();
+  var def = new Deferred();
 
   var self = this;
   this.privateIdentityPromise.then(function(privateIdentity) {
@@ -442,24 +415,6 @@ ProxyConnection.prototype.getServiceSignature = function(name) {
   });
 
   return def.promise;
-};
-
-/**
- * Generates an IDL wire description for all the registered services
- * @return {object} map from service name to idl wire description
- */
-ProxyConnection.prototype.generateIdlWireDescription = function() {
-  var servicesIdlWire = {};
-
-  for (var serviceName in this.registeredServices) {
-    if (this.registeredServices.hasOwnProperty(serviceName)) {
-      var serviceMetadata = this.registeredServices[serviceName];
-      servicesIdlWire[serviceName] =
-          IdlHelper.generateIdlWireDescription(serviceMetadata);
-    }
-  }
-
-  return servicesIdlWire;
 };
 
 /**
