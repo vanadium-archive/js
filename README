@@ -47,19 +47,14 @@ designed in the project to ensure this goal.
 
 I short, the build lints, prepares the files for the browser and runs tests. It:
 
-*gjslints everything.
-*Takes the code written in NodeJS style inside src/ copies it into temporary
-location, removes any node_only files, overrides NodeJS files that have an
-equivalent *.browseroverride.js
+*jsHints everything.
 *Uses a third-party called Browserify to make the NodeJS style files work in the
-browser.
-*Wrapps what's produced from Browserify and wraps it in a closure so we don't
-leak anything and exposes a single global variable called "veyron"
+browser by creating a UMD module called "Veyron"
 *Minifies and uglifies the JS file. The result is veyron.min.js that can be
 included in the browser.
 
 The build also runs all the specification tests in both NodeJS and also
-in PhantomJS headless browser. It:
+in Chrome browser. It:
 *Runs all spec tests except browser_only test files in NodeJS
 *Uses the Browserify plugin to browserify common and bowser_only test files
 *Runs a simple http server and hits the runner.html that includes the
@@ -81,9 +76,8 @@ back to grunt
 
 We should consider wiring code that's compatible with both NodeJS and the browser
 as much as possible. However, there will be times when we need to write node-only
-or browser-only code. This can be done by putting those modules in node_only or
-browser_only folders and providing a *.browseroverride.js for the modules
-that needs to branch differently for the browser/NodeJS.
+or browser-only code. This can be done by putting the browser version inside a
+browser_only folder and adding a mapping entry to package.json.
 
 For instance, consider we have a module that behaves differently in NodeJS
 and the browser and there are common modules that reference it:
@@ -92,18 +86,18 @@ and the browser and there are common modules that reference it:
 sayHello.js {
 
   // here we can load node only modules
-  var m = require(./node_only/myNodeModule);
+  var m = require(./myNodeModule);
 
   module.export = function() {
     console.log('Hello');
   }
 }
 
-// Browser version of the file
-sayHello.browseroverride.js { // Note the double extension with ".browseroverride."
+// Browser version of the file inside browser_only folder
+browser_only/sayHello.js {
 
   // here we can load browser only modules
-  var m = require(./browser_only/myBrowserModule);
+  var m = require(./myBrowserModule);
 
   module.export = function() {
     window.alert('Hello'); // or access DOM, browser-only functionality
@@ -118,6 +112,11 @@ person.js {
   var sayHello = require('./sayHello');
   sayHello();
 }
+
+then inside package.json we add the mapping to "browser" section of the file:
+  "browser": {
+    "./src/sayHello.js": "./src/browser_only/sayHello.js"
+  },
 
 
 # Testing structure and considerations

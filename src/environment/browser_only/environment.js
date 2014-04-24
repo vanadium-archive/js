@@ -4,7 +4,7 @@
 
 'use strict';
 
-var features = require('./browser_only/featuredetection');
+var features = require('./featuredetection');
 
 var Environment = function() {
 
