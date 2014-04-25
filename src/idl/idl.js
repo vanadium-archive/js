@@ -163,7 +163,7 @@ idlHelper.generateIdlWireDescription = function(service) {
 
       idlWire[methodName] = {
         'InArgs' : inArgs,
-        'NumOutArgs': 1,
+        'NumOutArgs': 2,
         'IsStreaming': methodMetadata.injections['$stream'] !== undefined
       };
     }

@@ -14,17 +14,17 @@ describe('Signature, when service is in JS getServiceSignature', function() {
   var expectedSignature = {
     'get': {
       InArgs: ['key'],
-      NumOutArgs: 1,
+      NumOutArgs: 2,
       IsStreaming: false
     },
     'set': {
       InArgs: ['key', 'value'],
-      NumOutArgs: 1,
+      NumOutArgs: 2,
       IsStreaming: false
     },
     'multiGet': {
       InArgs: [],
-      NumOutArgs: 1,
+      NumOutArgs: 2,
       IsStreaming: true
     }
   };

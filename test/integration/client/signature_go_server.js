@@ -15,17 +15,17 @@ describe('Signature, when service is in GO, getServiceSignature', function() {
   var expectedSignature = {
     'get': {
       InArgs: ['key'],
-      NumOutArgs: 1,
+      NumOutArgs: 2,
       IsStreaming: false
     },
     'set': {
       InArgs: ['key', 'value'],
-      NumOutArgs: 0,
+      NumOutArgs: 1,
       IsStreaming: false
     },
     'multiGet': {
       InArgs: [],
-      NumOutArgs: 0,
+      NumOutArgs: 1,
       IsStreaming: true
     }
   };

@@ -451,7 +451,7 @@ ProxyConnection.prototype.constructMessage = function(name, methodName,
     'Name' : name,
     'Method' : methodName,
     'InArgs' : mapOfArgs || {},
-    'NumOutArgs' : numOutArgs || 0,
+    'NumOutArgs' : numOutArgs || 2,
     'IsStreaming' : isStreaming,
     'PrivateID' : privateIdentity || null
   };
