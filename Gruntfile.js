@@ -173,10 +173,20 @@ module.exports = function(grunt) {
             outputFile: '<%= dirs.dist %>/test/test_results_browser_spec.out'
           },
           files: [
-            '<%= dirs.dist %>/test/veyron.test.config.js',
+            '<%= dirs.distTest %>/veyron.test.config.js',
             'test/test_helper.js',
-            '<%= dirs.dist %>/test/veyron.test.specs.browserify.js'
-          ]
+            '<%= dirs.distTest %>/veyron.test.specs.browserify.js'
+          ],
+          reporters: ['coverage'],
+          preprocessors: {
+            '<%= dirs.distTest %>/veyron.test.specs.browserify.js': ['coverage']
+          },
+          coverageReporter: {
+              reporters: [
+              { type: 'html', dir: '<%= dirs.distTest %>/coverage/unit' },
+              { type: 'cobertura', dir: '<%= dirs.distTest %>/coverage/unit' }
+            ]
+          }
         }
       },
       // Integration tests
@@ -187,10 +197,20 @@ module.exports = function(grunt) {
           },
           files: [
             '<%= dirs.dist %>/veyron.js',
-            '<%= dirs.dist %>/test/veyron.test.config.js',
+            '<%= dirs.distTest %>/veyron.test.config.js',
             'test/test_helper.js',
-            '<%= dirs.dist %>/test/veyron.test.integration.js'
-          ]
+            '<%= dirs.distTest %>/veyron.test.integration.js'
+          ],
+          reporters: ['coverage'],
+          preprocessors: {
+            '<%= dirs.dist %>/veyron.js': ['coverage']
+          },
+          coverageReporter: {
+              reporters: [
+              { type: 'html', dir: '<%= dirs.distTest %>/coverage/integration' },
+              { type: 'cobertura', dir: '<%= dirs.distTest %>/coverage/integration' }
+            ]
+          }
         }
       }
     }

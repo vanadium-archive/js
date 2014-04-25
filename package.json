@@ -38,6 +38,7 @@
     "karma-junit-reporter": "~0.1",
     "merge": "^1.1.2",
     "grunt-jsdoc": "~0.5.4",
-    "ink-docstrap": "~0.3.0-0"
+    "ink-docstrap": "~0.3.0-0",
+    "karma-coverage": "~0.2.1"
   }
 }
