@@ -15,10 +15,10 @@ var vLog = require('./../lib/vlog');
 
 
 /**
- * A client for the veyron service using websockets. Connects to the veyron HTTP
- * proxy and performs RPCs.
+ * A client for the veyron service using websockets. Connects to the veyron wspr
+ * and performs RPCs.
  * @constructor
- * @param {string} url of the http proxy that connects to the veyron network
+ * @param {string} url of wspr that connects to the veyron network
  * @param {string} [ privateIdentity = null ] private key for the user's veyron
  * identity
  */
@@ -121,7 +121,7 @@ ProxyConnection.prototype.getWebSocket = function() {
         def.resolve();
         return;
       default:
-        def.reject(new Error('Received unknown response type from http proxy'));
+        def.reject(new Error('Received unknown response type from wspr'));
     }
     delete self.outstandingRequests[message.ID];
   };
@@ -351,7 +351,7 @@ ProxyConnection.prototype.handleIncomingInvokeRequest = function(messageId,
 };
 
 /**
- * Sends the result of a requested invocation back to the http proxy
+ * Sends the result of a requested invocation back to wspr
  * @param {string} messageId Message id of the original invocation request
  * @param {Object} value Result of the call
  * @param {Object} err Error from the call
@@ -444,14 +444,14 @@ ProxyConnection.prototype.getServiceSignature = function(name) {
 };
 
 /**
- * Construct a message to send to the veyron http proxy.
+ * Construct a message to send to the veyron wspr
  * @param {string} name veyron name.
  * @param {string} methodName the name of the method to invoke.
  * @param {object} [ mapOfArgs = {} ] key-value map of argument names to values
  * @param {number} numOutArgs Number of expected outputs by the method
  * @param {boolean} isStreaming
  * @param {string} privateIdentity The private identity
- * @return {string} json string to send to the http proxy
+ * @return {string} json string to send to wspr
  */
 ProxyConnection.prototype.constructMessage = function(name, methodName,
     mapOfArgs, numOutArgs, isStreaming, privateIdentity) {

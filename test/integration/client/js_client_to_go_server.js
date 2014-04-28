@@ -1,8 +1,8 @@
 /**
  * @fileoverview Integration test for Veyron Client
  * This module tests that a veyron JS client can make calls to other veyron
- * services in Go or other languages through the http proxy.
- * http proxy server and the sample Go veyron service need to be running for
+ * services in Go or other languages through wspr.
+ * wspr server and the sample Go veyron service need to be running for
  * this test.
  *
  * Grunt's subtask_setupIntegrationTestEnvironment should spawn these servers
