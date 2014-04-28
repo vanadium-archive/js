@@ -160,7 +160,7 @@ module.exports = function(grunt) {
       options: {
         singleRun: '<%= browserTestSingleRun %>',
         browsers: ['<%= browserName %>'],
-        reporters: ['spec','junit'],
+        reporters: ['spec','junit','coverage'],
         frameworks: ['mocha', 'chai', 'chai-as-promised'],
         basePath: '',
         mocha: {
@@ -178,7 +178,6 @@ module.exports = function(grunt) {
             'test/test_helper.js',
             '<%= dirs.distTest %>/veyron.test.specs.browserify.js'
           ],
-          reporters: ['coverage'],
           preprocessors: {
             '<%= dirs.distTest %>/veyron.test.specs.browserify.js': ['coverage']
           },
@@ -202,7 +201,6 @@ module.exports = function(grunt) {
             'test/test_helper.js',
             '<%= dirs.distTest %>/veyron.test.integration.js'
           ],
-          reporters: ['coverage'],
           preprocessors: {
             '<%= dirs.dist %>/veyron.js': ['coverage']
           },
