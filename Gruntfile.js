@@ -179,7 +179,7 @@ module.exports = function(grunt) {
             '<%= dirs.distTest %>/veyron.test.specs.browserify.js'
           ],
           preprocessors: {
-            '<%= dirs.distTest %>/veyron.test.specs.browserify.js': ['coverage']
+            'dist/test/veyron.test.specs.browserify.js': ['coverage']
           },
           coverageReporter: {
               reporters: [
@@ -202,7 +202,7 @@ module.exports = function(grunt) {
             '<%= dirs.distTest %>/veyron.test.integration.js'
           ],
           preprocessors: {
-            '<%= dirs.dist %>/veyron.js': ['coverage']
+            'dist/veyron.js': ['coverage']
           },
           coverageReporter: {
               reporters: [
