@@ -293,9 +293,18 @@ ProxyConnection.prototype.handleIncomingInvokeRequest = function(messageId,
       finished = true;
       self.sendInvokeRequestResult(messageId, v, e);
     };
+
+    var context = {
+      suffix: request.Context.Suffix,
+      name: request.Context.Name,
+    };
+
     var injections = {
       '$stream' : new Stream(messageId, this.getWebSocket()),
-      '$callback': cb
+      '$callback': cb,
+      '$context': context,
+      '$suffix': context.suffix,
+      '$name': context.name
     };
 
     if (request.Method === 'MultiGet') {
@@ -307,7 +316,6 @@ ProxyConnection.prototype.handleIncomingInvokeRequest = function(messageId,
     }
 
     // Call the registered method on the requested service
-    // TODO(aghassemi) Context injection for special arguments like $PATH
     var result = serviceMethod.apply(serviceObject, args);
     if (result instanceof Error) {
       sendInvocationError(result);
