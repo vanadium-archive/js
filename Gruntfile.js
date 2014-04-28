@@ -155,10 +155,11 @@ module.exports = function(grunt) {
 
     // Whether Karma closes browsers immediately. Keeping open enables debugging
     browserTestSingleRun: true,
+    browserName: 'Chrome',
     browserTest: {
       options: {
         singleRun: '<%= browserTestSingleRun %>',
-        browsers: ['Chrome'],
+        browsers: ['<%= browserName %>'],
         reporters: ['spec','junit'],
         frameworks: ['mocha', 'chai', 'chai-as-promised'],
         basePath: '',
@@ -301,6 +302,8 @@ module.exports = function(grunt) {
       grunt.config.set('reporter', 'xunit');
       // Set to no logging since logs interfere with xUnit result output
       grunt.testConfigs['LOG_LEVEL'] = 0;
+
+      grunt.config.set('browserName', 'Firefox');
 
       var testsToRun = ['subtask_runSpecTests', 'subtask_runIntegrationTests'];
       if (testType === 'specs') {
