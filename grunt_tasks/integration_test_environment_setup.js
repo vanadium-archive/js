@@ -7,6 +7,7 @@ module.exports = function(grunt) {
 
   // List of processes we have spawned so we can kill them on teardown
   var runningChildProcesses = [];
+  var cleaningUp;
 
   /**
    * Setups the required environment for integration testing such as
@@ -14,7 +15,6 @@ module.exports = function(grunt) {
    * expected in the integration tests.
    */
   grunt.registerTask('subtask_setupIntegrationTestEnvironment', function() {
-
     var spawn = require('child_process').spawn;
     var fs = require('fs');
     var path = require('path');
@@ -24,6 +24,7 @@ module.exports = function(grunt) {
 
     // Reset state
     runningChildProcesses = [];
+    cleaningUp = false;
 
     // Constants
     // Binary location of wspr and other processes to run
@@ -54,24 +55,25 @@ module.exports = function(grunt) {
 
     var veyron_proxy_process = spawn(VEYRON_PROXY_BIN,
       ['-log_dir=' + LOGS_DIR, '-addr=127.0.0.1:' + VEYRON_PROXY_PORT]);
-    veyron_proxy_process.stderr.on('data', grunt.log.debug);
+    veyron_proxy_process.title = 'Veyron Proxy';
     runningChildProcesses.push(veyron_proxy_process);
 
     // Run wspr
     var wspr_process = spawn(WSPR_BIN,
       ['-v=3', '-vv=3', '-log_dir=' + LOGS_DIR, '-port=' + WSPR_PORT,
        '-vproxy=127.0.0.1:' + VEYRON_PROXY_PORT ]);
-    wspr_process.stderr.on('data', grunt.log.debug);
+    wspr_process.title = 'WSPR';
     runningChildProcesses.push(wspr_process);
 
     // Run identityd
     var identityd_process = spawn(IDENTITYD_BIN, ['-port=' + IDENTITYD_PORT]);
-    identityd_process.stderr.on('data', grunt.log.debug);
+    identityd_process.title = 'Identity Server';
     runningChildProcesses.push(identityd_process);
 
     // Run the sample go service proxy, we use the sampled example service
     var sample_service_process = spawn(SAMPLE_GO_SERVICE_BIN,
       ['-v=3', '-vv=3', '-log_dir=' + LOGS_DIR]);
+    sample_service_process.title = 'Sampled';
     runningChildProcesses.push(sample_service_process);
 
     // Wait until we get the sample service endpoint from the process stdout
@@ -97,25 +99,47 @@ module.exports = function(grunt) {
 
       testConfigs['SAMPLE_VEYRON_GO_SERVICE_ENDPOINT'] = endpoint;
     });
-    sample_service_process.stderr.on('data', grunt.log.debug);
+
+    runningChildProcesses.forEach(function(runningProcess) {
+      var stderr = '';
+      runningProcess.stderr.on('data', function(d) {
+        stderr += d;
+        grunt.log.debug(d);
+      });
+      runningProcess.on('exit', function (code) {
+        if (!cleaningUp) {
+          fail(runningProcess.title +
+            ' crashed before tests finish with code: ' + code +
+            ' here is the stderr:\n' + stderr);
+        }
+       });
+    });
 
     // Return with success, allowing sometime for proxy to fully start
     setTimeout(function() { done(true); }, 500);
 
   });
 
-  // Kills any running process we started
-  var cleanUp = function() {
-    runningChildProcesses.forEach(function(runningProcess) {
-      runningProcess.kill('SIGTERM');
-    });
+  // Kills any running process we started and calls done when all finish
+  var cleanUp = function(done) {
+    cleaningUp = true;
+    var numExited = 0;
+    for(var i = 0; i < runningChildProcesses.length; i++) {
+      runningChildProcesses[i].kill('SIGTERM');
+      // wait until all exit
+      runningChildProcesses[i].on('exit', function (code) {
+        numExited++;
+        if (done !== undefined && numExited == runningChildProcesses.length) {
+          done(true);
+        }
+      });
+    }
   };
 
   // Fails the task after cleaning up
   var fail = function(message) {
     cleanUp();
     grunt.fail.fatal(message);
-    done(false);
   };
 
   // Cleanup in case Grunt fails or is forced to exit
@@ -128,6 +152,8 @@ module.exports = function(grunt) {
    * such as killing wspr and other services spawned for testing
    */
   grunt.registerTask('subtask_teardownIntegrationTestEnvironment', function() {
-    cleanUp();
+    // Indicate this is a async grunt task
+    var done = this.async();
+    cleanUp(done);
   });
 };
