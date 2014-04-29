@@ -63,15 +63,7 @@ Veyron.prototype.newServer = function() {
  *
  * Usage:
  * var cl = veyron.newClient();
- * var service = cl.bind('EndpointAddress', 'ServiceName', {
- *   'ServiceName' : {
- *      'MethodName' : {
- *          name: 'MethodName',
- *          numParams: 1,
-            numOutParams: 1
- *      }
- *    }
- *  });
+ * var service = cl.bind('EndpointAddress', 'ServiceName');
  * resultPromise = service.MethodName(arg);
  * @return {Object} A client object
  */

@@ -3,15 +3,7 @@
  *
  *  Usage:
  *  var cl = new client(proxyConnection);
- *  var service = cl.bind('EndpointAddress', 'ServiceName', {
- *    'ServiceName' : {
- *       'MethodName' : {
- *           name: 'MethodName',
- *           numParams: 1,
-             numOutParams: 1
- *       }
- *     }
- *   });
+ *  var service = cl.bind('EndpointAddress', 'ServiceName');
  *  resultPromise = service.MethodName(arg);
  */
 
@@ -66,22 +58,22 @@ client.prototype.bind = function(name, optServiceSignature, callback) {
     var boundObject = {};
     var bindMethod = function(methodName) {
       var methodInfo = serviceSignature[methodName];
-      var numOutParams = methodInfo.NumOutArgs;
+      var numOutParams = methodInfo.numOutArgs;
       boundObject[methodName] = function() {
         var args = Array.prototype.slice.call(arguments, 0);
         var cb = null;
-        if (args.length === methodInfo.InArgs.length + 1) {
+        if (args.length === methodInfo.inArgs.length + 1) {
           cb = args[args.length - 1];
-          args = args.slice(0, methodInfo.InArgs.length);
+          args = args.slice(0, methodInfo.inArgs.length);
         }
-        if (args.length !== methodInfo.InArgs.length) {
+        if (args.length !== methodInfo.inArgs.length) {
           throw new Error('Invalid number of arguments to "' +
-            methodName + '". Expected ' + methodInfo.InArgs.length +
+            methodName + '". Expected ' + methodInfo.inArgs.length +
             ' but there were ' + args.length);
         }
         return self._proxyConnection.promiseInvokeMethod(
           name, methodName, args, numOutParams,
-          methodInfo.IsStreaming || false, cb);
+          methodInfo.isStreaming || false, cb);
       };
     };
 

@@ -36,12 +36,12 @@ describe('Client-side binding', function() {
     beforeEach(function(done) {
       var testServiceSignature = {
         'testMethod': {
-          InArgs: ['a', 'b', 'c'],
-          NumOutArgs: 2
+          inArgs: ['a', 'b', 'c'],
+          numOutArgs: 2
         },
         'testMethod2': {
-          InArgs: ['a'],
-          NumOutArgs: 2
+          inArgs: ['a'],
+          numOutArgs: 2
         }
       };
       var testServicePromise = mockedClient.bind(

@@ -15,8 +15,8 @@ var ec = {};
  * name property of an Error object.
  */
 var _standard = function(id, message) {
-  this.ID = id;
-  this.Msg = message;
+  this.iD = id;
+  this.msg = message;
 };
 
 /*
@@ -60,11 +60,11 @@ errIdConstrMap[vError.Ids.NotFound] = vError.NotFoundError;
 ec.toJSerror = function(verr) {
   var err;
 
-  var ErrIdConstr = errIdConstrMap[verr.ID];
+  var ErrIdConstr = errIdConstrMap[verr.iD];
   if(ErrIdConstr) {
-    err = new ErrIdConstr(verr.Msg);
+    err = new ErrIdConstr(verr.msg);
   } else {
-    err = new vError.VeyronError(verr.Msg, verr.ID);
+    err = new vError.VeyronError(verr.msg, verr.iD);
   }
 
   err.stack = ''; // stack does not make sense from a remote execution

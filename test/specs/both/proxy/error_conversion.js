@@ -25,42 +25,42 @@ describe('toStandardErrorStruct', function() {
     var jsErr = new Error(errMessage);
     jsErr.name = 'MyError';
     var struct = ErrorConversion.toStandardErrorStruct(jsErr);
-    expect(struct.ID).to.equal('MyError');
-    expect(struct.Msg).to.equal(errMessage);
+    expect(struct.iD).to.equal('MyError');
+    expect(struct.msg).to.equal(errMessage);
   });
 
   it('Should use unknown type for default JS error type', function() {
     var jsErr = new Error(errMessage);
     var struct = ErrorConversion.toStandardErrorStruct(jsErr);
-    expect(struct.ID).to.equal('');
-    expect(struct.Msg).to.equal(errMessage);
+    expect(struct.iD).to.equal('');
+    expect(struct.msg).to.equal(errMessage);
   });
 
   it('Should convert predefined errors to internal structure', function() {
     var jsErr = vError.NotAuthorizedError(errMessage);
     var struct = ErrorConversion.toStandardErrorStruct(jsErr);
-    expect(struct.ID).to.equal(vError.Ids.NotAuthorized);
-    expect(struct.Msg).to.equal(errMessage);
+    expect(struct.iD).to.equal(vError.Ids.NotAuthorized);
+    expect(struct.msg).to.equal(errMessage);
   });
 
   it('Should convert JS string to internal structure', function() {
     var struct = ErrorConversion.toStandardErrorStruct(errMessage);
-    expect(struct.ID).to.equal('');
-    expect(struct.Msg).to.equal(errMessage);
+    expect(struct.iD).to.equal('');
+    expect(struct.msg).to.equal(errMessage);
   });
 
   it('Should convert undefined to internal structure', function() {
     var struct = ErrorConversion.toStandardErrorStruct();
-    expect(struct.ID).to.equal('');
-    expect(struct.Msg).to.equal('');
+    expect(struct.iD).to.equal('');
+    expect(struct.msg).to.equal('');
   });
 });
 
 describe('toJSerror', function() {
   it('Should convert from internal structure to JS Error', function() {
     var struct = {
-      ID: 'MyError',
-      Msg: errMessage
+      iD: 'MyError',
+      msg: errMessage
     };
 
     var jsErr = ErrorConversion.toJSerror(struct);
@@ -69,8 +69,8 @@ describe('toJSerror', function() {
 
   it('Should create default error for unknown ID', function() {
     var struct = {
-      ID: '',
-      Msg: errMessage
+      iD: '',
+      msg: errMessage
     };
 
     var jsErr = ErrorConversion.toJSerror(struct);
@@ -79,8 +79,8 @@ describe('toJSerror', function() {
 
   it('Should convert to JS AbortedError', function() {
     var struct = {
-      ID: vError.Ids.Aborted,
-      Msg: errMessage
+      iD: vError.Ids.Aborted,
+      msg: errMessage
     };
 
     var jsErr = ErrorConversion.toJSerror(struct);
@@ -89,8 +89,8 @@ describe('toJSerror', function() {
 
   it('Should convert to JS BadArgError', function() {
     var struct = {
-      ID: vError.Ids.BadArg,
-      Msg: errMessage
+      iD: vError.Ids.BadArg,
+      msg: errMessage
     };
 
     var jsErr = ErrorConversion.toJSerror(struct);
@@ -99,8 +99,8 @@ describe('toJSerror', function() {
 
   it('Should convert to JS BadProtocolError', function() {
     var struct = {
-      ID: vError.Ids.BadProtocol,
-      Msg: errMessage
+      iD: vError.Ids.BadProtocol,
+      msg: errMessage
     };
 
     var jsErr = ErrorConversion.toJSerror(struct);
@@ -109,8 +109,8 @@ describe('toJSerror', function() {
 
   it('Should convert to JS ExistsError', function() {
     var struct = {
-      ID: vError.Ids.Exists,
-      Msg: errMessage
+      iD: vError.Ids.Exists,
+      msg: errMessage
     };
 
     var jsErr = ErrorConversion.toJSerror(struct);
@@ -119,8 +119,8 @@ describe('toJSerror', function() {
 
   it('Should convert to JS InternalError', function() {
     var struct = {
-      ID: vError.Ids.Internal,
-      Msg: errMessage
+      iD: vError.Ids.Internal,
+      msg: errMessage
     };
 
     var jsErr = ErrorConversion.toJSerror(struct);
@@ -129,8 +129,8 @@ describe('toJSerror', function() {
 
   it('Should convert to JS NotAuthorizedError', function() {
     var struct = {
-      ID: vError.Ids.NotAuthorized,
-      Msg: errMessage
+      iD: vError.Ids.NotAuthorized,
+      msg: errMessage
     };
 
     var jsErr = ErrorConversion.toJSerror(struct);
@@ -139,8 +139,8 @@ describe('toJSerror', function() {
 
   it('Should convert to NotFoundError', function() {
     var struct = {
-      ID: vError.Ids.NotFound,
-      Msg: errMessage
+      iD: vError.Ids.NotFound,
+      msg: errMessage
     };
 
     var jsErr = ErrorConversion.toJSerror(struct);

@@ -70,17 +70,17 @@ ProxyConnection.prototype.getWebSocket = function() {
     }
 
     // Messages originating from server are even numbers
-    var isServerOriginatedMessage = (message.ID % 2) === 0;
+    var isServerOriginatedMessage = (message.id % 2) === 0;
 
-    var def = self.outstandingRequests[message.ID];
+    var def = self.outstandingRequests[message.id];
 
     var payload;
     try {
-      payload = JSON.parse(message.Data);
+      payload = JSON.parse(message.data);
     } catch (e) {
       if (!isServerOriginatedMessage) {
-        def.reject(message.Data);
-        delete self.outstandingRequests[message.ID];
+        def.reject(message.data);
+        delete self.outstandingRequests[message.id];
       }
       return;
     }
@@ -88,22 +88,22 @@ ProxyConnection.prototype.getWebSocket = function() {
     // If we don't know about this flow, just drop the message. Unless it
     // originated from the sever.
     if (!isServerOriginatedMessage && !def) {
-      vLog.warn('Dropping message for unknown flow ' + message.ID + ' ' +
-          message.Data);
+      vLog.warn('Dropping message for unknown flow ' + message.id + ' ' +
+          message.data);
       return;
     }
 
-    switch (payload.Type) {
+    switch (payload.type) {
       case IncomingPayloadType.FINAL_RESPONSE:
-        if (payload.Message.length === 1) {
-          payload.Message = payload.Message[0];
+        if (payload.message.length === 1) {
+          payload.message = payload.message[0];
         }
-        def.resolve(payload.Message);
+        def.resolve(payload.message);
         break;
       case IncomingPayloadType.STREAM_RESPONSE:
         try {
           if (def.onmessage) {
-            def.onmessage(payload.Message);
+            def.onmessage(payload.message);
           }
           return;
           // Return so we don't remove the promise from the queue.
@@ -112,10 +112,10 @@ ProxyConnection.prototype.getWebSocket = function() {
         }
         break;
       case IncomingPayloadType.ERROR_RESPONSE:
-        def.reject(ErrorConversion.toJSerror(payload.Message));
+        def.reject(ErrorConversion.toJSerror(payload.message));
         break;
       case IncomingPayloadType.INVOKE_REQUEST:
-        self.handleIncomingInvokeRequest(message.ID, payload.Message);
+        self.handleIncomingInvokeRequest(message.id, payload.message);
         return;
       case IncomingPayloadType.STREAM_CLOSE:
         def.resolve();
@@ -123,7 +123,7 @@ ProxyConnection.prototype.getWebSocket = function() {
       default:
         def.reject(new Error('Received unknown response type from wspr'));
     }
-    delete self.outstandingRequests[message.ID];
+    delete self.outstandingRequests[message.id];
   };
 
   return deferred.promise;
@@ -182,17 +182,17 @@ ProxyConnection.prototype.promiseInvokeMethod = function(name,
  * @param {Deferred} def Deferred to add to outstandingRequests
  */
 ProxyConnection.prototype.sendRequest = function(message, type, def) {
-  this.outstandingRequests[this.id] = def;
+  var id = this.id;
+  this.id += 2;
 
-  var body = JSON.stringify({ id: this.id, data: message, type: type });
+  this.outstandingRequests[id] = def;
+  var body = JSON.stringify({ id: id, data: message, type: type });
 
   this.getWebSocket().then(function(websocket) {
     websocket.send(body);
   },function(e) {
     def.reject(e);
   });
-
-  this.id += 2;
 };
 
 /**
@@ -243,17 +243,17 @@ ProxyConnection.prototype.handleIncomingInvokeRequest = function(messageId,
   var self = this;
   var err;
 
-  var server = this.servers[request.ServerID];
+  var server = this.servers[request.serverId];
   if (server === undefined) {
-    err = new Error(request.ServerName + ' is not a configured server');
+    err = new Error(request.serverName + ' is not a configured server');
     this.sendInvokeRequestResult(messageId, null, err);
     return;
   }
 
   // Find the service
-  var serviceWrapper = server.getServiceObject(request.ServiceName);
+  var serviceWrapper = server.getServiceObject(request.serviceName);
   if (serviceWrapper === undefined) {
-    err = new Error('No registered service found for ' + request.ServiceName);
+    err = new Error('No registered service found for ' + request.serviceName);
     this.sendInvokeRequestResult(messageId, null, err);
     return;
   }
@@ -261,21 +261,21 @@ ProxyConnection.prototype.handleIncomingInvokeRequest = function(messageId,
   var serviceObject = serviceWrapper.object;
 
   // Find the method
-  var serviceMethod = serviceObject[request.Method];
+  var serviceMethod = serviceObject[request.method];
   if (serviceMethod === undefined) {
-    err = new Error('Requested method ' + request.Method +
-        ' not found on the service registered under ' + request.ServiceName);
+    err = new Error('Requested method ' + request.method +
+        ' not found on the service registered under ' + request.serviceName);
     this.sendInvokeRequestResult(messageId, null, err);
     return;
   }
-  var metadata = serviceWrapper.metadata[request.Method];
+  var metadata = serviceWrapper.metadata[request.method];
 
   var sendInvocationError = function(e) {
     var stackTrace;
     if (e instanceof Error && e.stack !== undefined) {
       stackTrace = e.stack;
     }
-    vLog.debug('Requested method ' + request.Method +
+    vLog.debug('Requested method ' + request.method +
       ' threw an exception on invoke: ', e, stackTrace);
 
     self.sendInvokeRequestResult(messageId, null, e);
@@ -283,7 +283,7 @@ ProxyConnection.prototype.handleIncomingInvokeRequest = function(messageId,
 
   // Invoke the method
   try {
-    var args = request.Args;
+    var args = request.args;
     var finished = false;
 
     var cb = function callback(e, v) {
@@ -295,8 +295,8 @@ ProxyConnection.prototype.handleIncomingInvokeRequest = function(messageId,
     };
 
     var context = {
-      suffix: request.Context.Suffix,
-      name: request.Context.Name,
+      suffix: request.context.suffix,
+      name: request.context.name,
     };
 
     var injections = {
@@ -307,9 +307,6 @@ ProxyConnection.prototype.handleIncomingInvokeRequest = function(messageId,
       '$name': context.name
     };
 
-    if (request.Method === 'MultiGet') {
-      console.log('foo');
-    }
     var variables = inject(args, metadata.injections, injections);
     if (variables.indexOf('$stream') !== -1) {
       self.outstandingRequests[messageId] = injections['$stream'];
@@ -368,8 +365,8 @@ ProxyConnection.prototype.sendInvokeRequestResult = function(messageId, value,
   }
 
   var responseData = {
-    'Results' : results,
-    'Err' : errorStruct
+    'results' : results,
+    'err' : errorStruct
   };
 
   var responseDataJSON = JSON.stringify(responseData);
@@ -401,9 +398,9 @@ ProxyConnection.prototype.publishServer = function(name, server, callback) {
   vLog.info('Publishing a server under name: ', name);
 
   var messageJSON = {
-    'Name': name,
-    'ServerID': server.id,
-    'Services': server.generateIdlWireDescription()
+    'name': name,
+    'serverId': server.id,
+    'services': server.generateIdlWireDescription()
   };
 
   this.servers[server.id] = server;
@@ -429,8 +426,8 @@ ProxyConnection.prototype.getServiceSignature = function(name) {
   var self = this;
   this.privateIdentityPromise.then(function(privateIdentity) {
     var messageJSON = {
-      'Name': name,
-      'PrivateID': privateIdentity
+      'name': name,
+      'privateId': privateIdentity
     };
     var message = JSON.stringify(messageJSON);
 
@@ -456,12 +453,12 @@ ProxyConnection.prototype.getServiceSignature = function(name) {
 ProxyConnection.prototype.constructMessage = function(name, methodName,
     mapOfArgs, numOutArgs, isStreaming, privateIdentity) {
   var jsonMessage = {
-    'Name' : name,
-    'Method' : methodName,
-    'InArgs' : mapOfArgs || {},
-    'NumOutArgs' : numOutArgs || 2,
-    'IsStreaming' : isStreaming,
-    'PrivateID' : privateIdentity || null
+    'name' : name,
+    'method' : methodName,
+    'inArgs' : mapOfArgs || {},
+    'numOutArgs' : numOutArgs || 2,
+    'isStreaming' : isStreaming,
+    'privateId' : privateIdentity || null
   };
   return JSON.stringify(jsonMessage);
 };

@@ -112,7 +112,7 @@ describe('Server and client in JS', function() {
           };
         };
 
-        for (var i = 0; i < 10; i++) {
+        for (var i = 0; i < 6; i++) {
           promise = promise.then(thenGenerator(i));
         }
 
@@ -125,14 +125,14 @@ describe('Server and client in JS', function() {
           };
 
           // Now let's send some requests.
-          for (var i = 0; i < 10; i += 2) {
+          for (var i = 0; i < 6; i += 2) {
             stream.send('' + i);
           }
 
           stream.close();
           return stream.promise;
         }).then(function() {
-          expect(nextNumber).to.equal(11);
+          expect(nextNumber).to.equal(7);
           done();
         }).catch (done);
       });

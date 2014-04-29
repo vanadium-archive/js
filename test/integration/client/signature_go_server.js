@@ -14,19 +14,19 @@ describe('Signature, when service is in GO, getServiceSignature', function() {
 
   var expectedSignature = {
     'get': {
-      InArgs: ['key'],
-      NumOutArgs: 2,
-      IsStreaming: false
+      inArgs: ['key'],
+      numOutArgs: 2,
+      isStreaming: false
     },
     'set': {
-      InArgs: ['key', 'value'],
-      NumOutArgs: 1,
-      IsStreaming: false
+      inArgs: ['key', 'value'],
+      numOutArgs: 1,
+      isStreaming: false
     },
     'multiGet': {
-      InArgs: [],
-      NumOutArgs: 1,
-      IsStreaming: true
+      inArgs: [],
+      numOutArgs: 1,
+      isStreaming: true
     }
   };
 
@@ -62,9 +62,9 @@ describe('Signature, when service is in GO, getServiceSignature', function() {
       if(expectedSignature.hasOwnProperty(methodName)) {
         var methodInfo = signature[methodName];
         expect(methodInfo).to.exists;
-        expect(methodInfo.InArgs).to.exists;
-        expect(methodInfo.InArgs.length).to.equal(
-          expectedSignature[methodName].InArgs.length);
+        expect(methodInfo.inArgs).to.exists;
+        expect(methodInfo.inArgs.length).to.equal(
+          expectedSignature[methodName].inArgs.length);
       }
     }
   });
@@ -75,10 +75,10 @@ describe('Signature, when service is in GO, getServiceSignature', function() {
       if(expectedSignature.hasOwnProperty(methodName)) {
         var methodInfo = signature[methodName];
         expect(methodInfo).to.exists;
-        expect(methodInfo.InArgs).to.exists;
-        for(var i=0; i < methodInfo.InArgs.length; i++) {
-          expect(methodInfo.InArgs[i]).to.equal(
-            expectedSignature[methodName].InArgs[i]);
+        expect(methodInfo.inArgs).to.exists;
+        for(var i=0; i < methodInfo.inArgs.length; i++) {
+          expect(methodInfo.inArgs[i]).to.equal(
+            expectedSignature[methodName].inArgs[i]);
         }
       }
     }
@@ -90,9 +90,9 @@ describe('Signature, when service is in GO, getServiceSignature', function() {
       if(expectedSignature.hasOwnProperty(methodName)) {
         var methodInfo = signature[methodName];
         expect(methodInfo).to.exists;
-        expect(methodInfo.NumOutArgs).to.exists;
-        expect(methodInfo.NumOutArgs).to.equal(
-          expectedSignature[methodName].NumOutArgs);
+        expect(methodInfo.numOutArgs).to.exists;
+        expect(methodInfo.numOutArgs).to.equal(
+          expectedSignature[methodName].numOutArgs);
       }
     }
   });
@@ -103,9 +103,9 @@ describe('Signature, when service is in GO, getServiceSignature', function() {
       if(expectedSignature.hasOwnProperty(methodName)) {
         var methodInfo = signature[methodName];
         expect(methodInfo).to.exists;
-        expect(methodInfo.IsStreaming).to.exists;
-        expect(methodInfo.IsStreaming).to.equal(
-          expectedSignature[methodName].IsStreaming);
+        expect(methodInfo.isStreaming).to.exists;
+        expect(methodInfo.isStreaming).to.equal(
+          expectedSignature[methodName].isStreaming);
       }
     }
   });

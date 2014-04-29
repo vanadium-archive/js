@@ -110,7 +110,7 @@ describe('Cache Service', function() {
 
   it('Should get an exception calling non-existing methods', function() {
     var fn = function() {
-      cacheService.SomeNonExistingMethod('bar');
+      cacheService.someNonExistingMethod('bar');
     };
 
     expect(fn).to.throw();
