@@ -11,7 +11,8 @@
   },
   "private": true,
   "dependencies": {
-    "ws": "~0.4.31"
+    "ws": "~0.4.31",
+    "es6-promise": "~0.1.1"
   },
   "devDependencies": {
     "grunt": "~0.4.2",
@@ -30,7 +31,6 @@
     "grunt-mkdir": "~0.1.1",
     "grunt-karma": "~0.6.2",
     "through": "~2.3.4",
-    "es6-promise": "~0.1.1",
     "karma-chai": "~0.1.0",
     "karma": "~0.10",
     "karma-mocha": "~0.1",
