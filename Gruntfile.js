@@ -301,8 +301,6 @@ module.exports = function(grunt) {
       // Set to no logging since logs interfere with xUnit result output
       grunt.testConfigs['LOG_LEVEL'] = 0;
 
-      grunt.config.set('browserName', 'Firefox');
-
       var testsToRun = ['subtask_runSpecTests', 'subtask_runIntegrationTests'];
       if (testType === 'specs') {
         testsToRun = ['subtask_runSpecTests']
