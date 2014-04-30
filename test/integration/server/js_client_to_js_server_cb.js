@@ -62,7 +62,7 @@ describe('Server and client in JS w/ callback', function() {
     }).then(function(endpoint) {
       expect(endpoint).to.exist;
       expect(endpoint).to.be.a('string');
-      expect(endpoint).to.have.string('@1@tcp@127.0.0.1');
+      expect(endpoint).to.have.string('@2@tcp@127.0.0.1');
 
       // Create a client to the returned endpoint
       client = veyron.newClient();

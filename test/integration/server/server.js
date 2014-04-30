@@ -32,7 +32,7 @@ describe('Server', function(done) {
       return server.publish('tv');
     });
 
-    return expect(endpoint).to.eventually.have.string('@1@tcp@127.0.0.1');
+    return expect(endpoint).to.eventually.have.string('@2@tcp@127.0.0.1');
   });
 
   it('Should get an endpoint after publish with callback', function(done) {
@@ -43,7 +43,7 @@ describe('Server', function(done) {
         done(e);
       } else {
         server.publish('tv', function publishDone(e, endpoint) {
-          expect(endpoint).to.have.string('@1@tcp@127.0.0.1');
+          expect(endpoint).to.have.string('@2@tcp@127.0.0.1');
           done();
         });
       }
@@ -59,7 +59,7 @@ describe('Server', function(done) {
       return server.publish('tv');
     });
 
-    return expect(endpoint).to.eventually.have.string('@1@tcp@127.0.0.1');
+    return expect(endpoint).to.eventually.have.string('@2@tcp@127.0.0.1');
   });
 
   it('Should be able to publish without registering anything', function() {
@@ -67,7 +67,7 @@ describe('Server', function(done) {
 
     var endpoint = server.publish('my/name/space');
 
-    return expect(endpoint).to.eventually.have.string('@1@tcp@127.0.0.1');
+    return expect(endpoint).to.eventually.have.string('@2@tcp@127.0.0.1');
   });
 
   it('Should get an error registering the same name twice', function() {
@@ -87,7 +87,7 @@ describe('Server', function(done) {
       return server.publish('tv');
     });
 
-    return expect(endpoint).to.eventually.have.string('@1@tcp@127.0.0.1');
+    return expect(endpoint).to.eventually.have.string('@2@tcp@127.0.0.1');
   });
 
   //TODO(aghassemi) tests and implementation for:
