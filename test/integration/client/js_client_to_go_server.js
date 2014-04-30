@@ -13,7 +13,7 @@
  * Only the public 'veyron' module is available for integration tests.
  * All globals (veyron, expect, testconfig) are injected by test runners.
  */
-describe('Cache Service', function() {
+describe('client/js_client_to_go_server.js: Cache Service', function() {
 
   var cacheService;
   var client;

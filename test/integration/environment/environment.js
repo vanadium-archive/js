@@ -6,7 +6,7 @@
  * Only the public "veyron" module is available for integration tests.
  * All globals (veyron, expect) are injected by test runners.
  */
-describe('Environment', function() {
+describe('environment/environment.js:', function() {
 
   var veyron = new Veyron(TestHelper.veyronConfig);
   var environment = veyron.getEnvironment();

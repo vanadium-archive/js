@@ -10,7 +10,8 @@
  */
 'use strict';
 
-describe('Signature, when service is in GO, getServiceSignature', function() {
+describe('client/signature_go_server.js: ' +
+  'Signature, when service is in GO, getServiceSignature', function() {
 
   var expectedSignature = {
     'get': {
