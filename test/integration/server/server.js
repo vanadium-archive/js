@@ -11,8 +11,6 @@
  */
 describe('Server', function(done) {
 
-  var veyron = new Veyron(TestHelper.veyronConfig);
-
   var greeter = {
     sayHi: function() {
       console.log('Hello');
@@ -26,6 +24,8 @@ describe('Server', function(done) {
   };
 
   it('Should get an endpoint after publish', function() {
+    var veyron = new Veyron(TestHelper.veyronConfig);
+
     var server = veyron.newServer();
 
     var endpoint = server.register('Hi', greeter).then(function() {
@@ -36,6 +36,7 @@ describe('Server', function(done) {
   });
 
   it('Should get an endpoint after publish with callback', function(done) {
+    var veyron = new Veyron(TestHelper.veyronConfig);
     var server = veyron.newServer();
 
     server.register('Hi', greeter, function registerDone(e) {
@@ -51,6 +52,7 @@ describe('Server', function(done) {
   });
 
   it('Should be able to register multiple services', function() {
+    var veyron = new Veyron(TestHelper.veyronConfig);
     var server = veyron.newServer();
 
     var endpoint = server.register('Hi', greeter).then(function() {
@@ -63,6 +65,7 @@ describe('Server', function(done) {
   });
 
   it('Should be able to publish without registering anything', function() {
+    var veyron = new Veyron(TestHelper.veyronConfig);
     var server = veyron.newServer();
 
     var endpoint = server.publish('my/name/space');
@@ -71,6 +74,7 @@ describe('Server', function(done) {
   });
 
   it('Should get an error registering the same name twice', function() {
+    var veyron = new Veyron(TestHelper.veyronConfig);
     var server = veyron.newServer();
 
     var endpoint = server.register('Hi', greeter).then(function() {
@@ -81,6 +85,7 @@ describe('Server', function(done) {
   });
 
   it('Should succeed publishing the same name twice', function() {
+    var veyron = new Veyron(TestHelper.veyronConfig);
     var server = veyron.newServer();
 
     var endpoint = server.publish('tv').then(function() {
