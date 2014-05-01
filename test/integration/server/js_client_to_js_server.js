@@ -10,53 +10,20 @@
  * All globals (veyron, expect, testconfig) are injected by test runners.
  */
 
-describe('Server and client in JS', function() {
+function runJSClientServerTests(cacheDefinition) {
   var client;
   var cacheServiceClient;
   var cacheServiceClientUsingEndpoint;
   before(function(done) {
 
     // Our cache service
-    var cache = {
-      cacheMap: {},
-      set: function(key, value) {
-        this.cacheMap[key] = value;
-      },
-      get: function(key) {
-        var def = new Veyron.Deferred();
-        var val = this.cacheMap[key];
-        if (val === undefined) {
-          def.reject('unknown key');
-        } else {
-          def.resolve(val);
-        }
-        return def.promise;
-      } ,
-      multiGet: function($stream) {
-        var def = new Veyron.Deferred();
-        $stream.promise.then(function() {
-          def.resolve();
-        }).catch (function(e) {
-          def.reject(e);
-        });
-        var self = this;
-        $stream.onmessage = function(key) {
-          var val = self.cacheMap[key];
-          if (val === undefined) {
-            def.reject('unknown key');
-          }
-          $stream.send(val);
-        };
 
-        return def.promise;
-      }
-    };
 
     var veyron = new Veyron(TestHelper.veyronConfig);
     // Create server object and publish the service
     var server = veyron.newServer();
 
-    server.register('Cache', cache).then(function() {
+    server.register('Cache', cacheDefinition).then(function() {
       return server.publish('myCache');
     }).then(function(endpoint) {
       expect(endpoint).to.exist;
@@ -171,4 +138,77 @@ describe('Server and client in JS', function() {
   // Ensure communication fails when service stops
   // Publishing to one proxy and calling to a different one
 
+}
+
+describe('Server and client in JS', function() {
+  var cache = {
+    cacheMap: {},
+    set: function(key, value) {
+      this.cacheMap[key] = value;
+    },
+    get: function(key) {
+      var def = new Veyron.Deferred();
+      var val = this.cacheMap[key];
+      if (val === undefined) {
+        def.reject('unknown key');
+      } else {
+        def.resolve(val);
+      }
+      return def.promise;
+    } ,
+    multiGet: function($stream) {
+      var def = new Veyron.Deferred();
+      $stream.promise.then(function() {
+        def.resolve();
+      }).catch (function(e) {
+        def.reject(e);
+      });
+      var self = this;
+      $stream.onmessage = function(key) {
+        var val = self.cacheMap[key];
+        if (val === undefined) {
+          def.reject('unknown key');
+        }
+        $stream.send(val);
+      };
+
+      return def.promise;
+    }
+  };
+
+  runJSClientServerTests(cache);
+});
+
+describe('Server and client in JS w/ callback', function() {
+  var cache = {
+    cacheMap: {},
+    set: function(key, value) {
+      this.cacheMap[key] = value;
+    },
+    get: function(key, $callback) {
+      var val = this.cacheMap[key];
+      if (val === undefined) {
+        $callback('unknown key');
+      } else {
+        $callback(null, val);
+      }
+    } ,
+    multiGet: function($callback, $stream) {
+      $stream.promise.then(function() {
+        $callback(null);
+      }).catch (function(e) {
+        $callback(e);
+      });
+      var self = this;
+      $stream.onmessage = function(key) {
+        var val = self.cacheMap[key];
+        if (val === undefined) {
+          $callback(new Error('unknown key'));
+        }
+        $stream.send(val);
+      };
+    }
+  };
+
+  runJSClientServerTests(cache);
 });
