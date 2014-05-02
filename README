@@ -6,26 +6,30 @@ NodeJS and browser environments enabling development of Veyron-based application
 
 # Building and testing
 
-"Make: can be used to build and test the project. Make delegates all tasks to
-Grunt behind the scene.
+The vgrunt script is essentially grunt, but runs npm install beforehand to
+ensure that the npm packages are up to date
 
 -Builds and tests everything
-$make
+./vgrunt or ./vgrunt test
 
 -Builds
-$make build
+./vgrunt build
 
--Builds and runs all automated tests
-$make test
+-Run a specific test
+./vgrunt test --grep "test name" --tests node_unit,browser_unit
+or equivalently
+./vgrunt test --grep "test name" --tests unit
+also can just run node tests
+./vgrunt test --tests node
 
 -Runs a HTTP server and opens the HTML test runners in the browser.
 -It does so by keeping the Karma test runner and Chrome open, Karma has a "debug"
 -button on the test runner that can be used to debug tests. Karma writes debug
 -logs to the console in the browser.
-$make debug
+./vgrunt debug_browser --tests browser_integration
 
 -Removes all build and testing artifacts
-$make clean
+./vgrunt clean
 
 
 # Summary

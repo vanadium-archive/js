@@ -1,6 +1,10 @@
 /**
  * Grunt modules
  * @param {object} grunt the Grunt module
+ *
+ * Options:
+ * --tests=node_unit,browser_integration,... - run specific tests (default: all)
+ * --grep=test_name - run the tests matching the specified pattern
  */
 
 var merge = require('merge');
@@ -50,10 +54,18 @@ module.exports = function(grunt) {
       dist: [
         '<%= dirs.dist %>'
       ],
+      // Clean docs
+      docs: [
+        '<%= dirs.docs %>'
+      ],
       // Clean logs
       logs: [
         '<%= dirs.logs %>'
-      ]
+      ],
+      // Clean node modules
+      mode_modules: [
+        'node_modules'
+      ],
     },
 
     jshint: {
@@ -129,6 +141,7 @@ module.exports = function(grunt) {
       // Spec tests
       options: {
         reporter: '<%= reporter %>',
+        grep: grunt.option('grep'), // only run tests matching pattern
         clearRequireCache: true,
         require: [
           'test/node_init.js',
@@ -164,7 +177,8 @@ module.exports = function(grunt) {
         frameworks: ['mocha', 'chai', 'chai-as-promised'],
         basePath: '',
         mocha: {
-          ui: 'tdd'
+          ui: 'tdd',
+          grep: grunt.option('grep') // only run tests matching pattern
         }
       },
       // Spec tests
@@ -238,12 +252,6 @@ module.exports = function(grunt) {
    */
 
   // Helper tasks, not to be run directly. Only referenced from Main tasks
-  grunt.registerTask('subtask_runSpecTests', [
-    'subtask_writeTestConfigFile',
-    'nodeTest:specs',
-    'browserTest:specs'
-  ]);
-
   grunt.registerTask('subtask_runNodeIntegrationTests', [
     'subtask_setupIntegrationTestEnvironment',
     'subtask_writeTestConfigFile',
@@ -256,13 +264,6 @@ module.exports = function(grunt) {
     'subtask_writeTestConfigFile',
     'browserTest:integration',
     'subtask_teardownIntegrationTestEnvironment'
-  ]);
-
-  // Browser and node integration tests do their own setup and tear down
-  // otherwise states would be shared
-  grunt.registerTask('subtask_runIntegrationTests', [
-    'subtask_runNodeIntegrationTests',
-    'subtask_runBrowserIntegrationTests'
   ]);
 
   grunt.registerTask('subtask_buildForBrowser', [
@@ -278,9 +279,53 @@ module.exports = function(grunt) {
     ['clean', 'jshint', 'mkdir:all', 'subtask_buildForBrowser', 'clean:temp']
   );
 
-  grunt.registerTask(
-    'test',
-    ['build', 'subtask_runSpecTests', 'subtask_runIntegrationTests']
+  grunt.registerTask('test', 'Runs the tests', function() {
+      grunt.task.run('build');
+
+      var allTests = ['node_unit', 'browser_unit', 'node_integration',
+      'browser_integration'];
+
+      var testStr = grunt.option('tests');
+
+      var hasSubstrMatch = function(testNames, toMatch) {
+        for (var testIndex in testNames) {
+          if (toMatch.indexOf(testNames[testIndex]) !== -1) {
+            return true;
+          }
+        }
+        return false;
+      }
+
+      var tests = allTests;
+      if (testStr !== undefined) {
+        tests = testStr.split(',');
+        var foundMatch = false;
+        for (var atIndex in allTests) {
+          if (hasSubstrMatch(tests, allTests[atIndex])) {
+            foundMatch = true;
+            break;
+          }
+        }
+        if (!foundMatch) {
+          grunt.fail.warn('Tasks did not match any of: ' + allTests);
+        }
+      }
+
+      if (hasSubstrMatch(tests, 'node_unit')) {
+        grunt.task.run('subtask_writeTestConfigFile');
+        grunt.task.run('nodeTest:specs');
+      }
+      if (hasSubstrMatch(tests, 'browser_unit')) {
+        grunt.task.run('subtask_writeTestConfigFile');
+        grunt.task.run('browserTest:specs');
+      }
+      if (hasSubstrMatch(tests, 'node_integration')) {
+        grunt.task.run('subtask_runNodeIntegrationTests');
+      }
+      if (hasSubstrMatch(tests, 'browser_integration')) {
+        grunt.task.run('subtask_runBrowserIntegrationTests');
+      }
+    }
   );
 
   grunt.registerTask(
@@ -288,26 +333,20 @@ module.exports = function(grunt) {
     ['test']
   );
 
-  grunt.task.registerTask(
-    'debug', 'Runs Karma in continuous mode so it can be debugged', function() {
+  grunt.registerTask('debug_browser',
+    'Runs tests in a browser window that remains open for debugging',
+    function() {
       grunt.config.set('browserTestSingleRun', false);
       grunt.task.run('test');
-    }
-  );
+  });
 
   grunt.task.registerTask(
-    'jenkins', 'Runs the tests outputting xml test results that jenkins can understand', function(testType) {
+    'jenkins_tests', 'Runs the tests outputting xml test results that jenkins can understand', function(testType) {
       grunt.config.set('reporter', 'xunit');
       // Set to no logging since logs interfere with xUnit result output
       grunt.testConfigs['LOG_LEVEL'] = 0;
 
-      var testsToRun = ['subtask_runSpecTests', 'subtask_runIntegrationTests'];
-      if (testType === 'specs') {
-        testsToRun = ['subtask_runSpecTests']
-      } else if (testType === 'integration') {
-        testsToRun = ['subtask_runIntegrationTests']
-      }
-      grunt.task.run(testsToRun);
+      grunt.task.run('test');
     }
   );
 
