@@ -46,21 +46,23 @@ module.exports = function(grunt) {
 
     // Clean tasks
     clean: {
-      // Clean build artifacts
-      temp: [
-        '<%= dirs.temp %>'
-      ],
-      // Clean dist
-      dist: [
-        '<%= dirs.dist %>'
-      ],
+      build: {
+        // Clean build artifacts
+        temp: [
+          '<%= dirs.temp %>'
+        ],
+        // Clean dist
+        dist: [
+          '<%= dirs.dist %>'
+        ],
+        // Clean logs
+        logs: [
+          '<%= dirs.logs %>'
+        ],
+      },
       // Clean docs
       docs: [
         '<%= dirs.docs %>'
-      ],
-      // Clean logs
-      logs: [
-        '<%= dirs.logs %>'
       ],
       // Clean node modules
       mode_modules: [
@@ -276,7 +278,8 @@ module.exports = function(grunt) {
   // or directly with Grunt. ( e.g. grunt test )
   grunt.registerTask(
     'build',
-    ['clean', 'jshint', 'mkdir:all', 'subtask_buildForBrowser', 'clean:temp']
+    ['clean:build', 'jshint', 'mkdir:all', 'subtask_buildForBrowser',
+    'clean:build:temp']
   );
 
   grunt.registerTask('test', 'Runs the tests', function() {
