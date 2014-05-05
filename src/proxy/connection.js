@@ -102,8 +102,8 @@ ProxyConnection.prototype.getWebSocket = function() {
         break;
       case IncomingPayloadType.STREAM_RESPONSE:
         try {
-          if (def.onmessage) {
-            def.onmessage(payload.message);
+          if (def.stream) {
+            def.stream._queueRead(payload.message);
           }
           return;
           // Return so we don't remove the promise from the queue.
@@ -112,16 +112,27 @@ ProxyConnection.prototype.getWebSocket = function() {
         }
         break;
       case IncomingPayloadType.ERROR_RESPONSE:
-        def.reject(ErrorConversion.toJSerror(payload.message));
+        var err = ErrorConversion.toJSerror(payload.message);
+        if (def.stream) {
+          def.stream.emit('error', err);
+        }
+        def.reject(err);
         break;
       case IncomingPayloadType.INVOKE_REQUEST:
         self.handleIncomingInvokeRequest(message.id, payload.message);
         return;
       case IncomingPayloadType.STREAM_CLOSE:
+        if (def && def.stream) {
+          def.stream._queueRead(null);
+        }
         def.resolve();
         return;
       default:
         def.reject(new Error('Received unknown response type from wspr'));
+    }
+    // If there is a stream associated with this request, then close it.
+    if (def.stream) {
+      def.stream._queueRead(null);
     }
     delete self.outstandingRequests[message.id];
   };
@@ -145,13 +156,12 @@ ProxyConnection.prototype.getWebSocket = function() {
 ProxyConnection.prototype.promiseInvokeMethod = function(name,
     methodName, mapOfArgs, numOutArgs, isStreaming, callback) {
   var def = new Deferred(callback);
-  var promise = def.promise;
 
   var streamingDeferred = null;
   if (isStreaming) {
     streamingDeferred = new Deferred();
-    def = new Stream(this.id, streamingDeferred.promise, callback);
-    promise = def;
+    def.stream = new Stream(this.id, streamingDeferred.promise, true);
+    def.promise.stream = def.stream;
   }
   var self = this;
   this.privateIdentityPromise.then(function(privateIdentity) {
@@ -170,7 +180,7 @@ ProxyConnection.prototype.promiseInvokeMethod = function(name,
     }
   );
 
-  return promise;
+  return def.promise;
 };
 
 /**
@@ -300,7 +310,7 @@ ProxyConnection.prototype.handleIncomingInvokeRequest = function(messageId,
     };
 
     var injections = {
-      '$stream' : new Stream(messageId, this.getWebSocket()),
+      '$stream' : new Stream(messageId, this.getWebSocket(), false),
       '$callback': cb,
       '$context': context,
       '$suffix': context.suffix,
@@ -309,7 +319,9 @@ ProxyConnection.prototype.handleIncomingInvokeRequest = function(messageId,
 
     var variables = inject(args, metadata.injections, injections);
     if (variables.indexOf('$stream') !== -1) {
-      self.outstandingRequests[messageId] = injections['$stream'];
+      var def = new Deferred();
+      def.stream = injections['$stream'];
+      self.outstandingRequests[messageId] = def;
     }
 
     // Call the registered method on the requested service
@@ -364,20 +376,27 @@ ProxyConnection.prototype.sendInvokeRequestResult = function(messageId, value,
     errorStruct = ErrorConversion.toStandardErrorStruct(err);
   }
 
-  var responseData = {
-    'results' : results,
-    'err' : errorStruct
-  };
+  // If this is a streaming request, queue up the final response after all
+  // the other stream requests are done.
+  var def = this.outstandingRequests[messageId];
+  if (def && def.stream) {
+    def.stream.serverClose(value, errorStruct);
+  } else {
+    var responseData = {
+      results: results,
+      err: errorStruct
+    };
 
-  var responseDataJSON = JSON.stringify(responseData);
+    var responseDataJSON = JSON.stringify(responseData);
 
-  var body = JSON.stringify({ id: messageId,
-    data: responseDataJSON,
-    type: MessageType.RESPONSE });
+    var body = JSON.stringify({ id: messageId,
+      data: responseDataJSON,
+      type: MessageType.RESPONSE });
 
-  this.getWebSocket().then(function(websocket) {
-    websocket.send(body);
-  });
+    this.getWebSocket().then(function(websocket) {
+      websocket.send(body);
+    });
+  }
   delete this.outstandingRequests[messageId];
 };
 

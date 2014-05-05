@@ -71,7 +71,7 @@ function runJSClientServerTests(cacheDefinition) {
         var promise = cacheServiceClient.set('foo', 'bar');
         var thenGenerator = function(i) {
           return function() {
-            return cacheServiceClient.set('' + i, '' + (i + 1));
+            return cacheServiceClient.set(i.toString(), (i + 1).toString());
           };
         };
 
@@ -81,19 +81,24 @@ function runJSClientServerTests(cacheDefinition) {
 
         var nextNumber = 1;
         promise.then(function() {
-          var stream = cacheServiceClient.multiGet();
-          stream.onmessage = function(value) {
-            expect(value).to.equal('' + nextNumber);
-            nextNumber += 2;
-          };
+          var promise = cacheServiceClient.multiGet();
+          var stream = promise.stream;
+          stream.on('readable', function readable() {
+            var value = stream.read();
+            if (value) {
+              expect(value).to.equal(nextNumber.toString());
+              nextNumber += 2;
+            }
+          });
+          stream.read();
 
           // Now let's send some requests.
           for (var i = 0; i < 6; i += 2) {
-            stream.send('' + i);
+            stream.write(i.toString());
           }
 
-          stream.close();
-          return stream.promise;
+          stream.end();
+          return promise;
         }).then(function() {
           expect(nextNumber).to.equal(7);
           done();
@@ -155,29 +160,34 @@ describe('server/js_client_to_js_server.js: ' +
     } ,
     multiGet: function($stream) {
       var def = new Veyron.Deferred();
-      $stream.promise.then(function() {
+      $stream.on('end', function() {
         def.resolve();
-      }).catch (function(e) {
+      });
+
+      $stream.on('error', function(e) {
         def.reject(e);
       });
       var self = this;
-      $stream.onmessage = function(key) {
-        var val = self.cacheMap[key];
-        if (val === undefined) {
-          def.reject('unknown key');
+      $stream.on('readable', function readable() {
+        var key = $stream.read();
+        if (key !== null) {
+          var val = self.cacheMap[key];
+          if (val === undefined) {
+            def.reject('unknown key');
+          }
+          $stream.write(val);
         }
-        $stream.send(val);
-      };
-
+      });
+      $stream.read();
       return def.promise;
     }
   };
-
   runJSClientServerTests(cache);
 });
 
 describe('server/js_client_to_js_server.js: ' +
   'Server and client in JS w/ callback', function() {
+  // our cache service
   var cache = {
     cacheMap: {},
     set: function(key, value) {
@@ -192,19 +202,24 @@ describe('server/js_client_to_js_server.js: ' +
       }
     } ,
     multiGet: function($callback, $stream) {
-      $stream.promise.then(function() {
+      $stream.on('end', function close() {
         $callback(null);
-      }).catch (function(e) {
+      });
+      $stream.on('error', function error(e) {
         $callback(e);
       });
       var self = this;
-      $stream.onmessage = function(key) {
-        var val = self.cacheMap[key];
-        if (val === undefined) {
-          $callback(new Error('unknown key'));
+      $stream.on('readable', function() {
+        var key = $stream.read();
+        if (key !== null) {
+          var val = self.cacheMap[key];
+          if (val === undefined) {
+            $callback(new Error('unknown key'));
+          }
+          $stream.write(val);
         }
-        $stream.send(val);
-      };
+      });
+      $stream.read();
     }
   };
 

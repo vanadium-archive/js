@@ -4,7 +4,7 @@
 
 'use strict';
 
-var inherits = require('./inherits');
+var inherits = require('util').inherits;
 
 var vError = {};
 

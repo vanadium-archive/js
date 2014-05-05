@@ -2,8 +2,10 @@
  * @fileoverview Streaming RPC implementation on top of websockets.
  */
 
-var Deferred = require('./../lib/deferred');
 var MessageType = require('./message_type');
+var Duplex = require('stream').Duplex;
+var inherits = require('util').inherits;
+
 /*
  * A stream that allows sending and recieving data for a streaming rpc.  If
  * onmessage is set and a function, it will be called whenever there is data on.
@@ -15,58 +17,128 @@ var MessageType = require('./message_type');
  * @param {number} flowId flow id
  * @param {Promise} webSocketPromise Promise of a websocket connection when
  * it's established
- * @param {function} cb a callback to call when the stream has completed.
+ * @param {boolean} isClient if set, then this is the client stream.
  */
-var Stream = function(flowId, webSocketPromise, cb) {
-  // Call the deferred constructor.
-  Deferred.call(this, cb);
+var Stream = function(flowId, webSocketPromise, isClient) {
+  Duplex.call(this, { objectMode: true });
   this.flowId = flowId;
+  this.isClient = isClient;
   this.webSocketPromise = webSocketPromise;
   this.onmessage = null;
+
+  // The buffer of messages that will be passed to push
+  // when the internal buffer has room.
+  this.wsBuffer = [];
+
+  // If set, objects are directly written to the internal buffer
+  // rather than wsBuffer.
+  this.shouldQueue = false;
 };
 
-Stream.prototype = Object.create(Deferred.prototype);
-
-/**
- * Send data down the stream
- * @param {*} data the data to send to the other side.
- */
-Stream.prototype.send = function(data) {
-  var flowId = this.flowId;
-  this.webSocketPromise.then(function(websocket) {
-    websocket.send(JSON.stringify({
-      id: flowId,
-      data: JSON.stringify(data),
-      type: MessageType.STREAM_VALUE
-    }));
-  });
-};
+inherits(Stream, Duplex);
 
 /**
  * Closes the stream, telling the other side that there is no more data.
  */
-Stream.prototype.close = function() {
-  var flowId = this.flowId;
+Stream.prototype.clientClose = function() {
+  var object = {
+    id: this.flowId,
+    type: MessageType.STREAM_CLOSE
+  };
+  Duplex.prototype.write.call(this, object);
+};
+
+Stream.prototype.serverClose = function(value, err) {
+  var object = {
+    id: this.flowId,
+    type: MessageType.RESPONSE,
+    data: JSON.stringify({
+      results: [value || null],
+      err: err || null
+    })
+  };
+  Duplex.prototype.write.call(this, object);
+};
+
+/**
+ * Implements the _read method needed by those subclassing Duplex.
+ * The parameter passed in is ignored, since it doesn't really make
+ * sense in object mode.
+ */
+Stream.prototype._read = function() {
+  // On a call to read, copy any objects in the websocket buffer into
+  // the internal stream buffer.  If we exhaust the websocket buffer
+  // and still have more room in the internal buffer, we set shouldQueue
+  // so we directly write to the internal buffer.
+  var i = 0;
+  while (i < this.wsBuffer.length && this.push(this.wsBuffer[i])) {
+    ++i;
+  }
+  if (i > 0) {
+    this.wsBuffer = this.wsBuffer.splice(i);
+  }
+
+  this.shouldQueue = this.wsBuffer.length === 0;
+};
+
+/**
+ * Queue the object passed in for reading
+ */
+Stream.prototype._queueRead = function(object) {
+  if (this.shouldQueue) {
+    // If we have run into the limit of the internal buffer,
+    // update this.shouldQueue.
+    this.shouldQueue = this.push(object);
+  } else {
+    this.wsBuffer.push(object);
+  }
+};
+
+/**
+ * Writes an object to the stream.
+ * @param {*} chunk The data to write to the stream.
+ * @param {null} encoding ignored for object streams.
+ * @param {function} callback if set, the function to call when the write
+ * completes. 
+ * @return {boolean} Returns false if the write buffer is full.
+ */
+Stream.prototype.write = function(chunk, encoding, callback) {
+  var object = {
+    id: this.flowId,
+    data: JSON.stringify(chunk),
+    type: MessageType.STREAM_VALUE
+  };
+  return Duplex.prototype.write.call(this, object, encoding, callback);
+};
+
+Stream.prototype._write = function(chunk, encoding, callback) {
   this.webSocketPromise.then(function(websocket) {
-    websocket.send(JSON.stringify({
-      id: flowId,
-      type: MessageType.STREAM_CLOSE
-    }));
+    websocket.send(JSON.stringify(chunk));
+    callback();
   });
 };
 
 /**
- * Implements the PromiseA then function
+ * Writes an optional object to the stream and ends the stream.
+ * @param {*} chunk The data to write to the stream.
+ * @param {null} encoding ignored for object streams.
+ * @param {function} callback if set, the function to call when the write
+ * completes.
  */
-Stream.prototype.then = function() {
-  return this.promise.then.apply(this.promise, arguments);
-};
+Stream.prototype.end = function(chunk, encoding, callback) {
+  if (this.isClient) {
+    if (chunk !== undefined) {
+      this.write(chunk, encoding);
+    }
+    this.clientClose();
+  } else {
+    // We probably shouldn't allow direct calls to end, since we need
+    // a return value here, but if they are piping streams, the developer
+    // probably doesn't care about the return value.
+    this.serverClose();
+  }
 
-/**
- * Implements the PromiseA catch function
- */
-Stream.prototype.catch = function() {
-  return this.promise.catch.apply(this.promise, arguments);
+  Duplex.prototype.end.call(this, null, null, callback);
 };
 
 module.exports = Stream;

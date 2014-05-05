@@ -120,7 +120,7 @@ describe('client/js_client_to_go_server.js: Cache Service', function() {
     var promise = cacheService.set('foo', 'bar');
     var thenGenerator = function(i) {
       return function() {
-        return cacheService.set('' + i, '' + (i + 1));
+        return cacheService.set(i.toString(), (i + 1).toString());
       };
     };
 
@@ -130,52 +130,23 @@ describe('client/js_client_to_go_server.js: Cache Service', function() {
 
     var nextNumber = 1;
     promise.then(function() {
-      var stream = cacheService.multiGet();
-      stream.onmessage = function(value) {
-        expect(value).to.equal('' + nextNumber);
-        nextNumber += 2;
-      };
-
+      var promise = cacheService.multiGet();
+      var stream = promise.stream;
+      stream.on('readable', function() {
+        var value = stream.read();
+        if (value) {
+          expect(value).to.equal(nextNumber.toString());
+          nextNumber += 2;
+        }
+      });
+      stream.read();
       // Now let's send some requests.
       for (var i = 0; i < 10; i += 2) {
-        stream.send('' + i);
+        stream.write(i.toString());
       }
 
-      stream.close();
-      return stream.promise;
-    }).then(function() {
-      expect(nextNumber).to.equal(11);
-      done();
-    }).catch (done);
-  });
-
-  it('Should be able to treat stream as a promise', function(done) {
-    var promise = cacheService.set('foo', 'bar');
-    var thenGenerator = function(i) {
-      return function() {
-        cacheService.set('' + i, '' + (i + 1));
-      };
-    };
-
-    for (var i = 0; i < 10; i++) {
-      promise = promise.then(thenGenerator(i));
-    }
-
-    var nextNumber = 1;
-    promise.then(function() {
-      var stream = cacheService.multiGet();
-      stream.onmessage = function(value) {
-        expect(value).to.equal('' + nextNumber);
-        nextNumber += 2;
-      };
-
-      // Now let's send some requests.
-      for (var i = 0; i < 10; i += 2) {
-        stream.send('' + i);
-      }
-
-      stream.close();
-      return stream;
+      stream.end();
+      return promise;
     }).then(function() {
       expect(nextNumber).to.equal(11);
       done();
@@ -185,13 +156,18 @@ describe('client/js_client_to_go_server.js: Cache Service', function() {
   it('Should propogate errors from onmessage callback', function(done) {
     var promise = cacheService.set('foo', 'bar');
     promise.then(function() {
-      var stream = cacheService.multiGet();
-      stream.onmessage = function(value) {
-        value();
-      };
-      stream.send('foo');
-      stream.close();
-      return stream.promise;
+      var promise = cacheService.multiGet();
+      var stream = promise.stream;
+      stream.on('readable', function readable() {
+        var value = stream.read();
+        if (value) {
+          value();
+        }
+      });
+      stream.read();
+      stream.write('foo');
+      stream.end();
+      return promise;
     }).then(function() {
       done('Success should not have been called');
     }).catch (function(e) {

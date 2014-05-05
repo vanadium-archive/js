@@ -31,7 +31,7 @@ module.exports = function(grunt) {
       var dest = this.data.dest;
 
       var options = {
-        builtins: false, // Do not include any of the core libraries
+        builtins: true,  // We browserify builtins for stream support.
         entries: [] // Files to transpile, will be populated later
       };
 
