@@ -120,7 +120,7 @@ describe('client/js_client_to_go_server.js: Cache Service', function() {
     var promise = cacheService.set('foo', 'bar');
     var thenGenerator = function(i) {
       return function() {
-        cacheService.set('' + i, '' + (i + 1));
+        return cacheService.set('' + i, '' + (i + 1));
       };
     };
 

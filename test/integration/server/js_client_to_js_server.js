@@ -71,7 +71,7 @@ function runJSClientServerTests(cacheDefinition) {
         var promise = cacheServiceClient.set('foo', 'bar');
         var thenGenerator = function(i) {
           return function() {
-            cacheServiceClient.set('' + i, '' + (i + 1));
+            return cacheServiceClient.set('' + i, '' + (i + 1));
           };
         };
 
