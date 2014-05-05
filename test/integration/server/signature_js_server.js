@@ -9,7 +9,8 @@
  * Only the public 'veyron' module is available for integration tests.
  * All globals (veyron, expect, testconfig) are injected by test runners.
  */
-describe('Signature, when service is in JS getServiceSignature', function() {
+describe('server/signature_js_server.js: ' +
+  'Signature, when service is in JS getServiceSignature', function() {
 
   var expectedSignature = {
     'get': {

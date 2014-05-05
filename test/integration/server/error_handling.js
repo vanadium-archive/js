@@ -10,7 +10,7 @@
  * All globals (veyron, expect, testconfig) are injected by test runners.
  */
 
-describe('Service in JS', function() {
+describe('server/error_handling.js: Service in JS', function() {
 
   var errMessage = 'failure';
   var error = new Error(errMessage);

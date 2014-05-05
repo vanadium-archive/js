@@ -9,7 +9,7 @@
  * Only the public "veyron" module is available for integration tests.
  * All globals (veyron, expect, testconfig) are injected by test runners.
  */
-describe('Server', function(done) {
+describe('server/server.js: Server', function(done) {
 
   var greeter = {
     sayHi: function() {

@@ -10,7 +10,7 @@
  * All globals (veyron, expect, testconfig) are injected by test runners.
  */
 
-describe('Service function in JS', function() {
+describe('server/context_injection.js: Service function in JS', function() {
   var expectedContext = {
     name: 'b/suf',
     suffix : 'suf'

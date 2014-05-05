@@ -15,10 +15,6 @@ function runJSClientServerTests(cacheDefinition) {
   var cacheServiceClient;
   var cacheServiceClientUsingEndpoint;
   before(function(done) {
-
-    // Our cache service
-
-
     var veyron = new Veyron(TestHelper.veyronConfig);
     // Create server object and publish the service
     var server = veyron.newServer();
@@ -140,7 +136,8 @@ function runJSClientServerTests(cacheDefinition) {
 
 }
 
-describe('Server and client in JS', function() {
+describe('server/js_client_to_js_server.js: ' +
+  'Server and client in JS', function() {
   var cache = {
     cacheMap: {},
     set: function(key, value) {
@@ -179,7 +176,8 @@ describe('Server and client in JS', function() {
   runJSClientServerTests(cache);
 });
 
-describe('Server and client in JS w/ callback', function() {
+describe('server/js_client_to_js_server.js: ' +
+  'Server and client in JS w/ callback', function() {
   var cache = {
     cacheMap: {},
     set: function(key, value) {

@@ -9,7 +9,7 @@
  * Only the public "veyron" module is available for integration tests.
  * All globals (veyron, expect, testconfig) are injected by test runners.
  */
-describe('Error Thrower', function() {
+describe('client/error_handling.js: Error Thrower', function() {
 
   var service;
   beforeEach(function(done) {
