@@ -4,7 +4,6 @@
 
 'use strict';
 
-var Environment = require('./environment/environment');
 var ProxyConnection = require('./proxy/connection');
 var Server = require('./ipc/server');
 var Client = require('./ipc/client');
@@ -69,15 +68,6 @@ Veyron.prototype.newServer = function() {
  */
 Veyron.prototype.newClient = function() {
   return new Client(this._getProxyConnection());
-};
-
-/**
- * Gets the current runtime environment.
- * @return {Environment} Object representing the runtime environment including
- * type ( e.g. Browser, NodeJS ), capabilities and a description.
- */
-Veyron.prototype.getEnvironment = function() {
-  return Environment;
 };
 
 /**
