@@ -68,19 +68,15 @@ function runJSClientServerTests(cacheDefinition) {
 
   it('Should be able to invoke streaming methods after the service is ' +
       'published', function(done) {
-        var promise = cacheServiceClient.set('foo', 'bar');
-        var thenGenerator = function(i) {
-          return function() {
-            return cacheServiceClient.set(i.toString(), (i + 1).toString());
-          };
-        };
-
-        for (var i = 0; i < 6; i++) {
-          promise = promise.then(thenGenerator(i));
+        var promises = [];
+        promises.push(cacheServiceClient.set('foo', 'bar'));
+        for (var i = 0; i < 10; ++i) {
+          promises.push(
+            cacheServiceClient.set(i.toString(), (i + 1).toString()));
         }
 
         var nextNumber = 1;
-        promise.then(function() {
+        Veyron.Promise.all(promises).then(function() {
           var promise = cacheServiceClient.multiGet();
           var stream = promise.stream;
           stream.on('readable', function readable() {

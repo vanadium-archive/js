@@ -117,19 +117,15 @@ describe('client/js_client_to_go_server.js: Cache Service', function() {
   });
 
   it('Should be able to do streaming gets and sets', function(done) {
-    var promise = cacheService.set('foo', 'bar');
-    var thenGenerator = function(i) {
-      return function() {
-        return cacheService.set(i.toString(), (i + 1).toString());
-      };
-    };
-
-    for (var i = 0; i < 10; i++) {
-      promise = promise.then(thenGenerator(i));
+    var promises = [];
+    promises.push(cacheService.set('foo', 'bar'));
+    for (var i = 0; i < 10; ++i) {
+      promises.push(
+        cacheService.set(i.toString(), (i + 1).toString()));
     }
 
     var nextNumber = 1;
-    promise.then(function() {
+    Veyron.Promise.all(promises).then(function() {
       var promise = cacheService.multiGet();
       var stream = promise.stream;
       stream.on('readable', function() {
