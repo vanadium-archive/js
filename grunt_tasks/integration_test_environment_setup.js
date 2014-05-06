@@ -54,7 +54,7 @@ module.exports = function(grunt) {
     }
 
     var veyron_proxy_process = spawn(VEYRON_PROXY_BIN,
-      ['-log_dir=' + LOGS_DIR, '-addr=127.0.0.1:' + VEYRON_PROXY_PORT]);
+      ['-log_dir=' + LOGS_DIR, '-address=127.0.0.1:' + VEYRON_PROXY_PORT]);
     veyron_proxy_process.title = 'Veyron Proxy';
     runningChildProcesses.push(veyron_proxy_process);
 
