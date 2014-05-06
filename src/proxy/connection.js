@@ -13,6 +13,8 @@ var Deferred = require('./../lib/deferred');
 var Promise = require('./../lib/promise');
 var vLog = require('./../lib/vlog');
 
+// Cache the service signatures for one hour.
+var BIND_CACHE_TTL = 3600 * 1000;
 
 /**
  * A client for the veyron service using websockets. Connects to the veyron wspr
@@ -31,6 +33,7 @@ function ProxyConnection(url, privateIdentityPromise) {
   this.outstandingRequests = {};
   this.currentWebSocketPromise;
   this.servers = {};
+  this.bindCache = {};
 }
 
 /**
@@ -439,17 +442,28 @@ ProxyConnection.prototype.publishServer = function(name, server, callback) {
  * @return {Promise} Signature of the service in JSON format
  */
 ProxyConnection.prototype.getServiceSignature = function(name) {
+  var cachedEntry = this.bindCache[name];
+  var now = new Date();
+  if (cachedEntry && now - cachedEntry.fetched < BIND_CACHE_TTL) {
+    return Promise.cast(cachedEntry.signature);
+  }
 
   var def = new Deferred();
 
   var self = this;
+  def.promise.then(function(signature) {
+    self.bindCache[name] = {
+      signature: signature,
+      fetched: now
+    };
+  });
   this.privateIdentityPromise.then(function(privateIdentity) {
     var messageJSON = {
       'name': name,
       'privateId': privateIdentity
     };
     var message = JSON.stringify(messageJSON);
-
+    
     // Send the get signature request to the proxy
     self.sendRequest(message, MessageType.SIGNATURE, def);
   }, function(reason) {
