@@ -1,6 +1,6 @@
 #!/bin/bash
 
-PATH=./node_modules/.bin:$VEYRON_ENV/cout/node/bin:$PATH
+PATH=./node_modules/.bin:$VEYRON_ROOT/environment/cout/node/bin:$PATH
 
 npm install
 grunt $@
