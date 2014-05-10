@@ -28,7 +28,7 @@ module.exports = function(grunt) {
 
     // Constants
     // Binary location of wspr and other processes to run
-    var VEYRON_BIN_DIR = path.resolve('../../v/bin');
+    var VEYRON_BIN_DIR = path.resolve('../../go/bin');
     var VEYRON_PROXY_BIN = VEYRON_BIN_DIR + '/proxy';
     var WSPR_BIN = VEYRON_BIN_DIR + '/wsprd';
     var IDENTITYD_BIN = VEYRON_BIN_DIR + '/identityd';
