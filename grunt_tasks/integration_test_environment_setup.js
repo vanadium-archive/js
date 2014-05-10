@@ -29,7 +29,7 @@ module.exports = function(grunt) {
     // Constants
     // Binary location of wspr and other processes to run
     var VEYRON_BIN_DIR = path.resolve('../../go/bin');
-    var VEYRON_PROXY_BIN = VEYRON_BIN_DIR + '/proxy';
+    var VEYRON_PROXY_BIN = VEYRON_BIN_DIR + '/proxyd';
     var WSPR_BIN = VEYRON_BIN_DIR + '/wsprd';
     var IDENTITYD_BIN = VEYRON_BIN_DIR + '/identityd';
     var SAMPLE_GO_SERVICE_BIN = VEYRON_BIN_DIR + '/sampled';
