@@ -1,5 +1,11 @@
 #!/bin/bash
 
+if [ -z "$VEYRON_ROOT" ]; then
+  echo "No VEYRON_ROOT found!"
+  echo "Please set VEYRON_ROOT to the location of the veyron project root and re-run."
+  exit 1
+fi
+
 PATH=./node_modules/.bin:$VEYRON_ROOT/environment/cout/node/bin:$PATH
 
 npm install
