@@ -4,10 +4,37 @@
  * @param {object} grunt the Grunt module
  */
 module.exports = function(grunt) {
-
   // List of processes we have spawned so we can kill them on teardown
   var runningChildProcesses = [];
   var cleaningUp;
+
+  var numProcessesWaitingToStart;
+
+  var resetNumWaitingProcesses = function() {
+    // There are five processes that need to be started:
+    // the proxy, wspr, mounttable, identity, and the sample server
+    numProcessesWaitingToStart = 5;
+  }
+  var addListeners = function(done, runningProcess) {
+    var stderr = '';
+    runningProcess.stderr.once('data', function() {
+      numProcessesWaitingToStart--;
+      if (numProcessesWaitingToStart === 0) {
+        done(true);
+      }
+    });
+    runningProcess.stderr.on('data', function(d) {
+      stderr += d;
+      grunt.log.debug(d);
+    });
+    runningProcess.on('exit', function (code) {
+      if (!cleaningUp) {
+        fail(runningProcess.title +
+          ' crashed before tests finish with code: ' + code +
+          ' here is the stderr:\n' + stderr);
+      }
+     });
+  };
 
   /**
    * Setups the required environment for integration testing such as
@@ -19,8 +46,11 @@ module.exports = function(grunt) {
     var fs = require('fs');
     var path = require('path');
 
+    resetNumWaitingProcesses();
     // Indicate this is a async grunt task
     var done = this.async();
+        
+    var boundAddListeners = addListeners.bind(undefined, done);
 
     // Reset state
     runningChildProcesses = [];
@@ -30,6 +60,7 @@ module.exports = function(grunt) {
     // Binary location of wspr and other processes to run
     var VEYRON_BIN_DIR = path.resolve('../../go/bin');
     var VEYRON_PROXY_BIN = VEYRON_BIN_DIR + '/proxyd';
+    var MOUNTTABLE_BIN = VEYRON_BIN_DIR + '/mounttabled';
     var WSPR_BIN = VEYRON_BIN_DIR + '/wsprd';
     var IDENTITYD_BIN = VEYRON_BIN_DIR + '/identityd';
     var SAMPLE_GO_SERVICE_BIN = VEYRON_BIN_DIR + '/sampled';
@@ -53,26 +84,61 @@ module.exports = function(grunt) {
       fail(errorMessage);
     }
 
+    var basicEnv = {
+      VEYRON_IDENTITY: process.env.IDENTITY_FILE
+    };
+    var mounttable_process = spawn(MOUNTTABLE_BIN,
+      ['-log_dir=' + LOGS_DIR], {
+        env: basicEnv
+      });
+    mounttable_process.title = 'MountTable';
+    var endpointRe = /@.*@@\S+/;
+    var mounttableEndpoint = '';
+    mounttable_process.stderr.on('data', function(data) {
+      var string = data.toString();
+      if (mounttableEndpoint !== '') {
+        return;
+      }
+      var match = string.match(endpointRe);
+      if (!match) {
+        return
+      }
+      mounttableEndpoint = match[0];
+      var envWithMount = {
+        VEYRON_IDENTITY: process.env.IDENTITY_FILE,
+        MOUNTTABLE_ROOT: '/' + mounttableEndpoint,
+      };
+      // Run wspr
+      var wspr_process = spawn(WSPR_BIN,
+        ['-v=3', '-vv=3', '-log_dir=' + LOGS_DIR, '-port=' + WSPR_PORT,
+         '-vproxy=127.0.0.1:' + VEYRON_PROXY_PORT ], {
+          env: envWithMount
+        });
+      wspr_process.title = 'WSPR';
+      runningChildProcesses.push(wspr_process);
+      boundAddListeners(wspr_process);
+    });
+
+    runningChildProcesses.push(mounttable_process);
     var veyron_proxy_process = spawn(VEYRON_PROXY_BIN,
-      ['-log_dir=' + LOGS_DIR, '-address=127.0.0.1:' + VEYRON_PROXY_PORT]);
+      ['-log_dir=' + LOGS_DIR, '-address=127.0.0.1:' + VEYRON_PROXY_PORT], {
+        env: basicEnv
+      });
     veyron_proxy_process.title = 'Veyron Proxy';
     runningChildProcesses.push(veyron_proxy_process);
 
-    // Run wspr
-    var wspr_process = spawn(WSPR_BIN,
-      ['-v=3', '-vv=3', '-log_dir=' + LOGS_DIR, '-port=' + WSPR_PORT,
-       '-vproxy=127.0.0.1:' + VEYRON_PROXY_PORT ]);
-    wspr_process.title = 'WSPR';
-    runningChildProcesses.push(wspr_process);
-
     // Run identityd
-    var identityd_process = spawn(IDENTITYD_BIN, ['-port=' + IDENTITYD_PORT]);
+    var identityd_process = spawn(IDENTITYD_BIN, ['-port=' + IDENTITYD_PORT], {
+      env: basicEnv
+    });
     identityd_process.title = 'Identity Server';
     runningChildProcesses.push(identityd_process);
 
     // Run the sample go service proxy, we use the sampled example service
     var sample_service_process = spawn(SAMPLE_GO_SERVICE_BIN,
-      ['-v=3', '-vv=3', '-log_dir=' + LOGS_DIR]);
+      ['-v=3', '-vv=3', '-log_dir=' + LOGS_DIR], {
+        env: basicEnv
+      });
     sample_service_process.title = 'Sampled';
     runningChildProcesses.push(sample_service_process);
 
@@ -100,24 +166,7 @@ module.exports = function(grunt) {
       testConfigs['SAMPLE_VEYRON_GO_SERVICE_ENDPOINT'] = endpoint;
     });
 
-    runningChildProcesses.forEach(function(runningProcess) {
-      var stderr = '';
-      runningProcess.stderr.on('data', function(d) {
-        stderr += d;
-        grunt.log.debug(d);
-      });
-      runningProcess.on('exit', function (code) {
-        if (!cleaningUp) {
-          fail(runningProcess.title +
-            ' crashed before tests finish with code: ' + code +
-            ' here is the stderr:\n' + stderr);
-        }
-       });
-    });
-
-    // Return with success, allowing sometime for proxy to fully start
-    setTimeout(function() { done(true); }, 500);
-
+    runningChildProcesses.forEach(boundAddListeners);
   });
 
   // Kills any running process we started and calls done when all finish

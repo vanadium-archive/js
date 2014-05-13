@@ -7,6 +7,7 @@ if [ -z "$VEYRON_ROOT" ]; then
 fi
 
 PATH=./node_modules/.bin:$VEYRON_ROOT/environment/cout/node/bin:$PATH
-
+IDENTITY_FILE=${TMPDIR:-/tmp}/identity
+$VEYRON_ROOT/veyron/go/bin/identity -name test > $IDENTITY_FILE 2> /dev/null
 npm install
-grunt $@
+IDENTITY_FILE=$IDENTITY_FILE grunt $@
