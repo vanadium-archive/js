@@ -138,30 +138,25 @@ module.exports = function(grunt) {
     },
 
     // Server-side testing in NodeJS
-    reporter: 'spec',
+    nodeReporter: 'spec',
     nodeTest: {
       // Spec tests
       options: {
-        reporter: '<%= reporter %>',
+        reporter: '<%= nodeReporter %>',
         grep: grunt.option('grep'), // only run tests matching pattern
         clearRequireCache: true,
         require: [
+          'xunit-file',
           'test/node_init.js',
           '<%= dirs.dist %>/test/veyron.test.config.js',
           'test/test_helper.js'
         ]
       },
       specs: {
-        options: {
-          captureFile: '<%= dirs.dist %>/test/test_results_node_spec.out',
-        },
         src: ['test/specs/both/**/*.js', 'test/specs/node_only/**/*.js']
       },
       // Integration tests
       integration: {
-        options: {
-          captureFile: '<%= dirs.dist %>/test/test_results_node_integration.out'
-        },
         src: ['test/integration/**/*.js']
       }
     },
@@ -315,6 +310,8 @@ module.exports = function(grunt) {
       }
 
       if (hasSubstrMatch(tests, 'node_unit')) {
+        process.env.XUNIT_FILE =
+          'dist/test/test_results_node_spec.out';
         grunt.task.run('subtask_writeTestConfigFile');
         grunt.task.run('nodeTest:specs');
       }
@@ -323,6 +320,8 @@ module.exports = function(grunt) {
         grunt.task.run('browserTest:specs');
       }
       if (hasSubstrMatch(tests, 'node_integration')) {
+        process.env.XUNIT_FILE =
+          'dist/test/test_results_node_integration.out';
         grunt.task.run('subtask_runNodeIntegrationTests');
       }
       if (hasSubstrMatch(tests, 'browser_integration')) {
@@ -345,9 +344,7 @@ module.exports = function(grunt) {
 
   grunt.task.registerTask(
     'jenkins_tests', 'Runs the tests outputting xml test results that jenkins can understand', function(testType) {
-      grunt.config.set('reporter', 'xunit');
-      // Set to no logging since logs interfere with xUnit result output
-      grunt.testConfigs['LOG_LEVEL'] = 0;
+      grunt.config.set('nodeReporter', 'xunit-file');
 
       grunt.task.run('test');
     }

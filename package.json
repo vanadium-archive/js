@@ -38,6 +38,7 @@
     "merge": "^1.1.2",
     "grunt-jsdoc": "~0.5.4",
     "ink-docstrap": "~0.3.0-0",
-    "karma-coverage": "~0.2.1"
+    "karma-coverage": "~0.2.1",
+    "xunit-file": "0.0.5"
   }
 }
