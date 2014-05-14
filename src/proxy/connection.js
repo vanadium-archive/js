@@ -34,6 +34,8 @@ function ProxyConnection(url, privateIdentityPromise) {
   this.currentWebSocketPromise;
   this.servers = {};
   this.bindCache = {};
+  this._configDeferred = new Deferred();
+  this.config = this._configDeferred.promise;
 }
 
 /**
@@ -51,6 +53,7 @@ ProxyConnection.prototype.getWebSocket = function() {
   // TODO(bjornick): Implement a timeout mechanism.
   var websocket = new WebSocket(this.url);
   var self = this;
+  var receivedConfig = false;
   var deferred = new Deferred();
   this.currentWebSocketPromise = deferred.promise;
   websocket.onopen = function() {
@@ -61,14 +64,23 @@ ProxyConnection.prototype.getWebSocket = function() {
   websocket.onerror = function(e) {
     vLog.error('Failed to connect to proxy at url:', self.url);
     deferred.reject(e);
+    this._configDeferred.reject(
+      'Proxy connection closed, failed to get config ' + e);
   };
 
+  var configDeferred = this._configDeferred;
   websocket.onmessage = function(frame) {
     var message;
     try {
       message = JSON.parse(frame.data);
     } catch (e) {
       vLog.warn('Failed to parse ' + frame.data);
+      return;
+    }
+
+    if (receivedConfig === false) { // first message is the config.
+      receivedConfig = true;
+      configDeferred.resolve(message);
       return;
     }
 
@@ -463,7 +475,7 @@ ProxyConnection.prototype.getServiceSignature = function(name) {
       'privateId': privateIdentity
     };
     var message = JSON.stringify(messageJSON);
-    
+
     // Send the get signature request to the proxy
     self.sendRequest(message, MessageType.SIGNATURE, def);
   }, function(reason) {

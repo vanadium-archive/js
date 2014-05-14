@@ -49,7 +49,7 @@ module.exports = function(grunt) {
     resetNumWaitingProcesses();
     // Indicate this is a async grunt task
     var done = this.async();
-        
+
     var boundAddListeners = addListeners.bind(undefined, done);
 
     // Reset state
