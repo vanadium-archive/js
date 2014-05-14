@@ -88,7 +88,7 @@ module.exports = function(grunt) {
       VEYRON_IDENTITY: process.env.IDENTITY_FILE
     };
     var mounttable_process = spawn(MOUNTTABLE_BIN,
-      ['-log_dir=' + LOGS_DIR, 'address=127.0.0.1:0'], {
+      ['-log_dir=' + LOGS_DIR, '-address=127.0.0.1:0'], {
         env: basicEnv
       });
     mounttable_process.title = 'MountTable';
