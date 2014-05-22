@@ -12,6 +12,7 @@ var Promise = require('./lib/promise');
 var vLog = require('./lib/vlog');
 var vError = require('./lib/verror');
 var http = require('./lib/http');
+var MountTable = require('./naming/mounttable');
 
 /**
  * Veyron constructor.
@@ -92,6 +93,27 @@ Veyron.prototype._getIdentityPromise = function() {
     );
   }
   return this._identityPromise;
+};
+
+/**
+ * Create a new MountTable
+ * @return {Promise} A promise that resolves to a MountTable instance.
+ */
+Veyron.prototype.newMountTable = function(roots) {
+  var veyron = this;
+  var proxy = this._getProxyConnection();
+
+  if (roots) {
+    return Promise.cast(new MountTable(veyron.newClient(), roots));
+  }
+
+  // We have to ask for the websocket now, otherwise the config
+  // wont arrive until the first time someone tries to make a call
+  // which is deadlock prone.
+  proxy.getWebSocket();
+  return this._getProxyConnection().config.then(function(config) {
+    return new MountTable(veyron.newClient(), config.mounttableRoot);
+  });
 };
 
 /**
