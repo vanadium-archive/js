@@ -60,15 +60,14 @@ ProxyConnection.prototype.getWebSocket = function() {
     vLog.info('Connected to proxy at', self.url);
     deferred.resolve(websocket);
   };
-
+  var configDeferred = this._configDeferred;
   websocket.onerror = function(e) {
     vLog.error('Failed to connect to proxy at url:', self.url);
     deferred.reject(e);
-    this._configDeferred.reject(
+    configDeferred.reject(
       'Proxy connection closed, failed to get config ' + e);
   };
 
-  var configDeferred = this._configDeferred;
   websocket.onmessage = function(frame) {
     var message;
     try {
@@ -108,48 +107,69 @@ ProxyConnection.prototype.getWebSocket = function() {
       return;
     }
 
-    switch (payload.type) {
-      case IncomingPayloadType.FINAL_RESPONSE:
-        if (payload.message.length === 1) {
-          payload.message = payload.message[0];
-        }
-        def.resolve(payload.message);
-        break;
-      case IncomingPayloadType.STREAM_RESPONSE:
+    var dequeue = function() {
+      // If there is a stream associated with this request, then close it.
+      if (def && def.stream) {
+        def.stream._queueRead(null);
+      }
+      delete self.outstandingRequests[message.id];
+    };
+
+    var handleFinalResponse = function() {
+      if (payload.message.length === 1) {
+        payload.message = payload.message[0];
+      }
+      def.resolve(payload.message);
+      dequeue();
+    };
+
+    var handleStreamResponse = function() {
+      if (def && def.stream) {
         try {
-          if (def.stream) {
-            def.stream._queueRead(payload.message);
-          }
-          return;
-          // Return so we don't remove the promise from the queue.
+          def.stream._queueRead(payload.message);
         } catch (e) {
           def.reject(e);
+          dequeue();
         }
-        break;
-      case IncomingPayloadType.ERROR_RESPONSE:
-        var err = ErrorConversion.toJSerror(payload.message);
+      }
+    };
+
+    var handleErrorResponse = function() {
+      var err = ErrorConversion.toJSerror(payload.message);
+      if (def.stream) {
+        def.stream.emit('error', err);
+      }
+      def.reject(err);
+      dequeue();
+    };
+
+    var handleStreamClose = function() {
+      if (def) {
         if (def.stream) {
-          def.stream.emit('error', err);
-        }
-        def.reject(err);
-        break;
-      case IncomingPayloadType.INVOKE_REQUEST:
-        self.handleIncomingInvokeRequest(message.id, payload.message);
-        return;
-      case IncomingPayloadType.STREAM_CLOSE:
-        if (def && def.stream) {
           def.stream._queueRead(null);
         }
         def.resolve();
-        return;
+      }
+      dequeue();
+    };
+
+    switch (payload.type) {
+      case IncomingPayloadType.FINAL_RESPONSE:
+        return handleFinalResponse();
+      case IncomingPayloadType.STREAM_RESPONSE:
+        return handleStreamResponse();
+      case IncomingPayloadType.ERROR_RESPONSE:
+        return handleErrorResponse();
+      case IncomingPayloadType.INVOKE_REQUEST:
+        return self.handleIncomingInvokeRequest(message.id, payload.message);
+      case IncomingPayloadType.STREAM_CLOSE:
+        return handleStreamClose();
       default:
         def.reject(new Error('Received unknown response type from wspr'));
+        dequeue();
+        return;
     }
-    // If there is a stream associated with this request, then close it.
-    if (def.stream) {
-      def.stream._queueRead(null);
-    }
-    delete self.outstandingRequests[message.id];
+
   };
 
   return deferred.promise;
