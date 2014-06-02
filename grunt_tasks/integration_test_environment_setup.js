@@ -67,9 +67,9 @@ module.exports = function(grunt) {
       MOUNTTABLE_ROOT: mounttableRoot,
     };
     var args = ['-v=3', '-vv=3', '-log_dir=' + LOGS_DIR];
-    args.concat(extraArgs);
+    args = args.concat(extraArgs);
     // Run process
-    var runningProcess = spawn(bin, extraArgs, { env: envWithMount});
+    var runningProcess = spawn(bin, args, { env: envWithMount});
     runningProcess.title = name;
     runningChildProcesses.push(runningProcess);
     return runningProcess;
