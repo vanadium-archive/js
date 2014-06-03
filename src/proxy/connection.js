@@ -191,11 +191,13 @@ ProxyConnection.prototype.getWebSocket = function() {
 ProxyConnection.prototype.promiseInvokeMethod = function(name,
     methodName, mapOfArgs, numOutArgs, isStreaming, callback) {
   var def = new Deferred(callback);
+  var id = this.id;
+  this.id += 2;
 
   var streamingDeferred = null;
   if (isStreaming) {
     streamingDeferred = new Deferred();
-    def.stream = new Stream(this.id, streamingDeferred.promise, true);
+    def.stream = new Stream(id, streamingDeferred.promise, true);
     def.promise.stream = def.stream;
   }
   var self = this;
@@ -204,7 +206,7 @@ ProxyConnection.prototype.promiseInvokeMethod = function(name,
         methodName, mapOfArgs, numOutArgs, isStreaming,
         privateIdentity);
 
-    self.sendRequest(message, MessageType.REQUEST, def);
+    self.sendRequest(message, MessageType.REQUEST, def, id);
     if (streamingDeferred) {
       self.currentWebSocketPromise.then(function(ws) {
         streamingDeferred.resolve(ws);
@@ -224,11 +226,15 @@ ProxyConnection.prototype.promiseInvokeMethod = function(name,
  * to the server
  * @param {Object} message Message to send
  * @param {MessageType} type Type of message to send
+ * @param {Number} id if provided, use this flow id instead of generating
+ * a new one.
  * @param {Deferred} def Deferred to add to outstandingRequests
  */
-ProxyConnection.prototype.sendRequest = function(message, type, def) {
-  var id = this.id;
-  this.id += 2;
+ProxyConnection.prototype.sendRequest = function(message, type, def, id) {
+  if (id === undefined) {
+    id = this.id;
+    this.id += 2;
+  }
 
   this.outstandingRequests[id] = def;
   var body = JSON.stringify({ id: id, data: message, type: type });
@@ -241,7 +247,7 @@ ProxyConnection.prototype.sendRequest = function(message, type, def) {
 };
 
 /**
- * Injects the injections into the right positions in args and
+ * Injects the injections into the eight positions in args and
  * returns what was injected.
  * @param {Array} args The arguments to inject into.
  * @param {Object} injectionPositions A map of injected variables to the
