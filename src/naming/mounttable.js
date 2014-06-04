@@ -187,7 +187,7 @@ MountTable.prototype.resolveToMountTable = function(name, callback) {
   };
 
   deferred.resolve(this._resolveLoop(names, names, 0, handleErrors));
-  
+
   return deferred.promise;
 };
 
@@ -211,9 +211,9 @@ MountTable.prototype.resolveMaximally = function(name, callback) {
     }
     throw err;
   };
-  
+
   deferred.resolve(this._resolveLoop(names, names, 0, handleErrors));
-  
+
   return deferred.promise;
 };
 

@@ -6,7 +6,6 @@
 var Deferred = require('../../../../src/lib/deferred.js');
 
 describe('Deferred\'s Promise', function() {
-
   var deferred;
   beforeEach(function() {
     deferred = new Deferred();
@@ -48,5 +47,4 @@ describe('Deferred\'s Promise', function() {
     return expect(promise).to.be.rejectedWith('error');
 
   });
-
 });

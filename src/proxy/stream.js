@@ -99,7 +99,7 @@ Stream.prototype._queueRead = function(object) {
  * @param {*} chunk The data to write to the stream.
  * @param {null} encoding ignored for object streams.
  * @param {function} callback if set, the function to call when the write
- * completes. 
+ * completes.
  * @return {boolean} Returns false if the write buffer is full.
  */
 Stream.prototype.write = function(chunk, encoding, callback) {

@@ -20,7 +20,6 @@ var assertError = function(err, name, typeConstructor) {
 };
 
 describe('toStandardErrorStruct', function() {
-
   it('Should convert JS Error to internal structure', function() {
     var jsErr = new Error(errMessage);
     jsErr.name = 'MyError';
@@ -146,5 +145,4 @@ describe('toJSerror', function() {
     var jsErr = ErrorConversion.toJSerror(struct);
     assertError(jsErr, vError.Ids.NotFound, vError.NotFoundError);
   });
-
 });

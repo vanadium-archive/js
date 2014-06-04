@@ -32,7 +32,6 @@ describe('server/signature_js_server.js: ' +
 
   var signature;
   beforeEach(function(done) {
-
     var veyron = new Veyron(TestHelper.veyronConfig);
     var cache = {
       set: function(key, value) {},
@@ -46,7 +45,6 @@ describe('server/signature_js_server.js: ' +
     server.register('Cache', cache).then(function() {
       return server.publish('myCache');
     }).then(function(endpoint) {
-
       // Create a client and bind to it
       var client = veyron.newClient();
 
@@ -125,5 +123,4 @@ describe('server/signature_js_server.js: ' +
       }
     }
   });
-
 });

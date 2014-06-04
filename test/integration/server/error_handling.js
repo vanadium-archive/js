@@ -11,7 +11,6 @@
  */
 
 describe('server/error_handling.js: Service in JS', function() {
-
   var errMessage = 'failure';
   var error = new Error(errMessage);
   var namedError = new Error(errMessage);
@@ -162,5 +161,4 @@ describe('server/error_handling.js: Service in JS', function() {
       expect(r.name).to.equal(expectedError.name);
     });
   });
-
 });

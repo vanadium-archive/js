@@ -98,7 +98,6 @@ describe('vLog', function() {
     expect(mockConsole.numWarnCalls).to.equal(1);
     expect(mockConsole.numLogCalls).to.equal(1);
     expect(mockConsole.numInfoCalls).to.equal(0);
-
   });
 
   it('Should write everything when level is info', function() {
@@ -123,7 +122,5 @@ describe('vLog', function() {
     vLog.debug('foo_debug', 42, [1,2]);
 
     expect(mockConsole.output).to.equal('foo_debug 42 1,2');
-
   });
-
 });

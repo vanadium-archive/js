@@ -16,7 +16,6 @@ var assertError = function(err, name) {
 };
 
 describe('vError', function() {
-
   describe('AbortedError', function() {
     it('Should return an Error with Name set to Ids.Aborted', function() {
       var err = new vError.AbortedError(errMessage);
@@ -114,6 +113,5 @@ describe('vError', function() {
       assertError(err, vError.Ids.NotFound);
     });
   });
-
 });
 

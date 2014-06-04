@@ -10,7 +10,6 @@
  * All globals (veyron, expect, testconfig) are injected by test runners.
  */
 describe('client/error_handling.js: Error Thrower', function() {
-
   var service;
   beforeEach(function(done) {
 
@@ -119,6 +118,5 @@ describe('client/error_handling.js: Error Thrower', function() {
       assertError(r, error);
     });
   });
-
 });
 

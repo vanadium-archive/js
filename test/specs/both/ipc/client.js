@@ -83,6 +83,5 @@ describe('Client-side binding', function() {
         }).to.throw(Error);
       });
     });
-
   });
 });

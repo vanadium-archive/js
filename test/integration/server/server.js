@@ -10,7 +10,6 @@
  * All globals (veyron, expect, testconfig) are injected by test runners.
  */
 describe('server/server.js: Server', function(done) {
-
   var greeter = {
     sayHi: function() {
       console.log('Hello');
@@ -98,5 +97,4 @@ describe('server/server.js: Server', function(done) {
   //TODO(aghassemi) tests and implementation for:
   // Publishing multiple times under different names
   // Registering after publishing
-
 });

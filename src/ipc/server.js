@@ -82,7 +82,6 @@ server.prototype.publish = function(name, callback) {
  */
 server.prototype.register = function(name, serviceObject, callback) {
   //TODO(aghassemi) Handle registering after publishing
-
   var def = new Deferred(callback);
 
   if (this.registeredServices[name] !== undefined) {

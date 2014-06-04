@@ -17,7 +17,6 @@ TestHelper.veyronConfig = {
  * Helper that publishes a service, binds to it and returns the bound service
  */
 TestHelper.publishAndBindService = function(service, name) {
-
   var veyron = new Veyron(TestHelper.veyronConfig);
   var server = veyron.newServer();
   server.register(name, service);
@@ -33,5 +32,3 @@ TestHelper.publishAndBindService = function(service, name) {
 if (global) {
   global.TestHelper = TestHelper;
 }
-
-

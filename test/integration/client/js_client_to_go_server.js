@@ -14,7 +14,6 @@
  * All globals (veyron, expect, testconfig) are injected by test runners.
  */
 describe('client/js_client_to_go_server.js: Cache Service', function() {
-
   var cacheService;
   var client;
   var absoluteVeyronName;
@@ -36,7 +35,6 @@ describe('client/js_client_to_go_server.js: Cache Service', function() {
   });
 
   it('Should be able to bind to the service', function() {
-
     expect(cacheService).to.exist;
 
     expect(cacheService.set).to.exist;

@@ -56,6 +56,7 @@ function commonResolveTests(resolver) {
     var results = mountTable[resolver]('d/e/f');
     return expect(results).to.eventually.eql(['/x//e/f', '/y//e/f']);
   });
+
   it('Should resolve through mounttables to a non-mounttable', function() {
     var mountTable = new MountTable(new MockClient({
       '/a//d/f': response(['/x', '/y'], 'f'),
@@ -65,6 +66,7 @@ function commonResolveTests(resolver) {
     var results = mountTable[resolver]('d/f');
     return expect(results).to.eventually.eql(['/store']);
   });
+
   it('Should try alternates when one server fails', function() {
     var mountTable = new MountTable(new MockClient({
       // Force the resolve to try an alternate name when one is not working.
@@ -74,6 +76,7 @@ function commonResolveTests(resolver) {
     var results = mountTable[resolver]('d/g');
     return expect(results).to.eventually.eql(['/fromb']);
   });
+
   it('Should return the last error when all names fail', function() {
     var mountTable = new MountTable(new MockClient({
       // Set up a case where all the names fail.
@@ -84,6 +87,7 @@ function commonResolveTests(resolver) {
     var results = mountTable[resolver]('h/i');
     return expect(results).to.eventually.be.rejectedWith(vError.InternalError);
   });
+
   it('Should return an error when the max depth is reached', function() {
     var mountTable = new MountTable(new MockClient({
       // Set up a case where all the names fail.
@@ -104,6 +108,7 @@ describe('resolveMaximally', function() {
     var results = mountTable.resolveMaximally('d/e');
     return expect(results).to.eventually.eql(['/x//e', '/y//e']);
   });
+
   commonResolveTests('resolveMaximally');
 });
 
@@ -117,5 +122,6 @@ describe('resolveToMountTable', function() {
     var results = mountTable.resolveToMountTable('d/e');
     return expect(results).to.eventually.eql(['/a//d/e', '/b//c/d/e']);
   });
+
   commonResolveTests('resolveToMountTable');
 });

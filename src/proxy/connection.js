@@ -44,7 +44,6 @@ function ProxyConnection(url, privateIdentityPromise) {
  * when the connection is established.
  */
 ProxyConnection.prototype.getWebSocket = function() {
-
   // We are either connecting or already connected, return the same promise
   if (this.currentWebSocketPromise) {
     return this.currentWebSocketPromise;
@@ -169,7 +168,6 @@ ProxyConnection.prototype.getWebSocket = function() {
         dequeue();
         return;
     }
-
   };
 
   return deferred.promise;
@@ -290,7 +288,6 @@ var inject = function(args, injectionPositions, injections) {
  */
 ProxyConnection.prototype.handleIncomingInvokeRequest = function(messageId,
     request) {
-
   var self = this;
   var err;
 

@@ -143,7 +143,7 @@ describe('Testing terminal', function() {
       expect(result).to.equal(output);
     };
   }
-  
+
   var ep = '/@2@tcp@h:0@@@@@';
   var tests = [
     new TerminalTest('', true),
@@ -175,7 +175,7 @@ describe('Making a name terminal', function() {
       expect(result).to.equal(output);
     };
   }
-  
+
   var ep = '/@2@tcp@h:0@@@@@';
   var tests = [
 		// relative names
@@ -210,7 +210,7 @@ describe('Making a name terminal at an index', function() {
       expect(result).to.equal(output);
     };
   }
-  
+
   var ep = '/@2@tcp@h:0@@@@@';
   var tests = [
 		new MakeTerminalIndexTest('a/b/c', 1, 'a//b/c'),
@@ -294,7 +294,7 @@ describe('Rooted', function() {
       expect(result).to.equal(output);
     };
   }
-  
+
   var ep = '/@2@tcp@h:0@@@@@';
   var tests = [
 		new RootedTest('/', true),
@@ -322,7 +322,7 @@ describe('Making a name resolvable', function() {
       expect(result).to.equal(output);
     };
   }
-  
+
   var ep = '/@2@tcp@h:0@@@@@';
   var tests = [
 		new MakeResolvableTest('', ''),
