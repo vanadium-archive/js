@@ -175,7 +175,7 @@ module.exports = function(grunt) {
   };
 
   var startIdentityd = function() {
-    var identityd_process = spawn(IDENTITYD_BIN, ['-port=' + IDENTITYD_PORT], {
+    var identityd_process = spawn(IDENTITYD_BIN, ['-address=localhost:' + IDENTITYD_PORT], {
       env: {
           VEYRON_IDENTITY: process.env.IDENTITY_FILE
         }
