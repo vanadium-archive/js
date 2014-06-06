@@ -3,7 +3,7 @@
  *
  *  Usage:
  *  var cl = new client(proxyConnection);
- *  var service = cl.bind('EndpointAddress', 'ServiceName');
+ *  var service = cl.bindTo('EndpointAddress', 'ServiceName');
  *  resultPromise = service.MethodName(arg);
  */
 
@@ -35,7 +35,7 @@ var client = function(proxyConnection) {
  * methods.
  * @return {Promise} An object with methods that perform rpcs to service methods
  */
-client.prototype.bind = function(name, optServiceSignature, callback) {
+client.prototype.bindTo = function(name, optServiceSignature, callback) {
   var self = this;
   if (typeof(optServiceSignature) === 'function') {
     callback = optServiceSignature;

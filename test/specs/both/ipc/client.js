@@ -20,7 +20,7 @@ describe('Client-side binding', function() {
 
   it('Binding to empty service', function(done) {
     var emptyServiceSignature = {};
-    var testServicePromise = mockedClient.bind(
+    var testServicePromise = mockedClient.bindTo(
         'myService/TestService',
         emptyServiceSignature);
 
@@ -44,7 +44,7 @@ describe('Client-side binding', function() {
           numOutArgs: 2
         }
       };
-      var testServicePromise = mockedClient.bind(
+      var testServicePromise = mockedClient.bindTo(
           'myService/TestService',
           testServiceSignature);
 

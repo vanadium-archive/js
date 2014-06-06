@@ -15,7 +15,7 @@ describe('client/bind.js:', function() {
   it('Should be able to bind', function(done) {
     var absoluteVeyronName =
         '/' + testconfig['SAMPLE_VEYRON_GO_SERVICE_ENDPOINT'] + '/cache';
-    client.bind(absoluteVeyronName).then(function() {
+    client.bindTo(absoluteVeyronName).then(function() {
       done();
     }).catch(done);
   });

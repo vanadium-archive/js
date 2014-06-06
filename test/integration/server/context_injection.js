@@ -54,49 +54,49 @@ describe('server/context_injection.js: Service function in JS', function() {
   });
 
   it('Should have access to suffix', function() {
-    return client.bind('a/b/suf').then(function(s) {
+    return client.bindTo('a/b/suf').then(function(s) {
       var call = s.getSuffix();
       return expect(call).to.eventually.equal('suf');
     });
   });
 
   it('Should see empty suffix', function() {
-    return client.bind('a/b/').then(function(s) {
+    return client.bindTo('a/b/').then(function(s) {
       var call = s.getSuffix();
       return expect(call).to.eventually.equal('');
     });
   });
 
   it('Should see suffix\'s trailing slash', function() {
-    return client.bind('a/b/suff/').then(function(s) {
+    return client.bindTo('a/b/suff/').then(function(s) {
       var call = s.getSuffix();
       return expect(call).to.eventually.equal('suff/');
     });
   });
 
   it('Should have access to nested suffix', function() {
-    return client.bind('a/b/parent/suf').then(function(s) {
+    return client.bindTo('a/b/parent/suf').then(function(s) {
       var call = s.getSuffix();
       return expect(call).to.eventually.equal('parent/suf');
     });
   });
 
   it('Should have access to name', function() {
-    return client.bind('a/b/suf').then(function(s) {
+    return client.bindTo('a/b/suf').then(function(s) {
       var call = s.getName();
       return expect(call).to.eventually.equal('b/suf');
     });
   });
 
   it('Should have access to context as one object', function() {
-    return client.bind('a/b/suf').then(function(s) {
+    return client.bindTo('a/b/suf').then(function(s) {
       var call = s.getContext();
       return expect(call).to.eventually.deep.equal(expectedContext);
     });
   });
 
   it('Should have access to context when mixed with other args', function() {
-    return client.bind('a/b/suf').then(function(s) {
+    return client.bindTo('a/b/suf').then(function(s) {
       var call = s.getContextMixedWithNormalArgs('-a-','-b-','-c-');
       return expect(call).to.eventually.deep.equal({a1: '-a-',
           context: expectedContext,

@@ -27,14 +27,14 @@ describe('client/js_client_to_go_server.js: Cache Service', function() {
     absoluteVeyronName =
         '/' + testconfig['SAMPLE_VEYRON_GO_SERVICE_ENDPOINT'] + '/cache';
 
-    client.bind(absoluteVeyronName).then(function(service) {
+    client.bindTo(absoluteVeyronName).then(function(service) {
       cacheService = service;
       done();
     }).catch(done);
 
   });
 
-  it('Should be able to bind to the service', function() {
+  it('Should be able to bindTo to the service', function() {
     expect(cacheService).to.exist;
 
     expect(cacheService.set).to.exist;
@@ -47,8 +47,8 @@ describe('client/js_client_to_go_server.js: Cache Service', function() {
     expect(cacheService.multiGet).to.be.a('function');
   });
 
-  it('Should be able to bind to the sevice with a callback', function(done) {
-    client.bind(absoluteVeyronName, function cb(e, cacheService) {
+  it('Should be able to bindTo to the sevice with a callback', function(done) {
+    client.bindTo(absoluteVeyronName, function cb(e, cacheService) {
       expect(cacheService).to.exist;
 
       expect(cacheService.set).to.exist;

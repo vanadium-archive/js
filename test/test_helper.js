@@ -22,7 +22,7 @@ TestHelper.publishAndBindService = function(service, name) {
   server.register(name, service);
   return server.publish('integration/tests/').then(function() {
     var client = veyron.newClient();
-    return client.bind('integration/tests/' + name);
+    return client.bindTo('integration/tests/' + name);
   }).then(function(s) {
     return s;
   });

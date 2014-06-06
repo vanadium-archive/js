@@ -29,10 +29,10 @@ function runJSClientServerTests(cacheDefinition) {
       // Create a client to the returned endpoint
       client = veyron.newClient();
 
-      var cacheServiceClientPromise = client.bind(
+      var cacheServiceClientPromise = client.bindTo(
           'myCache/Cache');
 
-      var cacheServiceClientUsingEndpointPromise = client.bind(
+      var cacheServiceClientUsingEndpointPromise = client.bindTo(
           '/' + endpoint + '/Cache');
 
       Veyron.Promise.all([cacheServiceClientPromise,
@@ -125,8 +125,8 @@ function runJSClientServerTests(cacheDefinition) {
 
       });
 
-  it('Should fail to bind to the wrong name', function() {
-    var service = client.bind('nonexisting/name');
+  it('Should fail to bindTo to the wrong name', function() {
+    var service = client.bindTo('nonexisting/name');
     return expect(service).to.eventually.be.rejected;
   });
 

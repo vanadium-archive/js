@@ -33,7 +33,7 @@ function MockMountTable(value) {
 // the resolveStep method, and will be considered a non-mounttable.
 function MockClient(mountPoints) {
   this.mountPoints = mountPoints;
-  this.bind = function(name) {
+  this.bindTo = function(name) {
     var val = this.mountPoints[name];
     if (val) {
       return Promise.resolve(new MockMountTable(val));

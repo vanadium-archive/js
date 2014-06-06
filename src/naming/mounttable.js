@@ -120,7 +120,7 @@ MountTable.prototype._resolveAgainstMountTable = function(names) {
   // differently.
   var mt = this;
   var name = nameUtil.makeTerminal(names[0]);
-  return this._client.bind(name).then(function onBind(service) {
+  return this._client.bindTo(name).then(function onBind(service) {
     if (service.resolveStep === undefined) {
       throw MountTable.errNotAMountTable();
     }

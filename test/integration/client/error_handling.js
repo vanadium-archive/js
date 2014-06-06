@@ -19,7 +19,7 @@ describe('client/error_handling.js: Error Thrower', function() {
     var absoluteVeyronName =
         '/' + testconfig['SAMPLE_VEYRON_GO_SERVICE_ENDPOINT'] + '/errorthrower';
 
-    client.bind(absoluteVeyronName).then(function(s) {
+    client.bindTo(absoluteVeyronName).then(function(s) {
       service = s;
       done();
     }).catch(done);
