@@ -13,6 +13,7 @@ var vLog = require('./lib/vlog');
 var vError = require('./lib/verror');
 var http = require('./lib/http');
 var MountTable = require('./naming/mounttable');
+var store = require('./storage/store');
 
 /**
  * Veyron constructor.
@@ -72,6 +73,14 @@ Veyron.prototype.newClient = function() {
 };
 
 /**
+ * Create a Veyron store client to access the store.
+ * For usage, @see storage/store.js
+ */
+Veyron.prototype.newStore = function() {
+  return new store.Store(this.newClient());
+};
+
+/**
  * Creates a new proxy connection
  * @return {ProxyConnection} A new proxy connection
  */
@@ -116,12 +125,14 @@ Veyron.prototype.newMountTable = function(roots) {
   });
 };
 
+// TODO(bprosnitz) Remove this before release!
 /**
  * @constructor
  * A lightweight deferred implementation using Veyron.Promise promises
  */
 Veyron.Deferred = Deferred;
 
+// TODO(bprosnitz) Remove this before release!
 /**
  * @constructor
  * A EcmaScript6-compatible implementation of Promise/A spec
@@ -145,6 +156,11 @@ Veyron.logLevels = vLog.levels;
  * Error objects with predefined names.
  */
 Veyron.Errors = vError;
+
+/**
+ * Transaction is a constructor for a new store transaction.
+ */
+Veyron.Transaction = store.Transaction;
 
 /**
  * Export Veyron

@@ -18,6 +18,7 @@ describe('server/context_injection.js: Service function in JS', function() {
 
   var client;
   before(function(done) {
+
     // Services that handles anything in a/b/* where b is the service name
     var service = {
       getSuffix: function($suffix) {
@@ -105,4 +106,5 @@ describe('server/context_injection.js: Service function in JS', function() {
         });
     });
   });
+
 });

@@ -40,16 +40,19 @@ module.exports = function(grunt) {
   var MOUNTTABLE_BIN = VEYRON_BIN_DIR + '/mounttabled';
   var WSPR_BIN = VEYRON_BIN_DIR + '/wsprd';
   var IDENTITYD_BIN = VEYRON_BIN_DIR + '/identityd';
+  var STORED_BIN = VEYRON_BIN_DIR + '/stored';
   var SAMPLE_GO_SERVICE_BIN = VEYRON_BIN_DIR + '/sampled';
 
   var BINARIES = [VEYRON_PROXY_BIN, MOUNTTABLE_BIN, WSPR_BIN, IDENTITYD_BIN,
-   SAMPLE_GO_SERVICE_BIN];
+   SAMPLE_GO_SERVICE_BIN, STORED_BIN];
 
   var WSPR_PORT = 3224; // The port for WSPR.
   var IDENTITYD_PORT = 8125; // The port for the identityd server.
 
   var LOGS_DIR = path.resolve('logs');
-
+  // TODO(bprosnitz) Currently we generate a *.ERROR sym link when there is an
+  // error. However this is not removed when the most recent logged version has
+  // no errors so it points to stale data.
 
   /**
    * Starts a process that depends on the mounttable root and returns
@@ -97,6 +100,8 @@ module.exports = function(grunt) {
   // Starts WSPR taking in the mounttable root and returns a promise that
   // will be resolved when WSPR is ready to accept requests.
   var startWSPR = function(mounttable) {
+    grunt.testConfigs['WSPR_SERVER_URL'] = 'http://localhost:' +
+        WSPR_PORT;
     return startProcessWithMounttableAndAddHandlers(
       mounttable, WSPR_BIN,
       'WSPR', ['-port=' + WSPR_PORT, '-vproxy=test/proxy']);
@@ -110,6 +115,29 @@ module.exports = function(grunt) {
       ['-address=127.0.0.1:0', '-name=test/proxy']);
   };
 
+  var startStored = function(mounttable) {
+    var storePath = 'dist/test/store_integration';
+    grunt.file.delete(storePath);
+    var process = startProcessWithMounttableRoot(
+      mounttable, STORED_BIN, 'stored', ['--address=127.0.0.1:0',
+      '--db=' + storePath]);
+    var def = new deferred();
+    addListeners(process, null, def.reject);
+    // Wait until we get the stored service endpoint from the process stdout
+    // TODO(bprosnitz) Talk to storage people about STDOUT/STDERR output.
+    process.stderr.on('data', function(data) {
+      var mountMatch = /Mounting store on (.*?), endpoint/g.exec(
+        data.toString());
+      if (mountMatch) {
+        var endpoint = mountMatch[1];
+        grunt.testConfigs['STORED_ENDPOINT'] = endpoint;
+        def.resolve();
+      }
+      // TODO(bprosnitz) Add timeout and error if not found.
+    });
+    return def.promise;
+  };
+
   // Starts sampled taking in the mounttable root and returns a ppromise
   // that will resolved when sampled is up and running.
   var startSampled = function(mounttable) {
@@ -119,7 +147,7 @@ module.exports = function(grunt) {
     addListeners(process, null, def.reject);
     // Wait until we get the sample service endpoint from the process stdout
     process.stdout.on('data', function(data) {
-      var endpoint = data.toString().replace(('Listening at: '), '').trim();
+      var endpoint = data.toString().replace('Listening at: ', '').trim();
       if (!endpoint.match(/^@.*@$/)) {
         var errorMessage = SAMPLE_GO_SERVICE_BIN + ' did not print the ' +
           'endpoint address on stdout. Expected stdout: ' +
@@ -130,14 +158,7 @@ module.exports = function(grunt) {
       }
 
       // Success, set the config vars that tests rely on and return
-      var testConfigs = grunt.testConfigs;
-
-      testConfigs['WSPR_SERVER_URL'] = 'http://localhost:' +
-        WSPR_PORT;
-      testConfigs['IDENTITY_SERVER_URL'] = 'http://localhost:' +
-        IDENTITYD_PORT + '/random/';
-
-      testConfigs['SAMPLE_VEYRON_GO_SERVICE_ENDPOINT'] = endpoint;
+      grunt.testConfigs['SAMPLE_VEYRON_GO_SERVICE_ENDPOINT'] = endpoint;
       def.resolve();
     });
     return def.promise;
@@ -184,6 +205,8 @@ module.exports = function(grunt) {
     runningChildProcesses.push(identityd_process);
     var identityDef = new deferred();
     addListeners(identityd_process, identityDef.resolve, identityDef.reject);
+    grunt.testConfigs['IDENTITY_SERVER_URL'] = 'http://localhost:' +
+        IDENTITYD_PORT + '/random/';
     return identityDef.promise;
   };
   /**
@@ -225,6 +248,8 @@ module.exports = function(grunt) {
     servicePromises.push(mounttablePromise.then(startProxy));
 
     servicePromises.push(mounttablePromise.then(startSampled));
+
+    servicePromises.push(mounttablePromise.then(startStored));
 
     Promise.all(servicePromises).then(function() {
       if (BINARIES.length != runningChildProcesses.length) {
