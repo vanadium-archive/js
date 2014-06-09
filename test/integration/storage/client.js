@@ -37,7 +37,7 @@ describe('storage/client.js', function() {
     });
 
     it('put() root of store', function() {
-      var promise = store.bind(dirVeyronName).then(function(s) {
+      var promise = store.bindTo(dirVeyronName).then(function(s) {
         return s.put(null, valToPutRoot);
       });
       return expect(promise).to.eventually.include.keys(
@@ -45,7 +45,7 @@ describe('storage/client.js', function() {
     });
 
     it('put() succeeds', function() {
-      var promise = store.bind(itemVeyronName).then(function(s) {
+      var promise = store.bindTo(itemVeyronName).then(function(s) {
         return s.put(null, valToPut);
       });
       return expect(promise).to.eventually.include.keys(
@@ -55,7 +55,7 @@ describe('storage/client.js', function() {
     // 1 Item now exists in the store.
 
     it('exist() of created item', function() {
-      var promise = store.bind(itemVeyronName).then(function(s) {
+      var promise = store.bindTo(itemVeyronName).then(function(s) {
         return s.exists(null);
       });
       return expect(promise).to.eventually.equal(true);
@@ -64,7 +64,7 @@ describe('storage/client.js', function() {
     // TODO(bprosnitz) Fix setAttr().
     /*
     it('setAttr() of created item', function() {
-      var promise = store.bind(itemVeyronName).then(function(s) {
+      var promise = store.bindTo(itemVeyronName).then(function(s) {
         return s.setAttr(null, []);
       });
       return expect(promise).to.eventually.be.fulfilled;
@@ -74,7 +74,7 @@ describe('storage/client.js', function() {
     // TODO(bprosnitz) Fix stat().
     /*
     it('stat() succeeds', function() {
-      var promise = store.bind(itemVeyronName).then(function(s) {
+      var promise = store.bindTo(itemVeyronName).then(function(s) {
         return s.stat(null);
       });
       return expect(promise).to.eventually.include.keys(
@@ -82,7 +82,7 @@ describe('storage/client.js', function() {
     });*/
 
     it('get() of created item', function() {
-      var promise = store.bind(itemVeyronName).then(function(s) {
+      var promise = store.bindTo(itemVeyronName).then(function(s) {
         return s.get(null);
       });
       return expect(promise).to.eventually.property('value').and.eql(valToPut);
@@ -103,7 +103,7 @@ describe('storage/client.js', function() {
           'value': valToPut
         }
       ];
-      var promise = store.bind(dirVeyronName).then(function(s) {
+      var promise = store.bindTo(dirVeyronName).then(function(s) {
         return s.query(null, {
           stmt: '*',
         });
@@ -113,7 +113,7 @@ describe('storage/client.js', function() {
 
     it('globT()', function() {
       var expectedResults = [itemName];
-      var promise = store.bind(dirVeyronName).then(function(s) {
+      var promise = store.bindTo(dirVeyronName).then(function(s) {
         return s.globT(null, '*');
       }).then(streamToArray);
       return expect(promise).to.eventually.eql(expectedResults);
@@ -126,14 +126,14 @@ describe('storage/client.js', function() {
           'servers': [],
         }
       ];
-      var promise = store.bind(dirVeyronName).then(function(s) {
+      var promise = store.bindTo(dirVeyronName).then(function(s) {
         return s.glob('*');
       }).then(streamToArray);
       return expect(promise).to.eventually.eql(expectedResults);
     });
 
     it('remove() of created item', function() {
-      var promise = store.bind(itemVeyronName).then(function(s) {
+      var promise = store.bindTo(itemVeyronName).then(function(s) {
         return s.remove(null);
       });
       return expect(promise).to.be.fulfilled;
@@ -142,7 +142,7 @@ describe('storage/client.js', function() {
     // 0 items now exist in the store.
 
     it('exist() of removed item', function() {
-      var promise = store.bind(itemVeyronName).then(function(s) {
+      var promise = store.bindTo(itemVeyronName).then(function(s) {
         return s.exists(null);
       });
       return expect(promise).to.eventually.eql(false);
@@ -179,7 +179,7 @@ describe('storage/client.js', function() {
     });
 
     it('committed tr: put() root of store', function() {
-      var promise = store.bind(dirVeyronName).then(function(s) {
+      var promise = store.bindTo(dirVeyronName).then(function(s) {
         return s.put(trCommit, valToPutRoot);
       });
       return expect(promise).to.eventually.include.keys(
@@ -187,14 +187,14 @@ describe('storage/client.js', function() {
     });
 
     it('committed tr: check item didnt\'t exist() before put', function() {
-      var promise = store.bind(itemVeyronName).then(function(s) {
+      var promise = store.bindTo(itemVeyronName).then(function(s) {
         return s.exists(trCommit);
       });
       return expect(promise).to.eventually.equal(false);
     });
 
     it('committed tr: put() succeeds', function() {
-      var promise = store.bind(itemVeyronName).then(function(s) {
+      var promise = store.bindTo(itemVeyronName).then(function(s) {
         return s.put(trCommit, valToPut);
       });
       return expect(promise).to.eventually.include.keys(
@@ -203,7 +203,7 @@ describe('storage/client.js', function() {
 
     // The item now exists in the store in the context of trCommit.
     it('committed tr: exist() of created item in transaction', function() {
-      var promise = store.bind(itemVeyronName).then(function(s) {
+      var promise = store.bindTo(itemVeyronName).then(function(s) {
         return s.exists(trCommit);
       });
       return expect(promise).to.eventually.equal(true);
@@ -216,7 +216,7 @@ describe('storage/client.js', function() {
 
     // The item now is committed to the store.
     it('committed tr: exist() of item created in transaction', function() {
-      var promise = store.bind(itemVeyronName).then(function(s) {
+      var promise = store.bindTo(itemVeyronName).then(function(s) {
         return s.exists(null);
       });
       return expect(promise).to.eventually.equal(true);
@@ -231,14 +231,14 @@ describe('storage/client.js', function() {
     });
 
     it('aborted tr: check item didnt\'t exist() before put', function() {
-      var promise = store.bind(abortedItemVeyronName).then(function(s) {
+      var promise = store.bindTo(abortedItemVeyronName).then(function(s) {
         return s.exists(trAbort);
       });
       return expect(promise).to.eventually.equal(false);
     });
 
     it('aborted tr: put() succeeds', function() {
-      var promise = store.bind(abortedItemVeyronName).then(function(s) {
+      var promise = store.bindTo(abortedItemVeyronName).then(function(s) {
         return s.put(trAbort, valToPut);
       });
       return expect(promise).to.eventually.include.keys(
@@ -247,7 +247,7 @@ describe('storage/client.js', function() {
 
     // The item should now exist in the context of trAbort.
     it('aborted tr: exist() of created item in transaction', function() {
-      var promise = store.bind(abortedItemVeyronName).then(function(s) {
+      var promise = store.bindTo(abortedItemVeyronName).then(function(s) {
         return s.exists(trAbort);
       });
       return expect(promise).to.eventually.equal(true);
@@ -259,7 +259,7 @@ describe('storage/client.js', function() {
     });
 
     it('aborted tr: item created in transaction does not exist', function() {
-      var promise = store.bind(abortedItemVeyronName).then(function(s) {
+      var promise = store.bindTo(abortedItemVeyronName).then(function(s) {
         return s.exists(null);
       });
       return expect(promise).to.eventually.equal(false);
@@ -268,7 +268,7 @@ describe('storage/client.js', function() {
     // TODO(bprosnitz) Fix setAttr().
     /*
     it('setAttr() of created item', function() {
-      var promise = store.bind(itemVeyronName).then(function(s) {
+      var promise = store.bindTo(itemVeyronName).then(function(s) {
         return s.setAttr(null, []);
       });
       return expect(promise).to.eventually.be.fulfilled;
@@ -278,7 +278,7 @@ describe('storage/client.js', function() {
     // TODO(bprosnitz) Fix stat().
     /*
     it('stat() succeeds', function() {
-      var promise = store.bind(itemVeyronName).then(function(s) {
+      var promise = store.bindTo(itemVeyronName).then(function(s) {
         return s.stat(null);
       });
       return expect(promise).to.eventually.include.keys(
@@ -287,7 +287,7 @@ describe('storage/client.js', function() {
 
     it('get() of created item', function() {
       var tr = Veyron.Transaction();
-      var promise = store.bind(itemVeyronName).then(function(s) {
+      var promise = store.bindTo(itemVeyronName).then(function(s) {
         return s.get(tr);
       });
       return expect(promise).to.eventually.property('value').and.eql(valToPut);
@@ -309,7 +309,7 @@ describe('storage/client.js', function() {
         }
       ];
       var tr = Veyron.Transaction();
-      var promise = store.bind(dirVeyronName).then(function(s) {
+      var promise = store.bindTo(dirVeyronName).then(function(s) {
         return s.query(tr, {
           stmt: '*',
         });
@@ -320,7 +320,7 @@ describe('storage/client.js', function() {
     it('globT()', function() {
       var tr = Veyron.Transaction();
       var expectedResults = [itemName];
-      var promise = store.bind(dirVeyronName).then(function(s) {
+      var promise = store.bindTo(dirVeyronName).then(function(s) {
         return s.globT(tr, '*');
       }).then(streamToArray);
       return expect(promise).to.eventually.eql(expectedResults);
@@ -328,7 +328,7 @@ describe('storage/client.js', function() {
 
     it('remove() of created item', function() {
       var tr = Veyron.Transaction();
-      var promise = store.bind(itemVeyronName).then(function(s) {
+      var promise = store.bindTo(itemVeyronName).then(function(s) {
         return s.remove(tr);
       }).then(function() {
         return tr.commit();
@@ -340,7 +340,7 @@ describe('storage/client.js', function() {
 
     it('exist() of removed item', function() {
       var tr = Veyron.Transaction();
-      var promise = store.bind(itemVeyronName).then(function(s) {
+      var promise = store.bindTo(itemVeyronName).then(function(s) {
         return s.exists(tr);
       });
       return expect(promise).to.eventually.equal(false);

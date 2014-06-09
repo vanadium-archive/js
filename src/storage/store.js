@@ -5,10 +5,10 @@
  *  // With transactions:
  *  var tr = Veyron.transaction();
  *  var store = veyron.newStore();
- *  store.bind('/addr/of/object1').then(function(s) {
+ *  store.bindTo('/addr/of/object1').then(function(s) {
  *    return s.get(tr);
  *  }.then(function(obj1) {
- *    return store.bind('/addr/of/object2').then(function(s) {
+ *    return store.bindTo('/addr/of/object2').then(function(s) {
  *      return s.put(tr, obj1.value);
  *    });
  *  }).then(function() {
@@ -16,7 +16,7 @@
  *  });
  *
  *  // Operations without setting up transactions manually:
- *  var stream = store.bind('/path/to/glob').glob('*');
+ *  var stream = store.bindTo('/path/to/glob').glob('*');
  *  stream.on('data', function(item) {
  *    console.log('Glob result: ' + item);
  *  });
@@ -91,7 +91,7 @@ Transaction.prototype._updateTransaction = function(client, service) {
   this._storageService = _joinAddressParts(service, '.store');
   if (!this._transactionCreation) {
     var trid = this._id;
-    this._transactionCreation = this._client.bind(
+    this._transactionCreation = this._client.bindTo(
       this._storageService).then(function(srvc) {
       return srvc.createTransaction(trid, []);
     });
@@ -105,7 +105,7 @@ Transaction.prototype.commit = function() {
     return Promise.resolve();
   }
   var trid = this._id;
-  return this._client.bind(this._storageService).then(function(srvc) {
+  return this._client.bindTo(this._storageService).then(function(srvc) {
     return srvc.commit(trid);
   });
 };
@@ -116,7 +116,7 @@ Transaction.prototype.abort = function() {
     return Promise.resolve();
   }
   var trid = this._id;
-  return this._client.bind(this._storageService).then(function(srvc) {
+  return this._client.bindTo(this._storageService).then(function(srvc) {
     return srvc.abort(trid);
   });
 };
@@ -131,7 +131,7 @@ Transaction.prototype.abort = function() {
 var StoreObject = function(client, path) {
   this._client = client;
   this._path = path;
-  this._bindPromise = this._client.bind(_joinAddressParts(this._path, '/'));
+  this._bindPromise = this._client.bindTo(_joinAddressParts(this._path, '/'));
 };
 
 StoreObject.prototype._updateTransactionAndBind = function(tr) {
@@ -226,7 +226,7 @@ var Store = function(client) {
   this._client = client;
 };
 
-Store.prototype.bind = function(path) {
+Store.prototype.bindTo = function(path) {
   var obj = new StoreObject(this._client, path);
   return obj._bindPromise.then(function() {
     return obj;
