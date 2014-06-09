@@ -294,7 +294,7 @@ ProxyConnection.prototype.handleIncomingInvokeRequest = function(messageId,
   var server = this.servers[request.serverId];
   if (server === undefined) {
     err = new Error(request.serverName + ' is not a configured server');
-    this.sendInvokeRequestResult(messageId, null, err);
+    this.sendInvokeRequestResult(messageId, request.method, null, err);
     return;
   }
 
@@ -302,7 +302,7 @@ ProxyConnection.prototype.handleIncomingInvokeRequest = function(messageId,
   var serviceWrapper = server.getServiceObject(request.serviceName);
   if (serviceWrapper === undefined) {
     err = new Error('No registered service found for ' + request.serviceName);
-    this.sendInvokeRequestResult(messageId, null, err);
+    this.sendInvokeRequestResult(messageId, request.method, null, err);
     return;
   }
 
@@ -313,20 +313,31 @@ ProxyConnection.prototype.handleIncomingInvokeRequest = function(messageId,
   if (serviceMethod === undefined) {
     err = new Error('Requested method ' + request.method +
         ' not found on the service registered under ' + request.serviceName);
-    this.sendInvokeRequestResult(messageId, null, err);
+    this.sendInvokeRequestResult(messageId, request.Name, null, err);
     return;
   }
   var metadata = serviceWrapper.metadata[request.method];
 
-  var sendInvocationError = function(e) {
+  var sendInvocationError = function(e, metadata) {
     var stackTrace;
     if (e instanceof Error && e.stack !== undefined) {
       stackTrace = e.stack;
     }
     vLog.debug('Requested method ' + request.method +
       ' threw an exception on invoke: ', e, stackTrace);
-
-    self.sendInvokeRequestResult(messageId, null, e);
+    var numReturnArgs = metadata.numReturnArgs;
+    var result;
+    switch (numReturnArgs) {
+      case 0:
+        break;
+      case 1:
+        result = null;
+        break;
+      default:
+        result = new Array(numReturnArgs);
+    }
+    self.sendInvokeRequestResult(messageId, request.method, result, e,
+                                 metadata);
   };
 
   // Invoke the method
@@ -339,7 +350,8 @@ ProxyConnection.prototype.handleIncomingInvokeRequest = function(messageId,
         return;
       }
       finished = true;
-      self.sendInvokeRequestResult(messageId, v, e);
+      self.sendInvokeRequestResult(messageId, request.method,
+                                   v, e, metadata);
     };
 
     var context = {
@@ -365,7 +377,7 @@ ProxyConnection.prototype.handleIncomingInvokeRequest = function(messageId,
     // Call the registered method on the requested service
     var result = serviceMethod.apply(serviceObject, args);
     if (result instanceof Error) {
-      sendInvocationError(result);
+      sendInvocationError(result, metadata);
       return;
     }
 
@@ -384,30 +396,58 @@ ProxyConnection.prototype.handleIncomingInvokeRequest = function(messageId,
         return;
       }
       finished = true;
-      self.sendInvokeRequestResult(messageId, value, null);
+      self.sendInvokeRequestResult(messageId, request.method, value,
+                                   null, metadata);
     }, function(err) {
       if (finished) {
         return;
       }
       finished = true;
-      sendInvocationError(err);
+      sendInvocationError(err, metadata);
     });
   } catch (e) {
-    sendInvocationError(e);
+    sendInvocationError(e, metadata);
   }
 };
 
 /**
  * Sends the result of a requested invocation back to wspr
  * @param {string} messageId Message id of the original invocation request
+ * @param {string} name Name of method
  * @param {Object} value Result of the call
  * @param {Object} err Error from the call
+ * @param {Object} metadata Metadata about the function.
  */
-ProxyConnection.prototype.sendInvokeRequestResult = function(messageId, value,
-    err) {
+ProxyConnection.prototype.sendInvokeRequestResult = function(messageId, name,
+    value, err, metadata) {
+  var results = [];
 
-  // JavaScript functions always return one result even if null or undefined
-  var results = [value];
+  if (metadata) {
+    switch (metadata.numReturnArgs) {
+      case 0:
+        if (value !== undefined) {
+          vLog.error('Unexpected return value from ' + name + ': ' + value);
+        }
+        results = [];
+        break;
+      case 1:
+        results = [value];
+        break;
+      default:
+        if (Array.isArray(value)) {
+          if (value.length !== metadata.numReturnArgs) {
+            vLog.error('Wrong number of arguments returned by ' + name +
+                '. expected: ' + metadata.numReturnArgs + ', got:' +
+                value.length);
+          }
+          results = value;
+        } else {
+          vLog.error('Wrong number of arguments returned by ' + name +
+              '. expected: ' + metadata.numReturnArgs + ', got: 1');
+          results = [value];
+        }
+    }
+  }
 
   var errorStruct = null;
   if (err !== undefined && err !== null) {
@@ -451,7 +491,6 @@ ProxyConnection.prototype.sendInvokeRequestResult = function(messageId, value,
  */
 ProxyConnection.prototype.publishServer = function(name, server, callback) {
   //TODO(aghassemi) Handle publish under multiple names
-
   vLog.info('Publishing a server under name: ', name);
 
   var messageJSON = {

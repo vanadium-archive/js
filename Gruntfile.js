@@ -342,6 +342,13 @@ module.exports = function(grunt) {
       grunt.task.run('test');
   });
 
+  grunt.registerTask('debug_browser_integration',
+      'Runs the integration test in a browsesr window that remains open for debugging',
+      function() {
+        grunt.config.set('browserTestSingleRun', false);
+        grunt.task.run('subtask_runBrowserIntegrationTests');
+  });
+
   grunt.task.registerTask(
     'jenkins_tests', 'Runs the tests outputting xml test results that jenkins can understand', function(testType) {
       grunt.config.set('nodeReporter', 'xunit-file');

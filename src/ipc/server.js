@@ -76,19 +76,27 @@ server.prototype.publish = function(name, callback) {
  *
  * @param {string} name The name to register the service under
  * @param {Object} serviceObject service object to register
+ * @param {Object} serviceMetadata if provided a set of metadata for functions
+ * in the service (such as number of return values).
  * @param {function} callback if provided, the function will be called on
  * completion. The only argument is an error if there was one.
  * @return {Promise} Promise to be called when register completes or fails
  */
-server.prototype.register = function(name, serviceObject, callback) {
+server.prototype.register = function(name, serviceObject, serviceMetadata,
+                callback) {
   //TODO(aghassemi) Handle registering after publishing
+  if (!callback && typeof(serviceMetadata) === 'function') {
+    callback = serviceMetadata;
+    serviceMetadata = null;
+  }
   var def = new Deferred(callback);
 
   if (this.registeredServices[name] !== undefined) {
     var err = new Error('Service already registered under name: ' + name);
     def.reject(err);
   } else {
-    this.registeredServices[name] = new ServiceWrapper(serviceObject);
+    this.registeredServices[name] = new ServiceWrapper(serviceObject,
+                                                       serviceMetadata);
     def.resolve();
   }
 

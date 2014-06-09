@@ -163,7 +163,7 @@ idlHelper.generateIdlWireDescription = function(service) {
 
       idlWire[methodName] = {
         'InArgs' : inArgs,
-        'NumOutArgs': 2,
+        'NumOutArgs': methodMetadata.numReturnArgs + 1,
         'IsStreaming': methodMetadata.injections['$stream'] !== undefined
       };
     }
@@ -194,10 +194,13 @@ var getParamNames = function(func) {
  * Wraps a Service with annotations for each exported function.
  * @constructor
  * @param {object} service the service that is being exported.
+ * @param {object} extraMetadata if provided, adds extra metadata for
+ * the functions exported (such as number of return values).
  */
-idlHelper.ServiceWrapper = function(service) {
+idlHelper.ServiceWrapper = function(service, extraMetadata) {
   this.object = service;
   this.metadata = {};
+  extraMetadata = extraMetadata || {};
 
   for (var methodName in service) {
     if (service.hasOwnProperty(methodName) &&
@@ -218,10 +221,21 @@ idlHelper.ServiceWrapper = function(service) {
             injections[name] = i;
           }
         }
-        this.metadata[methodName] = {
+        var metadata = {
           params: params,
-          injections: injections
+          injections: injections,
+          numReturnArgs: 1
         };
+
+        // We only want to copy over the accepted metadata options.
+        if (extraMetadata[methodName]) {
+          var extra = extraMetadata[methodName];
+          if (extra.numReturnArgs !== undefined) {
+            metadata.numReturnArgs = extra.numReturnArgs;
+          }
+        }
+
+        this.metadata[methodName] = metadata;
       }
     }
   }

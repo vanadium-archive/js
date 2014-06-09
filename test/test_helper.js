@@ -16,11 +16,13 @@ TestHelper.veyronConfig = {
 /*
  * Helper that publishes a service, binds to it and returns the bound service
  */
-TestHelper.publishAndBindService = function(service, name) {
+TestHelper.publishAndBindService = function(service, name,
+    metadata) {
   var veyron = new Veyron(TestHelper.veyronConfig);
   var server = veyron.newServer();
-  server.register(name, service);
-  return server.publish('integration/tests/').then(function() {
+  return server.register(name, service, metadata).then(function() {
+    return server.publish('integration/tests/');
+  }).then(function() {
     var client = veyron.newClient();
     return client.bindTo('integration/tests/' + name);
   }).then(function(s) {

@@ -19,7 +19,12 @@ function runJSClientServerTests(cacheDefinition) {
     // Create server object and publish the service
     var server = veyron.newServer();
 
-    server.register('Cache', cacheDefinition).then(function() {
+    var metadata = {
+      set:{
+        numReturnArgs: 0
+      }
+    };
+    server.register('Cache', cacheDefinition, metadata).then(function() {
       return server.publish('myCache');
     }).then(function(endpoint) {
       expect(endpoint).to.exist;
@@ -56,6 +61,11 @@ function runJSClientServerTests(cacheDefinition) {
 
         return expect(result).to.eventually.become('bar');
       });
+
+  it('Should not return any values for a void result', function() {
+    var result = cacheServiceClient.set('foo', 'bar');
+    expect(result).to.eventually.become(undefined);
+  });
 
   it('Should be able to use objects as arguments and returns', function() {
       var expected = { a: 'foo', b: 2 };

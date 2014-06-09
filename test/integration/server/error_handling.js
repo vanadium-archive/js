@@ -62,10 +62,20 @@ describe('server/error_handling.js: Service in JS', function() {
       },
       returnBuiltInError: function() {
         return builtInError;
-      }
+      },
+      returnErrorOnVoid: function() {
+        return error;
+      },
     };
 
-    TestHelper.publishAndBindService(service,'err-handling').then(function(s) {
+    var metadata = {
+      returnErrorOnVoid: {
+        numReturnArgs: 0
+      }
+    };
+    TestHelper.publishAndBindService(service,
+                                     'err-handling',
+                                     metadata).then(function(s) {
       remoteService = s;
       done();
     }).catch(function(e) {
@@ -159,6 +169,14 @@ describe('server/error_handling.js: Service in JS', function() {
     return expect(call).to.eventually.be.rejected.then(function(r) {
       expect(r.message).to.equal(expectedError.message);
       expect(r.name).to.equal(expectedError.name);
+    });
+  });
+
+  it('Should be able to return an error on a void function', function() {
+    var call = remoteService.throwNamedError();
+    return expect(call).to.eventually.be.rejected.then(function(r) {
+      expect(r.message).to.equal(namedError.message);
+      expect(r.name).to.equal(namedError.name);
     });
   });
 });
