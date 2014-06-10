@@ -6,30 +6,59 @@
 
 var idlHelper = {};
 
-// Count the number or input/output args in a string.
-var countArgs = function(args) {
+/**
+ * Returns an array of arguments, which is an object with a type and a name.
+ * @param {string} args the argument string as it appears in the idl file,
+ * i.e 'a, b int' or 'int, error' for return arguments.
+ * @param {string} isReturnArgs if set, treats the string as the return types
+ * @return {array} an array of the arguments
+ */
+var parseArgs = function(args, isReturnArgs) {
   args = args.trim();
-  var parts = args.split(',');
-  var count = parts.length;
-  // Handle the cases where params is '' or the last non-whitespace character
-  // in params is a ','.
-  if (parts[count - 1].trim() === '') {
-    count--;
+  if (args === '') {
+    return [];
   }
-  return count;
+  var parts = args.split(',');
+  var outputArgs = [];
+  var previousType = '';
+  for (var i = parts.length - 1; i >= 0; i--) {
+    var value = parts[i].trim();
+    if (value === '') {
+      continue;
+    }
+    var pieces = value.split(/\s+/);
+    switch (pieces.length) {
+      case 1:
+        if (isReturnArgs) {
+          outputArgs.push( { type: pieces[0].trim() });
+        } else {
+          outputArgs.push( { type: previousType, name: value });
+        }
+        break;
+      case 2:
+        previousType = pieces[1].trim();
+        outputArgs.push( { type: previousType, name: pieces[0].trim() });
+        break;
+      default:
+        throw new Error('Bad argument list ' + args);
+    }
+  }
+
+  return outputArgs.reverse();
 };
 
 /**
  * A representation of an function definition in the IDL.
  * @constructor
  * @param {string} method name of the method
- * @param {string} params the params string in the idl
+ * @param {string} args the args string in the idl, i.e 'a int, b string'
  * @param {string} returnArgs the return arguments in the definition.
  */
-var IDLFunction = function(method, params, returnArgs) {
+var IDLFunction = function(method, args, returnArgs) {
   this.name = method;
-  this.numParams = countArgs(params);
-  this.numReturnArgs = countArgs(returnArgs);
+  this.args = parseArgs(args, false);
+  var cleanedReturnArgs = returnArgs.replace('(','').replace(')','');
+  this.returnArgs = parseArgs(cleanedReturnArgs, true);
 };
 
 /*

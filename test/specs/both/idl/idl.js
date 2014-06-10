@@ -109,8 +109,8 @@ describe('IDL', function() {
         'Service' : {
           Add: {
             name: 'Add',
-            numParams: 0,
-            numReturnArgs: 0
+            args: [],
+            returnArgs: []
           }
         }
       };
@@ -129,8 +129,11 @@ describe('IDL', function() {
         'Service' : {
           Add: {
             name: 'Add',
-            numParams: 1,
-            numReturnArgs: 0
+            args: [ {
+              name: 'a',
+              type: 'int'
+            }],
+            returnArgs: []
           }
         }
       };
@@ -149,8 +152,14 @@ describe('IDL', function() {
         'Service' : {
           Add: {
             name: 'Add',
-            numParams: 2,
-            numReturnArgs: 0
+            args: [{
+              name: 'a',
+              type: 'int'
+            }, {
+              name: 'b',
+              type: 'int'
+            }],
+            returnArgs: []
           }
         }
       };
@@ -169,8 +178,14 @@ describe('IDL', function() {
         'Service' : {
           Add: {
             name: 'Add',
-            numParams: 2,
-            numReturnArgs: 0
+            args: [{
+              name: 'a',
+              type: 'int'
+            }, {
+              name: 'b',
+              type: 'int'
+            }],
+            returnArgs: []
           }
         }
       };
@@ -189,8 +204,16 @@ describe('IDL', function() {
         'Service' : {
           Add: {
             name: 'Add',
-            numParams: 2,
-            numReturnArgs: 1
+            args: [{
+              name: 'a',
+              type: 'int'
+            }, {
+              name: 'b',
+              type: 'int'
+            }],
+            returnArgs: [{
+              type: 'int'
+            }]
           }
         }
       };
@@ -209,8 +232,18 @@ describe('IDL', function() {
         'Service' : {
           Add: {
             name: 'Add',
-            numParams: 2,
-            numReturnArgs: 2
+            args: [{
+              name: 'a',
+              type: 'int'
+            }, {
+              name: 'b',
+              type: 'int'
+            }],
+            returnArgs: [{
+              type: 'int'
+            }, {
+              type: 'error'
+            }]
           }
         }
       };
@@ -229,8 +262,14 @@ describe('IDL', function() {
         'Service' : {
           Add: {
             name: 'Add',
-            numParams: 2,
-            numReturnArgs: 0
+            args: [{
+              name: 'a',
+              type: 'int'
+            }, {
+              name: 'b',
+              type: 'int'
+            }],
+            returnArgs: []
           }
         }
       };
@@ -249,8 +288,16 @@ describe('IDL', function() {
         'Service' : {
           Add: {
             name: 'Add',
-            numParams: 2,
-            numReturnArgs: 1
+            args: [{
+              name: 'a',
+              type: 'int'
+            }, {
+              name: 'b',
+              type: 'int'
+            }],
+            returnArgs: [{
+              type: 'int'
+            }]
           }
         }
       };
@@ -269,8 +316,18 @@ describe('IDL', function() {
         'Service' : {
           Add: {
             name: 'Add',
-            numParams: 2,
-            numReturnArgs: 2
+            args: [{
+              name: 'a',
+              type: 'int'
+            }, {
+              name: 'b',
+              type: 'int'
+            }],
+            returnArgs: [{
+              type: 'int'
+            }, {
+              type: 'error'
+            }]
           }
         }
       };
@@ -290,13 +347,23 @@ describe('IDL', function() {
         'Service' : {
           Add: {
             name: 'Add',
-            numParams: 2,
-            numReturnArgs: 2
+            args: [{
+              name: 'a',
+              type: 'int'
+            }, {
+              name: 'b',
+              type: 'int'
+            }],
+            returnArgs: [{
+              type: 'int'
+            }, {
+              type: 'error'
+            }]
           },
           UnaryOperator: {
             name: 'UnaryOperator',
-            numParams: 0,
-            numReturnArgs: 0
+            args: [],
+            returnArgs: []
           }
         }
       };
@@ -317,13 +384,19 @@ describe('IDL', function() {
         'Service' : {
           Add: {
             name: 'Add',
-            numParams: 2,
-            numReturnArgs: 0
+            args: [{
+              name: 'a',
+              type: 'int'
+            }, {
+              name: 'b',
+              type: 'int'
+            }],
+            returnArgs: []
           },
           UnaryOperator: {
             name: 'UnaryOperator',
-            numParams: 0,
-            numReturnArgs: 0
+            args: [],
+            returnArgs: []
           }
         }
       };
@@ -344,13 +417,23 @@ describe('IDL', function() {
         'Service' : {
           Add: {
             name: 'Add',
-            numParams: 2,
-            numReturnArgs: 2
+            args: [{
+              name: 'a',
+              type: 'int'
+            }, {
+              name: 'b',
+              type: 'int'
+            }],
+            returnArgs: [{
+              type: 'int'
+            }, {
+              type: 'error'
+            }]
           },
           UnaryOperator: {
             name: 'UnaryOperator',
-            numParams: 0,
-            numReturnArgs: 0
+            args: [],
+            returnArgs: []
           }
         }
       };
@@ -371,13 +454,19 @@ describe('IDL', function() {
         'Service' : {
           Add: {
             name: 'Add',
-            numParams: 2,
-            numReturnArgs: 0
+            args: [{
+              name: 'a',
+              type: 'int'
+            }, {
+              name: 'b',
+              type: 'int'
+            }],
+            returnArgs: []
           },
           UnaryOperator: {
             name: 'UnaryOperator',
-            numParams: 0,
-            numReturnArgs: 0
+            args: [],
+            returnArgs: []
           }
         }
       };
@@ -399,13 +488,23 @@ describe('IDL', function() {
         'Service' : {
           Add: {
             name: 'Add',
-            numParams: 2,
-            numReturnArgs: 2
+            args: [{
+              name: 'a',
+              type: 'int'
+            }, {
+              name: 'b',
+              type: 'int'
+            }],
+            returnArgs: [{
+              type: 'int'
+            }, {
+              type: 'error'
+            }]
           },
           UnaryOperator: {
             name: 'UnaryOperator',
-            numParams: 0,
-            numReturnArgs: 0
+            args: [],
+            returnArgs: []
           }
         }
       };
@@ -428,13 +527,23 @@ describe('IDL', function() {
         'Service' : {
           Add: {
             name: 'Add',
-            numParams: 2,
-            numReturnArgs: 2
+            args: [{
+              name: 'a',
+              type: 'int'
+            }, {
+              name: 'b',
+              type: 'int'
+            }],
+            returnArgs: [{
+              type: 'int'
+            }, {
+              type: 'error'
+            }]
           },
           UnaryOperator: {
             name: 'UnaryOperator',
-            numParams: 0,
-            numReturnArgs: 0
+            args: [],
+            returnArgs: []
           }
         }
       };
@@ -458,13 +567,19 @@ describe('IDL', function() {
         'Service' : {
           Add: {
             name: 'Add',
-            numParams: 2,
-            numReturnArgs: 0
+            args: [{
+              name: 'a',
+              type: 'int'
+            }, {
+              name: 'b',
+              type: 'int'
+            }],
+            returnArgs: []
           },
           UnaryOperator: {
             name: 'UnaryOperator',
-            numParams: 0,
-            numReturnArgs: 0
+            args: [],
+            returnArgs: []
           }
         }
       };
@@ -486,15 +601,21 @@ describe('IDL', function() {
         'Service' : {
           Add: {
             name: 'Add',
-            numParams: 0,
-            numReturnArgs: 0
+            args: [],
+            returnArgs: []
           }
         },
         'Service2': {
           Store: {
             name: 'Store',
-            numParams: 2,
-            numReturnArgs: 0
+            args: [{
+              name: 'a',
+              type: 'int'
+            }, {
+              name: 'b',
+              type: 'int'
+            }],
+            returnArgs: []
           }
         }
       };
