@@ -24,9 +24,13 @@ describe('storage/client.js', function() {
   describe('Transaction-less Methods', function() {
     var itemName = 'notx';
     var valToPutRoot = 'AString';
-    var valToPut = {x: 5};
-    var itemVeyronName;
-    var dirVeyronName;
+    var valToPut = {};
+    var childName = 'x';
+    var childVal = 5;
+    var itemVeyronName, dirVeyronName, childVeyronName;
+
+    var expectedMapVal = {};
+    expectedMapVal[childName] = childVal;
 
     var store;
     beforeEach(function() {
@@ -34,6 +38,7 @@ describe('storage/client.js', function() {
       store = veyron.newStore();
       dirVeyronName = testconfig['STORED_ENDPOINT'] + '/';
       itemVeyronName = dirVeyronName + itemName;
+      childVeyronName = itemVeyronName + '/' + childName;
     });
 
     it('put() root of store', function() {
@@ -47,6 +52,14 @@ describe('storage/client.js', function() {
     it('put() succeeds', function() {
       var promise = store.bindTo(itemVeyronName).then(function(s) {
         return s.put(null, valToPut);
+      });
+      return expect(promise).to.eventually.include.keys(
+        ['attrs', 'iD', 'mTimeNS']);
+    });
+
+    it('put() succeeds', function() {
+      var promise = store.bindTo(childVeyronName).then(function(s) {
+        return s.put(null, childVal);
       });
       return expect(promise).to.eventually.include.keys(
         ['attrs', 'iD', 'mTimeNS']);
@@ -85,7 +98,8 @@ describe('storage/client.js', function() {
       var promise = store.bindTo(itemVeyronName).then(function(s) {
         return s.get(null);
       });
-      return expect(promise).to.eventually.property('value').and.eql(valToPut);
+      return expect(promise).to.eventually.have.property('value').
+        and.eql(expectedMapVal);
     });
 
     it('query()', function() {
@@ -100,7 +114,7 @@ describe('storage/client.js', function() {
           'fields': {},
           'name': itemName,
           'nestedResult': 0,
-          'value': valToPut
+          'value': expectedMapVal
         }
       ];
       var promise = store.bindTo(dirVeyronName).then(function(s) {
