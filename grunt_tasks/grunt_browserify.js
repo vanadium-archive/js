@@ -85,10 +85,7 @@ module.exports = function(grunt) {
       }
 
       var bundleOptions = {
-        detectGlobals: false, // Do not include globals like "process"
-        insertGlobals: false,
-        standalone: this.data.standalone,
-        insertGlobalVars: ['none']
+        standalone: this.data.standalone
       };
 
       // Start the bundle
