@@ -5,8 +5,7 @@
 
 var streamToArray = function(stream) {
   var results = [];
-  stream.on('readable', function() {
-    var val = stream.read();
+  stream.on('data', function(val) {
     if (val) {
       results.push(val);
     }
