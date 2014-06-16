@@ -89,8 +89,7 @@ function runJSClientServerTests(cacheDefinition) {
         Veyron.Promise.all(promises).then(function() {
           var promise = cacheServiceClient.multiGet();
           var stream = promise.stream;
-          stream.on('readable', function readable() {
-            var value = stream.read();
+          stream.on('data', function(value) {
             if (value) {
               expect(value).to.equal(nextNumber.toString());
               nextNumber += 2;
@@ -174,8 +173,7 @@ describe('server/js_client_to_js_server.js: ' +
         def.reject(e);
       });
       var self = this;
-      $stream.on('readable', function readable() {
-        var key = $stream.read();
+      $stream.on('data', function(key) {
         if (key !== null) {
           var val = self.cacheMap[key];
           if (val === undefined) {
@@ -215,8 +213,7 @@ describe('server/js_client_to_js_server.js: ' +
         $callback(e);
       });
       var self = this;
-      $stream.on('readable', function() {
-        var key = $stream.read();
+      $stream.on('data', function(key) {
         if (key !== null) {
           var val = self.cacheMap[key];
           if (val === undefined) {

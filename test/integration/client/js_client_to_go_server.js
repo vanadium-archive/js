@@ -126,8 +126,7 @@ describe('client/js_client_to_go_server.js: Cache Service', function() {
     Veyron.Promise.all(promises).then(function() {
       var promise = cacheService.multiGet();
       var stream = promise.stream;
-      stream.on('readable', function() {
-        var value = stream.read();
+      stream.on('data', function(value) {
         if (value) {
           expect(value).to.equal(nextNumber.toString());
           nextNumber += 2;
@@ -152,8 +151,7 @@ describe('client/js_client_to_go_server.js: Cache Service', function() {
     promise.then(function() {
       var promise = cacheService.multiGet();
       var stream = promise.stream;
-      stream.on('readable', function readable() {
-        var value = stream.read();
+      stream.on('data', function(value) {
         if (value) {
           value();
         }
