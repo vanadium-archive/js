@@ -293,7 +293,7 @@ ProxyConnection.prototype.handleIncomingInvokeRequest = function(messageId,
 
   var server = this.servers[request.serverId];
   if (server === undefined) {
-    err = new Error(request.serverName + ' is not a configured server');
+    err = new Error(request.serverId + ' is not a configured server id');
     this.sendInvokeRequestResult(messageId, request.method, null, err);
     return;
   }
@@ -507,6 +507,26 @@ ProxyConnection.prototype.publishServer = function(name, server, callback) {
   this.sendRequest(message, MessageType.PUBLISH, def);
 
   return def.promise;
+};
+
+/**
+ * Sends a stop server request to wspr.
+ * @param {Server} server Server object to stop.
+ * @param {function} callback if provided, the function will be called on
+ * completion. The only argument is an error if there was one.
+ * @return {Promise} Promise to be called when stop service completes or fails
+ */
+ProxyConnection.prototype.stopServer = function(server, callback) {
+  var self = this;
+
+  var def = new Deferred(callback);
+  // Send the stop request to wspr
+  this.sendRequest(server.id.toString(), MessageType.STOP, def);
+
+  return def.promise.then(function(result) {
+    delete self.servers[server.id];
+    return result;
+  });
 };
 
 /**

@@ -59,6 +59,18 @@ server.prototype.publish = function(name, callback) {
 };
 
 /**
+ * Stop gracefully stops all services on this Server.
+ * New calls are rejected, but any in-flight calls are allowed to complete.
+ * All published named are unmounted.
+ * @param {function} callback if provided, the function will be called on
+ * completion. The only argument is an error if there was one.
+ * @return {Promise} Promise to be called when stop service completes or fails
+ */
+server.prototype.stop = function(callback) {
+  return this._proxyConnection.stopServer(this, callback);
+};
+
+/**
  * register associates a service object with a name within a server. Object's
  * methods become available to be invoked via RPC calls to that name after the
  * server is published.
@@ -130,8 +142,6 @@ server.prototype.generateIdlWireDescription = function() {
 server.prototype.getServiceObject = function(serviceName) {
   return this.registeredServices[serviceName];
 };
-
-//TODO(aghassemi) Implement stop()
 
 /**
  * Export the module

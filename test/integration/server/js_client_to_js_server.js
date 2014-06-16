@@ -138,12 +138,6 @@ function runJSClientServerTests(cacheDefinition) {
     var service = client.bindTo('nonexisting/name');
     return expect(service).to.eventually.be.rejected;
   });
-
-  // TODO(aghassemi) tests and implementation for:
-  // When JS service returns error
-  // Ensure communication fails when service stops
-  // Publishing to one proxy and calling to a different one
-
 }
 
 describe('server/js_client_to_js_server.js: ' +
