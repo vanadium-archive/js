@@ -139,9 +139,11 @@ module.exports = function(grunt) {
 
     // Server-side testing in NodeJS
     nodeReporter: 'spec',
+    testTimeout: 4000,
     nodeTest: {
       // Spec tests
       options: {
+        timeout: '<%= testTimeout %>',
         reporter: '<%= nodeReporter %>',
         grep: grunt.option('grep'), // only run tests matching pattern
         clearRequireCache: true,
@@ -175,6 +177,7 @@ module.exports = function(grunt) {
         basePath: '',
         mocha: {
           ui: 'tdd',
+          timeout: '<%= testTimeout %>',
           grep: grunt.option('grep') // only run tests matching pattern
         }
       },
