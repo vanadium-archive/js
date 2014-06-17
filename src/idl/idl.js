@@ -4,6 +4,7 @@
 
 'use strict';
 
+var vError = require('../lib/verror');
 var idlHelper = {};
 
 /**
@@ -65,15 +66,17 @@ var IDLFunction = function(method, args, returnArgs) {
  * Regexep for method.
  */
 var methodRegex = new RegExp([
-    '\\s*(\\w+)',          // the method name.
-    '\\(([^)]*)\\)',       // the arguments.
-    '[^\\S\\n;]*',         // any non-newline whitespace.
-    '(\\w+|\\([^)]*\\))?', // optional return types,
-                           // both int and (int, error) forms.
-    '[^\\S\\n]*',          // any non-newline whitespace.
-    '({[^}]*})?',          // the optional tags.
-    '[^\\S\\n]*',          // any non-newline whitespace.
-    '(;|\\n)?'             // an optional final semicolon or newline.
+    '\\s*(\\w+)',           // the method name.
+    '\\(([^)]*)\\)',        // the arguments.
+    '[^\\S\\n;]*',          // any non-newline whitespace.
+    '(stream<\\w+,\\w+>)?', // optinal stream arguments
+    '[^\\S\\n;]*',          // any non-newline whitespace.
+    '(\\w+|\\([^)]*\\))?',  // optional return types,
+                            // both int and (int, error) forms.
+    '[^\\S\\n]*',           // any non-newline whitespace.
+    '({[^}]*})?',           // the optional tags.
+    '[^\\S\\n]*',           // any non-newline whitespace.
+    '(;|\\n)?'              // an optional final semicolon or newline.
   ].join(''), 'g');
 
 /**
@@ -114,8 +117,9 @@ idlHelper.parseIDL = function(file) {
     // the method starts first and if it does, then we ignore this end match.
     while (method !== null && method.index < end.index) {
       var name = method[1];
+      name = name[0].toLowerCase() + name.slice(1);
       var params = method[2];
-      var outArgs = method[3] || '';
+      var outArgs = method[4] || '';
       currentInterface[name] = new IDLFunction(name, params, outArgs);
 
       // We have the endOfInterfaceRegex seek past the end of the method
@@ -261,6 +265,8 @@ idlHelper.ServiceWrapper = function(service, extraMetadata) {
           var extra = extraMetadata[methodName];
           if (extra.numReturnArgs !== undefined) {
             metadata.numReturnArgs = extra.numReturnArgs;
+          } else if (extra.returnArgs !== undefined) {
+            metadata.numReturnArgs = extra.returnArgs.length - 1;
           }
         }
 
@@ -268,6 +274,41 @@ idlHelper.ServiceWrapper = function(service, extraMetadata) {
       }
     }
   }
+};
+
+idlHelper.ServiceWrapper.prototype.validate = function(definition) {
+  for (var name in definition) {
+    if (definition.hasOwnProperty(name)) {
+      var metadata = this.metadata[name];
+      if (!metadata) {
+        return new vError.BadArgError('Missing method: ' + name);
+      }
+      var expected = definition[name];
+      var inputArgs = metadata.params.length -
+          Object.keys(metadata.injections).length;
+      if (inputArgs !== expected.args.length) {
+        return new vError.BadArgError('Wrong number of input args for ' +
+            name + ', got: ' + inputArgs + ', expected: ' +
+            expected.args.length);
+      }
+
+      // TODO(bjornick): Verify streaming args.
+      if (metadata.numReturnArgs !== expected.returnArgs.length - 1) {
+        return new vError.BadArgError('Wrong number of output args for ' +
+            name + ', got: ' + metadata.numReturnArgs + ', expected ' +
+            expected.returnArgs.length - 1);
+      }
+    }
+  }
+
+  for (name in this.metadata) {
+    if (this.metadata.hasOwnProperty(name) &&
+        !definition.hasOwnProperty(name)) {
+      return new vError.BadArgError('Unexpected method ' + name +
+          ' implemented.');
+    }
+  }
+  return null;
 };
 
 /**

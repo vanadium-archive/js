@@ -6,7 +6,6 @@
 var Client = require('../../../../src/ipc/client.js');
 
 describe('Client-side binding', function() {
-
   // Mock a proxy
   var mockedProxy = {
     promiseInvokeMethod: function(name, methodName, args, numOut,

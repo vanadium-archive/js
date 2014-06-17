@@ -10,21 +10,101 @@
  * All globals (veyron, expect, testconfig) are injected by test runners.
  */
 
-function runJSClientServerTests(cacheDefinition) {
+var cacheWithPromises = {
+  cacheMap: {},
+  set: function(key, value) {
+    this.cacheMap[key] = value;
+  },
+  get: function(key) {
+    var def = new Veyron.Deferred();
+    var val = this.cacheMap[key];
+    if (val === undefined) {
+      def.reject('unknown key');
+    } else {
+      def.resolve(val);
+    }
+    return def.promise;
+  } ,
+  multiGet: function($stream) {
+    var def = new Veyron.Deferred();
+    $stream.on('end', function() {
+      def.resolve();
+    });
+
+    $stream.on('error', function(e) {
+      def.reject(e);
+    });
+    var self = this;
+    $stream.on('data', function(key) {
+      if (key !== null) {
+        var val = self.cacheMap[key];
+        if (val === undefined) {
+          def.reject('unknown key');
+        }
+        $stream.write(val);
+      }
+    });
+    $stream.read();
+    return def.promise;
+  }
+};
+
+var cacheWithCallback = {
+  cacheMap: {},
+  set: function(key, value) {
+    this.cacheMap[key] = value;
+  },
+  get: function(key, $callback) {
+    var val = this.cacheMap[key];
+    if (val === undefined) {
+      $callback('unknown key');
+    } else {
+      $callback(null, val);
+    }
+  } ,
+  multiGet: function($callback, $stream) {
+    $stream.on('end', function close() {
+      $callback(null);
+    });
+    $stream.on('error', function error(e) {
+      $callback(e);
+    });
+    var self = this;
+    $stream.on('data', function(key) {
+      if (key !== null) {
+        var val = self.cacheMap[key];
+        if (val === undefined) {
+          $callback(new Error('unknown key'));
+        }
+        $stream.write(val);
+      }
+    });
+    $stream.read();
+  }
+};
+
+function runJSClientServerTests(cacheDefinition, idl, serviceName) {
   var client;
   var cacheServiceClient;
   var cacheServiceClientUsingEndpoint;
+
   before(function(done) {
     var veyron = new Veyron(TestHelper.veyronConfig);
     // Create server object and publish the service
     var server = veyron.newServer();
+    var optArg;
+    if (idl) {
+      server.addIDL(idl);
+      optArg = serviceName;
+    } else {
+      optArg = {
+        set:{
+          numReturnArgs: 0
+        }
+      };
+    }
 
-    var metadata = {
-      set:{
-        numReturnArgs: 0
-      }
-    };
-    server.register('Cache', cacheDefinition, metadata).then(function() {
+    server.register('Cache', cacheDefinition, optArg).then(function() {
       return server.publish('myCache');
     }).then(function(endpoint) {
       expect(endpoint).to.exist;
@@ -142,83 +222,21 @@ function runJSClientServerTests(cacheDefinition) {
 
 describe('server/js_client_to_js_server.js: ' +
   'Server and client in JS', function() {
-  var cache = {
-    cacheMap: {},
-    set: function(key, value) {
-      this.cacheMap[key] = value;
-    },
-    get: function(key) {
-      var def = new Veyron.Deferred();
-      var val = this.cacheMap[key];
-      if (val === undefined) {
-        def.reject('unknown key');
-      } else {
-        def.resolve(val);
-      }
-      return def.promise;
-    } ,
-    multiGet: function($stream) {
-      var def = new Veyron.Deferred();
-      $stream.on('end', function() {
-        def.resolve();
-      });
+  runJSClientServerTests(cacheWithPromises, null, null);
+});
 
-      $stream.on('error', function(e) {
-        def.reject(e);
-      });
-      var self = this;
-      $stream.on('data', function(key) {
-        if (key !== null) {
-          var val = self.cacheMap[key];
-          if (val === undefined) {
-            def.reject('unknown key');
-          }
-          $stream.write(val);
-        }
-      });
-      $stream.read();
-      return def.promise;
-    }
-  };
-  runJSClientServerTests(cache);
+describe('server/js_client_to_js_server.js: ' +
+  'Server and client in JS with IDL', function() {
+  var idl = 'package foo\n' +
+      'type Cache interface {\n' +
+      '  Set(key string, value string) error\n' +
+      '  Get(key string) (string, error)\n' +
+      '  MultiGet() stream<string, string> (string, error)\n' +
+      '}\n';
+  runJSClientServerTests(cacheWithPromises, idl, 'Cache');
 });
 
 describe('server/js_client_to_js_server.js: ' +
   'Server and client in JS w/ callback', function() {
-  // our cache service
-  var cache = {
-    cacheMap: {},
-    set: function(key, value) {
-      this.cacheMap[key] = value;
-    },
-    get: function(key, $callback) {
-      var val = this.cacheMap[key];
-      if (val === undefined) {
-        $callback('unknown key');
-      } else {
-        $callback(null, val);
-      }
-    } ,
-    multiGet: function($callback, $stream) {
-      $stream.on('end', function close() {
-        $callback(null);
-      });
-      $stream.on('error', function error(e) {
-        $callback(e);
-      });
-      var self = this;
-      $stream.on('data', function(key) {
-        if (key !== null) {
-          var val = self.cacheMap[key];
-          if (val === undefined) {
-            $callback(new Error('unknown key'));
-          }
-          $stream.write(val);
-        }
-      });
-      $stream.read();
-    }
-  };
-
-  runJSClientServerTests(cache);
+  runJSClientServerTests(cacheWithCallback, null, null);
 });

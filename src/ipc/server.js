@@ -18,6 +18,7 @@
 
 var Deferred = require('./../lib/deferred');
 var IdlHelper = require('./../idl/idl');
+var vError = require('./../lib/verror');
 var ServiceWrapper = IdlHelper.ServiceWrapper;
 
 var nextServerID = 1; // The ID for the next server.
@@ -32,6 +33,22 @@ var server = function(proxyConnection) {
   this._proxyConnection = proxyConnection;
   this.id = nextServerID++;
   this.registeredServices = {};
+  this._knownServiceDefinitions = {};
+};
+
+/**
+ * addIDL adds an IDL file to the set of definitions known by the server.
+ * Services defined in IDL files passed into this method can be used to
+ * describe the interface exported by a serviceObject passed into register.
+ * @param {string} idlContents the contents of an idl file.
+ */
+server.prototype.addIDL = function(idlContents) {
+  var updates = IdlHelper.parseIDL(idlContents);
+  for (var key in updates) {
+    if (updates.hasOwnProperty(key)) {
+      this._knownServiceDefinitions[key] = updates[key];
+    }
+  }
 };
 
 /**
@@ -88,8 +105,10 @@ server.prototype.stop = function(callback) {
  *
  * @param {string} name The name to register the service under
  * @param {Object} serviceObject service object to register
- * @param {Object} serviceMetadata if provided a set of metadata for functions
- * in the service (such as number of return values).
+ * @param {*} serviceMetadata if provided a set of metadata for functions
+ * in the service (such as number of return values).  It could either be
+ * passed in as a properties object or a string that is the name of a
+ * service that was defined in the idl files that the server knows about.
  * @param {function} callback if provided, the function will be called on
  * completion. The only argument is an error if there was one.
  * @return {Promise} Promise to be called when register completes or fails
@@ -107,8 +126,27 @@ server.prototype.register = function(name, serviceObject, serviceMetadata,
     var err = new Error('Service already registered under name: ' + name);
     def.reject(err);
   } else {
-    this.registeredServices[name] = new ServiceWrapper(serviceObject,
-                                                       serviceMetadata);
+    var shouldCheckDefinition = false;
+    if (typeof(serviceMetadata) === 'string') {
+      var key = serviceMetadata;
+      shouldCheckDefinition = true;
+      serviceMetadata = this._knownServiceDefinitions[key];
+      if (!serviceMetadata) {
+        def.reject(new vError.NotFoundError('unknown service ' + key));
+        return def.promise;
+      }
+    }
+
+    var wrapper = new ServiceWrapper(serviceObject, serviceMetadata);
+
+    if (shouldCheckDefinition) {
+      var err2 = wrapper.validate(serviceMetadata);
+      if (err2) {
+        def.reject(err2);
+        return def.promise;
+      }
+    }
+    this.registeredServices[name] = wrapper;
     def.resolve();
   }
 

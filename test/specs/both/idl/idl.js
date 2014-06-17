@@ -107,8 +107,8 @@ describe('IDL', function() {
           '}\n';
       var expectedResult = {
         'Service' : {
-          Add: {
-            name: 'Add',
+          add: {
+            name: 'add',
             args: [],
             returnArgs: []
           }
@@ -127,8 +127,8 @@ describe('IDL', function() {
           '}\n';
       var expectedResult = {
         'Service' : {
-          Add: {
-            name: 'Add',
+          add: {
+            name: 'add',
             args: [ {
               name: 'a',
               type: 'int'
@@ -150,8 +150,8 @@ describe('IDL', function() {
           '}\n';
       var expectedResult = {
         'Service' : {
-          Add: {
-            name: 'Add',
+          add: {
+            name: 'add',
             args: [{
               name: 'a',
               type: 'int'
@@ -176,8 +176,8 @@ describe('IDL', function() {
           '}\n';
       var expectedResult = {
         'Service' : {
-          Add: {
-            name: 'Add',
+          add: {
+            name: 'add',
             args: [{
               name: 'a',
               type: 'int'
@@ -202,8 +202,8 @@ describe('IDL', function() {
           '}\n';
       var expectedResult = {
         'Service' : {
-          Add: {
-            name: 'Add',
+          add: {
+            name: 'add',
             args: [{
               name: 'a',
               type: 'int'
@@ -230,8 +230,8 @@ describe('IDL', function() {
           '}\n';
       var expectedResult = {
         'Service' : {
-          Add: {
-            name: 'Add',
+          add: {
+            name: 'add',
             args: [{
               name: 'a',
               type: 'int'
@@ -260,8 +260,8 @@ describe('IDL', function() {
           '}\n';
       var expectedResult = {
         'Service' : {
-          Add: {
-            name: 'Add',
+          add: {
+            name: 'add',
             args: [{
               name: 'a',
               type: 'int'
@@ -286,8 +286,8 @@ describe('IDL', function() {
           '}\n';
       var expectedResult = {
         'Service' : {
-          Add: {
-            name: 'Add',
+          add: {
+            name: 'add',
             args: [{
               name: 'a',
               type: 'int'
@@ -314,8 +314,8 @@ describe('IDL', function() {
           '}\n';
       var expectedResult = {
         'Service' : {
-          Add: {
-            name: 'Add',
+          add: {
+            name: 'add',
             args: [{
               name: 'a',
               type: 'int'
@@ -345,8 +345,8 @@ describe('IDL', function() {
           '}\n';
       var expectedResult = {
         'Service' : {
-          Add: {
-            name: 'Add',
+          add: {
+            name: 'add',
             args: [{
               name: 'a',
               type: 'int'
@@ -360,8 +360,8 @@ describe('IDL', function() {
               type: 'error'
             }]
           },
-          UnaryOperator: {
-            name: 'UnaryOperator',
+          unaryOperator: {
+            name: 'unaryOperator',
             args: [],
             returnArgs: []
           }
@@ -382,8 +382,8 @@ describe('IDL', function() {
           '}\n';
       var expectedResult = {
         'Service' : {
-          Add: {
-            name: 'Add',
+          add: {
+            name: 'add',
             args: [{
               name: 'a',
               type: 'int'
@@ -393,8 +393,8 @@ describe('IDL', function() {
             }],
             returnArgs: []
           },
-          UnaryOperator: {
-            name: 'UnaryOperator',
+          unaryOperator: {
+            name: 'unaryOperator',
             args: [],
             returnArgs: []
           }
@@ -415,8 +415,8 @@ describe('IDL', function() {
           '}\n';
       var expectedResult = {
         'Service' : {
-          Add: {
-            name: 'Add',
+          add: {
+            name: 'add',
             args: [{
               name: 'a',
               type: 'int'
@@ -430,8 +430,8 @@ describe('IDL', function() {
               type: 'error'
             }]
           },
-          UnaryOperator: {
-            name: 'UnaryOperator',
+          unaryOperator: {
+            name: 'unaryOperator',
             args: [],
             returnArgs: []
           }
@@ -452,8 +452,8 @@ describe('IDL', function() {
           '}\n';
       var expectedResult = {
         'Service' : {
-          Add: {
-            name: 'Add',
+          add: {
+            name: 'add',
             args: [{
               name: 'a',
               type: 'int'
@@ -463,8 +463,8 @@ describe('IDL', function() {
             }],
             returnArgs: []
           },
-          UnaryOperator: {
-            name: 'UnaryOperator',
+          unaryOperator: {
+            name: 'unaryOperator',
             args: [],
             returnArgs: []
           }
@@ -486,8 +486,8 @@ describe('IDL', function() {
           '}\n';
       var expectedResult = {
         'Service' : {
-          Add: {
-            name: 'Add',
+          add: {
+            name: 'add',
             args: [{
               name: 'a',
               type: 'int'
@@ -501,8 +501,8 @@ describe('IDL', function() {
               type: 'error'
             }]
           },
-          UnaryOperator: {
-            name: 'UnaryOperator',
+          unaryOperator: {
+            name: 'unaryOperator',
             args: [],
             returnArgs: []
           }
@@ -525,8 +525,8 @@ describe('IDL', function() {
           '}\n';
       var expectedResult = {
         'Service' : {
-          Add: {
-            name: 'Add',
+          add: {
+            name: 'add',
             args: [{
               name: 'a',
               type: 'int'
@@ -540,8 +540,8 @@ describe('IDL', function() {
               type: 'error'
             }]
           },
-          UnaryOperator: {
-            name: 'UnaryOperator',
+          unaryOperator: {
+            name: 'unaryOperator',
             args: [],
             returnArgs: []
           }
@@ -565,8 +565,8 @@ describe('IDL', function() {
           '}\n';
       var expectedResult = {
         'Service' : {
-          Add: {
-            name: 'Add',
+          add: {
+            name: 'add',
             args: [{
               name: 'a',
               type: 'int'
@@ -576,8 +576,8 @@ describe('IDL', function() {
             }],
             returnArgs: []
           },
-          UnaryOperator: {
-            name: 'UnaryOperator',
+          unaryOperator: {
+            name: 'unaryOperator',
             args: [],
             returnArgs: []
           }
@@ -599,15 +599,15 @@ describe('IDL', function() {
           '}\n';
       var expectedResult = {
         'Service' : {
-          Add: {
-            name: 'Add',
+          add: {
+            name: 'add',
             args: [],
             returnArgs: []
           }
         },
         'Service2': {
-          Store: {
-            name: 'Store',
+          store: {
+            name: 'store',
             args: [{
               name: 'a',
               type: 'int'
