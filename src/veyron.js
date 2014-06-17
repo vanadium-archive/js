@@ -12,7 +12,7 @@ var Promise = require('./lib/promise');
 var vLog = require('./lib/vlog');
 var vError = require('./lib/verror');
 var http = require('./lib/http');
-var MountTable = require('./naming/mounttable');
+var Namespace = require('./namespace/namespace');
 var store = require('./storage/store');
 
 /**
@@ -105,15 +105,15 @@ Veyron.prototype._getIdentityPromise = function() {
 };
 
 /**
- * Create a new MountTable
- * @return {Promise} A promise that resolves to a MountTable instance.
+ * Create a new Namespace
+ * @return {Promise} A promise that resolves to a Namespace instance.
  */
-Veyron.prototype.newMountTable = function(roots) {
+Veyron.prototype.newNamespace = function(roots) {
   var veyron = this;
   var proxy = this._getProxyConnection();
 
   if (roots) {
-    return Promise.cast(new MountTable(veyron.newClient(), roots));
+    return Promise.cast(new Namespace(veyron.newClient(), roots));
   }
 
   // We have to ask for the websocket now, otherwise the config
@@ -121,7 +121,7 @@ Veyron.prototype.newMountTable = function(roots) {
   // which is deadlock prone.
   proxy.getWebSocket();
   return this._getProxyConnection().config.then(function(config) {
-    return new MountTable(veyron.newClient(), config.mounttableRoot);
+    return new Namespace(veyron.newClient(), config.mounttableRoot);
   });
 };
 

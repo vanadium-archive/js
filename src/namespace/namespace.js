@@ -1,46 +1,45 @@
 /**
- *  @fileoverview Client library for the MountTable.
+ *  @fileoverview Client library for the Namespace.
  */
 
 'use strict';
 
-var nameUtil = require('./names.js');
+var nameUtil = require('./util.js');
 var Deferred = require('../lib/deferred');
 var Promise = require('../lib/promise');
 var vError = require('../lib/verror');
 
 /**
- * MountTable handles manipulating and querying from
- * a mounttable.
+ * Namespace handles manipulating and querying from the mount table.
  * @param {object} client A veyron client.
- * @param {...string} roots root addresses to use as the root mounttables.
+ * @param {...string} roots root addresses to use as the root mount tables.
  * @constructor
  */
-var MountTable = function(client, roots) {
+var Namespace = function(client, roots) {
   this._client = client;
   this._roots = roots;
 };
 
 /*
- * Error returned when resolution hits a non-MountTable.
+ * Error returned when resolution hits a non-mount table.
  */
-MountTable.errNotAMountTable = function() {
+Namespace.errNotAMountTable = function() {
   return new vError.VeyronError(
-    'Resolution target is not a MountTable', vError.Ids.Aborted);
+    'Resolution target is not a mount table', vError.Ids.Aborted);
 };
 
 /*
- * Error returned from the MountTable server when reading a non-existant name.
+ * Error returned from the mount table server when reading a non-existant name.
  */
-MountTable.errNoSuchName = function() {
+Namespace.errNoSuchName = function() {
   return new vError.VeyronError(
     'Name doesn\'t exist', vError.Ids.NotFound);
 };
 
 /*
- * Error returned from the MountTable server when reading a non-existant name.
+ * Error returned from the mount table server when reading a non-existant name.
  */
-MountTable.errNoSuchNameRoot = function() {
+Namespace.errNoSuchNameRoot = function() {
   return new vError.VeyronError(
     'Name doesn\'t exist: root of namespace', vError.NotFound);
 };
@@ -48,16 +47,15 @@ MountTable.errNoSuchNameRoot = function() {
 /*
  * Maximum number of hops between servers we will make to resolve a name.
  */
-MountTable._maxDepth = 32;
+Namespace._maxDepth = 32;
 
 /*
- * Make a name relative to the roots of this MountTable.
+ * Make a name relative to the roots of this namespace.
  * @param {string} name A name.
  * @return {Array} A list of rooted names.
  */
-MountTable.prototype._rootNames = function(name) {
-  var parts = nameUtil.splitAddressName(name);
-  if (parts.address !== '') {
+Namespace.prototype._rootNames = function(name) {
+  if (nameUtil._isRooted(name) && name !== '/') {
     return [name];
   }
   var out = [];
@@ -79,7 +77,11 @@ function convertServersToStrings(results) {
   var suffix = results[1];
   var out = [];
   for (var i = 0; i < servers.length; i++) {
-    out.push(nameUtil.join(servers[i].server, suffix));
+    var name = servers[i].server;
+    if (suffix !== '') {
+      name = nameUtil.join(name, suffix);
+    }
+    out.push(name);
   }
   return out;
 }
@@ -90,7 +92,7 @@ function convertServersToStrings(results) {
  * @return {Array} list of terminal names.
  */
 function makeAllTerminal(names) {
-  return names.map(nameUtil.makeTerminal);
+  return names.map(nameUtil._convertToTerminalName);
 }
 
 /*
@@ -99,7 +101,7 @@ function makeAllTerminal(names) {
  * @return {boolean} true if every name in the input was terminal.
  */
 function allAreTerminal(names) {
-  return names.every(nameUtil.terminal);
+  return names.every(nameUtil._isTerminal);
 }
 
 /*
@@ -109,7 +111,7 @@ function allAreTerminal(names) {
  * @return {Promise} a promise that will be fulfilled with a list of further
  * resolved names.
  */
-MountTable.prototype._resolveAgainstMountTable = function(names) {
+Namespace.prototype._resolveAgainstMountTable = function(names) {
   if (names.length === 0) {
     return Promise.reject(
       new vError.BadArgError('No servers to resolve query.'));
@@ -118,20 +120,20 @@ MountTable.prototype._resolveAgainstMountTable = function(names) {
   // TODO(mattr): Maybe make this take a service signature.
   // That would be more efficient, but we would need to do error handling
   // differently.
-  var mt = this;
-  var name = nameUtil.makeTerminal(names[0]);
+  var self = this;
+  var name = nameUtil._convertToTerminalName(names[0]);
   return this._client.bindTo(name).then(function onBind(service) {
     if (service.resolveStep === undefined) {
-      throw MountTable.errNotAMountTable();
+      throw Namespace.errNotAMountTable();
     }
     return service.resolveStep().then(convertServersToStrings);
   }).catch(function onError(err) {
-    if (vError.equals(err, MountTable.errNoSuchName()) ||
-        vError.equals(err, MountTable.errNoSuchNameRoot()) ||
+    if (vError.equals(err, Namespace.errNoSuchName()) ||
+        vError.equals(err, Namespace.errNoSuchNameRoot()) ||
         names.length <= 1) {
       throw err;
     } else {
-      return mt._resolveAgainstMountTable(names.slice(1));
+      return self._resolveAgainstMountTable(names.slice(1));
     }
   });
 };
@@ -147,17 +149,17 @@ MountTable.prototype._resolveAgainstMountTable = function(names) {
  * @return {Promise} a promise that will be fulfilled with a list of terminal
  * names.
  */
-MountTable.prototype._resolveLoop = function(curr, last, depth, handleErrors) {
-  var mt = this;
-  return mt._resolveAgainstMountTable(curr).then(function onResolve(newNames) {
-    if (allAreTerminal(newNames)) {
-      return newNames;
+Namespace.prototype._resolveLoop = function(curr, last, depth, handleErrors) {
+  var self = this;
+  return self._resolveAgainstMountTable(curr).then(function onResolve(names) {
+    if (allAreTerminal(names)) {
+      return names;
     }
     depth++;
-    if (depth > MountTable._maxDepth) {
+    if (depth > Namespace._maxDepth) {
       throw new vError.InternalError('Maxiumum resolution depth exceeded.');
     }
-    return mt._resolveLoop(newNames, curr, depth, handleErrors);
+    return self._resolveLoop(names, curr, depth, handleErrors);
   }, function onError(err) {
     return handleErrors(err, curr, last);
   });
@@ -172,15 +174,15 @@ MountTable.prototype._resolveLoop = function(curr, last, depth, handleErrors) {
  * is one, and the second argument is a list of terminal names.
  * @return {Promise} A promise to a list of terminal names.
  */
-MountTable.prototype.resolveToMountTable = function(name, callback) {
+Namespace.prototype.resolveToMountTable = function(name, callback) {
   var names = this._rootNames(name);
   var deferred = new Deferred(callback);
   var handleErrors = function(err, curr, last) {
-    if (vError.equals(err, MountTable.errNoSuchNameRoot()) ||
-        vError.equals(err, MountTable.errNotAMountTable())) {
+    if (vError.equals(err, Namespace.errNoSuchNameRoot()) ||
+        vError.equals(err, Namespace.errNotAMountTable())) {
       return makeAllTerminal(last);
     }
-    if (vError.equals(err, MountTable.errNoSuchName())) {
+    if (vError.equals(err, Namespace.errNoSuchName())) {
       return makeAllTerminal(curr);
     }
     throw err;
@@ -193,20 +195,20 @@ MountTable.prototype.resolveToMountTable = function(name, callback) {
 
 /**
  * resolveMaximally resolves a veyron name as far as it can, whether the
- * target is a mounttable or not.
+ * target is a mount table or not.
  * @param {string} name The name to resolve.
  * @param {function} [callback] if given, this fuction will be called on
  * completion of the resolve.  The first argument will be an error if there
  * is one, and the second argument is a list of terminal names.
  * @return {Promise} A promise to a list of terminal names.
  */
-MountTable.prototype.resolveMaximally = function(name, callback) {
+Namespace.prototype.resolveMaximally = function(name, callback) {
   var names = this._rootNames(name);
   var deferred = new Deferred(callback);
   var handleErrors = function(err, curr, last){
-    if (vError.equals(err, MountTable.errNoSuchNameRoot()) ||
-        vError.equals(err, MountTable.errNoSuchName()) ||
-        vError.equals(err, MountTable.errNotAMountTable())) {
+    if (vError.equals(err, Namespace.errNoSuchNameRoot()) ||
+        vError.equals(err, Namespace.errNoSuchName()) ||
+        vError.equals(err, Namespace.errNotAMountTable())) {
       return makeAllTerminal(curr);
     }
     throw err;
@@ -217,4 +219,4 @@ MountTable.prototype.resolveMaximally = function(name, callback) {
   return deferred.promise;
 };
 
-module.exports = MountTable;
+module.exports = Namespace;

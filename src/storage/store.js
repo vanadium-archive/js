@@ -28,13 +28,7 @@
 'use strict';
 
 var Promise = require('../lib/promise');
-
-var _joinAddressParts = function() {
-  // TODO(bprosnitz) This is not correct, we can create '//' where by
-  // concatinating 'a/' and 'b'.
-  var args = Array.prototype.slice.call(arguments);
-  return args.join('/');
-};
+var names = require('../namespace/util.js');
 
 // Modifies stream in rpcPromise to emit 'error' events when the promise
 // rejects.
@@ -88,7 +82,7 @@ Transaction.prototype._updateTransaction = function(client, service) {
     throw new Error('Cannot change a transaction\'s client.');
   }*/
   this._client = client;
-  this._storageService = _joinAddressParts(service, '.store');
+  this._storageService = names.join(service, '.store');
   if (!this._transactionCreation) {
     var trid = this._id;
     this._transactionCreation = this._client.bindTo(
@@ -131,7 +125,7 @@ Transaction.prototype.abort = function() {
 var StoreObject = function(client, path) {
   this._client = client;
   this._path = path;
-  this._bindPromise = this._client.bindTo(_joinAddressParts(this._path, '/'));
+  this._bindPromise = this._client.bindTo(names.join(this._path, '/'));
 };
 
 StoreObject.prototype._updateTransactionAndBind = function(tr) {
