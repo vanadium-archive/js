@@ -325,16 +325,16 @@ ProxyConnection.prototype.handleIncomingInvokeRequest = function(messageId,
     }
     vLog.debug('Requested method ' + request.method +
       ' threw an exception on invoke: ', e, stackTrace);
-    var numReturnArgs = metadata.numReturnArgs;
+    var numOutArgs = metadata.numOutArgs;
     var result;
-    switch (numReturnArgs) {
+    switch (numOutArgs) {
       case 0:
         break;
       case 1:
         result = null;
         break;
       default:
-        result = new Array(numReturnArgs);
+        result = new Array(numOutArgs);
     }
     self.sendInvokeRequestResult(messageId, request.method, result, e,
                                  metadata);
@@ -423,7 +423,7 @@ ProxyConnection.prototype.sendInvokeRequestResult = function(messageId, name,
   var results = [];
 
   if (metadata) {
-    switch (metadata.numReturnArgs) {
+    switch (metadata.numOutArgs) {
       case 0:
         if (value !== undefined) {
           vLog.error('Unexpected return value from ' + name + ': ' + value);
@@ -435,15 +435,15 @@ ProxyConnection.prototype.sendInvokeRequestResult = function(messageId, name,
         break;
       default:
         if (Array.isArray(value)) {
-          if (value.length !== metadata.numReturnArgs) {
+          if (value.length !== metadata.numOutArgs) {
             vLog.error('Wrong number of arguments returned by ' + name +
-                '. expected: ' + metadata.numReturnArgs + ', got:' +
+                '. expected: ' + metadata.numOutArgs + ', got:' +
                 value.length);
           }
           results = value;
         } else {
           vLog.error('Wrong number of arguments returned by ' + name +
-              '. expected: ' + metadata.numReturnArgs + ', got: 1');
+              '. expected: ' + metadata.numOutArgs + ', got: 1');
           results = [value];
         }
     }

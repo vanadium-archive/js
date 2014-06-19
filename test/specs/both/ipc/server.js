@@ -6,11 +6,18 @@
 var Server = require('../../../../src/ipc/server.js');
 
 describe('Server registering', function() {
+  var idl = {
+      package: 'foo',
+      Sample: {
+        add: {
+          numInArgs: 2,
+          numOutArgs: 1,
+          inputStreaming: false,
+          outputStreaming: false
+        }
+      }
+    };
   it('Using IDL with no errors', function() {
-    var idl = 'package foo\n' +
-      'type Sample interface {\n' +
-      '  Add(a int, b int) (int, error)\n' +
-      '}\n';
     var server = new Server(null);
     server.addIDL(idl);
     var service = {
@@ -18,15 +25,11 @@ describe('Server registering', function() {
         return a + b;
       }
     };
-    var promise = server.register('adder', service, 'Sample');
+    var promise = server.register('adder', service, 'foo.Sample');
     return expect(promise).to.eventually.be.fulfilled;
   });
 
   it('Using IDL with no errors with injections', function() {
-    var idl = 'package foo\n' +
-      'type Sample interface {\n' +
-      '  Add(a int, b int) (int, error)\n' +
-      '}\n';
     var server = new Server(null);
     server.addIDL(idl);
     var service = {
@@ -34,27 +37,19 @@ describe('Server registering', function() {
         return a + b;
       }
     };
-    var promise = server.register('adder', service, 'Sample');
+    var promise = server.register('adder', service, 'foo.Sample');
     return expect(promise).to.eventually.be.fulfilled;
   });
 
   it('Using IDL with missing function', function() {
-    var idl = 'package foo\n' +
-      'type Sample interface {\n' +
-      '  Add(a int, b int) (int, error)\n' +
-      '}\n';
     var server = new Server(null);
     server.addIDL(idl);
     var service = {};
-    var promise = server.register('adder', service, 'Sample');
+    var promise = server.register('adder', service, 'foo.Sample');
     return expect(promise).to.eventually.be.rejected;
   });
 
   it('Using IDL with wrong number of args', function() {
-    var idl = 'package foo\n' +
-      'type Sample interface {\n' +
-      '  Add(a int, b int) (int, error)\n' +
-      '}\n';
     var server = new Server(null);
     server.addIDL(idl);
     var service = {
@@ -62,7 +57,7 @@ describe('Server registering', function() {
         return a;
       }
     };
-    var promise = server.register('adder', service, 'Sample');
+    var promise = server.register('adder', service, 'foo.Sample');
     return expect(promise).to.eventually.be.rejected;
   });
 });

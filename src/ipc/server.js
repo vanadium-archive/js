@@ -40,13 +40,13 @@ var server = function(proxyConnection) {
  * addIDL adds an IDL file to the set of definitions known by the server.
  * Services defined in IDL files passed into this method can be used to
  * describe the interface exported by a serviceObject passed into register.
- * @param {string} idlContents the contents of an idl file.
+ * @param {object} updates the output of the vdl tool on an idl.
  */
-server.prototype.addIDL = function(idlContents) {
-  var updates = IdlHelper.parseIDL(idlContents);
+server.prototype.addIDL = function(updates) {
+  var prefix = updates.package;
   for (var key in updates) {
-    if (updates.hasOwnProperty(key)) {
-      this._knownServiceDefinitions[key] = updates[key];
+    if (key[0] === key[0].toUpperCase() && updates.hasOwnProperty(key)) {
+      this._knownServiceDefinitions[prefix + '.' + key] = updates[key];
     }
   }
 };
@@ -168,7 +168,6 @@ server.prototype.generateIdlWireDescription = function() {
           IdlHelper.generateIdlWireDescription(serviceMetadata);
     }
   }
-
   return servicesIdlWire;
 };
 

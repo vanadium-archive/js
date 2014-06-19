@@ -227,13 +227,31 @@ describe('server/js_client_to_js_server.js: ' +
 
 describe('server/js_client_to_js_server.js: ' +
   'Server and client in JS with IDL', function() {
-  var idl = 'package foo\n' +
-      'type Cache interface {\n' +
-      '  Set(key string, value string) error\n' +
-      '  Get(key string) (string, error)\n' +
-      '  MultiGet() stream<string, string> (string, error)\n' +
-      '}\n';
-  runJSClientServerTests(cacheWithPromises, idl, 'Cache');
+  var idl = {
+    package: 'foo',
+    Cache: {
+      set: {
+        numInArgs: 2,
+        numOutArgs: 0,
+        inputStreaming: false,
+        outputStreaming: false
+      },
+      get: {
+        numInArgs: 1,
+        numOutArgs: 1,
+        inputStreaming: false,
+        outputStreaming: false
+      },
+      multiGet: {
+        numInArgs: 0,
+        numOutArgs: 1,
+        inputStreaming: true,
+        outputStreaming: true
+      },
+
+    }
+  };
+  runJSClientServerTests(cacheWithPromises, idl, 'foo.Cache');
 });
 
 describe('server/js_client_to_js_server.js: ' +
