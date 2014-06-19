@@ -174,9 +174,14 @@ StoreObject.prototype.query = function(tr, query) {
     return _makeStreamWithErrors(srvc.query(_getTrId(tr), query));
   });
 };
-StoreObject.prototype.watch = function(query) {
+StoreObject.prototype.watchGlob = function(pattern) {
   return this._bindPromise.then(function(srvc) {
-    return _makeStreamWithErrors(srvc.watch(query));
+    return _makeStreamWithErrors(srvc.watchGlob(pattern));
+  });
+};
+StoreObject.prototype.watchQuery = function(query) {
+  return this._bindPromise.then(function(srvc) {
+    return _makeStreamWithErrors(srvc.watchQuery(query));
   });
 };
 StoreObject.prototype.glob = function(pattern) {
