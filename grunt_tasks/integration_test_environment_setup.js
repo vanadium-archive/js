@@ -67,7 +67,7 @@ module.exports = function(grunt) {
    extraArgs) {
     var envWithMount = {
       VEYRON_IDENTITY: process.env.IDENTITY_FILE,
-      MOUNTTABLE_ROOT: mounttableRoot,
+      NAMESPACE_ROOT: mounttableRoot,
     };
     var args = ['-v=3', '-vv=3', '-log_dir=' + LOGS_DIR];
     args = args.concat(extraArgs);
