@@ -1,10 +1,10 @@
 /**
- * @fileoverview WebSocket client implementation
+ * @fileoverview An object that handles marshaling and unmarshal
+ * messages from the native veyron implementation.
  */
 
 'use strict';
 
-var WebSocket = require('./websocket');
 var Stream = require('./stream');
 var MessageType = require('./message_type');
 var IncomingPayloadType = require('./incoming_payload_type');
@@ -17,160 +17,126 @@ var vLog = require('./../lib/vlog');
 var BIND_CACHE_TTL = 3600 * 1000;
 
 /**
- * A client for the veyron service using websockets. Connects to the veyron wspr
- * and performs RPCs.
+ * A client for the native veyron implementation.
  * @constructor
- * @param {string} url of wspr that connects to the veyron network
- * @param {string} [ privateIdentity = null ] private key for the user's veyron
- * identity
+ * @param {Promise} sender A promise that is resolved when we are able to send
+ * a message to the native veron implementation. It should be resolved with an
+ * object that has a send function that will send messages to the native
+ * implementation.
+ * @param {Promise} [ privateIdentity = null ] A promise that resolves to the
+ * private key for the user's veyron identity.
  */
-function ProxyConnection(url, privateIdentityPromise) {
-  this.url = url.replace(/^(http|https)/, 'ws') + '/ws';
+function Proxy(sender, privateIdentityPromise) {
   this.privateIdentityPromise = privateIdentityPromise;
   // We use odd numbers for the message ids, so that the server can use even
   // numbers.
   this.id = 1;
   this.outstandingRequests = {};
-  this.currentWebSocketPromise;
   this.servers = {};
   this.bindCache = {};
+  this._hasResolvedConfig = false;
   this._configDeferred = new Deferred();
   this.config = this._configDeferred.promise;
+  this.senderPromise = sender;
 }
 
 /**
- * Connects to the server and returns an open web socket connection
- * @return {promise} a promise that will be fulfilled with a websocket object
- * when the connection is established.
+ * Handles a message from native veyron implementation.
+ * @param {Object} messsage The message from the native veyron code.
  */
-ProxyConnection.prototype.getWebSocket = function() {
-  // We are either connecting or already connected, return the same promise
-  if (this.currentWebSocketPromise) {
-    return this.currentWebSocketPromise;
+Proxy.prototype.process = function(message) {
+  if (this._hasResolvedConfig === false) { // first message is the config.
+    this._hasResolvedConfig = true;
+    this._configDeferred.resolve(message);
+    return;
   }
 
-  // TODO(bjornick): Implement a timeout mechanism.
-  var websocket = new WebSocket(this.url);
-  var self = this;
-  var receivedConfig = false;
-  var deferred = new Deferred();
-  this.currentWebSocketPromise = deferred.promise;
-  websocket.onopen = function() {
-    vLog.info('Connected to proxy at', self.url);
-    deferred.resolve(websocket);
-  };
-  var configDeferred = this._configDeferred;
-  websocket.onerror = function(e) {
-    vLog.error('Failed to connect to proxy at url:', self.url);
-    deferred.reject(e);
-    configDeferred.reject(
-      'Proxy connection closed, failed to get config ' + e);
-  };
+  // Messages originating from server are even numbers
+  var isServerOriginatedMessage = (message.id % 2) === 0;
 
-  websocket.onmessage = function(frame) {
-    var message;
+  var def = this.outstandingRequests[message.id];
+
+  var payload;
+  try {
+    payload = JSON.parse(message.data);
+  } catch (e) {
+    if (!isServerOriginatedMessage) {
+      def.reject(message.data);
+      delete this.outstandingRequests[message.id];
+    }
+    return;
+  }
+
+  // If we don't know about this flow, just drop the message. Unless it
+  // originated from the sever.
+  if (!isServerOriginatedMessage && !def) {
+    vLog.warn('Dropping message for unknown flow ' + message.id + ' ' +
+        message.data);
+    return;
+  }
+
+  switch (payload.type) {
+    case IncomingPayloadType.FINAL_RESPONSE:
+      return this.handleFinalResponse(def, payload, message.id);
+    case IncomingPayloadType.STREAM_RESPONSE:
+      return this.handleStreamResponse(def, payload, message.id);
+    case IncomingPayloadType.ERROR_RESPONSE:
+      return this.handleErrorResponse(def, payload, message.id);
+    case IncomingPayloadType.INVOKE_REQUEST:
+      return this.handleIncomingInvokeRequest(message.id, payload.message);
+    case IncomingPayloadType.STREAM_CLOSE:
+      return this.handleStreamClose(def, message.id);
+    default:
+      def.reject(new Error('Received unknown response type from jspr'));
+      this.dequeue(def, message.id);
+      return;
+  }
+};
+
+Proxy.prototype.dequeue = function(def, id) {
+  // If there is a stream associated with this request, then close it.
+  if (def && def.stream) {
+    def.stream._queueRead(null);
+  }
+  delete this.outstandingRequests[id];
+};
+
+Proxy.prototype.handleStreamResponse = function(def, payload, id) {
+  if (def && def.stream) {
     try {
-      message = JSON.parse(frame.data);
+      def.stream._queueRead(payload.message);
     } catch (e) {
-      vLog.warn('Failed to parse ' + frame.data);
-      return;
+      def.reject(e);
+      this.dequeue(def, id);
     }
+  }
+};
 
-    if (receivedConfig === false) { // first message is the config.
-      receivedConfig = true;
-      configDeferred.resolve(message);
-      return;
+Proxy.prototype.handleFinalResponse = function(def, payload, id) {
+  if (payload.message.length === 1) {
+    payload.message = payload.message[0];
+  }
+  def.resolve(payload.message);
+  this.dequeue(def, id);
+};
+
+Proxy.prototype.handleErrorResponse = function(def, payload, id) {
+  var err = ErrorConversion.toJSerror(payload.message);
+  if (def.stream) {
+    def.stream.emit('error', err);
+  }
+  def.reject(err);
+  this.dequeue(def, id);
+};
+
+Proxy.prototype.handleStreamClose = function(def, id) {
+  if (def) {
+    if (def.stream) {
+      def.stream._queueRead(null);
     }
-
-    // Messages originating from server are even numbers
-    var isServerOriginatedMessage = (message.id % 2) === 0;
-
-    var def = self.outstandingRequests[message.id];
-
-    var payload;
-    try {
-      payload = JSON.parse(message.data);
-    } catch (e) {
-      if (!isServerOriginatedMessage) {
-        def.reject(message.data);
-        delete self.outstandingRequests[message.id];
-      }
-      return;
-    }
-
-    // If we don't know about this flow, just drop the message. Unless it
-    // originated from the sever.
-    if (!isServerOriginatedMessage && !def) {
-      vLog.warn('Dropping message for unknown flow ' + message.id + ' ' +
-          message.data);
-      return;
-    }
-
-    var dequeue = function() {
-      // If there is a stream associated with this request, then close it.
-      if (def && def.stream) {
-        def.stream._queueRead(null);
-      }
-      delete self.outstandingRequests[message.id];
-    };
-
-    var handleFinalResponse = function() {
-      if (payload.message.length === 1) {
-        payload.message = payload.message[0];
-      }
-      def.resolve(payload.message);
-      dequeue();
-    };
-
-    var handleStreamResponse = function() {
-      if (def && def.stream) {
-        try {
-          def.stream._queueRead(payload.message);
-        } catch (e) {
-          def.reject(e);
-          dequeue();
-        }
-      }
-    };
-
-    var handleErrorResponse = function() {
-      var err = ErrorConversion.toJSerror(payload.message);
-      if (def.stream) {
-        def.stream.emit('error', err);
-      }
-      def.reject(err);
-      dequeue();
-    };
-
-    var handleStreamClose = function() {
-      if (def) {
-        if (def.stream) {
-          def.stream._queueRead(null);
-        }
-        def.resolve();
-      }
-      dequeue();
-    };
-
-    switch (payload.type) {
-      case IncomingPayloadType.FINAL_RESPONSE:
-        return handleFinalResponse();
-      case IncomingPayloadType.STREAM_RESPONSE:
-        return handleStreamResponse();
-      case IncomingPayloadType.ERROR_RESPONSE:
-        return handleErrorResponse();
-      case IncomingPayloadType.INVOKE_REQUEST:
-        return self.handleIncomingInvokeRequest(message.id, payload.message);
-      case IncomingPayloadType.STREAM_CLOSE:
-        return handleStreamClose();
-      default:
-        def.reject(new Error('Received unknown response type from wspr'));
-        dequeue();
-        return;
-    }
-  };
-
-  return deferred.promise;
+    def.resolve();
+  }
+  this.dequeue(def, id);
 };
 
 /**
@@ -186,7 +152,7 @@ ProxyConnection.prototype.getWebSocket = function() {
  * @return {promise} a promise to a return argument key value map
  * (for multiple return arguments)
  */
-ProxyConnection.prototype.promiseInvokeMethod = function(name,
+Proxy.prototype.promiseInvokeMethod = function(name,
     methodName, mapOfArgs, numOutArgs, isStreaming, callback) {
   var def = new Deferred(callback);
   var id = this.id;
@@ -201,19 +167,18 @@ ProxyConnection.prototype.promiseInvokeMethod = function(name,
   var self = this;
   this.privateIdentityPromise.then(function(privateIdentity) {
     var message = self.constructMessage(name,
-        methodName, mapOfArgs, numOutArgs, isStreaming,
-        privateIdentity);
+      methodName, mapOfArgs, numOutArgs, isStreaming,
+      privateIdentity);
 
     self.sendRequest(message, MessageType.REQUEST, def, id);
     if (streamingDeferred) {
-      self.currentWebSocketPromise.then(function(ws) {
+      self.senderPromise.then(function(ws) {
         streamingDeferred.resolve(ws);
       });
     }
   }, function(msg) {
-      def.reject(msg);
-    }
-  );
+    def.reject(msg);
+  });
 
   return def.promise;
 };
@@ -228,7 +193,7 @@ ProxyConnection.prototype.promiseInvokeMethod = function(name,
  * a new one.
  * @param {Deferred} def Deferred to add to outstandingRequests
  */
-ProxyConnection.prototype.sendRequest = function(message, type, def, id) {
+Proxy.prototype.sendRequest = function(message, type, def, id) {
   if (id === undefined) {
     id = this.id;
     this.id += 2;
@@ -237,8 +202,8 @@ ProxyConnection.prototype.sendRequest = function(message, type, def, id) {
   this.outstandingRequests[id] = def;
   var body = JSON.stringify({ id: id, data: message, type: type });
 
-  this.getWebSocket().then(function(websocket) {
-    websocket.send(body);
+  this.senderPromise.then(function(sender) {
+    sender.send(body);
   },function(e) {
     def.reject(e);
   });
@@ -286,8 +251,7 @@ var inject = function(args, injectionPositions, injections) {
  *   'Args': [] // Array of positional arguments to be passed into the method
  * }
  */
-ProxyConnection.prototype.handleIncomingInvokeRequest = function(messageId,
-    request) {
+Proxy.prototype.handleIncomingInvokeRequest = function(messageId, request) {
   var self = this;
   var err;
 
@@ -360,7 +324,7 @@ ProxyConnection.prototype.handleIncomingInvokeRequest = function(messageId,
     };
 
     var injections = {
-      '$stream' : new Stream(messageId, this.getWebSocket(), false),
+      '$stream' : new Stream(messageId, this.senderPromise, false),
       '$callback': cb,
       '$context': context,
       '$suffix': context.suffix,
@@ -411,14 +375,14 @@ ProxyConnection.prototype.handleIncomingInvokeRequest = function(messageId,
 };
 
 /**
- * Sends the result of a requested invocation back to wspr
+ * Sends the result of a requested invocation back to jspr
  * @param {string} messageId Message id of the original invocation request
  * @param {string} name Name of method
  * @param {Object} value Result of the call
  * @param {Object} err Error from the call
  * @param {Object} metadata Metadata about the function.
  */
-ProxyConnection.prototype.sendInvokeRequestResult = function(messageId, name,
+Proxy.prototype.sendInvokeRequestResult = function(messageId, name,
     value, err, metadata) {
   var results = [];
 
@@ -471,12 +435,13 @@ ProxyConnection.prototype.sendInvokeRequestResult = function(messageId, name,
       data: responseDataJSON,
       type: MessageType.RESPONSE });
 
-    this.getWebSocket().then(function(websocket) {
-      websocket.send(body);
+    this.senderPromise.then(function(sender) {
+      sender.send(body);
     });
   }
   delete this.outstandingRequests[messageId];
 };
+
 
 /**
  * Publishes the server under a name
@@ -489,7 +454,7 @@ ProxyConnection.prototype.sendInvokeRequestResult = function(messageId, name,
  * @return {Promise} Promise to be called when publish completes or fails
  * the endpoint string of the server will be returned as the value of promise
  */
-ProxyConnection.prototype.publishServer = function(name, server, callback) {
+Proxy.prototype.publishServer = function(name, server, callback) {
   //TODO(aghassemi) Handle publish under multiple names
   vLog.info('Publishing a server under name: ', name);
 
@@ -510,17 +475,17 @@ ProxyConnection.prototype.publishServer = function(name, server, callback) {
 };
 
 /**
- * Sends a stop server request to wspr.
+ * Sends a stop server request to jspr.
  * @param {Server} server Server object to stop.
  * @param {function} callback if provided, the function will be called on
  * completion. The only argument is an error if there was one.
  * @return {Promise} Promise to be called when stop service completes or fails
  */
-ProxyConnection.prototype.stopServer = function(server, callback) {
+Proxy.prototype.stopServer = function(server, callback) {
   var self = this;
 
   var def = new Deferred(callback);
-  // Send the stop request to wspr
+  // Send the stop request to jspr
   this.sendRequest(server.id.toString(), MessageType.STOP, def);
 
   return def.promise.then(function(result) {
@@ -535,7 +500,7 @@ ProxyConnection.prototype.stopServer = function(server, callback) {
  * @param {string} name the veyron name of the service to get signature for.
  * @return {Promise} Signature of the service in JSON format
  */
-ProxyConnection.prototype.getServiceSignature = function(name) {
+Proxy.prototype.getServiceSignature = function(name) {
   var cachedEntry = this.bindCache[name];
   var now = new Date();
   if (cachedEntry && now - cachedEntry.fetched < BIND_CACHE_TTL) {
@@ -568,16 +533,16 @@ ProxyConnection.prototype.getServiceSignature = function(name) {
 };
 
 /**
- * Construct a message to send to the veyron wspr
+ * Construct a message to send to the veyron native code
  * @param {string} name veyron name.
  * @param {string} methodName the name of the method to invoke.
  * @param {object} [ mapOfArgs = {} ] key-value map of argument names to values
  * @param {number} numOutArgs Number of expected outputs by the method
  * @param {boolean} isStreaming
  * @param {string} privateIdentity The private identity
- * @return {string} json string to send to wspr
+ * @return {string} json string to send to jspr
  */
-ProxyConnection.prototype.constructMessage = function(name, methodName,
+Proxy.prototype.constructMessage = function(name, methodName,
     mapOfArgs, numOutArgs, isStreaming, privateIdentity) {
   var jsonMessage = {
     'name' : name,
@@ -593,4 +558,4 @@ ProxyConnection.prototype.constructMessage = function(name, methodName,
 /**
  * Export the module
  */
-module.exports = ProxyConnection;
+module.exports = Proxy;

@@ -4,7 +4,7 @@
 
 'use strict';
 
-var ProxyConnection = require('./proxy/connection');
+var ProxyConnection = require('./proxy/websocket');
 var Server = require('./ipc/server');
 var Client = require('./ipc/client');
 var Deferred = require('./lib/deferred');

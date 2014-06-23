@@ -4,7 +4,7 @@
   "version": "0.0.1",
   "main": "./src/veyron",
   "browser": {
-    "./src/proxy/websocket.js": "./src/proxy/browser_only/websocket.js",
+    "./src/lib/websocket.js": "./src/proxy/browser_only/websocket.js",
     "./src/lib/http.js": "./src/lib/browser_only/http.js",
     "./src/lib/inherits.js": "./src/lib/browser_only/inherits.js"
   },
