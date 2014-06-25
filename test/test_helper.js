@@ -8,9 +8,9 @@ var TestHelper = {};
 
 // Default veyron config for integration tests
 TestHelper.veyronConfig = {
-  'proxy': testconfig['WSPR_SERVER_URL'],
-  'identityServer': testconfig['IDENTITY_SERVER_URL'],
-  'logLevel': testconfig['LOG_LEVEL']
+  proxy: testconfig['WSPR_SERVER_URL'],
+  identityServer: testconfig['IDENTITY_SERVER_URL'],
+  logLevel: testconfig['LOG_LEVEL']
 };
 
 /*
