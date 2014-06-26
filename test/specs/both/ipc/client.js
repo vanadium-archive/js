@@ -34,11 +34,11 @@ describe('Client-side binding', function() {
     var testService;
     beforeEach(function(done) {
       var testServiceSignature = {
-        'testMethod': {
+        testMethod: {
           inArgs: ['a', 'b', 'c'],
           numOutArgs: 2
         },
-        'testMethod2': {
+        testMethod2: {
           inArgs: ['a'],
           numOutArgs: 2
         }

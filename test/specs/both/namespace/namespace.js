@@ -12,7 +12,7 @@ var vError = require('../../../../src/lib/verror');
 function response(servers, suffix) {
   var entries = [];
   for (var i = 0; i < servers.length; i++) {
-    entries.push({'server': servers[i]});
+    entries.push({server: servers[i]});
   }
   return [entries, suffix];
 }

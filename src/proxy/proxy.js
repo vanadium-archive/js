@@ -246,9 +246,9 @@ var inject = function(args, injectionPositions, injections) {
  * @param {string} messageId Message Id set by the server.
  * @param {Object} request Invocation request JSON. Request's structure is
  * {
- *   'Name': string // Name under which the service is registered
- *   'Method': string // Name of the method on the service to call
- *   'Args': [] // Array of positional arguments to be passed into the method
+ *   Name: string // Name under which the service is registered
+ *   Method: string // Name of the method on the service to call
+ *   Args: [] // Array of positional arguments to be passed into the method
  * }
  */
 Proxy.prototype.handleIncomingInvokeRequest = function(messageId, request) {
@@ -324,11 +324,11 @@ Proxy.prototype.handleIncomingInvokeRequest = function(messageId, request) {
     };
 
     var injections = {
-      '$stream' : new Stream(messageId, this.senderPromise, false),
-      '$callback': cb,
-      '$context': context,
-      '$suffix': context.suffix,
-      '$name': context.name
+      $stream: new Stream(messageId, this.senderPromise, false),
+      $callback: cb,
+      $context: context,
+      $suffix: context.suffix,
+      $name: context.name
     };
 
     var variables = inject(args, metadata.injections, injections);
@@ -459,9 +459,9 @@ Proxy.prototype.publishServer = function(name, server, callback) {
   vLog.info('Publishing a server under name: ', name);
 
   var messageJSON = {
-    'name': name,
-    'serverId': server.id,
-    'services': server.generateIdlWireDescription()
+    name: name,
+    serverId: server.id,
+    services: server.generateIdlWireDescription()
   };
 
   this.servers[server.id] = server;
@@ -518,8 +518,8 @@ Proxy.prototype.getServiceSignature = function(name) {
   });
   this.privateIdentityPromise.then(function(privateIdentity) {
     var messageJSON = {
-      'name': name,
-      'privateId': privateIdentity
+      name: name,
+      privateId: privateIdentity
     };
     var message = JSON.stringify(messageJSON);
 
@@ -545,12 +545,12 @@ Proxy.prototype.getServiceSignature = function(name) {
 Proxy.prototype.constructMessage = function(name, methodName,
     mapOfArgs, numOutArgs, isStreaming, privateIdentity) {
   var jsonMessage = {
-    'name' : name,
-    'method' : methodName,
-    'inArgs' : mapOfArgs || {},
-    'numOutArgs' : numOutArgs || 2,
-    'isStreaming' : isStreaming,
-    'privateId' : privateIdentity || null
+    name: name,
+    method: methodName,
+    inArgs: mapOfArgs || {},
+    numOutArgs: numOutArgs || 2,
+    isStreaming: isStreaming,
+    privateId: privateIdentity || null
   };
   return JSON.stringify(jsonMessage);
 };

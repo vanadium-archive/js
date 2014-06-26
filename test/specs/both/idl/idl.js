@@ -20,10 +20,10 @@ describe('IDL', function() {
           }
         })
       )).to.deep.equal({
-          'aMethod': {
-            'InArgs': [],
-            'NumOutArgs': 2,
-            'IsStreaming': false
+          aMethod: {
+            InArgs: [],
+            NumOutArgs: 2,
+            IsStreaming: false
           }
         });
     });
@@ -36,10 +36,10 @@ describe('IDL', function() {
                 return arg1;
               }
             }))).to.deep.equal({
-              'bMethod': {
-                'InArgs': ['arg1', 'arg2'],
-                'NumOutArgs': 2,
-                'IsStreaming': false
+              bMethod: {
+                InArgs: ['arg1', 'arg2'],
+                NumOutArgs: 2,
+                IsStreaming: false
               }
             });
         });
@@ -53,15 +53,15 @@ describe('IDL', function() {
                 return arg1;
               }
             }))).to.deep.equal({
-              'amethod': {
-                'InArgs': [],
-                'NumOutArgs': 2,
-                'IsStreaming': false
+              amethod: {
+                InArgs: [],
+                NumOutArgs: 2,
+                IsStreaming: false
               },
-              'bMethod': {
-                'InArgs': ['arg1', 'arg2'],
-                'NumOutArgs': 2,
-                'IsStreaming': false
+              bMethod: {
+                InArgs: ['arg1', 'arg2'],
+                NumOutArgs: 2,
+                IsStreaming: false
               }
             });
         });
@@ -73,10 +73,10 @@ describe('IDL', function() {
           return arg1;
         }
       }))).to.deep.equal({
-        'bMethod': {
-          'InArgs': ['arg1', 'arg2'],
-          'NumOutArgs': 2,
-          'IsStreaming': false
+        bMethod: {
+          InArgs: ['arg1', 'arg2'],
+          NumOutArgs: 2,
+          IsStreaming: false
         }
       });
     });
@@ -86,10 +86,10 @@ describe('IDL', function() {
         aMethod: function($First, Scnd, $Third, Frth) {
         }
       }))).to.deep.equal({
-        'aMethod': {
-          'InArgs': ['Scnd', 'Frth'],
-          'NumOutArgs': 2,
-          'IsStreaming': false
+        aMethod: {
+          InArgs: ['Scnd', 'Frth'],
+          NumOutArgs: 2,
+          IsStreaming: false
         }
       });
     });
@@ -100,10 +100,10 @@ describe('IDL', function() {
         }
       });
       expect(idlHelper.generateIdlWireDescription(srvc)).to.deep.equal({
-        'meth': {
-          'InArgs': ['arg'],
-          'NumOutArgs': 2,
-          'IsStreaming': true
+        meth: {
+          InArgs: ['arg'],
+          NumOutArgs: 2,
+          IsStreaming: true
         }
       });
     });

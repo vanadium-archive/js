@@ -14,17 +14,17 @@ describe('client/signature_go_server.js: ' +
   'Signature, when service is in GO, getServiceSignature', function() {
 
   var expectedSignature = {
-    'get': {
+    get: {
       inArgs: ['key'],
       numOutArgs: 2,
       isStreaming: false
     },
-    'set': {
+    set: {
       inArgs: ['key', 'value'],
       numOutArgs: 1,
       isStreaming: false
     },
-    'multiGet': {
+    multiGet: {
       inArgs: [],
       numOutArgs: 1,
       isStreaming: true
@@ -115,7 +115,7 @@ describe('client/signature_go_server.js: ' +
     client._proxyConnection.bindCache[absoluteVeyronName] = {
       fetched: new Date(),
       signature: {
-        'bar': 'foo'
+        bar: 'foo'
       }
     };
     client._proxyConnection.getServiceSignature(absoluteVeyronName)
@@ -135,7 +135,7 @@ describe('client/signature_go_server.js: ' +
       // 3 hours ago.
       fetched: new Date() - 7200 * 1000,
       signature: {
-        'bar': 'foo'
+        bar: 'foo'
       }
     };
     client._proxyConnection.getServiceSignature(absoluteVeyronName)

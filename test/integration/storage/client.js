@@ -104,16 +104,16 @@ describe('storage/client.js', function() {
     it('query()', function() {
       var expectedResults = [
         {
-          'fields': {},
-          'name': '',
-          'nestedResult': 0,
-          'value': valToPutRoot
+          fields: {},
+          name: '',
+          nestedResult: 0,
+          value: valToPutRoot
         },
         {
-          'fields': {},
-          'name': itemName,
-          'nestedResult': 0,
-          'value': expectedMapVal
+          fields: {},
+          name: itemName,
+          nestedResult: 0,
+          value: expectedMapVal
         }
       ];
       var promise = store.bindTo(dirVeyronName).then(function(s) {
@@ -135,8 +135,8 @@ describe('storage/client.js', function() {
     it('glob()', function() {
       var expectedResults = [
         {
-          'name': itemName,
-          'servers': [],
+          name: itemName,
+          servers: [],
         }
       ];
       var promise = store.bindTo(dirVeyronName).then(function(s) {
@@ -309,16 +309,16 @@ describe('storage/client.js', function() {
     it('query()', function() {
       var expectedResults = [
         {
-          'fields': {},
-          'name': '',
-          'nestedResult': 0,
-          'value': valToPutRoot
+          fields: {},
+          name: '',
+          nestedResult: 0,
+          value: valToPutRoot
         },
         {
-          'fields': {},
-          'name': itemName,
-          'nestedResult': 0,
-          'value': valToPut
+          fields: {},
+          name: itemName,
+          nestedResult: 0,
+          value: valToPut
         }
       ];
       var tr = Veyron.Transaction();

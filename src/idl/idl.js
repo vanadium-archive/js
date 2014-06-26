@@ -35,9 +35,9 @@ idlHelper.generateIdlWireDescription = function(service) {
       }
 
       idlWire[methodName] = {
-        'InArgs' : inArgs,
-        'NumOutArgs': methodMetadata.numOutArgs + 1,
-        'IsStreaming': methodMetadata.injections['$stream'] !== undefined
+        InArgs: inArgs,
+        NumOutArgs: methodMetadata.numOutArgs + 1,
+        IsStreaming: methodMetadata.injections['$stream'] !== undefined
       };
     }
   }

@@ -13,17 +13,17 @@ describe('server/signature_js_server.js: ' +
   'Signature, when service is in JS getServiceSignature', function() {
 
   var expectedSignature = {
-    'get': {
+    get: {
       inArgs: ['key'],
       numOutArgs: 2,
       isStreaming: false
     },
-    'set': {
+    set: {
       inArgs: ['key', 'value'],
       numOutArgs: 2,
       isStreaming: false
     },
-    'multiGet': {
+    multiGet: {
       inArgs: [],
       numOutArgs: 2,
       isStreaming: true
