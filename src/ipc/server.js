@@ -128,13 +128,27 @@ server.prototype.register = function(name, serviceObject, serviceMetadata,
   } else {
     var shouldCheckDefinition = false;
     if (typeof(serviceMetadata) === 'string') {
-      var key = serviceMetadata;
+      serviceMetadata = [serviceMetadata];
+    }
+    if (Array.isArray(serviceMetadata)) {
       shouldCheckDefinition = true;
-      serviceMetadata = this._knownServiceDefinitions[key];
-      if (!serviceMetadata) {
-        def.reject(new vError.NotFoundError('unknown service ' + key));
-        return def.promise;
+      var serviceDefinitions = {};
+
+      for (var i = 0; i < serviceMetadata.length; i++) {
+        var key = serviceMetadata[i];
+        var object = this._knownServiceDefinitions[key];
+        if (!object) {
+          def.reject(new vError.NotFoundError('unknown service ' + key));
+          return def.promise;
+        }
+        // Merge the results into the single definitions object.
+        for (var k in object) {
+          if (object.hasOwnProperty(k)) {
+            serviceDefinitions[k] = object[k];
+          }
+        }
       }
+      serviceMetadata = serviceDefinitions;
     }
 
     var wrapper = new ServiceWrapper(serviceObject, serviceMetadata);

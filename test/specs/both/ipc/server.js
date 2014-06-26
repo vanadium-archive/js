@@ -7,16 +7,24 @@ var Server = require('../../../../src/ipc/server.js');
 
 describe('Server registering', function() {
   var idl = {
-      package: 'foo',
-      Sample: {
-        add: {
-          numInArgs: 2,
-          numOutArgs: 1,
-          inputStreaming: false,
-          outputStreaming: false
-        }
+    package: 'foo',
+    Sample: {
+      add: {
+        numInArgs: 2,
+        numOutArgs: 1,
+        inputStreaming: false,
+        outputStreaming: false
       }
-    };
+    },
+    Sample2: {
+      subtract: {
+        numInArgs: 2,
+        numOutArgs: 1,
+        inputStreaming: false,
+        outputStreaming: false
+      }
+    }
+  };
   it('Using IDL with no errors', function() {
     var server = new Server(null);
     server.addIDL(idl);
@@ -28,6 +36,23 @@ describe('Server registering', function() {
     var promise = server.register('adder', service, 'foo.Sample');
     return expect(promise).to.eventually.be.fulfilled;
   });
+
+  it('Using IDL with multiple services no errors', function() {
+    var server = new Server(null);
+    server.addIDL(idl);
+    var service = {
+      add: function(a, b) {
+        return a + b;
+      },
+      subtract: function(a, b) {
+        return a - b;
+      }
+    };
+    var promise = server.register('adder', service,
+      ['foo.Sample', 'foo.Sample2']);
+    return expect(promise).to.eventually.be.fulfilled;
+  });
+
 
   it('Using IDL with no errors with injections', function() {
     var server = new Server(null);
