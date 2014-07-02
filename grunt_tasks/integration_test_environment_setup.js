@@ -175,7 +175,7 @@ module.exports = function(grunt) {
         }
       });
     mounttable_process.title = 'MountTable';
-    var endpointRe = /@.*@@\S+/;
+    var endpointRe = /@.*@@\S*/;
     var mounttableEndpoint = '';
     mounttable_process.stderr.on('data', function(data) {
       var string = data.toString();
@@ -184,6 +184,7 @@ module.exports = function(grunt) {
       }
       var match = string.match(endpointRe);
       if (!match) {
+	console.log('Did not find a match');
         return
       }
       mounttableEndpoint = match[0];
