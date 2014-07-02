@@ -174,14 +174,22 @@ StoreObject.prototype.query = function(tr, query) {
     return _makeStreamWithErrors(srvc.query(_getTrId(tr), query));
   });
 };
-StoreObject.prototype.watchGlob = function(pattern) {
+StoreObject.prototype.watchGlob = function(pattern, resumeMarker) {
   return this._bindPromise.then(function(srvc) {
-    return _makeStreamWithErrors(srvc.watchGlob(pattern));
+    var globRequest = {
+      Pattern: pattern,
+      ResumeMarker: resumeMarker
+    };
+    return _makeStreamWithErrors(srvc.watchGlob(globRequest));
   });
 };
-StoreObject.prototype.watchQuery = function(query) {
+StoreObject.prototype.watchQuery = function(query, resumeMarker) {
   return this._bindPromise.then(function(srvc) {
-    return _makeStreamWithErrors(srvc.watchQuery(query));
+    var queryRequest = {
+      Query: query,
+      ResumeMarker: resumeMarker
+    };
+    return _makeStreamWithErrors(srvc.watchQuery(queryRequest));
   });
 };
 StoreObject.prototype.glob = function(pattern) {

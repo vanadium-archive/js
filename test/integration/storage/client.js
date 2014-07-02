@@ -19,6 +19,41 @@ var streamToArray = function(stream) {
   });
 };
 
+var expectChanges = function(done, stream, expectedChanges) {
+  var finish;
+  finish = function(err) {
+    done(err);
+    finish = function() {};
+  };
+  stream.on('data', function(changeBatch) {
+    if (expectedChanges.length === 0) {
+      return finish();
+    }
+    var changes = changeBatch.changes;
+    for (var i = 0; i < changes.length; i++) {
+      var change = changes[i];
+      var expectedChange = expectedChanges.shift();
+      expect(expectedChange.name).to.equal(change.name);
+      expect(expectedChange.state).to.equal(change.state);
+      if (expectedChange.state === Veyron.Watch.State.Exists) {
+        expect(expectedChange.value).to.equal(change.value.value);
+      }
+      if (expectedChanges.length === 0) {
+        return finish();
+      }
+    }
+    return null;
+  });
+  stream.on('end', function() {
+    if (expectedChanges.length > 0) {
+      return finish('unexpected end of stream');
+    }
+  });
+  stream.on('error', function(err) {
+    finish(err);
+  });
+};
+
 describe('storage/client.js', function() {
   describe('Transaction-less Methods', function() {
     var itemName = 'notx';
@@ -161,7 +196,41 @@ describe('storage/client.js', function() {
       return expect(promise).to.eventually.eql(false);
     });
 
-    // TODO(bprosnitz) Add watch test once it's possible.
+    it('watchGlob()', function(done) {
+      var watchItemName = 'watch';
+      var valToPutWatch = 'q';
+      var watchItemVeyronName = dirVeyronName + watchItemName;
+      store.bindTo(dirVeyronName).then(function(s) {
+        return s.watchGlob('*', Veyron.Watch.ResumeMarkers.Now);
+      }).then(function(stream) {
+        // Put itemName.
+        store.bindTo(watchItemVeyronName).then(function(s) {
+          s.put(null, valToPutWatch).then(function() {
+            s.remove(null);
+          });
+        });
+        // Expect 3 changes. The first announces that the initial state has
+        // been skipped, the second updates the item, and the third removes it.
+        var expectedChanges = [
+          {
+            name: '',
+            state: Veyron.Watch.State.InitialStateSkipped,
+          },
+          {
+            name: watchItemName,
+            state: Veyron.Watch.State.Exists,
+            value: valToPutWatch
+          },
+          {
+            name: watchItemName,
+            state: Veyron.Watch.State.DoesNotExist
+          },
+        ];
+        expectChanges(done, stream, expectedChanges);
+      });
+    });
+
+    // TODO(bprosnitz,tilaks) Add watchQuery test once it's possible.
   });
 
 

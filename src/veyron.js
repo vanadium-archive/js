@@ -14,6 +14,7 @@ var vError = require('./lib/verror');
 var http = require('./lib/http');
 var Namespace = require('./namespace/namespace');
 var store = require('./storage/store');
+var watch = require('./watch/watch');
 
 /**
  * Veyron constructor.
@@ -161,6 +162,8 @@ Veyron.Errors = vError;
  * Transaction is a constructor for a new store transaction.
  */
 Veyron.Transaction = store.Transaction;
+
+Veyron.Watch = watch;
 
 /**
  * Export Veyron
