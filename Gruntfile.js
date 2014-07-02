@@ -342,6 +342,8 @@ module.exports = function(grunt) {
     'Runs tests in a browser window that remains open for debugging',
     function() {
       grunt.config.set('browserTestSingleRun', false);
+      grunt.config.set('browserTest.specs.options.preprocessors', []);
+      grunt.config.set('browserTest.integration.options.preprocessors', []);
       grunt.task.run('test');
   });
 
