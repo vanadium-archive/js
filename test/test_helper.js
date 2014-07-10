@@ -14,17 +14,16 @@ TestHelper.veyronConfig = {
 };
 
 /*
- * Helper that publishes a service, binds to it and returns the bound service
+ * Helper that servees a service, binds to it and returns the bound service
  */
-TestHelper.publishAndBindService = function(service, name,
+TestHelper.serveAndBindService = function(service, name,
     metadata) {
   var veyron = new Veyron(TestHelper.veyronConfig);
   var server = veyron.newServer();
-  return server.register(name, service, metadata).then(function() {
-    return server.publish('integration/tests/');
-  }).then(function() {
+  var servingName = 'integration/tests/' + name;
+  return server.serve(servingName, service, metadata).then(function() {
     var client = veyron.newClient();
-    return client.bindTo('integration/tests/' + name);
+    return client.bindTo(servingName);
   }).then(function(s) {
     return s;
   });

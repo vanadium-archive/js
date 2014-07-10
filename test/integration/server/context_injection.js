@@ -10,8 +10,7 @@
  * All globals (veyron, expect, testconfig) are injected by test runners.
  */
 
-describe.skip('server/context_injection.js: Service function in JS',
-                function() {
+describe('server/context_injection.js: Service function in JS', function() {
   var expectedContext = {
     name: 'suf',
     suffix : 'suf'
@@ -41,12 +40,10 @@ describe.skip('server/context_injection.js: Service function in JS',
     };
 
     var veyron = new Veyron(TestHelper.veyronConfig);
-    // Create server object and publish the service
+    // Create server object and serve the service
     var server = veyron.newServer();
 
-    server.register('', service).then(function() {
-      return server.publish('a/b');
-    }).then(function() {
+    server.serve('a/b', service).then(function() {
       done();
     }).catch(function(e) {
       done(e);

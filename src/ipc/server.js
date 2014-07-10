@@ -10,8 +10,7 @@
  *  };
  *
  *  var s = new server(proxyConnection);
- *  s.register('video', videoService);
- *  s.publish('mymedia');
+ *  s.serve('mymedia/video', videoService);
  */
 
 'use strict';
@@ -32,7 +31,7 @@ var nextServerID = 1; // The ID for the next server.
 var server = function(proxyConnection) {
   this._proxyConnection = proxyConnection;
   this.id = nextServerID++;
-  this.registeredServices = {};
+  this.serviceObject = null;
   this._knownServiceDefinitions = {};
 };
 
@@ -51,28 +50,87 @@ server.prototype.addIDL = function(updates) {
   }
 };
 
+// Returns an error if the validation of metadata failed.
+server.prototype._getAndValidateMetadata = function(serviceObject,
+    serviceMetadata) {
+  var shouldCheckDefinition = false;
+  if (typeof(serviceMetadata) === 'string') {
+    serviceMetadata = [serviceMetadata];
+  }
+
+  if (Array.isArray(serviceMetadata)) {
+    shouldCheckDefinition = true;
+    var serviceDefinitions = {};
+
+    for (var i = 0; i < serviceMetadata.length; i++) {
+      var key = serviceMetadata[i];
+      var object = this._knownServiceDefinitions[key];
+      if (!object) {
+        return new vError.NotFoundError('unknown service ' + key);
+      }
+      // Merge the results into the single definitions object.
+      for (var k in object) {
+        if (object.hasOwnProperty(k)) {
+          serviceDefinitions[k] = object[k];
+        }
+      }
+    }
+    serviceMetadata = serviceDefinitions;
+  }
+
+  var wrapper = new ServiceWrapper(serviceObject, serviceMetadata);
+
+  if (shouldCheckDefinition) {
+    var err2 = wrapper.validate(serviceMetadata);
+    if (err2) {
+      return err2;
+    }
+  }
+
+  this.serviceObject = wrapper;
+
+  return null;
+};
+
 /**
- * publish enables the services registered thus far to service RPCs.  It will
+ * Serve serves the given service object under the given name.  It will
  * register them with the mount table and maintain that registration so long
  * as the stop() method has not been called.  The name determines where
- * in the mount table's name tree the new services will appear.  The name is
- * applied as a prefix to the names specified in register.
-
- * To serve names of the form "mymedia/media/*" make the calls:
- * register("media", mediaSvc);
- * publish("mymedia");
-
- * publish may be called multiple times to publish the same server under
- * multiple names.
+ * in the mount table's name tree the new services will appear.
  *
- * @param {string} name Name to publish under
+ * To serve names of the form "mymedia/*" make the calls:
+ * serve("mymedia", myService);
+
+ * serve may be called multiple times to serve the same service under
+ * multiple names.  If different objects are given on the different calls
+ * it is considered an error.
+ *
+ * @param {string} name Name to serve under
+ * @param {Object} serviceObject service object to serve
+ * @param {*} serviceMetadata if provided a set of metadata for functions
+ * in the service (such as number of return values).  It could either be
+ * passed in as a properties object or a string that is the name of a
+ * service that was defined in the idl files that the server knows about.
  * @param {function} callback if provided, the function will be called on
  * completion. The only argument is an error if there was one.
- * @return {Promise} Promise to be called when publish completes or fails
+ * @return {Promise} Promise to be called when serve completes or fails
  * the endpoint address of the server will be returned as the value of promise
  */
-server.prototype.publish = function(name, callback) {
-  return this._proxyConnection.publishServer(name, this, callback);
+server.prototype.serve = function(name, serviceObject,
+    serviceMetadata, callback) {
+  if (!callback && typeof(serviceMetadata) === 'function') {
+    callback = serviceMetadata;
+    serviceMetadata = null;
+  }
+
+  var err = this._getAndValidateMetadata(serviceObject, serviceMetadata);
+  if (err) {
+    var def = new Deferred(callback);
+    def.reject(err);
+    return def.promise;
+  }
+
+  return this._proxyConnection.serve(name, this, callback);
 };
 
 /**
@@ -88,110 +146,12 @@ server.prototype.stop = function(callback) {
 };
 
 /**
- * register associates a service object with a name within a server. Object's
- * methods become available to be invoked via RPC calls to that name after the
- * server is published.
- * Service object can be any JavaScript objects that expose methods to be called
- * remotely via RPCs.
- *
- *  register("media/video", videoSvc);
- *  register("media", mediaSvc);
- * and
- *  register("media", mediaSvc);
- *  register("media/video", videoSvc);
- * will both result in videoSvc being invoked for names of the form
- * "media/video/*". When there is a conflict between name prefixes,
- * the longest matching prefix is used.
- *
- * @param {string} name The name to register the service under
- * @param {Object} serviceObject service object to register
- * @param {*} serviceMetadata if provided a set of metadata for functions
- * in the service (such as number of return values).  It could either be
- * passed in as a properties object or a string that is the name of a
- * service that was defined in the idl files that the server knows about.
- * @param {function} callback if provided, the function will be called on
- * completion. The only argument is an error if there was one.
- * @return {Promise} Promise to be called when register completes or fails
- */
-server.prototype.register = function(name, serviceObject, serviceMetadata,
-                callback) {
-  //TODO(aghassemi) Handle registering after publishing
-  if (!callback && typeof(serviceMetadata) === 'function') {
-    callback = serviceMetadata;
-    serviceMetadata = null;
-  }
-  var def = new Deferred(callback);
-
-  if (this.registeredServices[name] !== undefined) {
-    var err = new Error('Service already registered under name: ' + name);
-    def.reject(err);
-  } else {
-    var shouldCheckDefinition = false;
-    if (typeof(serviceMetadata) === 'string') {
-      serviceMetadata = [serviceMetadata];
-    }
-    if (Array.isArray(serviceMetadata)) {
-      shouldCheckDefinition = true;
-      var serviceDefinitions = {};
-
-      for (var i = 0; i < serviceMetadata.length; i++) {
-        var key = serviceMetadata[i];
-        var object = this._knownServiceDefinitions[key];
-        if (!object) {
-          def.reject(new vError.NotFoundError('unknown service ' + key));
-          return def.promise;
-        }
-        // Merge the results into the single definitions object.
-        for (var k in object) {
-          if (object.hasOwnProperty(k)) {
-            serviceDefinitions[k] = object[k];
-          }
-        }
-      }
-      serviceMetadata = serviceDefinitions;
-    }
-
-    var wrapper = new ServiceWrapper(serviceObject, serviceMetadata);
-
-    if (shouldCheckDefinition) {
-      var err2 = wrapper.validate(serviceMetadata);
-      if (err2) {
-        def.reject(err2);
-        return def.promise;
-      }
-    }
-    this.registeredServices[name] = wrapper;
-    def.resolve();
-  }
-
-  return def.promise;
-};
-
-/**
  * Generates an IDL wire description for all the registered services
  * @return {Object.<string, Object>} map from service name to idl wire
  * description
  */
 server.prototype.generateIdlWireDescription = function() {
-  var servicesIdlWire = {};
-
-  for (var serviceName in this.registeredServices) {
-    if (this.registeredServices.hasOwnProperty(serviceName)) {
-      var serviceMetadata = this.registeredServices[serviceName];
-      servicesIdlWire[serviceName] =
-          IdlHelper.generateIdlWireDescription(serviceMetadata);
-    }
-  }
-  return servicesIdlWire;
-};
-
-/**
- * Get a service object for the specified service name.
- * @param {string} serviceName The service name.
- * @return {Object} The service definition, or undefined if not found.
- */
-server.prototype.getServiceObject = function(serviceName) {
-  return this.registeredServices[serviceName];
+  return IdlHelper.generateIdlWireDescription(this.serviceObject);
 };
 
 /**

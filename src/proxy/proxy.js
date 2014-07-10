@@ -246,9 +246,9 @@ var inject = function(args, injectionPositions, injections) {
  * @param {string} messageId Message Id set by the server.
  * @param {Object} request Invocation request JSON. Request's structure is
  * {
- *   Name: string // Name under which the service is registered
- *   Method: string // Name of the method on the service to call
- *   Args: [] // Array of positional arguments to be passed into the method
+ *   serverId: number // the server id
+ *   method: string // Name of the method on the service to call
+ *   args: [] // Array of positional arguments to be passed into the method
  * }
  */
 Proxy.prototype.handleIncomingInvokeRequest = function(messageId, request) {
@@ -263,9 +263,9 @@ Proxy.prototype.handleIncomingInvokeRequest = function(messageId, request) {
   }
 
   // Find the service
-  var serviceWrapper = server.getServiceObject(request.serviceName);
-  if (serviceWrapper === undefined) {
-    err = new Error('No registered service found for ' + request.serviceName);
+  var serviceWrapper = server.serviceObject;
+  if (!serviceWrapper) {
+    err = new Error('No service found');
     this.sendInvokeRequestResult(messageId, request.method, null, err);
     return;
   }
@@ -276,7 +276,7 @@ Proxy.prototype.handleIncomingInvokeRequest = function(messageId, request) {
   var serviceMethod = serviceObject[request.method];
   if (serviceMethod === undefined) {
     err = new Error('Requested method ' + request.method +
-        ' not found on the service registered under ' + request.serviceName);
+        ' not found on');
     this.sendInvokeRequestResult(messageId, request.Name, null, err);
     return;
   }
@@ -444,32 +444,32 @@ Proxy.prototype.sendInvokeRequestResult = function(messageId, name,
 
 
 /**
- * Publishes the server under a name
- * @param {string} name Name to publish under
- * @param {Object.<string, Object>} services Map of service name to idl wire
- * description.
+ * Serves the server under the given name
+ * @param {string} name Name to serve under
+ * @param {Veyron.Server} The server who will handle the requests for this
+ * name.
  * @param {function} [callback] If provided, the function will be called when
- * the  publish completes.  The first argument passed in is the error if there
+ * serve completes.  The first argument passed in is the error if there
  * was any and the second argument is the endpoint.
- * @return {Promise} Promise to be called when publish completes or fails
+ * @return {Promise} Promise to be called when serve completes or fails
  * the endpoint string of the server will be returned as the value of promise
  */
-Proxy.prototype.publishServer = function(name, server, callback) {
-  //TODO(aghassemi) Handle publish under multiple names
-  vLog.info('Publishing a server under name: ', name);
+Proxy.prototype.serve = function(name, server, callback) {
+  //TODO(aghassemi) Handle serve under multiple names
+  vLog.info('Serving under the name: ', name);
 
   var messageJSON = {
     name: name,
     serverId: server.id,
-    services: server.generateIdlWireDescription()
+    service: server.generateIdlWireDescription()
   };
 
   this.servers[server.id] = server;
 
   var def = new Deferred(callback);
   var message = JSON.stringify(messageJSON);
-  // Send the publish request to the proxy
-  this.sendRequest(message, MessageType.PUBLISH, def);
+  // Send the serve request to the proxy
+  this.sendRequest(message, MessageType.SERVE, def);
 
   return def.promise;
 };

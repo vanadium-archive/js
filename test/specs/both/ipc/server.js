@@ -5,7 +5,7 @@
 
 var Server = require('../../../../src/ipc/server.js');
 
-describe('Server registering', function() {
+describe('Server validating', function() {
   var idl = {
     package: 'foo',
     Sample: {
@@ -33,8 +33,8 @@ describe('Server registering', function() {
         return a + b;
       }
     };
-    var promise = server.register('adder', service, 'foo.Sample');
-    return expect(promise).to.eventually.be.fulfilled;
+    var err = server._getAndValidateMetadata(service, 'foo.Sample');
+    expect(err).to.be.null;
   });
 
   it('Using IDL with multiple services no errors', function() {
@@ -48,9 +48,10 @@ describe('Server registering', function() {
         return a - b;
       }
     };
-    var promise = server.register('adder', service,
+
+    var err = server._getAndValidateMetadata(service,
       ['foo.Sample', 'foo.Sample2']);
-    return expect(promise).to.eventually.be.fulfilled;
+    expect(err).to.be.null;
   });
 
 
@@ -62,16 +63,17 @@ describe('Server registering', function() {
         return a + b;
       }
     };
-    var promise = server.register('adder', service, 'foo.Sample');
-    return expect(promise).to.eventually.be.fulfilled;
+    var err = server._getAndValidateMetadata(service, 'foo.Sample');
+    expect(err).to.be.null;
   });
 
   it('Using IDL with missing function', function() {
     var server = new Server(null);
     server.addIDL(idl);
     var service = {};
-    var promise = server.register('adder', service, 'foo.Sample');
-    return expect(promise).to.eventually.be.rejected;
+
+    var err = server._getAndValidateMetadata(service, 'foo.Sample');
+    expect(err).not.to.be.null;
   });
 
   it('Using IDL with wrong number of args', function() {
@@ -82,7 +84,8 @@ describe('Server registering', function() {
         return a;
       }
     };
-    var promise = server.register('adder', service, 'foo.Sample');
-    return expect(promise).to.eventually.be.rejected;
+
+    var err = server._getAndValidateMetadata(service, 'foo.Sample');
+    expect(err).not.to.be.null;
   });
 });

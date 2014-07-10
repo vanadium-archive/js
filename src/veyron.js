@@ -52,8 +52,7 @@ function Veyron(config) {
  * };
  *
  * var s = veyron.newServer();
- * s.register('video', videoService);
- * s.publish('mymedia');
+ * s.serve('mymedia/video', videoService);
  * @return {Object} A server object
  */
 Veyron.prototype.newServer = function() {
