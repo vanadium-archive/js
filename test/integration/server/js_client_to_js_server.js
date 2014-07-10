@@ -90,7 +90,7 @@ function runJSClientServerTests(cacheDefinition, idl, serviceName) {
 
   before(function(done) {
     var veyron = new Veyron(TestHelper.veyronConfig);
-    // Create server object and publish the service
+    // Create server object and serve the service
     var server = veyron.newServer();
     var optArg;
     if (idl) {
@@ -104,9 +104,8 @@ function runJSClientServerTests(cacheDefinition, idl, serviceName) {
       };
     }
 
-    server.register('Cache', cacheDefinition, optArg).then(function() {
-      return server.publish('myCache');
-    }).then(function(endpoint) {
+    server.serve('myCache/Cache', cacheDefinition, optArg).then(
+        function(endpoint) {
       expect(endpoint).to.exist;
       expect(endpoint).to.be.a('string');
       expect(endpoint).to.have.string('@2@tcp@127.0.0.1');
@@ -133,8 +132,8 @@ function runJSClientServerTests(cacheDefinition, idl, serviceName) {
 
   });
 
-  it('Should be able to invoke methods after the service is published ' +
-     'using published name', function() {
+  it('Should be able to invoke methods after the service is serveed ' +
+     'using serveed name', function() {
         var result = cacheServiceClient.set('foo', 'bar').then(function() {
           return cacheServiceClient.get('foo');
         });
@@ -157,7 +156,7 @@ function runJSClientServerTests(cacheDefinition, idl, serviceName) {
     });
 
   it('Should be able to invoke streaming methods after the service is ' +
-      'published', function(done) {
+      'serveed', function(done) {
         var promises = [];
         promises.push(cacheServiceClient.set('foo', 'bar'));
         for (var i = 0; i < 10; ++i) {
@@ -203,7 +202,7 @@ function runJSClientServerTests(cacheDefinition, idl, serviceName) {
     expect(fn).to.throw();
   });
 
-  it('Should be able to invoke methods after the service is published ' +
+  it('Should be able to invoke methods after the service is serveed ' +
       'using the endpoint name', function() {
         var result = cacheServiceClientUsingEndpoint.set('foo', 'bar')
             .then(function() {

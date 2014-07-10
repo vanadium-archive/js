@@ -73,7 +73,7 @@ describe('server/error_handling.js: Service in JS', function() {
         numReturnArgs: 0
       }
     };
-    TestHelper.publishAndBindService(service,
+    TestHelper.serveAndBindService(service,
                                      'err-handling',
                                      metadata).then(function(s) {
       remoteService = s;

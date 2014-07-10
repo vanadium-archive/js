@@ -39,12 +39,10 @@ describe('server/signature_js_server.js: ' +
       multiGet: function($stream) {}
     };
 
-    // Create server object and publish the service
+    // Create server object and serve the service
     var server = veyron.newServer();
 
-    server.register('Cache', cache).then(function() {
-      return server.publish('myCache');
-    }).then(function(endpoint) {
+    server.serve('myCache/Cache', cache).then(function(endpoint) {
       // Create a client and bind to it
       var client = veyron.newClient();
 
