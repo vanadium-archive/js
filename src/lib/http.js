@@ -1,7 +1,10 @@
 'use strict';
 
 var http = require('http');
+var https = require('https');
+var parseUrl = require('url').parse;
 var Promise = require('./promise');
+var vlog = require('./vlog');
 
 module.exports = {
   /**
@@ -11,8 +14,19 @@ module.exports = {
    * 'statusCode', and 'body'.
    */
   Request: function(url) {
+    var client;
+    var protocol = parseUrl(url).protocol;
+    if (protocol === 'http:') {
+      client = http;
+      vlog.warn('Sending insecure request to: ' + url);
+    } else if (protocol === 'https:') {
+      client = https;
+    } else {
+      throw new Error('Unsupported protocol: ' + url);
+    }
+
     return new Promise(function(resolve, reject) {
-      var client = http.get(url, function(response) {
+      var req = client.get(url, function(response) {
         var result = {
           statusCode: response.statusCode,
           headers: response.headers,
@@ -27,11 +41,11 @@ module.exports = {
         });
       });
 
-      client.on('error', function(e) {
+      req.on('error', function(e) {
         reject(e);
       });
 
-      client.setTimeout(5000, function() {
+      req.setTimeout(5000, function() {
         reject('Timeout while accessing ' + url);
       });
     });
