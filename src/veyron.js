@@ -113,7 +113,7 @@ Veyron.prototype.newNamespace = function(roots) {
   var proxy = this._getProxyConnection();
 
   if (roots) {
-    return Promise.cast(new Namespace(veyron.newClient(), roots));
+    return Promise.resolve(new Namespace(veyron.newClient(), roots));
   }
 
   // We have to ask for the websocket now, otherwise the config

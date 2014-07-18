@@ -346,7 +346,7 @@ Proxy.prototype.handleIncomingInvokeRequest = function(messageId, request) {
     }
 
     // Normalize result to be a promise
-    var resultPromise = Promise.cast(result);
+    var resultPromise = Promise.resolve(result);
 
     if (variables.indexOf('$callback') !== -1) {
       // The callback takes care of sending the result, so we don't use the
@@ -504,7 +504,7 @@ Proxy.prototype.getServiceSignature = function(name) {
   var cachedEntry = this.bindCache[name];
   var now = new Date();
   if (cachedEntry && now - cachedEntry.fetched < BIND_CACHE_TTL) {
-    return Promise.cast(cachedEntry.signature);
+    return Promise.resolve(cachedEntry.signature);
   }
 
   var def = new Deferred();

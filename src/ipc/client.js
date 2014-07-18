@@ -46,7 +46,7 @@ client.prototype.bindTo = function(name, optServiceSignature, callback) {
   var serviceSignaturePromise;
 
   if (optServiceSignature !== undefined) {
-    serviceSignaturePromise = Promise.cast(optServiceSignature);
+    serviceSignaturePromise = Promise.resolve(optServiceSignature);
   } else {
     vLog.debug('Requesting service signature for:', name);
     serviceSignaturePromise = self._proxyConnection.getServiceSignature(name);
