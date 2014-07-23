@@ -8,6 +8,6 @@ fi
 
 PATH=./node_modules/.bin:$VEYRON_ROOT/environment/cout/node/bin:$PATH
 IDENTITY_FILE=${TMPDIR:-/tmp}/identity
-../../go/bin/identity -name test > $IDENTITY_FILE 2> /dev/null
+../../go/bin/identity generate test > $IDENTITY_FILE 2> /dev/null
 npm install
 IDENTITY_FILE=$IDENTITY_FILE grunt $@
