@@ -134,9 +134,7 @@ Proxy.prototype.handleStreamClose = function(def, id) {
     if (def.stream) {
       def.stream._queueRead(null);
     }
-    def.resolve();
   }
-  this.dequeue(def, id);
 };
 
 /**
