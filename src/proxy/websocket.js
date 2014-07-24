@@ -20,10 +20,20 @@ var Proxy = require('./proxy');
 function ProxyConnection(url, privateIdentityPromise) {
   this.url = url.replace(/^(http|https)/, 'ws') + '/ws';
   this.currentWebSocketPromise = null;
-  Proxy.call(this, this.getWebSocket(), privateIdentityPromise);
+  // Since we haven't finished constructing the Proxy object,
+  // we can't call this.getWebsocket() to return the sender promise.
+  // Instead, we create a new promise that will eventually call
+  // getWebsocket and only resolve the promise after Proxy.call
+  // has completed.
+  var def = new Deferred();
+  Proxy.call(this, def.promise, privateIdentityPromise);
+  def.resolve(this.getWebSocket());
 }
 
 ProxyConnection.prototype = Object.create(Proxy.prototype);
+
+ProxyConnection.prototype.constructor = ProxyConnection;
+
 /**
  * Connects to the server and returns an open web socket connection
  * @return {promise} a promise that will be fulfilled with a websocket object
