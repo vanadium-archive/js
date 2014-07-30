@@ -4,6 +4,9 @@
 
 'use strict';
 
+// Our JSHint config marks TestHelper as a read-only global, but this is the
+// file where we initialize TestHelper, so here we allow writes.
+/* global TestHelper: true */
 var TestHelper = {};
 
 // Default veyron config for integration tests
