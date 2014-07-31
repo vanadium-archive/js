@@ -23,11 +23,8 @@ var BIND_CACHE_TTL = 3600 * 1000;
  * a message to the native veron implementation. It should be resolved with an
  * object that has a send function that will send messages to the native
  * implementation.
- * @param {Promise} [ privateIdentity = null ] A promise that resolves to the
- * private key for the user's veyron identity.
  */
-function Proxy(sender, privateIdentityPromise) {
-  this.privateIdentityPromise = privateIdentityPromise;
+function Proxy(sender) {
   // We use odd numbers for the message ids, so that the server can use even
   // numbers.
   this.id = 1;
@@ -162,21 +159,16 @@ Proxy.prototype.promiseInvokeMethod = function(name,
     def.stream = new Stream(id, streamingDeferred.promise, true);
     def.promise.stream = def.stream;
   }
-  var self = this;
-  this.privateIdentityPromise.then(function(privateIdentity) {
-    var message = self.constructMessage(name,
-      methodName, mapOfArgs, numOutArgs, isStreaming,
-      privateIdentity);
 
-    self.sendRequest(message, MessageType.REQUEST, def, id);
-    if (streamingDeferred) {
-      self.senderPromise.then(function(ws) {
-        streamingDeferred.resolve(ws);
-      });
-    }
-  }, function(msg) {
-    def.reject(msg);
-  });
+  var message = this.constructMessage(name, methodName, mapOfArgs,
+      numOutArgs, isStreaming);
+
+  this.sendRequest(message, MessageType.REQUEST, def, id);
+  if (streamingDeferred) {
+    this.senderPromise.then(function(ws) {
+      streamingDeferred.resolve(ws);
+    });
+  }
 
   return def.promise;
 };
@@ -514,18 +506,11 @@ Proxy.prototype.getServiceSignature = function(name) {
       fetched: now
     };
   });
-  this.privateIdentityPromise.then(function(privateIdentity) {
-    var messageJSON = {
-      name: name,
-      privateId: privateIdentity
-    };
-    var message = JSON.stringify(messageJSON);
+  var messageJSON = { name: name };
+  var message = JSON.stringify(messageJSON);
 
-    // Send the get signature request to the proxy
-    self.sendRequest(message, MessageType.SIGNATURE, def);
-  }, function(reason) {
-    def.reject('Failed to get service signature: ' + reason);
-  });
+  // Send the get signature request to the proxy
+  this.sendRequest(message, MessageType.SIGNATURE, def);
 
   return def.promise;
 };
@@ -537,18 +522,16 @@ Proxy.prototype.getServiceSignature = function(name) {
  * @param {object} [ mapOfArgs = {} ] key-value map of argument names to values
  * @param {number} numOutArgs Number of expected outputs by the method
  * @param {boolean} isStreaming
- * @param {string} privateIdentity The private identity
  * @return {string} json string to send to jspr
  */
 Proxy.prototype.constructMessage = function(name, methodName,
-    mapOfArgs, numOutArgs, isStreaming, privateIdentity) {
+    mapOfArgs, numOutArgs, isStreaming) {
   var jsonMessage = {
     name: name,
     method: methodName,
     inArgs: mapOfArgs || {},
     numOutArgs: numOutArgs || 2,
-    isStreaming: isStreaming,
-    privateId: privateIdentity || null
+    isStreaming: isStreaming
   };
   return JSON.stringify(jsonMessage);
 };

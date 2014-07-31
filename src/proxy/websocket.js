@@ -14,10 +14,9 @@ var Proxy = require('./proxy');
  * and performs RPCs.
  * @constructor
  * @param {string} url of wspr that connects to the veyron network
- * @param {string} [ privateIdentity = null ] private key for the user's veyron
  * identity
  */
-function ProxyConnection(url, privateIdentityPromise) {
+function ProxyConnection(url) {
   this.url = url.replace(/^(http|https)/, 'ws') + '/ws';
   this.currentWebSocketPromise = null;
   // Since we haven't finished constructing the Proxy object,
@@ -26,7 +25,7 @@ function ProxyConnection(url, privateIdentityPromise) {
   // getWebsocket and only resolve the promise after Proxy.call
   // has completed.
   var def = new Deferred();
-  Proxy.call(this, def.promise, privateIdentityPromise);
+  Proxy.call(this, def.promise);
   def.resolve(this.getWebSocket());
 }
 

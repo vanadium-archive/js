@@ -11,7 +11,6 @@ var Deferred = require('./lib/deferred');
 var Promise = require('./lib/promise');
 var vLog = require('./lib/vlog');
 var vError = require('./lib/verror');
-var http = require('./lib/http');
 var Namespace = require('./namespace/namespace');
 var store = require('./storage/store');
 var watch = require('./watch/watch');
@@ -33,9 +32,6 @@ function Veyron(config) {
   if (typeof config.logLevel === 'undefined' || config.logLevel === null) {
     config.logLevel =  Veyron.logLevels.DEBUG;
   }
-  config.identityServer = config.identityServer ||
-    'http://www.vonery.com:8125/random/';
-
   this._config = config;
   vLog.level = config.logLevel;
 }
@@ -86,22 +82,9 @@ Veyron.prototype.newStore = function() {
  */
 Veyron.prototype._getProxyConnection = function() {
   if (!this._proxyConnection) {
-    this._proxyConnection =
-      new ProxyConnection(this._config.proxy, this._getIdentityPromise());
+    this._proxyConnection = new ProxyConnection(this._config.proxy);
   }
   return this._proxyConnection;
-};
-
-Veyron.prototype._getIdentityPromise = function() {
-  if (!this._identityPromise) {
-    this._identityPromise = http.Request(this._config.identityServer).then(
-      function(res) {
-        // TODO(bprosnitz) Consider performing validation on the identity.
-        return res.body;
-      }
-    );
-  }
-  return this._identityPromise;
 };
 
 /**
