@@ -12,6 +12,7 @@ var Promise = require('./lib/promise');
 var vLog = require('./lib/vlog');
 var vError = require('./lib/verror');
 var Namespace = require('./namespace/namespace');
+var namespaceUtil = require('./namespace/util');
 var store = require('./storage/store');
 var watch = require('./watch/watch');
 
@@ -107,6 +108,11 @@ Veyron.prototype.newNamespace = function(roots) {
     return new Namespace(veyron.newClient(), config.mounttableRoot);
   });
 };
+
+/**
+ * Utility functions to manipulate veyron names
+ */
+Veyron.namespaceUtil = namespaceUtil;
 
 // TODO(bprosnitz) Remove this before release!
 /**

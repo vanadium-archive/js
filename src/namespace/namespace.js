@@ -55,7 +55,7 @@ Namespace._maxDepth = 32;
  * @return {Array} A list of rooted names.
  */
 Namespace.prototype._rootNames = function(name) {
-  if (nameUtil._isRooted(name) && name !== '/') {
+  if (nameUtil.isRooted(name) && name !== '/') {
     return [name];
   }
   var out = [];
@@ -92,7 +92,7 @@ function convertServersToStrings(results) {
  * @return {Array} list of terminal names.
  */
 function makeAllTerminal(names) {
-  return names.map(nameUtil._convertToTerminalName);
+  return names.map(nameUtil.convertToTerminalName);
 }
 
 /*
@@ -101,7 +101,7 @@ function makeAllTerminal(names) {
  * @return {boolean} true if every name in the input was terminal.
  */
 function allAreTerminal(names) {
-  return names.every(nameUtil._isTerminal);
+  return names.every(nameUtil.isTerminal);
 }
 
 /*
@@ -121,7 +121,7 @@ Namespace.prototype._resolveAgainstMountTable = function(names) {
   // That would be more efficient, but we would need to do error handling
   // differently.
   var self = this;
-  var name = nameUtil._convertToTerminalName(names[0]);
+  var name = nameUtil.convertToTerminalName(names[0]);
   return this._client.bindTo(name).then(function onBind(service) {
     if (service.resolveStep === undefined) {
       throw Namespace.errNotAMountTable();

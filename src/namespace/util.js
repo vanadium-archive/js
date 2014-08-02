@@ -80,7 +80,7 @@ var join = function(parts) {
   * @param {string} The veyron name.
   * @return {boolean} True if the name is rooted, false otherwise.
   */
-var _isRooted = function(name) {
+var isRooted = function(name) {
   return _numInitialSlashes(name) === 1;
 };
 
@@ -90,7 +90,7 @@ var _isRooted = function(name) {
   * @param {string} The veyron name.
   * @return {boolean} True if the name is a terminal name, false otherwise.
   */
-var _isTerminal = function(name) {
+var isTerminal = function(name) {
   var numInitialSlashes = _numInitialSlashes(name);
   if (numInitialSlashes >= 2) {
     // If the name begins with '//', it is terminal.
@@ -114,13 +114,13 @@ var _isTerminal = function(name) {
   * @param {string} The initial veyron name.
   * @return {string} A terminal veyron name.
   */
-var _convertToTerminalName = function(name) {
+var convertToTerminalName = function(name) {
   // '' -> '' and '/' -> ''
   if (name === '' || name === '/') {
     return '';
   }
 
-  if (_isRooted(name)) {
+  if (isRooted(name)) {
     if (name.substr(1).indexOf('/') === -1) {
       // '/endpoint' -> '/endpoint'
       return name;
@@ -140,7 +140,7 @@ var _convertToTerminalName = function(name) {
 
 module.exports = {
   join: join,
-  _isTerminal: _isTerminal,
-  _isRooted: _isRooted,
-  _convertToTerminalName: _convertToTerminalName
+  isTerminal: isTerminal,
+  isRooted: isRooted,
+  convertToTerminalName: convertToTerminalName
 };

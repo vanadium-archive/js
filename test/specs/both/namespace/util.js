@@ -59,7 +59,7 @@ describe('Testing terminal', function() {
   function TerminalTest(input, output) {
     this.message = 'On ' + input + ' should return ' + output;
     this.run = function run(){
-      var result = names._isTerminal(input);
+      var result = names.isTerminal(input);
       expect(result).to.equal(output);
     };
   }
@@ -91,7 +91,7 @@ describe('Making a name terminal', function() {
     this.message = 'Should transform ' + input +
       ' into ' + output;
     this.run = function run(){
-      var result = names._convertToTerminalName(input);
+      var result = names.convertToTerminalName(input);
       expect(result).to.equal(output);
     };
   }
@@ -126,7 +126,7 @@ describe('Rooted', function() {
     this.message = 'Should return ' + output +
       ' for ' + input;
     this.run = function run(){
-      var result = names._isRooted(input);
+      var result = names.isRooted(input);
       expect(result).to.equal(output);
     };
   }
