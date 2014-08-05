@@ -1,13 +1,13 @@
 #!/bin/bash
 
-if [ -z "$VEYRON_ROOT" ]; then
+if [[ -z "$VEYRON_ROOT" ]]; then
   echo "No VEYRON_ROOT found!"
   echo "Please set VEYRON_ROOT to the location of the veyron project root and re-run."
   exit 1
 fi
 
-PATH=./node_modules/.bin:$VEYRON_ROOT/environment/cout/node/bin:$PATH
+PATH=./node_modules/.bin:${VEYRON_ROOT}/environment/cout/node/bin:$PATH
 IDENTITY_FILE=${TMPDIR:-/tmp}/identity
-../../go/bin/identity generate test > $IDENTITY_FILE 2> /dev/null
+${VEYRON_ROOT}/veyron/go/bin/identity generate test > $IDENTITY_FILE 2> /dev/null
 npm install
 IDENTITY_FILE=$IDENTITY_FILE grunt $@

@@ -35,13 +35,20 @@ module.exports = function(grunt) {
 
   // Constants
   // Binary location of wspr and other processes to run
-  var VEYRON_BIN_DIR = path.resolve('../../go/bin');
-  var VEYRON_PROXY_BIN = VEYRON_BIN_DIR + '/proxyd';
-  var MOUNTTABLE_BIN = VEYRON_BIN_DIR + '/mounttabled';
-  var WSPR_BIN = VEYRON_BIN_DIR + '/wsprd';
-  var IDENTITYD_BIN = VEYRON_BIN_DIR + '/identityd';
-  var STORED_BIN = VEYRON_BIN_DIR + '/stored';
-  var SAMPLE_GO_SERVICE_BIN = VEYRON_BIN_DIR + '/sampled';
+  var VEYRON_ROOT = process.env.VEYRON_ROOT;
+
+  if (! VEYRON_ROOT) {
+    grunt.fail.fatal('Please export $VEYRON_ROOT to proceed');
+  }
+
+  var VEYRON_BIN_DIR = path.join(VEYRON_ROOT, 'veyron/go/bin');
+
+  var VEYRON_PROXY_BIN = path.join(VEYRON_BIN_DIR, 'proxyd');
+  var MOUNTTABLE_BIN = path.join(VEYRON_BIN_DIR, 'mounttabled')
+  var WSPR_BIN = path.join(VEYRON_BIN_DIR, 'wsprd')
+  var IDENTITYD_BIN = path.join(VEYRON_BIN_DIR, 'identityd')
+  var STORED_BIN = path.join(VEYRON_BIN_DIR, 'stored')
+  var SAMPLE_GO_SERVICE_BIN = path.join(VEYRON_BIN_DIR, 'sampled')
 
   var BINARIES = [VEYRON_PROXY_BIN, MOUNTTABLE_BIN, WSPR_BIN, IDENTITYD_BIN,
    SAMPLE_GO_SERVICE_BIN, STORED_BIN];

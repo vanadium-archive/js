@@ -2,3 +2,5 @@ node_modules/
 dist/
 logs/
 docs/
+coverage/
+xunit.xml
