@@ -111,7 +111,7 @@ module.exports = function(grunt) {
         WSPR_PORT;
     return startProcessWithMounttableAndAddHandlers(
       mounttable, WSPR_BIN,
-      'WSPR', ['-port=' + WSPR_PORT, '-vproxy=test/proxy']);
+      'WSPR', ['-port=' + WSPR_PORT, '-vproxy=test/proxy', '-identd=test/identd']);
   };
 
   // Starts the Veyron Proxy taking in the mounttable root and returns
