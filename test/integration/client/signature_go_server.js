@@ -39,8 +39,9 @@ describe('client/signature_go_server.js: ' +
     var absoluteVeyronName =
         '/' + testconfig['SAMPLE_VEYRON_GO_SERVICE_ENDPOINT'] + '/cache';
 
-    client._proxyConnection.getServiceSignature(absoluteVeyronName)
-    .then(function(sig) {
+    client.bindTo(absoluteVeyronName).then(function(serviceObject) {
+      return serviceObject.signature();
+    }).then(function(sig) {
       signature = sig;
       done();
     }).catch (done);

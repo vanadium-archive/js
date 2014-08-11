@@ -83,6 +83,11 @@ client.prototype.bindTo = function(name, optServiceSignature, callback) {
       }
     }
 
+    //Also stub out signature() on the bound object.
+    boundObject.signature = function() {
+      return Promise.resolve(serviceSignature);
+    };
+
     def.resolve(boundObject);
   }).catch (def.reject);
 

@@ -45,9 +45,9 @@ describe('server/signature_js_server.js: ' +
     server.serve('myCache/Cache', cache).then(function(endpoint) {
       // Create a client and bind to it
       var client = veyron.newClient();
-
-      client._proxyConnection.getServiceSignature('myCache/Cache')
-      .then(function(sig) {
+      client.bindTo('myCache/Cache').then(function(serviceObject) {
+        return serviceObject.signature();
+      }).then(function(sig) {
         signature = sig;
         done();
       }).catch (done);

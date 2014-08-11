@@ -24,7 +24,8 @@ describe('Client-side binding', function() {
         emptyServiceSignature);
 
     testServicePromise.then(function(service) {
-      expect(Object.keys(service)).to.have.length(0);
+      // 1 for signature method which is always available
+      expect(Object.keys(service)).to.have.length(1);
       done();
     }).catch (done);
 
@@ -32,8 +33,9 @@ describe('Client-side binding', function() {
 
   describe('Executing bound functions', function() {
     var testService;
+    var testServiceSignature;
     beforeEach(function(done) {
-      var testServiceSignature = {
+      testServiceSignature = {
         testMethod: {
           inArgs: ['a', 'b', 'c'],
           numOutArgs: 2
@@ -48,7 +50,8 @@ describe('Client-side binding', function() {
           testServiceSignature);
 
       testServicePromise.then(function(service) {
-        expect(Object.keys(service)).to.have.length(2);
+        // 1 for signature method which is always available
+        expect(Object.keys(service)).to.have.length(2 + 1);
         testService = service;
         done();
       }).catch (done);
@@ -80,6 +83,17 @@ describe('Client-side binding', function() {
         expect(function() {
           testService.testMethod2(1, 'X', 'Y');
         }).to.throw(Error);
+      });
+    });
+
+    describe('signature', function() {
+      it('Should exist on the bound object', function() {
+        expect(testService.signature).to.exist;
+      });
+
+      it('Should return the signature object', function() {
+        var result = testService.signature();
+        return expect(result).to.eventually.deep.equal(testServiceSignature);
       });
     });
   });
