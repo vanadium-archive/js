@@ -9,5 +9,4 @@ fi
 PATH=./node_modules/.bin:${VEYRON_ROOT}/environment/cout/node/bin:$PATH
 IDENTITY_FILE=${TMPDIR:-/tmp}/identity
 ${VEYRON_ROOT}/veyron/go/bin/identity generate test > $IDENTITY_FILE 2> /dev/null
-npm install
 IDENTITY_FILE=$IDENTITY_FILE grunt $@

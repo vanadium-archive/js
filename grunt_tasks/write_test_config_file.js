@@ -19,7 +19,7 @@ module.exports = function(grunt) {
     fileContent += 'if(global) { global.testconfig = testconfig; }';
 
     var dirs = grunt.config.get('dirs');
-    var filePath = dirs.dist + '/test/veyron.test.config.js';
+    var filePath = 'test_out/veyron.test.config.js';
     grunt.file.write(filePath, fileContent);
 
   });

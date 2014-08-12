@@ -7,8 +7,6 @@
  * --grep=test_name - run the tests matching the specified pattern
  */
 
-var merge = require('merge');
-
 module.exports = function(grunt) {
 
   // Any key, value in this object will be available to all test files.
@@ -20,122 +18,6 @@ module.exports = function(grunt) {
   // Project configuration.
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
-
-    // Directory variables
-    dirs: {
-      temp: 'temp',
-      dist: 'dist',
-      docs: 'docs',
-      logs: 'logs',
-      distTest: '<%= dirs.dist %>/test'
-    },
-
-    // Make out temp and output directories
-    mkdir: {
-      all: {
-        options: {
-          create: [
-            '<%= dirs.temp %>',
-            '<%= dirs.dist %>',
-            '<%= dirs.distTest %>',
-            '<%= dirs.logs %>'
-          ]
-        }
-      }
-    },
-
-    // Clean tasks
-    clean: {
-      build: {
-        // Clean build artifacts
-        temp: [
-          '<%= dirs.temp %>'
-        ],
-        // Clean dist
-        dist: [
-          '<%= dirs.dist %>'
-        ],
-        // Clean logs
-        logs: [
-          '<%= dirs.logs %>'
-        ],
-      },
-      // Clean docs
-      docs: [
-        '<%= dirs.docs %>'
-      ],
-      // Clean node modules
-      mode_modules: [
-        'node_modules'
-      ],
-    },
-
-    jshint: {
-      node: {
-        files: {
-          src: ['src/**/*.js', 'test/**/*.js']
-        },
-        options: {
-          jshintrc: 'jshintrc.json',
-          ignores: ['src/**/browser_only/**',
-                    'test/**/browser_only/**']
-        }
-      },
-      browser_only: {
-        files: {
-          src: ['src/**/browser_only/**/*.js',
-                'test/**/browser_only/**/*.js']
-        },
-        options: merge({}, require('./jshintrc.json'), {
-          browser: true
-        })
-      }
-    },
-
-    browserify: {
-      source: {
-        src: ['src/veyron.js'],
-        dest: '<%= dirs.dist %>/veyron.js',
-        standalone: 'Veyron',
-        detectExternalNodeModules: true
-      },
-      tests: {
-        src: ['test/specs/both/**/*.js', 'test/specs/browser_only/**/*.js'],
-        dest: '<%= dirs.dist %>/test/veyron.test.specs.browserify.js'
-      }
-    },
-
-    // Combine files and add closure around the Veyron
-    concat: {
-      // concats all the integration files together
-      integration_tests: {
-        src: ['test/integration/**/*.js', '!test/integration/node_globals.js'],
-        dest: '<%= dirs.dist %>/test/veyron.test.integration.js'
-      }
-    },
-
-    // Compress and uglify
-    uglify: {
-      dist: {
-        files: {
-          '<%= dirs.dist %>/veyron.min.js': ['<%= dirs.dist %>/veyron.js']
-        },
-        options: {
-          sourceMap: true
-        }
-      }
-    },
-
-    // JSDoc
-    jsdoc: {
-      dist: {
-        src: ['src/**/*.js'],
-        options: {
-          destination: '<%= dirs.docs %>',
-          template: 'node_modules/ink-docstrap/template'
-        }
-      }
-    },
 
     // Server-side testing in NodeJS
     nodeReporter: 'spec',
@@ -150,8 +32,7 @@ module.exports = function(grunt) {
         require: [
           'xunit-file',
           'test/node_init.js',
-          '<%= dirs.dist %>/test/veyron.test.config.js',
-          'test/test_helper.js'
+          'test_out/veyron.test.config.js'
         ]
       },
       specs: {
@@ -185,20 +66,19 @@ module.exports = function(grunt) {
       specs: {
         options: {
           junitReporter: {
-            outputFile: '<%= dirs.dist %>/test/test_results_browser_spec.out'
+            outputFile: 'test_out/test_results_browser_spec.out'
           },
           files: [
-            '<%= dirs.distTest %>/veyron.test.config.js',
-            'test/test_helper.js',
-            '<%= dirs.distTest %>/veyron.test.specs.browserify.js'
+            'test_out/veyron.test.config.js',
+            'test_out/veyron.test.specs.js'
           ],
           preprocessors: {
-            'dist/test/veyron.test.specs.browserify.js': ['coverage']
+            'test_out/veyron.test.specs.browserify.js': ['coverage']
           },
           coverageReporter: {
               reporters: [
-              { type: 'html', dir: '<%= dirs.distTest %>/coverage/unit' },
-              { type: 'cobertura', dir: '<%= dirs.distTest %>/coverage/unit' }
+              { type: 'html', dir: 'test_out/coverage/unit' },
+              { type: 'cobertura', dir: 'test_out/coverage/unit' }
             ]
           }
         }
@@ -207,21 +87,19 @@ module.exports = function(grunt) {
       integration: {
         options: {
           junitReporter: {
-            outputFile: '<%= dirs.dist %>/test/test_results_browser_integration.out'
+            outputFile: 'test_out/test_results_browser_integration.out'
           },
           files: [
-            '<%= dirs.dist %>/veyron.js',
-            '<%= dirs.distTest %>/veyron.test.config.js',
-            'test/test_helper.js',
-            '<%= dirs.distTest %>/veyron.test.integration.js'
+            'test_out/veyron.test.config.js',
+            'test_out/veyron.test.integration.js'
           ],
           preprocessors: {
             'dist/veyron.js': ['coverage']
           },
           coverageReporter: {
               reporters: [
-              { type: 'html', dir: '<%= dirs.distTest %>/coverage/integration' },
-              { type: 'cobertura', dir: '<%= dirs.distTest %>/coverage/integration' }
+              { type: 'html', dir: 'test_out/coverage/integration' },
+              { type: 'cobertura', dir: 'test_out/coverage/integration' }
             ]
           }
         }
@@ -266,23 +144,7 @@ module.exports = function(grunt) {
     'subtask_teardownIntegrationTestEnvironment'
   ]);
 
-  grunt.registerTask('subtask_buildForBrowser', [
-    'browserify',
-    'concat',
-    'uglify'
-  ]);
-
-  // Main tasks, to be run from "make" (e.g. make debug )
-  // or directly with Grunt. ( e.g. grunt test )
-  grunt.registerTask(
-    'build',
-    ['clean:build', 'jshint', 'mkdir:all', 'subtask_buildForBrowser',
-    'clean:build:temp']
-  );
-
   grunt.registerTask('test', 'Runs the tests', function() {
-      grunt.task.run('build');
-
       var allTests = ['node_unit', 'browser_unit', 'node_integration',
       'browser_integration'];
 
@@ -314,7 +176,7 @@ module.exports = function(grunt) {
 
       if (hasSubstrMatch(tests, 'node_unit')) {
         process.env.XUNIT_FILE =
-          'dist/test/test_results_node_spec.out';
+          'test_out/test_results_node_spec.out';
         grunt.task.run('subtask_writeTestConfigFile');
         grunt.task.run('nodeTest:specs');
       }
@@ -324,7 +186,7 @@ module.exports = function(grunt) {
       }
       if (hasSubstrMatch(tests, 'node_integration')) {
         process.env.XUNIT_FILE =
-          'dist/test/test_results_node_integration.out';
+          'test_out/test_results_node_integration.out';
         grunt.task.run('subtask_runNodeIntegrationTests');
       }
       if (hasSubstrMatch(tests, 'browser_integration')) {

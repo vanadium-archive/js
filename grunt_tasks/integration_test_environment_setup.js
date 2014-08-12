@@ -123,7 +123,7 @@ module.exports = function(grunt) {
   };
 
   var startStored = function(mounttable) {
-    var storePath = 'dist/test/store_integration';
+    var storePath = 'test_out/store_integration';
     grunt.file.delete(storePath);
     var process = startProcessWithMounttableRoot(
       mounttable, STORED_BIN, 'stored', ['--address=127.0.0.1:0',

@@ -1,8 +1,7 @@
 /**
  * @fileoverview common helper functions to quicker testing setup
  */
-
-'use strict';
+var Veyron = require('../src/veyron');
 
 // Our JSHint config marks TestHelper as a read-only global, but this is the
 // file where we initialize TestHelper, so here we allow writes.
@@ -33,6 +32,4 @@ TestHelper.serveAndBindService = function(service, name,
 
 };
 
-if (global) {
-  global.TestHelper = TestHelper;
-}
+module.exports = TestHelper;

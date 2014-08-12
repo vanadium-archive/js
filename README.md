@@ -6,16 +6,18 @@ NodeJS and browser environments enabling development of Veyron-based application
 
 # Building and testing
 
-The vgrunt script is essentially grunt, but runs npm install beforehand to
-ensure that the npm packages are up to date
+We use GNU Make for building and testing Veyron.
 
 -Builds and tests everything
-./vgrunt or ./vgrunt test
+make test
 
 -Builds
-./vgrunt build
+make build
 
 -Run a specific test
+<!-- TODO(jasoncampbell): replace these "vgrunt"s with "make whatever" when
+it's ready. -->
+
 ./vgrunt test --grep "test name" --tests node_unit,browser_unit
 or equivalently
 ./vgrunt test --grep "test name" --tests unit
@@ -29,7 +31,7 @@ also can just run node tests
 ./vgrunt debug_browser --tests browser_integration
 
 -Removes all build and testing artifacts
-./vgrunt clean
+make clean
 
 
 # Summary
@@ -59,14 +61,12 @@ included in the browser.
 
 The build also runs all the specification tests in both NodeJS and also
 in Chrome browser. It:
-*Runs all spec tests except browser_only test files in NodeJS
 *Uses the Browserify plugin to browserify common and bowser_only test files
 *Runs a simple http server and hits the runner.html that includes the
 browserified tests with PhantomJS and reports the test results back to grunt.
 
 The build also runs integration tests in both environments. Integration tests are
-meant to test the "veyron" entry point and should only be testing the public API,
-therefore there is no node_only or browser_only version of integration tests.
+meant to test the "veyron" entry point and should only be testing the public API.
 For integration tests, the build:
 *Requires "veyron" and "expect" modules before loading the integration test files
 *Runs the test files in NodeJS
@@ -75,61 +75,11 @@ For integration tests, the build:
 veyron.min.js library and hits it with PhantomJS and reports the test results
 back to grunt
 
-
-# Code structure and considerations
-
-We should consider wiring code that's compatible with both NodeJS and the browser
-as much as possible. However, there will be times when we need to write node-only
-or browser-only code. This can be done by putting the browser version inside a
-browser_only folder and adding a mapping entry to package.json.
-
-For instance, consider we have a module that behaves differently in NodeJS
-and the browser and there are common modules that reference it:
-
-// NodeJs version of the file
-sayHello.js {
-
-  // here we can load node only modules
-  var m = require(./myNodeModule);
-
-  module.export = function() {
-    console.log('Hello');
-  }
-}
-
-// Browser version of the file inside browser_only folder
-browser_only/sayHello.js {
-
-  // here we can load browser only modules
-  var m = require(./myBrowserModule);
-
-  module.export = function() {
-    window.alert('Hello'); // or access DOM, browser-only functionality
-  }
-}
-
-// Other common file that are not browser or NodeJS specific
-person.js {
-
-  // The build process makes the appropriate version of sayHello.js available
-  // for each environment so this module does not need to worry about it.
-  var sayHello = require('./sayHello');
-  sayHello();
-}
-
-then inside package.json we add the mapping to "browser" section of the file:
-  "browser": {
-    "./src/sayHello.js": "./src/browser_only/sayHello.js"
-  },
-
-
 # Testing structure and considerations
 
 All the spec and integration tests run in both NodeJS and browser, however since
 we can write node-only or browser-only modules, it make sense to be able to
 write tests for those modules as well that only run in the supported environment.
-To do so, just put the specific tests in node_only or browser_only folders under
-test.
 
 Integration tests on the other hand can not be browser or node specific and will
 always run in both environments. This is because integration tests are testing

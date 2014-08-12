@@ -9,7 +9,8 @@
  * Only the public "veyron" module is available for integration tests.
  * All globals (veyron, expect, testconfig) are injected by test runners.
  */
-
+var Veyron = require('../../../src/veyron');
+var TestHelper = require('../../test_helper');
 describe('server/context_injection.js: Service function in JS', function() {
   var expectedContext = {
     name: 'suf',

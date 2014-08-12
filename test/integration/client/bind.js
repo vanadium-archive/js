@@ -5,6 +5,8 @@
  * is useful for identifying when binding is the cause of the
  * beforeEach failures.
  */
+var Veyron = require('../../../src/veyron');
+var TestHelper = require('../../test_helper');
 describe('client/bind.js:', function() {
   var client;
   beforeEach(function() {

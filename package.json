@@ -3,11 +3,6 @@
   "description": "Veyron JavaScript API",
   "version": "0.0.1",
   "main": "./src/veyron",
-  "browser": {
-    "./src/lib/websocket.js": "./src/proxy/browser_only/websocket.js",
-    "./src/lib/http.js": "./src/lib/browser_only/http.js",
-    "./src/lib/inherits.js": "./src/lib/browser_only/inherits.js"
-  },
   "private": true,
   "dependencies": {
     "ws": "~0.4.31",
@@ -17,17 +12,14 @@
     "browserify": "~4.2.1",
     "chai": "~1.9.1",
     "chai-as-promised": "~4.1.1",
+    "dependency-check": "^1.1.5",
     "grunt": "~0.4.5",
     "grunt-cli": "~0.1.13",
-    "grunt-contrib-clean": "~0.5.0",
-    "grunt-contrib-concat": "~0.4.0",
-    "grunt-contrib-jshint": "~0.10.0",
-    "grunt-contrib-uglify": "~0.5.0",
-    "grunt-jsdoc": "~0.5.6",
     "grunt-karma": "~0.8.3",
-    "grunt-mkdir": "~0.1.2",
     "grunt-mocha-test": "~0.11.0",
     "ink-docstrap": "~0.4.12",
+    "jsdoc": "^3.3.0-alpha9",
+    "jshint": "^2.5.3",
     "karma": "~0.12.17",
     "karma-chai": "~0.1.0",
     "karma-chai-plugins": "~0.2.1",
@@ -37,9 +29,8 @@
     "karma-mocha": "~0.1.6",
     "karma-spec-reporter": "~0.0.13",
     "load-grunt-tasks": "~0.6.0",
-    "merge": "~1.1.3",
+    "minifyify": "^4.0.3",
     "mocha": "~1.20.1",
-    "through": "~2.3.4",
     "xunit-file": "~0.0.5"
   }
 }

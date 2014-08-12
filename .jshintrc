@@ -23,9 +23,6 @@
   "node": true,
 
   "globals": {
-    "TestHelper": false,
-    "Veyron": false,
-    "XMLHttpRequest": false,
     "after": false,
     "afterEach": false,
     "assert": false,

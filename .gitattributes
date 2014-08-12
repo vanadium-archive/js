@@ -1,2 +1,1 @@
-*.min.js -crlf -diff
-*.min.js.map -crlf -diff
+dist/* -crlf -diff

@@ -1,8 +1,8 @@
 /**
  * @fileoverview Tests of the veyron storage client.
  */
-'use strict';
-
+var Veyron = require('../../../src/veyron');
+var TestHelper = require('../../test_helper');
 var streamToArray = function(stream) {
   var results = [];
   stream.on('data', function(val) {

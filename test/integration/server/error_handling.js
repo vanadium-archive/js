@@ -9,7 +9,8 @@
  * Only the public "veyron" module is available for integration tests.
  * All globals (veyron, expect, testconfig) are injected by test runners.
  */
-
+var Veyron = require('../../../src/veyron');
+var TestHelper = require('../../test_helper');
 describe('server/error_handling.js: Service in JS', function() {
   var errMessage = 'failure';
   var error = new Error(errMessage);

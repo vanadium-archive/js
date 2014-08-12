@@ -8,8 +8,8 @@
  * Only the public 'veyron' module is available for integration tests.
  * All globals (veyron, expect, testconfig) are injected by test runners.
  */
-'use strict';
-
+var Veyron = require('../../../src/veyron');
+var TestHelper = require('../../test_helper');
 describe('client/signature_go_server.js: ' +
   'Signature, when service is in GO, getServiceSignature', function() {
 

@@ -1,6 +1,8 @@
 /**
  * @fileoverview Integration test for getting the initial WSPR config.
  */
+var Veyron = require('../../../src/veyron');
+var TestHelper = require('../../test_helper');
 describe('proxy/config.js:', function() {
   var client;
   beforeEach(function() {
