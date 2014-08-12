@@ -16,10 +16,13 @@ dist/veyron.js: src/veyron.js $(JS_SRC_FILES) | node_modules
 dist/veyron.min.js: src/veyron.js $(JS_SRC_FILES) | node_modules
 	browserify $< --debug --plugin [ minifyify --map dist/veyron.js.map --output $@.map ] --outfile $@
 
-test_out/veyron.test.specs.js: $(JS_SPEC_TESTS) | node_modules
+test_out:
+	mkdir -p test_out
+
+test_out/veyron.test.specs.js: $(JS_SPEC_TESTS) | test_out node_modules
 	browserify $^ --debug --outfile $@
 
-test_out/veyron.test.integration.js: $(JS_INTEGRATION_TESTS) src/veyron.js | node_modules
+test_out/veyron.test.integration.js: $(JS_INTEGRATION_TESTS) src/veyron.js | test_out node_modules
 	browserify $^ --debug --outfile $@
 
 test: lint dependency-check test_out/veyron.test.specs.js test_out/veyron.test.integration.js
