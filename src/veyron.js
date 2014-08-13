@@ -6,6 +6,7 @@
 
 var ProxyConnection = require('./proxy/websocket');
 var Server = require('./ipc/server');
+var ServerRouter = require('./ipc/server_router');
 var Client = require('./ipc/client');
 var Deferred = require('./lib/deferred');
 var Promise = require('./lib/promise');
@@ -53,7 +54,7 @@ function Veyron(config) {
  * @return {Object} A server object
  */
 Veyron.prototype.newServer = function() {
-  return new Server(this._getProxyConnection());
+  return new Server(this._getRouter());
 };
 
 /**
@@ -69,6 +70,14 @@ Veyron.prototype.newClient = function() {
   return new Client(this._getProxyConnection());
 };
 
+Veyron.prototype._getRouter = function() {
+  if (!this._router) {
+    this._router = new ServerRouter(
+        this._getProxyConnection());
+  }
+  return this._router;
+
+};
 /**
  * Create a Veyron store client to access the store.
  * For usage, @see storage/store.js

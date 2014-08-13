@@ -147,26 +147,4 @@ describe('client/js_client_to_go_server.js: Cache Service', function() {
       done();
     }).catch (done);
   });
-
-  it('Should propogate errors from onmessage callback', function(done) {
-    var promise = cacheService.set('foo', 'bar');
-    promise.then(function() {
-      var promise = cacheService.multiGet();
-      var stream = promise.stream;
-      stream.on('data', function(value) {
-        if (value) {
-          value();
-        }
-      });
-      stream.read();
-      stream.write('foo');
-      stream.end();
-      return promise;
-    }).then(function() {
-      done('Success should not have been called');
-    }).catch (function(e) {
-      done();
-    });
-  });
 });
-

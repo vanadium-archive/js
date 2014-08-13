@@ -26,10 +26,10 @@ var nextServerID = 1; // The ID for the next server.
  * represents a veyron server which allows registration of services that can be
  * invoked remotely via RPCs.
  * @constructor
- * @param {Object} proxyConnection Veyron proxy client
+ * @param {Object} router the server router.
  */
-var server = function(proxyConnection) {
-  this._proxyConnection = proxyConnection;
+var server = function(router) {
+  this._router = router;
   this.id = nextServerID++;
   this.serviceObject = null;
   this._knownServiceDefinitions = {};
@@ -130,7 +130,7 @@ server.prototype.serve = function(name, serviceObject,
     return def.promise;
   }
 
-  return this._proxyConnection.serve(name, this, callback);
+  return this._router.serve(name, this, callback);
 };
 
 /**
@@ -142,7 +142,7 @@ server.prototype.serve = function(name, serviceObject,
  * @return {Promise} Promise to be called when stop service completes or fails
  */
 server.prototype.stop = function(callback) {
-  return this._proxyConnection.stopServer(this, callback);
+  return this._router.stopServer(this, callback);
 };
 
 /**

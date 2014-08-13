@@ -8,11 +8,16 @@ var Client = require('../../../../src/ipc/client.js');
 describe('Client-side binding', function() {
   // Mock a proxy
   var mockedProxy = {
-    promiseInvokeMethod: function(name, methodName, args, numOut,
-        streaming) {
-      expect(streaming).to.be.false;
-      return {methodName: methodName, args: args};
-    }
+    nextId: function() { return 0; },
+    sendRequest: function(data, type, handler, id) {
+      var msg = JSON.parse(data);
+      expect(msg.isStreaming).to.be.false;
+      handler.handleResponse(0, {
+        methodName: msg.method,
+        args: msg.inArgs
+      });
+    },
+    dequeue: function() {}
   };
 
   var mockedClient = new Client(mockedProxy);
@@ -59,10 +64,13 @@ describe('Client-side binding', function() {
     });
 
     describe('testMethod', function() {
-      it('Should succeed with correct number of arguments', function() {
+      it('Should succeed with correct number of arguments', function(done) {
         var result = testService.testMethod(3, 'X', null);
-        expect(result.methodName).to.equal('testMethod');
-        expect(result.args).to.eql([3, 'X', null]);
+        result.then(function(result) {
+          expect(result.methodName).to.equal('testMethod');
+          expect(result.args).to.eql([3, 'X', null]);
+          done();
+        }).catch(done);
       });
 
       it('Should throw an error with wrong number of arguments', function() {
@@ -73,10 +81,13 @@ describe('Client-side binding', function() {
     });
 
     describe('testMethod2', function() {
-      it('Should succeed with correct number of arguments', function() {
+      it('Should succeed with correct number of arguments', function(done) {
         var result = testService.testMethod2(1);
-        expect(result.methodName).to.equal('testMethod2');
-        expect(result.args).to.eql([1]);
+        result.then(function(result) {
+          expect(result.methodName).to.equal('testMethod2');
+          expect(result.args).to.eql([1]);
+          done();
+        }).catch(done);
       });
 
       it('Should throw an error with wrong number of arguments', function() {

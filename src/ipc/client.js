@@ -7,11 +7,129 @@
  *  resultPromise = service.MethodName(arg);
  */
 
-'use strict';
-
 var Deferred = require('../lib/deferred');
 var Promise = require('../lib/promise');
 var vLog = require('../lib/vlog');
+var ErrorConversion = require('../proxy/error_conversion');
+var Stream = require('../proxy/stream');
+var vError = require('../lib/verror');
+var MessageType = require('../proxy/message_type');
+var IncomingPayloadType = require('../proxy/incoming_payload_type');
+
+var OutstandingRPC = function(options, cb) {
+  this._proxy = options.proxy;
+  this._id = -1;
+  this._name = options.name;
+  this._methodName = options.methodName,
+  this._args = options.args;
+  this._numOutParams = options.numOutParams;
+  this._isStreaming = options.isStreaming || false;
+  this._cb = cb;
+  this._def = null;
+};
+
+OutstandingRPC.prototype.start = function() {
+  this._id = this._proxy.nextId();
+  var def = new Deferred(this._cb);
+
+  var streamingDeferred = null;
+  if (this._isStreaming) {
+    streamingDeferred = new Deferred();
+    def.stream = new Stream(this._id, streamingDeferred.promise, true);
+    def.promise.stream = def.stream;
+  }
+
+  var message = this.constructMessage();
+
+  this._def = def;
+  this._proxy.sendRequest(message, MessageType.REQUEST, this, this._id);
+  if (streamingDeferred) {
+    this._proxy.senderPromise.then(function(ws) {
+      streamingDeferred.resolve(ws);
+    });
+  }
+
+  return def.promise;
+};
+
+OutstandingRPC.prototype.handleResponse = function(type, data) {
+  switch (type) {
+    case IncomingPayloadType.FINAL_RESPONSE:
+      this.handleCompletion(data);
+      break;
+    case IncomingPayloadType.STREAM_RESPONSE:
+      this.handleStreamData(data);
+      break;
+    case IncomingPayloadType.ERROR_RESPONSE:
+      this.handleError(data);
+      break;
+    case IncomingPayloadType.STREAM_CLOSE:
+      this.handleStreamClose();
+      break;
+    default:
+      this.handleError(
+          new vError.InternalError('Recieved unknown response type from wspr'));
+      break;
+  }
+};
+
+OutstandingRPC.prototype.handleCompletion = function(data) {
+  if (data.length === 1) {
+    data = data[0];
+  }
+  this._def.resolve(data);
+  if (this._def.stream) {
+    this._def.stream._queueRead(null);
+  }
+  this._proxy.dequeue(this._id);
+};
+
+OutstandingRPC.prototype.handleStreamData = function(data) {
+  if (this._def.stream) {
+    this._def.stream._queueRead(data);
+  } else {
+    vLog.warn('Ignoring streaming message for non-streaming flow : ' +
+        this._id);
+  }
+};
+
+OutstandingRPC.prototype.handleStreamClose = function() {
+  if (this._def.stream) {
+    this._def.stream._queueRead(null);
+  }
+};
+
+OutstandingRPC.prototype.handleError = function(data) {
+  var err;
+  if (data instanceof vError.VeyronError) {
+    err = data;
+  } else {
+    err = ErrorConversion.toJSerror(data);
+  }
+
+  if (this._def.stream) {
+    this._def.stream.emit('error', err);
+    this._def.stream.queueRead(null);
+  }
+  this._def.reject(err);
+  this._proxy.dequeue(this._id);
+};
+
+
+/**
+ * Construct a message to send to the veyron native code
+ * @return {string} json string to send to jspr
+ */
+OutstandingRPC.prototype.constructMessage = function() {
+  var jsonMessage = {
+    name: this._name,
+    method: this._methodName,
+    inArgs: this._args || [],
+    numOutArgs: this._numOutParams || 1,
+    isStreaming: this._isStreaming
+  };
+  return JSON.stringify(jsonMessage);
+};
 
 /**
  * Client for the veyron service.
@@ -71,9 +189,15 @@ client.prototype.bindTo = function(name, optServiceSignature, callback) {
             methodName + '". Expected ' + methodInfo.inArgs.length +
             ' but there were ' + args.length);
         }
-        return self._proxyConnection.promiseInvokeMethod(
-          name, methodName, args, numOutParams,
-          methodInfo.isStreaming || false, cb);
+        var rpc = new OutstandingRPC({
+           proxy: self._proxyConnection,
+           name: name,
+           methodName: methodName,
+           args: args,
+           numOutParams: numOutParams,
+           isStreaming: methodInfo.isStreaming
+        }, cb);
+        return rpc.start();
       };
     };
 

@@ -14,7 +14,6 @@ var TestHelper = require('../../test_helper');
 describe('client/error_handling.js: Error Thrower', function() {
   var service;
   beforeEach(function(done) {
-
     var veyron = new Veyron(TestHelper.veyronConfig);
     var client = veyron.newClient();
 
