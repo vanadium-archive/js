@@ -28,7 +28,7 @@ function nameMatches(name, pattern) {
     // we have a match, since the prefix of the pattern
     // was matched by the name.
     if (expectedPaths[i] === '*') {
-      return true;
+      return i === expectedPaths.length - 1;
     }
 
     // name is a prefix of pattern
@@ -47,10 +47,10 @@ function nameMatches(name, pattern) {
 
 /**
  * Returns whether the PublicID matches a principal pattern. There
- * are basically two types of patterns.  A fixed name
+ * are basically two types of patterns.  A fixed name pattern
  * looks like 'a/b' and matches names 'a/b' and 'a', but not
  * 'a/b/c', 'aa', or 'a/bb'. 'a' is considered a match because
- * the owner of 'a' can trivially create the name 'a/b'.  A name
+ * the owner of 'a' can trivially create the name 'a/b'.  A star
  * pattern looks like 'a/b/*' and it matches anything that 'a/b' matches
  * as well as any name blessed by 'a/b', i.e 'a/b/c', 'a/b/c/d'.
  * @param {string} pattern The pattern to match against.
@@ -59,7 +59,7 @@ function nameMatches(name, pattern) {
  */
 PublicID.prototype.match = function(pattern) {
   if (pattern === '' || !pattern) {
-    return true;
+    return false;
   }
   for (var i = 0; i < this._names.length; i++) {
     if (nameMatches(this._names[i], pattern)) {

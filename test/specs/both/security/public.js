@@ -17,7 +17,7 @@ describe('PublicID match', function() {
   };
 
   it('* should match everything', function() {
-    shouldMatch('*' ['veyron/batman']);
+    shouldMatch('*', ['veyron/batman']);
     shouldMatch('*', ['veyron/brucewayne']);
   });
 
