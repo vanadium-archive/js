@@ -1,7 +1,29 @@
-# veyron-javascript-api
+# Veyron JS
 
 Veyron JavaScript API is a set of client and server APIs that work in both
 NodeJS and browser environments enabling development of Veyron-based applications.
+
+## Install
+
+You can install this library using npm:
+
+    npm install --save git@github.com:veyron/veyron.js.git
+
+We are using a private github repo up until the initial release. The npm CLI
+knows how to deal with [github urls] but you will need to make sure you have
+a [github account][github], that your [ssh keys are setup][ssh setup] and
+that you have been added to the [veyron github organization][github/veyron].
+
+If you would like to pin to a specific version or sha use the # notation at the end of the github url:
+
+    npm install --save git@github.com:veyron/veyron.js.git#d75035
+
+See also: [NPM Git URLs as Dependencies][github urls]
+
+[github urls]: https://www.npmjs.org/doc/files/package.json.html#git-urls-as-dependencies
+[github]: github.com/
+[ssh setup]: https://help.github.com/articles/generating-ssh-keys
+[github/veyron]: https://github.com/veyron
 
 # Building and testing
 
