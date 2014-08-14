@@ -5,11 +5,9 @@
  * reject and resolve publicly.
  */
 
-'use strict';
-
 var Promise = require('./promise');
 
-var deferred = function(cb) {
+var Deferred = function(cb) {
   var self = this;
 
   this.promise = new Promise(function(resolve, reject) {
@@ -28,4 +26,4 @@ var deferred = function(cb) {
 /**
  * Export the module
  */
-module.exports = deferred;
+module.exports = Deferred;

@@ -3,8 +3,6 @@
  * messages from the native veyron implementation.
  */
 
-'use strict';
-
 var MessageType = require('./message_type');
 var IncomingPayloadType = require('./incoming_payload_type');
 var Deferred = require('./../lib/deferred');

@@ -33,6 +33,7 @@
     "it": false,
     "testconfig": false,
     "xdescribe": false,
-    "xit": false
+    "xit": false,
+	"window": false
   }
 }

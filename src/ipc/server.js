@@ -13,8 +13,6 @@
  *  s.serve('mymedia/video', videoService);
  */
 
-'use strict';
-
 var Deferred = require('./../lib/deferred');
 var IdlHelper = require('./../idl/idl');
 var vError = require('./../lib/verror');
@@ -28,12 +26,16 @@ var nextServerID = 1; // The ID for the next server.
  * @constructor
  * @param {Object} router the server router.
  */
-var server = function(router) {
+function Server(router) {
+  if (!(this instanceof Server)) {
+    return new Server(router);
+  }
+
   this._router = router;
   this.id = nextServerID++;
   this.serviceObject = null;
   this._knownServiceDefinitions = {};
-};
+}
 
 /**
  * addIDL adds an IDL file to the set of definitions known by the server.
@@ -41,7 +43,7 @@ var server = function(router) {
  * describe the interface exported by a serviceObject passed into register.
  * @param {object} updates the output of the vdl tool on an idl.
  */
-server.prototype.addIDL = function(updates) {
+Server.prototype.addIDL = function(updates) {
   var prefix = updates.package;
   for (var key in updates) {
     if (key[0] === key[0].toUpperCase() && updates.hasOwnProperty(key)) {
@@ -51,7 +53,7 @@ server.prototype.addIDL = function(updates) {
 };
 
 // Returns an error if the validation of metadata failed.
-server.prototype._getAndValidateMetadata = function(serviceObject,
+Server.prototype._getAndValidateMetadata = function(serviceObject,
     serviceMetadata) {
   var shouldCheckDefinition = false;
   if (typeof(serviceMetadata) === 'string') {
@@ -116,7 +118,7 @@ server.prototype._getAndValidateMetadata = function(serviceObject,
  * @return {Promise} Promise to be called when serve completes or fails
  * the endpoint address of the server will be returned as the value of promise
  */
-server.prototype.serve = function(name, serviceObject,
+Server.prototype.serve = function(name, serviceObject,
     serviceMetadata, callback) {
   if (!callback && typeof(serviceMetadata) === 'function') {
     callback = serviceMetadata;
@@ -141,7 +143,7 @@ server.prototype.serve = function(name, serviceObject,
  * completion. The only argument is an error if there was one.
  * @return {Promise} Promise to be called when stop service completes or fails
  */
-server.prototype.stop = function(callback) {
+Server.prototype.stop = function(callback) {
   return this._router.stopServer(this, callback);
 };
 
@@ -150,11 +152,11 @@ server.prototype.stop = function(callback) {
  * @return {Object.<string, Object>} map from service name to idl wire
  * description
  */
-server.prototype.generateIdlWireDescription = function() {
+Server.prototype.generateIdlWireDescription = function() {
   return IdlHelper.generateIdlWireDescription(this.serviceObject);
 };
 
 /**
  * Export the module
  */
-module.exports = server;
+module.exports = Server;

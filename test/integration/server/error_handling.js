@@ -9,14 +9,17 @@
  * Only the public "veyron" module is available for integration tests.
  * All globals (veyron, expect, testconfig) are injected by test runners.
  */
-var Veyron = require('../../../src/veyron');
+
+var veyron = require('../../../src/veyron');
 var TestHelper = require('../../test_helper');
+var Deferred = require('../../../src/lib/deferred');
+
 describe('server/error_handling.js: Service in JS', function() {
   var errMessage = 'failure';
   var error = new Error(errMessage);
   var namedError = new Error(errMessage);
   namedError.name = 'MyError';
-  var builtInError = new Veyron.Errors.NotFoundError('can\'t see it');
+  var builtInError = new veyron.errors.NotFoundError('can\'t see it');
 
   var remoteService;
   before(function(done) {
@@ -40,12 +43,12 @@ describe('server/error_handling.js: Service in JS', function() {
         return namedError;
       },
       rejectPromise: function() {
-        var def = new Veyron.Deferred();
+        var def = new Deferred();
         def.reject(error);
         return def.promise;
       },
       rejectPromiseWithString: function() {
-        var def = new Veyron.Deferred();
+        var def = new Deferred();
         def.reject(errMessage);
         return def.promise;
       },

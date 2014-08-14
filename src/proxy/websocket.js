@@ -2,8 +2,6 @@
  * @fileoverview WebSocket client implementation
  */
 
-'use strict';
-
 var WebSocket = require('./../lib/websocket');
 var Deferred = require('./../lib/deferred');
 var vLog = require('./../lib/vlog');

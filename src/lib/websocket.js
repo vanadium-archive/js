@@ -2,8 +2,6 @@
  *  @fileoverview Web Socket provider for NodeJS
  */
 
-'use strict';
-
 var WS = require('ws');
 
 /**

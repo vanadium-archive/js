@@ -1,8 +1,6 @@
 /**
  * @fileoverview Tests for client side binding.
  */
-'use strict';
-
 var Client = require('../../../../src/ipc/client.js');
 
 describe('Client-side binding', function() {

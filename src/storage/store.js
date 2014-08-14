@@ -25,8 +25,6 @@
  *  });
  */
 
-'use strict';
-
 var Promise = require('../lib/promise');
 var names = require('../namespace/util.js');
 

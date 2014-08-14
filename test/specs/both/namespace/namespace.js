@@ -2,8 +2,6 @@
 /**
  * @fileoverview Tests for the namespace client library.
  */
-'use strict';
-
 var Namespace = require('../../../../src/namespace/namespace');
 var Promise = require('../../../../src/lib/promise');
 var vError = require('../../../../src/lib/verror');

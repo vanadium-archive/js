@@ -1,8 +1,6 @@
 /**
  * @fileoverview Tests vLog
  */
-'use strict';
-
 var vLog = require('../../../../src/lib/vlog.js');
 
 describe('vLog', function() {

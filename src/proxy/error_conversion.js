@@ -2,8 +2,6 @@
  * @fileoverview conversion between JavaScript and veyron2/verror Error object
  */
 
-'use strict';
-
 var vError = require('./../lib/verror');
 
 var ec = {};

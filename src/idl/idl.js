@@ -2,8 +2,6 @@
  * @fileoverview Parses the Veyron IDL
  */
 
-'use strict';
-
 var vError = require('../lib/verror');
 var idlHelper = {};
 

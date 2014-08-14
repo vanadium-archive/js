@@ -1,8 +1,6 @@
 /**
  * @fileoverview Tests vError
  */
-'use strict';
-
 var vError = require('../../../../src/lib/verror.js');
 var errMessage = 'fail';
 

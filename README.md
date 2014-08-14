@@ -3,7 +3,6 @@
 Veyron JavaScript API is a set of client and server APIs that work in both
 NodeJS and browser environments enabling development of Veyron-based applications.
 
-
 # Building and testing
 
 We use GNU Make for building and testing Veyron.
@@ -33,7 +32,6 @@ also can just run node tests
 -Removes all build and testing artifacts
 make clean
 
-
 # Summary
 
 The entry point to the API is through a module called "veyron", everything else
@@ -48,6 +46,11 @@ One of the goals of this project is to only write the code once and have it run
 in both NodeJS and Browser. Therefore, specific build and testing steps have been
 designed in the project to ensure this goal.
 
+When run in a browser, veyron.js expects that the veyron extension will be
+installed. The veyron extension is responsible for getting an oauth2 access
+token from the user and sending it to WSPR.  WSPR will use the access token to
+get a blessed identity from the identity server, and will use that identity for
+all requests coming from veyron.js's origin.
 
 # What does the build do?
 
@@ -86,6 +89,9 @@ always run in both environments. This is because integration tests are testing
 the public veyron API ( methods in ./veyron.js ) which should not be
 environment specific. Those methods needs to be lean and delegate more of the
 work to other private modules.
+
+The browser integration tests run with a mock of the veyron extension. This
+mock will respond to all "auth" requests with a mock identity name.
 
 Tip: The testing framework tests for leaks in the global namespace in the browser,
 most of the time leaks are cause by missing "var" before variable names.

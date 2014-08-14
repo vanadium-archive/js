@@ -2,140 +2,62 @@
  *  @fileoverview Public API and entry point to the Veyron API
  */
 
-'use strict';
-
-var ProxyConnection = require('./proxy/websocket');
-var Server = require('./ipc/server');
-var ServerRouter = require('./ipc/server_router');
-var Client = require('./ipc/client');
+var Runtime = require('./runtime/runtime');
 var Deferred = require('./lib/deferred');
-var Promise = require('./lib/promise');
-var vLog = require('./lib/vlog');
-var vError = require('./lib/verror');
-var Namespace = require('./namespace/namespace');
-var namespaceUtil = require('./namespace/util');
-var store = require('./storage/store');
-var watch = require('./watch/watch');
 
 /**
- * Veyron constructor.
- * @constructor
- * @param {Object} config Configuration options
+ * Create a Veyron Runtime
+ * @param {Object} config Configuration Options
  */
-function Veyron(config) {
-  if (!(this instanceof Veyron)) {
-    return new Veyron(config);
+function init(options, callback) {
+  if (typeof options === 'function') {
+    callback = options;
+    options = {};
   }
 
-  //TODO(aghassemi) Have default config and have these override those.
-  config = config || {};
-  config.proxy = config.proxy || 'vonery.com:8125';
-  // TODO(aghassemi) change default to NOLOG before release
-  if (typeof config.logLevel === 'undefined' || config.logLevel === null) {
-    config.logLevel =  Veyron.logLevels.DEBUG;
-  }
-  this._config = config;
-  vLog.level = config.logLevel;
+  var def = new Deferred(callback);
+
+  getIdentity(function(err, name) {
+    if (err) {
+      def.reject(err);
+    }
+    options.identityName = name;
+    def.resolve(new Runtime(options));
+  });
+
+  return def.promise;
 }
 
-/**
- * A Veyron server allows registration of services that can be
- * invoked remotely via RPCs.
- *
- * Usage:
- * var videoService = {
- *   play: function(videoName) {
- *     // Play video
- *   }
- * };
- *
- * var s = veyron.newServer();
- * s.serve('mymedia/video', videoService);
- * @return {Object} A server object
- */
-Veyron.prototype.newServer = function() {
-  return new Server(this._getRouter());
-};
+function getIdentity(callback) {
+  var isBrowser = (typeof window === 'object');
 
-/**
- * A Veyron client allows binding to remote services to invoke methods visa RPCs
- *
- * Usage:
- * var cl = veyron.newClient();
- * var service = cl.bindTo('EndpointAddress', 'ServiceName');
- * resultPromise = service.MethodName(arg);
- * @return {Object} A client object
- */
-Veyron.prototype.newClient = function() {
-  return new Client(this._getProxyConnection());
-};
-
-Veyron.prototype._getRouter = function() {
-  if (!this._router) {
-    this._router = new ServerRouter(
-        this._getProxyConnection());
-  }
-  return this._router;
-
-};
-/**
- * Create a Veyron store client to access the store.
- * For usage, @see storage/store.js
- */
-Veyron.prototype.newStore = function() {
-  return new store.Store(this.newClient());
-};
-
-/**
- * Creates a new proxy connection
- * @return {ProxyConnection} A new proxy connection
- */
-Veyron.prototype._getProxyConnection = function() {
-  if (!this._proxyConnection) {
-    this._proxyConnection = new ProxyConnection(this._config.proxy);
-  }
-  return this._proxyConnection;
-};
-
-/**
- * Create a new Namespace
- * @return {Promise} A promise that resolves to a Namespace instance.
- */
-Veyron.prototype.newNamespace = function(roots) {
-  var veyron = this;
-  var proxy = this._getProxyConnection();
-
-  if (roots) {
-    return Promise.resolve(new Namespace(veyron.newClient(), roots));
+  if (!isBrowser) {
+    return process.nextTick(callback.bind(null, null));
   }
 
-  // We have to ask for the websocket now, otherwise the config
-  // wont arrive until the first time someone tries to make a call
-  // which is deadlock prone.
-  proxy.getWebSocket();
-  return this._getProxyConnection().config.then(function(config) {
-    return new Namespace(veyron.newClient(), config.mounttableRoot);
-  });
-};
+  var Postie = require('postie');
+  var contentScript = new Postie(window);
 
-/**
- * Utility functions to manipulate veyron names
- */
-Veyron.namespaceUtil = namespaceUtil;
+  function handleAuthSuccess(data) {
+    removeListeners();
+    callback(null, data.name);
+  }
 
-// TODO(bprosnitz) Remove this before release!
-/**
- * @constructor
- * A lightweight deferred implementation using Veyron.Promise promises
- */
-Veyron.Deferred = Deferred;
+  function handleAuthError(err) {
+    removeListeners();
+    callback(err);
+  }
 
-// TODO(bprosnitz) Remove this before release!
-/**
- * @constructor
- * A EcmaScript6-compatible implementation of Promise/A spec
- */
-Veyron.Promise = Promise;
+  function removeListeners(){
+    contentScript.removeListener('auth:success', handleAuthSuccess);
+    contentScript.removeListener('auth:Error', handleAuthError);
+  }
+
+  contentScript.on('auth:success', handleAuthSuccess);
+  contentScript.on('auth:error', handleAuthError);
+
+  contentScript.post('auth');
+}
 
 /**
  * Enum for different log levels:
@@ -147,22 +69,19 @@ Veyron.Promise = Promise;
  * @readonly
  * @enum {number}
  */
-Veyron.logLevels = vLog.levels;
+var logLevels = require('./lib/vlog').levels;
 
 /**
  * Errors exposes a group of constructor functions to easily make common
  * Error objects with predefined names.
  */
-Veyron.Errors = vError;
+var errors = require('./lib/verror');
 
 /**
- * Transaction is a constructor for a new store transaction.
+ * Exports
  */
-Veyron.Transaction = store.Transaction;
-
-Veyron.Watch = watch;
-
-/**
- * Export Veyron
- */
-module.exports = Veyron;
+module.exports = {
+  init: init,
+  logLevels: logLevels,
+  errors: errors
+};

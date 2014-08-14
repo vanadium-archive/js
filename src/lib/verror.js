@@ -2,8 +2,6 @@
  * @fileoverview built-in Veyron errors
  */
 
-'use strict';
-
 var inherits = require('util').inherits;
 
 var vError = {};

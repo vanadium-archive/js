@@ -3,8 +3,6 @@
  * in place of console so that we can persist the logs if needed and turn
  * logging off at different levels.
  */
-'use strict';
-
 var vlog = function() {
 
   // default level is nolog

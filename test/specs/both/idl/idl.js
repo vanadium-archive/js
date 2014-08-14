@@ -1,8 +1,6 @@
 /**
  * @fileoverview Tests for IDL parsing.
  */
-'use strict';
-
 var idlHelper = require('../../../../src/idl/idl.js');
 
 describe('IDL', function() {

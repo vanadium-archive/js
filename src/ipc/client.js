@@ -136,9 +136,13 @@ OutstandingRPC.prototype.constructMessage = function() {
  * @constructor
  * @param {Object} proxyConnection Veyron proxy client
  */
-var client = function(proxyConnection) {
+function Client(proxyConnection) {
+  if (!(this instanceof Client)) {
+    return new Client(proxyConnection);
+  }
+
   this._proxyConnection = proxyConnection;
-};
+}
 
 /**
  * Performs client side binding of a remote service to a native javascript
@@ -153,7 +157,7 @@ var client = function(proxyConnection) {
  * methods.
  * @return {Promise} An object with methods that perform rpcs to service methods
  */
-client.prototype.bindTo = function(name, optServiceSignature, callback) {
+Client.prototype.bindTo = function(name, optServiceSignature, callback) {
   var self = this;
   if (typeof(optServiceSignature) === 'function') {
     callback = optServiceSignature;
@@ -221,4 +225,4 @@ client.prototype.bindTo = function(name, optServiceSignature, callback) {
 /**
  * Export the module
  */
-module.exports = client;
+module.exports = Client;

@@ -9,15 +9,19 @@
  * Only the public "veyron" module is available for integration tests.
  * All globals (veyron, expect, testconfig) are injected by test runners.
  */
-var Veyron = require('../../../src/veyron');
+
+var veyron = require('../../../src/veyron');
 var TestHelper = require('../../test_helper');
+var Deferred = require('../../../src/lib/deferred');
+var Promise = require('../../../src/lib/promise');
+
 var cacheWithPromises = {
   cacheMap: {},
   set: function(key, value) {
     this.cacheMap[key] = value;
   },
   get: function(key) {
-    var def = new Veyron.Deferred();
+    var def = new Deferred();
     var val = this.cacheMap[key];
     if (val === undefined) {
       def.reject('unknown key');
@@ -27,7 +31,7 @@ var cacheWithPromises = {
     return def.promise;
   } ,
   multiGet: function($stream) {
-    var def = new Veyron.Deferred();
+    var def = new Deferred();
     $stream.on('end', function() {
       def.resolve();
     });
@@ -85,52 +89,48 @@ var cacheWithCallback = {
 };
 
 function runJSClientServerTests(cacheDefinition, idl, serviceName) {
-  var client;
+  var rt;
   var cacheServiceClient;
   var cacheServiceClientUsingEndpoint;
 
   before(function(done) {
-    var veyron = new Veyron(TestHelper.veyronConfig);
-    // Create server object and serve the service
-    var server = veyron.newServer();
-    var optArg;
-    if (idl) {
-      server.addIDL(idl);
-      optArg = serviceName;
-    } else {
-      optArg = {
-        set:{
-          numReturnArgs: 0
-        }
-      };
-    }
+    veyron.init(TestHelper.veyronConfig, function(err, _rt) {
+      if (err) {
+        return done(err);
+      }
+      rt = _rt;
 
-    server.serve('myCache/Cache', cacheDefinition, optArg).then(
-        function(endpoint) {
-      expect(endpoint).to.exist;
-      expect(endpoint).to.be.a('string');
-      expect(endpoint).to.have.string('@2@tcp@127.0.0.1');
+      var optArg;
+      if (idl) {
+        optArg = serviceName;
+        rt.addIDL(idl);
+      } else {
+        optArg = {
+          set:{
+            numReturnArgs: 0
+          }
+        };
+      }
 
-      // Create a client to the returned endpoint
-      client = veyron.newClient();
+      rt.serve('myCache/Cache', cacheDefinition, optArg).then(
+          function(endpoint) {
+        expect(endpoint).to.exist;
+        expect(endpoint).to.be.a('string');
+        expect(endpoint).to.have.string('@2@tcp@127.0.0.1');
 
-      var cacheServiceClientPromise = client.bindTo(
-          'myCache/Cache');
+        var cacheServiceClientPromise = rt.bindTo('myCache/Cache');
 
-      var cacheServiceClientUsingEndpointPromise = client.bindTo(
-          '/' + endpoint + '/Cache');
+        var cacheServiceClientUsingEndpointPromise = rt.bindTo(
+            '/' + endpoint + '/Cache');
 
-      Veyron.Promise.all([cacheServiceClientPromise,
-        cacheServiceClientUsingEndpointPromise]).then(function(results) {
-        cacheServiceClient = results[0];
-        cacheServiceClientUsingEndpoint = results[1];
-        done();
-      }).catch (done);
-
-    }).catch (function(e) {
-      done(e);
+        Promise.all([cacheServiceClientPromise,
+            cacheServiceClientUsingEndpointPromise]).then(function(results) {
+          cacheServiceClient = results[0];
+          cacheServiceClientUsingEndpoint = results[1];
+          done();
+        }).catch (done);
+      }).catch(done);
     });
-
   });
 
   it('Should be able to invoke methods after the service is serveed ' +
@@ -166,7 +166,7 @@ function runJSClientServerTests(cacheDefinition, idl, serviceName) {
         }
 
         var nextNumber = 1;
-        Veyron.Promise.all(promises).then(function() {
+        Promise.all(promises).then(function() {
           var promise = cacheServiceClient.multiGet();
           var stream = promise.stream;
           stream.on('data', function(value) {
@@ -215,7 +215,7 @@ function runJSClientServerTests(cacheDefinition, idl, serviceName) {
       });
 
   it('Should fail to bindTo to the wrong name', function() {
-    var service = client.bindTo('nonexisting/name');
+    var service = rt.bindTo('nonexisting/name');
     return expect(service).to.eventually.be.rejected;
   });
 }

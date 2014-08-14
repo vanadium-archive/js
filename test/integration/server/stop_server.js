@@ -9,11 +9,12 @@
  * Only the public "veyron" module is available for integration tests.
  * All globals (veyron, expect, testconfig) are injected by test runners.
  */
-var Veyron = require('../../../src/veyron');
+
+var veyron = require('../../../src/veyron');
 var TestHelper = require('../../test_helper');
-describe('server/stop_server.js: Stopping a serveed JS server', function() {
-  var server;
-  var client;
+
+describe('server/stop_server.js: Stopping a served JS server', function() {
+  var rt;
 
   var service = {
     foo: function() {
@@ -22,19 +23,19 @@ describe('server/stop_server.js: Stopping a serveed JS server', function() {
   };
 
   function serve(name) {
-    var veyron = new Veyron(TestHelper.veyronConfig);
-    server = veyron.newServer();
-    return server.serve(name + '/foo', service).then(function() {
-      client = veyron.newClient();
-      return client.bindTo(name + '/foo');
-    }).then(function(s) {
-      // ensure we can call foo() before returning
-      return s.foo().then(function(val) {
-        expect(val).to.equal('bar');
-        return {
-          service: s,
-          server: server
-        };
+    return veyron.init(TestHelper.veyronConfig).then(function(_rt) {
+      rt = _rt;
+      return rt.serve(name + '/foo', service).then(function() {
+        return rt.bindTo(name + '/foo');
+      }).then(function(s) {
+        // ensure we can call foo() before returning
+        return s.foo().then(function(val) {
+          expect(val).to.equal('bar');
+          return {
+            service: s,
+            server: rt._getServer()
+          };
+        });
       });
     });
   }
@@ -67,7 +68,7 @@ describe('server/stop_server.js: Stopping a serveed JS server', function() {
     }).then(function serveAgain() {
       return server.serve('stopservice/test2', service);
     }).then(function bindToNewlyPublished() {
-      return client.bindTo('stopservice/test2/foo');
+      return rt.bindTo('stopservice/test2/foo');
     }).then(function callFooAgain(service) {
       return service.foo();
     }).then(function(val) {
@@ -93,15 +94,4 @@ describe('server/stop_server.js: Stopping a serveed JS server', function() {
       done(e);
     });
   });
-
-  it('Should not get error stopping an unserveed server', function(done) {
-    var veyron = new Veyron(TestHelper.veyronConfig);
-    server = veyron.newServer();
-    server.stop().then(function() {
-      done();
-    }).catch(function(e) {
-      done(e);
-    });
-  });
-
 });

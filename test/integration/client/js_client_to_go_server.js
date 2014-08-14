@@ -13,27 +13,30 @@
  * Only the public 'veyron' module is available for integration tests.
  * All globals (veyron, expect, testconfig) are injected by test runners.
  */
-var Veyron = require('../../../src/veyron');
+
+var veyron = require('../../../src/veyron');
 var TestHelper = require('../../test_helper');
+
+var Promise = require('../../../src/lib/promise');
+
 describe('client/js_client_to_go_server.js: Cache Service', function() {
   var cacheService;
-  var client;
   var absoluteVeyronName;
+  var rt;
   beforeEach(function(done) {
-
-    // Create veyron object and publish the service
-    var veyron = new Veyron(TestHelper.veyronConfig);
-
-    client = veyron.newClient();
-
     absoluteVeyronName =
         '/' + testconfig['SAMPLE_VEYRON_GO_SERVICE_ENDPOINT'] + '/cache';
 
-    client.bindTo(absoluteVeyronName).then(function(service) {
-      cacheService = service;
-      done();
-    }).catch(done);
-
+    veyron.init(TestHelper.veyronConfig, function(err, _rt) {
+      if (err) {
+        return done(err);
+      }
+      rt = _rt;
+      rt.bindTo(absoluteVeyronName).then(function(s) {
+        cacheService = s;
+        done();
+      }).catch(done);
+    });
   });
 
   it('Should be able to bindTo to the service', function() {
@@ -50,7 +53,7 @@ describe('client/js_client_to_go_server.js: Cache Service', function() {
   });
 
   it('Should be able to bindTo to the sevice with a callback', function(done) {
-    client.bindTo(absoluteVeyronName, function cb(e, cacheService) {
+    rt.bindTo(absoluteVeyronName, function cb(e, cacheService) {
       expect(cacheService).to.exist;
 
       expect(cacheService.set).to.exist;
@@ -125,7 +128,7 @@ describe('client/js_client_to_go_server.js: Cache Service', function() {
     }
 
     var nextNumber = 1;
-    Veyron.Promise.all(promises).then(function() {
+    Promise.all(promises).then(function() {
       var promise = cacheService.multiGet();
       var stream = promise.stream;
       stream.on('data', function(value) {

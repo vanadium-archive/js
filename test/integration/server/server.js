@@ -9,8 +9,10 @@
  * Only the public "veyron" module is available for integration tests.
  * All globals (veyron, expect, testconfig) are injected by test runners.
  */
-var Veyron = require('../../../src/veyron');
+
+var veyron = require('../../../src/veyron');
 var TestHelper = require('../../test_helper');
+
 describe('server/server.js: Server', function(done) {
   var greeter = {
     sayHi: function() {
@@ -18,35 +20,45 @@ describe('server/server.js: Server', function(done) {
     }
   };
 
-  it('Should get an endpoint after serve', function() {
-    var veyron = new Veyron(TestHelper.veyronConfig);
+  it('Should get an endpoint after serve', function(done) {
+    veyron.init(TestHelper.veyronConfig, function(err, rt) {
+      if (err) {
+        return done(err);
+      }
 
-    var server = veyron.newServer();
+      var endpoint = rt.serve('tv/Hi', greeter);
 
-    var endpoint = server.serve('tv/Hi', greeter);
-
-    return expect(endpoint).to.eventually.have.string('@2@tcp@127.0.0.1');
+      return expect(endpoint).to.eventually.have.string('@2@tcp@127.0.0.1')
+          .and.notify(done);
+    });
   });
 
   it('Should get an endpoint after serve with callback', function(done) {
-    var veyron = new Veyron(TestHelper.veyronConfig);
-    var server = veyron.newServer();
+    veyron.init(TestHelper.veyronConfig, function(err, rt) {
+      if (err) {
+        return done(err);
+      }
 
-    server.serve('tv/Hi', greeter, function serveDone(error, endpoint) {
-      expect(endpoint).to.have.string('@2@tcp@127.0.0.1');
-      done();
+      rt.serve('tv/Hi', greeter, function serveDone(error, endpoint) {
+        expect(endpoint).to.have.string('@2@tcp@127.0.0.1');
+        done();
+      });
     });
   });
 
   it('Should succeed serving the same name twice', function() {
-    var veyron = new Veyron(TestHelper.veyronConfig);
-    var server = veyron.newServer();
+    veyron.init(TestHelper.veyronConfig, function(err, rt) {
+      if (err) {
+        return done(err);
+      }
 
-    var endpoint = server.serve('tv', greeter).then(function() {
-      return server.serve('tv', greeter);
+      var endpoint = rt.serve('tv', greeter).then(function() {
+        return rt.serve('tv', greeter);
+      });
+
+      return expect(endpoint).to.eventually.have.string('@2@tcp@127.0.0.1')
+            .and.notify(done);
     });
-
-    return expect(endpoint).to.eventually.have.string('@2@tcp@127.0.0.1');
   });
   // TODO(aghassemi) tests and implementation for:
   // Publishing multiple times under different names

@@ -1,8 +1,6 @@
 /**
  * @fileoverview Tests ErrorConversion
  */
-'use strict';
-
 var vError = require('../../../../src/lib/verror');
 var ErrorConversion = require('../../../../src/proxy/error_conversion');
 var errMessage = 'fail';

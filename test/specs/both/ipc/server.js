@@ -1,8 +1,6 @@
 /**
  * @fileoverview Tests for server apis like register and addIDL.
  */
-'use strict';
-
 var Server = require('../../../../src/ipc/server.js');
 
 describe('Server validating', function() {

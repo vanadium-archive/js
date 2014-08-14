@@ -1,8 +1,6 @@
 /**
  * @fileoverview Tests for name utilities.
  */
-'use strict';
-
 var names = require('../../../../src/namespace/util');
 
 describe('Joining names', function() {

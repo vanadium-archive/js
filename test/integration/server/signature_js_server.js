@@ -9,8 +9,10 @@
  * Only the public 'veyron' module is available for integration tests.
  * All globals (veyron, expect, testconfig) are injected by test runners.
  */
-var Veyron = require('../../../src/veyron');
+
+var veyron = require('../../../src/veyron');
 var TestHelper = require('../../test_helper');
+
 describe('server/signature_js_server.js: ' +
   'Signature, when service is in JS getServiceSignature', function() {
 
@@ -34,28 +36,28 @@ describe('server/signature_js_server.js: ' +
 
   var signature;
   beforeEach(function(done) {
-    var veyron = new Veyron(TestHelper.veyronConfig);
-    var cache = {
-      set: function(key, value) {},
-      get: function(key) {},
-      multiGet: function($stream) {}
-    };
+    veyron.init(TestHelper.veyronConfig, function(err, rt) {
+      if (err) {
+        return done(err);
+      }
 
-    // Create server object and serve the service
-    var server = veyron.newServer();
+      var cache = {
+        set: function(key, value) {},
+        get: function(key) {},
+        multiGet: function($stream) {}
+      };
 
-    server.serve('myCache/Cache', cache).then(function(endpoint) {
-      // Create a client and bind to it
-      var client = veyron.newClient();
-      client.bindTo('myCache/Cache').then(function(serviceObject) {
-        return serviceObject.signature();
-      }).then(function(sig) {
-        signature = sig;
-        done();
-      }).catch (done);
-
+      // Serve cache service
+      rt.serve('myCache/Cache', cache).then(function(endpoint) {
+        // Bind to cache service
+        rt.bindTo('myCache/Cache').then(function(serviceObject) {
+          return serviceObject.signature();
+        }).then(function(sig) {
+          signature = sig;
+          done();
+        }).catch (done);
+      });
     });
-
   });
 
   it('Should be able to get the signature from remote service', function() {

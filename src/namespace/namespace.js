@@ -2,8 +2,6 @@
  *  @fileoverview Client library for the Namespace.
  */
 
-'use strict';
-
 var nameUtil = require('./util.js');
 var Deferred = require('../lib/deferred');
 var Promise = require('../lib/promise');

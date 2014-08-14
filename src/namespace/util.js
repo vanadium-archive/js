@@ -2,8 +2,6 @@
  * @fileoverview Helpers for manipulating veyron names.
  */
 
-'use strict';
-
 var _numInitialSlashes = function(s) {
   for (var i = 0; i < s.length; i++) {
     if (s.charAt(i) !== '/') {

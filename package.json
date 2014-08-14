@@ -5,8 +5,9 @@
   "main": "./src/veyron",
   "private": true,
   "dependencies": {
-    "ws": "~0.4.31",
-    "es6-promise": "~1.0.0"
+    "es6-promise": "~1.0.0",
+    "postie": "^0.4.5",
+    "ws": "~0.4.31"
   },
   "devDependencies": {
     "browserify": "~4.2.1",

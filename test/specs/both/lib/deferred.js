@@ -1,8 +1,6 @@
 /**
  * @fileoverview Tests for IDL parsing.
  */
-'use strict';
-
 var Deferred = require('../../../../src/lib/deferred.js');
 
 describe('Deferred\'s Promise', function() {

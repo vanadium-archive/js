@@ -6,8 +6,6 @@
  * These globals are available to all tests without a need to require them.
  */
 
-'use strict';
-
 var chai = require('chai');
 var chaiAsPromised = require('chai-as-promised');
 
@@ -16,7 +14,7 @@ chai.use(chaiAsPromised);
 /**
  * expose Veyron as global
  */
-global.Veyron = require('../src/veyron');
+global.veyron = require('../src/veyron');
 
 /**
  * expose Expect as global

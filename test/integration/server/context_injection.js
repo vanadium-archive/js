@@ -9,8 +9,10 @@
  * Only the public "veyron" module is available for integration tests.
  * All globals (veyron, expect, testconfig) are injected by test runners.
  */
-var Veyron = require('../../../src/veyron');
+
+var veyron = require('../../../src/veyron');
 var TestHelper = require('../../test_helper');
+
 describe('server/context_injection.js: Service function in JS', function() {
   var expectedContext = {
     name: 'suf',
@@ -20,7 +22,7 @@ describe('server/context_injection.js: Service function in JS', function() {
     }
   };
 
-  var client;
+  var rt;
   before(function(done) {
     // Services that handles anything in a/b/* where b is the service name
     var service = {
@@ -45,70 +47,72 @@ describe('server/context_injection.js: Service function in JS', function() {
       }
     };
 
-    var veyron = new Veyron(TestHelper.veyronConfig);
-    // Create server object and serve the service
-    var server = veyron.newServer();
+    veyron.init(TestHelper.veyronConfig, function(err, _rt) {
+      if (err) {
+        return done(err);
+      }
 
-    server.serve('a/b', service).then(function() {
-      done();
-    }).catch(function(e) {
-      done(e);
+      rt = _rt;
+
+      rt.serve('a/b', service).then(function() {
+        done();
+      }).catch(function(e) {
+        done(e);
+      });
     });
-
-    client = veyron.newClient();
   });
 
   it('Should have access to suffix', function() {
-    return client.bindTo('a/b/suf').then(function(s) {
+    return rt.bindTo('a/b/suf').then(function(s) {
       var call = s.getSuffix();
       return expect(call).to.eventually.equal('suf');
     });
   });
 
   it('Should see empty suffix', function() {
-    return client.bindTo('a/b/').then(function(s) {
+    return rt.bindTo('a/b/').then(function(s) {
       var call = s.getSuffix();
       return expect(call).to.eventually.equal('');
     });
   });
 
   it('Should see suffix\'s trailing slash', function() {
-    return client.bindTo('a/b/suff/').then(function(s) {
+    return rt.bindTo('a/b/suff/').then(function(s) {
       var call = s.getSuffix();
       return expect(call).to.eventually.equal('suff/');
     });
   });
 
   it('Should have access to nested suffix', function() {
-    return client.bindTo('a/b/parent/suf').then(function(s) {
+    return rt.bindTo('a/b/parent/suf').then(function(s) {
       var call = s.getSuffix();
       return expect(call).to.eventually.equal('parent/suf');
     });
   });
 
   it('Should have access to name', function() {
-    return client.bindTo('a/b/suf').then(function(s) {
+    return rt.bindTo('a/b/suf').then(function(s) {
       var call = s.getName();
       return expect(call).to.eventually.equal('suf');
     });
   });
 
   it('Should have access to context as one object', function() {
-    return client.bindTo('a/b/suf').then(function(s) {
+    return rt.bindTo('a/b/suf').then(function(s) {
       var call = s.getContext();
       return expect(call).to.eventually.deep.equal(expectedContext);
     });
   });
 
   it('Should have access to remoteId', function() {
-    return client.bindTo('a/b/suf').then(function(s) {
+    return rt.bindTo('a/b/suf').then(function(s) {
       var call = s.getPublicIdName();
       return expect(call).to.eventually.deep.equal(['test']);
     });
 
   });
   it('Should have access to context when mixed with other args', function() {
-    return client.bindTo('a/b/suf').then(function(s) {
+    return rt.bindTo('a/b/suf').then(function(s) {
       var call = s.getContextMixedWithNormalArgs('-a-','-b-','-c-');
       return expect(call).to.eventually.deep.equal({a1: '-a-',
           context: expectedContext,
