@@ -1,18 +1,17 @@
 /**
- * @fileoverview Tests for PublicID
+ * @fileoverview Tests for PublicId
  */
 
-var PublicID = require('../../../../src/security/public.js');
+var PublicId = require('../../../../src/security/public.js');
 
-describe('PublicID match', function() {
-
+describe('PublicId match', function() {
   var shouldMatch = function(pattern, names) {
-    var id = new PublicID(names);
+    var id = new PublicId(names);
     expect(id.match(pattern)).to.be.true;
   };
 
   var shouldNotMatch = function(pattern, names) {
-    var id = new PublicID(names);
+    var id = new PublicId(names);
     expect(id.match(pattern)).to.be.false;
   };
 

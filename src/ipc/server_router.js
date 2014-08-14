@@ -10,6 +10,7 @@ var Deferred = require('./../lib/deferred');
 var Promise = require('./../lib/promise');
 var vLog = require('./../lib/vlog');
 var SimpleHandler = require('../proxy/simple_handler');
+var PublicId = require('../security/public');
 
 
 var ServerStream = function(stream) {
@@ -164,6 +165,7 @@ Router.prototype.handleRequest = function(messageId, request) {
   var context = {
     suffix: request.context.suffix,
     name: request.context.name,
+    remoteId: new PublicId(request.context.remoteID.names)
   };
 
   var injections = {
@@ -171,7 +173,8 @@ Router.prototype.handleRequest = function(messageId, request) {
     $callback: cb,
     $context: context,
     $suffix: context.suffix,
-    $name: context.name
+    $name: context.name,
+    $remoteId: context.remoteId
   };
 
   var variables = inject(args, metadata.injections, injections);

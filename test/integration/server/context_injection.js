@@ -14,12 +14,14 @@ var TestHelper = require('../../test_helper');
 describe('server/context_injection.js: Service function in JS', function() {
   var expectedContext = {
     name: 'suf',
-    suffix : 'suf'
+    suffix : 'suf',
+    remoteId: {
+      names: ['test']
+    }
   };
 
   var client;
   before(function(done) {
-
     // Services that handles anything in a/b/* where b is the service name
     var service = {
       getSuffix: function($suffix) {
@@ -37,6 +39,9 @@ describe('server/context_injection.js: Service function in JS', function() {
           context:$context,
           a2: a2,
           a3: a3});
+      },
+      getPublicIdName: function($remoteId) {
+        return $remoteId.names;
       }
     };
 
@@ -95,6 +100,13 @@ describe('server/context_injection.js: Service function in JS', function() {
     });
   });
 
+  it('Should have access to remoteId', function() {
+    return client.bindTo('a/b/suf').then(function(s) {
+      var call = s.getPublicIdName();
+      return expect(call).to.eventually.deep.equal(['test']);
+    });
+
+  });
   it('Should have access to context when mixed with other args', function() {
     return client.bindTo('a/b/suf').then(function(s) {
       var call = s.getContextMixedWithNormalArgs('-a-','-b-','-c-');
