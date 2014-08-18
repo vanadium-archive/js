@@ -1,0 +1,29 @@
+
+form.settings {
+  box-sizing: border-box;
+  max-width: 50%;
+  min-width: 360px;
+  margin: 0 auto;
+  padding: 1.125em;
+}
+
+form.settings .input {
+  border-bottom: 1px solid grey;
+}
+
+form.settings .input:first-of-type {
+  border-top: 1px solid grey;
+}
+
+form.settings label,
+form.settings input {
+  box-sizing: border-box;
+  display: inline-block;
+  width: 50%;
+  padding: 1.125em;
+}
+
+form.settings label {
+  width: 25%;
+  text-align: right;
+}

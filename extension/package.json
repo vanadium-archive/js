@@ -1,0 +1,37 @@
+{
+  "name": "Veyron-Extension",
+  "version": "0.0.1",
+  "description": "## Goals: ### Short-term: Extension provides UI to manage identities WSPR holds on to all private keys and never exposes them.  The extension works with WSPR to manage identities.  A webapp should not be able to see all identities known to WSPR.",
+  "scripts": {
+    "start": "make example-server",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "veyron",
+  "license": "MIT",
+  "dependencies": {
+    "debug": "^1.0.4",
+    "domready": "^1.0.5",
+    "insert-css": "^0.2.0",
+    "lodash": "^2.4.1",
+    "mercury": "^6.0.1",
+    "postie": "^0.4.5",
+    "superagent": "^0.18.2",
+    "xtend": "^3.0.0"
+  },
+  "devDependencies": {
+    "brfs": "^1.2.0",
+    "browserify": "^5.9.1",
+    "dependency-check": "^1.1.5",
+    "jshint": "^2.5.2",
+    "minifyify": "^4.0.3",
+    "node-static": "^0.7.4",
+    "veyron": "git+ssh://git@github.com:veyron/veyron.js.git"
+  },
+  "directories": {
+    "example": "example"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://veyron.googlesource.com/veyron-extension"
+  }
+}

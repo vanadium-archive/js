@@ -1,6 +1,12 @@
-node_modules/
+node_modules
 logs/
 docs/
 coverage/
 test_out
 xunit.xml
+extension/extension/background.js
+extension/extension/content.js
+extension/extension/options.js
+extension/example/index.bundle.js
+veyron.crx
+*.map
