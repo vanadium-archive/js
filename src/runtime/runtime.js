@@ -15,19 +15,19 @@ var watch = require('../watch/watch');
 
 module.exports = Runtime;
 
-function Runtime(options) {
+function Runtime(config) {
   if (!(this instanceof Runtime)) {
-    return new Runtime(options);
+    return new Runtime(config);
   }
 
-  options.proxy = options.proxy || 'vonery.com:8125';
+  config.wspr = config.wspr || 'vonery.com:8125';
 
   // TODO(aghassemi) change default to NOLOG before release
-  if (typeof options.logLevel === 'undefined' || options.logLevel === null) {
-    options.logLevel =  vLog.levels.DEBUG;
+  if (typeof config.logLevel === 'undefined' || config.logLevel === null) {
+    config.logLevel =  vLog.levels.DEBUG;
   }
-  this._options = options;
-  vLog.level = options.logLevel;
+  this._config = config;
+  vLog.level = config.logLevel;
 
 }
 
@@ -102,7 +102,7 @@ Runtime.prototype.addIDL = function(updates) {
  */
 Runtime.prototype._getProxyConnection = function() {
   if (!this._proxyConnection) {
-    this._proxyConnection = new ProxyConnection(this._options.proxy);
+    this._proxyConnection = new ProxyConnection(this._config.wspr);
   }
   return this._proxyConnection;
 };

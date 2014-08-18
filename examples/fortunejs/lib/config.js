@@ -14,7 +14,7 @@ veyronConfig = {
   'logLevel': logLevels.ERROR,
 
   // Daemon that handles JavaScript communication with the rest of Veyron
-  'proxy': 'http://localhost:8124'
+  'wspr': 'http://localhost:8124'
 };
 
 module.exports = veyronConfig;
