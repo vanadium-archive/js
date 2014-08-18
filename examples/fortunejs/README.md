@@ -34,7 +34,7 @@ The proxyd allows nodes to communicate regardless of network topology.
 We have to pass it the location of the mountable in an environment variable
 called NAMESPACE_ROOT.
 
-    $ NAMESPACE_ROOT=/localhost:9002 $VEYRON_BIN/proxyd --address=:9001
+    $ NAMESPACE_ROOT=/localhost:9002 proxyd --address=:9001
 
 ### WSPR
 
@@ -50,7 +50,7 @@ at /proxy.envyor.com:8101/identity/veyron-test/google.
 
 Lastly, WSPR needs an initial identity.  You can generate one of these with:
 
-    $ identity generate myId > ~/identity
+    $ identity seekblessing > ~/identity
 
 Putting it all together, you start WSPR like so:
 
@@ -82,9 +82,10 @@ This should display a random fortune.  You can add a new fortune with:
 
 Before you can run the server or client in a browser, you will first need to
 install the Veyron Chrome Extension.  The extension lives in the
-veyron-extension repo.
+veyron-extension repo, and you can download it here:
 
-TODO(nlacasse): Figure out a way to distribute the veyron extension!
+https://github.com/veyron/veyron.js/raw/master/extension/veyron.crx
+
 
 ### Browserify
 
