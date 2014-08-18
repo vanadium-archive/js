@@ -2,8 +2,8 @@
 /**
  * @fileoverview Tests for the namespace client library.
  */
+var Promise = require('es6-promise').Promise;
 var Namespace = require('../../../../src/namespace/namespace');
-var Promise = require('../../../../src/lib/promise');
 var vError = require('../../../../src/lib/verror');
 
 // Conveience method to build a proper resolveStep response.

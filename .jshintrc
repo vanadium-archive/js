@@ -34,6 +34,8 @@
     "testconfig": false,
     "xdescribe": false,
     "xit": false,
-	"window": false
+    "window": false,
+    "Promise": true,
+    "Proxy": true
   }
 }

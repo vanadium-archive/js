@@ -13,7 +13,7 @@
 var veyron = require('../../../src/veyron');
 var TestHelper = require('../../test_helper');
 var Deferred = require('../../../src/lib/deferred');
-var Promise = require('../../../src/lib/promise');
+var Promise = require('es6-promise').Promise;
 
 var cacheWithPromises = {
   cacheMap: {},

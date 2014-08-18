@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Fortune cookie server running in the browser using Veyron technology">
+  <link rel="stylesheet" href="style.css">
+  <link href='http://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
+  <title>FortuneJS Server - We buy and sell fortunes!</title>
+</head>
+<body>
+  <header role="banner">
+    <h1 class="size-large padding-medium">FortuneJS - Server</h1>
+  </header>
+
+ <section role="main">
+  <div class="factory"><img src="../images/factory.png" alt=""></div>
+  <div class="stats">
+    <p>Fortunes in the jar: <span class="number color-blue" id="numTotal">...</span></p>
+    <p>Total fortunes served: <span class="number color-green" id="numServed">...</span></p>
+    <div class="messages" role="alert">
+      <p id="error" class="message color-red"></p>
+      <p id="info" class="message color-green"></p>
+    </div>
+  </div>
+ </section>
+
+  <script src="bundle.js" defer></script>
+</body>
+</html>

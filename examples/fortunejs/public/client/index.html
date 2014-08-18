@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Fortune cookie application using Veyron technology">
+  <link href='http://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
+  <link rel="stylesheet" href="style.css">
+  <title>FortuneJS Client - Because we know the future!</title>
+</head>
+<body>
+
+  <header class="cover-bg" role="banner">
+    <h1 class="size-large padding-medium color-white">FortuneJS</h1>
+    <cite class="attribution">Photography by <a target="_blank" href="https://www.flickr.com/photos/kneoh/">Karen Neoh</a> (CC BY 2.0)</cite>
+  </header>
+
+  <section role="main">
+    <div id="fortuneCard" class="card nowrap flipper">
+        <span id="fortuneText"></span>
+    </div>
+
+    <label class="screen-reader" for="fortuneInput">Create a new fortune</label>
+    <input id="fortuneInput" type="text" class="text-input hidden" placeholder="New fortune..."/>
+
+    <section role="navigation" class="actions">
+      <div class="main-actions">
+        <a id="newFortune" class="action refresh-action" title="New Fortune" href="javascript://">
+          <span class="screen-reader">New Fortune</span>
+        </a>
+        <a id="addFortune" class="action add-action" title="Add Fortune" href="javascript://">
+          <span class="screen-reader">Add Fortune</span>
+        </a>
+      </div>
+
+      <div class="add-actions hidden">
+        <a id="cancelFortune" class="action cancel-action" title="Cancel" href="javascript://">
+          <span class="screen-reader">Cancel</span>
+        </a>
+        <a id="saveFortune" class="action save-action" title="Save" href="javascript://">
+          <span class="screen-reader">Save</span>
+        </a>
+      </div>
+    </section>
+
+  </section>
+
+  <script src="bundle.js" defer></script>
+</body>
+</html>

@@ -5,7 +5,7 @@
  * reject and resolve publicly.
  */
 
-var Promise = require('./promise');
+var Promise = require('es6-promise').Promise;
 
 var Deferred = function(cb) {
   var self = this;

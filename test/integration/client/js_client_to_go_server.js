@@ -17,7 +17,7 @@
 var veyron = require('../../../src/veyron');
 var TestHelper = require('../../test_helper');
 
-var Promise = require('../../../src/lib/promise');
+var Promise = require('es6-promise').Promise;
 
 describe('client/js_client_to_go_server.js: Cache Service', function() {
   var cacheService;

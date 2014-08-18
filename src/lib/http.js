@@ -1,7 +1,8 @@
 var http = require('http');
 var https = require('https');
 var parseUrl = require('url').parse;
-var Promise = require('./promise');
+var Promise = require('es6-promise').Promise;
+
 var vlog = require('./vlog');
 
 module.exports = {

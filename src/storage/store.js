@@ -25,7 +25,7 @@
  *  });
  */
 
-var Promise = require('../lib/promise');
+var Promise = require('es6-promise').Promise;
 var names = require('../namespace/util.js');
 
 // Modifies stream in rpcPromise to emit 'error' events when the promise

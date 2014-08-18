@@ -4,6 +4,7 @@ docs/
 coverage/
 test_out
 xunit.xml
+bundle.js
 extension/extension/background.js
 extension/extension/content.js
 extension/extension/options.js

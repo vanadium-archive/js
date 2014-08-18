@@ -6,7 +6,7 @@
 var MessageType = require('./message_type');
 var IncomingPayloadType = require('./incoming_payload_type');
 var Deferred = require('./../lib/deferred');
-var Promise = require('./../lib/promise');
+var Promise = require('es6-promise').Promise;
 var vLog = require('./../lib/vlog');
 var SimpleHandler = require('./simple_handler');
 
