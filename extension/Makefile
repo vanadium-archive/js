@@ -34,8 +34,9 @@ wspr:
 	wsprd -vproxy="/proxy.envyor.com:8100" -identd="/proxy.envyor.com:8101/identity/veyron-test/google"
 
 clean:
-	@$(RM) -fr node_modules
-	@$(RM) -fr npm-debug.log
+	@$(RM) -fr node_modules npm-debug.log
+	@$(RM) -fr veyron.crx extension/options.js extension/background.js extension/options.js
+
 
 node_modules: package.json
 	@npm prune
