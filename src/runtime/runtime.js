@@ -2,16 +2,15 @@
  * @fileoverview Veyron Runtime
  */
 
+var Promise = require('es6-promise').Promise;
+
 var Server = require('../ipc/server');
 var ServerRouter = require('../ipc/server_router');
 var Client = require('../ipc/client');
 var ProxyConnection = require('../proxy/websocket');
-var Promise = require('es6-promise').Promise;
 var Namespace = require('../namespace/namespace');
-var namespaceUtil = require('../namespace/util');
 var store = require('../storage/store');
 var vLog = require('../lib/vlog');
-var watch = require('../watch/watch');
 
 module.exports = Runtime;
 
@@ -166,18 +165,3 @@ Runtime.prototype.newNamespace = function(roots) {
     return new Namespace(rt._getClient(), config.mounttableRoot);
   });
 };
-
-/**
- * Utility functions to manipulate veyron names
- */
-Runtime.namespaceUtil = namespaceUtil;
-
-/**
- * Transaction is a constructor for a new store transaction.
- */
-Runtime.Transaction = store.Transaction;
-
-/**
- * Watch is a constructor for a new Watch.
- */
-Runtime.Watch = watch;

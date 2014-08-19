@@ -6,6 +6,16 @@ var Runtime = require('./runtime/runtime');
 var Deferred = require('./lib/deferred');
 
 /**
+ * Exports
+ */
+module.exports = {
+  init: init,
+  logLevels: require('./lib/vlog').levels,
+  namespaceUtil: require('./namespace/util'),
+  errors: require('./lib/verror')
+};
+
+/**
  * Create a Veyron Runtime
  * @param {Object} config Configuration Options
  */
@@ -73,30 +83,3 @@ function getIdentity(callback) {
     contentScript.post('auth');
   }, 200);
 }
-
-/**
- * Enum for different log levels:
- *   NOLOG //No logging
- *   ERROR //Only errors are written
- *   WARN  //Only errors and warnings are written
- *   DEBUG //Errors, warnings and debug messages are written
- *   INFO  //All logs are written,
- * @readonly
- * @enum {number}
- */
-var logLevels = require('./lib/vlog').levels;
-
-/**
- * Errors exposes a group of constructor functions to easily make common
- * Error objects with predefined names.
- */
-var errors = require('./lib/verror');
-
-/**
- * Exports
- */
-module.exports = {
-  init: init,
-  logLevels: logLevels,
-  errors: errors
-};
