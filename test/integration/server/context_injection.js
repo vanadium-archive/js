@@ -70,16 +70,9 @@ describe('server/context_injection.js: Service function in JS', function() {
   });
 
   it('Should see empty suffix', function() {
-    return rt.bindTo('a/b/').then(function(s) {
+    return rt.bindTo('a/b').then(function(s) {
       var call = s.getSuffix();
       return expect(call).to.eventually.equal('');
-    });
-  });
-
-  it('Should not see suffix\'s trailing slash', function() {
-    return rt.bindTo('a/b/suff/').then(function(s) {
-      var call = s.getSuffix();
-      return expect(call).to.eventually.equal('suff');
     });
   });
 
@@ -121,5 +114,4 @@ describe('server/context_injection.js: Service function in JS', function() {
         });
     });
   });
-
 });
