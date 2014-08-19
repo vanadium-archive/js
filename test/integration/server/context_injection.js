@@ -76,10 +76,10 @@ describe('server/context_injection.js: Service function in JS', function() {
     });
   });
 
-  it('Should see suffix\'s trailing slash', function() {
+  it('Should not see suffix\'s trailing slash', function() {
     return rt.bindTo('a/b/suff/').then(function(s) {
       var call = s.getSuffix();
-      return expect(call).to.eventually.equal('suff/');
+      return expect(call).to.eventually.equal('suff');
     });
   });
 
