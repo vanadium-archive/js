@@ -1,4 +1,3 @@
-
 var mercury = require('mercury');
 var h = mercury.h;
 var debug = require('debug')('component:settings');
@@ -16,7 +15,10 @@ function render(settings) {
   debug('rendering', settings);
   insert(css);
 
-  return h('form.settings', settings.collection.map(setting.render));
+  return h('div', [
+    h('form.settings', settings.collection.map(setting.render)),
+    'Manage your identities here: chrome://identity-internals/'
+  ]);
 }
 
 function create() {

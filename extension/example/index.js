@@ -1,4 +1,4 @@
-var veyron = require('veyron');
+var veyron = require('../../src/veyron.js');
 
 // TODO(nlacasse): Consider getting this url from the extension?  Might not be
 // worth it though, because soon WSPR will be included in the extension and
@@ -20,7 +20,7 @@ function handleLogin(e){
       return console.error(err);
     }
 
-    var name = rt._options.identityName;
+    var name = rt.identityName;
     console.log('got runtime with identity name: ' + name);
     alert('Hello, ' + name + '!');
   });

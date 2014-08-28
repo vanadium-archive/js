@@ -6,9 +6,11 @@ var setting = require('./components/settings/setting');
 module.exports = init;
 
 var defaults = {
-  identityd: formatVeyronEP('identityd', 8215),
-  proxyd: formatVeyronEP('proxyd', 8100),
-  mounttabled: formatVeyronEP('mounttabled', 8101),
+// TODO(nlacasse): Once WSPR is running as a NaCl plugin, we should re-enable
+// these settings, and WSPR should read from them.
+//  identityd: formatVeyronEP('identityd', 8215),
+//  proxyd: formatVeyronEP('proxyd', 8100),
+//  mounttabled: formatVeyronEP('mounttabled', 8101),
   wspr: 'http://localhost:8124'
 };
 

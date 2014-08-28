@@ -15,7 +15,7 @@ init(function(err){
   }
 
   // Set wspr so it can be accessed by all functions in this module.
-  wspr = new WSPR(getWsprUrl());
+  wspr = new WSPR();
 
   // Start listening connections from content scripts.
   chrome.runtime.onConnect.addListener(contentScriptListener);
@@ -93,19 +93,6 @@ function getOrigin(url) {
   var URL = require('url');
   var parsed = URL.parse(url);
   return parsed.protocol + '//' + parsed.host;
-}
-
-// Get the WSPR url out of the settings.
-function getWsprUrl() {
-  var state = require('../state');
-  var settings = state.settings().collection;
-  var _ = require('lodash');
-
-  var wsprSetting = _.find(settings, function(setting) {
-    return (setting.key === 'wspr');
-  });
-
-  return wsprSetting.value;
 }
 
 debug('background script loaded');

@@ -24,8 +24,7 @@
     "dependency-check": "^1.1.5",
     "jshint": "^2.5.2",
     "minifyify": "^4.0.3",
-    "node-static": "^0.7.4",
-    "veyron": "git+ssh://git@github.com:veyron/veyron.js.git"
+    "node-static": "^0.7.4"
   },
   "directories": {
     "example": "example"

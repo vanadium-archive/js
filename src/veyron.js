@@ -4,6 +4,7 @@
 
 var Runtime = require('./runtime/runtime');
 var Deferred = require('./lib/deferred');
+var vlog = require('./lib/vlog');
 
 /**
  * Exports
@@ -19,11 +20,13 @@ module.exports = {
  * Create a Veyron Runtime
  * @param {Object} config Configuration Options
  */
-function init(options, callback) {
-  if (typeof options === 'function') {
-    callback = options;
-    options = {};
+function init(config, callback) {
+  if (typeof config === 'function') {
+    callback = config;
+    config = {};
   }
+
+  vlog.level = config.logLevel || vlog.level;
 
   var def = new Deferred(callback);
 
@@ -31,8 +34,13 @@ function init(options, callback) {
     if (err) {
       def.reject(err);
     }
-    options.identityName = name;
-    def.resolve(new Runtime(options));
+
+    var rtOpts = {
+      wspr: config.wspr || 'http://localhost:8124',
+      identityName: name
+    };
+
+    def.resolve(new Runtime(rtOpts));
   });
 
   return def.promise;

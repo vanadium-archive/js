@@ -10,24 +10,16 @@ var Client = require('../ipc/client');
 var ProxyConnection = require('../proxy/websocket');
 var Namespace = require('../namespace/namespace');
 var store = require('../storage/store');
-var vLog = require('../lib/vlog');
 
 module.exports = Runtime;
 
-function Runtime(config) {
+function Runtime(options) {
   if (!(this instanceof Runtime)) {
-    return new Runtime(config);
+    return new Runtime(options);
   }
 
-  config.wspr = config.wspr || 'vonery.com:8125';
-
-  // TODO(aghassemi) change default to NOLOG before release
-  if (typeof config.logLevel === 'undefined' || config.logLevel === null) {
-    config.logLevel =  vLog.levels.DEBUG;
-  }
-  this._config = config;
-  vLog.level = config.logLevel;
-
+  this.identityName = options.identityName;
+  this._wspr = options.wspr;
 }
 
 /**
@@ -101,7 +93,7 @@ Runtime.prototype.addIDL = function(updates) {
  */
 Runtime.prototype._getProxyConnection = function() {
   if (!this._proxyConnection) {
-    this._proxyConnection = new ProxyConnection(this._config.wspr);
+    this._proxyConnection = new ProxyConnection(this._wspr);
   }
   return this._proxyConnection;
 };
