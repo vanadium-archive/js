@@ -31,7 +31,6 @@ describe('Client-side binding', function() {
       expect(Object.keys(service)).to.have.length(1);
       done();
     }).catch (done);
-
   });
 
   describe('Executing bound functions', function() {
@@ -58,7 +57,6 @@ describe('Client-side binding', function() {
         testService = service;
         done();
       }).catch (done);
-
     });
 
     describe('testMethod', function() {

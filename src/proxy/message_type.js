@@ -9,7 +9,10 @@ var MessageType = {
   STREAM_VALUE: 3, // Indicates a stream value
   STREAM_CLOSE: 4, // Request to close a stream
   SIGNATURE: 5, // Request to get signature of a remote server
-  STOP: 6 // Request to stop a server
+  STOP: 6, // Request to stop a server
+  BLESS: 8, // Blesses an identity
+  UNLINK_ID: 9, // Unlinks an identity
+  NEW_ID: 10
 };
 
 module.exports = MessageType;
