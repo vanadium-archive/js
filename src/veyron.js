@@ -36,7 +36,7 @@ function init(config, callback) {
     }
 
     var rtOpts = {
-      wspr: config.wspr || 'http://localhost:8124',
+      wspr: config.wspr || process.env['WSPR'] || 'http://localhost:8124',
       identityName: name
     };
 
