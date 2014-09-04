@@ -100,7 +100,6 @@ Router.prototype.invokeMethod = function (receiver, method, args) {
  *   args: [] // Array of positional arguments to be passed into the method
  * }
  */
-
 Router.prototype.handleRequest = function(messageId, request) {
   var err;
   var server = this._servers[request.serverId];

@@ -62,5 +62,39 @@ describe('server/server.js: Server', function(done) {
   });
   // TODO(aghassemi) tests and implementation for:
   // Publishing multiple times under different names
-  // Registering after serveing
+});
+
+describe('server/server.js: websocket failure', function(done) {
+  var greeter = {
+    sayHi: function() {
+      console.log('Hello');
+    }
+  };
+
+  it('Should reject serve promise', function(done) {
+    veyron.init(TestHelper.badConfig, function(err, rt) {
+      if (err) {
+        return done(err);
+      }
+
+      var endpoint = rt.serve('tv/Hi', greeter);
+
+      return expect(endpoint).to.eventually.be.rejected.and.notify(done);
+    });
+  });
+
+  it('Should call serve callback', function(done) {
+    veyron.init(TestHelper.badConfig, function(err, rt) {
+      if (err) {
+        return done(err);
+      }
+
+      rt.serve('tv/Hi', greeter, function serveDone(error, endpoint) {
+        expect(error).not.to.be.null;
+        done();
+      });
+    });
+  });
+  // TODO(aghassemi) tests and implementation for:
+  // Publishing multiple times under different names
 });

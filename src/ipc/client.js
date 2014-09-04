@@ -47,6 +47,8 @@ OutstandingRPC.prototype.start = function() {
   if (streamingDeferred) {
     this._proxy.senderPromise.then(function(ws) {
       streamingDeferred.resolve(ws);
+    }, function(err) {
+      streamingDeferred.reject(err);
     });
   }
 

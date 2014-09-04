@@ -15,6 +15,12 @@ TestHelper.veyronConfig = {
   logLevel: testconfig['LOG_LEVEL']
 };
 
+TestHelper.badConfig = {
+  wspr: 'http://badaddres/',
+  identityServer: testconfig['IDENTITY_SERVER_URL'],
+  logLevel: testconfig['LOG_LEVEL']
+};
+
 /*
  * Helper that servees a service, binds to it and returns the bound service
  */

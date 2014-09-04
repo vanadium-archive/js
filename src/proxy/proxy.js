@@ -150,13 +150,14 @@ Proxy.prototype.sendRequest = function(message, type, handler, id) {
   }
   var body = JSON.stringify({ id: id, data: message, type: type });
 
+  var self = this;
   this.senderPromise.then(function(sender) {
     sender.send(body);
-  },function(e) {
-    var h = this.outstandingRequests[id];
+  }).catch(function(e) {
+    var h = self.outstandingRequests[id];
     if (h) {
       h.handleResponse(IncomingPayloadType.ERROR_RESPONSE, e);
-      delete this.outstandingRequests[id];
+      delete self.outstandingRequests[id];
     }
   });
 };

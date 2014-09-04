@@ -29,3 +29,31 @@ describe('client/bind.js:', function() {
     }).catch(done);
   });
 });
+
+describe('client/bind.js connection failure:', function() {
+  var rt;
+  beforeEach(function(done) {
+  veyron.init(TestHelper.badConfig, function(err, _rt) {
+      if (err) {
+        return done(err);
+      }
+      rt = _rt;
+      done();
+    });
+  });
+
+  it('Should reject the bind promise', function() {
+    var absoluteVeyronName =
+        '/' + testconfig['SAMPLE_VEYRON_GO_SERVICE_ENDPOINT'] + '/cache';
+    return expect(rt.bindTo(absoluteVeyronName)).to.eventually.be.rejected;
+  });
+
+  it('Should reject the bind callback', function(done) {
+    var absoluteVeyronName =
+        '/' + testconfig['SAMPLE_VEYRON_GO_SERVICE_ENDPOINT'] + '/cache';
+    rt.bindTo(absoluteVeyronName, function(err) {
+      expect(err).not.to.be.null;
+      done();
+    });
+  });
+});
