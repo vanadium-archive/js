@@ -2,12 +2,16 @@
  * @fileoverview PublicId stub of veyron identities
  */
 
+var MessageType = require('../proxy/message_type');
+
 /**
  * The public portion of a veyron identity.
  */
-function PublicId(names, caveats) {
+function PublicId(names, id, proxy) {
   this.names = names;
-  this._caveats = caveats;
+  this._id = id;
+  this._count = 1;
+  this._proxy = proxy;
 }
 
 // A name matches if it is a prefix of the pattern or if the pattern ends
@@ -59,6 +63,34 @@ PublicId.prototype.match = function(pattern) {
     }
   }
   return false;
+};
+
+/**
+ * Increments the reference count on the PublicId.  When the reference count
+ * goes to zero, the PublicId will be removed from the cache in the go code.
+ */
+PublicId.prototype.retain = function() {
+  this._count++;
+};
+
+/**
+ * Decrements the reference count on the PublicId.  When the reference count
+ * goes to zero, the PublicId will be removed from the cache in the go code.
+ */
+PublicId.prototype.release = function() {
+  this._count--;
+  if (this._count === 0) {
+    var message = JSON.stringify(this._id);
+    this._proxy.sendRequest(message, MessageType.UNLINK_ID, null,
+        this._proxy.nextId());
+  }
+};
+
+PublicId.prototype.toJSON = function() {
+  return {
+    id: this._id,
+    names: this.names
+  };
 };
 
 module.exports = PublicId;

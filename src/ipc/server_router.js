@@ -152,6 +152,14 @@ Router.prototype.handleRequest = function(messageId, request) {
   };
   var args = request.args;
 
+  var context = {
+    suffix: request.context.suffix,
+    name: request.context.name,
+    remoteId: new PublicId(request.context.remoteID.names,
+                           request.context.remoteID.handle,
+                           this._proxy)
+  };
+
   // Create callback to pass to the function, if it is requested.
   var finished = false;
   var cb = function callback(e, v) {
@@ -159,13 +167,8 @@ Router.prototype.handleRequest = function(messageId, request) {
       return;
     }
     finished = true;
+    context.remoteId.release();
     self.sendResult(messageId, request.method, v, e, metadata);
-  };
-
-  var context = {
-    suffix: request.context.suffix,
-    name: request.context.name,
-    remoteId: new PublicId(request.context.remoteID.names)
   };
 
   var injections = {
@@ -207,6 +210,7 @@ Router.prototype.handleRequest = function(messageId, request) {
     if (finished) {
       return;
     }
+    context.remoteId.release();
     finished = true;
     self.sendResult(messageId, request.method, value,
         null, metadata);

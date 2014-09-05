@@ -8,8 +8,13 @@ var Server = require('../ipc/server');
 var ServerRouter = require('../ipc/server_router');
 var Client = require('../ipc/client');
 var ProxyConnection = require('../proxy/websocket');
+var MessageType = require('../proxy/message_type');
 var Namespace = require('../namespace/namespace');
+var PrivateId = require('../security/private');
+var PublicId = require('../security/public');
 var store = require('../storage/store');
+var Deferred = require('../lib/deferred');
+var SimpleHandler = require('../proxy/simple_handler');
 
 module.exports = Runtime;
 
@@ -20,6 +25,7 @@ function Runtime(options) {
 
   this.identityName = options.identityName;
   this._wspr = options.wspr;
+  this.identity = new PrivateId(this._getProxyConnection());
 }
 
 /**
@@ -155,5 +161,26 @@ Runtime.prototype.newNamespace = function(roots) {
   proxy.getWebSocket();
   return proxy.config.then(function(config) {
     return new Namespace(rt._getClient(), config.mounttableRoot);
+  });
+};
+
+/**
+ * TODO(bjornick): This should probably produce a PrivateId and not a PublicId,
+ * but we don't have PrivateId store yet. This is mostly used for tests anyway.
+ * Create a new Identity
+ * @param {String} name the name for the identity.
+ * @param {function} cb if provided a callback that will be called with the
+ * new publicId.
+ * @return {Promise} A promise that resolves to the new PublicId
+ */
+Runtime.prototype.newIdentity = function(name, cb) {
+  var def = new Deferred(cb);
+
+  var proxy = this._getProxyConnection();
+  var id = proxy.nextId();
+  var handler = new SimpleHandler(def, proxy, id);
+  proxy.sendRequest(JSON.stringify(name), MessageType.NEW_ID, handler, id);
+  return def.promise.then(function(message) {
+    return new PublicId(message.names, message.handle, proxy);
   });
 };
