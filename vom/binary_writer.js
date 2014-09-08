@@ -2,6 +2,8 @@
  * @fileoverview Definition of BinaryWriter.
  */
 
+module.exports = BinaryWriter;
+
 var INITIAL_SIZE = 64;
 
 /**
@@ -61,5 +63,3 @@ BinaryWriter.prototype.writeByteArray = function(bytes) {
 BinaryWriter.prototype.getBytes = function() {
   return this.buf.subarray(0, this.pos);
 };
-
-module.exports = BinaryWriter;

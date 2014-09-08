@@ -2,6 +2,8 @@
  * @fileoverview Definition of RawVomReader.
  */
 
+module.exports = RawVomWriter;
+
 var BigInt = require('./big_int.js');
 var BinaryWriter = require('./binary_writer.js');
 var ByteUtil = require('./byte_util.js');
@@ -12,7 +14,7 @@ var ByteUtil = require('./byte_util.js');
  * @constructor
  */
 function RawVomWriter() {
-  this.writer = new BinaryWriter();
+  this._writer = new BinaryWriter();
 }
 
 /**
@@ -25,13 +27,13 @@ RawVomWriter.prototype._writeBigUint = function(v) {
     throw new Error('Cannot write negative uint');
   }
   if (v.getSign() === 0) {
-    this.writer.writeByte(0);
+    this._writer.writeByte(0);
     return;
   }
   if (v.getUintBytes().length > 1 || v.getUintBytes()[0] > 0x7f) {
-    this.writer.writeByte(0x100 - v.getUintBytes().length);
+    this._writer.writeByte(0x100 - v.getUintBytes().length);
   }
-  this.writer.writeByteArray(v.getUintBytes());
+  this._writer.writeByteArray(v.getUintBytes());
 };
 
 /**
@@ -100,7 +102,7 @@ RawVomWriter.prototype.writeString = function(v) {
   var utf8String = unescape(encodeURIComponent(v));
   this.writeUint(utf8String.length);
   for (var i = 0; i < utf8String.length; i++) {
-    this.writer.writeByte(utf8String.charCodeAt(i));
+    this._writer.writeByte(utf8String.charCodeAt(i));
   }
 };
 
@@ -110,10 +112,18 @@ RawVomWriter.prototype.writeString = function(v) {
  */
 RawVomWriter.prototype.writeBool = function(v) {
   if (v) {
-    this.writer.writeByte(1);
+    this._writer.writeByte(1);
   } else {
-    this.writer.writeByte(0);
+    this._writer.writeByte(0);
   }
+};
+
+/**
+ * Write raw bytes.
+ * @param {Uint8Array} bytes The byte array to write.
+ */
+RawVomWriter.prototype._writeRawBytes = function(bytes) {
+  this._writer.writeByteArray(bytes);
 };
 
 /**
@@ -121,7 +131,5 @@ RawVomWriter.prototype.writeBool = function(v) {
  * @return {Uint8Array} The buffered bytes.
  */
 RawVomWriter.prototype.getBytes = function() {
-  return new Uint8Array(this.writer.getBytes());
+  return new Uint8Array(this._writer.getBytes());
 };
-
-module.exports = RawVomWriter;

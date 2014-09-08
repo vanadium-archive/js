@@ -2,6 +2,8 @@
  * @fileoverview Definition of RawVomReader.
  */
 
+module.exports = RawVomReader;
+
 var BigInt = require('./big_int.js');
 var BinaryReader = require('./binary_reader.js');
 var ByteUtil = require('./byte_util.js');
@@ -13,7 +15,7 @@ var ByteUtil = require('./byte_util.js');
  * @constructor
  */
 function RawVomReader(arr) {
-  this.reader = new BinaryReader(arr);
+  this._reader = new BinaryReader(arr);
 }
 
 /**
@@ -21,7 +23,7 @@ function RawVomReader(arr) {
  * @return {BigUint} The BigUint that was read.
  */
 RawVomReader.prototype.readBigUint = function() {
-  var firstByte = this.reader.readByte();
+  var firstByte = this._reader.readByte();
   if (firstByte <= 0x7f) {
     if (firstByte === 0) {
       return new BigInt(0, new Uint8Array(0));
@@ -34,7 +36,7 @@ RawVomReader.prototype.readBigUint = function() {
     throw new Error('Invalid size ' + numBytes);
   }
 
-  var uintBytes = this.reader.readByteArray(numBytes);
+  var uintBytes = this._reader.readByteArray(numBytes);
   return new BigInt(1, uintBytes);
 };
 
@@ -97,7 +99,7 @@ RawVomReader.prototype.readString = function() {
   var length = this.readUint();
   var str = '';
   for (var i = 0; i < length; i++) {
-    str += String.fromCharCode(this.reader.readByte());
+    str += String.fromCharCode(this._reader.readByte());
   }
   return decodeURIComponent(escape(str));
 };
@@ -107,7 +109,7 @@ RawVomReader.prototype.readString = function() {
  * @return {boolean} The boolean that was read.
  */
 RawVomReader.prototype.readBool = function() {
-  var b = this.reader.readByte();
+  var b = this._reader.readByte();
   if (b === 1) {
     return true;
   } else if (b === 0) {
@@ -116,4 +118,11 @@ RawVomReader.prototype.readBool = function() {
   throw new Error('Invalid boolean byte ' + b);
 };
 
-module.exports = RawVomReader;
+/**
+ * Reads raw bytes.
+ * @param {number} amt The number of bytes to read.
+ * @return {Uint8Array} The bytes that were read.
+ */
+RawVomReader.prototype._readRawBytes = function(amt) {
+  return this._reader.readByteArray(amt);
+};

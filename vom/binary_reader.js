@@ -2,14 +2,7 @@
  * @fileoverview Definition of BinaryReader.
  */
 
-/**
- * EOFError represents the end of VOM data.
- */
-function EOFError(message) {
-	this.name = EOFError;
-	this.message = message || '';
-}
-EOFError.prototype = Error.prototype;
+module.exports = BinaryReader;
 
 /**
  * BinaryReader assists in reading from a Uint8Array by keeping track of the
@@ -30,7 +23,7 @@ BinaryReader.prototype.readByte = function() {
   var val = this.buf[this.pos];
   this.pos++;
   if (val === undefined) {
-  	throw new EOFError();
+  	throw new Error();
   }
   return val;
 };
@@ -45,9 +38,7 @@ BinaryReader.prototype.readByteArray = function(amt) {
   var arr = this.buf.subarray(this.pos, this.pos + amt);
   this.pos += amt;
   if (this.pos > this.buf) {
-  	throw new EOFError('Failed to read ' + amt + ' bytes. Hit EOF.');
+  	throw new Error('Failed to read ' + amt + ' bytes. Hit EOF.');
   }
   return arr;
 };
-
-module.exports = BinaryReader;

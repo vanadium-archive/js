@@ -15,6 +15,40 @@ test('constructor and getters', function(t) {
   t.end();
 });
 
+test('toString', function(t) {
+  var tests = [
+    {
+      input: new BigInt(0, new Uint8Array([])),
+      expectedResult: '0'
+    },
+    {
+      input: new BigInt(1, new Uint8Array([0x01])),
+      expectedResult: '1'
+    },
+    {
+      input: new BigInt(-1, new Uint8Array([0x01])),
+      expectedResult: '-1'
+    },
+    {
+      input: new BigInt(1,
+        new Uint8Array([0x20, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00])),
+      expectedResult: '9007199254740992'
+    },
+    {
+      input: new BigInt(-1,
+        new Uint8Array([0x20, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00])),
+      expectedResult: '-9007199254740992'
+    }
+  ];
+
+  for (var i = 0; i < tests.length; i++) {
+    var test = tests[i];
+    t.equals(test.input.toString(), test.expectedResult,
+      'input: ' + test.input + ' expectedResult: ' + test.expectedResult);
+  }
+  t.end();
+});
+
 test('comparisons', function(t) {
   // Note: FIRST_GREATER and SECOND_GREATER is here because this originally
   // checked more comparisons (e.g. greaterThan). These methods weren't needed

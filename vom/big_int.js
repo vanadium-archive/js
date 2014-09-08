@@ -4,6 +4,8 @@
 
 var ByteUtil = require('./byte_util.js');
 
+module.exports = BigInt;
+
 /**
  * BigInt represents an integer value of arbitrary size.
  * @param {number} sign The sign of the number 1, -1 or 0.
@@ -50,7 +52,7 @@ BigInt.fromNativeNumber = function(val) {
   if (val === 0) {
     return new BigInt(0, new Uint8Array(0));
   }
-  var abs = Math.abs(val)
+  var abs = Math.abs(val);
   if (abs <= 0xffffffff) {
     var lowerByteArr = new Uint8Array(4);
     var dataView = new DataView(lowerByteArr.buffer);
@@ -68,11 +70,18 @@ BigInt.fromNativeNumber = function(val) {
 
 /**
  * Generate a string representation of the BigInt.
+ * This must have the same output format as the string conversion of normal
+ * javascript integer (for the range of valid javascript integers).
  * @return {string} The string representation.
  */
 BigInt.prototype.toString = function() {
-  return 'BigInt{sign: ' + this._sign + ' uintBytes: \'' +
-    ByteUtil.bytes2Hex(this.getUintBytes()) + '\'}';
+  try {
+    return this.toNativeNumber().toString();
+  } catch (e) {
+    // TODO(bprosnitz) Make the format consistent for the full number range.
+    return 'BigInt with value \'' +
+      ByteUtil.bytes2Hex(this._bytes) + '\' too large for toString impl.';
+  }
 };
 
 /**
@@ -125,8 +134,8 @@ BigInt.prototype.getUintBytes = function() {
  */
 BigInt.prototype.toNativeNumber = function() {
   if (this._largerThanMaxLosslessInteger()) {
-    throw new Error('BigInt ' + this.toString() + ' out of range of native ' +
-      'javascript numbers');
+    throw new Error('BigInt \'' + ByteUtil.bytes2Hex(this) +
+      '\' out of range of native javascript numbers');
   }
   var arr = new Uint8Array(4);
   var copySrcIndex = this._bytes.length - Math.min(this._bytes.length, 4);
@@ -184,5 +193,3 @@ function _sign(val) {
   }
   return 0;
 }
-
-module.exports = BigInt;

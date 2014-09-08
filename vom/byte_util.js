@@ -2,12 +2,23 @@
  * @fileoverview Utilities for manipulating bytes.
  */
 
+ module.exports = {
+  emptyOrAllZero: emptyOrAllZero,
+  allOne: allOne,
+  shiftLeftOne: shiftLeftOne,
+  shiftRightOne: shiftRightOne,
+  decrement: decrement,
+  increment: increment,
+  bytes2Hex: bytes2Hex,
+  hex2Bytes: hex2Bytes
+};
+
 /**
  * Checks if the array of bytes is all zero or empty.
  * @param {Uint8Array} bytes the input byte array.
  * @return {boolean} true if the array is all zero or empty. false otherwise.
  */
-var emptyOrAllZero = function(bytes) {
+function emptyOrAllZero(bytes) {
   for (var i = 0; i < bytes.length; i++) {
     if (bytes[i] !== 0x00) {
       return false;
@@ -21,7 +32,7 @@ var emptyOrAllZero = function(bytes) {
  * @param {Uint8Array} bytes the input byte array.
  * @return {boolean} true if the array is all one. false otherwise.
  */
-var allOne = function(bytes) {
+function allOne(bytes) {
   if (bytes.length === 0) {
     return false;
   }
@@ -39,7 +50,7 @@ var allOne = function(bytes) {
  * @param {Uint8Array} bytes the input byte array.
  * @return the left shifted byte array.
  */
-var shiftLeftOne = function(bytes) {
+function shiftLeftOne(bytes) {
   if (emptyOrAllZero(bytes)) {
     return bytes;
   }
@@ -64,7 +75,7 @@ var shiftLeftOne = function(bytes) {
  * @param {Uint8Array} bytes the input byte array.
  * @return the right shifted byte array.
  */
-var shiftRightOne = function(bytes) {
+function shiftRightOne(bytes) {
   var topBit = 0;
   for (var i = 0; i < bytes.length; i++) {
     var nextTopBit = (bytes[i] & 0x01) << 7;
@@ -80,7 +91,7 @@ var shiftRightOne = function(bytes) {
  * @param {Uint8Array} bytes the input byte array.
  * @return the decremented byte array.
  */
-var decrement = function(bytes) {
+function decrement(bytes) {
   if (emptyOrAllZero(bytes)) {
     throw new Error('Decrement of zero not supported');
   }
@@ -101,7 +112,7 @@ var decrement = function(bytes) {
  * @param {Uint8Array} bytes the input byte array.
  * @return the incremented byte array.
  */
-var increment = function(bytes) {
+function increment(bytes) {
   if (bytes.length === 0) {
     return new Uint8Array([0x01]);
   }
@@ -127,7 +138,7 @@ var increment = function(bytes) {
  * @param {Uint8Array} bytes the input byte array.
  * @return {string} a hex string representation of the input array.
  */
-var bytes2Hex = function(arr) {
+function bytes2Hex(arr) {
   var hexString = '';
   for (var i = 0; i < arr.length; i++) {
     var str = arr[i].toString(16);
@@ -144,7 +155,7 @@ var bytes2Hex = function(arr) {
  * @param {string} hexString the input hex string.
  * @return {Uint8Array} the byte array representation of the hex string.
  */
-var hex2Bytes = function(hexString) {
+function hex2Bytes(hexString) {
   if (hexString.length % 2 !== 0) {
     throw new Error('Even length string required.');
   }
@@ -153,15 +164,4 @@ var hex2Bytes = function(hexString) {
     arr[i] = parseInt(hexString.substring(i*2, (i+1)*2), 16);
   }
   return arr;
-};
-
-module.exports = {
-  emptyOrAllZero: emptyOrAllZero,
-  allOne: allOne,
-  shiftLeftOne: shiftLeftOne,
-  shiftRightOne: shiftRightOne,
-  decrement: decrement,
-  increment: increment,
-  bytes2Hex: bytes2Hex,
-  hex2Bytes: hex2Bytes
 };
