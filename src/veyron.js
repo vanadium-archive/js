@@ -25,6 +25,7 @@ function init(config, callback) {
     callback = config;
     config = {};
   }
+  config = config || {};
 
   vlog.level = config.logLevel || vlog.level;
 
