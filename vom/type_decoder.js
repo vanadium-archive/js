@@ -1,6 +1,17 @@
 /**
  * @fileoverview Type decoder handles decoding types from a VOM stream by
  * looking up by id.
+ *
+ * Definitions:
+ * Type / Defined Type - The standard VOM javascript type object representation.
+ * Partial Type - The type representation off the wire, identical to defined
+ * types but child types are described by type ids rather than actual complete
+ * type objects.
+ *
+ * Overview:
+ * Type decoders hold a cache of decoded types. Types are read off the wire in
+ * defineType() and then lazily converted from partial to defined types when
+ * they are needed in lookupType().
  */
 
 module.exports = TypeDecoder;
@@ -30,7 +41,16 @@ TypeDecoder.prototype.lookupType = function(typeId) {
   return this._lookupTypeImpl(typeId, true);
 };
 
-TypeDecoder.prototype._lookupTypeImpl = function(typeId, defineUndefined) {
+/**
+ * Looks up a type in the decoded types cache by id.
+ * @param {number} typeId The type id.
+ * @param {boolean} defineUndefined True if partial types that this method
+ * resolves to should be built. False otherwise.
+ * Partial types should only be built when this is called through lookupType so
+ * that they are built lazily.
+ * @return {Type} The decoded type or undefined.
+ */
+TypeDecoder.prototype._lookupTypeImpl = function(typeId, definePartialTypes) {
   if (typeId < 0) {
     throw new Error('invalid negative type id.');
   }
@@ -40,7 +60,7 @@ TypeDecoder.prototype._lookupTypeImpl = function(typeId, defineUndefined) {
     return type;
   }
 
-  if (defineUndefined && this._partialTypes.hasOwnProperty(typeId)) {
+  if (definePartialTypes && this._partialTypes.hasOwnProperty(typeId)) {
     this._tryBuildPartialType(typeId, this._partialTypes[typeId]);
   }
 
