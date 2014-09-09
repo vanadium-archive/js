@@ -12,7 +12,6 @@ var MessageType = require('../proxy/message_type');
 var Namespace = require('../namespace/namespace');
 var PrivateId = require('../security/private');
 var PublicId = require('../security/public');
-var store = require('../storage/store');
 var Deferred = require('../lib/deferred');
 var SimpleHandler = require('../proxy/simple_handler');
 
@@ -133,14 +132,6 @@ Runtime.prototype._getClient = function() {
 Runtime.prototype._getServer = function() {
   this._server = this._server || new Server(this._getRouter());
   return this._server;
-};
-
-/**
- * Create a Veyron store client to access the store.
- * For usage, @see storage/store.js
- */
-Runtime.prototype.newStore = function() {
-  return new store.Store(this._getClient());
 };
 
 /**

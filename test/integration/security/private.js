@@ -32,7 +32,7 @@ describe('security/private.js: Test blessing', function() {
     var newName = rt.newIdentity('alice').then(function(publicId) {
       var caveats = [
           new caveat.MethodCaveat(['Foo', 'Bar']),
-          new caveat.PeerIdentityCaveat(['veyron/batman'])];
+          new caveat.PeerBlessingsCaveat(['veyron/batman'])];
       return rt.identity.bless(publicId, 'bob', 1000, caveats);
     }).then(function(blessing) {
       return blessing.names[0];

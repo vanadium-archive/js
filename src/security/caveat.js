@@ -25,18 +25,18 @@ MethodCaveat.prototype.toJSON = function() {
  * @param {Array} pattern an array of name patterns that the blessee
  * can talk to.
  */
-function PeerIdentityCaveat(patterns) {
+function PeerBlessingsCaveat(patterns) {
   this._patterns = patterns;
 }
 
-PeerIdentityCaveat.prototype.toJSON = function() {
+PeerBlessingsCaveat.prototype.toJSON = function() {
   return {
-    _type: 'PeerIdentityCaveat',
+    _type: 'PeerBlessingsCaveat',
     data: this._patterns
   };
 };
 
 module.exports = {
   MethodCaveat: MethodCaveat,
-  PeerIdentityCaveat: PeerIdentityCaveat
+  PeerBlessingsCaveat: PeerBlessingsCaveat
 };

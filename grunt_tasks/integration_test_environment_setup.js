@@ -47,11 +47,10 @@ module.exports = function(grunt) {
   var MOUNTTABLE_BIN = path.join(VEYRON_BIN_DIR, 'mounttabled')
   var WSPR_BIN = path.join(VEYRON_BIN_DIR, 'wsprd')
   var IDENTITYD_BIN = path.join(VEYRON_BIN_DIR, 'identityd')
-  var STORED_BIN = path.join(VEYRON_BIN_DIR, 'stored')
   var SAMPLE_GO_SERVICE_BIN = path.join(VEYRON_BIN_DIR, 'sampled')
 
   var BINARIES = [VEYRON_PROXY_BIN, MOUNTTABLE_BIN, WSPR_BIN, IDENTITYD_BIN,
-   SAMPLE_GO_SERVICE_BIN, STORED_BIN];
+   SAMPLE_GO_SERVICE_BIN];
 
   var WSPR_PORT = 3224; // The port for WSPR.
   var IDENTITYD_PORT = 8125; // The port for the identityd server.
@@ -120,29 +119,6 @@ module.exports = function(grunt) {
     return startProcessWithMounttableAndAddHandlers(
       mounttable, VEYRON_PROXY_BIN, 'Veyron Proxy',
       ['-address=127.0.0.1:0', '-name=test/proxy']);
-  };
-
-  var startStored = function(mounttable) {
-    var storePath = 'test_out/store_integration';
-    grunt.file.delete(storePath);
-    var process = startProcessWithMounttableRoot(
-      mounttable, STORED_BIN, 'stored', ['--address=127.0.0.1:0',
-      '--db=' + storePath]);
-    var def = new deferred();
-    addListeners(process, null, def.reject);
-    // Wait until we get the stored service endpoint from the process stdout
-    // TODO(bprosnitz) Talk to storage people about STDOUT/STDERR output.
-    process.stderr.on('data', function(data) {
-      var mountMatch = /Mounting store on (.*?), endpoint/g.exec(
-        data.toString());
-      if (mountMatch) {
-        var endpoint = mountMatch[1];
-        grunt.testConfigs['STORED_ENDPOINT'] = endpoint;
-        def.resolve();
-      }
-      // TODO(bprosnitz) Add timeout and error if not found.
-    });
-    return def.promise;
   };
 
   // Starts sampled taking in the mounttable root and returns a ppromise
@@ -256,8 +232,6 @@ module.exports = function(grunt) {
     servicePromises.push(mounttablePromise.then(startProxy));
 
     servicePromises.push(mounttablePromise.then(startSampled));
-
-    servicePromises.push(mounttablePromise.then(startStored));
 
     Promise.all(servicePromises).then(function() {
       if (BINARIES.length != runningChildProcesses.length) {

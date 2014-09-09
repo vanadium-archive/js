@@ -15,12 +15,12 @@ describe('Caveats to JSON', function() {
   });
 
 
-  it('Should serialize PeerIdentityCaveat', function() {
+  it('Should serialize PeerBlessingsCaveat', function() {
     var serialized = JSON.parse(JSON.stringify(
-        new caveats.PeerIdentityCaveat(
+        new caveats.PeerBlessingsCaveat(
             ['veyron/batman', 'veyron/brucewayne'])));
     expect(serialized).to.be.deep.equal({
-      _type: 'PeerIdentityCaveat',
+      _type: 'PeerBlessingsCaveat',
       data: ['veyron/batman', 'veyron/brucewayne']
     });
   });
