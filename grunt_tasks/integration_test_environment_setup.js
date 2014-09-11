@@ -42,12 +42,13 @@ module.exports = function(grunt) {
   }
 
   var VEYRON_BIN_DIR = path.join(VEYRON_ROOT, 'veyron/go/bin');
+  var ROADMAP_BIN_DIR = path.join(VEYRON_ROOT, 'roadmap/go/bin');
 
   var VEYRON_PROXY_BIN = path.join(VEYRON_BIN_DIR, 'proxyd');
   var MOUNTTABLE_BIN = path.join(VEYRON_BIN_DIR, 'mounttabled')
   var WSPR_BIN = path.join(VEYRON_BIN_DIR, 'wsprd')
   var IDENTITYD_BIN = path.join(VEYRON_BIN_DIR, 'identityd')
-  var SAMPLE_GO_SERVICE_BIN = path.join(VEYRON_BIN_DIR, 'sampled')
+  var SAMPLE_GO_SERVICE_BIN = path.join(ROADMAP_BIN_DIR, 'sampled')
 
   var BINARIES = [VEYRON_PROXY_BIN, MOUNTTABLE_BIN, WSPR_BIN, IDENTITYD_BIN,
    SAMPLE_GO_SERVICE_BIN];
