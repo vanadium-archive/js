@@ -834,7 +834,7 @@ func (__gen_s *ServerStubCache) Signature(call _gen_ipc.ServerCall) (_gen_ipc.Se
 				_gen_wiretype.FieldType{Type: 0x3, Name: "Key"},
 				_gen_wiretype.FieldType{Type: 0x41, Name: "Value"},
 			},
-			"veyron/examples/wspr_sample.KeyValuePair", []string(nil)},
+			"veyron.io/examples/wspr_sample.KeyValuePair", []string(nil)},
 		_gen_wiretype.SliceType{Elem: 0x45, Name: "", Tags: []string(nil)}, _gen_wiretype.ArrayType{Elem: 0x3, Len: 0xa, Name: "", Tags: []string(nil)}}
 
 	return result, nil

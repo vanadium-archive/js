@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 
-	"veyron/examples/wspr_sample/sampled/lib"
+	"veyron.io/examples/wspr_sample/sampled/lib"
 	"veyron/lib/signals"
 	"veyron2/rt"
 )

@@ -9,7 +9,7 @@ import (
 	"veyron2/naming"
 	"veyron2/security"
 
-	sample "veyron/examples/wspr_sample"
+	sample "veyron.io/examples/wspr_sample"
 )
 
 type cacheDispatcher struct {

@@ -6,7 +6,7 @@ import (
 	"veyron2/ipc"
 	"veyron2/verror"
 
-	sample "veyron/examples/wspr_sample"
+	sample "veyron.io/examples/wspr_sample"
 )
 
 // NewCached returns a new implementation of the ErrorThrowerService.

@@ -13,7 +13,7 @@ import (
 	"veyron2/vdl/vdlutil"
 	"veyron2/verror"
 
-	hps "veyron/examples/wspr_sample"
+	hps "veyron.io/examples/wspr_sample"
 )
 
 // getCacheClient initializes the runtime and creates a client binding.
