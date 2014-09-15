@@ -28,6 +28,15 @@ test_out/veyron.test.integration.js: $(JS_INTEGRATION_TESTS) | $(JS_SRC_FILES) t
 test: lint dependency-check test_out/veyron.test.specs.js test_out/veyron.test.integration.js
 	./vgrunt
 
+# TODO(jasoncampbell): check that browser tests run headlessly on both xvfb
+# enabaled machines and OSX.
+test-unit:
+	prova test/unit/test-*.js
+	prova test/unit/test-*.js --browser --launch phantom --quit
+
+test-integration:
+	node test/integration/runner.js test/integration/test-*.js
+
 lint: node_modules
 	jshint src/ test/
 
@@ -43,5 +52,6 @@ docs: $(JS_SRC_FILES) | node_modules
 node_modules: package.json
 	@npm prune
 	@npm install
+	@touch node_modules
 
-.PHONY: all build clean dependency-check lint test
+.PHONY: all build clean dependency-check lint test test-integration test-unit

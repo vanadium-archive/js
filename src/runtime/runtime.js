@@ -52,6 +52,36 @@ Runtime.prototype.bindTo = function(name, optServiceSignature, callback) {
 };
 
 /**
+ * Closes the underlying websocket connection.
+ *
+ * @example
+ *
+ * runtime.stop(function(err, code, message){
+ *   if (err) throw err;
+ *   console.log('code: %s, message: %s', code, message)
+ * });
+ *
+ * @param {Function} [callback] - Gets called once the underlying
+ * websocket is closed. Arguments: error, code, message.
+ *
+ * @see {@link http://goo.gl/6nC1xs|WS Event: "close"}
+ *
+ */
+Runtime.prototype.stop = function(callback) {
+  var runtime = this;
+
+  runtime
+  ._getProxyConnection()
+  .getWebSocket()
+  .then(function(ws) {
+    ws.on('close', function(code, message) {
+      callback(null, code, message);
+    });
+    ws.close();
+  });
+};
+
+/**
  * A Veyron server allows registration of services that can be
  * invoked remotely via RPCs.
  *
