@@ -4,7 +4,12 @@ SHELL := /bin/bash -e -o pipefail
 
 JS_SRC_FILES = $(shell find src -name "*.js")
 JS_SPEC_TESTS = test/test_helper.js $(shell find test/specs -name "*.js")
-JS_INTEGRATION_TESTS = test/test_helper.js $(shell find test/integration -name "*.js")
+
+JS_INTEGRATION_TESTS = test/test_helper.js
+JS_INTEGRATION_TESTS += test/integration/client/*.js
+JS_INTEGRATION_TESTS += test/integration/proxy/*.js
+JS_INTEGRATION_TESTS += test/integration/security/*.js
+JS_INTEGRATION_TESTS += test/integration/server/*.js
 
 all: build
 

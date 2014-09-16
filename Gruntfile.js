@@ -40,7 +40,12 @@ module.exports = function(grunt) {
       },
       // Integration tests
       integration: {
-        src: ['test/integration/**/*.js']
+        src: [
+          'test/integration/client/*.js',
+          'test/integration/proxy/*.js',
+          'test/integration/security/*.js',
+          'test/integration/server/*.js'
+        ]
       }
     },
 
