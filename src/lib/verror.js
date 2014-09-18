@@ -10,13 +10,13 @@ var vError = {};
  * List of predefined error ids. Matches veyron2/vError/common.idl
  */
 vError.Ids = {
-  Aborted: 'veyron2/verror.Aborted',
-  BadArg: 'veyron2/verror.BadArg',
-  BadProtocol: 'veyron2/verror.BadProtocol',
-  Exists: 'veyron2/verror.Exists',
-  Internal: 'veyron2/verror.Internal',
-  NotAuthorized: 'veyron2/verror.NotAuthorized',
-  NotFound: 'veyron2/verror.NotFound'
+  Aborted: 'veyron.io/veyron/veyron2/verror.Aborted',
+  BadArg: 'veyron.io/veyron/veyron2/verror.BadArg',
+  BadProtocol: 'veyron.io/veyron/veyron2/verror.BadProtocol',
+  Exists: 'veyron.io/veyron/veyron2/verror.Exists',
+  Internal: 'veyron.io/veyron/veyron2/verror.Internal',
+  NotAuthorized: 'veyron.io/veyron/veyron2/verror.NotAuthorized',
+  NotFound: 'veyron.io/veyron/veyron2/verror.NotFound'
 };
 
 /*
