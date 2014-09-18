@@ -34,9 +34,9 @@ describe('toStandardErrorStruct', function() {
   });
 
   it('Should convert predefined errors to internal structure', function() {
-    var jsErr = vError.NotAuthorizedError(errMessage);
+    var jsErr = vError.NoAccessError(errMessage);
     var struct = ErrorConversion.toStandardErrorStruct(jsErr);
-    expect(struct.iD).to.equal(vError.Ids.NotAuthorized);
+    expect(struct.iD).to.equal(vError.Ids.NoAccess);
     expect(struct.msg).to.equal(errMessage);
   });
 
@@ -124,23 +124,37 @@ describe('toJSerror', function() {
     assertError(jsErr, vError.Ids.Internal, vError.InternalError);
   });
 
-  it('Should convert to JS NotAuthorizedError', function() {
+  it('Should convert to JS NoAccessError', function() {
     var struct = {
-      iD: vError.Ids.NotAuthorized,
+      iD: vError.Ids.NoAccess,
       msg: errMessage
     };
 
     var jsErr = ErrorConversion.toJSerror(struct);
-    assertError(jsErr, vError.Ids.NotAuthorized, vError.NotAuthorizedError);
+    console.log(jsErr);
+    console.log(vError.Ids.NoAccess);
+    console.log(vError.NoAccessError);
+    assertError(jsErr, vError.Ids.NoAccess, vError.NoAccessError);
   });
 
-  it('Should convert to NotFoundError', function() {
+  it('Should convert to NoExistError', function() {
     var struct = {
-      iD: vError.Ids.NotFound,
+      iD: vError.Ids.NoExist,
       msg: errMessage
     };
 
     var jsErr = ErrorConversion.toJSerror(struct);
-    assertError(jsErr, vError.Ids.NotFound, vError.NotFoundError);
+    assertError(jsErr, vError.Ids.NoExist, vError.NoExistError);
+  });
+
+  it('Should convert to NoExistOrNoAccessError', function() {
+    var struct = {
+      iD: vError.Ids.NoExistOrNoAccess,
+      msg: errMessage
+    };
+
+    var jsErr = ErrorConversion.toJSerror(struct);
+    assertError(jsErr, vError.Ids.NoExistOrNoAccess,
+        vError.NoExistOrNoAccessError);
   });
 });

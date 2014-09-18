@@ -45,8 +45,9 @@ errIdConstrMap[vError.Ids.BadArg] = vError.BadArgError;
 errIdConstrMap[vError.Ids.BadProtocol] = vError.BadProtocolError;
 errIdConstrMap[vError.Ids.Exists] = vError.ExistsError;
 errIdConstrMap[vError.Ids.Internal] = vError.InternalError;
-errIdConstrMap[vError.Ids.NotAuthorized] = vError.NotAuthorizedError;
-errIdConstrMap[vError.Ids.NotFound] = vError.NotFoundError;
+errIdConstrMap[vError.Ids.NoAccess] = vError.NoAccessError;
+errIdConstrMap[vError.Ids.NoExist] = vError.NoExistError;
+errIdConstrMap[vError.Ids.NoExistOrNoAccess] = vError.NoExistOrNoAccessError;
 
 /*
  * Converts from a verror standard struct which comes from wspr to JavaScript

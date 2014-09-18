@@ -15,8 +15,9 @@ vError.Ids = {
   BadProtocol: 'veyron.io/veyron/veyron2/verror.BadProtocol',
   Exists: 'veyron.io/veyron/veyron2/verror.Exists',
   Internal: 'veyron.io/veyron/veyron2/verror.Internal',
-  NotAuthorized: 'veyron.io/veyron/veyron2/verror.NotAuthorized',
-  NotFound: 'veyron.io/veyron/veyron2/verror.NotFound'
+  NoAccess: 'veyron.io/veyron/veyron2/verror.NoAccess',
+  NoExist: 'veyron.io/veyron/veyron2/verror.NoExist',
+  NoExistOrNoAccess: 'veyron.io/veyron/veyron2/verror.NoExistOrNoAccess'
 };
 
 /*
@@ -133,26 +134,39 @@ inherits(vError.InternalError, vError.VeyronError);
  * @param {string} message message
  * @return {Error} Error object with name set to the not authorized error id.
  */
-vError.NotAuthorizedError = function(message) {
-  if (!(this instanceof vError.NotAuthorizedError)) {
-    return new vError.NotAuthorizedError(message);
+vError.NoAccessError = function(message) {
+  if (!(this instanceof vError.NoAccessError)) {
+    return new vError.NoAccessError(message);
   }
-  vError.VeyronError.call(this, message, vError.Ids.NotAuthorized);
+  vError.VeyronError.call(this, message, vError.Ids.NoAccess);
 };
-inherits(vError.NotAuthorizedError, vError.VeyronError);
+inherits(vError.NoAccessError, vError.VeyronError);
 
 /*
  * Creates an Error object indicating requested entity (e.g. object, method)
- * not found
+ * does not exist.
  * @param {string} message message
  * @return {Error} Error object with name set to the not found error id.
  */
-vError.NotFoundError = function(message) {
-  if (!(this instanceof vError.NotFoundError)) {
-    return new vError.NotFoundError(message);
+vError.NoExistError = function(message) {
+  if (!(this instanceof vError.NoExistError)) {
+    return new vError.NoExistError(message);
   }
-  vError.VeyronError.call(this, message, vError.Ids.NotFound);
+  vError.VeyronError.call(this, message, vError.Ids.NoExist);
 };
-inherits(vError.NotFoundError, vError.VeyronError);
+inherits(vError.NoExistError, vError.VeyronError);
 
+/*
+ * Creates an Error object indicating requested entity (e.g. object, method)
+ * either does not exist, or that the requester is not authorized to access it.
+ * @param {string} message message
+ * @return {Error} Error object with name set to the not found error id.
+ */
+vError.NoExistOrNoAccessError = function(message) {
+  if (!(this instanceof vError.NoExistOrNoAccessError)) {
+    return new vError.NoExistOrNoAccessError(message);
+  }
+  vError.VeyronError.call(this, message, vError.Ids.NoExistOrNoAccess);
+};
+inherits(vError.NoExistOrNoAccessError, vError.VeyronError);
 module.exports = vError;

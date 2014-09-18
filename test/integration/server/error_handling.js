@@ -19,7 +19,7 @@ describe('server/error_handling.js: Service in JS', function() {
   var error = new Error(errMessage);
   var namedError = new Error(errMessage);
   namedError.name = 'MyError';
-  var builtInError = new veyron.errors.NotFoundError('can\'t see it');
+  var builtInError = new veyron.errors.NoExistError('can\'t see it');
 
   var remoteService;
   before(function(done) {

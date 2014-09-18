@@ -32,7 +32,7 @@ Namespace.errNotAMountTable = function() {
  */
 Namespace.errNoSuchName = function() {
   return new vError.VeyronError(
-    'Name doesn\'t exist', vError.Ids.NotFound);
+    'Name doesn\'t exist', vError.Ids.NoExist);
 };
 
 /*
@@ -40,7 +40,7 @@ Namespace.errNoSuchName = function() {
  */
 Namespace.errNoSuchNameRoot = function() {
   return new vError.VeyronError(
-    'Name doesn\'t exist: root of namespace', vError.NotFound);
+    'Name doesn\'t exist: root of namespace', vError.NoExist);
 };
 
 /*

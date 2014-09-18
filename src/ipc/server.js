@@ -68,7 +68,7 @@ Server.prototype._getAndValidateMetadata = function(serviceObject,
       var key = serviceMetadata[i];
       var object = this._knownServiceDefinitions[key];
       if (!object) {
-        return new vError.NotFoundError('unknown service ' + key);
+        return new vError.NoExistError('unknown service ' + key);
       }
       // Merge the results into the single definitions object.
       for (var k in object) {

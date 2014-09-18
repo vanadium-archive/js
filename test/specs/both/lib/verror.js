@@ -84,32 +84,46 @@ describe('vError', function() {
     });
   });
 
-  describe('NotAuthorizedError', function() {
-    it('Should return an Error with Name set to Ids.NotAuthorized', function() {
-      var err = new vError.NotAuthorizedError(errMessage);
-      expect(err).to.be.instanceof(vError.NotAuthorizedError);
-      assertError(err, vError.Ids.NotAuthorized);
+  describe('NoAccessError', function() {
+    it('Should return an Error with Name set to Ids.NoAccess', function() {
+      var err = new vError.NoAccessError(errMessage);
+      expect(err).to.be.instanceof(vError.NoAccessError);
+      assertError(err, vError.Ids.NoAccess);
     });
 
     it('Should work as a function without New keyword', function() {
-      var err = vError.NotAuthorizedError(errMessage);
-      expect(err).to.be.instanceof(vError.NotAuthorizedError);
-      assertError(err, vError.Ids.NotAuthorized);
+      var err = vError.NoAccessError(errMessage);
+      expect(err).to.be.instanceof(vError.NoAccessError);
+      assertError(err, vError.Ids.NoAccess);
     });
   });
 
-  describe('NotFoundError', function() {
-    it('Should return an Error with Name set to Ids.NotFound', function() {
-      var err = new vError.NotFoundError(errMessage);
-      expect(err).to.be.instanceof(vError.NotFoundError);
-      assertError(err, vError.Ids.NotFound);
+  describe('NoExistError', function() {
+    it('Should return an Error with Name set to Ids.NoExist', function() {
+      var err = new vError.NoExistError(errMessage);
+      expect(err).to.be.instanceof(vError.NoExistError);
+      assertError(err, vError.Ids.NoExist);
     });
 
     it('Should work as a function without New keyword', function() {
-      var err = vError.NotFoundError(errMessage);
-      expect(err).to.be.instanceof(vError.NotFoundError);
-      assertError(err, vError.Ids.NotFound);
+      var err = vError.NoExistError(errMessage);
+      expect(err).to.be.instanceof(vError.NoExistError);
+      assertError(err, vError.Ids.NoExist);
+    });
+  });
+
+  describe('NoExistOrNoAccessError', function() {
+    it('Should return an Error with Name set to Ids.NoExistOrNoAccess',
+        function() {
+      var err = new vError.NoExistOrNoAccessError(errMessage);
+      expect(err).to.be.instanceof(vError.NoExistOrNoAccessError);
+      assertError(err, vError.Ids.NoExistOrNoAccess);
+    });
+
+    it('Should work as a function without New keyword', function() {
+      var err = vError.NoExistOrNoAccessError(errMessage);
+      expect(err).to.be.instanceof(vError.NoExistOrNoAccessError);
+      assertError(err, vError.Ids.NoExistOrNoAccess);
     });
   });
 });
-

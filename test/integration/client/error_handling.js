@@ -80,20 +80,30 @@ describe('client/error_handling.js: Error Thrower', function() {
     });
   });
 
-  it('Should be able to throw NotAuthorized', function() {
-    var call = service.throwNotAuthorized();
+  it('Should be able to throw NoAccess', function() {
+    var call = service.throwNoAccess();
     return expect(call).to.eventually.be.rejected.then(function(r) {
-      var error = new veyron.errors.NotAuthorizedError('NotAuthorized!');
-      expect(r).to.be.instanceof(veyron.errors.NotAuthorizedError);
+      var error = new veyron.errors.NoAccessError('NoAccess!');
+      expect(r).to.be.instanceof(veyron.errors.NoAccessError);
       assertError(r, error);
     });
   });
 
-  it('Should be able to throw NotFound', function() {
-    var call = service.throwNotFound();
+  it('Should be able to throw NoExist', function() {
+    var call = service.throwNoExist();
     return expect(call).to.eventually.be.rejected.then(function(r) {
-      var error = new veyron.errors.NotFoundError('NotFound!');
-      expect(r).to.be.instanceof(veyron.errors.NotFoundError);
+      var error = new veyron.errors.NoExistError('NoExist!');
+      expect(r).to.be.instanceof(veyron.errors.NoExistError);
+      assertError(r, error);
+    });
+  });
+
+  it('Should be able to throw NoExistOrNoAccess', function() {
+    var call = service.throwNoExistOrNoAccess();
+    return expect(call).to.eventually.be.rejected.then(function(r) {
+      var error =
+          new veyron.errors.NoExistOrNoAccessError('NoExistOrNoAccess!');
+      expect(r).to.be.instanceof(veyron.errors.NoExistOrNoAccessError);
       assertError(r, error);
     });
   });
