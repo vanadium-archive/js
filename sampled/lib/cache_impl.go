@@ -6,9 +6,9 @@ import (
 	"sort"
 	"time"
 
-	"veyron2/ipc"
-	"veyron2/vdl/vdlutil"
-	"veyron2/verror"
+	"veyron.io/veyron/veyron2/ipc"
+	"veyron.io/veyron/veyron2/vdl/vdlutil"
+	"veyron.io/veyron/veyron2/verror"
 
 	sample "veyron.io/examples/wspr_sample"
 )

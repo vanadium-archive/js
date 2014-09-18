@@ -3,8 +3,8 @@ package lib
 import (
 	"errors"
 
-	"veyron2/ipc"
-	"veyron2/verror"
+	"veyron.io/veyron/veyron2/ipc"
+	"veyron.io/veyron/veyron2/verror"
 
 	sample "veyron.io/examples/wspr_sample"
 )

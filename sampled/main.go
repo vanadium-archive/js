@@ -5,8 +5,8 @@ import (
 	"log"
 
 	"veyron.io/examples/wspr_sample/sampled/lib"
-	"veyron/lib/signals"
-	"veyron2/rt"
+	"veyron.io/veyron/veyron/lib/signals"
+	"veyron.io/veyron/veyron2/rt"
 )
 
 func main() {

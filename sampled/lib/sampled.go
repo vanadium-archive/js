@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"strings"
 
-	"veyron2"
-	"veyron2/ipc"
-	"veyron2/naming"
-	"veyron2/security"
+	"veyron.io/veyron/veyron2"
+	"veyron.io/veyron/veyron2/ipc"
+	"veyron.io/veyron/veyron2/naming"
+	"veyron.io/veyron/veyron2/security"
 
 	sample "veyron.io/examples/wspr_sample"
 )

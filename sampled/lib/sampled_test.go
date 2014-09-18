@@ -6,12 +6,12 @@ import (
 	"testing"
 	"time"
 
-	"veyron2/context"
-	"veyron2/ipc"
-	"veyron2/naming"
-	"veyron2/rt"
-	"veyron2/vdl/vdlutil"
-	"veyron2/verror"
+	"veyron.io/veyron/veyron2/context"
+	"veyron.io/veyron/veyron2/ipc"
+	"veyron.io/veyron/veyron2/naming"
+	"veyron.io/veyron/veyron2/rt"
+	"veyron.io/veyron/veyron2/vdl/vdlutil"
+	"veyron.io/veyron/veyron2/verror"
 
 	hps "veyron.io/examples/wspr_sample"
 )
