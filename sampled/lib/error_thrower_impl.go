@@ -32,12 +32,16 @@ func (e *errorThrowerImpl) ThrowInternal(_ ipc.ServerContext) error {
 	return verror.Internalf("Internal!")
 }
 
-func (e *errorThrowerImpl) ThrowNotAuthorized(_ ipc.ServerContext) error {
-	return verror.NotAuthorizedf("NotAuthorized!")
+func (e *errorThrowerImpl) ThrowNoAccess(_ ipc.ServerContext) error {
+	return verror.NoAccessf("NoAccess!")
 }
 
-func (e *errorThrowerImpl) ThrowNotFound(_ ipc.ServerContext) error {
-	return verror.NotFoundf("NotFound!")
+func (e *errorThrowerImpl) ThrowNoExist(_ ipc.ServerContext) error {
+	return verror.NoExistf("NoExist!")
+}
+
+func (e *errorThrowerImpl) ThrowNoExistOrNoAccess(_ ipc.ServerContext) error {
+	return verror.NoExistOrNoAccessf("NoExistOrNoAccess!")
 }
 
 func (e *errorThrowerImpl) ThrowUnknown(_ ipc.ServerContext) error {

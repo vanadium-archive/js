@@ -14,11 +14,14 @@ type ErrorThrower interface {
     // Throws veyron2/vError.Internal error
     ThrowInternal() error
 
-    // Throws veyron2/vError.NotAuthorized error
-    ThrowNotAuthorized() error
+    // Throws veyron2/vError.NoAccess error
+    ThrowNoAccess() error
 
-    // Throws veyron2/vError.NotFound error
-    ThrowNotFound() error
+    // Throws veyron2/vError.NoExist error
+    ThrowNoExist() error
+
+    // Throws veyron2/vError.NoExistOrNoAccess error
+    ThrowNoExistOrNoAccess() error
 
     // Throws veyron2/vError.Unknown error
     ThrowUnknown() error

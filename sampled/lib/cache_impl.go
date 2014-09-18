@@ -42,7 +42,7 @@ func (c *cacheImpl) Get(_ ipc.ServerContext, key string) (vdlutil.Any, error) {
 		return value, nil
 	}
 
-	return typedNil, verror.NotFoundf("key not found: %v", key)
+	return typedNil, verror.NoExistf("key not found: %v", key)
 }
 
 // getWithTypeCheck gets the key and tests if its type matches the given time, erroring if it does
@@ -140,7 +140,7 @@ func (c *cacheImpl) KeyValuePairs(ipc.ServerContext) ([]sample.KeyValuePair, err
 func (c *cacheImpl) MostRecentSet(ipc.ServerContext) (sample.KeyValuePair, int64, error) {
 	var err error
 	if c.lastUpdateTime.IsZero() {
-		err = verror.NotFoundf("no values in the cache so cannot return most recent.")
+		err = verror.NoExistf("no values in the cache so cannot return most recent.")
 	}
 	return c.mostRecent, c.lastUpdateTime.Unix(), err
 }

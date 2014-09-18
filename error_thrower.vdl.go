@@ -30,10 +30,12 @@ type ErrorThrower_ExcludingUniversal interface {
 	ThrowBadProtocol(ctx _gen_context.T, opts ..._gen_ipc.CallOpt) (err error)
 	// Throws veyron2/vError.Internal error
 	ThrowInternal(ctx _gen_context.T, opts ..._gen_ipc.CallOpt) (err error)
-	// Throws veyron2/vError.NotAuthorized error
-	ThrowNotAuthorized(ctx _gen_context.T, opts ..._gen_ipc.CallOpt) (err error)
-	// Throws veyron2/vError.NotFound error
-	ThrowNotFound(ctx _gen_context.T, opts ..._gen_ipc.CallOpt) (err error)
+	// Throws veyron2/vError.NoAccess error
+	ThrowNoAccess(ctx _gen_context.T, opts ..._gen_ipc.CallOpt) (err error)
+	// Throws veyron2/vError.NoExist error
+	ThrowNoExist(ctx _gen_context.T, opts ..._gen_ipc.CallOpt) (err error)
+	// Throws veyron2/vError.NoExistOrNoAccess error
+	ThrowNoExistOrNoAccess(ctx _gen_context.T, opts ..._gen_ipc.CallOpt) (err error)
 	// Throws veyron2/vError.Unknown error
 	ThrowUnknown(ctx _gen_context.T, opts ..._gen_ipc.CallOpt) (err error)
 	// Throws normal Go error
@@ -59,10 +61,12 @@ type ErrorThrowerService interface {
 	ThrowBadProtocol(context _gen_ipc.ServerContext) (err error)
 	// Throws veyron2/vError.Internal error
 	ThrowInternal(context _gen_ipc.ServerContext) (err error)
-	// Throws veyron2/vError.NotAuthorized error
-	ThrowNotAuthorized(context _gen_ipc.ServerContext) (err error)
-	// Throws veyron2/vError.NotFound error
-	ThrowNotFound(context _gen_ipc.ServerContext) (err error)
+	// Throws veyron2/vError.NoAccess error
+	ThrowNoAccess(context _gen_ipc.ServerContext) (err error)
+	// Throws veyron2/vError.NoExist error
+	ThrowNoExist(context _gen_ipc.ServerContext) (err error)
+	// Throws veyron2/vError.NoExistOrNoAccess error
+	ThrowNoExistOrNoAccess(context _gen_ipc.ServerContext) (err error)
 	// Throws veyron2/vError.Unknown error
 	ThrowUnknown(context _gen_ipc.ServerContext) (err error)
 	// Throws normal Go error
@@ -164,9 +168,9 @@ func (__gen_c *clientStubErrorThrower) ThrowInternal(ctx _gen_context.T, opts ..
 	return
 }
 
-func (__gen_c *clientStubErrorThrower) ThrowNotAuthorized(ctx _gen_context.T, opts ..._gen_ipc.CallOpt) (err error) {
+func (__gen_c *clientStubErrorThrower) ThrowNoAccess(ctx _gen_context.T, opts ..._gen_ipc.CallOpt) (err error) {
 	var call _gen_ipc.Call
-	if call, err = __gen_c.client(ctx).StartCall(ctx, __gen_c.name, "ThrowNotAuthorized", nil, opts...); err != nil {
+	if call, err = __gen_c.client(ctx).StartCall(ctx, __gen_c.name, "ThrowNoAccess", nil, opts...); err != nil {
 		return
 	}
 	if ierr := call.Finish(&err); ierr != nil {
@@ -175,9 +179,20 @@ func (__gen_c *clientStubErrorThrower) ThrowNotAuthorized(ctx _gen_context.T, op
 	return
 }
 
-func (__gen_c *clientStubErrorThrower) ThrowNotFound(ctx _gen_context.T, opts ..._gen_ipc.CallOpt) (err error) {
+func (__gen_c *clientStubErrorThrower) ThrowNoExist(ctx _gen_context.T, opts ..._gen_ipc.CallOpt) (err error) {
 	var call _gen_ipc.Call
-	if call, err = __gen_c.client(ctx).StartCall(ctx, __gen_c.name, "ThrowNotFound", nil, opts...); err != nil {
+	if call, err = __gen_c.client(ctx).StartCall(ctx, __gen_c.name, "ThrowNoExist", nil, opts...); err != nil {
+		return
+	}
+	if ierr := call.Finish(&err); ierr != nil {
+		err = ierr
+	}
+	return
+}
+
+func (__gen_c *clientStubErrorThrower) ThrowNoExistOrNoAccess(ctx _gen_context.T, opts ..._gen_ipc.CallOpt) (err error) {
+	var call _gen_ipc.Call
+	if call, err = __gen_c.client(ctx).StartCall(ctx, __gen_c.name, "ThrowNoExistOrNoAccess", nil, opts...); err != nil {
 		return
 	}
 	if ierr := call.Finish(&err); ierr != nil {
@@ -283,9 +298,11 @@ func (__gen_s *ServerStubErrorThrower) GetMethodTags(call _gen_ipc.ServerCall, m
 		return []interface{}{}, nil
 	case "ThrowInternal":
 		return []interface{}{}, nil
-	case "ThrowNotAuthorized":
+	case "ThrowNoAccess":
 		return []interface{}{}, nil
-	case "ThrowNotFound":
+	case "ThrowNoExist":
+		return []interface{}{}, nil
+	case "ThrowNoExistOrNoAccess":
 		return []interface{}{}, nil
 	case "ThrowUnknown":
 		return []interface{}{}, nil
@@ -345,13 +362,19 @@ func (__gen_s *ServerStubErrorThrower) Signature(call _gen_ipc.ServerCall) (_gen
 			{Name: "", Type: 65},
 		},
 	}
-	result.Methods["ThrowNotAuthorized"] = _gen_ipc.MethodSignature{
+	result.Methods["ThrowNoAccess"] = _gen_ipc.MethodSignature{
 		InArgs: []_gen_ipc.MethodArgument{},
 		OutArgs: []_gen_ipc.MethodArgument{
 			{Name: "", Type: 65},
 		},
 	}
-	result.Methods["ThrowNotFound"] = _gen_ipc.MethodSignature{
+	result.Methods["ThrowNoExist"] = _gen_ipc.MethodSignature{
+		InArgs: []_gen_ipc.MethodArgument{},
+		OutArgs: []_gen_ipc.MethodArgument{
+			{Name: "", Type: 65},
+		},
+	}
+	result.Methods["ThrowNoExistOrNoAccess"] = _gen_ipc.MethodSignature{
 		InArgs: []_gen_ipc.MethodArgument{},
 		OutArgs: []_gen_ipc.MethodArgument{
 			{Name: "", Type: 65},
@@ -408,13 +431,18 @@ func (__gen_s *ServerStubErrorThrower) ThrowInternal(call _gen_ipc.ServerCall) (
 	return
 }
 
-func (__gen_s *ServerStubErrorThrower) ThrowNotAuthorized(call _gen_ipc.ServerCall) (err error) {
-	err = __gen_s.service.ThrowNotAuthorized(call)
+func (__gen_s *ServerStubErrorThrower) ThrowNoAccess(call _gen_ipc.ServerCall) (err error) {
+	err = __gen_s.service.ThrowNoAccess(call)
 	return
 }
 
-func (__gen_s *ServerStubErrorThrower) ThrowNotFound(call _gen_ipc.ServerCall) (err error) {
-	err = __gen_s.service.ThrowNotFound(call)
+func (__gen_s *ServerStubErrorThrower) ThrowNoExist(call _gen_ipc.ServerCall) (err error) {
+	err = __gen_s.service.ThrowNoExist(call)
+	return
+}
+
+func (__gen_s *ServerStubErrorThrower) ThrowNoExistOrNoAccess(call _gen_ipc.ServerCall) (err error) {
+	err = __gen_s.service.ThrowNoExistOrNoAccess(call)
 	return
 }
 
