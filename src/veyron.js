@@ -36,22 +36,19 @@ function init(config, callback) {
   };
 
   // If we are running in a browser, and the user has not set
-  // config.requireAuthenticatedIdentity to false, then we will get an identity
-  // for the user.  This requires the Veyron Chrome Extension to be installed
-  // and enabled, and WSPR must be configured to talk to Veyron Identity server,
-  // which is currently hosted at:
-  // /proxy.envyor.com:8101/identity/veyron-test/google
-  // The resulting runtime will have runtime.identityName set to the name of the
-  // authenticated identity.
+  // config.skipAuthentication to true, then we will get an authenticated
+  // (blessed-by-identity-server) identity for the user.  This requires the
+  // Veyron Chrome Extension to be installed and enabled, and WSPR must be
+  // configured to talk to Veyron identity server, e.g. the one currently hosted
+  // at: /proxy.envyor.com:8101/identity/veyron-test/google The resulting
+  // runtime will have runtime.identityName set to the name of the authenticated
+  // identity.
   //
   // If we are not in a browser, or if the user has set
-  // config.requireAuthenticatedIdentity to false, then we create a runtime with
-  // the identityName 'unknown'.
+  // config.skipAuthentication to true, then we create a runtime with the
+  // identityName 'unknown'.
   var isBrowser = (typeof window === 'object');
-  if (typeof config.requireAuthenticatedIdentity === 'undefined') {
-    config.requireAuthenticatedIdentity = true;
-  }
-  if (isBrowser && config.requireAuthenticatedIdentity) {
+  if (isBrowser && !config.skipAuthentication) {
     getIdentity(config.authTimeout, function(err, name) {
       if (err) {
         def.reject(err);
@@ -73,7 +70,7 @@ function init(config, callback) {
 // WSPR, which is then associated with the origin of the web app.
 //
 // The flow starts by repeatedly sending an 'auth' message to the Veyron
-// Extension content script.  It must do this repeatedly because the first
+// Extension content script.  It must perform this repeatedly because the first
 // messages might get sent before the content script has had time to start.
 //
 // When the content script eventually receives the 'auth' message, it responds
@@ -82,9 +79,9 @@ function init(config, callback) {
 // If no 'auth:received' message is received within config.authTimeout
 // milliseconds, we timeout with an error.
 //
-// Once the extension has received the 'auth' message, it will do the OAuth <->
-// WSPR identity flow, and respond with either an 'auth:success' message or an
-// 'auth:error' message.
+// Once the extension has received the 'auth' message, it will perform the OAuth
+// <-> WSPR identity flow, and respond with either an 'auth:success' message or
+// an 'auth:error' message.
 function getIdentity(authTimeoutMs, callback) {
   var isBrowser = (typeof window === 'object');
 
@@ -94,6 +91,13 @@ function getIdentity(authTimeoutMs, callback) {
 
   var Postie = require('postie');
   var contentScript = new Postie(window);
+
+  function clearTimingEvents() {
+    // Stop asking for auth.
+    window.clearInterval(authRequestInterval);
+    // Cancel timeout timer.
+    window.clearTimeout(timeout);
+  }
 
   // Runs when the auth request succeeds.
   function handleAuthSuccess(data) {
@@ -109,23 +113,20 @@ function getIdentity(authTimeoutMs, callback) {
 
   // Runs when the extension receives the auth request.
   function handleAuthReceived() {
-    // Stop asking for auth.
-    window.clearInterval(authRequestInterval);
-    // Cancel timeout timer.
-    window.clearTimeout(timeout);
+    clearTimingEvents();
   }
 
   // Runs when timeout occurs before getting 'auth:received' message.
   function handleTimeout() {
     handleAuthError(new Error(
         'Auth timeout. Please ensure that the Veyron Chrome Extension is ' +
-        'installed and enabled.'
+        'installed and enabled. Download it here: ' +
+        'https://github.com/veyron/veyron.js/raw/master/extension/veyron.crx'
     ));
   }
 
   function removeListeners() {
-    window.clearInterval(authRequestInterval);
-    window.clearTimeout(timeout);
+    clearTimingEvents();
     contentScript.removeListener('auth:success', handleAuthSuccess);
     contentScript.removeListener('auth:error', handleAuthError);
   }
