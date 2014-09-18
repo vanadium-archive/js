@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Rock-Paper-Scissors game using Veyron technology">
+  <link rel="stylesheet" href="style.css">
+  <title>Rock Paper Scissors</title>
+</head>
+<body>
+  <header role="banner">
+    <h1>Rock Paper Scissors</h1>
+  </header>
+
+  <section id="settingsSection" role="settings">
+    <table id="settingsTable" align="center">
+    <tr>
+    <td class="left"><label for="judgeInput">Judge:</label></td>
+    <td class="right"><select id="judgeInput">
+      <option>Loading...</option>
+    </select></td>
+    </tr>
+
+    <tr>
+    <td class="left"><label for="playerInput">Opponent:</label></td>
+    <td class="right"><select id="playerInput">
+      <option>Loading...</option>
+    </select></td>
+    </tr>
+
+    <tr>
+    <td class="left"><label for="gameType">Type:</label></td>
+    <td class="right"><select id="gameType">
+      <option value="0">Classic</option>
+      <option value="1">LizardSpock</option>
+    </select></td>
+    </tr>
+
+    <tr>
+    <td class="left"><label for="numRounds">Rounds:</label></td>
+    <td class="right"><select id="numRounds">
+      <option value="1">1</option>
+      <option value="2">2</option>
+      <option value="3" selected>3</option>
+      <option value="4">4</option>
+      <option value="5">5</option>
+    </select></td>
+    </tr>
+
+    <tr><td colspan=2>
+    <input id="playButton" name="play" type="button" value="Play!" />
+    </td></tr>
+    </table>
+  </section>
+
+  <section id="playSection" class="hidden" role="play">
+  </section>
+
+  <section id="debugSection" class="hidden" role="debug">
+    <span id="debugText"></span>
+  </section>
+
+  <section id="tickerSection" role="ticker">
+    <div id="ticker"></span>
+  </section>
+
+  <script src="lib/veyron.js" defer></script>
+  <script src="rockpaperscissors.js" defer></script>
+  <script src="config.js" defer></script>
+  <script src="ui.js" defer></script>
+  <script src="rps.js" defer></script>
+</body>
+</html>
