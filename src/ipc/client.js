@@ -162,7 +162,8 @@ function Client(proxyConnection) {
  */
 Client.prototype.bindTo = function(name, optServiceSignature, callback) {
   var self = this;
-  if (typeof(optServiceSignature) === 'function') {
+
+  if (typeof optServiceSignature === 'function') {
     callback = optServiceSignature;
     optServiceSignature = undefined;
   }
@@ -178,9 +179,11 @@ Client.prototype.bindTo = function(name, optServiceSignature, callback) {
   }
 
   var promise = def.promise;
+
   serviceSignaturePromise.then(function(serviceSignature) {
     vLog.debug('Received signature for:', name, serviceSignature);
     var boundObject = {};
+
     var bindMethod = function(methodName) {
       var methodInfo = serviceSignature[methodName];
       var numOutParams = methodInfo.numOutArgs;

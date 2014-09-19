@@ -18,16 +18,24 @@ var runner = run(services)
 .on('error', exit)
 .start();
 
+process.on('SIGINT', stop);
+
 function test() {
   debug('running tests');
 
   var debugArgs = {
-    DEBUG: argv.debug || process.env.DEBUG,
+    DEBUG: argv.debug || process.env.DEBUG || '',
     DEBUG_COLORS: true
   };
 
+  // Newline separate the runner's debug output from the test's.
+  if (debugArgs.DEBUG) {
+    console.log();
+  }
+
+  var args = process.argv.slice(2, process.argv.length);
   var env = extend(process.env, debugArgs);
-  var prova = spawn('prova', [ 'test/integration/test-*.js' ], { env: env });
+  var prova = spawn('prova', args, { env: env });
 
   // Pipe the test run's stdout and stderr to the parent process
   prova.stdout.pipe(process.stdout);

@@ -47,7 +47,19 @@ function Runtime(options) {
  *
  */
 Runtime.prototype.bindTo = function(name, optServiceSignature, callback) {
+  var runtime = this;
   var client = this._getClient();
+
+  if (typeof optServiceSignature === 'function') {
+    callback = optServiceSignature;
+    optServiceSignature = undefined;
+  }
+
+  // Bind the callback to runtime
+  if (callback) {
+    callback = callback.bind(runtime);
+  }
+
   return client.bindTo(name, optServiceSignature, callback);
 };
 
@@ -56,7 +68,7 @@ Runtime.prototype.bindTo = function(name, optServiceSignature, callback) {
  *
  * @example
  *
- * runtime.stop(function(err, code, message){
+ * runtime.close(function(err, code, message){
  *   if (err) throw err;
  *   console.log('code: %s, message: %s', code, message)
  * });
@@ -67,18 +79,22 @@ Runtime.prototype.bindTo = function(name, optServiceSignature, callback) {
  * @see {@link http://goo.gl/6nC1xs|WS Event: "close"}
  *
  */
-Runtime.prototype.stop = function(callback) {
+Runtime.prototype.close = function(callback) {
   var runtime = this;
+  var deferred = new Deferred(callback);
 
   runtime
   ._getProxyConnection()
   .getWebSocket()
-  .then(function(ws) {
-    ws.on('close', function(code, message) {
-      callback(null, code, message);
-    });
-    ws.close();
-  });
+  .then(close)
+  .catch(deferred.reject);
+
+  return deferred.promise;
+
+  function close(websocket) {
+    websocket.onclose = deferred.resolve;
+    websocket.close();
+  }
 };
 
 /**

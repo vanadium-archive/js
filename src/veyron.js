@@ -5,6 +5,14 @@
 var Runtime = require('./runtime/runtime');
 var Deferred = require('./lib/deferred');
 var vlog = require('./lib/vlog');
+var extend = require('xtend');
+var isBrowser = require('is-browser');
+
+var defaults = {
+  logLevel: vlog.level,
+  authenticate: false,
+  authTimeout: 5000, // ms
+};
 
 /**
  * Exports
@@ -25,9 +33,8 @@ function init(config, callback) {
     callback = config;
     config = {};
   }
-  config = config || {};
-  vlog.level = config.logLevel || vlog.level;
-  config.authTimeout = config.authTimeout || 5000; // ms
+
+  config = extend(defaults, config);
 
   var def = new Deferred(callback);
 
@@ -45,10 +52,9 @@ function init(config, callback) {
   // identity.
   //
   // If we are not in a browser, or if the user has set
-  // config.skipAuthentication to true, then we create a runtime with the
+  // config.authenticate to true, then create a runtime with the
   // identityName 'unknown'.
-  var isBrowser = (typeof window === 'object');
-  if (isBrowser && !config.skipAuthentication) {
+  if (isBrowser && config.authenticate) {
     getIdentity(config.authTimeout, function(err, name) {
       if (err) {
         def.reject(err);
@@ -83,12 +89,6 @@ function init(config, callback) {
 // <-> WSPR identity flow, and respond with either an 'auth:success' message or
 // an 'auth:error' message.
 function getIdentity(authTimeoutMs, callback) {
-  var isBrowser = (typeof window === 'object');
-
-  if (!isBrowser) {
-    return process.nextTick(callback.bind(null, null));
-  }
-
   var Postie = require('postie');
   var contentScript = new Postie(window);
 
