@@ -7,8 +7,7 @@
  *  resultPromise = service.MethodName(arg);
  */
 
-var Promise = require('es6-promise').Promise;
-
+var Promise = require('../lib/promise');
 var Deferred = require('../lib/deferred');
 var vLog = require('../lib/vlog');
 var ErrorConversion = require('../proxy/error_conversion');

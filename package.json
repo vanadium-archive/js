@@ -5,7 +5,7 @@
   "main": "./src/veyron",
   "private": true,
   "dependencies": {
-    "es6-promise": "~1.0.0",
+    "bluebird": "^2.3.2",
     "is-browser": "^2.0.1",
     "postie": "^0.4.5",
     "which": "^1.0.5",

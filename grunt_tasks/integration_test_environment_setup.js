@@ -1,4 +1,4 @@
-var Promise = require('es6-promise').Promise;
+var Promise = require('../src/lib/promise');
 var deferred =  require('../src/lib/deferred');
 var path = require('path');
 var spawn = require('child_process').spawn;

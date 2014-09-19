@@ -46,7 +46,7 @@ describe('server/server.js: Server', function(done) {
     });
   });
 
-  it('Should succeed serving the same name twice', function() {
+  it('Should succeed serving the same name twice', function(done) {
     veyron.init(TestHelper.veyronConfig, function(err, rt) {
       if (err) {
         return done(err);

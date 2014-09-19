@@ -13,7 +13,7 @@
 var veyron = require('../../../src/veyron');
 var TestHelper = require('../../test_helper');
 var Deferred = require('../../../src/lib/deferred');
-var Promise = require('es6-promise').Promise;
+var Promise = require('../../../src/lib/promise');
 
 var cacheWithPromises = {
   cacheMap: {},
@@ -144,7 +144,7 @@ function runJSClientServerTests(cacheDefinition, idl, serviceName) {
 
   it('Should not return any values for a void result', function() {
     var result = cacheServiceClient.set('foo', 'bar');
-    expect(result).to.eventually.become(undefined);
+    return expect(result).to.eventually.become([]);
   });
 
   it('Should be able to use objects as arguments and returns', function() {

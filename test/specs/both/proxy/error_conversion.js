@@ -131,9 +131,6 @@ describe('toJSerror', function() {
     };
 
     var jsErr = ErrorConversion.toJSerror(struct);
-    console.log(jsErr);
-    console.log(vError.Ids.NoAccess);
-    console.log(vError.NoAccessError);
     assertError(jsErr, vError.Ids.NoAccess, vError.NoAccessError);
   });
 

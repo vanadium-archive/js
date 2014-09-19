@@ -2,9 +2,8 @@
  *  @fileoverview Client library for the Namespace.
  */
 
-var Promise = require('es6-promise').Promise;
-
 var nameUtil = require('./util.js');
+var Promise = require('../lib/promise');
 var Deferred = require('../lib/deferred');
 var vError = require('../lib/verror');
 

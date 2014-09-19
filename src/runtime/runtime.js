@@ -2,8 +2,6 @@
  * @fileoverview Veyron Runtime
  */
 
-var Promise = require('es6-promise').Promise;
-
 var Server = require('../ipc/server');
 var ServerRouter = require('../ipc/server_router');
 var Client = require('../ipc/client');
@@ -12,6 +10,7 @@ var MessageType = require('../proxy/message_type');
 var Namespace = require('../namespace/namespace');
 var PrivateId = require('../security/private');
 var PublicId = require('../security/public');
+var Promise = require('../lib/promise');
 var Deferred = require('../lib/deferred');
 var SimpleHandler = require('../proxy/simple_handler');
 

@@ -55,6 +55,15 @@ ProxyConnection.prototype.getWebSocket = function() {
   websocket.onerror = function(e) {
     vLog.error('Failed to connect to proxy at url:', self.url);
     deferred.reject(e);
+
+    // TODO(nlacasse): This causes an unhandledRejection, since nothing is
+    // chained on this promise at the point when we reject it.
+    //
+    // Later on, configDeferred becomes proxy.config, and a lot of places in the
+    // code do proxy.config.then(), so I'm leaving this in for now.
+    //
+    // This should be refactored so that there is a handler chained to this
+    // promise at the point it is created, or at least before it gets rejected.
     configDeferred.reject(
       'Proxy connection closed, failed to get config ' + e);
   };

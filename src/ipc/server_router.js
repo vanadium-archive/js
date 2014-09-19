@@ -2,8 +2,7 @@
  * @fileoveriew A router that handles incoming server rpcs.
  */
 
-var Promise = require('es6-promise').Promise;
-
+var Promise = require('../lib/promise');
 var Stream = require('../proxy/stream');
 var MessageType = require('../proxy/message_type');
 var IncomingPayloadType = require('../proxy/incoming_payload_type');
