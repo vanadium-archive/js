@@ -25,36 +25,33 @@ module.exports = {
 };
 
 /**
- * Create a Veyron Runtime
- * @param {Object} config Configuration Options
+ * Creates a Veyron runtime.
+ * @param {Object} config Configuration options
  */
-function init(config, callback) {
+function init(config, cb) {
   if (typeof config === 'function') {
-    callback = config;
+    cb = config;
     config = {};
   }
 
   config = extend(defaults, config);
 
-  var def = new Deferred(callback);
+  var def = new Deferred(cb);
 
   var runtimeOpts = {
     wspr: config.wspr || process.env['WSPR'] || 'http://localhost:8124'
   };
 
-  // If we are running in a browser, and the user has not set
-  // config.skipAuthentication to true, then we will get an authenticated
+  // If the user has set config.authenticate to true, get an authenticated
   // (blessed-by-identity-server) identity for the user.  This requires the
-  // Veyron Chrome Extension to be installed and enabled, and WSPR must be
+  // Veyron Chrome Extension to be installed and enabled, and WSPR to be
   // configured to talk to Veyron identity server, e.g. the one currently hosted
-  // at: /proxy.envyor.com:8101/identity/veyron-test/google The resulting
+  // at /proxy.envyor.com:8101/identity/veyron-test/google.  The resulting
   // runtime will have runtime.identityName set to the name of the authenticated
   // identity.
   //
-  // If we are not in a browser, or if the user has set
-  // config.authenticate to true, then create a runtime with the
-  // identityName 'unknown'.
-  if (isBrowser && config.authenticate) {
+  // Otherwise, create a runtime with identityName 'unknown'.
+  if (config.authenticate) {
     getIdentity(config.authTimeout, function(err, name) {
       if (err) {
         def.reject(err);
@@ -71,8 +68,8 @@ function init(config, callback) {
   return def.promise;
 }
 
-// getIdentity tells the Veyron Extension to start an OAuth flow, get an access
-// token for the user, and exchange that access token for a blessed identity in
+// getIdentity tells the Veyron Extension to start an OAuth flow, gets an access
+// token for the user, and exchanges that access token for a blessed identity in
 // WSPR, which is then associated with the origin of the web app.
 //
 // The flow starts by repeatedly sending an 'auth' message to the Veyron
@@ -88,9 +85,16 @@ function init(config, callback) {
 // Once the extension has received the 'auth' message, it will perform the OAuth
 // <-> WSPR identity flow, and respond with either an 'auth:success' message or
 // an 'auth:error' message.
-function getIdentity(authTimeoutMs, callback) {
+function getIdentity(authTimeoutMs, cb) {
+  if (!isBrowser) {
+    return cb(new Error('authenticate=true requires browser environment'));
+  }
+
   var Postie = require('postie');
   var contentScript = new Postie(window);
+
+  // Initialized below.
+  var timeout, authRequestInterval;
 
   function clearTimingEvents() {
     // Stop asking for auth.
@@ -102,13 +106,13 @@ function getIdentity(authTimeoutMs, callback) {
   // Runs when the auth request succeeds.
   function handleAuthSuccess(data) {
     removeListeners();
-    callback(null, data.name);
+    cb(null, data.name);
   }
 
   // Runs when the auth request fails.
   function handleAuthError(err) {
     removeListeners();
-    callback(err);
+    cb(err);
   }
 
   // Runs when the extension receives the auth request.
@@ -137,11 +141,11 @@ function getIdentity(authTimeoutMs, callback) {
 
   // Repeatedly ask the extension to auth.  The first time this runs, the
   // extension might not be running yet, so we need to ask in a setInterval.
-  var authRequestInterval = window.setInterval(function(){
+  authRequestInterval = window.setInterval(function() {
     contentScript.post('auth');
   }, 200);
 
   // Timeout if we don't get an 'auth:received' message before authTimeoutMs
   // milliseconds.
-  var timeout = setTimeout(handleTimeout, authTimeoutMs);
+  timeout = window.setTimeout(handleTimeout, authTimeoutMs);
 }
