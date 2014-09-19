@@ -1,8 +1,9 @@
 /**
- * @fileoverview A lightweight deferred implementation using ES6 Promise
- * Deferred are sometimes easier to use since they can be passed around
- * and rejected, resolved by other code whereas Promise API does not expose
- * reject and resolve publicly.
+ * @fileoverview A lightweight deferred implementation built on promises.
+ *
+ * A deferred encapsulates a promise and its resolve/reject methods in a single
+ * object.  This makes deferreds easier to pass to around and resolve or reject
+ * from other pieces of code.
  */
 
 var Promise = require('./promise');
@@ -18,15 +19,14 @@ function Deferred(cb) {
   });
 
   if (cb) {
-    deferred.promise
-    .then(success, error);
-  }
-
-  function success(value) {
-    cb(null, value);
-  }
-
-  function error(err) {
-    cb(err);
+    // Convert back to callback-based API.
+    //
+    // This must be a .done() and not a .then().  Errors thrown inside of a
+    // .then() callback are wrapped in a try/catch, whereas errors thrown inside
+    // of a .done() callback will be thrown as an error.
+    deferred.promise.done(
+        function (value) { cb(null, value); },
+        function (err) { cb(err); }
+    );
   }
 }
