@@ -37,7 +37,7 @@ function Runtime(options) {
  * @param {string} name the veyron name of the service to bind to.
  * @param {object} optServiceSignature if set, javascript signature of methods
  * available in the remote service.
- * @param {function} [callback] if given, this function will be called on
+ * @param {function} [cb] if given, this function will be called on
  * completion of the bind.  The first argument will be an error if there is
  * one, and the second argument is an object with methods that perform rpcs to
  * service
@@ -45,21 +45,20 @@ function Runtime(options) {
  * @return {Promise} An object with methods that perform rpcs to service methods
  *
  */
-Runtime.prototype.bindTo = function(name, optServiceSignature, callback) {
+Runtime.prototype.bindTo = function(name, optServiceSignature, cb) {
   var runtime = this;
   var client = this._getClient();
 
   if (typeof optServiceSignature === 'function') {
-    callback = optServiceSignature;
+    cb = optServiceSignature;
     optServiceSignature = undefined;
   }
 
-  // Bind the callback to runtime
-  if (callback) {
-    callback = callback.bind(runtime);
+  if (cb) {
+    cb = cb.bind(runtime);
   }
 
-  return client.bindTo(name, optServiceSignature, callback);
+  return client.bindTo(name, optServiceSignature, cb);
 };
 
 /**
@@ -72,15 +71,15 @@ Runtime.prototype.bindTo = function(name, optServiceSignature, callback) {
  *   console.log('code: %s, message: %s', code, message)
  * });
  *
- * @param {Function} [callback] - Gets called once the underlying
+ * @param {Function} [cb] - Gets called once the underlying
  * websocket is closed. Arguments: error, code, message.
  *
  * @see {@link http://goo.gl/6nC1xs|WS Event: "close"}
  *
  */
-Runtime.prototype.close = function(callback) {
+Runtime.prototype.close = function(cb) {
   var runtime = this;
-  var deferred = new Deferred(callback);
+  var deferred = new Deferred(cb);
 
   runtime
   ._getProxyConnection()
@@ -115,15 +114,14 @@ Runtime.prototype.close = function(callback) {
  * in the service (such as number of return values).  It could either be
  * passed in as a properties object or a string that is the name of a
  * service that was defined in the idl files that the server knows about.
- * @param {function} callback if provided, the function will be called on
+ * @param {function} cb if provided, the function will be called on
  * completion. The only argument is an error if there was one.
  * @return {Promise} Promise to be called when serve completes or fails
  * the endpoint address of the server will be returned as the value of promise
  */
-Runtime.prototype.serve = function(name, serviceObject, serviceMetadata,
-    callback) {
+Runtime.prototype.serve = function(name, serviceObject, serviceMetadata, cb) {
   var server = this._getServer();
-  return server.serve(name, serviceObject, serviceMetadata, callback);
+  return server.serve(name, serviceObject, serviceMetadata, cb);
 };
 
 /**

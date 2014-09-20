@@ -167,14 +167,14 @@ Namespace.prototype._resolveLoop = function(curr, last, depth, handleErrors) {
  * resolveToMountTable resolves a veyron name to the terminal name of the
  * innermost mountable that owns the name.
  * @param {string} name The name to resolve.
- * @param {function} [callback] if given, this fuction will be called on
+ * @param {function} [cb] if given, this fuction will be called on
  * completion of the resolve.  The first argument will be an error if there
  * is one, and the second argument is a list of terminal names.
  * @return {Promise} A promise to a list of terminal names.
  */
-Namespace.prototype.resolveToMountTable = function(name, callback) {
+Namespace.prototype.resolveToMountTable = function(name, cb) {
   var names = this._rootNames(name);
-  var deferred = new Deferred(callback);
+  var deferred = new Deferred(cb);
   var handleErrors = function(err, curr, last) {
     if (vError.equals(err, Namespace.errNoSuchNameRoot()) ||
         vError.equals(err, Namespace.errNotAMountTable())) {
@@ -195,14 +195,14 @@ Namespace.prototype.resolveToMountTable = function(name, callback) {
  * resolveMaximally resolves a veyron name as far as it can, whether the
  * target is a mount table or not.
  * @param {string} name The name to resolve.
- * @param {function} [callback] if given, this fuction will be called on
+ * @param {function} [cb] if given, this fuction will be called on
  * completion of the resolve.  The first argument will be an error if there
  * is one, and the second argument is a list of terminal names.
  * @return {Promise} A promise to a list of terminal names.
  */
-Namespace.prototype.resolveMaximally = function(name, callback) {
+Namespace.prototype.resolveMaximally = function(name, cb) {
   var names = this._rootNames(name);
-  var deferred = new Deferred(callback);
+  var deferred = new Deferred(cb);
   var handleErrors = function(err, curr, last){
     if (vError.equals(err, Namespace.errNoSuchNameRoot()) ||
         vError.equals(err, Namespace.errNoSuchName()) ||

@@ -59,27 +59,27 @@ var cacheWithCallback = {
   set: function(key, value) {
     this.cacheMap[key] = value;
   },
-  get: function(key, $callback) {
+  get: function(key, $cb) {
     var val = this.cacheMap[key];
     if (val === undefined) {
-      $callback('unknown key');
+      $cb('unknown key');
     } else {
-      $callback(null, val);
+      $cb(null, val);
     }
   } ,
-  multiGet: function($callback, $stream) {
+  multiGet: function($cb, $stream) {
     $stream.on('end', function close() {
-      $callback(null);
+      $cb(null);
     });
     $stream.on('error', function error(e) {
-      $callback(e);
+      $cb(e);
     });
     var self = this;
     $stream.on('data', function(key) {
       if (key !== null) {
         var val = self.cacheMap[key];
         if (val === undefined) {
-          $callback(new Error('unknown key'));
+          $cb(new Error('unknown key'));
         }
         $stream.write(val);
       }

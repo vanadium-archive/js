@@ -36,9 +36,9 @@ describe('server/context_injection.js: Service function in JS', function() {
         $context.remoteId._id = undefined;
         return $context;
       },
-      getContextMixedWithNormalArgs: function(a1, $context, a2, $callback, a3) {
+      getContextMixedWithNormalArgs: function(a1, $context, a2, $cb, a3) {
         $context.remoteId._id = undefined;
-        $callback(null,
+        $cb(null,
           {a1: a1,
            context: $context,
            a2: a2,

@@ -5,7 +5,7 @@ var config = {
   wspr: 'http://localhost:' + port
 };
 
-test('runtime.close(callback)', function(assert) {
+test('runtime.close(cb)', function(assert) {
   veyron.init(config, oninit);
 
   function oninit(err, runtime) {

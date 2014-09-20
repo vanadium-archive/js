@@ -119,12 +119,12 @@ Service.prototype.spawn = function(args, options) {
 
 // A quick wrapper for short run execs, useful for non-deamons like the
 // identity command.
-Service.prototype.exec = function(command, callback) {
+Service.prototype.exec = function(command, cb) {
   var service = this;
 
   service
-  .on('error', callback.bind(service))
-  .on('spawn', callback.bind(service, null))
+  .on('error', cb.bind(service))
+  .on('spawn', cb.bind(service, null))
   .spawn(command.split(' '));
 };
 

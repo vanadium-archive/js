@@ -21,9 +21,9 @@ function Deferred(cb) {
   if (cb) {
     // Convert back to callback-based API.
     //
-    // This must be a .done() and not a .then().  Errors thrown inside of a
-    // .then() callback are wrapped in a try/catch, whereas errors thrown inside
-    // of a .done() callback will be thrown as an error.
+    // Note, this must be a .done() and not a .then().  Errors thrown inside of
+    // a .then() callback are wrapped in a try/catch, whereas errors thrown
+    // inside of a .done() callback will be thrown as an error.
     deferred.promise.done(
         function (value) { cb(null, value); },
         function (err) { cb(err); }

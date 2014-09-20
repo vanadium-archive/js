@@ -113,38 +113,37 @@ Server.prototype._getAndValidateMetadata = function(serviceObject,
  * in the service (such as number of return values).  It could either be
  * passed in as a properties object or a string that is the name of a
  * service that was defined in the idl files that the server knows about.
- * @param {function} callback if provided, the function will be called on
+ * @param {function} cb if provided, the function will be called on
  * completion. The only argument is an error if there was one.
  * @return {Promise} Promise to be called when serve completes or fails
  * the endpoint address of the server will be returned as the value of promise
  */
-Server.prototype.serve = function(name, serviceObject,
-    serviceMetadata, callback) {
-  if (!callback && typeof(serviceMetadata) === 'function') {
-    callback = serviceMetadata;
+Server.prototype.serve = function(name, serviceObject, serviceMetadata, cb) {
+  if (!cb && typeof(serviceMetadata) === 'function') {
+    cb = serviceMetadata;
     serviceMetadata = null;
   }
 
   var err = this._getAndValidateMetadata(serviceObject, serviceMetadata);
   if (err) {
-    var def = new Deferred(callback);
+    var def = new Deferred(cb);
     def.reject(err);
     return def.promise;
   }
 
-  return this._router.serve(name, this, callback);
+  return this._router.serve(name, this, cb);
 };
 
 /**
  * Stop gracefully stops all services on this Server.
  * New calls are rejected, but any in-flight calls are allowed to complete.
  * All published named are unmounted.
- * @param {function} callback if provided, the function will be called on
+ * @param {function} cb if provided, the function will be called on
  * completion. The only argument is an error if there was one.
  * @return {Promise} Promise to be called when stop service completes or fails
  */
-Server.prototype.stop = function(callback) {
-  return this._router.stopServer(this, callback);
+Server.prototype.stop = function(cb) {
+  return this._router.stopServer(this, cb);
 };
 
 /**

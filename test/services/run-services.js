@@ -146,12 +146,12 @@ Run.prototype.add = function(name) {
   return s;
 };
 
-Run.prototype.stop = function (callback) {
-  callback = callback || function(){};
+Run.prototype.stop = function (cb) {
+  cb = cb || function(){};
 
   var run = this;
 
-  run.on('stop', callback);
+  run.on('stop', cb);
 
   if (run.is('stopping')) {
     return;

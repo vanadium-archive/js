@@ -30,6 +30,7 @@ test_out/veyron.test.specs.js: $(JS_SPEC_TESTS) | $(JS_SRC_FILES) test_out node_
 test_out/veyron.test.integration.js: $(JS_INTEGRATION_TESTS) | $(JS_SRC_FILES) test_out node_modules
 	browserify $^ --debug --outfile $@
 
+# NOTE(sadovsky): Switching to "jshint ." reveals tons of real lint errors.
 lint: node_modules
 	jshint src/ test/
 
@@ -41,8 +42,8 @@ test: lint dependency-check test_out/veyron.test.specs.js test_out/veyron.test.i
 
 test-new: test-unit test-integration
 
-# TODO(jasoncampbell): check that browser tests run headlessly on both xvfb
-# enabaled machines and OSX.
+# TODO(jasoncampbell): check that browser tests run headlessly on both
+# xvfb-enabled machines and OS X.
 test-unit:
 	prova test/unit/test-*.js
 	prova test/unit/test-*.js --browser --launch chrome --quit

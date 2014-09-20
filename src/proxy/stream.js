@@ -98,23 +98,23 @@ Stream.prototype._queueRead = function(object) {
  * Writes an object to the stream.
  * @param {*} chunk The data to write to the stream.
  * @param {null} encoding ignored for object streams.
- * @param {function} callback if set, the function to call when the write
+ * @param {function} cb if set, the function to call when the write
  * completes.
  * @return {boolean} Returns false if the write buffer is full.
  */
-Stream.prototype.write = function(chunk, encoding, callback) {
+Stream.prototype.write = function(chunk, encoding, cb) {
   var object = {
     id: this.flowId,
     data: JSON.stringify(chunk),
     type: MessageType.STREAM_VALUE
   };
-  return Duplex.prototype.write.call(this, object, encoding, callback);
+  return Duplex.prototype.write.call(this, object, encoding, cb);
 };
 
-Stream.prototype._write = function(chunk, encoding, callback) {
+Stream.prototype._write = function(chunk, encoding, cb) {
   this.webSocketPromise.then(function(websocket) {
     websocket.send(JSON.stringify(chunk));
-    callback();
+    cb();
   });
 };
 
@@ -122,10 +122,10 @@ Stream.prototype._write = function(chunk, encoding, callback) {
  * Writes an optional object to the stream and ends the stream.
  * @param {*} chunk The data to write to the stream.
  * @param {null} encoding ignored for object streams.
- * @param {function} callback if set, the function to call when the write
+ * @param {function} cb if set, the function to call when the write
  * completes.
  */
-Stream.prototype.end = function(chunk, encoding, callback) {
+Stream.prototype.end = function(chunk, encoding, cb) {
   if (this.isClient) {
     if (chunk !== undefined) {
       this.write(chunk, encoding);
@@ -138,7 +138,7 @@ Stream.prototype.end = function(chunk, encoding, callback) {
     this.serverClose();
   }
 
-  Duplex.prototype.end.call(this, null, null, callback);
+  Duplex.prototype.end.call(this, null, null, cb);
 };
 
 module.exports = Stream;

@@ -36,8 +36,8 @@ describe('server/error_handling.js: Service in JS', function() {
       returnError: function() {
         return error;
       },
-      returnErrorInCallback: function($callback) {
-        $callback(error, null);
+      returnErrorInCallback: function($cb) {
+        $cb(error, null);
       },
       returnNamedError: function() {
         return namedError;

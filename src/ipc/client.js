@@ -152,22 +152,21 @@ function Client(proxyConnection) {
  * @param {string} name the veyron name of the service to bind to.
  * @param {object} optServiceSignature if set, javascript signature of methods
  * available in the remote service.
- * @param {function} [callback] if given, this function will be called on
- * completion of the bind.  The first argument will be an error if there is
- * one, and the second argument is an object with methods that perform rpcs to
- * service
+ * @param {function} [cb] if given, this function will be called on completion
+ * of the bind.  The first argument will be an error if there is one, and the
+ * second argument is an object with methods that perform rpcs to service
  * methods.
  * @return {Promise} An object with methods that perform rpcs to service methods
  */
-Client.prototype.bindTo = function(name, optServiceSignature, callback) {
+Client.prototype.bindTo = function(name, optServiceSignature, cb) {
   var self = this;
 
   if (typeof optServiceSignature === 'function') {
-    callback = optServiceSignature;
+    cb = optServiceSignature;
     optServiceSignature = undefined;
   }
 
-  var def = new Deferred(callback);
+  var def = new Deferred(cb);
   var serviceSignaturePromise;
 
   if (optServiceSignature !== undefined) {

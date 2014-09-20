@@ -1,5 +1,5 @@
 /**
- *  @fileoverview Public API and entry point to the Veyron API
+ *  @fileoverview Public Veyron API.
  */
 
 var Runtime = require('./runtime/runtime');

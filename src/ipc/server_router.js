@@ -161,7 +161,7 @@ Router.prototype.handleRequest = function(messageId, request) {
 
   // Create callback to pass to the function, if it is requested.
   var finished = false;
-  var cb = function callback(e, v) {
+  var cb = function cb(e, v) {
     if (finished) {
       return;
     }
@@ -172,7 +172,7 @@ Router.prototype.handleRequest = function(messageId, request) {
 
   var injections = {
     $stream: new Stream(messageId, this._proxy.senderPromise, false),
-    $callback: cb,
+    $cb: cb,
     $context: context,
     $suffix: context.suffix,
     $name: context.name,
@@ -198,7 +198,7 @@ Router.prototype.handleRequest = function(messageId, request) {
   // Normalize result to be a promise
   var resultPromise = Promise.resolve(result);
 
-  if (variables.indexOf('$callback') !== -1) {
+  if (variables.indexOf('$cb') !== -1) {
     // The callback takes care of sending the result, so we don't use the
     // promises.
     return;
@@ -292,13 +292,13 @@ Router.prototype.sendResult = function(messageId, name, value, err, metadata) {
  * @param {string} name Name to serve under
  * @param {Veyron.Server} The server who will handle the requests for this
  * name.
- * @param {function} [callback] If provided, the function will be called when
+ * @param {function} [cb] If provided, the function will be called when
  * serve completes.  The first argument passed in is the error if there
  * was any and the second argument is the endpoint.
  * @return {Promise} Promise to be called when serve completes or fails
  * the endpoint string of the server will be returned as the value of promise
  */
-Router.prototype.serve = function(name, server, callback) {
+Router.prototype.serve = function(name, server, cb) {
   vLog.info('Serving under the name: ', name);
 
   var messageJSON = {
@@ -309,7 +309,7 @@ Router.prototype.serve = function(name, server, callback) {
 
   this._servers[server.id] = server;
 
-  var def = new Deferred(callback);
+  var def = new Deferred(cb);
   var message = JSON.stringify(messageJSON);
   var id = this._proxy.id;
   this._proxy.id += 2;
@@ -323,14 +323,14 @@ Router.prototype.serve = function(name, server, callback) {
 /**
  * Sends a stop server request to jspr.
  * @param {Server} server Server object to stop.
- * @param {function} callback if provided, the function will be called on
+ * @param {function} cb if provided, the function will be called on
  * completion. The only argument is an error if there was one.
  * @return {Promise} Promise to be called when stop service completes or fails
  */
-Router.prototype.stopServer = function(server, callback) {
+Router.prototype.stopServer = function(server, cb) {
   var self = this;
 
-  var def = new Deferred(callback);
+  var def = new Deferred(cb);
   var id = this._proxy.id;
   this._proxy.id += 2;
   var handler = new SimpleHandler(def, this._proxy, id);
@@ -345,4 +345,3 @@ Router.prototype.stopServer = function(server, callback) {
 
 
 module.exports = Router;
-
