@@ -12,7 +12,9 @@ var MessageType = {
   STOP: 6, // Request to stop a server
   BLESS: 8, // Blesses an identity
   UNLINK_ID: 9, // Unlinks an identity
-  NEW_ID: 10
+  NEW_ID: 10,  // Creates a new public id for javascript.  This is only used
+               // by tests.
+  LOOKUP_RESPONSE: 11, // Response from a lookup call to Javacript.
 };
 
 module.exports = MessageType;

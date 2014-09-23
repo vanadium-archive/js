@@ -74,8 +74,7 @@ idlHelper.ServiceWrapper = function(service, extraMetadata) {
   extraMetadata = extraMetadata || {};
 
   for (var methodName in service) {
-    if (service.hasOwnProperty(methodName) &&
-        methodName.length > 0 && methodName[0] !== '_') {
+    if (methodName.length > 0 && methodName[0] !== '_') {
       if (methodName[0] >= 'A' && methodName[0] <= 'Z') {
         var camelCaseName = methodName.charAt(0).toLowerCase() +
           methodName.slice(1);

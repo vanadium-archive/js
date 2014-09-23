@@ -2,6 +2,7 @@
  * @fileoverview common helper functions to quicker testing setup
  */
 var veyron = require('../src/veyron');
+var leafDispatcher = require('../src/ipc/leaf_dispatcher');
 
 // Our JSHint config marks TestHelper as a read-only global, but this is the
 // file where we initialize TestHelper, so here we allow writes.
@@ -27,7 +28,8 @@ TestHelper.badConfig = {
 TestHelper.serveAndBindService = function(service, name, metadata) {
   return veyron.init(TestHelper.veyronConfig).then(function(rt){
     var servingName = 'integration/tests/' + name;
-    return rt.serve(servingName, service, metadata).then(function() {
+    var dispatcher = leafDispatcher(service, metadata);
+    return rt.serve(servingName, dispatcher).then(function() {
       return rt.bindTo(servingName);
     }).then(function(s) {
       return s;

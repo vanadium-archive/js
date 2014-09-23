@@ -74,7 +74,7 @@ Proxy.prototype.process = function(message) {
       vLog.warn('Dropping message for unknown invoke payload ' + payload.type);
       return;
     }
-    handler.handleRequest(message.id, payload.message);
+    handler.handleRequest(message.id, payload.type, payload.message);
   } else {
     handler.handleResponse(payload.type, payload.message);
   }

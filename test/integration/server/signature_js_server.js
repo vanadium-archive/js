@@ -12,6 +12,7 @@
 
 var veyron = require('../../../src/veyron');
 var TestHelper = require('../../test_helper');
+var leafDispatcher = require('../../../src/ipc/leaf_dispatcher');
 
 describe('server/signature_js_server.js: ' +
   'Signature, when service is in JS getServiceSignature', function() {
@@ -47,8 +48,9 @@ describe('server/signature_js_server.js: ' +
         multiGet: function($stream) {}
       };
 
+      var dispatcher = leafDispatcher(cache);
       // Serve cache service
-      rt.serve('myCache/Cache', cache).then(function(endpoint) {
+      rt.serve('myCache/Cache', dispatcher).then(function(endpoint) {
         // Bind to cache service
         rt.bindTo('myCache/Cache').then(function(serviceObject) {
           return serviceObject.signature();

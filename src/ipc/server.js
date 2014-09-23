@@ -14,9 +14,10 @@
  */
 
 var Deferred = require('./../lib/deferred');
+var Promise = require('./../lib/promise');
 var IdlHelper = require('./../idl/idl');
-var vError = require('./../lib/verror');
 var ServiceWrapper = IdlHelper.ServiceWrapper;
+var vLog = require('./../lib/vlog');
 
 var nextServerID = 1; // The ID for the next server.
 
@@ -32,67 +33,29 @@ function Server(router) {
   }
 
   this._router = router;
+  this._handle = 0;
   this.id = nextServerID++;
-  this.serviceObject = null;
-  this._knownServiceDefinitions = {};
+  this.dispatcher = null;
+  this.serviceObjectHandles = {};
 }
 
 /**
- * addIDL adds an IDL file to the set of definitions known by the server.
- * Services defined in IDL files passed into this method can be used to
- * describe the interface exported by a serviceObject passed into register.
- * @param {object} updates the output of the vdl tool on an idl.
+ * A function that returns the service object for a suffix/method pair.
+ * @callback Lookup
+ * @param {string} suffix the suffix for the call
+ * @param {string} method the method for the call
+ * @param {Lookup-callback} cb the callback to call when the dispatch is
+ * complete
+ * @return {*} either the ServiceWrapper object to handle the method call or
+ * a Promise that will be resolved the service callback
  */
-Server.prototype.addIDL = function(updates) {
-  var prefix = updates.package;
-  for (var key in updates) {
-    if (key[0] === key[0].toUpperCase() && updates.hasOwnProperty(key)) {
-      this._knownServiceDefinitions[prefix + '.' + key] = updates[key];
-    }
-  }
-};
 
-// Returns an error if the validation of metadata failed.
-Server.prototype._getAndValidateMetadata = function(serviceObject,
-    serviceMetadata) {
-  var shouldCheckDefinition = false;
-  if (typeof(serviceMetadata) === 'string') {
-    serviceMetadata = [serviceMetadata];
-  }
-
-  if (Array.isArray(serviceMetadata)) {
-    shouldCheckDefinition = true;
-    var serviceDefinitions = {};
-
-    for (var i = 0; i < serviceMetadata.length; i++) {
-      var key = serviceMetadata[i];
-      var object = this._knownServiceDefinitions[key];
-      if (!object) {
-        return new vError.NoExistError('unknown service ' + key);
-      }
-      // Merge the results into the single definitions object.
-      for (var k in object) {
-        if (object.hasOwnProperty(k)) {
-          serviceDefinitions[k] = object[k];
-        }
-      }
-    }
-    serviceMetadata = serviceDefinitions;
-  }
-
-  var wrapper = new ServiceWrapper(serviceObject, serviceMetadata);
-
-  if (shouldCheckDefinition) {
-    var err2 = wrapper.validate(serviceMetadata);
-    if (err2) {
-      return err2;
-    }
-  }
-
-  this.serviceObject = wrapper;
-
-  return null;
-};
+/**
+ * Callback passed into Lookup
+ * @callback Lookup-callback
+ * @param {Error} err an error if one occurred
+ * @param {ServiceWrapper} object the object that will handle the method call
+ */
 
 /**
  * Serve serves the given service object under the given name.  It will
@@ -101,36 +64,22 @@ Server.prototype._getAndValidateMetadata = function(serviceObject,
  * in the mount table's name tree the new services will appear.
  *
  * To serve names of the form "mymedia/*" make the calls:
- * serve("mymedia", myService);
+ * serve("mymedia", dispatcher);
 
  * serve may be called multiple times to serve the same service under
  * multiple names.  If different objects are given on the different calls
  * it is considered an error.
  *
  * @param {string} name Name to serve under
- * @param {Object} serviceObject service object to serve
- * @param {*} serviceMetadata if provided a set of metadata for functions
- * in the service (such as number of return values).  It could either be
- * passed in as a properties object or a string that is the name of a
- * service that was defined in the idl files that the server knows about.
- * @param {function} cb if provided, the function will be called on
+ * @param {Lookup} lookup a function that will take in the suffix
+ * and the method to be called and return the service object for that suffix.
+ * @param {function} cbif provided, the function will be called on
  * completion. The only argument is an error if there was one.
  * @return {Promise} Promise to be called when serve completes or fails
  * the endpoint address of the server will be returned as the value of promise
  */
-Server.prototype.serve = function(name, serviceObject, serviceMetadata, cb) {
-  if (!cb && typeof(serviceMetadata) === 'function') {
-    cb = serviceMetadata;
-    serviceMetadata = null;
-  }
-
-  var err = this._getAndValidateMetadata(serviceObject, serviceMetadata);
-  if (err) {
-    var def = new Deferred(cb);
-    def.reject(err);
-    return def.promise;
-  }
-
+Server.prototype.serve = function(name, lookup, cb) {
+  this.dispatcher = lookup;
   return this._router.serve(name, this, cb);
 };
 
@@ -146,13 +95,84 @@ Server.prototype.stop = function(cb) {
   return this._router.stopServer(this, cb);
 };
 
-/**
- * Generates an IDL wire description for all the registered services
- * @return {Object.<string, Object>} map from service name to idl wire
- * description
+/*
+ * Returns the service that maps to the handle that is passed in
+ * @param {Number} handle the handle for the service
+ * @return {Object} the service object for the handle.
  */
-Server.prototype.generateIdlWireDescription = function() {
-  return IdlHelper.generateIdlWireDescription(this.serviceObject);
+Server.prototype.getServiceForHandle = function(handle) {
+  var result = this.serviceObjectHandles[handle];
+  if (result && !result._cacheObject) {
+    delete this.serviceObjectHandles[handle];
+  }
+
+  return result;
+};
+
+/*
+ * Handles the result of lookup and returns an error if there was any.
+ */
+Server.prototype._handleLookupResult = function(wrapper) {
+  if (!(wrapper instanceof ServiceWrapper)) {
+    return new Error('The result of lookup should be of type ServiceWrapper');
+  }
+  if (wrapper._handle !== undefined &&
+      !this.serviceObjectHandles[wrapper._handle]) {
+    return null;
+  }
+  wrapper._handle = this._handle;
+  this.serviceObjectHandles[wrapper._handle] = wrapper;
+  this._handle++;
+  return null;
+};
+
+/*
+ * Perform the lookup call to the user code on the suffix and method passed in.
+ */
+Server.prototype._handleLookup = function(suffix, method) {
+  var self = this;
+  var def = new Deferred();
+  function cb(e, v) {
+    if (e) {
+      def.reject(e);
+      return;
+    }
+    var err = self._handleLookupResult(v);
+    if (err) {
+      def.reject(err);
+    } else {
+      def.resolve(v);
+    }
+  }
+
+  var result;
+  try {
+    result = this.dispatcher(suffix, method, cb);
+  } catch (e) {
+    def.reject(e);
+    vLog.error(e);
+    return def.promise;
+  }
+
+  function handleResult(v) {
+    var err = self._handleLookupResult(v);
+    if (err) {
+     return Promise.reject(err);
+    }
+    return Promise.resolve(v);
+  }
+
+  if (result === undefined) {
+    return def.promise.then(handleResult);
+  }
+
+  if (result instanceof Error) {
+    def.reject(result);
+    return def.promise;
+  }
+
+  var promise = Promise.resolve(result);
+  return promise.then(handleResult);
 };
 
 /**

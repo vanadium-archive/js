@@ -13,6 +13,7 @@
 var veyron = require('../../../src/veyron');
 var TestHelper = require('../../test_helper');
 var Deferred = require('../../../src/lib/deferred');
+var leafDispatcher = require('../../../src/ipc/leaf_dispatcher');
 var Promise = require('../../../src/lib/promise');
 
 var cacheWithPromises = {
@@ -102,8 +103,7 @@ function runJSClientServerTests(cacheDefinition, idl, serviceName) {
 
       var optArg;
       if (idl) {
-        optArg = serviceName;
-        rt.addIDL(idl);
+        optArg = idl[serviceName];
       } else {
         optArg = {
           set:{
@@ -112,7 +112,8 @@ function runJSClientServerTests(cacheDefinition, idl, serviceName) {
         };
       }
 
-      rt.serve('myCache/Cache', cacheDefinition, optArg).then(
+      var dispatcher = leafDispatcher(cacheDefinition, optArg);
+      rt.serve('myCache/Cache', dispatcher).then(
           function(endpoint) {
         expect(endpoint).to.exist;
         expect(endpoint).to.be.a('string');

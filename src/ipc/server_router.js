@@ -11,6 +11,8 @@ var Deferred = require('./../lib/deferred');
 var vLog = require('./../lib/vlog');
 var SimpleHandler = require('../proxy/simple_handler');
 var PublicId = require('../security/public');
+var vError = require('../lib/verror');
+var IdlHelper = require('./../idl/idl');
 
 
 var ServerStream = function(stream) {
@@ -41,6 +43,7 @@ var Router = function(proxy) {
   this._proxy = proxy;
   this._streamMap = {};
   proxy.addIncomingHandler(IncomingPayloadType.INVOKE_REQUEST, this);
+  proxy.addIncomingHandler(IncomingPayloadType.LOOKUP_REQUEST, this);
 };
 
 /**
@@ -88,6 +91,49 @@ Router.prototype.invokeMethod = function (receiver, method, args) {
   }
 };
 
+Router.prototype.handleRequest = function(messageId, type, request) {
+  switch (type) {
+    case IncomingPayloadType.INVOKE_REQUEST:
+      this.handleRPCRequest(messageId, request);
+      break;
+    case IncomingPayloadType.LOOKUP_REQUEST:
+      this.handleLookupRequest(messageId, request);
+      break;
+    default:
+      vLog.Error('Unknown request type ' + request.type);
+  }
+};
+
+Router.prototype.handleLookupRequest = function(messageId, request) {
+  var server = this._servers[request.serverID];
+  if (!server) {
+    var data = JSON.stringify({
+      err: new vError.ExistsError('unknown server')
+    });
+    this._proxy.sendRequest(data, MessageType.LOOKUP_RESPONSE,
+        null, messageId);
+    return;
+  }
+
+  var self = this;
+  server._handleLookup(request.suffix, request.method).then(function(value) {
+    var data = {
+      signature: IdlHelper.generateIdlWireDescription(value),
+      hasAuthorizer: false,
+      handle: value._handle,
+      label: 3
+    };
+    self._proxy.sendRequest(JSON.stringify(data), MessageType.LOOKUP_RESPONSE,
+        null, messageId);
+  }).catch(function(err) {
+    var data = JSON.stringify({
+      err: ErrorConversion.toStandardErrorStruct(err),
+    });
+    self._proxy.sendRequest(data, MessageType.LOOKUP_RESPONSE,
+        null, messageId);
+  });
+};
+
 /**
  * Handles incoming requests from the server to invoke methods on registered
  * services in JavaScript.
@@ -99,7 +145,7 @@ Router.prototype.invokeMethod = function (receiver, method, args) {
  *   args: [] // Array of positional arguments to be passed into the method
  * }
  */
-Router.prototype.handleRequest = function(messageId, request) {
+Router.prototype.handleRPCRequest = function(messageId, request) {
   var err;
   var server = this._servers[request.serverId];
   if (!server) {
@@ -108,10 +154,10 @@ Router.prototype.handleRequest = function(messageId, request) {
     return;
   }
 
-  var serviceWrapper = server.serviceObject;
+  var serviceWrapper = server.getServiceForHandle(request.handle);
   if (!serviceWrapper) {
     err = new Error('No service found');
-    this.sendResulttResult(messageId, request.method, null, err);
+    this.sendResult(messageId, request.method, null, err);
     return;
   }
 
@@ -304,7 +350,6 @@ Router.prototype.serve = function(name, server, cb) {
   var messageJSON = {
     name: name,
     serverId: server.id,
-    service: server.generateIdlWireDescription()
   };
 
   this._servers[server.id] = server;

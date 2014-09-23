@@ -12,6 +12,7 @@
 
 var veyron = require('../../../src/veyron');
 var TestHelper = require('../../test_helper');
+var leafDispatcher = require('../../../src/ipc/leaf_dispatcher');
 
 describe('server/context_injection.js: Service function in JS', function() {
   var expectedContext = {
@@ -56,7 +57,7 @@ describe('server/context_injection.js: Service function in JS', function() {
 
       rt = _rt;
 
-      rt.serve('a/b', service).then(function() {
+      rt.serve('a/b', leafDispatcher(service)).then(function() {
         done();
       }).catch(function(e) {
         done(e);
