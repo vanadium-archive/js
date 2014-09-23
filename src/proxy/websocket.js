@@ -2,7 +2,7 @@
  * @fileoverview WebSocket client implementation
  */
 
-var WebSocket = require('./../lib/websocket');
+var WebSocket = require('ws');
 var Deferred = require('./../lib/deferred');
 var vLog = require('./../lib/vlog');
 var Proxy = require('./proxy');
@@ -81,6 +81,24 @@ ProxyConnection.prototype.getWebSocket = function() {
   };
 
   return deferred.promise;
+};
+
+ProxyConnection.prototype.close = function(cb) {
+  var proxy = this;
+  var deferred = new Deferred(cb);
+
+  proxy.closing = true;
+
+  proxy
+  .getWebSocket()
+  .then(close);
+
+  return deferred.promise;
+
+  function close(websocket) {
+    websocket.onclose = deferred.resolve;
+    websocket.close();
+  }
 };
 
 /**

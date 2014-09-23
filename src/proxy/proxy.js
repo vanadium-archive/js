@@ -6,7 +6,6 @@
 var MessageType = require('./message_type');
 var IncomingPayloadType = require('./incoming_payload_type');
 var Deferred = require('./../lib/deferred');
-var Promise = require('../lib/promise');
 var vLog = require('./../lib/vlog');
 var SimpleHandler = require('./simple_handler');
 
@@ -80,7 +79,7 @@ Proxy.prototype.process = function(message) {
   }
 };
 
-Proxy.prototype.dequeue = function(def, id) {
+Proxy.prototype.dequeue = function(id) {
   delete this.outstandingRequests[id];
 };
 
@@ -97,30 +96,37 @@ Proxy.prototype.nextId = function() {
  * @return {Promise} Signature of the service in JSON format
  */
 Proxy.prototype.getServiceSignature = function(name) {
-  var cachedEntry = this.bindCache[name];
-  var now = new Date();
-  if (cachedEntry && now - cachedEntry.fetched < BIND_CACHE_TTL) {
-    return Promise.resolve(cachedEntry.signature);
+  var proxy = this;
+  var deferred = new Deferred();
+  var now = Date.now;
+
+  // TODO(jasoncampbell): Cache logic should be isolated elsewhere and
+  // attached to the Proxy instance. The async-cache module with maxAge set
+  // to BIND_CACHE_TTL would be a good fit here:
+  // https://www.npmjs.org/package/async-cache
+  var cache = this.bindCache[name];
+
+  if (cache && (now() - cache.fetched < BIND_CACHE_TTL)) {
+    deferred.resolve(cache.signature);
+    return deferred.promise;
   }
 
-  var def = new Deferred();
-
-  var self = this;
-  def.promise.then(function(signature) {
-    self.bindCache[name] = {
+  deferred.promise.then(function(signature) {
+    proxy.bindCache[name] = {
       signature: signature,
-      fetched: now
+      fetched: now()
     };
   });
+
   var messageJSON = { name: name };
   var message = JSON.stringify(messageJSON);
 
-  var id = this.nextId();
-  // Send the get signature request to the proxy
-  var handler = new SimpleHandler(def, this, id);
-  this.sendRequest(message, MessageType.SIGNATURE, handler, id);
+  var id = proxy.nextId();
+  var handler = new SimpleHandler(deferred, proxy, id);
 
-  return def.promise;
+  proxy.sendRequest(message, MessageType.SIGNATURE, handler, id);
+
+  return deferred.promise;
 };
 
 
@@ -153,10 +159,14 @@ Proxy.prototype.sendRequest = function(message, type, handler, id) {
   var self = this;
   this.senderPromise.then(function(sender) {
     sender.send(body);
-  }).catch(function(e) {
+  }).catch(function(err) {
+    // TODO(jasoncampbell): Add tests that cover this case, also sender.send
+    // above is async and will break out of the try/catch promise mechanism
+    // in node.
     var h = self.outstandingRequests[id];
+
     if (h) {
-      h.handleResponse(IncomingPayloadType.ERROR_RESPONSE, e);
+      h.handleResponse(IncomingPayloadType.ERROR_RESPONSE, err);
       delete self.outstandingRequests[id];
     }
   });
