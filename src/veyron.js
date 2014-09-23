@@ -2,11 +2,12 @@
  *  @fileoverview Public Veyron API.
  */
 
-var Runtime = require('./runtime/runtime');
-var Deferred = require('./lib/deferred');
-var vlog = require('./lib/vlog');
 var extend = require('xtend');
 var isBrowser = require('is-browser');
+
+var Deferred = require('./lib/deferred');
+var Runtime = require('./runtime/runtime');
+var vlog = require('./lib/vlog');
 
 var defaults = {
   logLevel: vlog.level,
@@ -18,10 +19,11 @@ var defaults = {
  * Exports
  */
 module.exports = {
+  errors: require('./lib/verror'),
   init: init,
   logLevels: require('./lib/vlog').levels,
   namespaceUtil: require('./namespace/util'),
-  errors: require('./lib/verror')
+  Promise: require('./lib/promise')
 };
 
 /**
