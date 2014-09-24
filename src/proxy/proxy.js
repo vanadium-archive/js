@@ -80,7 +80,7 @@ Proxy.prototype.process = function(message) {
   }
 };
 
-Proxy.prototype.dequeue = function(def, id) {
+Proxy.prototype.dequeue = function(id) {
   delete this.outstandingRequests[id];
 };
 

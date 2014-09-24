@@ -26,7 +26,10 @@ Handler.prototype.handleResponse = function(type, message) {
       this._def.resolve(message);
       break;
     case IncomingPayloadType.ERROR_RESPONSE:
-      var err = ErrorConversion.toJSerror(message);
+      var err = message;
+      if (!(err instanceof Error)) {
+	      err = ErrorConversion.toJSerror(message);
+      }
       this._def.reject(err);
       break;
     default:
