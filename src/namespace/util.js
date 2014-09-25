@@ -136,9 +136,29 @@ var convertToTerminalName = function(name) {
   }
 };
 
+/**
+  * Strips the basename off the rest of the given veyron name.
+  * @param {string} The veyron name.
+  * @return {string} The string prefixing the given name's basename.
+  */
+var stripBasename = function(name) {
+  return name.substring(0, name.lastIndexOf('/') + 1);
+};
+
+/**
+  * Gets the basename of the given veyron name.
+  * @param {string} The veyron name.
+  * @return {string} The basename of the given name
+  */
+var basename = function(name) {
+  return name.substring(name.lastIndexOf('/') + 1);
+};
+
 module.exports = {
   join: join,
   isTerminal: isTerminal,
   isRooted: isRooted,
-  convertToTerminalName: convertToTerminalName
+  convertToTerminalName: convertToTerminalName,
+  stripBasename: stripBasename,
+  basename: basename
 };

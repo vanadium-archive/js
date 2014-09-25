@@ -4,11 +4,11 @@
 var names = require('../../../../src/namespace/util');
 
 describe('Joining names', function() {
-  function JoinTest(prefix, suffix, output) {
-    this.message = 'On ' + prefix + ' and ' + suffix +
+  function JoinTest(prefix, Basename, output) {
+    this.message = 'On ' + prefix + ' and ' + Basename +
       ' should return ' + output;
     this.run = function run(){
-      var result = names.join(prefix, suffix);
+      var result = names.join(prefix, Basename);
       expect(result).to.equal(output);
     };
   }
@@ -140,6 +140,60 @@ describe('Rooted', function() {
 		new RootedTest('//a', false),
 		new RootedTest('//b', false),
 		new RootedTest('//' + ep, false),
+  ];
+  for (var i = 0; i < tests.length; i++) {
+    var test = tests[i];
+    it(test.message, test.run);
+  }
+});
+
+describe('Strip Basename Tests', function() {
+  function StripBasenameTest(input, output) {
+    this.message = 'Should return ' + output +
+      ' for ' + input;
+    this.run = function run(){
+      var result = names.stripBasename(input);
+      expect(result).to.equal(output);
+    };
+  }
+
+  var tests = [
+    new StripBasenameTest('/', '/'),
+    new StripBasenameTest('/a', '/'),
+    new StripBasenameTest('/a/', '/a/'),
+    new StripBasenameTest('/a/b', '/a/'),
+    new StripBasenameTest('/a/b/', '/a/b/'),
+    new StripBasenameTest('a', ''),
+    new StripBasenameTest('a/', 'a/'),
+    new StripBasenameTest('a/b', 'a/'),
+    new StripBasenameTest('a/b/', 'a/b/'),
+  ];
+  for (var i = 0; i < tests.length; i++) {
+    var test = tests[i];
+    it(test.message, test.run);
+  }
+});
+
+describe('Basename Tests', function() {
+  function BasenameTest(input, output) {
+    this.message = 'Should return ' + output +
+      ' for ' + input;
+    this.run = function run(){
+      var result = names.basename(input);
+      expect(result).to.equal(output);
+    };
+  }
+
+  var tests = [
+    new BasenameTest('/', ''),
+    new BasenameTest('/a', 'a'),
+    new BasenameTest('/a/', ''),
+    new BasenameTest('/a/b', 'b'),
+    new BasenameTest('/a/b/', ''),
+    new BasenameTest('a', 'a'),
+    new BasenameTest('a/', ''),
+    new BasenameTest('a/b', 'b'),
+    new BasenameTest('a/b/', ''),
   ];
   for (var i = 0; i < tests.length; i++) {
     var test = tests[i];
