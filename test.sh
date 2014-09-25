@@ -9,6 +9,6 @@
 #
 #     find . -name 'test.sh' -exec \{\} \;
 #
-source "${VEYRON_ROOT}/environment/scripts/lib/run.sh"
+source "${VEYRON_ROOT}/scripts/lib/run.sh"
 
 run ./vgrunt
