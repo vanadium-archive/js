@@ -152,9 +152,10 @@ function Client(proxyConnection) {
  * @param {string} name the veyron name of the service to bind to.
  * @param {object} optServiceSignature if set, javascript signature of methods
  * available in the remote service.
- * @param {function} [cb] if given, this function will be called on completion
- * of the bind.  The first argument will be an error if there is one, and the
- * second argument is an object with methods that perform rpcs to service
+ * @param {function} [cb] if given, this function will be called on
+ * completion of the bind.  The first argument will be an error if there is
+ * one, and the second argument is an object with methods that perform rpcs to
+ * service
  * methods.
  * @return {Promise} An object with methods that perform rpcs to service methods
  */
@@ -185,18 +186,52 @@ Client.prototype.bindTo = function(name, optServiceSignature, cb) {
     var bindMethod = function(methodName) {
       var methodInfo = serviceSignature[methodName];
       var numOutParams = methodInfo.numOutArgs;
+
       boundObject[methodName] = function() {
         var args = Array.prototype.slice.call(arguments, 0);
-        var cb = null;
-        if (args.length === methodInfo.inArgs.length + 1) {
-          cb = args[args.length - 1];
-          args = args.slice(0, methodInfo.inArgs.length);
+        var callback;
+
+        for (var i = 0; i < args.length; i++) {
+          var isLast = (i + 1) === args.length;
+          var isFunction = typeof args[i] === 'function';
+
+          if (isFunction && isLast) {
+            callback = args[i];
+            args.splice(i, 1);
+          }
         }
-        if (args.length !== methodInfo.inArgs.length) {
-          throw new Error('Invalid number of arguments to "' +
-            methodName + '". Expected ' + methodInfo.inArgs.length +
-            ' but there were ' + args.length);
+
+        // TODO(jasoncampbell): This should probably be a more meaningful
+        // error with its own constructor so that it can be checked in a
+        // programatic way:
+        //
+        //     service
+        //     .foo('bar')
+        //     .catch(ArgumentsArityError, function(err) {
+        //       console.error('invalid number of arguments')
+        //     })
+        //
+        var expected = methodInfo.inArgs.length;
+        var actual = args.length;
+
+        if (actual !== expected) {
+          var message = [
+            'Invalid number of arguments to',
+            '"' + methodName + '".',
+            'Expected',
+            expected,
+            'but there were',
+            actual + '.'
+          ].join(' ');
+
+          var deferred = new Deferred(callback);
+          var error = new Error(message);
+
+          deferred.reject(error);
+
+          return deferred.promise;
         }
+
         var rpc = new OutstandingRPC({
            proxy: self._proxyConnection,
            name: name,
@@ -204,7 +239,8 @@ Client.prototype.bindTo = function(name, optServiceSignature, cb) {
            args: args,
            numOutParams: numOutParams,
            isStreaming: methodInfo.isStreaming
-        }, cb);
+        }, callback);
+
         return rpc.start();
       };
     };
@@ -216,8 +252,12 @@ Client.prototype.bindTo = function(name, optServiceSignature, cb) {
     }
 
     //Also stub out signature() on the bound object.
-    boundObject.signature = function() {
-      return Promise.resolve(serviceSignature);
+    boundObject.signature = function(callback) {
+      var deferred = new Deferred(callback);
+
+      deferred.resolve(serviceSignature);
+
+      return deferred.promise;
     };
 
     def.resolve(boundObject);
