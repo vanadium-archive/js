@@ -79,20 +79,10 @@ Runtime.prototype.bindTo = function(name, optServiceSignature, cb) {
  */
 Runtime.prototype.close = function(cb) {
   var runtime = this;
-  var deferred = new Deferred(cb);
 
-  runtime
+  return runtime
   ._getProxyConnection()
-  .getWebSocket()
-  .then(close)
-  .catch(deferred.reject);
-
-  return deferred.promise;
-
-  function close(websocket) {
-    websocket.onclose = deferred.resolve;
-    websocket.close();
-  }
+  .close(cb);
 };
 
 /**

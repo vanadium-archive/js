@@ -87,11 +87,16 @@ ProxyConnection.prototype.close = function(cb) {
   var proxy = this;
   var deferred = new Deferred(cb);
 
-  proxy.closing = true;
-
   proxy
   .getWebSocket()
-  .then(close);
+  .then(close, function(err) {
+    // TODO(jasoncampbell): Better error handling around websocket connection
+    // It's possible that the initial connection failed with
+    // "Error: getaddrinfo ENOTFOUND" Since there was not a
+    // connection to begin with in this case it can be considered
+    // successfully closed.
+    deferred.resolve();
+  });
 
   return deferred.promise;
 

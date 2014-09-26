@@ -15,7 +15,7 @@ var services = [
 
 var runner = run(services)
 .on('start', test)
-.on('error', exit)
+.on('error', crash)
 .start();
 
 process.on('SIGINT', stop);
@@ -49,28 +49,28 @@ function test() {
   // emitted multiple times (since multiple processes might share the same
   // stdio streams)
   prova.on('exit', function(code, signal) {
-    debug('test process exited');
-    stop();
+    debug('test process exited - code: %s, signal: %s', code, signal);
+    stop(null, code);
   });
 }
 
-function stop(err) {
+function stop(err, code) {
   runner.stop(function() {
+    debug('runner stopped, exiting: %s', code);
+
     // NOTE: `stop` can be called with an error that has already been logged
-    // via the stderr stream, exit is called below without the error to
-    // prevent double logging of errors in this case.
+    // via the stderr stream, process.exit() is called below without the
+    // error to prevent double logging of errors.
     if (err) {
-      exit();
+      process.exit(1);
+    } else {
+      process.exit(code);
     }
   });
 }
 
-function exit(err) {
-  debug('exiting...');
-
-  if (err) {
-    console.error(err.message);
-  }
+function crash(err) {
+  console.log(err.message);
 
   process.exit(1);
 }
