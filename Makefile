@@ -1,6 +1,27 @@
 PATH := node_modules/.bin:${VEYRON_ROOT}/environment/cout/node/bin:$(PATH)
 SHELL := /bin/bash -e -o pipefail
+
 .DEFAULT_GOAL := all
+
+UNAME := $(shell uname)
+PHANTOM := $(shell which phantomjs)
+BROWSER := chrome
+
+# For browser testing non Darwin machines get the --headless flag, this uses
+# xvfb underneath the hood (inside prova => launch-browser => node-headless).
+# To support headless browser running by default on OS X phantomjs will be
+# used instead of Google Chrome if it is installed.
+#
+# SEE: https://github.com/kesla/node-headless/
+ifneq ($(UNAME),Darwin)
+	HEADLESS := --headless
+endif
+
+ifdef PHANTOM
+	BROWSER := phantom
+endif
+
+BROWSER_OPTS := --browser --launch $(BROWSER) $(HEADLESS) --quit
 
 JS_SRC_FILES = $(shell find src -name "*.js")
 JS_SPEC_TESTS = test/test_helper.js $(shell find test/specs -name "*.js")
@@ -42,15 +63,13 @@ test: lint dependency-check test_out/veyron.test.specs.js test_out/veyron.test.i
 
 test-new: test-unit test-integration
 
-# TODO(jasoncampbell): check that browser tests run headlessly on both
-# xvfb-enabled machines and OS X.
-test-unit:
+test-unit: node_modules
 	prova test/unit/test-*.js
-	prova test/unit/test-*.js --browser --launch chrome --quit
+	prova test/unit/test-*.js $(BROWSER_OPTS)
 
-test-integration:
+test-integration: node_modules
 	node test/integration/runner.js test/integration/test-*.js
-	node test/integration/runner.js test/integration/test-*.js --browser --launch chrome --quit
+	node test/integration/runner.js test/integration/test-*.js $(BROWSER_OPTS)
 
 clean:
 	@$(RM) -fr docs/* logs/* test_out/* tmp node_modules npm-debug.log
