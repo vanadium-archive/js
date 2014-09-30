@@ -98,13 +98,6 @@ function getIdentity(authTimeoutMs, cb) {
   // Initialized below.
   var timeout, authRequestInterval;
 
-  function clearTimingEvents() {
-    // Stop asking for auth.
-    window.clearInterval(authRequestInterval);
-    // Cancel timeout timer.
-    window.clearTimeout(timeout);
-  }
-
   // Runs when the auth request succeeds.
   function handleAuthSuccess(data) {
     removeListeners();
@@ -119,7 +112,7 @@ function getIdentity(authTimeoutMs, cb) {
 
   // Runs when the extension receives the auth request.
   function handleAuthReceived() {
-    clearTimingEvents();
+    window.clearInterval(authRequestInterval);
   }
 
   // Runs when timeout occurs before getting 'auth:received' message.
@@ -132,7 +125,8 @@ function getIdentity(authTimeoutMs, cb) {
   }
 
   function removeListeners() {
-    clearTimingEvents();
+    window.clearInterval(authRequestInterval);
+    window.clearTimeout(timeout);
     contentScript.removeListener('auth:success', handleAuthSuccess);
     contentScript.removeListener('auth:error', handleAuthError);
   }
