@@ -15,6 +15,7 @@ var MessageType = {
   NEW_ID: 10,  // Creates a new public id for javascript.  This is only used
                // by tests.
   LOOKUP_RESPONSE: 11, // Response from a lookup call to Javacript.
+  AUTHORIZATION_RESPONSE: 12 // Response from an authorization call to JS.
 };
 
 module.exports = MessageType;

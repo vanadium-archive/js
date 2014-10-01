@@ -17,7 +17,7 @@ var DEFAULT_FLAGS = {
   log_dir: path.resolve('tmp/log') // jshint ignore:line
 };
 
-process.env.PATH += VEYRON_BINS.join(':');
+process.env.PATH += ':' + VEYRON_BINS.join(':');
 
 module.exports = Service;
 
@@ -139,7 +139,8 @@ Service.prototype.kill = function() {
 function notfound(name) {
   var message = 'Veyron binary not found: ' + name + '\n' +
       'Please run: \n' +
-      '  $VEYRON_ROOT/scripts/build/go install veyron... roadmap...';
+      '  $VEYRON_ROOT/scripts/build/go install veyron... roadmap... \n' +
+      ' path is ' + process.env.PATH;
 
   return new Error(message);
 }

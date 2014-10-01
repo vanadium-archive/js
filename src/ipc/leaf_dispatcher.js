@@ -13,10 +13,11 @@ var ServiceWrapper = IdlHelper.ServiceWrapper;
  * @param {object} metadata the metadata is an optional parameter that adds
  * annotations to the functions exported by the functions.  This is generally
  * created by running the vdl compiler.
+ * @param {Authorizer} authorizer the authorizer to use.
  * @return {function} a dispatcher function that will reuse the same service
  * object.
  */
-function createLeafDispatcher(serviceObject, metadata) {
+function createLeafDispatcher(serviceObject, metadata, authorizer) {
   var wrapper = new ServiceWrapper(serviceObject, metadata);
   if (metadata && metadata._validate) {
     var err = wrapper.validate(wrapper.metadata);
@@ -25,9 +26,11 @@ function createLeafDispatcher(serviceObject, metadata) {
     }
   }
 
-  wrapper._cacheObject = true;
   return function() {
-    return wrapper;
+    return {
+      service: wrapper,
+      authorizer: authorizer,
+    };
   };
 }
 

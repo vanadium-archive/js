@@ -13,6 +13,7 @@ var SimpleHandler = require('../proxy/simple_handler');
 var PublicId = require('../security/public');
 var vError = require('../lib/verror');
 var IdlHelper = require('./../idl/idl');
+var SecurityContext = require('../security/context.js');
 
 
 var ServerStream = function(stream) {
@@ -44,6 +45,7 @@ var Router = function(proxy) {
   this._streamMap = {};
   proxy.addIncomingHandler(IncomingPayloadType.INVOKE_REQUEST, this);
   proxy.addIncomingHandler(IncomingPayloadType.LOOKUP_REQUEST, this);
+  proxy.addIncomingHandler(IncomingPayloadType.AUTHORIZATION_REQUEST, this);
 };
 
 /**
@@ -99,9 +101,36 @@ Router.prototype.handleRequest = function(messageId, type, request) {
     case IncomingPayloadType.LOOKUP_REQUEST:
       this.handleLookupRequest(messageId, request);
       break;
+    case IncomingPayloadType.AUTHORIZATION_REQUEST:
+      this.handleAuthorizationRequest(messageId, request);
+      break;
     default:
-      vLog.Error('Unknown request type ' + request.type);
+      vLog.Error('Unknown request type ' + type);
   }
+};
+
+Router.prototype.handleAuthorizationRequest = function(messageId, request) {
+  var server = this._servers[request.serverID];
+  if (!server) {
+    var data = JSON.stringify({
+      err: new vError.ExistsError('unknown server')
+    });
+    this._proxy.sendRequest(data, MessageType.AUTHORIZATION_RESPONSE,
+        null, messageId);
+    return;
+  }
+  var router = this;
+  var securityContext = new SecurityContext(request.context, this._proxy);
+  server.handleAuthorization(request.handle, securityContext).then(function() {
+    router._proxy.sendRequest('{}', MessageType.AUTHORIZATION_RESPONSE, null,
+        messageId);
+  }).catch(function(e) {
+    var data = JSON.stringify({
+      err: ErrorConversion.toStandardErrorStruct(e)
+    });
+    router._proxy.sendRequest(data, MessageType.AUTHORIZATION_RESPONSE, null,
+        messageId);
+  });
 };
 
 Router.prototype.handleLookupRequest = function(messageId, request) {
@@ -117,9 +146,10 @@ Router.prototype.handleLookupRequest = function(messageId, request) {
 
   var self = this;
   server._handleLookup(request.suffix, request.method).then(function(value) {
+    var hasAuthorizer = (typeof value.authorizer === 'function');
     var data = {
-      signature: IdlHelper.generateIdlWireDescription(value),
-      hasAuthorizer: false,
+      signature: IdlHelper.generateIdlWireDescription(value.service),
+      hasAuthorizer: hasAuthorizer,
       handle: value._handle,
       label: 3
     };

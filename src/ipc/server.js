@@ -40,14 +40,25 @@ function Server(router) {
 }
 
 /**
+ * @typedef LookupResponse
+ * @type {Object}
+ * @property {ServiceWrapper} service The ServiceWrapper that will handle
+ * method call.
+ * @property {Authorizer} authorizer An Authorizer that will handle the
+ * authorization for the method call.  If null, then the default strict
+ * authorizer will be used.
+ */
+
+/**
  * A function that returns the service object for a suffix/method pair.
  * @callback Lookup
  * @param {string} suffix the suffix for the call
  * @param {string} method the method for the call
  * @param {Lookup-callback} cb the callback to call when the dispatch is
  * complete
- * @return {*} either the ServiceWrapper object to handle the method call or
- * a Promise that will be resolved the service callback
+ * @return {LookupResponse|Promise} either the LookupResponse object to
+ * handle the method call or a Promise that will be resolved the service
+ * callback.
  */
 
 /**
@@ -102,26 +113,65 @@ Server.prototype.stop = function(cb) {
  */
 Server.prototype.getServiceForHandle = function(handle) {
   var result = this.serviceObjectHandles[handle];
-  if (result && !result._cacheObject) {
-    delete this.serviceObjectHandles[handle];
+  delete this.serviceObjectHandles[handle];
+
+  return result.service;
+};
+
+/*
+ * Handles the authorization for an RPC.
+ * @param {Number} handle the handle for the authorizer
+ * @param {object} request the context of the authorization
+ * @return {Promise} a promise that will be fulfilled with the result.
+ */
+Server.prototype.handleAuthorization = function(handle, request) {
+  var handler = this.serviceObjectHandles[handle];
+  if (!handler || !handler.authorizer) {
+    return Promise.reject(new Error('Unknown handle ' + handle));
+  }
+  var server = this;
+  var def = new Deferred();
+  function cb(e) {
+    if (e) {
+      def.reject(e);
+      return;
+    }
+    def.resolve();
   }
 
-  return result;
+  var result;
+  try {
+    result = handler.authorizer(request, cb);
+  } catch (e) {
+    vLog.error(e);
+    return Promise.reject(e);
+  }
+
+  if (result === undefined) {
+    return def.promise;
+  }
+
+  if (result === null) {
+    return Promise.resolve();
+  }
+
+  if (result.then) {
+    return result;
+  }
+
+  return Promise.reject(result);
 };
 
 /*
  * Handles the result of lookup and returns an error if there was any.
  */
-Server.prototype._handleLookupResult = function(wrapper) {
-  if (!(wrapper instanceof ServiceWrapper)) {
+Server.prototype._handleLookupResult = function(object) {
+  if (!(object.service instanceof ServiceWrapper)) {
     return new Error('The result of lookup should be of type ServiceWrapper');
   }
-  if (wrapper._handle !== undefined &&
-      !this.serviceObjectHandles[wrapper._handle]) {
-    return null;
-  }
-  wrapper._handle = this._handle;
-  this.serviceObjectHandles[wrapper._handle] = wrapper;
+
+  object._handle = this._handle;
+  this.serviceObjectHandles[object._handle] = object;
   this._handle++;
   return null;
 };

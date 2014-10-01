@@ -34,11 +34,15 @@ Echoer.prototype.echo = function() {
 
 function dispatcher(suffix, method) {
   if (suffix.indexOf('echo/') === 0) {
-    return new ServiceWrapper(new Echoer(suffix.substr(5)));
+    return {
+      service: new ServiceWrapper(new Echoer(suffix.substr(5))),
+    };
   } else if (suffix.indexOf('count/') === 0) {
-    return new ServiceWrapper(new Counter(suffix.substr(6)));
+    return {
+      service: new ServiceWrapper(new Counter(suffix.substr(6))),
+    };
   }
-  return new Error('unknown suffix');
+  throw new Error('unknown suffix');
 }
 
 function failDispatcher(suffix, method) {
@@ -49,7 +53,9 @@ function promiseDispatcher(suffix, method) {
   if (suffix === 'fail') {
     return Promise.reject(new Error('bad'));
   }
-  return Promise.resolve(new ServiceWrapper(new Echoer(suffix)));
+  return Promise.resolve({
+    service: new ServiceWrapper(new Echoer(suffix))
+  });
 }
 
 function asyncDispatcher(suffix, method, cb) {
@@ -57,7 +63,7 @@ function asyncDispatcher(suffix, method, cb) {
     cb(new Error('bad'));
     return;
   }
-  cb(null, new ServiceWrapper(new Echoer(suffix)));
+  cb(null, { service: new ServiceWrapper(new Echoer(suffix))});
 }
 
 describe('server/dispatcher.js: count test', function() {

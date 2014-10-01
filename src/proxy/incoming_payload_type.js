@@ -9,6 +9,7 @@ var IncomingPayloadType = {
   INVOKE_REQUEST: 3, // Request to invoke a method in JS originating from server
   STREAM_CLOSE: 4,  // Response saying that the stream is closed.
   LOOKUP_REQUEST: 5, // A request to perform a dispatcher lookup
+  AUTHORIZATION_REQUEST: 6,  // A request to authorize an rpc.
 };
 
 module.exports = IncomingPayloadType;
