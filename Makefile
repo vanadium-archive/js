@@ -4,24 +4,22 @@ SHELL := /bin/bash -e -o pipefail
 .DEFAULT_GOAL := all
 
 UNAME := $(shell uname)
-PHANTOM := $(shell which phantomjs)
 BROWSER := chrome
 
 # For browser testing non Darwin machines get the --headless flag, this uses
 # xvfb underneath the hood (inside prova => launch-browser => node-headless).
-# To support headless browser running by default on OS X phantomjs will be
-# used instead of Google Chrome if it is installed.
+# Unfortunately OS X can't do the headless thing...
 #
 # SEE: https://github.com/kesla/node-headless/
 ifneq ($(UNAME),Darwin)
 	HEADLESS := --headless
 endif
 
-ifdef PHANTOM
-	BROWSER := phantom
+ifdef TAP
+	TAP := --tap
 endif
 
-BROWSER_OPTS := --browser --launch $(BROWSER) $(HEADLESS) --quit
+BROWSER_OPTS := --browser --launch $(BROWSER) $(HEADLESS) $(TAP) --quit
 
 JS_SRC_FILES = $(shell find src -name "*.js")
 JS_SPEC_TESTS = test/test_helper.js $(shell find test/specs -name "*.js")
@@ -64,15 +62,20 @@ test: lint dependency-check test_out/veyron.test.specs.js test_out/veyron.test.i
 test-new: test-unit test-integration
 
 test-unit: node_modules
-	prova test/unit/test-*.js
+	prova test/unit/test-*.js $(TAP)
 	prova test/unit/test-*.js $(BROWSER_OPTS)
 
 test-integration: node_modules
-	node test/integration/runner.js test/integration/test-*.js
+	node test/integration/runner.js test/integration/test-*.js $(TAP)
 	node test/integration/runner.js test/integration/test-*.js $(BROWSER_OPTS)
 
 clean:
-	@$(RM) -fr docs/* logs/* test_out/* tmp node_modules npm-debug.log
+	@$(RM) -fr docs/*
+	@$(RM) -fr logs/*
+	@$(RM) -fr test_out/*
+	@$(RM) -fr tmp
+	@$(RM) -fr node_modules
+	@$(RM) -fr npm-debug.log
 
 docs: $(JS_SRC_FILES) | node_modules
 	jsdoc $^ --template node_modules/ink-docstrap/template --destination $@
@@ -82,4 +85,5 @@ node_modules: package.json
 	@npm install
 	@touch node_modules
 
-.PHONY: all build clean dependency-check lint test test-new test-unit test-integration
+.PHONY: all build clean dependency-check lint
+.PHONY: test test-new test-unit test-integration
