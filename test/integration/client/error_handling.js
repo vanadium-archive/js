@@ -37,7 +37,6 @@ describe('client/error_handling.js: Error Thrower', function() {
     expect(err.message).to.equal(expectedErr.message);
     expect(err.toString()).to.equal(expectedErr.name + ': ' +
       expectedErr.message);
-    expect(err.stack).to.be.empty;
   };
 
   it('Should be able to bind to the service', function() {
@@ -133,4 +132,3 @@ describe('client/error_handling.js: Error Thrower', function() {
     });
   });
 });
-

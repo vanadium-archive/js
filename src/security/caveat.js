@@ -2,6 +2,11 @@
  * @fileoverview Caveats for blessings
  */
 
+module.exports = {
+  MethodCaveat: MethodCaveat,
+  PeerBlessingsCaveat: PeerBlessingsCaveat
+};
+
 /**
  * A caveat that is only valid for calling one of a list of methods.
  * @constructor
@@ -34,9 +39,4 @@ PeerBlessingsCaveat.prototype.toJSON = function() {
     _type: 'PeerBlessingsCaveat',
     data: this._patterns
   };
-};
-
-module.exports = {
-  MethodCaveat: MethodCaveat,
-  PeerBlessingsCaveat: PeerBlessingsCaveat
 };

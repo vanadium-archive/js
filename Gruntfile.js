@@ -150,8 +150,7 @@ module.exports = function(grunt) {
   ]);
 
   grunt.registerTask('test', 'Runs the tests', function() {
-      var allTests = ['node_unit', 'browser_unit', 'node_integration',
-      'browser_integration'];
+      var allTests = [ 'node_integration', 'browser_integration'];
 
       var testStr = grunt.option('tests');
 
