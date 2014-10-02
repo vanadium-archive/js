@@ -4,7 +4,6 @@
 
 var test = require('prova');
 var context = require('../../src/runtime/context');
-var Promise = require('../../src/lib/promise');
 
 var fakeRuntime = {};
 var ctx = context.Context(fakeRuntime);
@@ -25,20 +24,20 @@ var vctx2 = vctx1.withValue(key2, 'value2');
 test('ValueContext (own value)', function(assert) {
   assert.equal(vctx1.value(key1), 'value1');
   assert.equal(vctx2.value(key2), 'value2');
-  assert.end()
+  assert.end();
 });
 
 test('ValueContext (parent/child values)', function(assert) {
   assert.equal(vctx2.value(key1), 'value1');
   assert.equal(vctx1.value(key2), null);
-  assert.end()
+  assert.end();
 });
 
 test('CancelContext.done', function(assert) {
   var cctx = ctx.withCancel();
   assert.plan(3);
 
-  assert.equal(cctx.done(), false)
+  assert.equal(cctx.done(), false);
   cctx.waitUntilDone().catch(onerror);
   cctx.cancel();
   assert.equal(cctx.done(), true);
@@ -66,7 +65,7 @@ test('CancelContext (parent cancellation)', function(assert) {
 
 test('CancelContext (ancestor cancellation)', function(assert) {
   var cctx1 = ctx.withCancel();
-  var vctx = cctx1.withValue(context.ContextKey(), 'value');
+  cctx1.withValue(context.ContextKey(), 'value');
   var cctx2 = cctx1.withCancel();
   assert.plan(4);
 
@@ -83,7 +82,7 @@ test('CancelContext (ancestor cancellation)', function(assert) {
 
 test('DeadlineContext', function(assert) {
   var dctx = ctx.withDeadline(Date.now() + 1);
-  assert.plan(2)
+  assert.plan(2);
   dctx.waitUntilDone().catch(onerror);
 
   function onerror(error) {

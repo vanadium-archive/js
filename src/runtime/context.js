@@ -24,7 +24,7 @@ function DeadlineExceededError() {
   if (!(this instanceof DeadlineExceededError)) {
     return new DeadlineExceededError();
   }
-  vError.AbortedError.call(this, "deadline exceeded");
+  vError.AbortedError.call(this, 'deadline exceeded');
 }
 inherits(DeadlineExceededError, vError.AbortedError);
 
@@ -37,7 +37,7 @@ function CancelledError() {
   if (!(this instanceof CancelledError)) {
     return new CancelledError();
   }
-  vError.AbortedError.call(this, "cancelled");
+  vError.AbortedError.call(this, 'cancelled');
 }
 inherits(CancelledError, vError.AbortedError);
 
@@ -108,7 +108,7 @@ Context.prototype.waitUntilDone = function(callback) {
   // throw away the context and return a promise that will never
   // be resolved.
   return new Promise(function(){});
-}
+};
 
 /*
  * Returns the runtime used to create this context.  This is
@@ -198,7 +198,7 @@ ChildContext.prototype.done = function() {
 };
 ChildContext.prototype.waitUntilDone = function(callback) {
   return this._parent.waitUntilDone(callback);
-}
+};
 ChildContext.prototype.runtime = function() {
   return this._parent.runtime();
 };
@@ -274,7 +274,9 @@ CancelContext.prototype._cancel = function(error) {
   this._done = true;
   this._deferred.reject(error);
   for (var id in this._children) {
-    this._children[id]._cancel(error);
+    if (this._children.hasOwnProperty(id)) {
+      this._children[id]._cancel(error);
+    }
   }
   this._children = {};
 };
