@@ -22,7 +22,6 @@ endif
 BROWSER_OPTS := --browser --launch $(BROWSER) $(HEADLESS) $(TAP) --quit
 
 JS_SRC_FILES = $(shell find src -name "*.js")
-JS_SPEC_TESTS = test/test_helper.js $(shell find test/specs -name "*.js")
 
 JS_INTEGRATION_TESTS = test/test_helper.js
 JS_INTEGRATION_TESTS += test/integration/client/*.js
@@ -42,9 +41,6 @@ dist/veyron.min.js: src/veyron.js $(JS_SRC_FILES) | node_modules
 
 test_out:
 	mkdir -p test_out
-
-test_out/veyron.test.specs.js: $(JS_SPEC_TESTS) | $(JS_SRC_FILES) test_out node_modules
-	browserify $^ --debug --outfile $@
 
 test_out/veyron.test.integration.js: $(JS_INTEGRATION_TESTS) | $(JS_SRC_FILES) test_out node_modules
 	browserify $^ --debug --outfile $@

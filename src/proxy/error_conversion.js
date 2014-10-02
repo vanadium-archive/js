@@ -4,7 +4,10 @@
 
 var vError = require('./../lib/verror');
 
-var ec = {};
+module.exports = {
+  toStandardErrorStruct: toStandardErrorStruct,
+  toJSerror: toJSerror
+};
 
 /*
  * Implements the same structure as Standard struct in veyron2/verror
@@ -24,7 +27,7 @@ var _standard = function(id, message) {
  * @param {Error} err JavaScript error object
  * @return {_standard} verror standard struct
  */
-ec.toStandardErrorStruct = function(err) {
+function toStandardErrorStruct(err) {
   var errId = ''; // empty ID indicate an unknown error
   var errMessage = '';
   if (err instanceof Error) {
@@ -37,7 +40,7 @@ ec.toStandardErrorStruct = function(err) {
   }
 
   return new _standard(errId, errMessage);
-};
+}
 
 var errIdConstrMap = {};
 errIdConstrMap[vError.Ids.Aborted] = vError.AbortedError;
@@ -56,7 +59,7 @@ errIdConstrMap[vError.Ids.NoExistOrNoAccess] = vError.NoExistOrNoAccessError;
  * @param {_standard} verr verror standard struct
  * @return {Error} JavaScript error object
  */
-ec.toJSerror = function(verr) {
+function toJSerror(verr) {
   var err;
 
   var ErrIdConstr = errIdConstrMap[verr.iD];
@@ -66,8 +69,5 @@ ec.toJSerror = function(verr) {
     err = new vError.VeyronError(verr.msg, verr.iD);
   }
 
-  err.stack = ''; // stack does not make sense from a remote execution
   return err;
-};
-
-module.exports = ec;
+}
