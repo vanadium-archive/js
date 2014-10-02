@@ -17,16 +17,22 @@ function Deferred(cb) {
     deferred.resolve = resolve;
     deferred.reject = reject;
   });
+  addCallback(deferred.promise, cb);
+}
 
+function addCallback(promise, cb) {
   if (cb) {
-    // Convert back to callback-based API.
-    //
     // Note, this must be a .done() and not a .then().  Errors thrown inside of
     // a .then() callback are wrapped in a try/catch, whereas errors thrown
     // inside of a .done() callback will be thrown as an error.
-    deferred.promise.done(
-        function success(value) { cb(null, value); },
-        function error(err) { cb(err); }
+    promise.done(
+      function success(value) { cb(null, value); },
+      function error(err) { cb(err); }
     );
   }
 }
+
+// This adds a callback to the deferred (for people using the callback api).
+Deferred.prototype.addCallback = function(cb) {
+  addCallback(this.promise, cb);
+};
