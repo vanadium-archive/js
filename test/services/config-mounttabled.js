@@ -1,6 +1,6 @@
 module.exports = {
   bin: 'mounttabled',
   flags: {
-    address: ':9002'
+    address: 'localhost:9002'
   }
 };
