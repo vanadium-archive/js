@@ -13,16 +13,21 @@ var service = {
   }
 };
 
-function createDispatcher(authorizer) {
+function createDispatcher(authorizer, label) {
   function auth(context, cb) {
     if (context.method === 'signature') {
       return null;
     }
     return authorizer(context, cb);
   }
+  var metadata = {
+    call: {
+      label: label
+    }
+  };
   return function authDispatcher(suffix, method) {
     return {
-      service: new ServiceWrapper(service),
+      service: new ServiceWrapper(service, metadata),
       authorizer: auth,
     };
   };
@@ -247,6 +252,44 @@ test('authorizer - validate context', function(assert) {
 
   function serve(runtime) {
     var dispatcher = createDispatcher(authorizer);
+    return runtime.serve('authorizer', dispatcher).then(function(ep) {
+      endpoint = ep;
+      return runtime;
+    });
+  }
+
+  var rt;
+  function bindTo(runtime) {
+    rt = runtime;
+    return runtime.bindTo('authorizer/auth');
+  }
+
+  function call(service) {
+    return service.call('foo').then(function(value) {
+      assert.equal(value, 1, 'unexpected return value');
+      rt.close(assert.end);
+    });
+  }
+});
+
+test('authorizer - passing in labels', function(assert) {
+  veyron
+  .init(config)
+  .then(serve)
+  .then(bindTo)
+  .then(call)
+  .catch(assert.end);
+
+  var endpoint = '';
+  function authorizer(ctx) {
+    if (ctx.label !== 4.0) {
+      return new Error('wrong label ' + ctx.label);
+    }
+    return null;
+  }
+
+  function serve(runtime) {
+    var dispatcher = createDispatcher(authorizer, 4.0);
     return runtime.serve('authorizer', dispatcher).then(function(ep) {
       endpoint = ep;
       return runtime;

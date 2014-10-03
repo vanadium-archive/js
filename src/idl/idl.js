@@ -103,6 +103,8 @@ idlHelper.ServiceWrapper = function(service, extraMetadata) {
           if (extra.numOutArgs !== undefined) {
             metadata.numOutArgs = extra.numOutArgs;
           }
+
+          metadata.label = extra.label;
         }
 
         this.metadata[methodName] = metadata;
@@ -155,6 +157,13 @@ idlHelper.ServiceWrapper.prototype.validate = function(definition) {
     }
   }
   return null;
+};
+
+idlHelper.ServiceWrapper.prototype.labelForMethod = function(method) {
+  if (!this.metadata.hasOwnProperty(method)) {
+    return 0;
+  }
+  return this.metadata[method].label || 0;
 };
 
 /**
