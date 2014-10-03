@@ -30,6 +30,14 @@ test('toString', function(t) {
       expectedResult: '-1'
     },
     {
+      input: new BigInt(1, new Uint8Array([0x34, 0x96, 0x23, 0x43])),
+      expectedResult: '882254659'
+    },
+    {
+      input: new BigInt(-1, new Uint8Array([0x05, 0x77, 0x75, 0x77, 0x82])),
+      expectedResult: '-23479023490'
+    },
+    {
       input: new BigInt(1,
         new Uint8Array([0x20, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00])),
       expectedResult: '9007199254740992'
@@ -38,6 +46,11 @@ test('toString', function(t) {
       input: new BigInt(-1,
         new Uint8Array([0x20, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00])),
       expectedResult: '-9007199254740992'
+    },
+    {
+      input: new BigInt(1, new Uint8Array([0x10, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00])),
+      expectedResult: '1267650600228229401496703205376'
     }
   ];
 
@@ -174,6 +187,216 @@ test('comparisons', function(t) {
     var test = tests[i];
     t.equals(test.first.equals(test.second), test.expectedResult === EQUAL,
       'equals check failed on ' + test.first + ' and ' + test.second);
+    t.equals(test.first.greaterThan(test.second),
+      test.expectedResult === FIRST_GREATER,
+      'greaterThan check failed on ' + test.first + ' and ' + test.second);
+    t.equals(test.first.greaterThanEquals(test.second),
+      test.expectedResult === FIRST_GREATER ||
+      test.expectedResult === EQUAL,
+      'greaterThanEquals check failed on ' + test.first + ' and ' +
+      test.second);
+  }
+  t.end();
+});
+
+test('left shift', function(t) {
+  var tests = [
+    {
+      val: new BigInt(0, new Uint8Array([])),
+      amt: 0,
+      expectedResult: new BigInt(0, new Uint8Array([])),
+    },
+    {
+      val: new BigInt(1, new Uint8Array([0x44, 0x99, 0x00])),
+      amt: 0,
+      expectedResult: new BigInt(1, new Uint8Array([0x44, 0x99, 0x00])),
+    },
+    {
+      val: new BigInt(-1, new Uint8Array([0x89])),
+      amt: 0,
+      expectedResult: new BigInt(-1, new Uint8Array([0x89])),
+    },
+    {
+      val: new BigInt(1, new Uint8Array([0x01, 0x01])),
+      amt: 2,
+      expectedResult: new BigInt(1, new Uint8Array([0x04, 0x04])),
+    },
+    {
+      val: new BigInt(1, new Uint8Array([0x01, 0x01])),
+      amt: 9,
+      expectedResult: new BigInt(1, new Uint8Array([0x02, 0x02, 0x00])),
+    },
+    {
+      val: new BigInt(1, new Uint8Array([0x02])),
+      amt: 9,
+      expectedResult: new BigInt(1, new Uint8Array([0x04, 0x00])),
+    },
+    {
+      val: new BigInt(1, new Uint8Array([0x02])),
+      amt: 7,
+      expectedResult: new BigInt(1, new Uint8Array([0x01, 0x00])),
+    },
+    {
+      val: new BigInt(1, new Uint8Array([0x00, 0x01, 0xff])),
+      amt: 6,
+      expectedResult: new BigInt(1, new Uint8Array([0x00, 0x7f, 0xc0])),
+    },
+  ];
+  for (var i = 0; i < tests.length; i++) {
+    var test = tests[i];
+    var leftShiftedVal = test.val.leftShift(test.amt);
+    t.ok(leftShiftedVal.equals(test.expectedResult), test.val +
+      ' << ' + test.amt + ' = ' + leftShiftedVal + ' (expected ' +
+        test.expectedResult + ')');
+  }
+  t.end();
+});
+
+test('add and subtract', function(t) {
+  var tests = [
+    {
+      first: new BigInt(0, new Uint8Array([])),
+      second: new BigInt(0, new Uint8Array([])),
+      addResult: new BigInt(0, new Uint8Array([])),
+      subtractResult: new BigInt(0, new Uint8Array([]))
+    },
+    {
+      first: new BigInt(0, new Uint8Array([])),
+      second: new BigInt(1, new Uint8Array([0x01])),
+      addResult: new BigInt(1, new Uint8Array([0x01])),
+      subtractResult: new BigInt(-1, new Uint8Array([0x01]))
+    },
+    {
+      first: new BigInt(0, new Uint8Array([])),
+      second: new BigInt(-1, new Uint8Array([0x01])),
+      addResult: new BigInt(-1, new Uint8Array([0x01])),
+      subtractResult: new BigInt(1, new Uint8Array([0x01]))
+    },
+    {
+      first: new BigInt(1, new Uint8Array([0x03])),
+      second: new BigInt(1, new Uint8Array([0x05])),
+      addResult: new BigInt(1, new Uint8Array([0x08])),
+      subtractResult: new BigInt(-1, new Uint8Array([0x02])),
+    },
+    {
+      first: new BigInt(-1, new Uint8Array([0x03])),
+      second: new BigInt(-1, new Uint8Array([0x05])),
+      addResult: new BigInt(-1, new Uint8Array([0x08])),
+      subtractResult: new BigInt(1, new Uint8Array([0x02]))
+    },
+    {
+      first: new BigInt(1, new Uint8Array([0x03])),
+      second: new BigInt(-1, new Uint8Array([0x05])),
+      addResult: new BigInt(-1, new Uint8Array([0x02])),
+      subtractResult: new BigInt(1, new Uint8Array([0x08]))
+    },
+    {
+      first: new BigInt(-1, new Uint8Array([0x03])),
+      second: new BigInt(1, new Uint8Array([0x05])),
+      addResult: new BigInt(1, new Uint8Array([0x02])),
+      subtractResult: new BigInt(-1, new Uint8Array([0x08]))
+    },
+    {
+      first: new BigInt(1, new Uint8Array([0x03])),
+      second: new BigInt(-1, new Uint8Array([0x03])),
+      addResult: new BigInt(0, new Uint8Array([])),
+      subtractResult: new BigInt(1, new Uint8Array([0x06]))
+    },
+    {
+      first: new BigInt(1, new Uint8Array([0xff])),
+      second: new BigInt(1, new Uint8Array([0x01])),
+      addResult: new BigInt(1, new Uint8Array([0x01, 0x00])),
+      subtractResult: new BigInt(1, new Uint8Array([0xfe]))
+    },
+    {
+      first: new BigInt(-1, new Uint8Array([0xff])),
+      second: new BigInt(-1, new Uint8Array([0x01])),
+      addResult: new BigInt(-1, new Uint8Array([0x01, 0x00])),
+      subtractResult: new BigInt(-1, new Uint8Array([0xfe]))
+    },
+    {
+      first: new BigInt(-1, new Uint8Array([0xff])),
+      second: new BigInt(1, new Uint8Array([0xff])),
+      addResult: new BigInt(0, new Uint8Array([])),
+      subtractResult: new BigInt(-1, new Uint8Array([0x01, 0xfe]))
+    },
+    {
+      first: new BigInt(1, new Uint8Array([0xff])),
+      second: new BigInt(1, new Uint8Array([0xff])),
+      addResult: new BigInt(1, new Uint8Array([0x01, 0xfe])),
+      subtractResult: new BigInt(0, new Uint8Array([]))
+    },
+    {
+      first: new BigInt(1, new Uint8Array([0x80])),
+      second: new BigInt(1, new Uint8Array([0x7f])),
+      addResult: new BigInt(1, new Uint8Array([0xff])),
+      subtractResult: new BigInt(1, new Uint8Array([0x01]))
+    },
+    {
+      first: new BigInt(1, new Uint8Array([0x39, 0x98, 0x99])),
+      second: new BigInt(1, new Uint8Array([0x7f, 0x37])),
+      addResult: new BigInt(1, new Uint8Array([0x3a, 0x17, 0xd0])),
+      subtractResult: new BigInt(1, new Uint8Array([0x39, 0x19, 0x62])),
+    },
+  ];
+  for (var i = 0; i < tests.length; i++) {
+    var test = tests[i];
+    var addResult = test.first.add(test.second);
+    t.ok(addResult.equals(test.addResult), test.first +
+      ' + ' + test.second + ' = ' + addResult + ' (expected ' +
+        test.addResult + ')');
+    var subtractResult = test.first.subtract(test.second);
+    t.ok(subtractResult.equals(test.subtractResult), test.first +
+      ' - (' + test.second + ') = ' + subtractResult + ' (expected ' +
+        test.subtractResult + ')');
+  }
+  t.end();
+});
+
+test('multiply and divide', function(t) {
+  var tests = [];
+  var leftSideNumbers = [-14342, -1024, -1023, -324, -92, -5, -1, 0,
+    1, 6, 9, 111, 9543];
+  var rightSideNumbers = [-3390, -235, -77, -3, -1, 0, 1, 2, 5, 99, 8000];
+
+  for (var i = 0; i < leftSideNumbers.length; i++) {
+    for (var j = 0; j < rightSideNumbers.length; j++) {
+      var left = leftSideNumbers[i];
+      var right = rightSideNumbers[j];
+      var expectedMultiply = BigInt.fromNativeNumber(left * right);
+      var expectedDivide = NaN;
+      if (right !== 0) {
+        var floorVal = Math.floor(Math.abs(left / right));
+        if (left / right < 0) {
+          floorVal = -floorVal;
+        }
+        expectedDivide = BigInt.fromNativeNumber(floorVal);
+      }
+      tests.push({
+        first: BigInt.fromNativeNumber(left),
+        second: BigInt.fromNativeNumber(right),
+        multiply: expectedMultiply,
+        divide: expectedDivide
+      });
+    }
+  }
+
+  for (var i = 0; i < tests.length; i++) {
+    var test = tests[i];
+    var multiply = test.first.multiply(test.second);
+    t.ok(multiply.equals(test.multiply), test.first +
+      ' * ' + test.second + ' = ' + multiply + ' (expected ' +
+        test.multiply + ')');
+    var divide = test.first.divide(test.second);
+    if (isNaN(test.divide)) {
+      t.ok(isNaN(divide), test.first +
+      ' / ' + test.second + ' = ' + divide + ' (expected ' +
+        test.divide + ')');
+    } else {
+      t.ok(divide.equals(test.divide), test.first +
+      ' / ' + test.second + ' = ' + divide + ' (expected ' +
+        test.divide + ')');
+    }
   }
   t.end();
 });

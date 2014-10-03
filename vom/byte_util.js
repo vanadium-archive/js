@@ -7,6 +7,7 @@
   allOne: allOne,
   shiftLeftOne: shiftLeftOne,
   shiftRightOne: shiftRightOne,
+  twosComplement: twosComplement,
   decrement: decrement,
   increment: increment,
   bytes2Hex: bytes2Hex,
@@ -25,7 +26,7 @@ function emptyOrAllZero(bytes) {
     }
   }
   return true;
-};
+}
 
 /**
  * Checks if the array of bytes is all one bits (0xff bytes).
@@ -42,7 +43,7 @@ function allOne(bytes) {
     }
   }
   return true;
-};
+}
 
 /**
  * Shifts the bytes to the left by one bit.
@@ -67,7 +68,7 @@ function shiftLeftOne(bytes) {
   }
   bytes[bytes.length - 1] = bytes[bytes.length - 1] << 1;
   return bytes;
-};
+}
 
 /**
  * Shifts the bytes to the right by one bit.
@@ -83,7 +84,27 @@ function shiftRightOne(bytes) {
     topBit = nextTopBit;
   }
   return bytes;
-};
+}
+
+/**
+ * Computes the two's complement of the value in the byte array.
+ * @param {Uint8Array} bytes the input byte array.
+ * @return the two's complemented byte array
+ */
+function twosComplement(bytes) {
+  var flipped = false;
+  for (var i = bytes.length - 1; i >= 0; i--) {
+    if (flipped) {
+      bytes[i] = ~bytes[i];
+    } else {
+      if (bytes[i] !== 0) {
+        bytes[i] = 0x100 - bytes[i];
+        flipped = true;
+      }
+    }
+  }
+  return bytes;
+}
 
 /**
  * Decrements the input byte array by 1.
@@ -104,7 +125,7 @@ function decrement(bytes) {
     }
   }
   return bytes;
-};
+}
 
 /**
  * Increments the input byte array by 1.
@@ -131,7 +152,7 @@ function increment(bytes) {
     }
   }
   return bytes;
-};
+}
 
 /**
  * Converts the input byte array to a hex representation.
@@ -148,7 +169,7 @@ function bytes2Hex(arr) {
     hexString += str;
   }
   return hexString;
-};
+}
 
 /**
  * Converts the input hex string to a byte array.
@@ -164,4 +185,4 @@ function hex2Bytes(hexString) {
     arr[i] = parseInt(hexString.substring(i*2, (i+1)*2), 16);
   }
   return arr;
-};
+}

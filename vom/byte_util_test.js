@@ -182,6 +182,61 @@ test('shiftRightOne', function(t) {
   t.end();
 });
 
+test('twosComplement', function(t) {
+  var tests = [
+    {
+      input: new Uint8Array([]),
+      expectedOutput: new Uint8Array([])
+    },
+    {
+      input: new Uint8Array([0x00]),
+      expectedOutput: new Uint8Array([0x00])
+    },
+    {
+      input: new Uint8Array([0xff]),
+      expectedOutput: new Uint8Array([0x01])
+    },
+    {
+      input: new Uint8Array([0x80]),
+      expectedOutput: new Uint8Array([0x80])
+    },
+    {
+      input: new Uint8Array([0xa8]),
+      expectedOutput: new Uint8Array([0x58])
+    },
+    {
+      input: new Uint8Array([0x34, 0x48]),
+      expectedOutput: new Uint8Array([0xcb, 0xb8])
+    },
+    {
+      input: new Uint8Array([0x79, 0x71]),
+      expectedOutput: new Uint8Array([0x86, 0x8f])
+    },
+    {
+      input: new Uint8Array([0x80, 0x00]),
+      expectedOutput: new Uint8Array([0x80, 0x00])
+    },
+    {
+      input: new Uint8Array([0x00, 0x00]),
+      expectedOutput: new Uint8Array([0x00, 0x00])
+    },
+    {
+      input: new Uint8Array([0xff, 0xff]),
+      expectedOutput: new Uint8Array([0x00, 0x01])
+    },
+  ];
+  for (var i = 0; i < tests.length; i++) {
+    var test = tests[i];
+    var inputCopy = new Uint8Array(test.input);
+    inputCopy = ByteUtil.twosComplement(inputCopy);
+    t.deepEquals(inputCopy, test.expectedOutput, 'for input ' +
+      ByteUtil.bytes2Hex(test.input) + ' expected ' +
+      ByteUtil.bytes2Hex(test.expectedOutput) + ', but got ' +
+      ByteUtil.bytes2Hex(inputCopy));
+  }
+  t.end();
+});
+
 test('decrement', function(t) {
   var tests = [
     {
