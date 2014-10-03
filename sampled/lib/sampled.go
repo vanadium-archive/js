@@ -12,16 +12,21 @@ import (
 	sample "veyron.io/examples/wspr_sample"
 )
 
-type cacheDispatcher struct {
+type sampleDispatcher struct {
 	cache        interface{}
 	errorThrower interface{}
 }
 
-func (cd *cacheDispatcher) Lookup(suffix, method string) (ipc.Invoker, security.Authorizer, error) {
-	if strings.HasPrefix(suffix, "errorThrower") {
-		return ipc.ReflectInvoker(cd.errorThrower), nil, nil
+func (sd *sampleDispatcher) Lookup(suffix, method string) (ipc.Invoker, security.Authorizer, error) {
+	if strings.HasPrefix(suffix, "cache") {
+		return ipc.ReflectInvoker(sd.cache), nil, nil
 	}
-	return ipc.ReflectInvoker(cd.cache), nil, nil
+
+	if strings.HasPrefix(suffix, "errorThrower") {
+		return ipc.ReflectInvoker(sd.errorThrower), nil, nil
+	}
+
+	return ipc.ReflectInvoker(sd.cache), nil, nil
 }
 
 func StartServer(r veyron2.Runtime) (ipc.Server, naming.Endpoint, error) {
@@ -31,7 +36,7 @@ func StartServer(r veyron2.Runtime) (ipc.Server, naming.Endpoint, error) {
 		return nil, nil, fmt.Errorf("failure creating server: %v", err)
 	}
 
-	disp := &cacheDispatcher{
+	disp := &sampleDispatcher{
 		cache:        sample.NewServerCache(NewCached()),
 		errorThrower: sample.NewServerErrorThrower(NewErrorThrower()),
 	}
@@ -44,8 +49,13 @@ func StartServer(r veyron2.Runtime) (ipc.Server, naming.Endpoint, error) {
 
 	// Publish the cache service. This will register it in the mount table and
 	// maintain the registration until StopServing is called.
+	if err := s.Serve("sample", disp); err != nil {
+		return nil, nil, fmt.Errorf("error publishing service: %v", err)
+	}
+
 	if err := s.Serve("cache", disp); err != nil {
 		return nil, nil, fmt.Errorf("error publishing service: %v", err)
 	}
+
 	return s, endpoint, nil
 }
