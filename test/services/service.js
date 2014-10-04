@@ -139,7 +139,7 @@ Service.prototype.kill = function() {
 function notfound(name) {
   var message = 'Veyron binary not found: ' + name + '\n' +
       'Please run: \n' +
-      '  $VEYRON_ROOT/scripts/build/go install veyron... roadmap... \n' +
+      '  veyron go install veyron... roadmap... \n' +
       ' path is ' + process.env.PATH;
 
   return new Error(message);

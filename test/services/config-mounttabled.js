@@ -1,6 +1,6 @@
 module.exports = {
   bin: 'mounttabled',
   flags: {
-    address: 'localhost:9002'
+    'veyron.tcp.address': 'localhost:9002'
   }
 };
