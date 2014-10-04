@@ -153,7 +153,7 @@ module.exports = function(grunt) {
     var mounttablePromise = mounttableDef.promise;
 
     var mounttable_process = spawn(MOUNTTABLE_BIN,
-      ['-log_dir=' + LOGS_DIR, '-address=127.0.0.1:0'], {
+      ['-log_dir=' + LOGS_DIR, '-veyron.tcp.address=127.0.0.1:0'], {
         env: {
           VEYRON_IDENTITY: process.env.IDENTITY_FILE
         }
