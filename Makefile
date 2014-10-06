@@ -52,7 +52,7 @@ lint: node_modules
 dependency-check: node_modules
 	dependency-check package.json --entry src/veyron.js
 
-test: lint dependency-check test_out/veyron.test.specs.js test_out/veyron.test.integration.js
+test: lint dependency-check test_out/veyron.test.integration.js
 	./vgrunt
 
 test-new: test-unit test-integration
