@@ -24,7 +24,6 @@ BROWSER_OPTS := --browser --launch $(BROWSER) $(HEADLESS) $(TAP) --quit
 JS_SRC_FILES = $(shell find src -name "*.js")
 
 JS_INTEGRATION_TESTS = test/test_helper.js
-JS_INTEGRATION_TESTS += test/integration/client/*.js
 JS_INTEGRATION_TESTS += test/integration/proxy/*.js
 JS_INTEGRATION_TESTS += test/integration/security/*.js
 JS_INTEGRATION_TESTS += test/integration/server/*.js
@@ -52,7 +51,7 @@ lint: node_modules
 dependency-check: node_modules
 	dependency-check package.json --entry src/veyron.js
 
-test: lint dependency-check test_out/veyron.test.specs.js test_out/veyron.test.integration.js
+test: lint dependency-check test_out/veyron.test.integration.js
 	./vgrunt
 
 test-new: test-unit test-integration
