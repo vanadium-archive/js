@@ -4,7 +4,7 @@
 
 var test = require('prova');
 
-var ByteUtil = require('./byte_util.js');
+var ByteUtil = require('./../../src/vom/byte_util.js');
 
 test('emptyOrAllZero', function(t) {
   var tests = [

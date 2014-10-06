@@ -4,15 +4,16 @@
 
 var test = require('prova');
 
-var stringify = require('./stringify.js');
-var Types = require('./types.js');
-var Kind = require('./kind.js');
+var stringify = require('./../../src/vom/stringify.js');
+var Types = require('./../../src/vom/types.js');
+var Kind = require('./../../src/vom/kind.js');
 
-var TypeEncoder = require('./type_encoder.js');
-var TypeDecoder = require('./type_decoder.js');
+var TypeEncoder = require('./../../src/vom/type_encoder.js');
+var TypeDecoder = require('./../../src/vom/type_decoder.js');
 
-var ByteArrayMessageWriter = require('./byte_array_message_writer.js');
-var RawVomReader = require('./raw_vom_reader.js');
+var ByteArrayMessageWriter = require(
+    './../../src/vom/byte_array_message_writer.js');
+var RawVomReader = require('./../../src/vom/raw_vom_reader.js');
 
 /**
  * Type message reader reads type messages from the provided data.

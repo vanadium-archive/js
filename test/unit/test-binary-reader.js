@@ -4,8 +4,8 @@
 
 var test = require('prova');
 
-var BinaryReader = require('./binary_reader.js');
-var ByteUtil = require('./byte_util.js');
+var BinaryReader = require('./../../src/vom/binary_reader.js');
+var ByteUtil = require('./../../src/vom/byte_util.js');
 
 test('readByte', function(t) {
   var expectedBytes = [ 0x0, 0xff, 0x10, 0x20, 0x30, 0x40 ];

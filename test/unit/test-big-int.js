@@ -4,7 +4,7 @@
 
 var test = require('prova');
 
-var BigInt = require('./big_int.js');
+var BigInt = require('./../../src/vom/big_int.js');
 
 test('constructor and getters', function(t) {
   var sign = -1;

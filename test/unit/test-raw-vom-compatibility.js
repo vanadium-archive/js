@@ -4,10 +4,10 @@
 
 var test = require('prova');
 
-var BigInt = require('./big_int.js');
-var RawVomWriter = require('./raw_vom_writer');
-var RawVomReader = require('./raw_vom_reader');
-var ByteUtil = require('./byte_util.js');
+var BigInt = require('./../../src/vom/big_int.js');
+var RawVomWriter = require('./../../src/vom/raw_vom_writer');
+var RawVomReader = require('./../../src/vom/raw_vom_reader');
+var ByteUtil = require('./../../src/vom/byte_util.js');
 
 var testTypes = {
   UINT: {

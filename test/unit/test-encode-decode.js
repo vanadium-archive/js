@@ -4,15 +4,17 @@
 
 var test = require('prova');
 
-var Kind = require('./kind.js');
-var Types = require('./types.js');
-var stringify = require('./stringify.js');
+var Kind = require('./../../src/vom/kind.js');
+var Types = require('./../../src/vom/types.js');
+var stringify = require('./../../src/vom/stringify.js');
 
-var ByteArrayMessageWriter = require('./byte_array_message_writer.js');
-var ByteArrayMessageReader = require('./byte_array_message_reader.js');
+var ByteArrayMessageWriter = require(
+    './../../src/vom/byte_array_message_writer.js');
+var ByteArrayMessageReader = require(
+    './../../src/vom/byte_array_message_reader.js');
 
-var Encoder = require('./encoder.js');
-var Decoder = require('./decoder.js');
+var Encoder = require('./../../src/vom/encoder.js');
+var Decoder = require('./../../src/vom/decoder.js');
 
 test('encode and decode', function(t) {
   var linkedListNodeType = {
@@ -297,6 +299,15 @@ test('encode and decode', function(t) {
     var decoder = new Decoder(messageReader);
     var result = decoder.decode(); // decode the written bytes
 
+    // If the result is an Uint8Array, it could have been created
+    // by calling subarray.  In node, this means that buffer points
+    // the whole buffer, while the expected value only has buffer
+    // contents for Uint8Array slice.  This causes the equality check
+    // to fail.  To fix this, we create a new Uint8Array which provides
+    // a pristine buffer with only the contents of the subarray.
+    if (result instanceof Uint8Array) {
+      result = new Uint8Array(result);
+    }
     var resultStr = stringify(result);
     var expectedStr = stringify(test.v);
     t.equals(resultStr, expectedStr);
