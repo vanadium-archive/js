@@ -198,13 +198,19 @@ Runtime.prototype.newNamespace = function(roots) {
  * @return {Promise} A promise that resolves to the new PublicId
  */
 Runtime.prototype.newIdentity = function(name, cb) {
-  var def = new Deferred(cb);
-
+  var newIdentityDef = new Deferred(cb);
+  var messageDef = new Deferred();
   var proxy = this._getProxyConnection();
   var id = proxy.nextId();
-  var handler = new SimpleHandler(def, proxy, id);
+  var handler = new SimpleHandler(messageDef, proxy, id);
+
   proxy.sendRequest(JSON.stringify(name), MessageType.NEW_ID, handler, id);
-  return def.promise.then(function(message) {
-    return new PublicId(message.names, message.handle, proxy);
-  });
+
+  messageDef.promise.then(function(message) {
+    var id = new PublicId(message.names, message.handle, proxy);
+
+    newIdentityDef.resolve(id);
+  }, newIdentityDef.reject);
+
+  return newIdentityDef.promise;
 };

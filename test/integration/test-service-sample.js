@@ -84,9 +84,10 @@ test('var promise = cache.get(key, value) - failure', function(assert) {
     cache
     .get('really not a thing')
     .then(function() {
-      assert.fail('This should not have succeeded.');
+      assert.fail('should not succeed');
       end(assert);
-    }, function(err) {
+    })
+    .catch(function(err) {
       assert.ok(err instanceof VeyronError, 'should error');
       end(assert);
     });
@@ -139,8 +140,6 @@ test('var stream = cache.multiGet().stream', function(assert) {
     .then(function() {
       var promise = cache.multiGet();
       var stream = promise.stream;
-      var writes = 0;
-      var reads = 0;
 
       // Error handling boilerplate
       promise.catch(error);
@@ -154,19 +153,14 @@ test('var stream = cache.multiGet().stream', function(assert) {
         var expected = items[json.key].value;
 
         assert.equal(actual, expected);
-
-        reads++;
       });
 
       stream.on('end', function() {
-        assert.equal(writes, reads);
         end(assert);
       });
 
       Object.keys(items).forEach(function(key) {
         stream.write(key);
-
-        writes++;
       });
 
       stream.end();
