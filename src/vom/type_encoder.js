@@ -117,21 +117,23 @@ TypeEncoder.prototype._validateType = function(type) {
 
   // Validate the existance or non-existance of fields.
   var fieldsSeen = {};
-  for (var i = 0; i < requiredFields.length; i++) {
-    var fieldName = requiredFields[i];
+  var i;
+  var fieldName;
+  for (i = 0; i < requiredFields.length; i++) {
+    fieldName = requiredFields[i];
     if (!type.hasOwnProperty(fieldName)) {
-      throw new Error('Type ' + type  + ' missing required field \'' +
-        fieldName + '\'');
+      throw new Error('Type ' + type + ' missing required field \'' +
+      fieldName + '\'');
     }
     fieldsSeen[fieldName] = null;
   }
-  for (var i = 0; i < optionalFields.length; i++) {
-    var fieldName = optionalFields[i];
+  for (i = 0; i < optionalFields.length; i++) {
+    fieldName = optionalFields[i];
     if (type.hasOwnProperty(fieldName)) {
       fieldsSeen[fieldName] = null;
     }
   }
-  for (var fieldName in type) {
+  for (fieldName in type) {
     if (!type.hasOwnProperty(fieldName)) {
       continue;
     }
@@ -151,7 +153,7 @@ TypeEncoder.prototype._validateType = function(type) {
     if (!Array.isArray(type.labels)) {
       throw new Error('labels must be an array');
     }
-    for (var i = 0; i < type.labels.length; i++) {
+    for (i = 0; i < type.labels.length; i++) {
       if (typeof type.labels[i] !== 'string') {
         throw new Error('label must be a string');
       }
@@ -180,9 +182,9 @@ TypeEncoder.prototype._validateType = function(type) {
     if (!Array.isArray(type.fields)) {
       throw new Error('fields must be an array');
     }
-    for (var i = 0; i < type.fields.length; i++) {
+    for (i = 0; i < type.fields.length; i++) {
       var field = type.fields[i];
-      if (typeof field !== 'object' || field  === null) {
+      if (typeof field !== 'object' || field === null) {
         throw new Error('field expected to be an object');
       }
       if (!field.hasOwnProperty('name')) {
@@ -207,7 +209,7 @@ TypeEncoder.prototype._validateType = function(type) {
     if (!Array.isArray(type.types)) {
       throw new Error('types must be an array');
     }
-    for (var i = 0; i < type.types.length; i++) {
+    for (i = 0; i < type.types.length; i++) {
       if (typeof type.types[i] !== 'object' || type.types[i] === null) {
         throw new Error('one of type expected to be an object');
       }
@@ -260,6 +262,9 @@ var kindToBootstrapType = function(kind) {
  */
 TypeEncoder.prototype._encodeWireType = function(messageWriter, type, typeId) {
   var rawWriter = new RawVomWriter();
+  var i;
+  var elemId;
+  var keyId;
   switch (type.kind) {
     case Kind.ANY:
     case Kind.BOOL:
@@ -285,7 +290,7 @@ TypeEncoder.prototype._encodeWireType = function(messageWriter, type, typeId) {
       break;
     case Kind.NILABLE:
       // TODO(BPROSNITZ) This format isn't final.
-      var elemId = this.encodeType(messageWriter, type.elem);
+      elemId = this.encodeType(messageWriter, type.elem);
       rawWriter.writeUint(BootstrapTypes.definitions.WIRENILABLE.id);
       rawWriter.writeUint(1);
       rawWriter.writeUint(elemId);
@@ -297,13 +302,13 @@ TypeEncoder.prototype._encodeWireType = function(messageWriter, type, typeId) {
       rawWriter.writeString(type.name);
       rawWriter.writeUint(2);
       rawWriter.writeUint(type.labels.length);
-      for (var i = 0; i < type.labels.length; i++) {
+      for (i = 0; i < type.labels.length; i++) {
         rawWriter.writeString(type.labels[i]);
       }
       rawWriter.writeUint(0);
       break;
     case Kind.ARRAY:
-      var elemId = this.encodeType(messageWriter, type.elem);
+      elemId = this.encodeType(messageWriter, type.elem);
       rawWriter.writeUint(BootstrapTypes.definitions.WIREARRAY.id);
       if (typeof type.name === 'string') {
         rawWriter.writeUint(1);
@@ -316,7 +321,7 @@ TypeEncoder.prototype._encodeWireType = function(messageWriter, type, typeId) {
       rawWriter.writeUint(0);
       break;
     case Kind.LIST:
-      var elemId = this.encodeType(messageWriter, type.elem);
+      elemId = this.encodeType(messageWriter, type.elem);
       rawWriter.writeUint(BootstrapTypes.definitions.WIRELIST.id);
       if (typeof type.name === 'string') {
         rawWriter.writeUint(1);
@@ -327,7 +332,7 @@ TypeEncoder.prototype._encodeWireType = function(messageWriter, type, typeId) {
       rawWriter.writeUint(0);
       break;
     case Kind.SET:
-      var keyId = this.encodeType(messageWriter, type.key);
+      keyId = this.encodeType(messageWriter, type.key);
       rawWriter.writeUint(BootstrapTypes.definitions.WIRESET.id);
       if (typeof type.name === 'string') {
         rawWriter.writeUint(1);
@@ -338,8 +343,8 @@ TypeEncoder.prototype._encodeWireType = function(messageWriter, type, typeId) {
       rawWriter.writeUint(0);
       break;
     case Kind.MAP:
-      var keyId = this.encodeType(messageWriter, type.key);
-      var elemId = this.encodeType(messageWriter, type.elem);
+      keyId = this.encodeType(messageWriter, type.key);
+      elemId = this.encodeType(messageWriter, type.elem);
       rawWriter.writeUint(BootstrapTypes.definitions.WIREMAP.id);
       if (typeof type.name === 'string') {
         rawWriter.writeUint(1);
@@ -353,7 +358,7 @@ TypeEncoder.prototype._encodeWireType = function(messageWriter, type, typeId) {
       break;
     case Kind.STRUCT:
       var fieldInfo = [];
-      for (var i = 0; i < type.fields.length; i++) {
+      for (i = 0; i < type.fields.length; i++) {
         fieldInfo.push({
           name: type.fields[i].name,
           id: this.encodeType(messageWriter, type.fields[i].type)
@@ -366,7 +371,7 @@ TypeEncoder.prototype._encodeWireType = function(messageWriter, type, typeId) {
       }
       rawWriter.writeUint(2);
       rawWriter.writeUint(fieldInfo.length);
-      for (var i = 0; i < fieldInfo.length; i++) {
+      for (i = 0; i < fieldInfo.length; i++) {
         var field = fieldInfo[i];
         rawWriter.writeUint(1);
         rawWriter.writeString(field.name);
@@ -378,7 +383,7 @@ TypeEncoder.prototype._encodeWireType = function(messageWriter, type, typeId) {
       break;
     case Kind.ONEOF:
       var typeIds = [];
-      for (var i = 0; i < type.types.length; i++) {
+      for (i = 0; i < type.types.length; i++) {
         typeIds.push(this.encodeType(messageWriter, type.types[i]));
       }
       rawWriter.writeUint(BootstrapTypes.definitions.WIREONEOF.id);
@@ -388,7 +393,7 @@ TypeEncoder.prototype._encodeWireType = function(messageWriter, type, typeId) {
       }
       rawWriter.writeUint(2);
       rawWriter.writeUint(typeIds.length);
-      for (var i = 0; i < typeIds.length; i++) {
+      for (i = 0; i < typeIds.length; i++) {
         rawWriter.writeUint(typeIds[i]);
       }
       rawWriter.writeUint(0);

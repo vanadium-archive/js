@@ -13,7 +13,8 @@ function stableCircularStringifyInternal(val, seen) {
     return '"' + val.replace(/\"/, '\\"') + '"';
   }
 
-  for (var i = 0; i < seen.length; i++) {
+  var i;
+  for (i = 0; i < seen.length; i++) {
     if (val === seen[i]) {
       return 'ID[' + i + ']';
     }
@@ -24,7 +25,7 @@ function stableCircularStringifyInternal(val, seen) {
   keys.sort();
 
   var str = '{';
-  for (var i = 0; i < keys.length; i++) {
+  for (i = 0; i < keys.length; i++) {
     if (i > 0) {
       str += ',';
     }

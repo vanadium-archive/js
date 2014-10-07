@@ -119,12 +119,14 @@ TypeDecoder.prototype._flattenTypeDepGraph = function(typeId, typeDeps) {
   if (partialType.elemTypeId !== undefined) {
     this._flattenTypeDepGraph(partialType.elemTypeId, typeDeps);
   }
+  var i;
   if (partialType.typeIds !== undefined) {
-    for (var i = 0; i < partialType.typeIds.length; i++)
-    this._flattenTypeDepGraph(partialType.typeIds[i], typeDeps);
+    for (i = 0; i < partialType.typeIds.length; i++) {
+      this._flattenTypeDepGraph(partialType.typeIds[i], typeDeps);
+    }
   }
   if (partialType.fields !== undefined) {
-    for (var i = 0; i < partialType.fields.length; i++) {
+    for (i = 0; i < partialType.fields.length; i++) {
       this._flattenTypeDepGraph(partialType.fields[i].typeId, typeDeps);
     }
   }
@@ -160,10 +162,16 @@ TypeDecoder.prototype._tryBuildPartialType = function(typeId) {
     throw new Error('Type unexpectedly undefined.');
   };
 
+  var id;
+  var type;
+  var i;
   // All dependencies are ready. Build the type.
-  for (var id in flattenedTypes) {
-    var partialType = flattenedTypes[id].partialType;
-    var type = flattenedTypes[id].type;
+  for (id in flattenedTypes) {
+    if (!flattenedTypes.hasOwnProperty(id)) {
+      continue;
+    }
+    partialType = flattenedTypes[id].partialType;
+    type = flattenedTypes[id].type;
 
     if (partialType.namedTypeId !== undefined) {
       // Handle named types in a second pass because it involves copying.
@@ -189,13 +197,13 @@ TypeDecoder.prototype._tryBuildPartialType = function(typeId) {
     }
     if (partialType.typeIds !== undefined) {
       type.types = new Array(partialType.typeIds.length);
-      for (var i = 0; i < partialType.typeIds.length; i++) {
+      for (i = 0; i < partialType.typeIds.length; i++) {
         type.types[i] = getType(partialType.typeIds[i]);
       }
     }
     if (partialType.fields !== undefined) {
       type.fields = new Array(partialType.fields.length);
-      for (var i = 0; i < partialType.fields.length; i++) {
+      for (i = 0; i < partialType.fields.length; i++) {
         var partialField = partialType.fields[i];
         type.fields[i] = {
           name: partialField.name,
@@ -206,10 +214,10 @@ TypeDecoder.prototype._tryBuildPartialType = function(typeId) {
   }
 
   // Now handle named types.
-  for (var id in flattenedTypes) {
+  for (id in flattenedTypes) {
     if (flattenedTypes.hasOwnProperty(id)) {
-      var partialType = flattenedTypes[id].partialType;
-      var type = flattenedTypes[id].type;
+      partialType = flattenedTypes[id].partialType;
+      type = flattenedTypes[id].type;
 
       if (partialType.namedTypeId !== undefined) {
         // Special case for named types.
@@ -243,11 +251,13 @@ TypeDecoder.prototype._readPartialType = function(messageBytes) {
   var reader = new RawVomReader(messageBytes);
   var wiretypeId = reader.readUint();
   var partialType = {};
+  var nextIndex;
+  var i;
   switch (wiretypeId) {
     case BootstrapTypes.definitions.WIRENAMED.id:
       endDef:
       while (true) {
-        var nextIndex = reader.readUint();
+        nextIndex = reader.readUint();
         switch(nextIndex) {
           case 0:
             break endDef;
@@ -264,18 +274,18 @@ TypeDecoder.prototype._readPartialType = function(messageBytes) {
       break;
     case BootstrapTypes.definitions.WIREENUM.id:
       partialType.kind = Kind.ENUM;
-      endDef:
+      endDef2:
       while (true) {
-        var nextIndex = reader.readUint();
+        nextIndex = reader.readUint();
         switch(nextIndex) {
           case 0:
-            break endDef;
+            break endDef2;
           case 1:
             partialType.name = reader.readString();
             break;
           case 2:
             partialType.labels = new Array(reader.readUint());
-            for (var i = 0; i < partialType.labels.length; i++) {
+            for (i = 0; i < partialType.labels.length; i++) {
               partialType.labels[i] = reader.readString();
             }
             break;
@@ -286,12 +296,12 @@ TypeDecoder.prototype._readPartialType = function(messageBytes) {
       break;
     case BootstrapTypes.definitions.WIREARRAY.id:
       partialType.kind = Kind.ARRAY;
-      endDef:
+      endDef3:
       while (true) {
-        var nextIndex = reader.readUint();
+        nextIndex = reader.readUint();
         switch(nextIndex) {
           case 0:
-            break endDef;
+            break endDef3;
           case 1:
             partialType.name = reader.readString();
             break;
@@ -308,12 +318,12 @@ TypeDecoder.prototype._readPartialType = function(messageBytes) {
       break;
     case BootstrapTypes.definitions.WIRELIST.id:
       partialType.kind = Kind.LIST;
-      endDef:
+      endDef4:
       while (true) {
-        var nextIndex = reader.readUint();
+        nextIndex = reader.readUint();
         switch(nextIndex) {
           case 0:
-            break endDef;
+            break endDef4;
           case 1:
             partialType.name = reader.readString();
             break;
@@ -327,12 +337,12 @@ TypeDecoder.prototype._readPartialType = function(messageBytes) {
       break;
     case BootstrapTypes.definitions.WIRESET.id:
       partialType.kind = Kind.SET;
-      endDef:
+      endDef5:
       while (true) {
-        var nextIndex = reader.readUint();
+        nextIndex = reader.readUint();
         switch(nextIndex) {
           case 0:
-            break endDef;
+            break endDef5;
           case 1:
             partialType.name = reader.readString();
             break;
@@ -346,12 +356,12 @@ TypeDecoder.prototype._readPartialType = function(messageBytes) {
       break;
     case BootstrapTypes.definitions.WIREMAP.id:
       partialType.kind = Kind.MAP;
-      endDef:
+      endDef6:
       while (true) {
-        var nextIndex = reader.readUint();
+        nextIndex = reader.readUint();
         switch(nextIndex) {
           case 0:
-            break endDef;
+            break endDef6;
           case 1:
             partialType.name = reader.readString();
             break;
@@ -368,18 +378,18 @@ TypeDecoder.prototype._readPartialType = function(messageBytes) {
       break;
     case BootstrapTypes.definitions.WIRESTRUCT.id:
       partialType.kind = Kind.STRUCT;
-      endDef:
+      endDef7:
       while (true) {
-        var nextIndex = reader.readUint();
+        nextIndex = reader.readUint();
         switch(nextIndex) {
           case 0:
-            break endDef;
+            break endDef7;
           case 1:
             partialType.name = reader.readString();
             break;
           case 2:
             partialType.fields = new Array(reader.readUint());
-            for (var i = 0; i < partialType.fields.length; i++) {
+            for (i = 0; i < partialType.fields.length; i++) {
               partialType.fields[i] = {};
               sfEndDef:
               while(true) {
@@ -404,18 +414,18 @@ TypeDecoder.prototype._readPartialType = function(messageBytes) {
       break;
     case BootstrapTypes.definitions.WIREONEOF.id:
       partialType.kind = Kind.ONEOF;
-      endDef:
+      endDef8:
       while (true) {
-        var nextIndex = reader.readUint();
+        nextIndex = reader.readUint();
         switch(nextIndex) {
           case 0:
-            break endDef;
+            break endDef8;
           case 1:
             partialType.name = reader.readString();
             break;
           case 2:
             partialType.typeIds = new Array(reader.readUint());
-            for (var i = 0; i < partialType.typeIds.length; i++) {
+            for (i = 0; i < partialType.typeIds.length; i++) {
               partialType.typeIds[i] = reader.readUint();
             }
             break;
@@ -426,12 +436,12 @@ TypeDecoder.prototype._readPartialType = function(messageBytes) {
       break;
     case BootstrapTypes.definitions.WIRENILABLE.id:
       partialType.kind = Kind.NILABLE;
-      endDef:
+      endDef9:
       while (true) {
-        var nextIndex = reader.readUint();
+        nextIndex = reader.readUint();
         switch(nextIndex) {
           case 0:
-            break endDef;
+            break endDef9;
           case 1:
             partialType.elemTypeId = reader.readUint();
             break;

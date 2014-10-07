@@ -1,3 +1,4 @@
+/*global escape: true */
 /**
  * @fileoverview Definition of RawVomReader.
  */

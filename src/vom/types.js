@@ -29,4 +29,4 @@ function primitiveType(kind) {
   return {
     kind: kind
   };
-};
+}

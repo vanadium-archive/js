@@ -230,9 +230,14 @@ Encoder.prototype._encodeStruct = function(v, t, writer) {
     throw new Error('Invalid non-object value for set ' + v);
   }
   for (var key in v) {
-    if (!v.hasOwnProperty(key) || key === '_type') {
+    if (!v.hasOwnProperty(key)) {
       continue;
     }
+
+    if (key === '_type') {
+      continue;
+    }
+
     var val = v[key];
 
     var fieldIndex = -1;
@@ -286,11 +291,11 @@ Encoder.prototype._encodeAny = function(v, writer) {
 Encoder.prototype._guessOneOfType = function(val, types) {
   // TODO(bprosnitz) Centralize these conversion rules and make them consistent
   // with the go implementation.
-
+  var i = 0;
   if (val.hasOwnProperty('_type')) {
     var valType = val._type;
     var valTypeStr = stringify(valType);
-    for (var i = 0; i < types.length; i++) {
+    for (i = 0; i < types.length; i++) {
       if (stringify(types[i]) === valTypeStr) {
         return valType;
       }
@@ -299,7 +304,7 @@ Encoder.prototype._guessOneOfType = function(val, types) {
   }
 
   if (typeof val === 'number') {
-    for (var i = 0; i < types.length; i++) {
+    for (i = 0; i < types.length; i++) {
       switch (types[i].kind) {
         case Kind.UINT16:
         case Kind.UINT32:
@@ -315,7 +320,7 @@ Encoder.prototype._guessOneOfType = function(val, types) {
     throw new Error('No number type in OneOf');
   }
   if (typeof val === 'boolean') {
-    for (var i = 0; i < types.length; i++) {
+    for (i = 0; i < types.length; i++) {
       if (types[i].kind === Kind.BOOL) {
         return types[i];
       }
@@ -323,7 +328,7 @@ Encoder.prototype._guessOneOfType = function(val, types) {
     throw new Error('No boolean type in OneOf');
   }
   if (typeof val === 'string') {
-    for (var i = 0; i < types.length; i++) {
+    for (i = 0; i < types.length; i++) {
       if (types[i].kind === Kind.STRING) {
         return types[i];
       }
@@ -332,7 +337,7 @@ Encoder.prototype._guessOneOfType = function(val, types) {
   }
 
   if (typeof val === 'object') {
-    for (var i = 0; i < types.length; i++) {
+    for (i = 0; i < types.length; i++) {
       var otherType = types[i];
       if (otherType.kind === Kind.ARRAY || otherType.kind === Kind.LIST) {
         if (Array.isArray(val)) {

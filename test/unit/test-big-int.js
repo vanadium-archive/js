@@ -359,7 +359,8 @@ test('multiply and divide', function(t) {
     1, 6, 9, 111, 9543];
   var rightSideNumbers = [-3390, -235, -77, -3, -1, 0, 1, 2, 5, 99, 8000];
 
-  for (var i = 0; i < leftSideNumbers.length; i++) {
+  var i;
+  for (i = 0; i < leftSideNumbers.length; i++) {
     for (var j = 0; j < rightSideNumbers.length; j++) {
       var left = leftSideNumbers[i];
       var right = rightSideNumbers[j];
@@ -381,7 +382,7 @@ test('multiply and divide', function(t) {
     }
   }
 
-  for (var i = 0; i < tests.length; i++) {
+  for (i = 0; i < tests.length; i++) {
     var test = tests[i];
     var multiply = test.first.multiply(test.second);
     t.ok(multiply.equals(test.multiply), test.first +
@@ -444,13 +445,17 @@ test('fromNativeNumber', function(t) {
       expectedOutput: null
     },
   ];
+  var generator = function(test) {
+    return function() {
+      BigInt.fromNativeNumber(test.input);
+    };
+  };
   for (var i = 0; i < tests.length; i++) {
     var test = tests[i];
 
     if (test.hasOwnProperty('expectedFailure')) {
-      t.throws(function() {
-        BigInt.fromNativeNumber(test.input);
-      }, undefined, 'test: ' + test.input.toString(16) + ' should fail');
+      t.throws(generator(test), undefined,
+          'test: ' + test.input.toString(16) + ' should fail');
     } else {
       var result = BigInt.fromNativeNumber(test.input);
       t.ok(result.equals(test.expectedOutput), 'test: ' +
@@ -508,13 +513,17 @@ test('toNativeNumber', function(t) {
       expectedFailure: true
     },
   ];
+  var generator = function(test) {
+    return function() {
+      test.input.toNativeNumber();
+    };
+  };
   for (var i = 0; i < tests.length; i++) {
     var test = tests[i];
 
     if (test.hasOwnProperty('expectedFailure')) {
-      t.throws(function() {
-        test.input.toNativeNumber();
-      }, undefined, 'test: ' + test.input + ' should fail');
+      t.throws(generator(test), undefined,
+          'test: ' + test.input + ' should fail');
     } else {
       var result = test.input.toNativeNumber();
       t.equals(result, test.expectedOutput, 'test: ' +
