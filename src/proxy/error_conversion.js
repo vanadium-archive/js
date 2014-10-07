@@ -12,11 +12,11 @@ module.exports = {
 /*
  * Implements the same structure as Standard struct in veyron2/verror
  * @private
- * @param {string} Id id of the error, which in JavaScript, corresponds to the
- * name property of an Error object.
+ * @param {Object} idAction idActionription of the error, which in JavaScript,
+ * corresponds to the name property of an Error object.
  */
-var _standard = function(id, message) {
-  this.iD = id;
+var _standard = function(idAction, message) {
+  this.idAction = idAction;
   this.msg = message;
 };
 
@@ -28,29 +28,33 @@ var _standard = function(id, message) {
  * @return {_standard} verror standard struct
  */
 function toStandardErrorStruct(err) {
-  var errId = ''; // empty ID indicate an unknown error
+  var idAction = {
+    id: 'unknown',
+    action: 0,
+  };
   var errMessage = '';
   if (err instanceof Error) {
     errMessage = err.message;
-    if (err.name !== 'Error') { // default name is considered unknown
-      errId = err.name;
+    if (err.idAction) { // default name is considered unknown
+      idAction = err.idAction;
     }
   } else if (err !== undefined && err !== null) {
     errMessage = err + '';
   }
 
-  return new _standard(errId, errMessage);
+  return new _standard(idAction, errMessage);
 }
 
 var errIdConstrMap = {};
-errIdConstrMap[vError.Ids.Aborted] = vError.AbortedError;
-errIdConstrMap[vError.Ids.BadArg] = vError.BadArgError;
-errIdConstrMap[vError.Ids.BadProtocol] = vError.BadProtocolError;
-errIdConstrMap[vError.Ids.Exists] = vError.ExistsError;
-errIdConstrMap[vError.Ids.Internal] = vError.InternalError;
-errIdConstrMap[vError.Ids.NoAccess] = vError.NoAccessError;
-errIdConstrMap[vError.Ids.NoExist] = vError.NoExistError;
-errIdConstrMap[vError.Ids.NoExistOrNoAccess] = vError.NoExistOrNoAccessError;
+errIdConstrMap[vError.IdActions.Aborted.id] = vError.AbortedError;
+errIdConstrMap[vError.IdActions.BadArg.id] = vError.BadArgError;
+errIdConstrMap[vError.IdActions.BadProtocol.id] = vError.BadProtocolError;
+errIdConstrMap[vError.IdActions.Exists.id] = vError.ExistsError;
+errIdConstrMap[vError.IdActions.Internal.id] = vError.InternalError;
+errIdConstrMap[vError.IdActions.NoAccess.id] = vError.NoAccessError;
+errIdConstrMap[vError.IdActions.NoExist.id] = vError.NoExistError;
+errIdConstrMap[vError.IdActions.NoExistOrNoAccess.id] =
+   vError.NoExistOrNoAccessError;
 
 /*
  * Converts from a verror standard struct which comes from wspr to JavaScript
@@ -62,11 +66,11 @@ errIdConstrMap[vError.Ids.NoExistOrNoAccess] = vError.NoExistOrNoAccessError;
 function toJSerror(verr) {
   var err;
 
-  var ErrIdConstr = errIdConstrMap[verr.iD];
+  var ErrIdConstr = errIdConstrMap[verr.iDAction.iD || verr.iDAction.id];
   if(ErrIdConstr) {
     err = new ErrIdConstr(verr.msg);
   } else {
-    err = new vError.VeyronError(verr.msg, verr.iD);
+    err = new vError.VeyronError(verr.msg, verr.iDAction);
   }
 
   return err;

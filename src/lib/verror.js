@@ -6,34 +6,67 @@ var inherits = require('util').inherits;
 
 var vError = {};
 
+vError.Actions = {
+  NoRetry: 0,
+  RetryConnection: 1,
+  RetryRefetch: 2,
+  RetryBackoff: 3,
+};
 /*
  * List of predefined error ids. Matches veyron2/vError/common.idl
  */
-vError.Ids = {
-  Aborted: 'veyron.io/veyron/veyron2/verror.Aborted',
-  BadArg: 'veyron.io/veyron/veyron2/verror.BadArg',
-  BadProtocol: 'veyron.io/veyron/veyron2/verror.BadProtocol',
-  Exists: 'veyron.io/veyron/veyron2/verror.Exists',
-  Internal: 'veyron.io/veyron/veyron2/verror.Internal',
-  NoAccess: 'veyron.io/veyron/veyron2/verror.NoAccess',
-  NoExist: 'veyron.io/veyron/veyron2/verror.NoExist',
-  NoExistOrNoAccess: 'veyron.io/veyron/veyron2/verror.NoExistOrNoAccess'
+vError.IdActions = {
+  Aborted: {
+    id: 'veyron.io/veyron/veyron2/verror.Aborted',
+    action: vError.Actions.NoRetry,
+  },
+  BadArg: {
+    id: 'veyron.io/veyron/veyron2/verror.BadArg',
+    action: vError.Actions.NoRetry,
+  },
+  BadProtocol: {
+    id: 'veyron.io/veyron/veyron2/verror.BadProtocol',
+    action: vError.Actions.NoRetry,
+  },
+  Exists: {
+    id: 'veyron.io/veyron/veyron2/verror.Exists',
+    action: vError.Actions.NoRetry,
+  },
+  Internal: {
+    id: 'veyron.io/veyron/veyron2/verror.Internal',
+    action: vError.Actions.NoRetry,
+  },
+  NoAccess: {
+    id: 'veyron.io/veyron/veyron2/verror.NoAccess',
+    action: vError.Actions.NoRetry,
+  },
+  NoExist: {
+    id: 'veyron.io/veyron/veyron2/verror.NoExist',
+    action: vError.Actions.NoRetry,
+  },
+  NoExistOrNoAccess: {
+    id: 'veyron.io/veyron/veyron2/verror.NoExistOrNoAccess',
+    action: vError.Actions.NoRetry,
+  },
 };
 
 /*
  * Creates an error object given the ID as the name and a message
  * @constructor
  * @param {string} message message
- * @param {vError.Ids} id Error id
+ * @param {vError.IdActions} idAction idActionription of error
  */
-vError.VeyronError = function(message, id) {
+vError.VeyronError = function(message, idAction) {
   if (!(this instanceof vError.VeyronError)) {
-    return new vError.VeyronError(message, id);
+    return new vError.VeyronError(message, idAction);
   }
   Error.call(this);
   this.message = message;
-  if (id) {
-    this.name = id;
+  this.idAction = idAction;
+  if (idAction.id) {
+    this.name = idAction.id;
+  } else if (idAction.iD) {
+    this.name = idAction.iD;
   }
   if (typeof Error.captureStackTrace === 'function') {
     Error.captureStackTrace(this, vError.VeyronError);
@@ -55,7 +88,7 @@ vError.equals = function(a, b) {
   var ais = a instanceof vError.VeyronError;
   var bis = b instanceof vError.VeyronError;
   if (ais && bis) {
-    return a.message === b.message && a.id === b.id;
+    return a.message === b.message && a.idAction === b.idAction;
   }
   return false;
 };
@@ -69,7 +102,7 @@ vError.AbortedError = function(message) {
   if (!(this instanceof vError.AbortedError)) {
     return new vError.AbortedError(message);
   }
-  vError.VeyronError.call(this, message, vError.Ids.Aborted);
+  vError.VeyronError.call(this, message, vError.IdActions.Aborted);
 };
 inherits(vError.AbortedError, vError.VeyronError);
 
@@ -83,7 +116,7 @@ vError.BadArgError = function(message) {
   if (!(this instanceof vError.BadArgError)) {
     return new vError.BadArgError(message);
   }
-  vError.VeyronError.call(this, message, vError.Ids.BadArg);
+  vError.VeyronError.call(this, message, vError.IdActions.BadArg);
 };
 inherits(vError.BadArgError, vError.VeyronError);
 
@@ -97,7 +130,7 @@ vError.BadProtocolError = function(message) {
   if (!(this instanceof vError.BadProtocolError)) {
     return new vError.BadProtocolError(message);
   }
-  vError.VeyronError.call(this, message, vError.Ids.BadProtocol);
+  vError.VeyronError.call(this, message, vError.IdActions.BadProtocol);
 };
 inherits(vError.BadProtocolError, vError.VeyronError);
 
@@ -110,7 +143,7 @@ vError.ExistsError = function(message) {
   if (!(this instanceof vError.ExistsError)) {
     return new vError.ExistsError(message);
   }
-  vError.VeyronError.call(this, message, vError.Ids.Exists);
+  vError.VeyronError.call(this, message, vError.IdActions.Exists);
 };
 inherits(vError.ExistsError, vError.VeyronError);
 
@@ -124,7 +157,7 @@ vError.InternalError = function(message) {
   if (!(this instanceof vError.InternalError)) {
     return new vError.InternalError(message);
   }
-  vError.VeyronError.call(this, message, vError.Ids.Internal);
+  vError.VeyronError.call(this, message, vError.IdActions.Internal);
 };
 inherits(vError.InternalError, vError.VeyronError);
 
@@ -138,7 +171,7 @@ vError.NoAccessError = function(message) {
   if (!(this instanceof vError.NoAccessError)) {
     return new vError.NoAccessError(message);
   }
-  vError.VeyronError.call(this, message, vError.Ids.NoAccess);
+  vError.VeyronError.call(this, message, vError.IdActions.NoAccess);
 };
 inherits(vError.NoAccessError, vError.VeyronError);
 
@@ -152,7 +185,7 @@ vError.NoExistError = function(message) {
   if (!(this instanceof vError.NoExistError)) {
     return new vError.NoExistError(message);
   }
-  vError.VeyronError.call(this, message, vError.Ids.NoExist);
+  vError.VeyronError.call(this, message, vError.IdActions.NoExist);
 };
 inherits(vError.NoExistError, vError.VeyronError);
 
@@ -166,7 +199,7 @@ vError.NoExistOrNoAccessError = function(message) {
   if (!(this instanceof vError.NoExistOrNoAccessError)) {
     return new vError.NoExistOrNoAccessError(message);
   }
-  vError.VeyronError.call(this, message, vError.Ids.NoExistOrNoAccess);
+  vError.VeyronError.call(this, message, vError.IdActions.NoExistOrNoAccess);
 };
 inherits(vError.NoExistOrNoAccessError, vError.VeyronError);
 module.exports = vError;

@@ -2,13 +2,13 @@ var test = require('prova');
 var verror = require('../../src/lib/verror.js');
 var VeyronError = verror.VeyronError;
 var message = 'test error message';
-var errors = Object.keys(verror.Ids).map(idToErrorName);
+var errors = Object.keys(verror.IdActions).map(idToErrorName);
 
 errors.forEach(function(key) {
   test('verror.' + key, function(assert) {
     var Ctor = verror[key];
     var err = new Ctor(message);
-    var id = verror.Ids[key.replace('Error', '')];
+    var id = verror.IdActions[key.replace('Error', '')].id;
 
     assert.ok(Ctor() instanceof Ctor, 'should not require "new"'); // jshint ignore:line
     assert.ok(err instanceof Ctor, 'should be instanceof ' + key);
@@ -22,7 +22,8 @@ errors.forEach(function(key) {
   });
 });
 
-function idToErrorName(id) {
+function idToErrorName(key) {
+  var id = verror.IdActions[key].id;
   var prefix = 'veyron.io/veyron/veyron2/verror.';
   var name = id.replace(prefix, '');
 
