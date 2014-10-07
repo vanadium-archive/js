@@ -2,7 +2,7 @@
 module.exports = {
   title: 'WSPR',
   flags: {
-    vproxy: 'test/proxy',
+    'veyron.proxy': 'test/proxy',
     identd: 'test/identd',
     port: 3224
   }
