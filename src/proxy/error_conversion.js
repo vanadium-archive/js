@@ -66,11 +66,13 @@ errIdConstrMap[vError.IdActions.NoExistOrNoAccess.id] =
 function toJSerror(verr) {
   var err;
 
-  var ErrIdConstr = errIdConstrMap[verr.iDAction.iD || verr.iDAction.id];
+  var type = verr.iDAction.iD || verr.iDAction.id
+  var ErrIdConstr = errIdConstrMap[type];
+  var msg = verr.msg || (type + ": " + verr.paramList.join(" "));
   if(ErrIdConstr) {
-    err = new ErrIdConstr(verr.msg);
+    err = new ErrIdConstr(msg);
   } else {
-    err = new vError.VeyronError(verr.msg, verr.iDAction);
+    err = new vError.VeyronError(msg, verr.iDAction);
   }
 
   return err;
