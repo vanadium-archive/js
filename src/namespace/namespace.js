@@ -22,24 +22,24 @@ var Namespace = function(client, roots) {
  * Error returned when resolution hits a non-mount table.
  */
 Namespace.errNotAMountTable = function() {
-  return new vError.VeyronError(
-    'Resolution target is not a mount table', vError.Ids.Aborted);
+  return new vError.AbortedError(
+    'Resolution target is not a mount table');
 };
 
 /*
  * Error returned from the mount table server when reading a non-existant name.
  */
 Namespace.errNoSuchName = function() {
-  return new vError.VeyronError(
-    'Name doesn\'t exist', vError.Ids.NoExist);
+  return new vError.NoExistError(
+    'Name doesn\'t exist');
 };
 
 /*
  * Error returned from the mount table server when reading a non-existant name.
  */
 Namespace.errNoSuchNameRoot = function() {
-  return new vError.VeyronError(
-    'Name doesn\'t exist: root of namespace', vError.NoExist);
+  return new vError.NoExistError(
+    'Name doesn\'t exist: root of namespace');
 };
 
 /*
