@@ -23,7 +23,13 @@ module.exports = {
   init: init,
   logLevels: require('./lib/vlog').levels,
   namespaceUtil: require('./namespace/util'),
-  Promise: require('./lib/promise')
+  Promise: require('./lib/promise'),
+  createLeafDispatcher: require('./ipc/leaf_dispatcher'),
+  vom: {
+    Kind: require('./vom/kind'),
+    Types: require('./vom/types'),
+  },
+  caveats: require('./security/caveat'),
 };
 
 /**
