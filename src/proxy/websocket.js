@@ -6,6 +6,7 @@ var WebSocket = require('ws');
 var Deferred = require('./../lib/deferred');
 var vLog = require('./../lib/vlog');
 var Proxy = require('./proxy');
+var isBrowser = require('is-browser');
 
 /**
  * A client for the veyron service using websockets. Connects to the veyron wspr
@@ -53,19 +54,32 @@ ProxyConnection.prototype.getWebSocket = function() {
   };
   var configDeferred = this._configDeferred;
   websocket.onerror = function(e) {
+    // TODO(jasoncampbell): there can be more errors than just faild
+    // connection, additionally there can be more than one error emited. We
+    // should take care to cover these cases.
     vLog.error('Failed to connect to proxy at url:', self.url);
+
+    var isEvent = isBrowser && !!window.Event && e instanceof window.Event;
+    var isErrorEvent = isEvent && e.type === 'error';
+
+    // It's possible to get DOM Websocket error events into here
+    if (isErrorEvent) {
+      e = new Error('WebSocket error - ' + self.url);
+    }
+
     deferred.reject(e);
 
-    // TODO(nlacasse): This causes an unhandledRejection, since nothing is
-    // chained on this promise at the point when we reject it.
+    // TODO(nlacasse): This causes an unhandledRejection, since nothing
+    // is chained on this promise at the point when we reject it.
     //
-    // Later on, configDeferred becomes proxy.config, and a lot of places in the
-    // code do proxy.config.then(), so I'm leaving this in for now.
+    // Later on, configDeferred becomes proxy.config, and a lot of places
+    // in the code do proxy.config.then(), so I'm leaving this in for now.
     //
     // This should be refactored so that there is a handler chained to this
-    // promise at the point it is created, or at least before it gets rejected.
-    configDeferred.reject(
-      'Proxy connection closed, failed to get config ' + e);
+    // promise at the point it is created, or at least before it gets
+    // rejected.
+    var message = 'Proxy connection closed, failed to get config ' + e.message;
+    configDeferred.reject(new Error(message));
   };
 
   websocket.onmessage = function(frame) {

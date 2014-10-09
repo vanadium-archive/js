@@ -63,6 +63,11 @@ test('var err = ec.toJSerror(struct)', function(assert) {
   assert.equal(err.name, 'Error');
   assert.equal(err.message, message);
 
+  err = ec.toJSerror(new Error('dont convert me'));
+
+  assert.equal(err.name, 'Error');
+  assert.equal(err.message, 'dont convert me');
+
   var errors = [
     'AbortedError',
     'BadArgError',

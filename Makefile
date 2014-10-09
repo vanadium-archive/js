@@ -60,8 +60,12 @@ test-unit: node_modules
 	prova test/unit/test-*.js $(TAP)
 	prova test/unit/test-*.js $(BROWSER_OPTS)
 
-test-integration: node_modules
+test-integration: test-integration-node test-integration-browser
+
+test-integration-node: node_modules
 	node test/integration/runner.js test/integration/test-*.js $(TAP)
+
+test-integration-browser: node_modules
 	node test/integration/runner.js test/integration/test-*.js $(BROWSER_OPTS)
 
 clean:
@@ -81,4 +85,5 @@ node_modules: package.json
 	@touch node_modules
 
 .PHONY: all build clean dependency-check lint
-.PHONY: test test-new test-unit test-integration
+.PHONY: test test-new test-unit
+.PHONY: test-integration test-integration-node test-integration-browser

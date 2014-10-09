@@ -66,6 +66,10 @@ errIdConstrMap[vError.IdActions.NoExistOrNoAccess.id] =
 function toJSerror(verr) {
   var err;
 
+  if (verr instanceof Error) {
+    return verr;
+  }
+
   var type = verr.iDAction.iD || verr.iDAction.id
   var ErrIdConstr = errIdConstrMap[type];
   var msg = verr.msg || (type + ": " + verr.paramList.join(" "));
