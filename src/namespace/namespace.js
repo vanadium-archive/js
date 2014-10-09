@@ -126,8 +126,8 @@ Namespace.prototype._resolveAgainstMountTable = function(names) {
     }
     return service.resolveStep().then(convertServersToStrings);
   }).catch(function onError(err) {
-    if (vError.equals(err, Namespace.errNoSuchName()) ||
-        vError.equals(err, Namespace.errNoSuchNameRoot()) ||
+    if (errorEquals(err, Namespace.errNoSuchName()) ||
+        errorEquals(err, Namespace.errNoSuchNameRoot()) ||
         names.length <= 1) {
       throw err;
     } else {
@@ -176,11 +176,11 @@ Namespace.prototype.resolveToMountTable = function(name, cb) {
   var names = this._rootNames(name);
   var deferred = new Deferred(cb);
   var handleErrors = function(err, curr, last) {
-    if (vError.equals(err, Namespace.errNoSuchNameRoot()) ||
-        vError.equals(err, Namespace.errNotAMountTable())) {
+    if (errorEquals(err, Namespace.errNoSuchNameRoot()) ||
+        errorEquals(err, Namespace.errNotAMountTable())) {
       return makeAllTerminal(last);
     }
-    if (vError.equals(err, Namespace.errNoSuchName())) {
+    if (errorEquals(err, Namespace.errNoSuchName())) {
       return makeAllTerminal(curr);
     }
     throw err;
@@ -195,7 +195,7 @@ Namespace.prototype.resolveToMountTable = function(name, cb) {
  * resolveMaximally resolves a veyron name as far as it can, whether the
  * target is a mount table or not.
  * @param {string} name The name to resolve.
- * @param {function} [cb] if given, this fuction will be called on
+ * @param {function} [cb] if given, this function will be called on
  * completion of the resolve.  The first argument will be an error if there
  * is one, and the second argument is a list of terminal names.
  * @return {Promise} A promise to a list of terminal names.
@@ -204,9 +204,9 @@ Namespace.prototype.resolveMaximally = function(name, cb) {
   var names = this._rootNames(name);
   var deferred = new Deferred(cb);
   var handleErrors = function(err, curr, last){
-    if (vError.equals(err, Namespace.errNoSuchNameRoot()) ||
-        vError.equals(err, Namespace.errNoSuchName()) ||
-        vError.equals(err, Namespace.errNotAMountTable())) {
+    if (errorEquals(err, Namespace.errNoSuchNameRoot()) ||
+        errorEquals(err, Namespace.errNoSuchName()) ||
+        errorEquals(err, Namespace.errNotAMountTable())) {
       return makeAllTerminal(curr);
     }
     throw err;
@@ -215,6 +215,21 @@ Namespace.prototype.resolveMaximally = function(name, cb) {
   deferred.resolve(this._resolveLoop(names, names, 0, handleErrors));
 
   return deferred.promise;
+};
+
+// TODO(aghassemi) we need to seriously get rid of expecting particular error
+// text like we have been in this module.
+// This is a temporary hack to account for the recent changes in verror until
+// this module is re-factored as currently there is no easy alternative
+// (even Go namespace library relies on actual error text)
+function errorEquals(target, source) {
+  var result =
+    target.name === source.name &&
+    //Ends with
+    target.message.indexOf(source.message,
+      target.message.length - source.message.length ) !== -1;
+
+  return result;
 };
 
 module.exports = Namespace;

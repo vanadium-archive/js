@@ -77,23 +77,6 @@ vError.VeyronError = function(message, idAction) {
 inherits(vError.VeyronError, Error);
 
 /*
- * Tests if two errors are equal.
- * If the errors are both VeyronErrors then this returns true
- * when their messange and names are equal.  Other cases return false.
- * @param {Error} a An error to compare
- * @param {Error} a An error to compare
- * @return {boolean} Returns true if the errors are equal.
- */
-vError.equals = function(a, b) {
-  var ais = a instanceof vError.VeyronError;
-  var bis = b instanceof vError.VeyronError;
-  if (ais && bis) {
-    return a.message === b.message && a.idAction === b.idAction;
-  }
-  return false;
-};
-
-/*
  * Creates an error object indicating operation aborted, e.g. connection closed.
  * @constructor
  * @param {string} message message
