@@ -1,10 +1,10 @@
+// Command wspr_sampled is an implementation of the wspr_sample service.
 package main
 
 import (
 	"fmt"
 	"log"
 
-	"veyron.io/examples/wspr_sample/sampled/lib"
 	"veyron.io/veyron/veyron/lib/signals"
 	"veyron.io/veyron/veyron2/rt"
 )
@@ -14,7 +14,7 @@ func main() {
 	r := rt.Init()
 	defer r.Cleanup()
 
-	s, endpoint, err := lib.StartServer(r)
+	s, endpoint, err := StartServer(r)
 	if err != nil {
 		log.Fatal("", err)
 	}

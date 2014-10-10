@@ -1,4 +1,4 @@
-package lib
+package main
 
 import (
 	"fmt"
@@ -9,7 +9,7 @@ import (
 	"veyron.io/veyron/veyron2/naming"
 	"veyron.io/veyron/veyron2/security"
 
-	sample "veyron.io/examples/wspr_sample"
+	"veyron.io/examples/wspr_sample"
 )
 
 type sampleDispatcher struct {
@@ -37,8 +37,8 @@ func StartServer(r veyron2.Runtime) (ipc.Server, naming.Endpoint, error) {
 	}
 
 	disp := &sampleDispatcher{
-		cache:        sample.NewServerCache(NewCached()),
-		errorThrower: sample.NewServerErrorThrower(NewErrorThrower()),
+		cache:        wspr_sample.NewServerCache(NewCached()),
+		errorThrower: wspr_sample.NewServerErrorThrower(NewErrorThrower()),
 	}
 
 	// Create an endpoint and begin listening.

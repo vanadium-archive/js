@@ -1,4 +1,4 @@
-package lib
+package main
 
 import (
 	"errors"
@@ -13,16 +13,16 @@ import (
 	"veyron.io/veyron/veyron2/vdl/vdlutil"
 	"veyron.io/veyron/veyron2/verror"
 
-	hps "veyron.io/examples/wspr_sample"
+	"veyron.io/examples/wspr_sample"
 )
 
 // getCacheClient initializes the runtime and creates a client binding.
-func getCacheClient(address string) (hps.Cache, error) {
+func getCacheClient(address string) (wspr_sample.Cache, error) {
 	rt.Init()
 
 	// Bind to a rooted, terminal name to bypass the MountTable which isn't
 	// actually used, nor needed, in these tests.
-	s, err := hps.BindCache(naming.JoinAddressName(address, "//cache"))
+	s, err := wspr_sample.BindCache(naming.JoinAddressName(address, "//cache"))
 	if err != nil {
 		return nil, err
 	}
@@ -149,7 +149,7 @@ func populateObject(ctx context.T, s settable) error {
 }
 
 // setupManyResults starts a server and client and populates the server with the values in populateObject.
-func setupManyResults(t *testing.T) (hps.Cache, ipc.Server) {
+func setupManyResults(t *testing.T) (wspr_sample.Cache, ipc.Server) {
 	r := rt.Init()
 	s, endpoint, err := StartServer(r)
 	if err != nil {
