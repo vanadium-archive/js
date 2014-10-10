@@ -85,11 +85,23 @@ Router.prototype.invokeMethod = function (receiver, method, args) {
   // Call the registered method on the requested service
   try {
     return method.apply(receiver, args);
-  } catch (e) {
-    if (e instanceof Error) {
-      return e;
+  } catch (err) {
+
+    // Gaurd against rejecting non-errors
+    // TODO(jasoncampbell): consolidate all error conversion into verror
+    if (! (err instanceof Error)) {
+      var message;
+
+      if (typeof err === 'undefined' || err === null) {
+        message = 'Unknown exception.';
+      } else {
+        message = JSON.stringify(err);
+      }
+
+      return new Error(message);
     }
-    return new Error(e);
+
+    return err;
   }
 };
 
@@ -294,7 +306,23 @@ Router.prototype.handleRPCRequest = function(messageId, request) {
     if (finished) {
       return;
     }
+
     finished = true;
+
+    // Gaurd against rejecting non-errors
+    // TODO(jasoncampbell): consolidate all error conversion into verror
+    if (! (err instanceof Error)) {
+      var message;
+
+      if (typeof err === 'undefined' || err === null) {
+        message = 'Unknown exception.';
+      } else {
+        message = JSON.stringify(err);
+      }
+
+      err = new Error(message);
+    }
+
     sendInvocationError(err, metadata);
   });
 };

@@ -230,6 +230,6 @@ function errorEquals(target, source) {
       target.message.length - source.message.length ) !== -1;
 
   return result;
-};
+}
 
 module.exports = Namespace;

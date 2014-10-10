@@ -12,6 +12,7 @@ vError.Actions = {
   RetryRefetch: 2,
   RetryBackoff: 3,
 };
+
 /*
  * List of predefined error ids. Matches veyron2/vError/common.idl
  */
@@ -48,6 +49,10 @@ vError.IdActions = {
     id: 'veyron.io/veyron/veyron2/verror.NoExistOrNoAccess',
     action: vError.Actions.NoRetry,
   },
+  Unknown: {
+    id: 'veyron.io/veyron/veyron2/verror.Unknown',
+    action: vError.Actions.NoRetry,
+  }
 };
 
 /*
@@ -60,20 +65,24 @@ vError.VeyronError = function(message, idAction) {
   if (!(this instanceof vError.VeyronError)) {
     return new vError.VeyronError(message, idAction);
   }
+
   Error.call(this);
-  this.message = message;
-  this.idAction = idAction;
-  if (idAction.id) {
-    this.name = idAction.id;
-  } else if (idAction.iD) {
-    this.name = idAction.iD;
+
+  this.message = message || '';
+
+  this.idAction = idAction || vError.IdActions.Unknown;
+
+  if (! this.idAction.id) {
+    this.idAction.id = vError.IdActions.Unknown.id;
   }
+
   if (typeof Error.captureStackTrace === 'function') {
     Error.captureStackTrace(this, vError.VeyronError);
   } else {
     this.stack = (new Error()).stack;
   }
 };
+
 inherits(vError.VeyronError, Error);
 
 /*
@@ -185,4 +194,15 @@ vError.NoExistOrNoAccessError = function(message) {
   vError.VeyronError.call(this, message, vError.IdActions.NoExistOrNoAccess);
 };
 inherits(vError.NoExistOrNoAccessError, vError.VeyronError);
+
+vError.UnknownError = function(message) {
+  if (!(this instanceof vError.UnknownError)) {
+    return new vError.UnknownError(message);
+  }
+
+  vError.VeyronError.call(this, message);
+};
+
+inherits(vError.UnknownError, vError.VeyronError);
+
 module.exports = vError;

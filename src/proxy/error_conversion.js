@@ -28,33 +28,33 @@ var _standard = function(idAction, message) {
  * @return {_standard} verror standard struct
  */
 function toStandardErrorStruct(err) {
-  var idAction = {
-    id: 'unknown',
-    action: 0,
-  };
-  var errMessage = '';
+  var idAction = vError.IdActions.Unknown;
+  var message = '';
+
   if (err instanceof Error) {
-    errMessage = err.message;
-    if (err.idAction) { // default name is considered unknown
+    message = err.message;
+
+    if (err.idAction) {
       idAction = err.idAction;
     }
   } else if (err !== undefined && err !== null) {
-    errMessage = err + '';
+    // coerce to string
+    message = err + '';
   }
 
-  return new _standard(idAction, errMessage);
+  return new _standard(idAction, message);
 }
 
-var errIdConstrMap = {};
-errIdConstrMap[vError.IdActions.Aborted.id] = vError.AbortedError;
-errIdConstrMap[vError.IdActions.BadArg.id] = vError.BadArgError;
-errIdConstrMap[vError.IdActions.BadProtocol.id] = vError.BadProtocolError;
-errIdConstrMap[vError.IdActions.Exists.id] = vError.ExistsError;
-errIdConstrMap[vError.IdActions.Internal.id] = vError.InternalError;
-errIdConstrMap[vError.IdActions.NoAccess.id] = vError.NoAccessError;
-errIdConstrMap[vError.IdActions.NoExist.id] = vError.NoExistError;
-errIdConstrMap[vError.IdActions.NoExistOrNoAccess.id] =
-   vError.NoExistOrNoAccessError;
+// TODO(jasoncampbell): Change this so that the error map is easier to
+// lookup constructors etc.
+var errors = {};
+
+Object.keys(vError.IdActions).forEach(function(key) {
+  var value = vError.IdActions[key];
+  var ctor = vError[key + 'Error'];
+
+  errors[value.id] = ctor;
+});
 
 /*
  * Converts from a verror standard struct which comes from wspr to JavaScript
@@ -66,17 +66,17 @@ errIdConstrMap[vError.IdActions.NoExistOrNoAccess.id] =
 function toJSerror(verr) {
   var err;
 
-  if (verr instanceof Error) {
-    return verr;
-  }
+  // iDAction from GO, idAction from JS
+  var idAction = verr.iDAction || verr.idAction;
+  var id = idAction.iD || idAction.id;
+  var msg = verr.msg || (id + ': ' + verr.paramList.join(' '));
 
-  var type = verr.iDAction.iD || verr.iDAction.id
-  var ErrIdConstr = errIdConstrMap[type];
-  var msg = verr.msg || (type + ": " + verr.paramList.join(" "));
-  if(ErrIdConstr) {
-    err = new ErrIdConstr(msg);
+  var Ctor = errors[id];
+
+  if (Ctor) {
+    err = new Ctor(msg);
   } else {
-    err = new vError.VeyronError(msg, verr.iDAction);
+    err = new vError.VeyronError(msg, idAction);
   }
 
   return err;

@@ -103,7 +103,7 @@ OutstandingRPC.prototype.handleStreamClose = function() {
 
 OutstandingRPC.prototype.handleError = function(data) {
   var err;
-  if (data instanceof vError.VeyronError) {
+  if (data instanceof Error) {
     err = data;
   } else {
     err = ErrorConversion.toJSerror(data);

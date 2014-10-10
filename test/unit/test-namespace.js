@@ -93,9 +93,9 @@ resolvers.forEach(function(resolver) {
     var namespace = new Namespace(client, roots);
 
     namespace[resolver]('h/i', function(err) {
-      var isInernalError = err instanceof vError.InternalError;
-
-      assert.ok(isInernalError, 'should be instanceof vError.InternalError');
+      assert.ok(err, 'should err');
+      assert.ok(err instanceof vError.InternalError,
+        'should be instanceof vError.InternalError');
       assert.end();
     });
   });

@@ -130,6 +130,7 @@ Server.prototype.handleAuthorization = function(handle, request) {
     return Promise.reject(new Error('Unknown handle ' + handle));
   }
   var def = new Deferred();
+
   function cb(e) {
     if (e) {
       def.reject(e);

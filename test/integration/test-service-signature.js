@@ -1,7 +1,6 @@
 var test = require('prova');
 var veyron = require('../../');
 var port = require('../services/config-wsprd').flags.port;
-
 var knownSignature = {
   get: {
     inArgs: ['key'],
