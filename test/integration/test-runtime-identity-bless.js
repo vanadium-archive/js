@@ -2,7 +2,6 @@ var test = require('prova');
 var veyron = require('../../');
 var caveat = require('../../src/security/caveat');
 var MethodCaveat = caveat.MethodCaveat;
-var PeerBlessingsCaveat = caveat.PeerBlessingsCaveat;
 
 test('i.bless(..., callback)', function(assert) {
   identity('alice', function(err, id, runtime) {
@@ -52,7 +51,6 @@ test('i.bless(..., callback) - caveats', function(assert) {
     var duration = 1000;
     var caveats = [
       new MethodCaveat(['Foo', 'Bar']),
-      new PeerBlessingsCaveat(['veyron/batman'])
     ];
 
 
@@ -74,7 +72,6 @@ test('var promise = i.bless(...) - caveats', function(assert) {
     var duration = 1000;
     var caveats = [
       new MethodCaveat(['Foo', 'Bar']),
-      new PeerBlessingsCaveat(['veyron/batman'])
     ];
 
     runtime
