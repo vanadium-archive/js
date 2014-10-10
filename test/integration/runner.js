@@ -9,7 +9,7 @@ debug('starting services');
 var services = [
   'proxyd',
   'wsprd',
-  'sampled',
+  'wspr_sampled',
   'identityd'
 ];
 
