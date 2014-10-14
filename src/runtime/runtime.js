@@ -209,7 +209,8 @@ Runtime.prototype.newIdentity = function(name, cb) {
   proxy.sendRequest(JSON.stringify(name), MessageType.NEW_ID, handler, id);
 
   messageDef.promise.then(function(message) {
-    var id = new PublicId(message.names, message.handle, proxy);
+    var id = new PublicId(message.names, message.handle, message.publicKey,
+                          proxy);
 
     newIdentityDef.resolve(id);
   }, newIdentityDef.reject);

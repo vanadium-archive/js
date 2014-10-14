@@ -10,8 +10,10 @@ function Context(ctx, proxy) {
   this.suffix = ctx.suffix;
   // TODO(bjornick): Use the enums.
   this.label = ctx.label;
-  this.localId = new PublicId(ctx.localID.names, ctx.localID.handle, proxy);
-  this.remoteId = new PublicId(ctx.remoteID.names, ctx.remoteID.handle, proxy);
+  this.localId = new PublicId(ctx.localID.names, ctx.localID.handle,
+                              ctx.localID.publicKey, proxy);
+  this.remoteId = new PublicId(ctx.remoteID.names, ctx.remoteID.handle,
+                              ctx.remoteID.publicKey, proxy);
   // TODO(bjornick): Create endpoints.
   this.localEndpoint = ctx.localEndpoint;
   this.remoteEndpoint = ctx.remoteEndpoint;

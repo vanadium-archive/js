@@ -248,6 +248,7 @@ Router.prototype.handleRPCRequest = function(messageId, request) {
     name: request.context.name,
     remoteId: new PublicId(request.context.remoteID.names,
                            request.context.remoteID.handle,
+                           request.context.remoteID.publicKey,
                            this._proxy)
   };
 
@@ -371,7 +372,8 @@ Router.prototype.sendResult = function(messageId, name, value, err, metadata) {
 
   var errorStruct = null;
   if (err !== undefined && err !== null) {
-    errorStruct = ErrorConversion.toStandardErrorStruct(err, this._appName, name);
+    errorStruct = ErrorConversion.toStandardErrorStruct(err, this._appName,
+                                                        name);
   }
 
   // If this is a streaming request, queue up the final response after all

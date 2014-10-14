@@ -12,3 +12,4 @@ extension/example/index.bundle.js
 *.map
 npm-debug.log
 tmp
+*.swp

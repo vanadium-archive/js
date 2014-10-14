@@ -5,47 +5,47 @@ test('id.match(pattern)', function(assert) {
   // wildcard
   assert.ok(match({
     names: [ 'veyron/batman' ],
-    pattern: '*'
+    pattern: '...'
   }));
 
   assert.ok(match({
     names: [ 'veyron/brucewayne' ],
-    pattern: '*'
+    pattern: '...'
   }));
 
   assert.ok(match({
     names: [ 'veyron/batman' ],
-    pattern: 'veyron/batman/*'
+    pattern: 'veyron/batman/...'
   }));
 
   assert.notOk(match({
     names: [ 'veyron/brucewayne' ],
-    pattern: 'veyron/batman/*'
+    pattern: 'veyron/batman/...'
   }));
 
   assert.ok(match({
     names: [ 'veyron/batman/car' ],
-    pattern: 'veyron/batman/*'
+    pattern: 'veyron/batman/...'
   }));
 
   assert.ok(match({
     names: [ 'veyron' ],
-    pattern: 'veyron/batman/*'
+    pattern: 'veyron/batman/...'
   }));
 
   assert.ok(match({
     names: [ 'veyron' ],
-    pattern: 'veyron/batman/car/*'
+    pattern: 'veyron/batman/car/...'
   }));
 
   assert.ok(match({
     names: [ 'veyron/batman/car', 'veyron/brucewayne/car' ],
-    pattern: 'veyron/batman/*'
+    pattern: 'veyron/batman/...'
   }));
 
   assert.notOk(match({
     names: [ 'veyron/batman/car', 'veyron/brucewayne/car' ],
-    pattern: 'veyron/superman/*'
+    pattern: 'veyron/superman/...'
   }));
 
   // exact match

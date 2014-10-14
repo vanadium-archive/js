@@ -44,7 +44,7 @@ function Server(router) {
  * @type {Object}
  * @property {ServiceWrapper} service The ServiceWrapper that will handle
  * method call.
- * @property {Authorizer} authorizer An Authorizer that will handle the
+ * @property {Authorize} authorizer An Authorizer that will handle the
  * authorization for the method call.  If null, then the default strict
  * authorizer will be used.
  */
@@ -68,6 +68,23 @@ function Server(router) {
  * @param {ServiceWrapper} object the object that will handle the method call
  */
 
+/**
+ * Callback passed into Authorize
+ * @callback Authorize-callback
+ * @param {Error} err if set, the reason that the authorization failed.
+ */
+
+/**
+ * A function that returns an error if the operation is not authorizedd
+ * @callback Authorize
+ * @param {SecurityContext} context the context of the rpc.
+ * @param {Authorize-callback} cb the callback to call with the result if
+ * the rpc is asynchronous.  This can be ignored if the Authorizer returns
+ * a promise or the result.
+ * @return {Promise|Error} either an error that occurred (or null if there was
+ * no error) or a Promise that will be resolved if the authorization succeeded
+ * and rejected if it failed.
+ */
 /**
  * Serve serves the given service object under the given name.  It will
  * register them with the mount table and maintain that registration so long

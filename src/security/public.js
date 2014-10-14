@@ -3,43 +3,18 @@
  */
 
 var MessageType = require('../proxy/message_type');
+var blessingMatches = require('./blessing_matching');
 
 /**
  * The public portion of a veyron identity.
  */
-function PublicId(names, id, proxy) {
+function PublicId(names, id, key, proxy) {
   this.names = names;
   this._id = id;
   this._count = 1;
   this._proxy = proxy;
+  this._key = key;
 }
-
-// A name matches if it is a prefix of the pattern or if the pattern ends
-// in a '/*' and the pattern is a prefix of the name.
-function nameMatches(name, pattern) {
-  var paths = name.split('/');
-  var expectedPaths = pattern.split('/');
-  for (var i = 0; i < expectedPaths.length; i++) {
-    // If there is a star at the end of the pattern then
-    // we have a match, since the prefix of the pattern
-    // was matched by the name.
-    if (expectedPaths[i] === '*') {
-      return i === expectedPaths.length - 1;
-    }
-
-    // name is a prefix of pattern
-    if (i === paths.length) {
-      return true;
-    }
-
-    if (paths[i] !== expectedPaths[i]) {
-      return false;
-    }
-  }
-
-  return paths.length === expectedPaths.length;
-}
-
 
 /**
  * Returns whether the PublicId matches a principal pattern. There
@@ -58,7 +33,7 @@ PublicId.prototype.match = function(pattern) {
     return false;
   }
   for (var i = 0; i < this.names.length; i++) {
-    if (nameMatches(this.names[i], pattern)) {
+    if (blessingMatches(this.names[i], pattern)) {
       return true;
     }
   }
@@ -89,7 +64,8 @@ PublicId.prototype.release = function() {
 PublicId.prototype.toJSON = function() {
   return {
     id: this._id,
-    names: this.names
+    names: this.names,
+    key: this._key
   };
 };
 

@@ -5,10 +5,6 @@ var message = 'Something bad happened.';
 
 test('var struct = ec.toStandardErrorStruct(err)', function(assert) {
   var err = new Error(message);
-  var struct = ec.toStandardErrorStruct(err);
-
-
-  var err = new Error(message);
   var struct = ec.toStandardErrorStruct(err, 'app', 'call');
 
   assert.deepEqual(struct, {

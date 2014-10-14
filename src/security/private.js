@@ -42,7 +42,8 @@ PrivateId.prototype.bless = function(blessee, name, duration, caveats, cb) {
   this._proxy.sendRequest(message, MessageType.BLESS, handler, id);
   var self = this._proxy;
   return def.promise.then(function(message) {
-    var id = new PublicId(message.names, message.handle, self._proxy);
+    var id = new PublicId(message.names, message.handle, message.publicKey,
+                          self._proxy);
     return id;
   });
 };

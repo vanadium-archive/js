@@ -30,6 +30,7 @@ module.exports = {
     Types: require('./vom/types'),
   },
   caveats: require('./security/caveat'),
+  aclAuthorizer: require('./security/acl_authorizer'),
 };
 
 /**
