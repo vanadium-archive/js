@@ -24,6 +24,7 @@ function Runtime(options) {
   this.identityName = options.identityName;
   this._wspr = options.wspr;
   this.identity = new PrivateId(this._getProxyConnection());
+  this._name = options.appName;
 }
 
 /**
@@ -143,7 +144,8 @@ Runtime.prototype._getProxyConnection = function() {
 Runtime.prototype._getRouter = function() {
   if (!this._router) {
     this._router = new ServerRouter(
-        this._getProxyConnection());
+        this._getProxyConnection(),
+        this._name);
   }
   return this._router;
 };

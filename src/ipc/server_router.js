@@ -39,10 +39,11 @@ ServerStream.prototype.handleResponse = function(type, data) {
  * server
  * @constructor
  */
-var Router = function(proxy) {
+var Router = function(proxy, appName) {
   this._servers = {};
   this._proxy = proxy;
   this._streamMap = {};
+  this._appName = appName;
   proxy.addIncomingHandler(IncomingPayloadType.INVOKE_REQUEST, this);
   proxy.addIncomingHandler(IncomingPayloadType.LOOKUP_REQUEST, this);
   proxy.addIncomingHandler(IncomingPayloadType.AUTHORIZATION_REQUEST, this);
@@ -138,7 +139,8 @@ Router.prototype.handleAuthorizationRequest = function(messageId, request) {
         messageId);
   }).catch(function(e) {
     var data = JSON.stringify({
-      err: ErrorConversion.toStandardErrorStruct(e)
+      err: ErrorConversion.toStandardErrorStruct(e, this._appName,
+                                                 request.context.method)
     });
     router._proxy.sendRequest(data, MessageType.AUTHORIZATION_RESPONSE, null,
         messageId);
@@ -170,7 +172,8 @@ Router.prototype.handleLookupRequest = function(messageId, request) {
         null, messageId);
   }).catch(function(err) {
     var data = JSON.stringify({
-      err: ErrorConversion.toStandardErrorStruct(err),
+      err: ErrorConversion.toStandardErrorStruct(err, self._appName,
+                                                 request.method),
     });
     self._proxy.sendRequest(data, MessageType.LOOKUP_RESPONSE,
         null, messageId);
@@ -368,7 +371,7 @@ Router.prototype.sendResult = function(messageId, name, value, err, metadata) {
 
   var errorStruct = null;
   if (err !== undefined && err !== null) {
-    errorStruct = ErrorConversion.toStandardErrorStruct(err);
+    errorStruct = ErrorConversion.toStandardErrorStruct(err, this._appName, name);
   }
 
   // If this is a streaming request, queue up the final response after all

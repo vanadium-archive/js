@@ -7,9 +7,14 @@ test('var struct = ec.toStandardErrorStruct(err)', function(assert) {
   var err = new Error(message);
   var struct = ec.toStandardErrorStruct(err);
 
+
+  var err = new Error(message);
+  var struct = ec.toStandardErrorStruct(err, 'app', 'call');
+
   assert.deepEqual(struct, {
     msg: message,
-    idAction: verror.IdActions.Unknown
+    idAction: verror.IdActions.Unknown,
+    paramList: ['app', 'call'],
   });
   assert.end();
 });
@@ -17,21 +22,24 @@ test('var struct = ec.toStandardErrorStruct(err)', function(assert) {
 // TODO: this should loop.
 test('var struct = ec.toStandardErrorStruct(verr)', function(assert) {
   var err = verror.NoAccessError(message);
+  err.paramList = ['app', 'call'];
   var struct = ec.toStandardErrorStruct(err);
 
   assert.deepEqual(struct, {
     msg: message,
-    idAction: verror.IdActions.NoAccess
+    idAction: verror.IdActions.NoAccess,
+    paramList: err.paramList,
   });
   assert.end();
 });
 
 test('var struct = ec.toStandardErrorStruct(string)', function(assert) {
-  var struct = ec.toStandardErrorStruct(message);
+  var struct = ec.toStandardErrorStruct(message, 'appName', 'call');
 
   assert.deepEqual(struct, {
     msg: message,
-    idAction: verror.IdActions.Unknown
+    idAction: verror.IdActions.Unknown,
+    paramList: ['appName', 'call'],
   });
   assert.end();
 });
@@ -41,7 +49,8 @@ test('var struct = ec.toStandardErrorStruct()', function(assert) {
 
   assert.deepEqual(struct, {
     msg: '',
-    idAction: verror.IdActions.Unknown
+    idAction: verror.IdActions.Unknown,
+    paramList: [],
   });
   assert.end();
 });
@@ -51,19 +60,21 @@ test('var struct = ec.toStandardErrorStruct(null)', function(assert) {
 
   assert.deepEqual(struct, {
     msg: '',
-    idAction: verror.IdActions.Unknown
+    idAction: verror.IdActions.Unknown,
+    paramList: [],
   });
   assert.end();
 });
 
 test('var err = ec.toJSerror(struct)', function(assert) {
-  var struct = {
+  var err = ec.toJSerror({
     msg: message,
-    iDAction: verror.IdActions.NoAccess
-  };
-  var err = ec.toJSerror(struct);
+    iDAction: verror.IdActions.NoAccess,
+    paramList: ['app', 'call'],
+  });
 
   assert.equal(err.message, message);
+  assert.deepEqual(err.paramList, ['app', 'call']);
   assert.deepEqual(err.idAction, verror.IdActions.NoAccess);
   assert.end();
 });

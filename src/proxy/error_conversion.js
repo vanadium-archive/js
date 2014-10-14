@@ -15,9 +15,10 @@ module.exports = {
  * @param {Object} idAction idActionription of the error, which in JavaScript,
  * corresponds to the name property of an Error object.
  */
-var _standard = function(idAction, message) {
+var _standard = function(idAction, message, paramList) {
   this.idAction = idAction;
   this.msg = message;
+  this.paramList = paramList;
 };
 
 /*
@@ -25,11 +26,14 @@ var _standard = function(idAction, message) {
  * wspr expects as error format.
  * @private
  * @param {Error} err JavaScript error object
+ * @param {string} appName name of the app
+ * @param {string} operation operation name.
  * @return {_standard} verror standard struct
  */
-function toStandardErrorStruct(err) {
+function toStandardErrorStruct(err, appName, operation) {
   var idAction = vError.IdActions.Unknown;
   var message = '';
+  var paramList = [];
 
   if (err instanceof Error) {
     message = err.message;
@@ -37,12 +41,20 @@ function toStandardErrorStruct(err) {
     if (err.idAction) {
       idAction = err.idAction;
     }
+    paramList = err.paramList || [];
   } else if (err !== undefined && err !== null) {
     // coerce to string
     message = err + '';
   }
 
-  return new _standard(idAction, message);
+  if (!paramList[0] && appName) {
+    paramList[0] = appName;
+  }
+
+  if (!paramList[1] && operation) {
+    paramList[1] = operation;
+  }
+  return new _standard(idAction, message, paramList);
 }
 
 // TODO(jasoncampbell): Change this so that the error map is easier to
@@ -78,6 +90,7 @@ function toJSerror(verr) {
   } else {
     err = new vError.VeyronError(msg, idAction);
   }
+  err.paramList = verr.paramList || [];
 
   return err;
 }

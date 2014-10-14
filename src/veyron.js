@@ -47,7 +47,8 @@ function init(config, cb) {
   var def = new Deferred(cb);
 
   var runtimeOpts = {
-    wspr: config.wspr || process.env['WSPR'] || 'http://localhost:8124'
+    wspr: config.wspr || process.env['WSPR'] || 'http://localhost:8124',
+    appName: config.appName || 'webapp',
   };
 
   // If the user has set config.authenticate to true, get an authenticated
