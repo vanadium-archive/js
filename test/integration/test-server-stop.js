@@ -104,6 +104,8 @@ test('var promise = server.stop() - re-serve', function(assert) {
 
 test('server.stop() - called twice', function(assert) {
   serve(name, dispatcher, function(err, res) {
+    assert.error(err);
+
     res.server.stop(function(err) {
       assert.error(err);
 

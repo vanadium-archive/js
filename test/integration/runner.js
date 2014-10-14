@@ -28,11 +28,6 @@ function test() {
     DEBUG_COLORS: true
   };
 
-  // Newline separate the runner's debug output from the test's.
-  if (debugArgs.DEBUG) {
-    console.log();
-  }
-
   var args = process.argv.slice(2, process.argv.length);
   var env = extend(process.env, debugArgs);
   var prova = spawn('prova', args, { env: env });

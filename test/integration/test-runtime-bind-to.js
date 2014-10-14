@@ -41,6 +41,65 @@ test('var promise = runtime.bindTo(name)', function(assert) {
   }
 });
 
+// TODO(jasoncampbell): The enpoint from the serve call has a public IP
+// address that my not be accessible on some firewall settings (GCE/CI).
+// This needs to be investigated and fixed, most likey the cause is in some
+// recent changes to the proxy.
+test.skip('runtime.bindTo(endpoint, callback) - bind to enpoint of a JS server',
+function(assert) {
+  var leafDispatcher = require('../../src/ipc/leaf_dispatcher');
+  var cache = require('./cache-service');
+  var dispatcher = leafDispatcher(cache);
+  var serve = require('./serve');
+
+  serve('testing/cache', dispatcher, function(err, res) {
+    assert.error(err);
+
+    var name = '/' + res.endpoint + '/cache';
+
+    res.runtime.bindTo(name, function(err, service) {
+      assert.error(err);
+      assert.ok(service);
+      res.end(assert);
+    });
+  });
+});
+
+test('runtime.bindTo(badName, callback) - failure', function(assert) {
+  veyron.init(config, function(err, runtime) {
+    assert.error(err);
+
+    runtime.bindTo('does-not/exist', function(err, service) {
+      assert.ok(err instanceof Error);
+      assert.deepEqual(err.idAction, veyron.errors.IdActions.NoExist);
+      runtime.close(assert.end);
+    });
+  });
+});
+
+test('var promise = runtime.bindTo(badName) - failure', function(assert) {
+  var rt;
+
+  veyron
+  .init(config)
+  .then(function(runtime) {
+    rt = runtime;
+    return runtime.bindTo('does-not/exist');
+  })
+  .then(function(service) {
+    assert.fail('should not succeed');
+    rt.close(assert.end);
+  }, function(err) {
+    assert.ok(err instanceof Error);
+    assert.deepEqual(err.idAction, veyron.errors.IdActions.NoExist);
+    rt.close(assert.end);
+  })
+  .catch(function(err) {
+    assert.error(err);
+    rt.close(assert.end);
+  });
+});
+
 test('runtime.bindTo(name, [callback]) - bad wspr url', function(assert) {
   veyron.init({ wspr: 'http://bad-address.tld' }, onruntime);
 

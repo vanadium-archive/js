@@ -40,7 +40,7 @@ function Service(name, env) {
   service.arguments = flags(extend(DEFAULT_FLAGS, service.config.flags));
   service.bin = '';
   service.env = env || {};
-  service.debug = debug('service:' + service.name);
+  service.debug = debug('run-services:' + service.name);
 }
 
 inherits(Service, EE);
@@ -72,8 +72,21 @@ Service.prototype.spawn = function(args, options) {
     // NOTE: All veyron bins log to stderr so this buffer will just grow
     // until that is resolved...
     if (service.process.stderr) {
-      service.process.stderr.on('data', function (buffer) {
-        errlog += buffer;
+      service.process.stderr.on('data', function (data) {
+        errlog += data;
+
+        if (service.endpoint) {
+          return;
+        }
+
+        // Scrap stderr for endpoints.
+        var out = data.toString();
+        var match = out.match(endpointRegExp);
+
+        if (match) {
+          service.debug('endpoint: %s', match[0])
+          service.emit('endpoint', service.endpoint = '/' + match[0]);
+        }
       });
     }
 
@@ -91,23 +104,6 @@ Service.prototype.spawn = function(args, options) {
 
       service.emit('error', new Error(message));
     });
-
-    // mounttabled services will emit an enpoint once it comes across the
-    // stderr spew.
-    if (service.name === 'mounttabled') {
-      service.process.stderr.on('data', function(data) {
-        if (service.endpoint) {
-          return;
-        }
-
-        var out = data.toString();
-        var match = out.match(endpointRegExp);
-
-        if (match) {
-          service.emit('endpoint', service.endpoint = '/' + match[0]);
-        }
-      });
-    }
 
     [ 'exit', 'close' ].forEach(function (name) {
         service.process.on(name, service.emit.bind(service, name));

@@ -66,6 +66,7 @@ function serve(name, dispatcher, callback) {
         runtime: runtime,
         config: config,
         server: runtime._getServer(),
+        endpoint: endpoint,
         end: end
       };
 

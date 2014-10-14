@@ -11,4 +11,4 @@
 #
 source "${VEYRON_ROOT}/scripts/lib/run.sh"
 
-run ./vgrunt
+run make test
