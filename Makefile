@@ -41,7 +41,7 @@ dependency-check: node_modules
 
 test: lint dependency-check test-unit test-integration
 
-test-unit: test-unit-node test-unit-browser
+test-unit: lint test-unit-node test-unit-browser
 
 test-unit-node: node_modules
 	prova test/unit/test-*.js $(TAP)
@@ -49,7 +49,7 @@ test-unit-node: node_modules
 test-unit-browser: node_modules
 	prova test/unit/test-*.js $(BROWSER_OPTS)
 
-test-integration: test-integration-node test-integration-browser
+test-integration: lint test-integration-node test-integration-browser
 
 test-integration-node: node_modules
 	node test/integration/runner.js test/integration/test-*.js $(TAP)

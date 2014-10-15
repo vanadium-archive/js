@@ -41,11 +41,7 @@ test('var promise = runtime.bindTo(name)', function(assert) {
   }
 });
 
-// TODO(jasoncampbell): The enpoint from the serve call has a public IP
-// address that my not be accessible on some firewall settings (GCE/CI).
-// This needs to be investigated and fixed, most likey the cause is in some
-// recent changes to the proxy.
-test.skip('runtime.bindTo(endpoint, callback) - bind to enpoint of a JS server',
+test('runtime.bindTo(endpoint, callback) - bind to enpoint of a JS server',
 function(assert) {
   var leafDispatcher = require('../../src/ipc/leaf_dispatcher');
   var cache = require('./cache-service');
