@@ -4,8 +4,7 @@ var inherits = require('util').inherits;
 var EE = require('events').EventEmitter;
 var extend = require('xtend');
 var which = require('which');
-var endpointRegExp = /@.*@@\S*/;
-var debug = require('debug');
+var endpointRegExp = /@.*@@\S*(?!])/;
 
 var VEYRON_ROOT = process.env.VEYRON_ROOT;
 var VEYRON_BINS = [
@@ -40,7 +39,6 @@ function Service(name, env) {
   service.arguments = flags(extend(DEFAULT_FLAGS, service.config.flags));
   service.bin = '';
   service.env = env || {};
-  service.debug = debug('run-services:' + service.name);
 }
 
 inherits(Service, EE);
@@ -79,13 +77,17 @@ Service.prototype.spawn = function(args, options) {
           return;
         }
 
-        // Scrap stderr for endpoints.
+        // Scrape stderr for endpoints.
         var out = data.toString();
         var match = out.match(endpointRegExp);
 
         if (match) {
-          service.debug('endpoint: %s', match[0]);
           service.emit('endpoint', service.endpoint = '/' + match[0]);
+          service.emit('ready');
+        }
+
+        if (service.name === 'wsprd' && out.match('Listening at port')) {
+          service.emit('ready');
         }
       });
     }
