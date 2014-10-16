@@ -84,7 +84,7 @@ Service.prototype.spawn = function(args, options) {
         var match = out.match(endpointRegExp);
 
         if (match) {
-          service.debug('endpoint: %s', match[0])
+          service.debug('endpoint: %s', match[0]);
           service.emit('endpoint', service.endpoint = '/' + match[0]);
         }
       });
