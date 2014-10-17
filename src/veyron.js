@@ -112,10 +112,9 @@ function getIdentity(authTimeoutMs, cb) {
     cb(null, data.name);
   }
 
-  // Runs when the auth request fails.
-  function handleAuthError(err) {
+  function handleAuthError(data) {
     removeListeners();
-    cb(err);
+    cb(objectToError(data.error));
   }
 
   // Runs when the extension receives the auth request.
@@ -152,4 +151,13 @@ function getIdentity(authTimeoutMs, cb) {
   // Timeout if we don't get an 'auth:received' message before authTimeoutMs
   // milliseconds.
   timeout = window.setTimeout(handleTimeout, authTimeoutMs);
+}
+
+// An error that gets sent via postMessage will be received as a plain Object.
+// This function turns it back into an Error object.
+function objectToError(obj) {
+  var err = new Error(obj.message);
+  err.name = obj.name;
+  err.stack = obj.stack;
+  return err;
 }

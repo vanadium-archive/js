@@ -21,10 +21,9 @@
 
   "devel": true,
   "node": true,
+  "browser": true,
 
   "globals": {
-    "window": false,
-    "Promise": true,
-    "Proxy": true
+    "chrome": false
   }
 }

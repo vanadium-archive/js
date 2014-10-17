@@ -80,11 +80,22 @@ function getAuthToken(callback){
   });
 }
 
+// Convert an Error object into a bare Object with the same properties.  We do
+// this because port.postMessage calls JSON.stringify, which ignores the message
+// and stack properties on Error objects.
+function errorToObject(err) {
+  var obj = {};
+  Object.getOwnPropertyNames(err).forEach(function(key) {
+    obj[key] = err[key];
+  });
+  return obj;
+}
+
 // Helper functions to send error message back to calling content script.
 function sendError(type, port, err) {
   port.postMessage({
     type: type + ':error',
-    error: err
+    error: errorToObject(err)
   });
 }
 

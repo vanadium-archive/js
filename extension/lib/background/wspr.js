@@ -34,7 +34,7 @@ WSPR.prototype.createAccount = function(accessToken, callback) {
         return callback(err);
       }
       if (res.error) {
-        return callback(res.error);
+        return callback(httpResponseToError(res));
       }
       if (!res.body || !res.body.names) {
         return callback(new Error('Invalid response: missing "names".'));
@@ -57,7 +57,7 @@ WSPR.prototype.assocAccount = function (name, origin, callback) {
         return callback(err);
       }
       if (res.error) {
-        return callback(res.error);
+        return callback(httpResponseToError(res));
       }
       callback(null, name);
     });
@@ -74,3 +74,14 @@ WSPR.prototype.createAndAssocAccount = function(accessToken, origin, callback) {
     wspr.assocAccount(names[0], origin, callback);
   });
 };
+
+// If an XHR gets a 4XX or 5XX HTTP error, then res.error will be an Error
+// object with message corresponding to the HTTP status code (e.g. "Bad
+// Request"), which is not so helpful.  This function creates an Error object
+// with message set to the actual response text from the server, and status set
+// to the HTTP status code.
+function httpResponseToError(res) {
+  var err = new Error(res.text);
+  err.status = res.status;
+  return err;
+}

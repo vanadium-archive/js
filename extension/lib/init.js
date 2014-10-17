@@ -1,4 +1,3 @@
-var url = require('url');
 var debug = require('debug')('init');
 var storage = require('./storage');
 var setting = require('./components/settings/setting');
@@ -14,14 +13,15 @@ var defaults = {
   wspr: 'http://localhost:8124'
 };
 
-function formatVeyronEP(service, port) {
-  var host = 'proxy.envyor.com';
-  return url.format({
-    hostname: host,
-    port: port,
-    pathname: '/'
-  }).replace('//', '/');
-}
+// TODO(nlacasse): Uncomment once this function is needed by the settings above.
+// function formatVeyronEP(service, port) {
+//   var host = 'proxy.envyor.com';
+//   return require('url').format({
+//     hostname: host,
+//     port: port,
+//     pathname: '/'
+//   }).replace('//', '/');
+// }
 
 // Hydrates the settings from chrome storage.  Also binds changes in the
 // settings to update chrome storage.  If callback is provided, it will be fired
@@ -83,5 +83,3 @@ function init(callback){
     callback(null);
   });
 }
-
-
