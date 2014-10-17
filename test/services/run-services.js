@@ -80,12 +80,17 @@ Run.prototype.start = function () {
 
   debug('now starting...');
 
-  run.names.forEach(function(name) {
-    debug('spawning: %s', name);
-    run.add(name).spawn();
+  var jobs = run.names.map(function(name) {
+    var service = run.add(name);
+    return createStartWorker(service);
   });
 
-  run.emit('start');
+  parallel(jobs, started);
+
+  function started(err) {
+    debug('started all services');
+    run.emit('start');
+  }
 
   return run;
 };
@@ -120,8 +125,10 @@ Run.prototype.setup = function() {
     run
     .add('mounttabled')
     .on('endpoint', function(endpoint){
-      debug('endpoint: %s', endpoint);
       run.options.NAMESPACE_ROOT = endpoint;
+    })
+    .on('ready', function() {
+      debug('mounttabled running');
       run.emit('setup');
     })
     .spawn();
@@ -170,6 +177,20 @@ Run.prototype.stop = function (cb) {
   }
 };
 
+function createStartWorker(service) {
+  return function start(cb) {
+    debug('spawning: %s', service.name);
+
+    service.on('ready', function ready() {
+      debug('ready: %s', service.name);
+      // Error listeners have already been listend to via the call to
+      // run.add(name)
+      cb();
+    });
+    service.spawn();
+  };
+}
+
 function createStopWorker(service) {
   // Errors need to be removed from each service ahead of exiting since
   // things will start complaining about missing mountables etc. as all the
@@ -177,7 +198,7 @@ function createStopWorker(service) {
   service.removeAllListeners('error');
   service.on('error', function() {});
 
-  return function worker(cb) {
+  return function stop(cb) {
     debug('exiting %s', service.name);
     service.on('exit', cb);
     service.kill('SIGTERM');
