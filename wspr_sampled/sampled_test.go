@@ -13,6 +13,8 @@ import (
 	"veyron.io/veyron/veyron2/vdl/vdlutil"
 	"veyron.io/veyron/veyron2/verror"
 
+	_ "veyron.io/veyron/veyron/profiles"
+
 	"veyron.io/examples/wspr_sample"
 )
 
