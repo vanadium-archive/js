@@ -75,3 +75,7 @@ node_modules: package.json
 .PHONY: all build clean dependency-check lint test
 .PHONY: test-integration test-integration-node test-integration-browser
 .PHONY: test-unit test-unit-node test-unit-browser
+
+# Prevent the tests from running in parallel, which causes problems because it
+# starts multiple instances of the services at once.
+.NOTPARALLEL: test-integration test-unit test

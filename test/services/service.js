@@ -4,7 +4,7 @@ var inherits = require('util').inherits;
 var EE = require('events').EventEmitter;
 var extend = require('xtend');
 var which = require('which');
-var endpointRegExp = /@.*@@\S*(?!])/;
+var endpointRegExp = /Mount table .+ endpoint: (\/.+@@)/;
 
 var VEYRON_ROOT = process.env.VEYRON_ROOT;
 var VEYRON_BINS = [
@@ -39,6 +39,7 @@ function Service(name, env) {
   service.arguments = flags(extend(DEFAULT_FLAGS, service.config.flags));
   service.bin = '';
   service.env = env || {};
+  service.ready = false;
 }
 
 inherits(Service, EE);
@@ -73,20 +74,29 @@ Service.prototype.spawn = function(args, options) {
       service.process.stderr.on('data', function (data) {
         errlog += data;
 
-        if (service.endpoint) {
+        if (service.ready) {
           return;
         }
 
         // Scrape stderr for endpoints.
         var out = data.toString();
-        var match = out.match(endpointRegExp);
 
-        if (match) {
-          service.emit('endpoint', service.endpoint = '/' + match[0]);
-          service.emit('ready');
-        }
-
-        if (service.name === 'wsprd' && out.match('Listening at port')) {
+        if (service.name === 'wsprd') {
+          if (out.match('Listening at port')) {
+            service.ready = true;
+            service.emit('ready');
+          }
+          return;
+        } else if (service.name === 'mounttabled') {
+          var match = out.match(endpointRegExp);
+          if (match && match[1]) {
+            service.ready = true;
+            service.emit('endpoint', service.endpoint = match[1]);
+            service.emit('ready');
+          }
+          return;
+        } else {
+          service.ready = true;
           service.emit('ready');
         }
       });
@@ -137,7 +147,7 @@ Service.prototype.kill = function() {
 function notfound(name) {
   var message = 'Veyron binary not found: ' + name + '\n' +
       'Please run: \n' +
-      '  veyron go install veyron... roadmap... \n' +
+      '  veyron go install veyron.io/... \n' +
       ' path is ' + process.env.PATH;
 
   return new Error(message);

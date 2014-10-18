@@ -6,7 +6,6 @@ var inherits = require('util').inherits;
 var extend = require('xtend');
 var path = require('path');
 var mkdirp = require('mkdirp');
-var mounttableConfig = require('./config-mounttabled');
 var fs = require('fs');
 
 module.exports = Run;
@@ -35,7 +34,6 @@ function Run(names, options) {
   var run = this;
   var defaults = {
     'tmp-dir': path.resolve('tmp'),
-    NAMESPACE_ROOT: '/localhost' + mounttableConfig.flags.address,
     VEYRON_IDENTITY: path.resolve('tmp/test-identity')
   };
 
@@ -140,10 +138,14 @@ Run.prototype.setup = function() {
 // with exiting everything cleanly.
 Run.prototype.add = function(name) {
   var run = this;
-  var s = service(name, {
-    NAMESPACE_ROOT: run.options.NAMESPACE_ROOT,
+  var opts = {
     VEYRON_IDENTITY: run.options.VEYRON_IDENTITY
-  });
+  };
+  if (run.options.NAMESPACE_ROOT) {
+    opts.NAMESPACE_ROOT = run.options.NAMESPACE_ROOT;
+  }
+
+  var s = service(name, opts);
 
   s.on('error', run.emit.bind(run, 'error'));
 
