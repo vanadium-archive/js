@@ -8,10 +8,15 @@ debug('starting services');
 
 var services = [
   'proxyd',
-  'wsprd',
   'wspr_sampled',
   'identityd'
 ];
+
+if ('use-nacl' in argv) {
+  services.push('nacl-wsprd.js');
+} else {
+  services.push('wsprd');
+}
 
 var runner = run(services)
 .on('start', test)
@@ -28,7 +33,15 @@ function test() {
     DEBUG_COLORS: true
   };
 
-  var args = process.argv.slice(2, process.argv.length);
+  // Extract the flags before the list of tests to run.
+  // Neither optimist.argv or process.argv do the right thing here.
+  var firstNonFlag;
+  for (firstNonFlag = 2; firstNonFlag < process.argv.length; firstNonFlag++) {
+    if (process.argv[firstNonFlag][0] !== '-') {
+      break;
+    }
+  }
+  var args = process.argv.slice(firstNonFlag);
   var env = extend(process.env, debugArgs);
   var prova = spawn('prova', args, { env: env });
 

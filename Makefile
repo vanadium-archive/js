@@ -27,6 +27,47 @@ all: build
 
 build: dist/veyron.js dist/veyron.min.js
 
+$(NACLGOROOT)/bin/go:
+	$(NACLGOROOT)/src/make-nacl.sh
+
+updated-go-compiler: validate-naclgoroot $(NACLGOROOT)/bin/go
+	GOARCH=386 GOOS=nacl "$(NACLGOROOT)/bin/go" install ...
+
+naclgoroot-is-set:
+ifndef NACLGOROOT
+	$(error NACLGOROOT is not set)
+endif
+
+validate-naclgoroot: naclgoroot-is-set
+ifeq (,$(wildcard $(NACLGOROOT)/src/make-nacl.sh))
+	$(error NACLGOROOT not set to a go compiler with NACL support. $(NACLGOROOT)/src/make-nacl.sh missing.)
+endif
+
+nacl/out/wspr.nexe: validate-naclgoroot updated-go-compiler
+	veyron -target-go=$(NACLGOROOT)/bin/go xgo 386-nacl build -o $@ "veyron.io/wspr/veyron/services/wsprd/wspr_nacl"
+
+nacl/out/index.html: nacl/html/index.html
+	@cp -f $< $@
+
+nacl/out/manifest.json: nacl/html/manifest.json
+	@cp -f $< $@
+
+nacl/out/wspr.nmf: nacl/html/wspr.nmf
+	@cp -f $< $@
+
+nacl/out/wspr.js: nacl/html/wspr.js
+	@cp -f $< $@
+
+chromebin-is-set:
+ifndef CHROME_BIN
+	$(error CHROME_BIN is not set)
+endif
+
+validate-chromebin: chromebin-is-set
+	[[ `objdump -f $(CHROME_BIN) | grep architecture | cut -f2 -d\ | cut -f1 -d,` = "i386" ]] || { echo "CHROME_BIN does not contain a 32-bit chrome executable."; exit 1; }
+
+nacl/out: nacl/out/wspr.nexe nacl/out/index.html nacl/out/manifest.json nacl/out/wspr.nmf nacl/out/wspr.js
+
 dist/veyron.js: src/veyron.js $(JS_SRC_FILES) | node_modules
 	browserify $< --debug --outfile $@
 
@@ -49,6 +90,7 @@ test-unit-node: node_modules
 test-unit-browser: node_modules
 	prova test/unit/test-*.js $(BROWSER_OPTS)
 
+#TODO(bprosnitz) Add test-integration-nacl
 test-integration: lint test-integration-node test-integration-browser
 
 test-integration-node: node_modules
@@ -57,8 +99,12 @@ test-integration-node: node_modules
 test-integration-browser: node_modules
 	node test/integration/runner.js test/integration/test-*.js $(BROWSER_OPTS)
 
+test-integration-nacl: validate-chromebin node_modules nacl/out
+	node test/integration/runner.js --use-nacl test/integration/test-*.js $(BROWSER_OPTS)
+
 clean:
 	@$(RM) -fr docs/*
+	@$(RM) -fr nacl/out/*
 	@$(RM) -fr tmp
 	@$(RM) -fr node_modules
 	@$(RM) -fr npm-debug.log
@@ -67,14 +113,20 @@ clean:
 docs: $(JS_SRC_FILES) | node_modules
 	jsdoc $^ --template node_modules/ink-docstrap/template --destination $@
 
-node_modules: package.json
+node_modules: package.json  check-that-npm-is-in-path
 	@npm prune
 	@npm install
 	@touch node_modules
 
+check-that-npm-is-in-path:
+	@which npm > /dev/null || { echo "npm is not in the path. Did you remember to run 'veyron profiles setup web'?"; exit 1; }
+
 .PHONY: all build clean dependency-check lint test
-.PHONY: test-integration test-integration-node test-integration-browser
+.PHONY: test-integration test-integration-node test-integration-browser test-integration-nacl
 .PHONY: test-unit test-unit-node test-unit-browser
+.PHONY: updated-go-compiler naclgoroot-is-set validate-naclgoroot
+.PHONY: chromebin-is-set validate-chromebin
+.PHONY: check-that-npm-is-in-path
 
 # Prevent the tests from running in parallel, which causes problems because it
 # starts multiple instances of the services at once.

@@ -8,6 +8,7 @@ var endpointRegExp = /Mount table .+ endpoint: (\/.+@@)/;
 
 var VEYRON_ROOT = process.env.VEYRON_ROOT;
 var VEYRON_BINS = [
+  path.join(VEYRON_ROOT, 'veyron.js/nacl/scripts'),
   path.join(VEYRON_ROOT, 'veyron/go/bin'),
   path.join(VEYRON_ROOT, 'roadmap/go/bin')
 ];
@@ -64,6 +65,13 @@ Service.prototype.spawn = function(args, options) {
 
     service.bin = bin;
     service.process = spawn(bin, args, options);
+
+    if (service.name === 'nacl-wsprd.js') {
+      // Wait for chrome to spin up.
+      setTimeout(function() {
+        service.emit('ready');
+      }, 5000);
+    }
 
     // Buffer stderr until close so that a meaningful error can be emitted
     // when a non-zero exit code is encountered.
