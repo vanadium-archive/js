@@ -7,7 +7,7 @@ var Duplex = require('stream').Duplex;
 var inherits = require('util').inherits;
 
 /*
- * A stream that allows sending and recieving data for a streaming rpc.  If
+ * A stream that allows sending and receiving data for a streaming rpc.  If
  * onmessage is set and a function, it will be called whenever there is data on.
  * the stream. The stream implements the promise api.  When the rpc is complete,
  * the stream will be fulfilled.  If there is an error, then the stream will be
