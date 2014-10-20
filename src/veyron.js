@@ -124,11 +124,11 @@ function getIdentity(authTimeoutMs, cb) {
 
   // Runs when timeout occurs before getting 'auth:received' message.
   function handleTimeout() {
-    handleAuthError(new Error(
+    handleAuthError({error: new Error(
         'Auth timeout. Please ensure that the Veyron Chrome Extension is ' +
         'installed and enabled. Download it here: ' +
         'https://github.com/veyron/veyron.js/raw/master/extension/veyron.crx'
-    ));
+    )});
   }
 
   function removeListeners() {
