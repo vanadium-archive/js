@@ -125,7 +125,7 @@ test('var stream = cache.multiGet().stream', function(assert) {
     for (var i = 0; i < 10; ++i) {
       items[i] = {
         key: i,
-        value: 'random value: ' + Math.random()
+        value: 'next value: ' + i
       };
     }
 

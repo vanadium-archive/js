@@ -1,0 +1,7 @@
+{
+  "program": {
+    "x86-32": {
+      "url": "wspr.nexe"
+    }
+  }
+}

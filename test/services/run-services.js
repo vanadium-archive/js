@@ -138,9 +138,9 @@ Run.prototype.setup = function() {
 // with exiting everything cleanly.
 Run.prototype.add = function(name) {
   var run = this;
-  var opts = {
+  var opts = extend(process.env, {
     VEYRON_IDENTITY: run.options.VEYRON_IDENTITY
-  };
+  });
   if (run.options.NAMESPACE_ROOT) {
     opts.NAMESPACE_ROOT = run.options.NAMESPACE_ROOT;
   }

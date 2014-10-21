@@ -2,6 +2,7 @@ node_modules
 logs/
 docs/
 coverage/
+nacl/out/
 test_out
 xunit.xml
 bundle.js

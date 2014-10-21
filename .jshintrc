@@ -25,6 +25,7 @@
   "globals": {
     "window": false,
     "Promise": true,
-    "Proxy": true
+    "Proxy": true,
+    "chrome": true
   }
 }
