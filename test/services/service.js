@@ -8,9 +8,8 @@ var endpointRegExp = /Mount table .+ endpoint: (\/.+@@)/;
 
 var VEYRON_ROOT = process.env.VEYRON_ROOT;
 var VEYRON_BINS = [
-  path.join(VEYRON_ROOT, 'veyron.js/nacl/scripts'),
-  path.join(VEYRON_ROOT, 'veyron/go/bin'),
-  path.join(VEYRON_ROOT, 'roadmap/go/bin')
+  path.join(VEYRON_ROOT, 'veyron.js/go/bin'),
+  path.join(VEYRON_ROOT, 'veyron.js/nacl/scripts')
 ];
 var DEFAULT_FLAGS = {
   v: 3,

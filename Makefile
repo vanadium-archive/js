@@ -1,4 +1,11 @@
 PATH := node_modules/.bin:${VEYRON_ROOT}/environment/cout/node/bin:$(PATH)
+
+GOPATH := $(VEYRON_ROOT)/veyron.js/go
+VDLPATH := $(GOPATH)
+GOBIN := $(VEYRON_ROOT)/veyron.js/go/bin
+VGO := GOPATH="$(GOPATH)" VDLPATH="$(VDLPATH)" veyron go
+VIO_FILES := $(shell find $(VEYRON_ROOT)/veyron/go/src/veyron.io -name "*.go")
+
 SHELL := /bin/bash -e -o pipefail
 
 .DEFAULT_GOAL := all
@@ -93,14 +100,22 @@ test-unit-browser: node_modules
 #TODO(bprosnitz) Add test-integration-nacl
 test-integration: lint test-integration-node test-integration-browser
 
-test-integration-node: node_modules
+test-integration-node: node_modules go/bin
 	node test/integration/runner.js test/integration/test-*.js $(TAP)
 
-test-integration-browser: node_modules
+test-integration-browser: node_modules go/bin
 	node test/integration/runner.js test/integration/test-*.js $(BROWSER_OPTS)
 
-test-integration-nacl: validate-chromebin node_modules nacl/out
+test-integration-nacl: validate-chromebin node_modules nacl/out go/bin
 	node test/integration/runner.js --use-nacl test/integration/test-*.js $(BROWSER_OPTS)
+
+go/bin: go/src $(VIO_FILES)
+	@$(VGO) build -o $(GOBIN)/mounttabled veyron.io/veyron/veyron/services/mounttable/mounttabled
+	@$(VGO) build -o $(GOBIN)/identityd veyron.io/veyron/veyron/services/identity/identityd
+	@$(VGO) build -o $(GOBIN)/proxyd veyron.io/veyron/veyron/services/proxy/proxyd
+	@$(VGO) build -o $(GOBIN)/identity veyron.io/veyron/veyron/tools/identity
+	@$(VGO) build -o $(GOBIN)/wsprd veyron.io/wspr/veyron/services/wsprd
+	@$(VGO) build -o $(GOBIN)/wspr_sampled wspr_sample/wspr_sampled
 
 clean:
 	@$(RM) -fr docs/*
@@ -109,6 +124,8 @@ clean:
 	@$(RM) -fr node_modules
 	@$(RM) -fr npm-debug.log
 	@$(RM) -fr xunit.xml
+	@$(RM) -fr go/bin
+	@$(RM) -fr go/pkg
 
 docs: $(JS_SRC_FILES) | node_modules
 	jsdoc $^ --template node_modules/ink-docstrap/template --destination $@

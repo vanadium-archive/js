@@ -10,7 +10,7 @@ import (
 	"veyron.io/veyron/veyron2/vdl/vdlutil"
 	"veyron.io/veyron/veyron2/verror"
 
-	"veyron.io/examples/wspr_sample"
+	"wspr_sample"
 )
 
 var typedNil []int

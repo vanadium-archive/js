@@ -15,7 +15,7 @@ import (
 
 	_ "veyron.io/veyron/veyron/profiles"
 
-	"veyron.io/examples/wspr_sample"
+	"wspr_sample"
 )
 
 // getCacheClient initializes the runtime and creates a client binding.

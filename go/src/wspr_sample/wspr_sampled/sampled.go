@@ -9,7 +9,7 @@ import (
 	"veyron.io/veyron/veyron2/naming"
 	"veyron.io/veyron/veyron2/security"
 
-	"veyron.io/examples/wspr_sample"
+	"wspr_sample"
 )
 
 type sampleDispatcher struct {

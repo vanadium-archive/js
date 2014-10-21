@@ -2,6 +2,8 @@ node_modules
 logs/
 docs/
 coverage/
+go/pkg
+go/bin
 nacl/out/
 test_out
 xunit.xml
