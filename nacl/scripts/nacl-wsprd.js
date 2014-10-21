@@ -56,7 +56,8 @@ function writeConfig(callback) {
 
 function checkForChrome(callback) {
     if (env.CHROME_BIN === undefined) {
-        return callback(new Error('CHROME_BIN (for 32-bit chrome) must be defined'));
+        return callback(new Error(
+            'CHROME_BIN (for 32-bit chrome) must be defined'));
     }
     fs.exists(env.CHROME_BIN, function(exists) {
         if (exists) {
@@ -95,7 +96,8 @@ function initializeProfile(userDir, callback) {
         calledCallback = true;
         if (code !== 0) {
             if (signal !== null) {
-                callback(new Error('Signal received from parent process: ' + signal));
+                callback(new Error(
+                  'Signal received from parent process: ' + signal));
             } else {
                 callback(new Error('Non-zero exit code: ' + code));
             }
