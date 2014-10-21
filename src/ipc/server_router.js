@@ -10,29 +10,11 @@ var ErrorConversion = require('../proxy/error_conversion');
 var Deferred = require('./../lib/deferred');
 var vLog = require('./../lib/vlog');
 var SimpleHandler = require('../proxy/simple_handler');
+var StreamHandler = require('../proxy/stream_handler');
 var PublicId = require('../security/public');
 var vError = require('../lib/verror');
 var IdlHelper = require('./../idl/idl');
 var SecurityContext = require('../security/context.js');
-
-
-var ServerStream = function(stream) {
-  this._stream = stream;
-};
-
-ServerStream.prototype.handleResponse = function(type, data) {
-  switch (type) {
-    case IncomingPayloadType.STREAM_RESPONSE:
-      this._stream._queueRead(data);
-      break;
-    case IncomingPayloadType.STREAM_CLOSE:
-      this._stream._queueRead(null);
-      break;
-    case IncomingPayloadType.ERROR_RESPONSE:
-      this._stream.emit('error', ErrorConversion.toJSerror(data));
-      break;
-  }
-};
 
 /**
  * A router that handles routing incoming requests to the right
@@ -276,7 +258,7 @@ Router.prototype.handleRPCRequest = function(messageId, request) {
   if (variables.indexOf('$stream') !== -1) {
     var stream = injections['$stream'];
     this._streamMap[messageId] = stream;
-    var rpc = new ServerStream(stream);
+    var rpc = new StreamHandler(stream);
     this._proxy.addIncomingStreamHandler(messageId, rpc);
   }
 
