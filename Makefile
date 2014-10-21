@@ -119,7 +119,7 @@ node_modules: package.json  check-that-npm-is-in-path
 	@touch node_modules
 
 check-that-npm-is-in-path:
-	@which npm > /dev/null || { echo "npm is not in the path. Did you remember to run 'veyron profiles setup web'?"; exit 1; }
+	@which npm > /dev/null || { echo "npm is not in the path. Did you remember to run 'veyron profile setup web'?"; exit 1; }
 
 .PHONY: all build clean dependency-check lint test
 .PHONY: test-integration test-integration-node test-integration-browser test-integration-nacl
