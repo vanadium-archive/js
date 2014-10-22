@@ -51,7 +51,7 @@ Namespace.prototype.glob = function(pattern, cb) {
  * relative to these roots.
  * The roots will be tried in the order that they are specified in the parameter
  * list for setRoots.
- * @param {[]string | ...string} roots object names for the roots
+ * @param {Array | varargs} roots object names for the roots
  */
 Namespace.prototype.setRoots = function(roots) {
   if (!Array.isArray(roots)) {
