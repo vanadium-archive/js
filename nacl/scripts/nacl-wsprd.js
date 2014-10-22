@@ -54,18 +54,21 @@ function writeConfig(callback) {
     });
 }
 
-function checkForChrome(callback) {
-    if (env.CHROME_BIN === undefined) {
-        return callback(new Error(
-            'CHROME_BIN (for 32-bit chrome) must be defined'));
-    }
-    fs.exists(env.CHROME_BIN, function(exists) {
-        if (exists) {
-            callback();
-        } else {
-            callback(new Error('CHROME_BIN does not point to a file'));
+function checkForNeededEnvs(callback) {
+    var neededEnvs = ['CHROME_DEVEL_SANDBOX', 'CHROME_BIN',
+        'NAMESPACE_ROOT', 'VEYRON_ROOT', 'VEYRON_IDENTITY'];
+    var missing = [];
+    neededEnvs.forEach(function(neededEnv) {
+        if (env[neededEnv] === undefined) {
+            missing.push(neededEnv);
         }
     });
+    if (missing.length !== 0) {
+        return callback(new Error(
+            'Some needed environment variables are not set: ' +
+            JSON.stringify(missing)));
+    }
+    callback();
 }
 
 function initializeProfile(userDir, callback) {
@@ -144,7 +147,7 @@ function startWsprInChrome(callback) {
 }
 
 function main(callback) {
-    checkForChrome(function(err) {
+    checkForNeededEnvs(function(err) {
         if (err) {
             return callback(err);
         }

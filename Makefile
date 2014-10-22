@@ -50,8 +50,9 @@ ifeq (,$(wildcard $(NACLGOROOT)/src/make-nacl.sh))
 	$(error NACLGOROOT not set to a go compiler with NACL support. $(NACLGOROOT)/src/make-nacl.sh missing.)
 endif
 
+#TODO(bprosnitz) Remove the novdl flag once it works on non-host architectures
 nacl/out/wspr.nexe: validate-naclgoroot updated-go-compiler
-	veyron -target-go=$(NACLGOROOT)/bin/go xgo 386-nacl build -o $@ "veyron.io/wspr/veyron/services/wsprd/wspr_nacl"
+	veyron -target-go=$(NACLGOROOT)/bin/go xgo -novdl 386-nacl build -o $@ "veyron.io/wspr/veyron/services/wsprd/wspr_nacl"
 
 nacl/out/index.html: nacl/html/index.html
 	@cp -f $< $@
