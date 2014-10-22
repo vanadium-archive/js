@@ -1,0 +1,12 @@
+package wspr_sample
+
+// CancelCollector is a test interface for use in testing cancellation and deadlines.
+type CancelCollector interface {
+	// A function that never returns, but records the status of the given key.
+	NeverReturn(key int64) error
+
+	// Wait for the call with the given key to have the given status.  Possible statuses are:
+	// "running", and, "cancelled".  Returns the number of nanoseconds left on
+	// the deadline of the specified call when the call first began.
+	WaitForStatus(key int64, status string) (timeout int64, err error)
+}

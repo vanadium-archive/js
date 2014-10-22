@@ -33,6 +33,15 @@ var expectedContext = {
   }
 };
 
+function contains(actual, expected, assert) {
+  for (var key in expected) {
+    if (!expected.hasOwnProperty(key)) {
+      continue;
+    }
+    assert.deepEqual(actual[key], expected[key]);
+  }
+}
+
 test('$suffix - ', function(assert) {
   serve('a/b', dispatcher, function(err, res) {
     assert.error(err);
@@ -110,7 +119,7 @@ test('$context', function(assert) {
         // remove the key attribute before comparison
         delete context.remoteId.key;
 
-        assert.deepEqual(context, expectedContext);
+        contains(context, expectedContext, assert);
         res.end(assert);
       });
     });
@@ -131,11 +140,12 @@ test('$context - mixed with normal args', function(assert) {
         // remove the key attribute before comparison
         delete results.context.remoteId.key;
 
-        assert.deepEqual(results, {a1: '-a-',
-          context: expectedContext,
+        contains(results, {
+          a1: '-a-',
           a2: '-b-',
           a3: '-c-'
-        });
+        }, assert);
+        contains(results.context, expectedContext, assert);
         res.end(assert);
       });
     });

@@ -11,10 +11,10 @@ var Deferred = require('./../lib/deferred');
 var vLog = require('./../lib/vlog');
 var SimpleHandler = require('../proxy/simple_handler');
 var StreamHandler = require('../proxy/stream_handler');
-var PublicId = require('../security/public');
 var vError = require('../lib/verror');
 var IdlHelper = require('./../idl/idl');
-var SecurityContext = require('../security/context.js');
+var SecurityContext = require('../security/context');
+var ServerContext = require('./server_context');
 
 /**
  * A router that handles routing incoming requests to the right
@@ -25,10 +25,12 @@ var Router = function(proxy, appName) {
   this._servers = {};
   this._proxy = proxy;
   this._streamMap = {};
+  this._contextMap = {};
   this._appName = appName;
   proxy.addIncomingHandler(IncomingPayloadType.INVOKE_REQUEST, this);
   proxy.addIncomingHandler(IncomingPayloadType.LOOKUP_REQUEST, this);
   proxy.addIncomingHandler(IncomingPayloadType.AUTHORIZATION_REQUEST, this);
+  proxy.addIncomingHandler(IncomingPayloadType.CANCEL, this);
 };
 
 /**
@@ -99,6 +101,9 @@ Router.prototype.handleRequest = function(messageId, type, request) {
     case IncomingPayloadType.AUTHORIZATION_REQUEST:
       this.handleAuthorizationRequest(messageId, request);
       break;
+    case IncomingPayloadType.CANCEL:
+      this.handleCancel(messageId, request);
+      break;
     default:
       vLog.Error('Unknown request type ' + type);
   }
@@ -160,6 +165,18 @@ Router.prototype.handleLookupRequest = function(messageId, request) {
     self._proxy.sendRequest(data, MessageType.LOOKUP_RESPONSE,
         null, messageId);
   });
+};
+
+/**
+ * Handles cancellations of in-progress requests againsts Javascript service
+ * invokations.
+ * @param {string} messageId Message Id set by the server.
+ */
+Router.prototype.handleCancel = function(messageId) {
+  var ctx = this._contextMap[messageId];
+  if (ctx) {
+    ctx.cancel();
+  }
 };
 
 /**
@@ -225,14 +242,8 @@ Router.prototype.handleRPCRequest = function(messageId, request) {
   };
   var args = request.args;
 
-  var context = {
-    suffix: request.context.suffix,
-    name: request.context.name,
-    remoteId: new PublicId(request.context.remoteID.names,
-                           request.context.remoteID.handle,
-                           request.context.remoteID.publicKey,
-                           this._proxy)
-  };
+  var ctx = new ServerContext(request, this._proxy);
+  this._contextMap[messageId] = ctx;
 
   // Create callback to pass to the function, if it is requested.
   var finished = false;
@@ -241,17 +252,17 @@ Router.prototype.handleRPCRequest = function(messageId, request) {
       return;
     }
     finished = true;
-    context.remoteId.release();
+    ctx.remoteId.release();
     self.sendResult(messageId, request.method, v, e, metadata);
   };
 
   var injections = {
     $stream: new Stream(messageId, this._proxy.senderPromise, false),
     $cb: cb,
-    $context: context,
-    $suffix: context.suffix,
-    $name: context.name,
-    $remoteId: context.remoteId
+    $context: ctx,
+    $suffix: ctx.suffix,
+    $name: ctx.name,
+    $remoteId: ctx.remoteId
   };
 
   var variables = inject(args, metadata.injections, injections);
@@ -284,7 +295,7 @@ Router.prototype.handleRPCRequest = function(messageId, request) {
     if (finished) {
       return;
     }
-    context.remoteId.release();
+    ctx.remoteId.release();
     finished = true;
     self.sendResult(messageId, request.method, value,
         null, metadata);
@@ -356,6 +367,17 @@ Router.prototype.sendResult = function(messageId, name, value, err, metadata) {
   if (err !== undefined && err !== null) {
     errorStruct = ErrorConversion.toStandardErrorStruct(err, this._appName,
                                                         name);
+  }
+
+  // Clean up the context map.
+  var ctx = this._contextMap[messageId];
+  if (ctx) {
+    // Set an empty error handler to catch the now useless cancellation error
+    // before we cancel the context.  This just prevents an annoying warning
+    // from being printed.
+    ctx.waitUntilDone().catch(function(err) {});
+    ctx.cancel();
+    delete this._contextMap[messageId];
   }
 
   // If this is a streaming request, queue up the final response after all

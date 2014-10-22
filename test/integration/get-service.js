@@ -30,7 +30,7 @@ function service(name, callback) {
     }
 
     runtime.bindTo(name, function(err, service) {
-      callback(err, service, end);
+      callback(err, service, end, runtime);
     });
 
     // hoisted and passed as the last argument to the callback argument.

@@ -16,7 +16,8 @@ var MessageType = {
                // by tests.
   LOOKUP_RESPONSE: 11, // Response from a lookup call to Javacript.
   AUTHORIZATION_RESPONSE: 12, // Response from an authorization call to JS.
-  NAMESPACE_REQUEST: 13 // Request to call a method on the namespace client.
+  NAMESPACE_REQUEST: 13, // Request to call a method on the namespace client.
+  CANCEL: 17 // Cancel an ongoing JS initiated call.
 };
 
 module.exports = MessageType;

@@ -6,6 +6,7 @@ import (
 	"testing"
 	"time"
 
+	"veyron.io/veyron/veyron2"
 	"veyron.io/veyron/veyron2/context"
 	"veyron.io/veyron/veyron2/ipc"
 	"veyron.io/veyron/veyron2/naming"
@@ -30,6 +31,48 @@ func getCacheClient(address string) (wspr_sample.Cache, error) {
 	}
 
 	return s, nil
+}
+
+func waitForStatus(r veyron2.Runtime, name string, status string) error {
+	ctx, cancel := r.NewContext().WithTimeout(10 * time.Second)
+	defer cancel()
+
+	stub, err := wspr_sample.BindCancelCollector(name)
+	if err != nil {
+		return err
+	}
+
+	_, err = stub.WaitForStatus(ctx, 1, status)
+	return err
+}
+
+func TestCancelCollector(t *testing.T) {
+	r := rt.Init()
+
+	s, endpoint, err := StartServer(r)
+
+	if err != nil {
+		t.Fatal("failed to start server: ", err)
+	}
+	defer s.Stop()
+
+	name := naming.JoinAddressName(endpoint.String(), "//cancelCollector")
+	stub, err := wspr_sample.BindCancelCollector(name)
+	if err != nil {
+		t.Fatal("failed to bind: ", err)
+	}
+
+	ctx, cancel := r.NewContext().WithCancel()
+	go stub.NeverReturn(ctx, 1)
+
+	if err = waitForStatus(r, name, "running"); err != nil {
+		t.Fatal("Error waiting for cancellation: ", err)
+	}
+	cancel()
+
+	if err = waitForStatus(r, name, "cancelled"); err != nil {
+		t.Fatal("Error waiting for cancellation: ", err)
+	}
 }
 
 // TestValueSetGet tests setting values and then calling various Get* functions.

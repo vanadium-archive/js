@@ -7,6 +7,7 @@ function mock(name) {
   switch (name) {
   case 'proxy':
     m = {
+      cancelFromContext: function() {},
       nextId: function() { return 0; },
       sendRequest: function(data, type, handler, id) {
         var message = JSON.parse(data);

@@ -15,8 +15,11 @@ var Stream = require('../proxy/stream');
 var vError = require('../lib/verror');
 var MessageType = require('../proxy/message_type');
 var IncomingPayloadType = require('../proxy/incoming_payload_type');
+var context = require('../runtime/context');
+var constants = require('./constants');
 
-var OutstandingRPC = function(options, cb) {
+var OutstandingRPC = function(ctx, options, cb) {
+  this._ctx = ctx;
   this._proxy = options.proxy;
   this._id = -1;
   this._name = options.name;
@@ -42,6 +45,7 @@ OutstandingRPC.prototype.start = function() {
   var message = this.constructMessage();
 
   this._def = def;
+  this._proxy.cancelFromContext(this._ctx, this._id);
   this._proxy.sendRequest(message, MessageType.REQUEST, this, this._id);
   if (streamingDeferred) {
     this._proxy.senderPromise.then(function(ws) {
@@ -123,12 +127,19 @@ OutstandingRPC.prototype.handleError = function(data) {
  * @return {string} json string to send to jspr
  */
 OutstandingRPC.prototype.constructMessage = function() {
+  var deadline = this._ctx.deadline();
+  var timeout = constants.NO_TIMEOUT;
+  if (deadline !== null) {
+    timeout = deadline - Date.now();
+  }
+
   var jsonMessage = {
     name: this._name,
     method: this._methodName,
     inArgs: this._args || [],
     numOutArgs: this._numOutParams || 1,
-    isStreaming: this._isStreaming
+    isStreaming: this._isStreaming,
+    timeout: timeout
   };
   return JSON.stringify(jsonMessage);
 };
@@ -149,6 +160,7 @@ function Client(proxyConnection) {
 /**
  * Performs client side binding of a remote service to a native javascript
  * stub object.
+ * @param {Context} A context.
  * @param {string} name the veyron name of the service to bind to.
  * @param {object} optServiceSignature if set, javascript signature of methods
  * available in the remote service.
@@ -159,9 +171,14 @@ function Client(proxyConnection) {
  * methods.
  * @return {Promise} An object with methods that perform rpcs to service methods
  */
-Client.prototype.bindTo = function(name, optServiceSignature, cb) {
+Client.prototype.bindTo = function(ctx, name, optServiceSignature, cb) {
+  cb = context.optionalContext(arguments);
   var self = this;
 
+  if (typeof cb !== 'function') {
+    optServiceSignature = cb;
+    cb = undefined;
+  }
   if (typeof optServiceSignature === 'function') {
     cb = optServiceSignature;
     optServiceSignature = undefined;
@@ -174,7 +191,8 @@ Client.prototype.bindTo = function(name, optServiceSignature, cb) {
     serviceSignaturePromise = Promise.resolve(optServiceSignature);
   } else {
     vLog.debug('Requesting service signature for:', name);
-    serviceSignaturePromise = self._proxyConnection.getServiceSignature(name);
+    var proxy = self._proxyConnection;
+    serviceSignaturePromise = proxy.getServiceSignature(ctx, name);
   }
 
   var promise = def.promise;
@@ -188,17 +206,30 @@ Client.prototype.bindTo = function(name, optServiceSignature, cb) {
       var numOutParams = methodInfo.numOutArgs;
 
       boundObject[methodName] = function() {
-        var args = Array.prototype.slice.call(arguments, 0);
         var callback;
-
-        for (var i = 0; i < args.length; i++) {
-          var isLast = (i + 1) === args.length;
-          var isFunction = typeof args[i] === 'function';
-
-          if (isFunction && isLast) {
-            callback = args[i];
-            args.splice(i, 1);
+        var ctx;
+        var first = 0;
+        var last = arguments.length - 1;
+        if (last >= 0) {
+          // The first argument is an optional context
+          // TODO(mattr): The context will become non-optional at some point.
+          // The last argument is an optional callback
+          if (arguments[first] instanceof context.Context) {
+            first++;
+            ctx = arguments[0];
           }
+          if (typeof arguments[last] === 'function') {
+            callback = arguments[last];
+            last--;
+          }
+        }
+        var args = Array.prototype.slice.call(arguments, first, last + 1);
+
+        // TODO(mattr): For now, if the context isn't specified we
+        // make one up here with a fake runtime.  In the future the
+        // context will be required and we can eliminate this hack.
+        if (!ctx) {
+          ctx = new context.Context({});
         }
 
         // TODO(jasoncampbell): This should probably be a more meaningful
@@ -232,7 +263,7 @@ Client.prototype.bindTo = function(name, optServiceSignature, cb) {
           return deferred.promise;
         }
 
-        var rpc = new OutstandingRPC({
+        var rpc = new OutstandingRPC(ctx, {
            proxy: self._proxyConnection,
            name: name,
            methodName: methodName,

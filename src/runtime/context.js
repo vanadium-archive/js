@@ -8,11 +8,36 @@ var vError = require('../lib/verror');
 var inherits = require('util').inherits;
 
 module.exports = {
+  optionalContext: optionalContext,
   Context: Context,
   ContextKey: ContextKey,
   DeadlineExceededError: DeadlineExceededError,
   CancelledError: CancelledError
 };
+
+/*
+ * Adjusts the arg positions if the context is not present.  This is
+ * intended as a temporary measure to ease the transition to having
+ * context as a required first parameter.  Eventually this can be
+ * changed to throw errors and then be removed altogether.
+ * This function returns the last argument, which you must assign
+ * manually.
+ * @param {arguments} A function arguments list.
+ * @return {*} The last argument of the host function.
+ */
+function optionalContext(args) {
+  var lastidx = args.length - 1;
+  if (lastidx >= 0 && args[0] instanceof Context) {
+    return args[lastidx];
+  }
+
+  var last = args[lastidx];
+  for (var i = lastidx; i > 0; i--) {
+    args[i] = args[i - 1];
+  }
+  args[0] = new Context({});
+  return last;
+}
 
 /*
  * Creates an Error object indicating that the context was cancelled
@@ -297,7 +322,7 @@ CancelContext.prototype.waitUntilDone = function(callback) {
 // A DeadlineContext cancels itself when its deadline is met.
 function DeadlineContext(parent, deadline) {
   this._deadline = deadline;
-  this._timerID = setTimeout(this.cancel.bind(this), deadline - Date.now());
+  this._timerID = setTimeout(this._expire.bind(this), deadline - Date.now());
 
   CancelContext.call(this, parent);
 }
@@ -312,6 +337,6 @@ DeadlineContext.prototype._cancel = function(error) {
   CancelContext.prototype._cancel.call(this, error);
 };
 
-DeadlineContext.prototype.cancel = function() {
+DeadlineContext.prototype._expire = function(error) {
   this._cancel(new DeadlineExceededError());
 };
