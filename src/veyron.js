@@ -25,10 +25,6 @@ module.exports = {
   namespaceUtil: require('./namespace/util'),
   Promise: require('./lib/promise'),
   createLeafDispatcher: require('./ipc/leaf_dispatcher'),
-  vom: {
-    Kind: require('./vom/kind'),
-    Types: require('./vom/types'),
-  },
   caveats: require('./security/caveat'),
   aclAuthorizer: require('./security/acl_authorizer'),
 };
