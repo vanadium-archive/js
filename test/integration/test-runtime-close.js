@@ -10,7 +10,7 @@ test('runtime.close(cb)', function(assert) {
 
   function oninit(err, runtime) {
     assert.error(err);
-    runtime.bindTo('cache', onbind);
+    runtime.bindTo('test_service/cache', onbind);
   }
 
   function onbind(err, service) {
@@ -31,7 +31,7 @@ test('var promise = runtime.close()', function(assert) {
 
   function bindTo(runtime) {
     rt = runtime;
-    return runtime.bindTo('cache');
+    return runtime.bindTo('test_service/cache');
   }
 
   function close(service) {

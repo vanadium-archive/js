@@ -6,7 +6,7 @@ import (
 
 	"veyron.io/veyron/veyron2/ipc"
 
-	"wspr_sample"
+	"test_service"
 )
 
 type callStatus int
@@ -29,7 +29,7 @@ func statusFromString(s string) callStatus {
 }
 
 // NewCached returns a new implementation of the ErrorThrowerService.
-func NewCancelCollector() wspr_sample.CancelCollectorService {
+func NewCancelCollector() test_service.CancelCollectorService {
 	return &cancelCollectorImpl{
 		infoMap: make(map[int64]*callInfo),
 	}

@@ -5,7 +5,7 @@ var VeyronError = veyron.errors.VeyronError;
 var Promise = require('bluebird');
 
 test('cache.set(key, value, callback)', function(assert) {
-  service('sample/cache', function(err, cache, end) {
+  service('test_service/cache', function(err, cache, end) {
     assert.error(err);
 
     cache.set('foo', 'bar', function(err, result) {
@@ -16,7 +16,7 @@ test('cache.set(key, value, callback)', function(assert) {
 });
 
 test('var promise = cache.set(key, value)', function(assert) {
-  service('sample/cache', function(err, cache, end) {
+  service('test_service/cache', function(err, cache, end) {
     assert.error(err);
 
     cache.set('foo', 'bar')
@@ -30,7 +30,7 @@ test('var promise = cache.set(key, value)', function(assert) {
 });
 
 test('cache.get(key, value, callback)', function(assert) {
-  service('sample/cache', function(err, cache, end) {
+  service('test_service/cache', function(err, cache, end) {
     assert.error(err);
 
     cache.set('baz', 'qux', function(err, result) {
@@ -46,7 +46,7 @@ test('cache.get(key, value, callback)', function(assert) {
 });
 
 test('cache.get(key, value, callback) - failure', function(assert) {
-  service('sample/cache', function(err, cache, end) {
+  service('test_service/cache', function(err, cache, end) {
     assert.error(err);
 
     cache.get('is not a thing', function(err, value) {
@@ -58,7 +58,7 @@ test('cache.get(key, value, callback) - failure', function(assert) {
 
 
 test('var promise = cache.get(key, value)', function(assert) {
-  service('sample/cache', function(err, cache, end) {
+  service('test_service/cache', function(err, cache, end) {
     assert.error(err);
 
     cache.set('baz', 'qux')
@@ -78,7 +78,7 @@ test('var promise = cache.get(key, value)', function(assert) {
 });
 
 test('var promise = cache.get(key, value) - failure', function(assert) {
-  service('sample/cache', function(err, cache, end) {
+  service('test_service/cache', function(err, cache, end) {
     assert.error(err);
 
     cache
@@ -94,7 +94,7 @@ test('var promise = cache.get(key, value) - failure', function(assert) {
 });
 
 test('cache.badMethod() - exception', function(assert) {
-  service('sample/cache', function(err, cache, end) {
+  service('test_service/cache', function(err, cache, end) {
     assert.error(err);
 
     assert.throws(function() {
@@ -106,7 +106,7 @@ test('cache.badMethod() - exception', function(assert) {
 });
 
 test('var stream = cache.multiGet().stream', function(assert) {
-  service('sample/cache', function(err, cache, end) {
+  service('test_service/cache', function(err, cache, end) {
     assert.error(err);
 
     // `cache.mutliGet()` returns an object that has a "stream" attribute.

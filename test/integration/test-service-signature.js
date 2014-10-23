@@ -31,7 +31,7 @@ test('service.signature([callback])', function(assert) {
     assert.error(err);
 
     rt = runtime;
-    runtime.bindTo('cache', onbind);
+    runtime.bindTo('test_service/cache', onbind);
   }
 
   function onbind(err, service) {
@@ -87,7 +87,7 @@ test('service.signature() - promise', function(assert) {
 
   function bindTo(runtime) {
     rt = runtime;
-    return runtime.bindTo('cache');
+    return runtime.bindTo('test_service/cache');
   }
 
   function getSignature(service) {

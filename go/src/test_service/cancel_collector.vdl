@@ -1,4 +1,4 @@
-package wspr_sample
+package test_service
 
 // CancelCollector is a test interface for use in testing cancellation and deadlines.
 type CancelCollector interface {

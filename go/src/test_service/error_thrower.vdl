@@ -1,4 +1,4 @@
-package wspr_sample
+package test_service
 
 // A testing interface with methods that throw various types of errors
 type ErrorThrower interface {

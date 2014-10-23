@@ -1,4 +1,4 @@
-// Command wspr_sampled is an implementation of the wspr_sample service.
+// Command test_serviced is an implementation of the test_service service.
 package main
 
 import (

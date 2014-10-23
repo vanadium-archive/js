@@ -42,7 +42,7 @@ function run(err, collector, end, assert, runtime) {
 }
 
 test('cancel: js client to go server', function(assert) {
-  service('sample/cancel', function(err, collector, end, runtime) {
+  service('test_service/cancel', function(err, collector, end, runtime) {
     run(err, collector, end, assert, runtime);
   });
 });

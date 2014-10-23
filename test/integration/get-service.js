@@ -13,7 +13,7 @@ module.exports = service;
 // To make a connection to the default integration test wspr instance and
 // bind to a service use:
 //
-//     service('sample/cache', function(err, cache, end) {
+//     service('test_service/cache', function(err, cache, end) {
 //       assert.error(err)
 //
 //       // your assertions here...

@@ -9,16 +9,16 @@ import (
 	"veyron.io/veyron/veyron2/naming"
 	"veyron.io/veyron/veyron2/security"
 
-	"wspr_sample"
+	"test_service"
 )
 
-type sampleDispatcher struct {
+type testServiceDispatcher struct {
 	cache           interface{}
 	errorThrower    interface{}
 	cancelCollector interface{}
 }
 
-func (sd *sampleDispatcher) Lookup(suffix, method string) (ipc.Invoker, security.Authorizer, error) {
+func (sd *testServiceDispatcher) Lookup(suffix, method string) (ipc.Invoker, security.Authorizer, error) {
 	if strings.HasPrefix(suffix, "cache") {
 		return ipc.ReflectInvoker(sd.cache), nil, nil
 	}
@@ -41,10 +41,10 @@ func StartServer(r veyron2.Runtime) (ipc.Server, naming.Endpoint, error) {
 		return nil, nil, fmt.Errorf("failure creating server: %v", err)
 	}
 
-	disp := &sampleDispatcher{
-		cache:           wspr_sample.NewServerCache(NewCached()),
-		errorThrower:    wspr_sample.NewServerErrorThrower(NewErrorThrower()),
-		cancelCollector: wspr_sample.NewServerCancelCollector(NewCancelCollector()),
+	disp := &testServiceDispatcher{
+		cache:           test_service.NewServerCache(NewCached()),
+		errorThrower:    test_service.NewServerErrorThrower(NewErrorThrower()),
+		cancelCollector: test_service.NewServerCancelCollector(NewCancelCollector()),
 	}
 
 	// Create an endpoint and begin listening.
@@ -55,10 +55,8 @@ func StartServer(r veyron2.Runtime) (ipc.Server, naming.Endpoint, error) {
 
 	// Publish the services. This will register them in the mount table and
 	// maintain the registration until StopServing is called.
-	for _, service := range []string{"sample", "cache", "cancel"} {
-		if err := s.Serve(service, disp); err != nil {
-			return nil, nil, fmt.Errorf("error publishing service '%s': %v", service, err)
-		}
+	if err := s.Serve("test_service", disp); err != nil {
+		return nil, nil, fmt.Errorf("error publishing service '%s': %v", err)
 	}
 
 	return s, endpoint, nil

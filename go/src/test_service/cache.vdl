@@ -1,4 +1,4 @@
-package wspr_sample
+package test_service
 
 // A Cache service mimics the memcache interface.
 type Cache interface {

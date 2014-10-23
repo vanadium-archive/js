@@ -10,7 +10,7 @@ import (
 	"veyron.io/veyron/veyron2/vdl/vdlutil"
 	"veyron.io/veyron/veyron2/verror"
 
-	"wspr_sample"
+	"test_service"
 )
 
 var typedNil []int
@@ -18,19 +18,19 @@ var typedNil []int
 // A simple in-memory implementation of a Cache service.
 type cacheImpl struct {
 	cache          map[string]vdlutil.Any
-	mostRecent     wspr_sample.KeyValuePair
+	mostRecent     test_service.KeyValuePair
 	lastUpdateTime time.Time
 }
 
 // NewCached returns a new implementation of the CacheService.
-func NewCached() wspr_sample.CacheService {
+func NewCached() test_service.CacheService {
 	return &cacheImpl{cache: make(map[string]vdlutil.Any)}
 }
 
 // Set sets a value for a key.  This should never return an error.
 func (c *cacheImpl) Set(_ ipc.ServerContext, key string, value vdlutil.Any) error {
 	c.cache[key] = value
-	c.mostRecent = wspr_sample.KeyValuePair{Key: key, Value: value}
+	c.mostRecent = test_service.KeyValuePair{Key: key, Value: value}
 	c.lastUpdateTime = time.Now()
 	return nil
 }
@@ -126,10 +126,10 @@ func (c *cacheImpl) AsMap(ipc.ServerContext) (map[string]vdlutil.Any, error) {
 }
 
 // KeyValuePairs returns the full contents of the cache as a slice of pairs.
-func (c *cacheImpl) KeyValuePairs(ipc.ServerContext) ([]wspr_sample.KeyValuePair, error) {
-	kvp := make([]wspr_sample.KeyValuePair, 0, len(c.cache))
+func (c *cacheImpl) KeyValuePairs(ipc.ServerContext) ([]test_service.KeyValuePair, error) {
+	kvp := make([]test_service.KeyValuePair, 0, len(c.cache))
 	for key, val := range c.cache {
-		kvp = append(kvp, wspr_sample.KeyValuePair{key, val})
+		kvp = append(kvp, test_service.KeyValuePair{key, val})
 	}
 	return kvp, nil
 }
@@ -137,7 +137,7 @@ func (c *cacheImpl) KeyValuePairs(ipc.ServerContext) ([]wspr_sample.KeyValuePair
 // MostRecentSet returns the key and value and the timestamp for the most
 // recent set operation
 // TODO(bprosnitz) support type types and change time to native time type
-func (c *cacheImpl) MostRecentSet(ipc.ServerContext) (wspr_sample.KeyValuePair, int64, error) {
+func (c *cacheImpl) MostRecentSet(ipc.ServerContext) (test_service.KeyValuePair, int64, error) {
 	var err error
 	if c.lastUpdateTime.IsZero() {
 		err = verror.NoExistf("no values in the cache so cannot return most recent.")
@@ -180,7 +180,7 @@ func (c *cacheImpl) Size(ipc.ServerContext) (int64, error) {
 // MultiGet handles a stream of get requests.  Returns an error if one of the
 // keys in the stream is not in the map or if there was an issue reading
 // the stream.
-func (c *cacheImpl) MultiGet(_ ipc.ServerContext, stream wspr_sample.CacheServiceMultiGetStream) error {
+func (c *cacheImpl) MultiGet(_ ipc.ServerContext, stream test_service.CacheServiceMultiGetStream) error {
 	rStream := stream.RecvStream()
 	sender := stream.SendStream()
 	for rStream.Advance() {

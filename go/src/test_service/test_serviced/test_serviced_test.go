@@ -16,16 +16,16 @@ import (
 
 	_ "veyron.io/veyron/veyron/profiles"
 
-	"wspr_sample"
+	"test_service"
 )
 
 // getCacheClient initializes the runtime and creates a client binding.
-func getCacheClient(address string) (wspr_sample.Cache, error) {
+func getCacheClient(address string) (test_service.Cache, error) {
 	rt.Init()
 
 	// Bind to a rooted, terminal name to bypass the MountTable which isn't
 	// actually used, nor needed, in these tests.
-	s, err := wspr_sample.BindCache(naming.JoinAddressName(address, "//cache"))
+	s, err := test_service.BindCache(naming.JoinAddressName(address, "//cache"))
 	if err != nil {
 		return nil, err
 	}
@@ -37,7 +37,7 @@ func waitForStatus(r veyron2.Runtime, name string, status string) error {
 	ctx, cancel := r.NewContext().WithTimeout(10 * time.Second)
 	defer cancel()
 
-	stub, err := wspr_sample.BindCancelCollector(name)
+	stub, err := test_service.BindCancelCollector(name)
 	if err != nil {
 		return err
 	}
@@ -57,7 +57,7 @@ func TestCancelCollector(t *testing.T) {
 	defer s.Stop()
 
 	name := naming.JoinAddressName(endpoint.String(), "//cancelCollector")
-	stub, err := wspr_sample.BindCancelCollector(name)
+	stub, err := test_service.BindCancelCollector(name)
 	if err != nil {
 		t.Fatal("failed to bind: ", err)
 	}
@@ -194,7 +194,7 @@ func populateObject(ctx context.T, s settable) error {
 }
 
 // setupManyResults starts a server and client and populates the server with the values in populateObject.
-func setupManyResults(t *testing.T) (wspr_sample.Cache, ipc.Server) {
+func setupManyResults(t *testing.T) (test_service.Cache, ipc.Server) {
 	r := rt.Init()
 	s, endpoint, err := StartServer(r)
 	if err != nil {

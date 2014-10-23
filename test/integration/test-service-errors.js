@@ -3,7 +3,7 @@ var service = require('./get-service');
 var verror = require('../../src/lib/verror');
 
 test('errorThrower.method(callback) - AbortedError', function(assert) {
-  service('sample/errorThrower', function(err, errorThrower, end) {
+  service('test_service/errorThrower', function(err, errorThrower, end) {
     assert.error(err);
 
     errorThrower.throwAborted(function(err) {
@@ -16,7 +16,7 @@ test('errorThrower.method(callback) - AbortedError', function(assert) {
 });
 
 test('errorThrower.method(callback) - BadArgError', function(assert) {
-  service('sample/errorThrower', function(err, errorThrower, end) {
+  service('test_service/errorThrower', function(err, errorThrower, end) {
     assert.error(err);
 
     errorThrower.throwBadArg(function(err) {
@@ -29,7 +29,7 @@ test('errorThrower.method(callback) - BadArgError', function(assert) {
 });
 
 test('errorThrower.method(callback) - BadProtocolError', function(assert) {
-  service('sample/errorThrower', function(err, errorThrower, end) {
+  service('test_service/errorThrower', function(err, errorThrower, end) {
     assert.error(err);
 
     errorThrower.throwBadProtocol(function(err) {
@@ -43,7 +43,7 @@ test('errorThrower.method(callback) - BadProtocolError', function(assert) {
 });
 
 test('errorThrower.method(callback) - InternalError', function(assert) {
-  service('sample/errorThrower', function(err, errorThrower, end) {
+  service('test_service/errorThrower', function(err, errorThrower, end) {
     assert.error(err);
 
     errorThrower.throwInternal(function(err) {
@@ -57,7 +57,7 @@ test('errorThrower.method(callback) - InternalError', function(assert) {
 });
 
 test('errorThrower.method(callback) - NoAccess', function(assert) {
-  service('sample/errorThrower', function(err, errorThrower, end) {
+  service('test_service/errorThrower', function(err, errorThrower, end) {
     assert.error(err);
 
     errorThrower.throwNoAccess(function(err) {
@@ -71,7 +71,7 @@ test('errorThrower.method(callback) - NoAccess', function(assert) {
 });
 
 test('errorThrower.method(callback) - NoExist', function(assert) {
-  service('sample/errorThrower', function(err, errorThrower, end) {
+  service('test_service/errorThrower', function(err, errorThrower, end) {
     assert.error(err);
 
     errorThrower.throwNoExist(function(err) {
@@ -84,7 +84,7 @@ test('errorThrower.method(callback) - NoExist', function(assert) {
 });
 
 test('errorThrower.method(callback) - NoExistOrNoAccess', function(assert) {
-  service('sample/errorThrower', function(err, errorThrower, end) {
+  service('test_service/errorThrower', function(err, errorThrower, end) {
     assert.error(err);
 
     errorThrower.throwNoExistOrNoAccess(function(err) {
@@ -98,7 +98,7 @@ test('errorThrower.method(callback) - NoExistOrNoAccess', function(assert) {
 });
 
 test('errorThrower.method(callback) - Unknown Error', function(assert) {
-  service('sample/errorThrower', function(err, errorThrower, end) {
+  service('test_service/errorThrower', function(err, errorThrower, end) {
     assert.error(err);
 
     errorThrower.throwUnknown(function(err) {
@@ -111,7 +111,7 @@ test('errorThrower.method(callback) - Unknown Error', function(assert) {
 });
 
 test('errorThrower.method(callback) - GoError Error', function(assert) {
-  service('sample/errorThrower', function(err, errorThrower, end) {
+  service('test_service/errorThrower', function(err, errorThrower, end) {
     assert.error(err);
 
     errorThrower.throwGoError(function(err) {
@@ -124,7 +124,7 @@ test('errorThrower.method(callback) - GoError Error', function(assert) {
 });
 
 test('errorThrower.method(callback) - GoError Error', function(assert) {
-  service('sample/errorThrower', function(err, errorThrower, end) {
+  service('test_service/errorThrower', function(err, errorThrower, end) {
     assert.error(err);
 
     errorThrower.throwCustomStandardError(function(err) {

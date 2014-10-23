@@ -24,7 +24,7 @@ var knownSignature = {
 
 test('proxy.getServiceSignature(name) - valid cache', function(assert) {
   var proxy = new ProxyWappedWebSocket(url);
-  var name = 'cache';
+  var name = 'test_service/cache';
 
   // fake a valid cached signature
   proxy.bindCache[name] = {
@@ -45,7 +45,7 @@ test('proxy.getServiceSignature(name) - valid cache', function(assert) {
 
 test('proxy.getServiceSignature(name) - stale cache', function(assert) {
   var proxy = new ProxyWappedWebSocket(url);
-  var name = 'cache';
+  var name = 'test_service/cache';
 
   // stub with mock cached sig
   proxy.bindCache[name] = {
@@ -79,7 +79,7 @@ test('proxy.getServiceSignature(name) - stale cache', function(assert) {
 
 test('proxy.getServiceSignature(name) - set cache', function(assert) {
   var proxy = new ProxyWappedWebSocket(url);
-  var name = 'cache';
+  var name = 'test_service/cache';
   var before = now();
 
   proxy

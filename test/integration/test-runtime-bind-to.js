@@ -14,7 +14,7 @@ test('runtime.bindTo(name, callback)', function(assert) {
     assert.error(err);
 
     rt = runtime;
-    runtime.bindTo('cache', onbind);
+    runtime.bindTo('test_service/cache', onbind);
   }
 
   function onbind(err, service) {
@@ -33,7 +33,7 @@ test('var promise = runtime.bindTo(name)', function(assert) {
 
   function bindTo(runtime) {
     return runtime
-    .bindTo('cache')
+    .bindTo('test_service/cache')
     .then(function(service) {
       assert.ok(service);
       runtime.close(assert.end);
@@ -101,7 +101,7 @@ test('runtime.bindTo(name, [callback]) - bad wspr url', function(assert) {
 
   function onruntime(err, runtime) {
     assert.error(err);
-    runtime.bindTo('cache', onservice);
+    runtime.bindTo('test_service/cache', onservice);
   }
 
   function onservice(err, service) {
@@ -118,7 +118,7 @@ test('var promise = runtime.bindTo(name) - bad wspr url', function(assert) {
 
   function bindTo(runtime) {
     return runtime
-    .bindTo('cache')
+    .bindTo('test_service/cache')
     .then(noop, function(err) {
       assert.ok(err instanceof Error);
       assert.end();

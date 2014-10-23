@@ -4,7 +4,7 @@ GOPATH := $(VEYRON_ROOT)/veyron.js/go
 VDLPATH := $(GOPATH)
 GOBIN := $(VEYRON_ROOT)/veyron.js/go/bin
 VGO := GOPATH="$(GOPATH)" VDLPATH="$(VDLPATH)" veyron go
-VIO_FILES := $(shell find $(VEYRON_ROOT)/veyron/go/src/veyron.io -name "*.go")
+GO_FILES := $(shell find go/src $(VEYRON_ROOT)/veyron/go/src/veyron.io -name "*.go")
 
 SHELL := /bin/bash -e -o pipefail
 
@@ -110,13 +110,13 @@ test-integration-browser: node_modules go/bin
 test-integration-nacl: validate-chromebin node_modules nacl/out go/bin
 	node test/integration/runner.js --use-nacl test/integration/test-*.js $(BROWSER_OPTS)
 
-go/bin: go/src $(VIO_FILES)
+go/bin: $(GO_FILES)
 	@$(VGO) build -o $(GOBIN)/mounttabled veyron.io/veyron/veyron/services/mounttable/mounttabled
 	@$(VGO) build -o $(GOBIN)/identityd veyron.io/veyron/veyron/services/identity/identityd
 	@$(VGO) build -o $(GOBIN)/proxyd veyron.io/veyron/veyron/services/proxy/proxyd
 	@$(VGO) build -o $(GOBIN)/identity veyron.io/veyron/veyron/tools/identity
 	@$(VGO) build -o $(GOBIN)/wsprd veyron.io/wspr/veyron/services/wsprd
-	@$(VGO) build -o $(GOBIN)/wspr_sampled wspr_sample/wspr_sampled
+	@$(VGO) build -o $(GOBIN)/test_serviced test_service/test_serviced
 
 clean:
 	@$(RM) -fr docs/*
