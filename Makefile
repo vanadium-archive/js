@@ -88,9 +88,22 @@ lint: node_modules
 dependency-check: node_modules
 	dependency-check package.json --entry src/veyron.js
 
-test: lint dependency-check test-unit test-integration
+test: lint dependency-check test-unit test-integration test-vdl
 
-test-unit: lint test-unit-node test-unit-browser
+test-vdl: lint gen-vdl test-vdl-node test-vdl-browser
+
+# This generates the output of the vdl files in src/veyron.io/<package-path>
+# The command will generate all the dependent files as well.
+gen-vdl:
+	veyron run vdl generate -lang=js veyron.io/veyron/veyron2/vdl/testdata/...
+
+test-vdl-node: node_modules
+	prova test/vdl/test-*.js $(TAP)
+
+test-vdl-browser: node_modules
+	prova test/vdl/test-*.js $(BROWSER_OPTS)
+
+test-unit: lint test-unit-node test-unit-browser test-vdl
 
 test-unit-node: node_modules
 	prova test/unit/test-*.js $(TAP)

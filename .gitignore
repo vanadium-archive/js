@@ -15,3 +15,4 @@ extension/example/index.bundle.js
 npm-debug.log
 tmp
 *.swp
+src/veyron.io
