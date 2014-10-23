@@ -5,7 +5,6 @@ coverage/
 go/pkg
 go/bin
 nacl/out/
-test_out
 xunit.xml
 bundle.js
 extension/extension/background.js
