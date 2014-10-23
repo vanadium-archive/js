@@ -8,6 +8,7 @@ var IncomingPayloadType = require('./incoming_payload_type');
 var Deferred = require('./../lib/deferred');
 var vLog = require('./../lib/vlog');
 var SimpleHandler = require('./simple_handler');
+var context = require('../runtime/context');
 
 // Cache the service signatures for one hour.
 var BIND_CACHE_TTL = 3600 * 1000;
@@ -92,10 +93,13 @@ Proxy.prototype.nextId = function() {
 /**
  * Gets the signature including methods names, number of arguments for a given
  * service name.
+ * @param {Context} A context instance.
  * @param {string} name the veyron name of the service to get signature for.
  * @return {Promise} Signature of the service in JSON format
  */
-Proxy.prototype.getServiceSignature = function(name) {
+Proxy.prototype.getServiceSignature = function(ctx, name) {
+  name = context.optionalContext(arguments);
+
   var proxy = this;
   var deferred = new Deferred();
   var now = Date.now;
@@ -123,7 +127,7 @@ Proxy.prototype.getServiceSignature = function(name) {
 
   var id = proxy.nextId();
   var handler = new SimpleHandler(deferred, proxy, id);
-
+  this.cancelFromContext(ctx, id);
   proxy.sendRequest(message, MessageType.SIGNATURE, handler, id);
 
   return deferred.promise;
@@ -136,6 +140,23 @@ Proxy.prototype.addIncomingHandler = function(type, handler) {
 
 Proxy.prototype.addIncomingStreamHandler = function(id, handler) {
   this.outstandingRequests[id] = handler;
+};
+
+/*
+ * Arranges to notify downstream servers when the given
+ * context is cancelled.  It also causes outstanding handlers for
+ * those requests to receive a cancellation error.
+ */
+Proxy.prototype.cancelFromContext = function(ctx, id) {
+  var proxy = this;
+  ctx.waitUntilDone().catch(function(error) {
+    var h = proxy.outstandingRequests[id];
+    proxy.sendRequest(null, MessageType.CANCEL, null, id);
+    if (h) {
+      h.handleResponse(IncomingPayloadType.ERROR_RESPONSE, error);
+      delete proxy.outstandingRequests[id];
+    }
+  });
 };
 
 /**

@@ -13,8 +13,9 @@ import (
 )
 
 type sampleDispatcher struct {
-	cache        interface{}
-	errorThrower interface{}
+	cache           interface{}
+	errorThrower    interface{}
+	cancelCollector interface{}
 }
 
 func (sd *sampleDispatcher) Lookup(suffix, method string) (ipc.Invoker, security.Authorizer, error) {
@@ -24,6 +25,10 @@ func (sd *sampleDispatcher) Lookup(suffix, method string) (ipc.Invoker, security
 
 	if strings.HasPrefix(suffix, "errorThrower") {
 		return ipc.ReflectInvoker(sd.errorThrower), nil, nil
+	}
+
+	if strings.HasPrefix(suffix, "cancel") {
+		return ipc.ReflectInvoker(sd.cancelCollector), nil, nil
 	}
 
 	return ipc.ReflectInvoker(sd.cache), nil, nil
@@ -37,8 +42,9 @@ func StartServer(r veyron2.Runtime) (ipc.Server, naming.Endpoint, error) {
 	}
 
 	disp := &sampleDispatcher{
-		cache:        wspr_sample.NewServerCache(NewCached()),
-		errorThrower: wspr_sample.NewServerErrorThrower(NewErrorThrower()),
+		cache:           wspr_sample.NewServerCache(NewCached()),
+		errorThrower:    wspr_sample.NewServerErrorThrower(NewErrorThrower()),
+		cancelCollector: wspr_sample.NewServerCancelCollector(NewCancelCollector()),
 	}
 
 	// Create an endpoint and begin listening.
@@ -47,14 +53,12 @@ func StartServer(r veyron2.Runtime) (ipc.Server, naming.Endpoint, error) {
 		return nil, nil, fmt.Errorf("error listening to service: %v", err)
 	}
 
-	// Publish the cache service. This will register it in the mount table and
+	// Publish the services. This will register them in the mount table and
 	// maintain the registration until StopServing is called.
-	if err := s.Serve("sample", disp); err != nil {
-		return nil, nil, fmt.Errorf("error publishing service: %v", err)
-	}
-
-	if err := s.Serve("cache", disp); err != nil {
-		return nil, nil, fmt.Errorf("error publishing service: %v", err)
+	for _, service := range []string{"sample", "cache", "cancel"} {
+		if err := s.Serve(service, disp); err != nil {
+			return nil, nil, fmt.Errorf("error publishing service '%s': %v", service, err)
+		}
 	}
 
 	return s, endpoint, nil
