@@ -131,10 +131,14 @@ clean:
 docs: $(JS_SRC_FILES) | node_modules
 	jsdoc $^ --template node_modules/ink-docstrap/template --destination $@
 
-node_modules: package.json  check-that-npm-is-in-path
+node_modules: package.json  check-that-npm-is-in-path | node_modules/vom/lib/index.js
 	@npm prune
 	@npm install
 	@touch node_modules
+
+node_modules/vom/lib/index.js:
+	cd "$(VEYRON_ROOT)/veyron/javascript/vom" && npm link
+	:;npm link vom
 
 check-that-npm-is-in-path:
 	@which npm > /dev/null || { echo "npm is not in the path. Did you remember to run 'veyron profile setup web'?"; exit 1; }
