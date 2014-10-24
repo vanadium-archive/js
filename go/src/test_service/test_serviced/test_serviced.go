@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	"veyron.io/veyron/veyron/profiles"
 	"veyron.io/veyron/veyron2"
 	"veyron.io/veyron/veyron2/ipc"
 	"veyron.io/veyron/veyron2/naming"
@@ -48,7 +49,7 @@ func StartServer(r veyron2.Runtime) (ipc.Server, naming.Endpoint, error) {
 	}
 
 	// Create an endpoint and begin listening.
-	endpoint, err := s.Listen("tcp", "127.0.0.1:0")
+	endpoint, err := s.Listen(profiles.LocalListenSpec)
 	if err != nil {
 		return nil, nil, fmt.Errorf("error listening to service: %v", err)
 	}
