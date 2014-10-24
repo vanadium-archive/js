@@ -90,17 +90,17 @@ dependency-check: node_modules
 
 test: lint dependency-check test-unit test-integration test-vdl
 
-test-vdl: lint gen-vdl test-vdl-node test-vdl-browser
+test-vdl: test-vdl-node test-vdl-browser
 
 # This generates the output of the vdl files in src/veyron.io/<package-path>
 # The command will generate all the dependent files as well.
 gen-vdl:
-	veyron run vdl generate -lang=js veyron.io/veyron/veyron2/vdl/testdata/...
+	veyron run vdl generate -lang=js -js_out_dir="$(PWD)/src" veyron.io/veyron/veyron2/vdl/testdata/...
 
-test-vdl-node: node_modules
+test-vdl-node: gen-vdl node_modules
 	prova test/vdl/test-*.js $(TAP)
 
-test-vdl-browser: node_modules
+test-vdl-browser: gen-vdl node_modules
 	prova test/vdl/test-*.js $(BROWSER_OPTS)
 
 test-unit: lint test-unit-node test-unit-browser test-vdl
@@ -162,7 +162,10 @@ check-that-npm-is-in-path:
 .PHONY: updated-go-compiler naclgoroot-is-set validate-naclgoroot
 .PHONY: chromebin-is-set validate-chromebin
 .PHONY: check-that-npm-is-in-path
+.PHONY: gen-vdl
 
 # Prevent the tests from running in parallel, which causes problems because it
 # starts multiple instances of the services at once.
-.NOTPARALLEL: test-integration test-unit test
+.NOTPARALLEL: test-integration test-integration-browser test-integration-node
+.NOTPARALLEL: test-unit test-unit-node test-unit-browser
+.NOTPARALLEL: test-vdl test-vdl-node test-vdl-browser

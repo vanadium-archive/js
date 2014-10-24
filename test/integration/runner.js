@@ -8,8 +8,7 @@ debug('starting services');
 
 var services = [
   'proxyd',
-  'test_serviced',
-  'identityd'
+  'test_serviced'
 ];
 
 if ('use-nacl' in argv) {

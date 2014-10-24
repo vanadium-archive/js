@@ -2,6 +2,6 @@
 module.exports = {
   flags: {
     name: 'test/proxy',
-    address: 'localhost:0'
+    address: '127.0.0.1:0'
   }
 };
