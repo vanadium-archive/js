@@ -52,7 +52,6 @@ ProxyConnection.prototype.getWebSocket = function() {
     vLog.info('Connected to proxy at', self.url);
     deferred.resolve(websocket);
   };
-  var configDeferred = this._configDeferred;
   websocket.onerror = function(e) {
     // TODO(jasoncampbell): there can be more errors than just faild
     // connection, additionally there can be more than one error emited. We
@@ -68,18 +67,6 @@ ProxyConnection.prototype.getWebSocket = function() {
     }
 
     deferred.reject(e);
-
-    // TODO(nlacasse): This causes an unhandledRejection, since nothing
-    // is chained on this promise at the point when we reject it.
-    //
-    // Later on, configDeferred becomes proxy.config, and a lot of places
-    // in the code do proxy.config.then(), so I'm leaving this in for now.
-    //
-    // This should be refactored so that there is a handler chained to this
-    // promise at the point it is created, or at least before it gets
-    // rejected.
-    var message = 'Proxy connection closed, failed to get config ' + e.message;
-    configDeferred.reject(new Error(message));
   };
 
   websocket.onmessage = function(frame) {

@@ -27,9 +27,6 @@ function Proxy(sender) {
   this.id = 1;
   this.outstandingRequests = {};
   this.bindCache = {};
-  this._hasResolvedConfig = false;
-  this._configDeferred = new Deferred();
-  this.config = this._configDeferred.promise;
   this.senderPromise = sender;
   this.incomingRequestHandlers = {};
 }
@@ -39,12 +36,6 @@ function Proxy(sender) {
  * @param {Object} messsage The message from the native veyron code.
  */
 Proxy.prototype.process = function(message) {
-  if (this._hasResolvedConfig === false) { // first message is the config.
-    this._hasResolvedConfig = true;
-    this._configDeferred.resolve(message);
-    return;
-  }
-
   // Messages originating from server are even numbers
   var isServerOriginatedMessage = (message.id % 2) === 0;
 
