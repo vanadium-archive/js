@@ -8,10 +8,8 @@ var Client = require('../ipc/client');
 var ProxyConnection = require('../proxy/websocket');
 var MessageType = require('../proxy/message_type');
 var Namespace = require('../namespace/namespace');
-var Namespace2 = require('../namespace/namespace2');
 var PrivateId = require('../security/private');
 var PublicId = require('../security/public');
-var Promise = require('../lib/promise');
 var Deferred = require('../lib/deferred');
 var SimpleHandler = require('../proxy/simple_handler');
 
@@ -171,35 +169,14 @@ Runtime.prototype._getServer = function() {
 };
 
 /**
- * Create a new Namespace
- * @return {Promise} A promise that resolves to a Namespace instance.
- */
-Runtime.prototype.newNamespace = function(roots) {
-  var rt = this;
-  var proxy = this._getProxyConnection();
-
-  if (roots) {
-    return Promise.resolve(new Namespace(this._getClient(), roots));
-  }
-
-  // We have to ask for the websocket now, otherwise the config
-  // wont arrive until the first time someone tries to make a call
-  // which is deadlock prone.
-  proxy.getWebSocket();
-  return proxy.config.then(function(config) {
-    return new Namespace(rt._getClient(), config.mounttableRoot);
-  });
-};
-
-/**
  * Create a new Namespace.
  * @param {string[]} Optional root names.
  * @return {Namespace} A namespace client instance.
  * TODO(aghassemi) rename back to newNamespace
  */
-Runtime.prototype.newNamespace2 = function(roots) {
+Runtime.prototype.newNamespace = function(roots) {
   var proxy = this._getProxyConnection();
-  return new Namespace2(proxy, roots);
+  return new Namespace(proxy, roots);
 };
 
 /**

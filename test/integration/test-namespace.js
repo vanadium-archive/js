@@ -15,7 +15,7 @@ test('glob(' + PREFIX + '*)', function(assert) {
 
   init(config).then(function glob(rt) {
     runtime = rt;
-    var namespace = rt.newNamespace2();
+    var namespace = rt.newNamespace();
     var rpc = namespace.glob(PREFIX + '*');
     rpc.catch(end);
     return readAllNames(rpc.stream);
@@ -38,7 +38,7 @@ test('glob(' + PREFIX + 'cottage/*/*/*) - nested', function(assert) {
 
   init(config).then(function glob(rt) {
     runtime = rt;
-    var namespace = rt.newNamespace2();
+    var namespace = rt.newNamespace();
     var rpc = namespace.glob(PREFIX + 'cottage/*/*/*');
     rpc.catch(end);
     return readAllNames(rpc.stream);
@@ -63,7 +63,7 @@ test('glob(' + PREFIX + 'does/not/exist) - empty', function(assert) {
 
   init(config).then(function glob(rt) {
     runtime = rt;
-    var namespace = rt.newNamespace2();
+    var namespace = rt.newNamespace();
     var rpc = namespace.glob(PREFIX + 'does/not/exist');
     rpc.catch(end);
     return readAllNames(rpc.stream);
@@ -86,7 +86,7 @@ test('setRoots() -> invalid', function(assert) {
 
   init(config).then(function glob(rt) {
     runtime = rt;
-    var namespace = rt.newNamespace2();
+    var namespace = rt.newNamespace();
     // Set the roots to a invalid roots, then we don't expect any glob results.
     namespace.setRoots('/bad-root-address-1.tld', '/bad-root-address-2.tld');
     var rpc = namespace.glob(PREFIX + '*');
@@ -111,7 +111,7 @@ test('setRoots() -> valid', function(assert) {
 
   init(config).then(function glob(rt) {
     runtime = rt;
-    var namespace = rt.newNamespace2();
+    var namespace = rt.newNamespace();
     // Set the roots to a valid root, we expect normal glob results.
     namespace.setRoots('/' + namespaceRootAddress );
     var rpc = namespace.glob(PREFIX + '*');

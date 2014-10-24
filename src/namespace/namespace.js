@@ -1,235 +1,71 @@
-/**
- *  @fileoverview Client library for the Namespace.
- */
-
-var nameUtil = require('./util.js');
-var Promise = require('../lib/promise');
 var Deferred = require('../lib/deferred');
-var vError = require('../lib/verror');
+var MessageType = require('../proxy/message_type');
+var Stream = require('../proxy/stream');
+var StreamHandler = require('../proxy/stream_handler');
 
+module.exports = Namespace;
 /**
- * Namespace handles manipulating and querying from the mount table.
- * @param {object} client A veyron client.
- * @param {...string} roots root addresses to use as the root mount tables.
+ * Create a new Namespace.
+ * @param {Proxy} Proxy instance.
+ * @param {string[]} Optional root names.
  * @constructor
  */
-var Namespace = function(client, roots) {
-  this._client = client;
+function Namespace(proxy, roots) {
+    this._proxy = proxy;
+    this._roots = roots;
+}
+
+var NamespaceMethods = {
+    GLOB: 0,
+};
+
+/**
+ * Glob streams all names matching pattern. If recursive is true, it also
+ * returns all names below the matching ones.
+ * @param {string} pattern Glob pattern to match
+ * @param {function} cb Optional callback that will be called with (err, stream)
+ * @return {Promise} A promise with an stream object hanging from it.
+ */
+Namespace.prototype.glob = function(pattern, cb) {
+  var def = new Deferred(cb);
+  var id = this._proxy.nextId();
+
+  def.stream = new Stream(id, this._proxy.senderPromise, true);
+
+  var handler = new StreamHandler(def.stream);
+  var args = {
+    pattern: pattern
+  };
+  var message = createMessage(NamespaceMethods.GLOB, this._roots, args);
+
+  this._proxy.sendRequest(message, MessageType.NAMESPACE_REQUEST, null, id);
+  this._proxy.addIncomingStreamHandler(id, handler);
+
+  def.promise.stream = def.stream;
+  return def.promise;
+};
+
+/**
+ * Sets the roots that the local Namespace is relative to.
+ * All relative names passed to the methods above will be interpreted as
+ * relative to these roots.
+ * The roots will be tried in the order that they are specified in the parameter
+ * list for setRoots.
+ * @param {Array | varargs} roots object names for the roots
+ */
+Namespace.prototype.setRoots = function(roots) {
+  if (!Array.isArray(roots)) {
+    roots = Array.prototype.slice.call(arguments);
+  }
   this._roots = roots;
 };
 
-/*
- * Error returned when resolution hits a non-mount table.
- */
-Namespace.errNotAMountTable = function() {
-  return new vError.AbortedError(
-    'Resolution target is not a mount table');
-};
-
-/*
- * Error returned from the mount table server when reading a non-existant name.
- */
-Namespace.errNoSuchName = function() {
-  return new vError.NoExistError(
-    'Name doesn\'t exist');
-};
-
-/*
- * Error returned from the mount table server when reading a non-existant name.
- */
-Namespace.errNoSuchNameRoot = function() {
-  return new vError.NoExistError(
-    'Name doesn\'t exist: root of namespace');
-};
-
-/*
- * Maximum number of hops between servers we will make to resolve a name.
- */
-Namespace._maxDepth = 32;
-
-/*
- * Make a name relative to the roots of this namespace.
- * @param {string} name A name.
- * @return {Array} A list of rooted names.
- */
-Namespace.prototype._rootNames = function(name) {
-  if (nameUtil.isRooted(name) && name !== '/') {
-    return [name];
-  }
-  var out = [];
-  for (var i = 0; i < this._roots.length; i++) {
-    out.push(nameUtil.join(this._roots[i], name));
-  }
-  return out;
-};
-
-/*
- * Utility function to join a suffix to a list of servers.
- * @param {Array} results An array of return values from a
- * resolveStep call.  The first element of the array is a list of servers.
- * The second element should be a string suffix.
- * @return {Array} list of servers with suffix appended.
- */
-function convertServersToStrings(results) {
-  var servers = results[0];
-  var suffix = results[1];
-  var out = [];
-  for (var i = 0; i < servers.length; i++) {
-    var name = servers[i].server;
-    if (suffix !== '') {
-      name = nameUtil.join(name, suffix);
-    }
-    out.push(name);
-  }
-  return out;
-}
-
-/*
- * Utility function to make an array of names terminal.
- * @param {Array} names List of names.
- * @return {Array} list of terminal names.
- */
-function makeAllTerminal(names) {
-  return names.map(nameUtil.convertToTerminalName);
-}
-
-/*
- * Utility function to check if every name in an array is terminal.
- * @param {Array} names List of names.
- * @return {boolean} true if every name in the input was terminal.
- */
-function allAreTerminal(names) {
-  return names.every(nameUtil.isTerminal);
-}
-
-/*
- * Utility method to try a single resolve step against a list of
- * mirrored MountTable servers.
- * @param {Array} names List of names representing mirrored MountTable servers.
- * @return {Promise} a promise that will be fulfilled with a list of further
- * resolved names.
- */
-Namespace.prototype._resolveAgainstMountTable = function(names) {
-  if (names.length === 0) {
-    return Promise.reject(
-      new vError.BadArgError('No servers to resolve query.'));
-  }
-
-  // TODO(mattr): Maybe make this take a service signature.
-  // That would be more efficient, but we would need to do error handling
-  // differently.
-  var self = this;
-  var name = nameUtil.convertToTerminalName(names[0]);
-  return this._client.bindTo(name).then(function onBind(service) {
-    if (service.resolveStep === undefined) {
-      throw Namespace.errNotAMountTable();
-    }
-    return service.resolveStep().then(convertServersToStrings);
-  }).catch(function onError(err) {
-    if (errorEquals(err, Namespace.errNoSuchName()) ||
-        errorEquals(err, Namespace.errNoSuchNameRoot()) ||
-        names.length <= 1) {
-      throw err;
-    } else {
-      return self._resolveAgainstMountTable(names.slice(1));
-    }
-  });
-};
-
-/*
- * Utility method to try a sequence of resolves until the resulting names are
- * entirely terminal.
- * @param {Array} curr List of equivalent names to try on this step.
- * @param {Array} last List of names that were tried on the previous step.
- * @param {number} depth The current depth of the recursive traversal.
- * @param {function} handleErrors A function that errors will be passed to
- * for special handling depending on the caller.
- * @return {Promise} a promise that will be fulfilled with a list of terminal
- * names.
- */
-Namespace.prototype._resolveLoop = function(curr, last, depth, handleErrors) {
-  var self = this;
-  return self._resolveAgainstMountTable(curr).then(function onResolve(names) {
-    if (allAreTerminal(names)) {
-      return names;
-    }
-    depth++;
-    if (depth > Namespace._maxDepth) {
-      throw new vError.InternalError('Maxiumum resolution depth exceeded.');
-    }
-    return self._resolveLoop(names, curr, depth, handleErrors);
-  }, function onError(err) {
-    return handleErrors(err, curr, last);
-  });
-};
-
-/**
- * resolveToMountTable resolves a veyron name to the terminal name of the
- * innermost mountable that owns the name.
- * @param {string} name The name to resolve.
- * @param {function} [cb] if given, this fuction will be called on
- * completion of the resolve.  The first argument will be an error if there
- * is one, and the second argument is a list of terminal names.
- * @return {Promise} A promise to a list of terminal names.
- */
-Namespace.prototype.resolveToMountTable = function(name, cb) {
-  var names = this._rootNames(name);
-  var deferred = new Deferred(cb);
-  var handleErrors = function(err, curr, last) {
-    if (errorEquals(err, Namespace.errNoSuchNameRoot()) ||
-        errorEquals(err, Namespace.errNotAMountTable())) {
-      return makeAllTerminal(last);
-    }
-    if (errorEquals(err, Namespace.errNoSuchName())) {
-      return makeAllTerminal(curr);
-    }
-    throw err;
+function createMessage(method, roots, args) {
+  var messageObject = {
+    method: method,
+    args: args || null,
+    roots: roots || []
   };
 
-  deferred.resolve(this._resolveLoop(names, names, 0, handleErrors));
-
-  return deferred.promise;
-};
-
-/**
- * resolveMaximally resolves a veyron name as far as it can, whether the
- * target is a mount table or not.
- * @param {string} name The name to resolve.
- * @param {function} [cb] if given, this function will be called on
- * completion of the resolve.  The first argument will be an error if there
- * is one, and the second argument is a list of terminal names.
- * @return {Promise} A promise to a list of terminal names.
- */
-Namespace.prototype.resolveMaximally = function(name, cb) {
-  var names = this._rootNames(name);
-  var deferred = new Deferred(cb);
-  var handleErrors = function(err, curr, last){
-    if (errorEquals(err, Namespace.errNoSuchNameRoot()) ||
-        errorEquals(err, Namespace.errNoSuchName()) ||
-        errorEquals(err, Namespace.errNotAMountTable())) {
-      return makeAllTerminal(curr);
-    }
-    throw err;
-  };
-
-  deferred.resolve(this._resolveLoop(names, names, 0, handleErrors));
-
-  return deferred.promise;
-};
-
-// TODO(aghassemi) we need to seriously get rid of expecting particular error
-// text like we have been in this module.
-// This is a temporary hack to account for the recent changes in verror until
-// this module is re-factored as currently there is no easy alternative
-// (even Go namespace library relies on actual error text)
-function errorEquals(target, source) {
-  var result =
-    target.name === source.name &&
-    //Ends with
-    target.message.indexOf(source.message,
-      target.message.length - source.message.length ) !== -1;
-
-  return result;
+  return JSON.stringify(messageObject);
 }
-
-module.exports = Namespace;
