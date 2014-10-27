@@ -6,55 +6,94 @@ var Types = require('vom').Types;
 
 test('named primitive types', function(assert) {
   var res = new base.types.NamedBool(false);
-  assert.equal(res._type, Types.BOOL);
+  assert.deepEqual(res._type, {
+    kind: Kind.BOOL,
+    name: 'veyron.io/veyron/veyron2/vdl/testdata/base.NamedBool',
+  });
   assert.equal(res.val, false);
 
   res = new base.types.NamedByte(1);
-  assert.equal(res._type, Types.BYTE);
+  assert.deepEqual(res._type,{
+    kind: Kind.BYTE,
+    name: 'veyron.io/veyron/veyron2/vdl/testdata/base.NamedByte',
+  });
   assert.equal(res.val, 1);
 
   res = new base.types.NamedUint16(1);
-  assert.equal(res._type, Types.UINT16);
+  assert.deepEqual(res._type, {
+    kind: Kind.UINT16,
+    name: 'veyron.io/veyron/veyron2/vdl/testdata/base.NamedUint16',
+  });
   assert.equal(res.val, 1);
 
   res = new base.types.NamedUint32(1);
-  assert.equal(res._type, Types.UINT32);
+  assert.deepEqual(res._type, {
+    kind: Kind.UINT32,
+    name: 'veyron.io/veyron/veyron2/vdl/testdata/base.NamedUint32',
+  });
   assert.equal(res.val, 1);
 
   res = new base.types.NamedUint64(1);
-  assert.equal(res._type, Types.UINT64);
+  assert.deepEqual(res._type, {
+    kind: Kind.UINT64,
+    name: 'veyron.io/veyron/veyron2/vdl/testdata/base.NamedUint64',
+  });
   assert.equal(res.val, 1);
 
   res = new base.types.NamedInt16(1);
-  assert.equal(res._type, Types.INT16);
+  assert.deepEqual(res._type, {
+    kind: Kind.INT16,
+    name: 'veyron.io/veyron/veyron2/vdl/testdata/base.NamedInt16',
+  });
   assert.equal(res.val, 1);
 
   res = new base.types.NamedInt32(1);
-  assert.equal(res._type, Types.INT32);
+  assert.deepEqual(res._type, {
+    kind: Kind.INT32,
+    name: 'veyron.io/veyron/veyron2/vdl/testdata/base.NamedInt32',
+  });
   assert.equal(res.val, 1);
 
   res = new base.types.NamedInt64(1);
-  assert.equal(res._type, Types.INT64);
+  assert.deepEqual(res._type, {
+    kind: Kind.INT64,
+    name: 'veyron.io/veyron/veyron2/vdl/testdata/base.NamedInt64',
+  });
   assert.equal(res.val, 1);
 
   res = new base.types.NamedFloat32(1);
-  assert.equal(res._type, Types.FLOAT32);
+  assert.deepEqual(res._type, {
+    kind: Kind.FLOAT32,
+    name: 'veyron.io/veyron/veyron2/vdl/testdata/base.NamedFloat32',
+  });
   assert.equal(res.val, 1);
 
   res = new base.types.NamedFloat64(1);
-  assert.equal(res._type, Types.FLOAT64);
+  assert.deepEqual(res._type, {
+    kind: Kind.FLOAT64,
+    name: 'veyron.io/veyron/veyron2/vdl/testdata/base.NamedFloat64',
+  });
   assert.equal(res.val, 1);
 
   res = new base.types.NamedComplex64(null);
-  assert.equal(res._type, Types.COMPLEX64);
+  assert.deepEqual(res._type, {
+    kind: Kind.COMPLEX64,
+    name: 'veyron.io/veyron/veyron2/vdl/testdata/base.NamedComplex64',
+  });
   assert.equal(res.val, null);
 
   res = new base.types.NamedComplex128(null);
-  assert.equal(res._type, Types.COMPLEX128);
+  assert.deepEqual(res._type, {
+    kind: Kind.COMPLEX128,
+    name: 'veyron.io/veyron/veyron2/vdl/testdata/base.NamedComplex128',
+  });
   assert.equal(res.val, null);
 
   res = new base.types.NamedString('foo');
-  assert.equal(res._type, Types.STRING);
+  assert.deepEqual(res._type, {
+    kind: Kind.STRING,
+    name: 'veyron.io/veyron/veyron2/vdl/testdata/base.NamedString',
+  });
   assert.equal(res.val, 'foo');
   assert.end();
 });
@@ -62,6 +101,7 @@ test('named primitive types', function(assert) {
 test('named composite types', function(assert) {
   var res = new base.types.NamedArray([false, true]);
   assert.deepEqual(res._type, {
+    name: 'veyron.io/veyron/veyron2/vdl/testdata/base.NamedArray',
     kind: Kind.ARRAY,
     elem: Types.BOOL,
     len: 2,
@@ -70,6 +110,7 @@ test('named composite types', function(assert) {
 
   res = new base.types.NamedList([]);
   assert.deepEqual(res._type, {
+    name: 'veyron.io/veyron/veyron2/vdl/testdata/base.NamedList',
     kind: Kind.LIST,
     elem: Types.UINT32
   });
