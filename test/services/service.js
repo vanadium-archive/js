@@ -89,7 +89,7 @@ Service.prototype.spawn = function(args, options) {
         var out = data.toString();
 
         if (service.name === 'wsprd') {
-          if (out.match('Listening at port')) {
+          if (out.match('Listening at')) {
             service.ready = true;
             service.emit('ready');
           }
