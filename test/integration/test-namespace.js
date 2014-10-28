@@ -177,7 +177,12 @@ function readAllNames(stream) {
   var names = [];
   return new Promise(function(resolve, reject) {
     stream.on('data', function(mountPoint) {
-      names.push(mountPoint.name);
+      // TODO(aghassemi): this is temporary while we figure out how to
+      //  deprecate the notAnMT error classification in the Go glob client
+      // library.
+      if (!mountPoint.error) {
+        names.push(mountPoint.name);
+      }
     });
 
     stream.on('end', function(name) {
