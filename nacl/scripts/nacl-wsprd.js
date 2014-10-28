@@ -26,7 +26,12 @@ if (!env.CHROME_DEVEL_SANDBOX) {
 }
 
 function writeConfig(callback) {
-    fs.readFile(env.VEYRON_IDENTITY, function(err, identityContents) {
+    // HACK!!
+    // TODO(ataly, ashankar, bprosnitz): Get rid of the config entry for
+    // private key. Ideally, the private key would be generated/retrieved
+    // within WSPR-nacl by directly talking to some secure storage in
+    // Chrome (e.g. LocalStorage).
+    fs.readFile(path.join(env.VEYRON_CREDENTIALS, 'privatekey.pem'), function(err, pemPrivateKey) {
         if (err) {
             return callback(err);
         }
@@ -39,7 +44,8 @@ function writeConfig(callback) {
             wsprHttpPort: testConfig.flags.port,
             identityd: testConfig.flags.identd,
             proxyName: testConfig.flags['veyron.proxy'],
-            identityContents: ''+identityContents,
+            pemPrivateKey: ''+pemPrivateKey,
+            defaultBlessingName: 'test',
             // TODO(bprosnitz) Support all namespace environment variables.
             namespaceRoot: env.NAMESPACE_ROOT
         };
@@ -56,7 +62,7 @@ function writeConfig(callback) {
 
 function checkForNeededEnvs(callback) {
     var neededEnvs = ['CHROME_DEVEL_SANDBOX', 'CHROME_BIN',
-        'NAMESPACE_ROOT', 'VEYRON_ROOT', 'VEYRON_IDENTITY'];
+        'NAMESPACE_ROOT', 'VEYRON_ROOT', 'VEYRON_CREDENTIALS'];
     var missing = [];
     neededEnvs.forEach(function(neededEnv) {
         if (env[neededEnv] === undefined) {
