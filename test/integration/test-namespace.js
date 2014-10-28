@@ -1,6 +1,7 @@
 var test = require('prova');
 var veyron = require('../../');
 var Promise = require('../../src/lib/promise');
+var leafDispatcher = require('../../src/ipc/leaf_dispatcher');
 var port = require('../services/config-wsprd').flags.port;
 var config = {
   wspr: 'http://localhost:' + port
@@ -167,11 +168,10 @@ function init(config) {
   return veyron.init(config).then(function setupNamespaceSimulation(rt) {
     runtime = rt;
     var serveRequests = SAMPLE_NAMESPACE.map(function(name) {
-      return rt.serve(name, {});
+      return rt.serve(name, leafDispatcher({}));
     });
     return Promise.all(serveRequests);
   }).then(function ready() {
     return runtime;
   });
 }
-
