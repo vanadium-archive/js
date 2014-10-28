@@ -10,13 +10,13 @@ var MessageType = {
   STREAM_CLOSE: 4, // Request to close a stream
   SIGNATURE: 5, // Request to get signature of a remote server
   STOP: 6, // Request to stop a server
-  BLESS: 8, // Blesses an identity
-  UNLINK_ID: 9, // Unlinks an identity
-  NEW_ID: 10,  // Creates a new public id for javascript.  This is only used
-               // by tests.
   LOOKUP_RESPONSE: 11, // Response from a lookup call to Javacript.
   AUTHORIZATION_RESPONSE: 12, // Response from an authorization call to JS.
   NAMESPACE_REQUEST: 13, // Request to call a method on the namespace client.
+  BLESS_PUBLICKEY:  14, // Request to bless a public key.
+  UNLINK_BLESSINGS: 15, // Unlinks blessings.
+  NEW_BLESSINGS: 16, // Creates a new Blessing for javascript.  This is only
+                     // used by tests.
   CANCEL: 17 // Cancel an ongoing JS initiated call.
 };
 

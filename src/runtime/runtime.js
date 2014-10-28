@@ -8,8 +8,8 @@ var Client = require('../ipc/client');
 var ProxyConnection = require('../proxy/websocket');
 var MessageType = require('../proxy/message_type');
 var Namespace = require('../namespace/namespace');
-var PrivateId = require('../security/private');
-var PublicId = require('../security/public');
+var Principal = require('../security/principal');
+var Blessings = require('../security/blessings');
 var Deferred = require('../lib/deferred');
 var SimpleHandler = require('../proxy/simple_handler');
 
@@ -20,9 +20,9 @@ function Runtime(options) {
     return new Runtime(options);
   }
 
-  this.identityName = options.identityName;
+  this.accountName = options.accountName;
   this._wspr = options.wspr;
-  this.identity = new PrivateId(this._getProxyConnection());
+  this.principal = new Principal(this._getProxyConnection());
   this._name = options.appName;
 }
 
@@ -180,29 +180,28 @@ Runtime.prototype.newNamespace = function(roots) {
 };
 
 /**
- * TODO(bjornick): This should probably produce a PrivateId and not a PublicId,
- * but we don't have PrivateId store yet. This is mostly used for tests anyway.
- * Create a new Identity
- * @param {String} name the name for the identity.
+ * TODO(bjornick): This should probably produce a Principal and not Blessings,
+ * but we don't have Principal store yet. This is mostly used for tests anyway.
+ * Create new Blessings
+ * @param {String} extension for the Blessings .
  * @param {function} cb if provided a callback that will be called with the
- * new publicId.
- * @return {Promise} A promise that resolves to the new PublicId
+ * new Blessings.
+ * @return {Promise} A promise that resolves to the new Blessings
  */
-Runtime.prototype.newIdentity = function(name, cb) {
-  var newIdentityDef = new Deferred(cb);
+Runtime.prototype.newBlessings = function(extension, cb) {
+  var newBlessingsDef = new Deferred(cb);
   var messageDef = new Deferred();
   var proxy = this._getProxyConnection();
   var id = proxy.nextId();
   var handler = new SimpleHandler(messageDef, proxy, id);
 
-  proxy.sendRequest(JSON.stringify(name), MessageType.NEW_ID, handler, id);
+  proxy.sendRequest(JSON.stringify(extension), MessageType.NEW_BLESSINGS,
+                    handler, id);
 
   messageDef.promise.then(function(message) {
-    var id = new PublicId(message.names, message.handle, message.publicKey,
-                          proxy);
+    var id = new Blessings(message.handle, message.publicKey, proxy);
+    newBlessingsDef.resolve(id);
+  }, newBlessingsDef.reject);
 
-    newIdentityDef.resolve(id);
-  }, newIdentityDef.reject);
-
-  return newIdentityDef.promise;
+  return newBlessingsDef.promise;
 };

@@ -1,31 +1,31 @@
 var test = require('prova');
 var veyron = require('../../');
-var PublicId = require('../../src/security/public.js');
+var Blessings = require('../../src/security/blessings.js');
 var port = require('../services/config-wsprd').flags.port;
 var config = {
   wspr: 'http://localhost:' + port
 };
 
-test('runtime.newIdentity(name, callback)', function(assert) {
+test('runtime.newBlessings(name, callback)', function(assert) {
   veyron.init(config, function(err, runtime) {
     assert.error(err);
 
-    runtime.newIdentity('alice', function(err, id) {
+    runtime.newBlessings('alice', function(err, blessings) {
       assert.error(err);
-      assert.ok(id instanceof PublicId, 'should be a PublicId');
+      assert.ok(blessings instanceof Blessings, 'should be a Blessings');
       runtime.close(assert.end);
     });
   });
 });
 
-test('var promise = runtime.newIdentity(name)', function(assert) {
+test('var promise = runtime.newBlessings(name)', function(assert) {
   veyron.init(config, function(err, runtime) {
     assert.error(err);
 
     runtime
-    .newIdentity('alice')
+    .newBlessings('alice')
     .then(function(id) {
-      assert.ok(id instanceof PublicId, 'should be a PublicId');
+      assert.ok(id instanceof Blessings, 'should be a Blessings');
       runtime.close(assert.end);
     })
     .catch(function(err) {

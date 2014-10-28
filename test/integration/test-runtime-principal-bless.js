@@ -4,7 +4,7 @@ var caveat = require('../../src/security/caveat');
 var MethodCaveat = caveat.MethodCaveat;
 
 test('i.bless(..., callback)', function(assert) {
-  identity('alice', function(err, id, runtime) {
+  blessings('alice', function(err, blessee, runtime) {
     assert.error(err);
 
     var name = 'bob';
@@ -12,17 +12,16 @@ test('i.bless(..., callback)', function(assert) {
     var caveats = null;
 
     runtime
-    .identity
-    .bless(id, name, duration, caveats, function(err, blessing) {
+    .principal
+    .bless(blessee, name, duration, caveats, function(err, blessing) {
       assert.error(err);
-      assert.equal(blessing.names[0], 'test/bob');
       runtime.close(assert.end);
     });
   });
 });
 
 test('var promise = i.bless(...)', function(assert) {
-  identity('alice', function(err, id, runtime) {
+  blessings('alice', function(err, blessee, runtime) {
     assert.error(err);
 
     var name = 'bob';
@@ -30,10 +29,9 @@ test('var promise = i.bless(...)', function(assert) {
     var caveats = null;
 
     runtime
-    .identity
-    .bless(id, name, duration, caveats)
+    .principal
+    .bless(blessee, name, duration, caveats)
     .then(function(blessing) {
-      assert.equal(blessing.names[0], 'test/bob');
       runtime.close(assert.end);
     })
     .catch(function(err) {
@@ -44,7 +42,7 @@ test('var promise = i.bless(...)', function(assert) {
 });
 
 test('i.bless(..., callback) - caveats', function(assert) {
-  identity('alice', function(err, id, runtime) {
+  blessings('alice', function(err, blessee, runtime) {
     assert.error(err);
 
     var name = 'bob';
@@ -55,17 +53,16 @@ test('i.bless(..., callback) - caveats', function(assert) {
 
 
     runtime
-    .identity
-    .bless(id, name, duration, caveats, function(err, blessing) {
+    .principal
+    .bless(blessee, name, duration, caveats, function(err, blessing) {
       assert.error(err);
-      assert.equal(blessing.names[0], 'test/bob');
       runtime.close(assert.end);
     });
   });
 });
 
 test('var promise = i.bless(...) - caveats', function(assert) {
-  identity('alice', function(err, id, runtime) {
+  blessings('alice', function(err, blessee, runtime) {
     assert.error(err);
 
     var name = 'bob';
@@ -75,10 +72,9 @@ test('var promise = i.bless(...) - caveats', function(assert) {
     ];
 
     runtime
-    .identity
-    .bless(id, name, duration, caveats)
+    .principal
+    .bless(blessee, name, duration, caveats)
     .then(function(blessing) {
-      assert.equal(blessing.names[0], 'test/bob');
       runtime.close(assert.end);
     })
     .catch(function(err) {
@@ -89,7 +85,7 @@ test('var promise = i.bless(...) - caveats', function(assert) {
 });
 
 test('i.bless(..., callback) - bad caveats failure', function(assert) {
-  identity('alice', function(err, id, runtime) {
+  blessings('alice', function(err, blessee, runtime) {
     assert.error(err);
 
     var name = 'bob';
@@ -98,8 +94,8 @@ test('i.bless(..., callback) - bad caveats failure', function(assert) {
 
 
     runtime
-    .identity
-    .bless(id, name, duration, caveats, function(err, blessing) {
+    .principal
+    .bless(blessee, name, duration, caveats, function(err, blessing) {
       assert.ok(err, 'should error');
       runtime.close(assert.end);
     });
@@ -107,7 +103,7 @@ test('i.bless(..., callback) - bad caveats failure', function(assert) {
 });
 
 test('var promise = i.bless(...) - bad caveats failure', function(assert) {
-  identity('alice', function(err, id, runtime) {
+  blessings('alice', function(err, blessee, runtime) {
     assert.error(err);
 
     var name = 'bob';
@@ -116,8 +112,8 @@ test('var promise = i.bless(...) - bad caveats failure', function(assert) {
 
 
     runtime
-    .identity
-    .bless(id, name, duration, caveats)
+    .principal
+    .bless(blessee, name, duration, caveats)
     .then(function() {
       assert.fail('should not succeed');
       runtime.close(assert.end);
@@ -130,7 +126,7 @@ test('var promise = i.bless(...) - bad caveats failure', function(assert) {
 });
 
 
-function identity(name, callback) {
+function blessings(extension, callback) {
   var port = require('../services/config-wsprd').flags.port;
   var config = {
     wspr: 'http://localhost:' + port
@@ -141,8 +137,8 @@ function identity(name, callback) {
       return callback(err);
     }
 
-    runtime.newIdentity(name, function(err, id) {
-      callback(err, id, runtime);
+    runtime.newBlessings(extension, function(err, blessings) {
+      callback(err, blessings, runtime);
     });
   });
 }

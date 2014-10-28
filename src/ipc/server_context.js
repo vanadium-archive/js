@@ -3,7 +3,7 @@
  * extra information about the state of a server call.
  */
 
-var PublicId = require('../security/public');
+var Blessings = require('../security/blessings');
 var context = require('../runtime/context');
 var inherits = require('util').inherits;
 var constants = require('./constants');
@@ -31,10 +31,11 @@ function ServerContext(request, proxy) {
   }
   this.suffix = request.context.suffix;
   this.name = request.context.name;
-  this.remoteId = new PublicId(request.context.remoteID.names,
-                               request.context.remoteID.handle,
-                               request.context.remoteID.publicKey,
+  this.remoteBlessings = new Blessings(
+                               request.context.remoteBlessings.handle,
+                               request.context.remoteBlessings.publicKey,
                                proxy);
+  this.remoteBlessingStrings = request.context.remoteBlessingStrings;
 }
 inherits(ServerContext, context.Context);
 

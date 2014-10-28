@@ -10,27 +10,24 @@ var dispatcher = leafDispatcher({
     return $name;
   },
   getContext: function($context) {
-    $context.remoteId._id = undefined;
+    $context.remoteBlessings._id = undefined;
     return $context;
   },
   getContextMixedWithNormalArgs: function(a1, $context, a2, $cb, a3) {
-    $context.remoteId._id = undefined;
+    $context.remoteBlessings._id = undefined;
     $cb(null,
       {a1: a1,
        context: $context,
        a2: a2,
        a3: a3});
-  },
-  getPublicIdName: function($remoteId) {
-    return $remoteId.names;
   }
 });
+
 var expectedContext = {
   name: 'suf',
   suffix : 'suf',
-  remoteId: {
-    names: ['test']
-  }
+  remoteBlessings: {},
+  remoteBlessingStrings: ['test']
 };
 
 function contains(actual, expected, assert) {
@@ -117,7 +114,7 @@ test('$context', function(assert) {
         assert.error(err);
 
         // remove the key attribute before comparison
-        delete context.remoteId.key;
+        delete context.remoteBlessings.key;
 
         contains(context, expectedContext, assert);
         res.end(assert);
@@ -138,7 +135,7 @@ test('$context - mixed with normal args', function(assert) {
         assert.error(err);
 
         // remove the key attribute before comparison
-        delete results.context.remoteId.key;
+        delete results.context.remoteBlessings.key;
 
         contains(results, {
           a1: '-a-',
@@ -146,22 +143,6 @@ test('$context - mixed with normal args', function(assert) {
           a3: '-c-'
         }, assert);
         contains(results.context, expectedContext, assert);
-        res.end(assert);
-      });
-    });
-  });
-});
-
-test('$remoteId', function(assert) {
-  serve('a/b', dispatcher, function(err, res) {
-    assert.error(err);
-
-    res.runtime.bindTo('a/b/suf', function(err, service) {
-      assert.error(err);
-
-      service.getPublicIdName(function(err, id) {
-        assert.error(err);
-        assert.deepEqual(id, [ 'test' ]);
         res.end(assert);
       });
     });

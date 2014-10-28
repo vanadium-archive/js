@@ -20,8 +20,8 @@ function handleLogin(e){
       return console.error(err);
     }
 
-    var name = rt.identityName;
-    console.log('got runtime with identity name: ' + name);
-    alert('Hello, ' + name + '!');
+    var accountName = rt.accountName;
+    console.log('got runtime with accountName: ' + accountName);
+    alert('Hello, ' + accountName + '!');
   });
 }

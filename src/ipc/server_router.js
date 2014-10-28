@@ -252,7 +252,7 @@ Router.prototype.handleRPCRequest = function(messageId, request) {
       return;
     }
     finished = true;
-    ctx.remoteId.release();
+    ctx.remoteBlessings.release();
     self.sendResult(messageId, request.method, v, e, metadata);
   };
 
@@ -262,7 +262,7 @@ Router.prototype.handleRPCRequest = function(messageId, request) {
     $context: ctx,
     $suffix: ctx.suffix,
     $name: ctx.name,
-    $remoteId: ctx.remoteId
+    $remoteBlessings: ctx.remoteBlessings
   };
 
   var variables = inject(args, metadata.injections, injections);
@@ -295,7 +295,7 @@ Router.prototype.handleRPCRequest = function(messageId, request) {
     if (finished) {
       return;
     }
-    ctx.remoteId.release();
+    ctx.remoteBlessings.release();
     finished = true;
     self.sendResult(messageId, request.method, value,
         null, metadata);

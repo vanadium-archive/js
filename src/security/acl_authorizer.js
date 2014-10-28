@@ -32,15 +32,19 @@ var errACL = new vError.NoAccessError('acl authorization failed');
  */
 function authorizer(acl) {
   return function authorize(ctx) {
-    // If the remoteId is ourselves (i.e a self rpc), then we
+    // If the remoteBlessings is ourselves (i.e a self rpc), then we
     // always authorize.
-    if (ctx.localId && ctx.remoteId &&
-        ctx.localId.publicKey === ctx.remoteId.publicKey) {
+    if (ctx.localBlessings && ctx.remoteBlessings &&
+        ctx.localBlessings.publicKey === ctx.remoteBlessings.publicKey) {
       return null;
     }
-    var remoteNames = ctx.remoteId.names;
+    var remoteNames = ctx.remoteBlessingStrings;
+    if ((remoteNames === undefined || remoteNames.length === 0) &&
+         canAccessACL('', ctx.label, acl)) {
+       return null;
+    }
     for (var i = 0; i < remoteNames.length; i++) {
-      if (matchesACL(remoteNames[i], ctx.label, acl)) {
+      if (canAccessACL(remoteNames[i], ctx.label, acl)) {
         return null;
       }
     }
@@ -50,7 +54,7 @@ function authorizer(acl) {
 
 // Returns whether name passed in has permission for the passed in
 // label.
-function matchesACL(name, label, acl) {
+function canAccessACL(name, label, acl) {
   // The set of labels that are allowed for
   // the given names.
   var pattern;

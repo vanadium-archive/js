@@ -22,7 +22,7 @@ WSPR.prototype.getUrl = function() {
   return wsprSetting.value;
 };
 
-// Create an account on WSPR with an identity derived from an access token.
+// Create an account on WSPR with a blessing derived from an access token.
 // Currently this is implemented by POSTing to WSPR with the body:
 // { access_token: <access_token> }
 // Returns the names of the new account in an array.
@@ -45,12 +45,12 @@ WSPR.prototype.createAccount = function(accessToken, callback) {
 };
 
 // Associate an account with an origin on WSPR.  The account must have been
-// previously created with createAccount(...).  Input is the name of the account
-// to use:
+// previously created with createAccount(...).  Input is an account name to use:
 // { name: <account name> }
 // Response will be 200 OK if association is successful.
 WSPR.prototype.assocAccount = function (name, origin, callback) {
   request.post(this.getUrl() + '/assoc-account')
+    // TODO(ataly, nlacasse): Also send the origin?
     .send({ name: name })
     .end(function(err, res) {
       if (err) {
@@ -70,7 +70,9 @@ WSPR.prototype.createAndAssocAccount = function(accessToken, origin, callback) {
     if (err) {
       return callback(err);
     }
-    // Assoc with the first name.
+    // Assoc with first name.
+    // TODO(ataly, nlacasse): How do we decide which account name to associate with
+    // the origin?
     wspr.assocAccount(names[0], origin, callback);
   });
 };

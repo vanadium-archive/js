@@ -49,34 +49,33 @@ function init(config, cb) {
   };
 
   // If the user has set config.authenticate to true, get an authenticated
-  // (blessed-by-identity-server) identity for the user.  This requires the
+  // (blessed-by-Blessing-server) account for the user.  This requires the
   // Veyron Chrome Extension to be installed and enabled, and WSPR to be
-  // configured to talk to Veyron identity server, e.g. the one currently hosted
+  // configured to talk to Veyron Blessing server, e.g. the one currently hosted
   // at /proxy.envyor.com:8101/identity/veyron-test/google.  The resulting
-  // runtime will have runtime.identityName set to the name of the authenticated
-  // identity.
+  // runtime will have runtime.accountName set of authenticated account.
   //
-  // Otherwise, create a runtime with identityName 'unknown'.
+  // Otherwise, create a runtime with accountName 'unknown'.
   if (config.authenticate) {
-    getIdentity(config.authTimeout, function(err, name) {
+    getAccount(config.authTimeout, function(err, name) {
       if (err) {
         def.reject(err);
         return def.promise;
       }
-      runtimeOpts.identityName = name;
+      runtimeOpts.accountName = name;
       def.resolve(new Runtime(runtimeOpts));
     });
   } else {
-    runtimeOpts.identityName = 'unknown';
+    runtimeOpts.accountName = 'unknown';
     def.resolve(new Runtime(runtimeOpts));
   }
 
   return def.promise;
 }
 
-// getIdentity tells the Veyron Extension to start an OAuth flow, gets an access
-// token for the user, and exchanges that access token for a blessed identity in
-// WSPR, which is then associated with the origin of the web app.
+// getAccounts tells the Veyron Extension to start an OAuth flow, gets an
+// access token for the user, and exchanges that access token for an account
+// which is then associated with the origin of the web app.
 //
 // The flow starts by repeatedly sending an 'auth' message to the Veyron
 // Extension content script.  It must perform this repeatedly because the first
@@ -91,7 +90,7 @@ function init(config, cb) {
 // Once the extension has received the 'auth' message, it will perform the OAuth
 // <-> WSPR identity flow, and respond with either an 'auth:success' message or
 // an 'auth:error' message.
-function getIdentity(authTimeoutMs, cb) {
+function getAccount(authTimeoutMs, cb) {
   if (!isBrowser) {
     return cb(new Error('authenticate=true requires browser environment'));
   }

@@ -7,17 +7,17 @@ with WSPR to manage identities.  A webapp should not be able to see all
 identities known to WSPR.
 
 An auth flow will look something like this.
-1. Webapp requests an identity from the extension.
-2. Extension pops up some UI to let the user pick an existing identity, or create a new one.
-3a. If the user picks an existing identity:
-    WSPR associates that identity with the user and the webapp's domain.
-    All veyron RPCs from this webapp will use that identity.
+1. Webapp requests a blessing from the extension.
+2. Extension pops up some UI to let the user pick an existing blessing, or create a new one.
+3a. If the user picks an existing blessing:
+    WSPR associates that blessing with the user and the webapp's domain.
+    All veyron RPCs from this webapp will use that blessing.
     Done.
-3b. If the user chooses to create a new identity:
+3b. If the user chooses to create a new blessing:
     Extension UI kicks off OAuth flow.
     ...whirlpool of despair...
-    WSPR ends up with a blessed identity, and associates that identity with the user and webapp's domain.
-    All veyron RPCs from this webapp will use that identity.
+    WSPR ends up with a blessing, and associates that blessing with the user and webapp's domain.
+    All veyron RPCs from this webapp will use that blessing.
     Done.
 
 The extension should also provide a way to remove identities from WSPR.
@@ -51,4 +51,4 @@ This certificate should obviously not live in the repository.
     $ make example-server
 
 This will run an example web app at http://localhost:8080.  The web app has a
-log-in button that communicates with the extension to start the identity flow.
+log-in button that communicates with the extension to start the blessing flow.

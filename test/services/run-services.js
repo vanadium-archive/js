@@ -6,7 +6,6 @@ var inherits = require('util').inherits;
 var extend = require('xtend');
 var path = require('path');
 var mkdirp = require('mkdirp');
-var fs = require('fs');
 
 module.exports = Run;
 
@@ -34,7 +33,7 @@ function Run(names, options) {
   var run = this;
   var defaults = {
     'tmp-dir': path.resolve('tmp'),
-    VEYRON_IDENTITY: path.resolve('tmp/test-identity')
+    VEYRON_CREDENTIALS: path.resolve('tmp/test-credentials')
   };
 
   EE.call(this);
@@ -96,25 +95,25 @@ Run.prototype.start = function () {
 Run.prototype.setup = function() {
   var run = this;
   var tmp = path.join(run.options['tmp-dir'], 'log');
-  var VEYRON_IDENTITY = run.options.VEYRON_IDENTITY;
+  var VEYRON_CREDENTIALS = run.options.VEYRON_CREDENTIALS;
 
   debug('setting up...');
 
-  mkdirp(tmp, createIdentity);
+  mkdirp(tmp, createCredentials);
 
-  function createIdentity(err) {
+  function createCredentials(err) {
     if (err) {
       return run.emit('error', err);
     }
 
-    service('identity')
-    .exec('generate test', function(err, stdout, stderr) {
+    service('principal')
+    .exec('create --overwrite ' + VEYRON_CREDENTIALS + ' test',
+	  function(err, stdout, stderr) {
       if (err) {
         return run.emit('error', err);
       }
 
       stdout
-      .pipe(fs.createWriteStream(VEYRON_IDENTITY))
       .on('close', startMounttable);
     });
   }
@@ -139,7 +138,7 @@ Run.prototype.setup = function() {
 Run.prototype.add = function(name) {
   var run = this;
   var opts = extend(process.env, {
-    VEYRON_IDENTITY: run.options.VEYRON_IDENTITY
+    VEYRON_CREDENTIALS: run.options.VEYRON_CREDENTIALS
   });
   if (run.options.NAMESPACE_ROOT) {
     opts.NAMESPACE_ROOT = run.options.NAMESPACE_ROOT;

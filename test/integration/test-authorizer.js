@@ -235,10 +235,10 @@ test('authorizer - validate context', function(assert) {
 
   var endpoint = '';
   function authorizer(ctx) {
-    if (ctx.remoteId.names[0] !== 'test') {
-      return new Error('unknown identity ' + ctx.remoteId.names);
-    } else if (ctx.localId.names[0] !== 'test') {
-      return new Error('unknown identity ' + ctx.localId.names);
+    if (ctx.remoteBlessingStrings[0] !== 'test') {
+      return new Error('unknown blessings ' + ctx.remoteBlessingStrings);
+    } else if (ctx.localBlessingStrings[0] !== 'test') {
+      return new Error('unknown blessings ' + ctx.localBlessingStrings);
     } else if (ctx.method !== 'call') {
       return new Error('wrong method ' + ctx.method);
     } else if (ctx.name !== 'auth') {

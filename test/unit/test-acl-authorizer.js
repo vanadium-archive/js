@@ -6,10 +6,10 @@ var Labels = require('../../src/security/labels');
 
 test('allow same public key access with no other acls', function(assert) {
   var ctx = {
-    localId: {
+    localBlessings: {
       publicKey: 'me',
     },
-    remoteId: {
+    remoteBlessings: {
       publicKey: 'me',
     },
   };
@@ -60,13 +60,13 @@ test('full suite of go tests', function(assert) {
       continue;
     }
     var ctx = {
-      localId: {
+      localBlessings: {
         publicKey: 'me',
       },
-      remoteId: {
+      remoteBlessings: {
         publicKey: 'otherkey',
-        names: [name],
-      }
+      },
+      remoteBlessingStrings: [name],
     };
     var exp = expectations[name];
 

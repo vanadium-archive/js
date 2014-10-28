@@ -133,7 +133,7 @@ Service.prototype.spawn = function(args, options) {
 };
 
 // A quick wrapper for short run execs, useful for non-deamons like the
-// identity command.
+// principal command.
 Service.prototype.exec = function(command, cb) {
   var service = this;
 

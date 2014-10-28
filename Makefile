@@ -127,7 +127,7 @@ go/bin: $(GO_FILES)
 	@$(VGO) build -o $(GOBIN)/mounttabled veyron.io/veyron/veyron/services/mounttable/mounttabled
 	@$(VGO) build -o $(GOBIN)/identityd veyron.io/veyron/veyron/services/identity/identityd
 	@$(VGO) build -o $(GOBIN)/proxyd veyron.io/veyron/veyron/services/proxy/proxyd
-	@$(VGO) build -o $(GOBIN)/identity veyron.io/veyron/veyron/tools/identity
+	@$(VGO) build -o $(GOBIN)/principal veyron.io/veyron/veyron/tools/principal
 	@$(VGO) build -o $(GOBIN)/wsprd veyron.io/wspr/veyron/services/wsprd
 	@$(VGO) build -o $(GOBIN)/test_serviced test_service/test_serviced
 
