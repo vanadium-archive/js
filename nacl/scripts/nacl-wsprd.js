@@ -31,7 +31,8 @@ function writeConfig(callback) {
     // private key. Ideally, the private key would be generated/retrieved
     // within WSPR-nacl by directly talking to some secure storage in
     // Chrome (e.g. LocalStorage).
-    fs.readFile(path.join(env.VEYRON_CREDENTIALS, 'privatekey.pem'), function(err, pemPrivateKey) {
+    fs.readFile(path.join(env.VEYRON_CREDENTIALS, 'privatekey.pem'),
+      function(err, pemPrivateKey) {
         if (err) {
             return callback(err);
         }
