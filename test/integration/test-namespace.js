@@ -28,7 +28,7 @@ test('glob(' + PREFIX + '*)', function(assert) {
 
   function end(err) {
     assert.error(err);
-    if(runtime) {
+    if (runtime) {
       runtime.close(assert.end);
     }
   }
@@ -45,15 +45,16 @@ test('glob(' + PREFIX + 'cottage/*/*/*) - nested', function(assert) {
     return readAllNames(rpc.stream);
   }).then(function validate(actual) {
     var expected = [
-    PREFIX + 'cottage/lawn/back/sprinkler',
-    PREFIX + 'cottage/lawn/front/sprinkler'];
+      PREFIX + 'cottage/lawn/back/sprinkler',
+      PREFIX + 'cottage/lawn/front/sprinkler'
+    ];
     assert.deepEqual(actual.sort(), expected.sort());
     end();
   }).catch(end);
 
   function end(err) {
     assert.error(err);
-    if(runtime) {
+    if (runtime) {
       runtime.close(assert.end);
     }
   }
@@ -76,7 +77,43 @@ test('glob(' + PREFIX + 'does/not/exist) - empty', function(assert) {
 
   function end(err) {
     assert.error(err);
-    if(runtime) {
+    if (runtime) {
+      runtime.close(assert.end);
+    }
+  }
+});
+
+test('mount -> resolve -> unmount -> resolve(cb)', function(assert) {
+  var runtime;
+  var namespace;
+  var MINUTE = 60 * 1000; // a minute
+  var expectedServerAddress;
+  var name = PREFIX + 'new/name';
+
+  veyron.init(config).then(function createServer(rt) {
+    runtime = rt;
+    namespace = rt.newNamespace();
+    return rt.serve(PREFIX + 'does/not/matter', {});
+  }).then(function mount(endpoint) {
+    expectedServerAddress = '/' + endpoint;
+    return namespace.mount(name, expectedServerAddress, MINUTE);
+  }).then(function resolve() {
+    return namespace.resolve(name);
+  }).then(function validate(resolveResult) {
+    assert.equals(resolveResult.length, 1);
+    assert.equals(resolveResult[0], expectedServerAddress);
+  }).then(function unmount() {
+    return namespace.unmount(name);
+  }).then(function resolve() {
+    namespace.resolve(name, function cb(err) {
+      assert.ok(err, 'no resolving after unmount()');
+      end();
+    });
+  }).catch(end);
+
+  function end(err) {
+    assert.error(err);
+    if (runtime) {
       runtime.close(assert.end);
     }
   }
@@ -101,7 +138,7 @@ test('setRoots() -> invalid', function(assert) {
 
   function end(err) {
     assert.error(err);
-    if(runtime) {
+    if (runtime) {
       runtime.close(assert.end);
     }
   }
@@ -114,7 +151,7 @@ test('setRoots() -> valid', function(assert) {
     runtime = rt;
     var namespace = rt.newNamespace();
     // Set the roots to a valid root, we expect normal glob results.
-    namespace.setRoots('/' + namespaceRootAddress );
+    namespace.setRoots('/' + namespaceRootAddress);
     var rpc = namespace.glob(PREFIX + '*');
     rpc.catch(end);
     return readAllNames(rpc.stream);
@@ -126,7 +163,7 @@ test('setRoots() -> valid', function(assert) {
 
   function end(err) {
     assert.error(err);
-    if(runtime) {
+    if (runtime) {
       runtime.close(assert.end);
     }
   }
@@ -138,7 +175,7 @@ test('setRoots() -> valid', function(assert) {
  */
 function readAllNames(stream) {
   var names = [];
-  return new Promise( function(resolve, reject) {
+  return new Promise(function(resolve, reject) {
     stream.on('data', function(mountPoint) {
       names.push(mountPoint.name);
     });
