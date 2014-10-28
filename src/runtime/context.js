@@ -88,19 +88,11 @@ ContextKey._nextKey = 0;
  * context for a new operation which is unrealted to any ongoing
  * activity.
  * @constructor
- * @param {Runtime} runtime The runtime to attach to this context
  */
-function Context(runtime) {
+function Context() {
   if (!(this instanceof Context)) {
-    return new Context(runtime);
+    return new Context();
   }
-
-  if (runtime === null) {
-    throw new vError.BadArgError(
-      'Attempting to construct context with null runtime.');
-  }
-
-  this._runtime = runtime;
 }
 
 /*
@@ -133,15 +125,6 @@ Context.prototype.waitUntilDone = function(callback) {
   // throw away the context and return a promise that will never
   // be resolved.
   return new Promise(function(){});
-};
-
-/*
- * Returns the runtime used to create this context.  This is
- * guaranteed to be non-null.
- * @return {Runtime} The runtime, guaranteed to be non-null
- */
-Context.prototype.runtime = function() {
-  return this._runtime;
 };
 
 /*
@@ -210,8 +193,7 @@ Context.prototype.withTimeout = function(timeout) {
 // It defers all its calls to its parent.
 function ChildContext(parent) {
   this._parent = parent;
-  // I explicitly don't call Context here because I don't
-  // want to set _runtime on every instance.
+  Context.call(this);
 }
 inherits(ChildContext, Context);
 
@@ -223,9 +205,6 @@ ChildContext.prototype.done = function() {
 };
 ChildContext.prototype.waitUntilDone = function(callback) {
   return this._parent.waitUntilDone(callback);
-};
-ChildContext.prototype.runtime = function() {
-  return this._parent.runtime();
 };
 ChildContext.prototype.value = function(key) {
   return this._parent.value();

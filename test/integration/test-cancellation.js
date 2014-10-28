@@ -5,12 +5,12 @@ var serve = require('./serve');
 var leafDispatcher = require('../../src/ipc/leaf_dispatcher');
 var NO_TIMEOUT = require('../../src/ipc/constants').NO_TIMEOUT;
 
-function run(err, collector, end, assert, runtime) {
+function run(err, collector, end, assert) {
   assert.error(err);
 
   var id = Math.floor(Math.random() * 1000000);
   var timeout = 60 * 60 * 1000;
-  var ctx = new context.Context(runtime).withTimeout(timeout);
+  var ctx = new context.Context().withTimeout(timeout);
 
   collector.neverReturn(ctx, id).catch(function(err) {
     if (!(err instanceof context.CancelledError)) {
@@ -18,7 +18,7 @@ function run(err, collector, end, assert, runtime) {
     }
   });
 
-  var dctx = new context.Context(runtime).withTimeout(60000);
+  var dctx = new context.Context().withTimeout(60000);
   collector.waitForStatus(dctx, id, 'running')
     .then(function(serverTimeout) {
       // Ensure that the server got the timeout we set.  We allow up to 10s
@@ -42,8 +42,8 @@ function run(err, collector, end, assert, runtime) {
 }
 
 test('cancel: js client to go server', function(assert) {
-  service('test_service/cancel', function(err, collector, end, runtime) {
-    run(err, collector, end, assert, runtime);
+  service('test_service/cancel', function(err, collector, end) {
+    run(err, collector, end, assert);
   });
 });
 
@@ -112,6 +112,6 @@ function newDispatcher() {
 
 test('cancel: js client to js server', function(assert) {
   serve('testing/cancel', newDispatcher(), function(err, res) {
-    run(err, res.service, res.end, assert, res.runtime);
+    run(err, res.service, res.end, assert);
   });
 });
