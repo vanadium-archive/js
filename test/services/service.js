@@ -5,6 +5,8 @@ var EE = require('events').EventEmitter;
 var extend = require('xtend');
 var which = require('which');
 var endpointRegExp = /Mount table .+ endpoint: (\/.+@@)/;
+var PassThrough = require('stream').PassThrough;
+var fs = require('fs');
 
 var VEYRON_ROOT = process.env.VEYRON_ROOT;
 var VEYRON_BINS = [
@@ -72,13 +74,23 @@ Service.prototype.spawn = function(args, options) {
       }, 5000);
     }
 
+    if (service.process.stdout) {
+      service.process.stdout.pipe(fs.createWriteStream(
+        path.join('tmp', service.name + '.stdout.log')));
+    }
+
     // Buffer stderr until close so that a meaningful error can be emitted
     // when a non-zero exit code is encountered.
     //
     // NOTE: All veyron bins log to stderr so this buffer will just grow
     // until that is resolved...
     if (service.process.stderr) {
-      service.process.stderr.on('data', function (data) {
+      var stderr = new PassThrough();
+      service.process.stderr.pipe(stderr);
+      stderr.pipe(fs.createWriteStream(
+        path.join('tmp', service.name + '.stderr.log')));
+
+      stderr.on('data', function (data) {
         errlog += data;
 
         if (service.ready) {
