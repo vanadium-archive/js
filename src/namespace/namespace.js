@@ -12,15 +12,19 @@ module.exports = Namespace;
  * @constructor
  */
 function Namespace(proxy, roots) {
-    this._proxy = proxy;
-    this._roots = roots;
+  this._proxy = proxy;
+  this._roots = roots;
 }
 
 var NamespaceMethods = {
-    GLOB: 0,
-    MOUNT: 1,
-    UNMOUNT: 2,
-    RESOLVE: 3
+  GLOB: 0,
+  MOUNT: 1,
+  UNMOUNT: 2,
+  RESOLVE: 3,
+  RESOLVETOMT: 4,
+  FLUSHCACHEENTRY: 5,
+  DISABLECACHE: 6,
+  ROOTS: 7
 };
 
 /**
@@ -48,7 +52,7 @@ Namespace.prototype.glob = function(pattern, cb) {
  * be replaced by the new server object address. False by default.
  * @param {function} cb(err) Optional callback
  * @return {Promise} A promise to be resolved when mount is complete or rejected
- * when mount has an error
+ * when there is an error
  */
 Namespace.prototype.mount = function(name, server, ttl, replaceMount, cb) {
   ttl = ttl || 0; // Default is 0
@@ -70,7 +74,7 @@ Namespace.prototype.mount = function(name, server, ttl, replaceMount, cb) {
  * @param {string} server Server object address
  * @param {function} cb(err) Optional callback
  * @return {Promise} A promise to be resolved when unmount is complete or
- * rejected when mount has an error
+ * rejected when there is an error
  */
 Namespace.prototype.unmount = function(name, server, cb) {
   server = server || '';
@@ -86,8 +90,8 @@ Namespace.prototype.unmount = function(name, server, cb) {
  * Resolve the object name into its mounted servers.
  * @param {string} name Object name
  * @param {function} cb(err, servers[]) Optional callback
- * @return {Promise} A promise to be resolved an string array of server object
- * addresses or rejected when mount has an error
+ * @return {Promise} A promise to be resolved a string array of server object
+ * addresses or rejected when there is an error
  */
 Namespace.prototype.resolve = function(name, cb) {
   var args = {
@@ -97,6 +101,64 @@ Namespace.prototype.resolve = function(name, cb) {
   return this._sendRequest(NamespaceMethods.RESOLVE, args, cb);
 };
 
+/*
+ * ResolveToMountTable resolves the object name into the mounttables
+ * directly responsible for the name.
+ * @param {string} name Object name
+ * @param {function} cb(err, mounttables[]) Optional callback
+ * @return {Promise} A promise to be resolved a string array of mounttable
+ * object addresses or rejected when there is an error
+ */
+Namespace.prototype.resolveToMounttable = function(name, cb) {
+  var args = {
+    name: name
+  };
+
+  return this._sendRequest(NamespaceMethods.RESOLVETOMT, args, cb);
+};
+
+/*
+ * FlushCacheEntry flushes resolution information cached for the name.
+ * @param {string} name Object name
+ * @param {function} cb(err, anythingFlushed) Optional callback
+ * @return {Promise} A promise to be resolved a boolean indicating if anything
+ * was flushed or rejected when there is an error
+ */
+Namespace.prototype.flushCacheEntry = function(name, cb) {
+  var args = {
+    name: name
+  };
+
+  return this._sendRequest(NamespaceMethods.FLUSHCACHEENTRY, args, cb);
+};
+
+/*
+ * Disables the resolution cache when set to true and enables if false.
+ * @param {boolean} disable Whether to disable or enable cache.
+ * @param {function} cb(err) Optional callback
+ * @return {Promise} A promise to be resolved when disableCache is complete or
+ * rejected when there is an error
+ */
+Namespace.prototype.disableCache = function(disable, cb) {
+  disable = !!disable; // Cast to bool
+  var args = {
+    disable: disable
+  };
+
+  return this._sendRequest(NamespaceMethods.DISABLECACHE, args, cb);
+};
+
+/**
+ * Returns the currently configured roots. An empty array is returned if no
+ * roots are configured.
+ * @param {function} cb(err, roots[]) Optional callback
+ * @return {Promise} A promise to be resolved with an array of root object names
+ * when getRoots is complete or rejected when there is an error
+ */
+Namespace.prototype.roots = function(cb) {
+  return this._sendRequest(NamespaceMethods.ROOTS, null, cb);
+};
+
 /**
  * Sets the roots that the local Namespace is relative to.
  * All relative names passed to the methods above will be interpreted as
@@ -104,13 +166,26 @@ Namespace.prototype.resolve = function(name, cb) {
  * The roots will be tried in the order that they are specified in the parameter
  * list for setRoots.
  * @param {Array | varargs} roots object names for the roots
+ * @param {function} cb(err) Optional callback
+ * @return {Promise} A promise to be resolved when setRoots is complete or
+ * rejected when there is an error
  */
-Namespace.prototype.setRoots = function(roots) {
+Namespace.prototype.setRoots = function(roots, cb) {
   if (!Array.isArray(roots)) {
     roots = Array.prototype.slice.call(arguments);
+    if (typeof roots[roots.length - 1] === 'function') {
+      cb = roots.pop();
+    } else {
+      cb = null;
+    }
   }
+  var def = new Deferred(cb);
   this._roots = roots;
+  def.resolve();
+  return def.promise;
 };
+
+//TODO(aghassemi) Implement Unresolve after Go library makes its changes.
 
 Namespace.prototype._sendRequest = function(method, args, cb) {
   var def = new Deferred(cb);

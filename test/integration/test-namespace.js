@@ -119,14 +119,114 @@ test('mount -> resolve -> unmount -> resolve(cb)', function(assert) {
   }
 });
 
-test('setRoots() -> invalid', function(assert) {
+test('resolveToMountTable(' + PREFIX + 'cottage)', function(assert) {
   var runtime;
 
-  init(config).then(function glob(rt) {
+  init(config).then(function resolveToMountTable(rt) {
     runtime = rt;
     var namespace = rt.newNamespace();
+    return namespace.resolveToMounttable(PREFIX + 'cottage');
+  }).then(function validate(mounttableAddresses) {
+    assert.equals(mounttableAddresses.length, 1);
+    assert.ok(mounttableAddresses[0].indexOf(namespaceRootAddress) > -1);
+    end();
+  }).catch(end);
+
+  function end(err) {
+    assert.error(err);
+    if (runtime) {
+      runtime.close(assert.end);
+    }
+  }
+});
+
+test('flushCacheEntry(' + PREFIX + 'house/alarm)', function(assert) {
+  var runtime;
+  var namespace;
+  var name = PREFIX + 'house/alarm';
+
+  init(config).then(function resolveSoItGetsCached(rt) {
+    runtime = rt;
+    namespace = rt.newNamespace();
+    return namespace.resolve(name);
+  }).then(function flushCacheEntry() {
+    return namespace.flushCacheEntry(name);
+  }).then(function validate(flushed) {
+    assert.ok(flushed, 'cache flushed');
+    end();
+  }).catch(end);
+
+  function end(err) {
+    assert.error(err);
+    if (runtime) {
+      runtime.close(assert.end);
+    }
+  }
+});
+
+test('disableCache(true)', function(assert) {
+  var runtime;
+  var namespace;
+  var name = PREFIX + 'house/alarm';
+
+  init(config).then(function disableCache(rt) {
+    runtime = rt;
+    namespace = rt.newNamespace();
+    return namespace.disableCache(true);
+  }).then(function resolveButItShouldNotGetCached(rt) {
+    return namespace.resolve(name);
+  }).then(function tryFlushCacheEntry() {
+    return namespace.flushCacheEntry(name);
+  }).then(function validate(flushed) {
+    assert.notOk(flushed, 'no cache to be flushed');
+    end();
+  }).catch(end);
+
+  function end(err) {
+    assert.error(err);
+    if (runtime) {
+      runtime.close(assert.end);
+    }
+  }
+});
+
+test('setRoots() -> valid', function(assert) {
+  var runtime;
+  var namespace;
+
+  init(config).then(function setRoots(rt) {
+    runtime = rt;
+    namespace = rt.newNamespace();
+    // Set the roots to a valid root, we expect normal glob results.
+    return namespace.setRoots('/' + namespaceRootAddress);
+  }).then(function glob() {
+    var rpc = namespace.glob(PREFIX + '*');
+    rpc.catch(end);
+    return readAllNames(rpc.stream);
+  }).then(function validate(actual) {
+    var expected = [PREFIX + 'cottage', PREFIX + 'house'];
+    assert.deepEqual(actual.sort(), expected.sort());
+    end();
+  }).catch(end);
+
+  function end(err) {
+    assert.error(err);
+    if (runtime) {
+      runtime.close(assert.end);
+    }
+  }
+});
+
+test('setRoots() -> invalid', function(assert) {
+  var runtime;
+  var namespace;
+
+  init(config).then(function setRoots(rt) {
+    runtime = rt;
+    namespace = rt.newNamespace();
     // Set the roots to a invalid roots, then we don't expect any glob results.
-    namespace.setRoots('/bad-root-address-1.tld', '/bad-root-address-2.tld');
+    return namespace.setRoots(['/bad-root-1.tld', '/bad-root-2.tld']);
+  }).then(function glob() {
     var rpc = namespace.glob(PREFIX + '*');
     rpc.catch(end);
     return readAllNames(rpc.stream);
@@ -144,25 +244,48 @@ test('setRoots() -> invalid', function(assert) {
   }
 });
 
-test('setRoots() -> valid', function(assert) {
+test('roots()', function(assert) {
   var runtime;
 
-  init(config).then(function glob(rt) {
+  init(config).then(function roots(rt) {
     runtime = rt;
     var namespace = rt.newNamespace();
-    // Set the roots to a valid root, we expect normal glob results.
-    namespace.setRoots('/' + namespaceRootAddress);
-    var rpc = namespace.glob(PREFIX + '*');
-    rpc.catch(end);
-    return readAllNames(rpc.stream);
-  }).then(function validate(actual) {
-    var expected = [PREFIX + 'cottage', PREFIX + 'house'];
-    assert.deepEqual(actual.sort(), expected.sort());
+    return namespace.roots();
+  }).then(function validate(roots) {
+    assert.equals(roots.length, 1);
+    assert.ok(roots[0].indexOf(namespaceRootAddress) > -1);
     end();
   }).catch(end);
 
   function end(err) {
     assert.error(err);
+    if (runtime) {
+      runtime.close(assert.end);
+    }
+  }
+});
+
+test('setRoots() -> roots() (cb)', function(assert) {
+  var runtime;
+  var namespace;
+
+  veyron.init(config, onInit);
+
+  function onInit(err, rt) {
+    assert.error(err);
+    runtime = rt;
+    namespace = rt.newNamespace();
+    namespace.setRoots('/root1', '/root2', onSetRoots);
+  }
+
+  function onSetRoots(err) {
+    assert.error(err);
+    namespace.roots(onRoots);
+  }
+
+  function onRoots(err, roots) {
+    assert.error(err);
+    assert.deepEqual(roots, ['/root1', '/root2']);
     if (runtime) {
       runtime.close(assert.end);
     }
