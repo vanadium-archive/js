@@ -27,17 +27,18 @@ WSPR.prototype.getUrl = function() {
 // { access_token: <access_token> }
 // Returns the names of the new account in an array.
 WSPR.prototype.createAccount = function(accessToken, callback) {
+  var that = this;
   request.post(this.getUrl() + '/create-account')
     .send({ 'access_token': accessToken })
     .end(function(err, res) {
       if (err) {
-        return callback(err);
+        return callback(that.handleNetworkError(err));
       }
       if (res.error) {
         return callback(httpResponseToError(res));
       }
       if (!res.body || !res.body.names) {
-        return callback(new Error('Invalid response: missing "names".'));
+        return callback(new Error('createAccount got invalid response from WSPR: missing "names".'));
       }
       // TODO(nlacasse): assert res.body
       callback(null, res.body.names);
@@ -49,12 +50,14 @@ WSPR.prototype.createAccount = function(accessToken, callback) {
 // { name: <account name> }
 // Response will be 200 OK if association is successful.
 WSPR.prototype.assocAccount = function (name, origin, callback) {
+  var that = this;
   request.post(this.getUrl() + '/assoc-account')
-    // TODO(ataly, nlacasse): Also send the origin?
-    .send({ name: name })
-    .end(function(err, res) {
+    .send({
+      name: name,
+      origin: origin
+    }).end(function(err, res) {
       if (err) {
-        return callback(err);
+        return callback(that.handleNetworkError(err));
       }
       if (res.error) {
         return callback(httpResponseToError(res));
@@ -75,6 +78,17 @@ WSPR.prototype.createAndAssocAccount = function(accessToken, origin, callback) {
     // the origin?
     wspr.assocAccount(names[0], origin, callback);
   });
+};
+
+// Detects if network error was caused by a missing or unresponsive WSPR, and
+// creates a more helpful error message on those cases.  The original error will
+// be a CORS error since WSPR is not responding to the preflight OPTIONS
+// request.
+WSPR.prototype.handleNetworkError = function(err) {
+  if (err.crossDomain) {
+    return new Error('Cannot connect to WSPR at: ' + this.getUrl());
+  }
+  return err;
 };
 
 // If an XHR gets a 4XX or 5XX HTTP error, then res.error will be an Error
