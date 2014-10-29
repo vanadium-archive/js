@@ -7,13 +7,13 @@ test('i.bless(..., callback)', function(assert) {
   blessings('alice', function(err, blessee, runtime) {
     assert.error(err);
 
-    var name = 'bob';
+    var extension = 'bob';
     var duration = 1000;
     var caveats = null;
 
     runtime
     .principal
-    .bless(blessee, name, duration, caveats, function(err, blessing) {
+    .bless(blessee, extension, duration, caveats, function(err, blessing) {
       assert.error(err);
       runtime.close(assert.end);
     });
@@ -24,13 +24,13 @@ test('var promise = i.bless(...)', function(assert) {
   blessings('alice', function(err, blessee, runtime) {
     assert.error(err);
 
-    var name = 'bob';
+    var extension = 'bob';
     var duration = 1000;
     var caveats = null;
 
     runtime
     .principal
-    .bless(blessee, name, duration, caveats)
+    .bless(blessee, extension, duration, caveats)
     .then(function(blessing) {
       runtime.close(assert.end);
     })
@@ -45,7 +45,7 @@ test('i.bless(..., callback) - caveats', function(assert) {
   blessings('alice', function(err, blessee, runtime) {
     assert.error(err);
 
-    var name = 'bob';
+    var extension = 'bob';
     var duration = 1000;
     var caveats = [
       new MethodCaveat(['Foo', 'Bar']),
@@ -54,7 +54,7 @@ test('i.bless(..., callback) - caveats', function(assert) {
 
     runtime
     .principal
-    .bless(blessee, name, duration, caveats, function(err, blessing) {
+    .bless(blessee, extension, duration, caveats, function(err, blessing) {
       assert.error(err);
       runtime.close(assert.end);
     });
@@ -65,7 +65,7 @@ test('var promise = i.bless(...) - caveats', function(assert) {
   blessings('alice', function(err, blessee, runtime) {
     assert.error(err);
 
-    var name = 'bob';
+    var extension = 'bob';
     var duration = 1000;
     var caveats = [
       new MethodCaveat(['Foo', 'Bar']),
@@ -73,7 +73,7 @@ test('var promise = i.bless(...) - caveats', function(assert) {
 
     runtime
     .principal
-    .bless(blessee, name, duration, caveats)
+    .bless(blessee, extension, duration, caveats)
     .then(function(blessing) {
       runtime.close(assert.end);
     })
@@ -88,14 +88,14 @@ test('i.bless(..., callback) - bad caveats failure', function(assert) {
   blessings('alice', function(err, blessee, runtime) {
     assert.error(err);
 
-    var name = 'bob';
+    var extension = 'bob';
     var duration = 1000;
     var caveats = [ 3, 4, 5 ];
 
 
     runtime
     .principal
-    .bless(blessee, name, duration, caveats, function(err, blessing) {
+    .bless(blessee, extension, duration, caveats, function(err, blessing) {
       assert.ok(err, 'should error');
       runtime.close(assert.end);
     });
@@ -106,14 +106,14 @@ test('var promise = i.bless(...) - bad caveats failure', function(assert) {
   blessings('alice', function(err, blessee, runtime) {
     assert.error(err);
 
-    var name = 'bob';
+    var extension = 'bob';
     var duration = 1000;
     var caveats = [ 3, 4, 5 ];
 
 
     runtime
     .principal
-    .bless(blessee, name, duration, caveats)
+    .bless(blessee, extension, duration, caveats)
     .then(function() {
       assert.fail('should not succeed');
       runtime.close(assert.end);

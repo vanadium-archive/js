@@ -6,7 +6,7 @@ var config = {
   wspr: 'http://localhost:' + port
 };
 
-test('runtime.newBlessings(name, callback)', function(assert) {
+test('runtime.newBlessings(extension, callback)', function(assert) {
   veyron.init(config, function(err, runtime) {
     assert.error(err);
 
@@ -18,7 +18,7 @@ test('runtime.newBlessings(name, callback)', function(assert) {
   });
 });
 
-test('var promise = runtime.newBlessings(name)', function(assert) {
+test('var promise = runtime.newBlessings(extension)', function(assert) {
   veyron.init(config, function(err, runtime) {
     assert.error(err);
 

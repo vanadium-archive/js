@@ -17,14 +17,15 @@ function Principal(proxy) {
 /*
  * Blesses the blessee's public key with the given caveats.
  * @param {Blessings} blessee: a blessing on the public key to bless.
- * @param {String} name: the extension for the blessing.
+ * @param {String} extension: the extension for the blessing.
  * @param {Number} duration: the duration of the blessing in milliseconds.
  * @param {Array} caveats: an array of Cavaeats to restrict the blessing.
  * @papram {function} cb an optional callback that will return the blessing
  * @return {Promise} a promise that will be resolved with the blessing
  */
 
-Principal.prototype.bless = function(blessee, name, duration, caveats, cb) {
+Principal.prototype.bless = function(blessee, extension, duration, caveats,
+                                     cb) {
   var def = new Deferred(cb);
   if (!(blessee instanceof Blessings)) {
     def.reject(new Error('blessee should be of type Blessings'));
@@ -33,7 +34,7 @@ Principal.prototype.bless = function(blessee, name, duration, caveats, cb) {
 
   var message = JSON.stringify({
     handle: blessee._id,
-    name: name,
+    extension: extension,
     durationMs: duration,
     caveats: caveats
   });
