@@ -38,6 +38,10 @@ BROWSER_OPTS := --browser --launch $(BROWSER) $(HEADLESS) $(TAP) --quit
 
 JS_SRC_FILES = $(shell find src -name "*.js")
 
+# Common services needed for all integration tests. Must be a comma-seperated
+# string with no spaces.
+COMMON_SERVICES := "proxyd,test_serviced"
+
 all: build
 
 build: dist/veyron.js dist/veyron.min.js
@@ -123,13 +127,16 @@ test-unit-browser: node_modules
 test-integration: lint test-integration-node test-integration-browser
 
 test-integration-node: node_modules go/bin
-	node test/integration/runner.js test/integration/test-*.js $(TAP) $(NODE_OUTPUT)
+	node test/integration/runner.js --services=$(COMMON_SERVICES),wsprd -- \
+	prova $(TAP) test/integration/test-*.js $(NODE_OUTPUT)
 
 test-integration-browser: node_modules go/bin
-	node test/integration/runner.js test/integration/test-*.js $(BROWSER_OPTS) $(BROWSER_OUTPUT)
+	node test/integration/runner.js --services=$(COMMON_SERVICES),wsprd -- \
+	prova $(BROWSER_OPTS) test/integration/test-*.js $(BROWSER_OUTPUT)
 
 test-integration-nacl: validate-chromebin node_modules nacl/out go/bin
-	node test/integration/runner.js --use-nacl test/integration/test-*.js $(BROWSER_OPTS) $(BROWSER_OUTPUT)
+	node test/integration/runner.js --services=$(COMMON_SERVICES),nacl-wsprd.js -- \
+	prova $(BROWSER_OPTS) test/integration/test-*.js $(BROWSER_OUTPUT)
 
 go/bin: $(GO_FILES)
 	@$(VGO) build -o $(GOBIN)/mounttabled veyron.io/veyron/veyron/services/mounttable/mounttabled
