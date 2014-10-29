@@ -6,6 +6,8 @@ GOBIN := $(VEYRON_ROOT)/veyron.js/go/bin
 VGO := GOPATH="$(GOPATH)" VDLPATH="$(VDLPATH)" veyron go
 GO_FILES := $(shell find go/src $(VEYRON_ROOT)/veyron/go/src/veyron.io -name "*.go")
 
+NODE_MODULE_JS_FILES := $(shell find node_modules -name *.js)
+
 SHELL := /bin/bash -e -o pipefail
 
 .DEFAULT_GOAL := all
@@ -88,10 +90,10 @@ validate-chromebin: chromebin-is-set
 
 nacl/out: nacl/out/wspr.nexe nacl/out/index.html nacl/out/manifest.json nacl/out/wspr.nmf nacl/out/wspr.js
 
-dist/veyron.js: src/veyron.js $(JS_SRC_FILES) | node_modules
+dist/veyron.js: src/veyron.js $(JS_SRC_FILES) $(NODE_MODULES_JS_FILES) | node_modules
 	browserify $< --debug --outfile $@
 
-dist/veyron.min.js: src/veyron.js $(JS_SRC_FILES) | node_modules
+dist/veyron.min.js: src/veyron.js $(JS_SRC_FILES) $(NODE_MODULES_JS_FILES) | node_modules
 	browserify $< --debug --plugin [ minifyify --map dist/veyron.js.map --output $@.map ] --outfile $@
 
 lint: node_modules
@@ -100,7 +102,9 @@ lint: node_modules
 dependency-check: node_modules
 	dependency-check package.json --entry src/veyron.js
 
-test: lint dependency-check test-unit test-integration test-vdl
+test-precheck: lint dependency-check test-vdl node_modules
+
+test: test-unit test-integration
 
 test-vdl: test-vdl-node test-vdl-browser
 
@@ -115,26 +119,26 @@ test-vdl-node: gen-vdl node_modules
 test-vdl-browser: gen-vdl node_modules
 	prova test/vdl/test-*.js $(BROWSER_OPTS)
 
-test-unit: lint test-unit-node test-unit-browser test-vdl
+test-unit: test-unit-node test-unit-browser
 
-test-unit-node: node_modules
+test-unit-node: test-precheck
 	prova test/unit/test-*.js $(TAP) $(NODE_OUTPUT)
 
-test-unit-browser: node_modules
+test-unit-browser: test-precheck
 	prova test/unit/test-*.js $(BROWSER_OPTS) $(BROWSER_OUTPUT)
 
 #TODO(bprosnitz) Add test-integration-nacl
 test-integration: lint test-integration-node test-integration-browser
 
-test-integration-node: node_modules go/bin
+test-integration-node: test-precheck go/bin
 	node test/integration/runner.js --services=$(COMMON_SERVICES),wsprd -- \
 	prova $(TAP) test/integration/test-*.js $(NODE_OUTPUT)
 
-test-integration-browser: node_modules go/bin
+test-integration-browser: test-precheck go/bin
 	node test/integration/runner.js --services=$(COMMON_SERVICES),wsprd -- \
 	prova $(BROWSER_OPTS) test/integration/test-*.js $(BROWSER_OUTPUT)
 
-test-integration-nacl: validate-chromebin node_modules nacl/out go/bin
+test-integration-nacl: validate-chromebin test-precheck nacl/out go/bin
 	node test/integration/runner.js --services=$(COMMON_SERVICES),nacl-wsprd.js -- \
 	prova $(BROWSER_OPTS) test/integration/test-*.js $(BROWSER_OUTPUT)
 
