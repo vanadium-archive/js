@@ -1,53 +1,54 @@
-var run = require('../services/run-services');
 var debug = require('debug')('integration-runner');
-var spawn = require('comandante');
 var extend = require('xtend');
-var argv = require('optimist').argv;
+var ServiceRunner = require('../services/run-services');
+var serviceRunner;
+var spawn = require('child_process').spawn;
 
-debug('starting services');
+var argv = require('minimist')(process.argv.slice(2), {
+  '--': true,
+  default: {services: ''}
+});
 
-var services = [
-  'proxyd',
-  'test_serviced'
-];
-
-if ('use-nacl' in argv) {
-  services.push('nacl-wsprd.js');
-} else {
-  services.push('wsprd');
-}
-
-var runner = run(services)
-.on('start', test)
-.on('error', crash)
-.start();
-
+process.on('uncaughtException', function(err) {
+  console.error('Uncaught exception: ' + err);
+  stop(err);
+});
 process.on('SIGINT', stop);
 
-function test() {
-  debug('running tests');
+// Start services specified in the --services command line flag.
+function startServices(cb) {
+  var services = [];
+  if (argv.services && argv.services.length) {
+    services = argv.services.split(',');
+  }
 
+  debug('starting services: ' + services);
+
+  serviceRunner = new ServiceRunner(services);
+  serviceRunner
+  .on('start', cb)
+  .on('error', stop)
+  .start();
+}
+
+// Spawn test command and stop on exit.
+function runTests() {
+  debug('running tests');
   var debugArgs = {
     DEBUG: argv.debug || process.env.DEBUG || '',
     DEBUG_COLORS: true
   };
-
-  // Extract the flags before the list of tests to run.
-  // Neither optimist.argv or process.argv do the right thing here.
-  var firstNonFlag;
-  for (firstNonFlag = 2; firstNonFlag < process.argv.length; firstNonFlag++) {
-    if (process.argv[firstNonFlag][0] !== '-') {
-      break;
-    }
-  }
-  var args = process.argv.slice(firstNonFlag);
   var env = extend(process.env, debugArgs);
-  var prova = spawn('prova', args, { env: env });
+
+  var command = argv['--'];
+  var executableName = command[0];
+  var args = command.slice(1);
+  var proc = spawn(executableName, args, { env: env });
 
   // Pipe the test run's stdout and stderr to the parent process
-  prova.stdout.pipe(process.stdout);
-  prova.stderr.pipe(process.stderr);
-  prova.on('error', function(err) {
+  proc.stdout.pipe(process.stdout);
+  proc.stderr.pipe(process.stderr);
+  proc.on('error', function(err) {
     debug('test errored');
     stop(err);
   });
@@ -55,29 +56,26 @@ function test() {
   // NOTE: 'exit' is better than 'close' in this context since close can be
   // emitted multiple times (since multiple processes might share the same
   // stdio streams)
-  prova.on('exit', function(code, signal) {
+  proc.on('exit', function(code, signal) {
     debug('test process exited - code: %s, signal: %s', code, signal);
     stop(null, code);
   });
 }
 
+// Stop all services and exit.
 function stop(err, code) {
-  runner.stop(function() {
-    debug('runner stopped, exiting: %s', code);
+  if (err) {
+    code = code || 1;
+    console.error(err);
+    console.error(err.stack);
+  } else {
+    code = code || 0;
+  }
 
-    // NOTE: `stop` can be called with an error that has already been logged
-    // via the stderr stream, process.exit() is called below without the
-    // error to prevent double logging of errors.
-    if (err) {
-      process.exit(1);
-    } else {
-      process.exit(code);
-    }
+  serviceRunner.stop(function() {
+    debug('runner stopped, exiting: %s', code);
+    process.exit(code);
   });
 }
 
-function crash(err) {
-  console.log(err.message);
-
-  process.exit(1);
-}
+startServices(runTests);

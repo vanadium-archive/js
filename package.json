@@ -16,6 +16,7 @@
   },
   "devDependencies": {
     "browserify": "~4.2.1",
+    "child-killer": "~1.0.0",
     "comandante": "0.0.1",
     "debug": "^1.0.4",
     "dependency-check": "^1.1.5",
@@ -26,8 +27,7 @@
     "minimist": "^1.1.0",
     "mkdirp": "^0.5.0",
     "node-static": "^0.7.4",
-    "optimist": "^0.6.1",
-    "prova": "jxson/prova#1d644bb",
+    "prova": "jxson/prova#657522ada",
     "run-parallel": "^1.0.0"
   }
 }
