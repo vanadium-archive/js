@@ -5,8 +5,7 @@
 var test = require('prova');
 var context = require('../../src/runtime/context');
 
-var fakeRuntime = {};
-var ctx = context.Context(fakeRuntime);
+var ctx = context.Context();
 
 test('optionalContext', function(assert) {
   function f(ctx, x, y) {
@@ -26,7 +25,6 @@ test('optionalContext', function(assert) {
 test('Root Context', function(assert) {
   assert.equal(ctx.deadline(), null);
   assert.equal(ctx.done(), false);
-  assert.equal(ctx.runtime(), fakeRuntime);
   assert.end();
 });
 

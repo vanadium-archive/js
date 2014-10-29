@@ -22,8 +22,7 @@ function ServerContext(request, proxy) {
     return new ServerContext();
   }
 
-  // TODO(mattr): What to pass for runtime? Remove runtime as a param?
-  this._ctx = new context.Context({});
+  this._ctx = new context.Context();
   if (request.context.timeout !== constants.NO_TIMEOUT) {
     this._ctx = this._ctx.withTimeout(request.context.timeout);
   } else {
@@ -47,9 +46,6 @@ ServerContext.prototype.done = function() {
 };
 ServerContext.prototype.waitUntilDone = function(callback) {
   return this._ctx.waitUntilDone(callback);
-};
-ServerContext.prototype.runtime = function() {
-  return this._ctx.runtime();
 };
 ServerContext.prototype.value = function(key) {
   return this._ctx.value();

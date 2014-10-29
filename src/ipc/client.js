@@ -225,11 +225,10 @@ Client.prototype.bindTo = function(ctx, name, optServiceSignature, cb) {
         }
         var args = Array.prototype.slice.call(arguments, first, last + 1);
 
-        // TODO(mattr): For now, if the context isn't specified we
-        // make one up here with a fake runtime.  In the future the
-        // context will be required and we can eliminate this hack.
+
+        // TODO(mattr): Remove this when contexts become required.
         if (!ctx) {
-          ctx = new context.Context({});
+          ctx = new context.Context();
         }
 
         // TODO(jasoncampbell): This should probably be a more meaningful
