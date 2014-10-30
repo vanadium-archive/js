@@ -132,15 +132,15 @@ test-integration: lint test-integration-node test-integration-browser
 
 test-integration-node: test-precheck go/bin
 	node test/integration/runner.js --services=$(COMMON_SERVICES),wsprd -- \
-	prova $(TAP) test/integration/test-*.js $(NODE_OUTPUT)
+	prova test/integration/test-*.js $(TAP) $(NODE_OUTPUT)
 
 test-integration-browser: test-precheck go/bin
 	node test/integration/runner.js --services=$(COMMON_SERVICES),wsprd -- \
-	prova $(BROWSER_OPTS) test/integration/test-*.js $(BROWSER_OUTPUT)
+	prova test/integration/test-*.js $(BROWSER_OPTS) $(BROWSER_OUTPUT)
 
 test-integration-nacl: validate-chromebin test-precheck nacl/out go/bin
 	node test/integration/runner.js --services=$(COMMON_SERVICES),nacl-wsprd.js -- \
-	prova $(BROWSER_OPTS) test/integration/test-*.js $(BROWSER_OUTPUT)
+	prova test/integration/test-*.js $(BROWSER_OPTS) $(BROWSER_OUTPUT)
 
 go/bin: $(GO_FILES)
 	@$(VGO) build -o $(GOBIN)/mounttabled veyron.io/veyron/veyron/services/mounttable/mounttabled
