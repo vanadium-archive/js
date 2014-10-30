@@ -7,7 +7,6 @@ import (
 
 	"veyron.io/veyron/veyron/lib/signals"
 	_ "veyron.io/veyron/veyron/profiles"
-	_ "veyron.io/veyron/veyron/runtimes/google/security"
 	"veyron.io/veyron/veyron2/rt"
 )
 
