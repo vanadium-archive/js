@@ -102,9 +102,9 @@ lint: node_modules
 dependency-check: node_modules
 	dependency-check package.json --entry src/veyron.js
 
-test-precheck: lint dependency-check test-vdl node_modules
+test-precheck: lint dependency-check gen-vdl node_modules
 
-test: test-unit test-integration
+test: test-unit test-integration test-vdl
 
 test-vdl: test-vdl-node test-vdl-browser
 
