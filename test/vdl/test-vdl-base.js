@@ -121,14 +121,14 @@ test('named composite types', function(assert) {
 test('struct constructor', function(assert) {
   var res = new base.types.NamedStruct();
   // Make sure the default values are set.
-  assert.equal(res.A, false);
-  assert.equal(res.B, '');
-  assert.equal(res.C, 0);
+  assert.equal(res.a, false);
+  assert.equal(res.b, '');
+  assert.equal(res.c, 0);
 
-  res = new base.types.NamedStruct({A: true});
+  res = new base.types.NamedStruct({a: true});
   // Make sure overrides are applied
-  assert.equal(res.A, true);
-  assert.equal(res.B, '');
-  assert.equal(res.C, 0);
+  assert.equal(res.a, true);
+  assert.equal(res.b, '');
+  assert.equal(res.c, 0);
   assert.end();
 });
