@@ -123,6 +123,7 @@ Run.prototype.setup = function() {
     .add('mounttabled')
     .on('endpoint', function(endpoint){
       run.options.NAMESPACE_ROOT = endpoint;
+      process.env.NAMESPACE_ROOT = endpoint;
     })
     .on('ready', function() {
       debug('mounttabled running');
