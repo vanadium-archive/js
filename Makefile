@@ -20,12 +20,18 @@ BROWSER := chrome
 # Unfortunately OS X can't do the headless thing...
 #
 # SEE: https://github.com/kesla/node-headless/
-ifneq ($(UNAME),Darwin)
-	HEADLESS := --headless
+ifndef NOHEADLESS
+	ifneq ($(UNAME),Darwin)
+		HEADLESS := --headless
+	endif
 endif
 
-ifdef TAP
+ifndef NOTAP
 	TAP := --tap
+endif
+
+ifndef NOQUIT
+	QUIT := --quit
 endif
 
 ifdef NODE_OUTPUT
@@ -36,9 +42,11 @@ ifdef BROWSER_OUTPUT
 	BROWSER_OUTPUT := > $(BROWSER_OUTPUT)
 endif
 
-BROWSER_OPTS := --browser --launch $(BROWSER) $(HEADLESS) $(TAP) --quit
+BROWSER_OPTS := --browser --launch $(BROWSER) $(HEADLESS) $(TAP) $(QUIT)
 
 JS_SRC_FILES = $(shell find src -name "*.js")
+
+JS_NACL_SRC_FILES = $(shell find nacl/html -name "*.js")
 
 # Common services needed for all integration tests. Must be a comma-seperated
 # string with no spaces.
@@ -77,8 +85,8 @@ nacl/out/manifest.json: nacl/html/manifest.json
 nacl/out/wspr.nmf: nacl/html/wspr.nmf
 	@cp -f $< $@
 
-nacl/out/wspr.js: nacl/html/wspr.js
-	@cp -f $< $@
+nacl/out/wspr.js: nacl/html/wspr.js $(JS_NACL_SRC_FILES) $(NODE_MODULE_JS_FILES) | node_modules
+	browserify $< --debug --outfile $@
 
 chromebin-is-set:
 ifndef CHROME_BIN
@@ -139,7 +147,8 @@ test-integration-browser: test-precheck go/bin
 	prova test/integration/test-*.js $(BROWSER_OPTS) $(BROWSER_OUTPUT)
 
 test-integration-nacl: validate-chromebin test-precheck nacl/out go/bin
-	node test/integration/runner.js --services=$(COMMON_SERVICES),nacl-wsprd.js -- \
+	nacl/scripts/run-with-user-dir.sh \
+	node test/integration/runner.js --services=$(COMMON_SERVICES),write-wspr-config.js -- \
 	prova test/integration/test-*.js $(BROWSER_OPTS) $(BROWSER_OUTPUT)
 
 go/bin: $(GO_FILES)

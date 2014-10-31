@@ -67,7 +67,7 @@ Service.prototype.spawn = function(args, options) {
     service.bin = bin;
     service.process = spawn(bin, args, options);
 
-    if (service.name === 'nacl-wsprd.js') {
+    if (service.name === 'write-wspr-config.js') {
       // Wait for chrome to spin up.
       setTimeout(function() {
         service.emit('ready');

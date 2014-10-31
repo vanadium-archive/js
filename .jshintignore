@@ -3,3 +3,4 @@ dist
 examples
 extension
 src/veyron.io
+nacl/out
