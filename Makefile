@@ -6,7 +6,7 @@ GOBIN := $(VEYRON_ROOT)/veyron.js/go/bin
 VGO := GOPATH="$(GOPATH)" VDLPATH="$(VDLPATH)" veyron go
 GO_FILES := $(shell find go/src $(VEYRON_ROOT)/veyron/go/src/veyron.io -name "*.go")
 
-NODE_MODULE_JS_FILES := $(shell find node_modules -name *.js)
+NODE_MODULE_JS_FILES := $(shell find node_modules -name *.js | sed 's/ /\\ /')
 
 SHELL := /bin/bash -e -o pipefail
 
@@ -44,9 +44,9 @@ endif
 
 BROWSER_OPTS := --browser --launch $(BROWSER) $(HEADLESS) $(TAP) $(QUIT)
 
-JS_SRC_FILES = $(shell find src -name "*.js")
+JS_SRC_FILES = $(shell find src -name "*.js" | sed 's/ /\\ /')
 
-JS_NACL_SRC_FILES = $(shell find nacl/html -name "*.js")
+JS_NACL_SRC_FILES = $(shell find nacl/html -name "*.js" | sed 's/ /\\ /')
 
 # Common services needed for all integration tests. Must be a comma-seperated
 # string with no spaces.
@@ -85,6 +85,9 @@ nacl/out/manifest.json: nacl/html/manifest.json
 nacl/out/wspr.nmf: nacl/html/wspr.nmf
 	@cp -f $< $@
 
+nacl/out/content.js: nacl/html/content.js
+	@cp -f $< $@
+
 nacl/out/wspr.js: nacl/html/wspr.js $(JS_NACL_SRC_FILES) $(NODE_MODULE_JS_FILES) | node_modules
 	browserify $< --debug --outfile $@
 
@@ -96,7 +99,7 @@ endif
 validate-chromebin: chromebin-is-set
 	[[ `objdump -f $(CHROME_BIN) | grep architecture | cut -f2 -d\ | cut -f1 -d,` = "i386" ]] || { echo "CHROME_BIN does not contain a 32-bit chrome executable."; exit 1; }
 
-nacl/out: nacl/out/wspr.nexe nacl/out/index.html nacl/out/manifest.json nacl/out/wspr.nmf nacl/out/wspr.js
+nacl/out: nacl/out/wspr.nexe nacl/out/index.html nacl/out/manifest.json nacl/out/wspr.nmf nacl/out/wspr.js nacl/out/content.js
 
 dist/veyron.js: src/veyron.js $(JS_SRC_FILES) $(NODE_MODULES_JS_FILES) | node_modules
 	browserify $< --debug --outfile $@
