@@ -172,7 +172,6 @@ Runtime.prototype._getServer = function() {
  * Create a new Namespace.
  * @param {string[]} Optional root names.
  * @return {Namespace} A namespace client instance.
- * TODO(aghassemi) rename back to newNamespace
  */
 Runtime.prototype.newNamespace = function(roots) {
   var proxy = this._getProxyConnection();
