@@ -52,6 +52,8 @@ JS_NACL_SRC_FILES = $(shell find nacl/html -name "*.js" | sed 's/ /\\ /')
 # string with no spaces.
 COMMON_SERVICES := "proxyd,test_serviced"
 
+BROWSERIFY_OPTS := --debug --standalone veyron
+
 all: build
 
 build: dist/veyron.js dist/veyron.min.js
@@ -102,10 +104,10 @@ validate-chromebin: chromebin-is-set
 nacl/out: nacl/out/wspr.nexe nacl/out/index.html nacl/out/manifest.json nacl/out/wspr.nmf nacl/out/wspr.js nacl/out/content.js
 
 dist/veyron.js: src/veyron.js $(JS_SRC_FILES) $(NODE_MODULES_JS_FILES) | node_modules
-	browserify $< --debug --outfile $@
+	browserify $< $(BROWSERIFY_OPTS) --outfile $@
 
 dist/veyron.min.js: src/veyron.js $(JS_SRC_FILES) $(NODE_MODULES_JS_FILES) | node_modules
-	browserify $< --debug --plugin [ minifyify --map dist/veyron.js.map --output $@.map ] --outfile $@
+	browserify $< $(BROWSERIFY_OPTS) --plugin [ minifyify --map dist/veyron.js.map --output $@.map ] --outfile $@
 
 lint: node_modules
 	jshint .
