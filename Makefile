@@ -87,9 +87,6 @@ nacl/out/manifest.json: nacl/html/manifest.json
 nacl/out/wspr.nmf: nacl/html/wspr.nmf
 	@cp -f $< $@
 
-nacl/out/content.js: nacl/html/content.js
-	@cp -f $< $@
-
 nacl/out/wspr.js: nacl/html/wspr.js $(JS_NACL_SRC_FILES) $(NODE_MODULE_JS_FILES) | node_modules
 	browserify $< --debug --outfile $@
 
@@ -101,7 +98,7 @@ endif
 validate-chromebin: chromebin-is-set
 	[[ `objdump -f $(CHROME_BIN) | grep architecture | cut -f2 -d\ | cut -f1 -d,` = "i386" ]] || { echo "CHROME_BIN does not contain a 32-bit chrome executable."; exit 1; }
 
-nacl/out: nacl/out/wspr.nexe nacl/out/index.html nacl/out/manifest.json nacl/out/wspr.nmf nacl/out/wspr.js nacl/out/content.js
+nacl/out: nacl/out/wspr.nexe nacl/out/index.html nacl/out/manifest.json nacl/out/wspr.nmf nacl/out/wspr.js
 
 dist/veyron.js: src/veyron.js $(JS_SRC_FILES) $(NODE_MODULES_JS_FILES) | node_modules
 	browserify $< $(BROWSERIFY_OPTS) --outfile $@
