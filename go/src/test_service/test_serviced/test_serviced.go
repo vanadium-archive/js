@@ -19,7 +19,7 @@ type testServiceDispatcher struct {
 	cancelCollector interface{}
 }
 
-func (sd *testServiceDispatcher) Lookup(suffix, method string) (ipc.Invoker, security.Authorizer, error) {
+func (sd *testServiceDispatcher) Lookup(suffix, method string) (interface{}, security.Authorizer, error) {
 	if strings.HasPrefix(suffix, "cache") {
 		return ipc.ReflectInvoker(sd.cache), nil, nil
 	}
