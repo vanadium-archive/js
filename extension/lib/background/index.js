@@ -46,14 +46,14 @@ function handleAuthRequest(port) {
       return sendError('auth', port, err);
     }
 
-    wspr.createAndAssocAccount(token, origin, function(err, name) {
+    wspr.createAndAssocAccount(token, origin, function(err, account) {
       if (err) {
         return sendError('auth', port, err);
       }
 
       port.postMessage({
         type: 'auth:success',
-        name: name
+        account: account
       });
     });
   });

@@ -57,12 +57,12 @@ function init(config, cb) {
   //
   // Otherwise, create a runtime with accountName 'unknown'.
   if (config.authenticate) {
-    getAccount(config.authTimeout, function(err, name) {
+    getAccount(config.authTimeout, function(err, account) {
       if (err) {
         def.reject(err);
         return def.promise;
       }
-      runtimeOpts.accountName = name;
+      runtimeOpts.accountName = account;
       def.resolve(new Runtime(runtimeOpts));
     });
   } else {
@@ -104,7 +104,7 @@ function getAccount(authTimeoutMs, cb) {
   // Runs when the auth request succeeds.
   function handleAuthSuccess(data) {
     removeListeners();
-    cb(null, data.name);
+    cb(null, data.account);
   }
 
   function handleAuthError(data) {

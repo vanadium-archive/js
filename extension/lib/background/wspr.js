@@ -25,7 +25,7 @@ WSPR.prototype.getUrl = function() {
 // Create an account on WSPR with a blessing derived from an access token.
 // Currently this is implemented by POSTing to WSPR with the body:
 // { access_token: <access_token> }
-// Returns the names of the new account in an array.
+// Returns the name of the new account.
 WSPR.prototype.createAccount = function(accessToken, callback) {
   var that = this;
   request.post(this.getUrl() + '/create-account')
@@ -37,23 +37,23 @@ WSPR.prototype.createAccount = function(accessToken, callback) {
       if (res.error) {
         return callback(httpResponseToError(res));
       }
-      if (!res.body || !res.body.names) {
-        return callback(new Error('createAccount got invalid response from WSPR: missing "names".'));
+      if (!res.body || !res.body.account) {
+        return callback(new Error('createAccount got invalid response from WSPR: missing "account".'));
       }
       // TODO(nlacasse): assert res.body
-      callback(null, res.body.names);
+      callback(null, res.body.account);
     });
 };
 
 // Associate an account with an origin on WSPR.  The account must have been
 // previously created with createAccount(...).  Input is an account name to use:
-// { name: <account name> }
+// { account: <account name> }
 // Response will be 200 OK if association is successful.
-WSPR.prototype.assocAccount = function (name, origin, callback) {
+WSPR.prototype.assocAccount = function (account, origin, callback) {
   var that = this;
   request.post(this.getUrl() + '/assoc-account')
     .send({
-      name: name,
+      account: account,
       origin: origin
     }).end(function(err, res) {
       if (err) {
@@ -62,21 +62,18 @@ WSPR.prototype.assocAccount = function (name, origin, callback) {
       if (res.error) {
         return callback(httpResponseToError(res));
       }
-      callback(null, name);
+      callback(null, account);
     });
 };
 
 // Helper method that creates the account and associates it with the origin.
 WSPR.prototype.createAndAssocAccount = function(accessToken, origin, callback) {
   var wspr = this;
-  this.createAccount(accessToken, function(err, names) {
+  this.createAccount(accessToken, function(err, account) {
     if (err) {
       return callback(err);
     }
-    // Assoc with first name.
-    // TODO(ataly, nlacasse): How do we decide which account name to associate with
-    // the origin?
-    wspr.assocAccount(names[0], origin, callback);
+    wspr.assocAccount(account, origin, callback);
   });
 };
 
