@@ -1,4 +1,4 @@
-PATH := node_modules/.bin:$(PATH)
+PATH := node_modules/.bin:${VEYRON_ROOT}/environment/cout/node/bin:$(PATH)
 SHELL := /bin/bash -e -o pipefail
 .DEFAULT_GOAL := all
 
