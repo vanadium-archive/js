@@ -121,7 +121,7 @@ test-vdl: test-vdl-node test-vdl-browser
 # This generates the output of the vdl files in src/veyron.io/<package-path>
 # The command will generate all the dependent files as well.
 gen-vdl:
-	veyron run vdl generate -lang=js -js_out_dir="$(PWD)/src" veyron.io/veyron/veyron2/vdl/testdata/...
+	veyron run vdl generate -lang=javascript -js_out_dir="$(PWD)/src" veyron.io/veyron/veyron2/vdl/testdata/...
 
 test-vdl-node: gen-vdl node_modules
 	prova test/vdl/test-*.js $(TAP)
