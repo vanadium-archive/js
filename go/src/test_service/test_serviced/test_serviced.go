@@ -56,7 +56,7 @@ func StartServer(r veyron2.Runtime) (ipc.Server, naming.Endpoint, error) {
 
 	// Publish the services. This will register them in the mount table and
 	// maintain the registration until StopServing is called.
-	if err := s.Serve("test_service", disp); err != nil {
+	if err := s.ServeDispatcher("test_service", disp); err != nil {
 		return nil, nil, fmt.Errorf("error publishing service '%s': %v", err)
 	}
 
