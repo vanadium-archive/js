@@ -76,7 +76,7 @@ endif
 
 #TODO(bprosnitz) Remove the novdl flag once it works on non-host architectures
 nacl/out/wspr.nexe: validate-naclgoroot updated-go-compiler
-	GOROOT= veyron -target-go=$(NACLGOROOT)/bin/go xgo -novdl 386-nacl build -o $@ "veyron.io/wspr/veyron/services/wsprd/wspr_nacl"
+	GOROOT= veyron xgo --target_go=$(NACLGOROOT)/bin/go -novdl 386-nacl build -o $@ "veyron.io/wspr/veyron/services/wsprd/wspr_nacl"
 
 nacl/out/index.html: nacl/html/index.html
 	@cp -f $< $@
