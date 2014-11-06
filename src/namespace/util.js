@@ -83,60 +83,6 @@ var isRooted = function(name) {
 };
 
 /**
-  * Determines if a name is terminal, meaning that it corresponds to a final
-  * endpoint and name and does not need to be resolved further.
-  * @param {string} The veyron name.
-  * @return {boolean} True if the name is a terminal name, false otherwise.
-  */
-var isTerminal = function(name) {
-  var numInitialSlashes = _numInitialSlashes(name);
-  if (numInitialSlashes >= 2) {
-    // If the name begins with '//', it is terminal.
-    return true;
-  } else if (numInitialSlashes === 1) {
-    // If the name begins with a single slash, it is terminal if there are no
-    // more slashes (indexOf === -1) or if the next slash is a double slash.
-    var nextSlashIndex = name.substr(1).indexOf('/');
-    var nextDoubleSlashIndex = name.substr(1).indexOf('//');
-    return nextSlashIndex === nextDoubleSlashIndex;
-  } else {
-    // If there are no initial slashes, it is only terminal if it is the empty
-    // string.
-    return name.length === 0;
-  }
-};
-
-/**
-  * Converts a veyron name to a terminal name. This is used to generate a final
-  * name when a name has finished resolving.
-  * @param {string} The initial veyron name.
-  * @return {string} A terminal veyron name.
-  */
-var convertToTerminalName = function(name) {
-  // '' -> '' and '/' -> ''
-  if (name === '' || name === '/') {
-    return '';
-  }
-
-  if (isRooted(name)) {
-    if (name.substr(1).indexOf('/') === -1) {
-      // '/endpoint' -> '/endpoint'
-      return name;
-    }
-    if (name.substr(1).indexOf('/') === name.length - 2) {
-      // '/endpoint/' -> '/endpoint'
-      return name.substring(0, name.length - 1);
-    }
-    // '/endpoint/something' -> '/endpoint//something'
-    // '/endpoint//something -> '/endpoint//something'
-    return name.replace(/^(\/[^/]+?)[/]*\//, '$1//');
-  } else {
-    // '/////something' -> '//something'
-    return '//' + _removeInitialSlashes(name);
-  }
-};
-
-/**
   * Strips the basename off the rest of the given veyron name.
   * @param {string} The veyron name.
   * @return {string} The string prefixing the given name's basename.
@@ -156,9 +102,7 @@ var basename = function(name) {
 
 module.exports = {
   join: join,
-  isTerminal: isTerminal,
   isRooted: isRooted,
-  convertToTerminalName: convertToTerminalName,
   stripBasename: stripBasename,
   basename: basename
 };
