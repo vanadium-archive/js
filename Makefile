@@ -111,7 +111,7 @@ extension/veyron.crx:
 
 test-precheck: lint dependency-check gen-vdl node_modules
 
-test: test-unit test-integration test-vdl
+test: test-unit test-integration test-vdl test-extension
 
 test-vdl: test-vdl-node test-vdl-browser
 
@@ -149,6 +149,11 @@ test-integration-nacl: validate-chromebin test-precheck nacl/out go/bin
 	nacl/scripts/run-with-user-dir.sh \
 	node test/integration/runner.js --services=$(COMMON_SERVICES),write-wspr-config.js -- \
 	prova test/integration/test-*.js $(BROWSER_OPTS) $(BROWSER_OUTPUT)
+
+test-extension: BROWSER_OPTS := --options="--load-extension=$(PWD)/extension/build/" $(BROWSER_OPTS)
+test-extension: test-precheck go/bin extension/veyron.crx
+	node test/integration/runner.js --services=$(COMMON_SERVICES),wsprd -- \
+	prova test/extension/test-*.js $(BROWSER_OPTS) $(BROWSER_OUTPUT)
 
 go/bin: $(GO_FILES)
 	@$(VGO) build -o $(GOBIN)/identityd veyron.io/veyron/veyron/services/identity/identityd
@@ -193,6 +198,7 @@ check-that-npm-is-in-path:
 	@which npm > /dev/null || { echo "npm is not in the path. Did you remember to run 'veyron profile setup web'?"; exit 1; }
 
 .PHONY: all build clean dependency-check lint test
+.PHONY: test-extension
 .PHONY: test-integration test-integration-node test-integration-browser test-integration-nacl
 .PHONY: test-unit test-unit-node test-unit-browser
 .PHONY: updated-go-compiler naclgoroot-is-set validate-naclgoroot
@@ -203,6 +209,7 @@ check-that-npm-is-in-path:
 # Prevent the tests from running in parallel, which causes problems because it
 # starts multiple instances of the services at once, and also because it
 # interleaves the test output.
+.NOTPARALLEL: test-extension
 .NOTPARALLEL: test-integration test-integration-browser test-integration-node
 .NOTPARALLEL: test-unit test-unit-node test-unit-browser
 .NOTPARALLEL: test-vdl test-vdl-node test-vdl-browser

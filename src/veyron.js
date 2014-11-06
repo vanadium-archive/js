@@ -96,7 +96,7 @@ function getAccount(authTimeoutMs, cb) {
   }
 
   var Postie = require('postie');
-  var contentScript = new Postie(window);
+  var contentScript = new Postie(window.top);
 
   // Initialized below.
   var timeout, authRequestInterval;
