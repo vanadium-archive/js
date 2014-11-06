@@ -13,12 +13,15 @@ endef
 all: veyron.crx
 
 build/html: html/*
+	mkdir -p build
 	cp -r html build
 
 build/images: images/*
+	mkdir -p build
 	cp -r images build
 
 build/manifest.json: manifest.json
+	mkdir -p build
 	cp manifest.json build
 
 build/js/background.js: lib/background/index.js $(JS_FILES) node_modules
