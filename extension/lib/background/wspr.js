@@ -38,7 +38,9 @@ WSPR.prototype.createAccount = function(accessToken, callback) {
         return callback(httpResponseToError(res));
       }
       if (!res.body || !res.body.account) {
-        return callback(new Error('createAccount got invalid response from WSPR: missing "account".'));
+        return callback(
+            new Error('createAccount got invalid response from WSPR: ' +
+              'missing "account".'));
       }
       // TODO(nlacasse): assert res.body
       callback(null, res.body.account);

@@ -8,10 +8,8 @@
     "bluebird": "^2.3.2",
     "is-browser": "^2.0.1",
     "postie": "^0.4.5",
-    "which": "^1.0.5",
     "ws": "~0.4.31",
     "xtend": "^4.0.0",
-    "tmp": "0.0.24",
     "vom": "0.0.0"
   },
   "devDependencies": {
@@ -28,6 +26,7 @@
     "mkdirp": "^0.5.0",
     "node-static": "^0.7.4",
     "prova": "jxson/prova#657522ada",
-    "run-parallel": "^1.0.0"
+    "run-parallel": "^1.0.0",
+    "which": "^1.0.5"
   }
 }
