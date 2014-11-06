@@ -54,9 +54,9 @@ COMMON_SERVICES := "proxyd,test_serviced"
 
 BROWSERIFY_OPTS := --debug --standalone veyron
 
-all: build
+all: lint build
 
-build: dist/veyron.js dist/veyron.min.js
+build: dist/veyron.js dist/veyron.min.js extension/veyron.crx
 
 $(NACLGOROOT)/bin/go:
 	$(NACLGOROOT)/src/make-nacl.sh
@@ -106,11 +106,8 @@ dist/veyron.js: src/veyron.js $(JS_SRC_FILES) $(NODE_MODULES_JS_FILES) | node_mo
 dist/veyron.min.js: src/veyron.js $(JS_SRC_FILES) $(NODE_MODULES_JS_FILES) | node_modules
 	browserify $< $(BROWSERIFY_OPTS) --plugin [ minifyify --map dist/veyron.js.map --output $@.map ] --outfile $@
 
-lint: node_modules
-	jshint .
-
-dependency-check: node_modules
-	dependency-check package.json --entry src/veyron.js
+extension/veyron.crx:
+	$(MAKE) -C extension veyron.crx
 
 test-precheck: lint dependency-check gen-vdl node_modules
 
@@ -154,22 +151,31 @@ test-integration-nacl: validate-chromebin test-precheck nacl/out go/bin
 	prova test/integration/test-*.js $(BROWSER_OPTS) $(BROWSER_OUTPUT)
 
 go/bin: $(GO_FILES)
-	@$(VGO) build -o $(GOBIN)/mounttabled veyron.io/veyron/veyron/services/mounttable/mounttabled
 	@$(VGO) build -o $(GOBIN)/identityd veyron.io/veyron/veyron/services/identity/identityd
-	@$(VGO) build -o $(GOBIN)/proxyd veyron.io/veyron/veyron/services/proxy/proxyd
+	@$(VGO) build -o $(GOBIN)/mounttabled veyron.io/veyron/veyron/services/mounttable/mounttabled
 	@$(VGO) build -o $(GOBIN)/principal veyron.io/veyron/veyron/tools/principal
-	@$(VGO) build -o $(GOBIN)/wsprd veyron.io/wspr/veyron/services/wsprd
+	@$(VGO) build -o $(GOBIN)/proxyd veyron.io/veyron/veyron/services/proxy/proxyd
 	@$(VGO) build -o $(GOBIN)/test_serviced test_service/test_serviced
+	@$(VGO) build -o $(GOBIN)/wsprd veyron.io/wspr/veyron/services/wsprd
+
+lint: node_modules
+	jshint .
+	$(MAKE) -C extension lint
+
+dependency-check: node_modules
+	dependency-check package.json --entry src/veyron.js
 
 clean:
+	@$(RM) -fr dist/*
 	@$(RM) -fr docs/*
-	@$(RM) -fr nacl/out/*
-	@$(RM) -fr tmp
-	@$(RM) -fr node_modules
-	@$(RM) -fr npm-debug.log
-	@$(RM) -fr xunit.xml
 	@$(RM) -fr go/bin
 	@$(RM) -fr go/pkg
+	@$(RM) -fr nacl/out/*
+	@$(RM) -fr node_modules
+	@$(RM) -fr npm-debug.log
+	@$(RM) -fr tmp
+	@$(RM) -fr xunit.xml
+	$(MAKE) -C extension clean
 
 docs: $(JS_SRC_FILES) | node_modules
 	jsdoc $^ --template node_modules/ink-docstrap/template --destination $@
@@ -195,7 +201,8 @@ check-that-npm-is-in-path:
 .PHONY: gen-vdl
 
 # Prevent the tests from running in parallel, which causes problems because it
-# starts multiple instances of the services at once.
+# starts multiple instances of the services at once, and also because it
+# interleaves the test output.
 .NOTPARALLEL: test-integration test-integration-browser test-integration-node
 .NOTPARALLEL: test-unit test-unit-node test-unit-browser
 .NOTPARALLEL: test-vdl test-vdl-node test-vdl-browser

@@ -4,19 +4,38 @@ SHELL := /bin/bash -e -o pipefail
 
 JS_FILES = $(shell find lib -name "*.js" -o -name "*.css")
 
-all: extension/background.js extension/content.js extension/options.js
+# browserify $1 --transform brfs --debug --plugin [ minifyify --map /options.js.map --output $2.map ] --outfile $2
+define BROWSERIFY
+	mkdir -p $(dir $2)
+	browserify $1 --transform brfs --debug --outfile $2
+endef
 
-extension/options.js: lib/background/options.js $(JS_FILES) node_modules
-	browserify $< --transform brfs --debug --plugin [ minifyify --map /options.js.map --output $@.map ] --outfile $@
+all: veyron.crx
 
-extension/background.js: lib/background/index.js $(JS_FILES) node_modules
-	browserify $< --transform brfs --debug --plugin [ minifyify --map /background.js.map --output $@.map ] --outfile $@
+build/html:
+	cp -r html build
 
-extension/content.js: lib/content/index.js $(JS_FILES) node_modules
-	browserify $< --transform brfs --debug --plugin [ minifyify --map /content.js.map --output $@.map ] --outfile $@
+build/images:
+	cp -r images build
 
-veyron.crx: all
-	./bin/crxmake.sh ./extension ./dev-cert.pem veyron
+build/manifest.json:
+	cp manifest.json build
+
+build/js/background.js: lib/background/index.js $(JS_FILES) node_modules
+	$(call BROWSERIFY,$<,$@)
+
+build/js/content.js: lib/content/index.js $(JS_FILES) node_modules
+	$(call BROWSERIFY,$<,$@)
+
+build/js/options.js: lib/background/options.js $(JS_FILES) node_modules
+	$(call BROWSERIFY,$<,$@)
+
+build/js: build/js/background.js build/js/content.js build/js/options.js
+
+build: build/html build/images build/manifest.json build/js
+
+veyron.crx: build
+	./bin/crxmake.sh ./build ./dev-cert.pem veyron
 
 example-server: example/index.bundle.js
 	static "example" -H '{"Cache-Control": "no-cache, must-revalidate"}'
@@ -31,11 +50,11 @@ dependency-check: node_modules
 	dependency-check package.json --entry lib/background/index.js --entry lib/content/index.js
 
 wspr:
-	wsprd -vproxy="/proxy.envyor.com:8100" -identd="/proxy.envyor.com:8101/identity/veyron-test/google"
+	wsprd -veyron.proxy="/proxy.envyor.com:8100" -identd="/proxy.envyor.com:8101/identity/veyron-test/google"
 
 clean:
 	@$(RM) -fr node_modules npm-debug.log
-	@$(RM) -fr veyron.crx extension/options.js extension/background.js extension/options.js
+	@$(RM) -fr veyron.crx build
 
 
 node_modules: package.json

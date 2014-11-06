@@ -7,11 +7,11 @@
   "options_page": "options.html",
   "background": {
     "persistent": false,
-    "scripts": [ "background.js" ]
+    "scripts": [ "js/background.js" ]
   },
   "content_scripts": [{
     "matches": [ "<all_urls>" ],
-    "js": [ "content.js" ]
+    "js": [ "js/content.js" ]
   }],
   "permissions": [
     "<all_urls>",
@@ -19,9 +19,9 @@
     "storage"
   ],
   "web_accessible_resources": [
-    "background.js.map",
-    "content.js.map",
-    "options.js.map"
+    "js/background.js.map",
+    "js/content.js.map",
+    "js/options.js.map"
   ],
   // See https://developer.chrome.com/apps/app_identity
   "oauth2": {
