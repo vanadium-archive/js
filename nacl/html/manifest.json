@@ -22,6 +22,7 @@
     }
   },
   "permissions": [
-    "alarms" // Needed to keep the extension from being killed.
+    "alarms", // Needed to keep the extension from being killed.
+    "unlimitedStorage"
   ]
 }
