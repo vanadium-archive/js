@@ -13,7 +13,7 @@ test('runtime.serve(name, service, callback)', function(assert) {
 
     runtime.serve('tv/hi', service, function(err, endpoint) {
       assert.error(err);
-      assert.ok(endpoint.match('@2@tcp@'));
+      assert.ok(endpoint && endpoint.match('@2@tcp@'), 'got endpoint');
       runtime.close(assert.end);
     });
   });
@@ -73,7 +73,7 @@ test('runtime.serve(name, service, callback) - served twice', function(assert) {
 
       runtime.serve('tv/hi', service, function(err, endpoint) {
         assert.error(err);
-        assert.ok(endpoint.match('@2@tcp@'));
+        assert.ok(endpoint && endpoint.match('@2@tcp@'), 'got endpoint');
         assert.equal(endpoint, firstEndpoint);
         runtime.close(assert.end);
       });
