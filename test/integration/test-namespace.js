@@ -30,6 +30,8 @@ test('glob(' + PREFIX + '*)', function(assert) {
     assert.error(err);
     if (runtime) {
       runtime.close(assert.end);
+    } else {
+      assert.end();
     }
   }
 });
@@ -56,6 +58,8 @@ test('glob(' + PREFIX + 'cottage/*/*/*) - nested', function(assert) {
     assert.error(err);
     if (runtime) {
       runtime.close(assert.end);
+    } else {
+      assert.end();
     }
   }
 });
@@ -79,6 +83,8 @@ test('glob(' + PREFIX + 'does/not/exist) - empty', function(assert) {
     assert.error(err);
     if (runtime) {
       runtime.close(assert.end);
+    } else {
+      assert.end();
     }
   }
 });
@@ -115,6 +121,8 @@ test('mount -> resolve -> unmount -> resolve(cb)', function(assert) {
     assert.error(err);
     if (runtime) {
       runtime.close(assert.end);
+    } else {
+      assert.end();
     }
   }
 });
@@ -136,6 +144,8 @@ test('resolveToMountTable(' + PREFIX + 'cottage)', function(assert) {
     assert.error(err);
     if (runtime) {
       runtime.close(assert.end);
+    } else {
+      assert.end();
     }
   }
 });
@@ -160,6 +170,8 @@ test('flushCacheEntry(' + PREFIX + 'house/alarm)', function(assert) {
     assert.error(err);
     if (runtime) {
       runtime.close(assert.end);
+    } else {
+      assert.end();
     }
   }
 });
@@ -186,6 +198,8 @@ test('disableCache(true)', function(assert) {
     assert.error(err);
     if (runtime) {
       runtime.close(assert.end);
+    } else {
+      assert.end();
     }
   }
 });
@@ -213,6 +227,8 @@ test('setRoots() -> valid', function(assert) {
     assert.error(err);
     if (runtime) {
       runtime.close(assert.end);
+    } else {
+      assert.end();
     }
   }
 });
@@ -240,6 +256,8 @@ test('setRoots() -> invalid', function(assert) {
     assert.error(err);
     if (runtime) {
       runtime.close(assert.end);
+    } else {
+      assert.end();
     }
   }
 });
@@ -261,6 +279,8 @@ test('roots()', function(assert) {
     assert.error(err);
     if (runtime) {
       runtime.close(assert.end);
+    } else {
+      assert.end();
     }
   }
 });
