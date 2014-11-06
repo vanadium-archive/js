@@ -23,41 +23,6 @@ test('names.join(...)', function(assert) {
   assert.end();
 });
 
-test('names.isTerminal(name)', function(assert) {
-  assert.ok(names.isTerminal(''));
-  assert.ok(names.isTerminal('/'));
-  assert.ok(names.isTerminal('//'));
-  assert.ok(names.isTerminal('//a/b'));
-  assert.ok(names.isTerminal(ep + ''));
-  assert.ok(names.isTerminal(ep + '//'));
-  assert.ok(names.isTerminal(ep + '//a/b'));
-  assert.notOk(names.isTerminal('a/b'));
-  assert.notOk(names.isTerminal('a//b'));
-  assert.notOk(names.isTerminal(ep + '/a'));
-  assert.notOk(names.isTerminal(ep + '/a//b'));
-  assert.end();
-});
-
-test('names.convertToTerminalName(name)', function(assert) {
-  assert.equal(names.convertToTerminalName(''), '');
-  assert.equal(names.convertToTerminalName(''), '');
-  assert.equal(names.convertToTerminalName('a'), '//a');
-  assert.equal(names.convertToTerminalName('a/b'), '//a/b');
-  // rooted names
-  assert.equal(names.convertToTerminalName(ep + ''), ep + '');
-  assert.equal(names.convertToTerminalName(ep + '/'), ep + '');
-  assert.equal(names.convertToTerminalName(ep + '//'), ep + '//');
-  assert.equal(names.convertToTerminalName(ep + '/a'), ep + '//a');
-  assert.equal(names.convertToTerminalName(ep + '/a/c'), ep + '//a/c');
-  assert.equal(names.convertToTerminalName(ep + '/a//c'), ep + '//a//c');
-  assert.equal(names.convertToTerminalName(ep + '/a/b//c'), ep + '//a/b//c');
-  // corner cases
-  assert.equal(names.convertToTerminalName('//'), '//');
-  assert.equal(names.convertToTerminalName('///'), '//');
-  assert.equal(names.convertToTerminalName('///' + ep + '/'), '/' + ep + '/');
-  assert.end();
-});
-
 test('names.isRooted(name)', function(assert) {
   assert.ok(names.isRooted('/'));
   assert.ok(names.isRooted('/a'));
