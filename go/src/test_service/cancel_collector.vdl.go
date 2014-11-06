@@ -75,9 +75,27 @@ func BindCancelCollector(name string, opts ..._gen_ipc.BindOpt) (CancelCollector
 // It takes a regular server implementing the CancelCollectorService
 // interface, and returns a new server stub.
 func NewServerCancelCollector(server CancelCollectorService) interface{} {
-	return &ServerStubCancelCollector{
+	stub := &ServerStubCancelCollector{
 		service: server,
 	}
+	var gs _gen_ipc.GlobState
+	var self interface{} = stub
+	// VAllGlobber is implemented by the server object, which is wrapped in
+	// a VDL generated server stub.
+	if x, ok := self.(_gen_ipc.VAllGlobber); ok {
+		gs.VAllGlobber = x
+	}
+	// VAllGlobber is implemented by the server object without using a VDL
+	// generated stub.
+	if x, ok := server.(_gen_ipc.VAllGlobber); ok {
+		gs.VAllGlobber = x
+	}
+	// VChildrenGlobber is implemented in the server object.
+	if x, ok := server.(_gen_ipc.VChildrenGlobber); ok {
+		gs.VChildrenGlobber = x
+	}
+	stub.gs = &gs
+	return stub
 }
 
 // clientStubCancelCollector implements CancelCollector.
@@ -153,6 +171,7 @@ func (__gen_c *clientStubCancelCollector) GetMethodTags(ctx _gen_context.T, meth
 // the requirements of veyron2/ipc.ReflectInvoker.
 type ServerStubCancelCollector struct {
 	service CancelCollectorService
+	gs      *_gen_ipc.GlobState
 }
 
 func (__gen_s *ServerStubCancelCollector) GetMethodTags(call _gen_ipc.ServerCall, method string) ([]interface{}, error) {
@@ -212,6 +231,10 @@ func (__gen_s *ServerStubCancelCollector) UnresolveStep(call _gen_ipc.ServerCall
 		reply[i] = _gen_naming.Join(p, call.Name())
 	}
 	return
+}
+
+func (__gen_s *ServerStubCancelCollector) VGlob() *_gen_ipc.GlobState {
+	return __gen_s.gs
 }
 
 func (__gen_s *ServerStubCancelCollector) NeverReturn(call _gen_ipc.ServerCall, key int64) (err error) {

@@ -1,1 +1,2 @@
 dist/* -crlf -diff
+extension/veyron.crx -crlf -diff
