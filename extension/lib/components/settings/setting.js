@@ -28,14 +28,13 @@ function render(setting) {
   ]);
 }
 
-function create(opts) {
-  opts = opts || {};
-
-  debug('initializing', opts);
+function create(key, value, defaultValue) {
+  debug('initializing', key, 'to', value, 'with default', defaultValue);
 
   var state = mercury.struct({
-    key: mercury.value(opts.key || null),
-    value: mercury.value(opts.value || null),
+    key: mercury.value(key || null),
+    value: mercury.value(value || null),
+    defaultValue: mercury.value(defaultValue || null),
     events: mercury.input([ 'update', 'restoreDefault' ])
   });
 
@@ -45,7 +44,7 @@ function create(opts) {
   };
 
   state.events.restoreDefault = function(){
-    state.value.set(opts.value);
+    state.value.set(defaultValue);
   };
 
   return { state: state };

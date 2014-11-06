@@ -3,24 +3,12 @@ var request = require('superagent');
 module.exports = WSPR;
 
 // Module for interacting with the WSPR proxy.
-function WSPR(){
+function WSPR(url){
   if(!(this instanceof WSPR)){
     return new WSPR();
   }
+  this.url = url;
 }
-
-// Get the WSPR url out of the settings.
-WSPR.prototype.getUrl = function() {
-  var state = require('../state');
-  var settings = state.settings().collection;
-  var _ = require('lodash');
-
-  var wsprSetting = _.find(settings, function(setting) {
-    return (setting.key === 'wspr');
-  });
-
-  return wsprSetting.value;
-};
 
 // Create an account on WSPR with a blessing derived from an access token.
 // Currently this is implemented by POSTing to WSPR with the body:
@@ -28,7 +16,7 @@ WSPR.prototype.getUrl = function() {
 // Returns the name of the new account.
 WSPR.prototype.createAccount = function(accessToken, callback) {
   var that = this;
-  request.post(this.getUrl() + '/create-account')
+  request.post(this.url + '/create-account')
     .send({ 'access_token': accessToken })
     .end(function(err, res) {
       if (err) {
@@ -53,7 +41,7 @@ WSPR.prototype.createAccount = function(accessToken, callback) {
 // Response will be 200 OK if association is successful.
 WSPR.prototype.assocAccount = function (account, origin, callback) {
   var that = this;
-  request.post(this.getUrl() + '/assoc-account')
+  request.post(this.url + '/assoc-account')
     .send({
       account: account,
       origin: origin
@@ -85,7 +73,7 @@ WSPR.prototype.createAndAssocAccount = function(accessToken, origin, callback) {
 // request.
 WSPR.prototype.handleNetworkError = function(err) {
   if (err.crossDomain) {
-    return new Error('Cannot connect to WSPR at: ' + this.getUrl());
+    return new Error('Cannot connect to WSPR at: ' + this.url);
   }
   return err;
 };

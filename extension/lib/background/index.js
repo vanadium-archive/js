@@ -1,25 +1,13 @@
-var debug = require('debug')('wspr');
+var debug = require('debug')('background:index');
 if (typeof window !== 'undefined') {
   window.debug = require('debug');
 }
 
+var state = require('../state');
 var WSPR = require('./wspr');
-var init = require('../init');
 
-var wspr;
-
-// Wait for state.settings to get hydrated from storage.
-init(function(err){
-  if (err) {
-    return console.error('Error during init.', err);
-  }
-
-  // Set wspr so it can be accessed by all functions in this module.
-  wspr = new WSPR();
-
-  // Start listening connections from content scripts.
-  chrome.runtime.onConnect.addListener(contentScriptListener);
-});
+// Start listening connections from content scripts.
+chrome.runtime.onConnect.addListener(contentScriptListener);
 
 // Listen for messages from the content script and dispatch as necessary.
 // Currently the only message we care about is "auth".
@@ -45,6 +33,8 @@ function handleAuthRequest(port) {
     } catch (err) {
       return sendError('auth', port, err);
     }
+
+    var wspr = new WSPR(state.settings().wspr.value);
 
     wspr.createAndAssocAccount(token, origin, function(err, account) {
       if (err) {

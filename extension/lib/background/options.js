@@ -1,6 +1,5 @@
 var domready = require('domready');
 var mercury = require('mercury');
-var init = require('../init');
 var state = require('../state');
 var settings = require('../components/settings');
 if (typeof window !== 'undefined') {
@@ -8,7 +7,6 @@ if (typeof window !== 'undefined') {
 }
 
 domready(function() {
-  init();
   mercury.app(document.body, state, render);
 });
 

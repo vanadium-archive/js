@@ -25,6 +25,6 @@ function handleLogin(e){
 
     var accountName = rt.accountName;
     console.log('got runtime with accountName: ' + accountName);
-    alert('Hello, ' + accountName + '!');
+    alert('Hello ' + accountName + '!');
   });
 }

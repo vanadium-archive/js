@@ -12,13 +12,13 @@ endef
 
 all: veyron.crx
 
-build/html:
+build/html: html/*
 	cp -r html build
 
-build/images:
+build/images: images/*
 	cp -r images build
 
-build/manifest.json:
+build/manifest.json: manifest.json
 	cp manifest.json build
 
 build/js/background.js: lib/background/index.js $(JS_FILES) node_modules

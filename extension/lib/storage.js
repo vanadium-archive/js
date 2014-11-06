@@ -7,8 +7,9 @@ module.exports = {
 };
 
 function set(key, value, callback) {
+  var jsonValue = JSON.stringify(value);
   var object = {};
-  object[key] = value;
+  object[key] = jsonValue;
 
   debug('setting', object);
 
@@ -17,7 +18,21 @@ function set(key, value, callback) {
 
 function get(key, callback) {
   debug('getting', key);
-  chrome.storage.sync.get(key, wrap(key, callback));
+  chrome.storage.sync.get(key, wrap(key, function(err, jsonValue) {
+    if (err) {
+      return callback(err);
+    }
+
+    if (jsonValue === null) {
+      return callback(null, null);
+    }
+
+    try {
+      return callback(null, JSON.parse(jsonValue));
+    } catch (err) {
+      return callback(err);
+    }
+  }));
 }
 
 // Wrapper for nice callbacks with errors
