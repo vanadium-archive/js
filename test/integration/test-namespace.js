@@ -14,6 +14,10 @@ var PREFIX = 'namespace-testing/';
 // TODO(aghassemi) disabled temporary since behaviour depends
 // on being able to serve multiple times.
 // Re-enable when we support addName and removeName in JavaScript API.
+test('Skipped namespace tests', function(t) {
+  t.skip('Re-enable when we support addName and removeName in JavaScript API.');
+  t.end();
+});
 test.skip('Skipped namespace tests', function() {
 test('glob(' + PREFIX + '*)', function(assert) {
   var runtime;

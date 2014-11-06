@@ -67,6 +67,10 @@ test('var promise = runtime.serve(name, service) - failure', function(assert) {
 // TODO(aghassemi) disabled temporary since behaviour depends
 // on being able to serve multiple times.
 // Re-enable when we support addName and removeName in JavaScript API.
+test('Skipped runtime served twice tests', function(t) {
+  t.skip('Re-enable when we support addName and removeName in JavaScript API.');
+  t.end();
+});
 test.skip(
   'runtime.serve(name, service, callback) - served twice', function(assert) {
   veyron.init(config, function(err, runtime) {
