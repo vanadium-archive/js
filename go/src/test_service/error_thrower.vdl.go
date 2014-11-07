@@ -4,311 +4,360 @@
 package test_service
 
 import (
-	// The non-user imports are prefixed with "_gen_" to prevent collisions.
-	_gen_veyron2 "veyron.io/veyron/veyron2"
-	_gen_context "veyron.io/veyron/veyron2/context"
-	_gen_ipc "veyron.io/veyron/veyron2/ipc"
-	_gen_naming "veyron.io/veyron/veyron2/naming"
-	_gen_vdlutil "veyron.io/veyron/veyron2/vdl/vdlutil"
-	_gen_wiretype "veyron.io/veyron/veyron2/wiretype"
+	// The non-user imports are prefixed with "__" to prevent collisions.
+	__veyron2 "veyron.io/veyron/veyron2"
+	__context "veyron.io/veyron/veyron2/context"
+	__ipc "veyron.io/veyron/veyron2/ipc"
+	__vdlutil "veyron.io/veyron/veyron2/vdl/vdlutil"
+	__wiretype "veyron.io/veyron/veyron2/wiretype"
 )
 
 // TODO(toddw): Remove this line once the new signature support is done.
-// It corrects a bug where _gen_wiretype is unused in VDL pacakges where only
+// It corrects a bug where __wiretype is unused in VDL pacakges where only
 // bootstrap types are used on interfaces.
-const _ = _gen_wiretype.TypeIDInvalid
+const _ = __wiretype.TypeIDInvalid
 
+// ErrorThrowerClientMethods is the client interface
+// containing ErrorThrower methods.
+//
 // A testing interface with methods that throw various types of errors
-// ErrorThrower is the interface the client binds and uses.
-// ErrorThrower_ExcludingUniversal is the interface without internal framework-added methods
-// to enable embedding without method collisions.  Not to be used directly by clients.
-type ErrorThrower_ExcludingUniversal interface {
+type ErrorThrowerClientMethods interface {
 	// Throws veyron2/vError.Aborted error
-	ThrowAborted(ctx _gen_context.T, opts ..._gen_ipc.CallOpt) (err error)
+	ThrowAborted(__context.T, ...__ipc.CallOpt) error
 	// Throws veyron2/vError.BadArg error
-	ThrowBadArg(ctx _gen_context.T, opts ..._gen_ipc.CallOpt) (err error)
+	ThrowBadArg(__context.T, ...__ipc.CallOpt) error
 	// Throws veyron2/vError.BadProtocol error
-	ThrowBadProtocol(ctx _gen_context.T, opts ..._gen_ipc.CallOpt) (err error)
+	ThrowBadProtocol(__context.T, ...__ipc.CallOpt) error
 	// Throws veyron2/vError.Internal error
-	ThrowInternal(ctx _gen_context.T, opts ..._gen_ipc.CallOpt) (err error)
+	ThrowInternal(__context.T, ...__ipc.CallOpt) error
 	// Throws veyron2/vError.NoAccess error
-	ThrowNoAccess(ctx _gen_context.T, opts ..._gen_ipc.CallOpt) (err error)
+	ThrowNoAccess(__context.T, ...__ipc.CallOpt) error
 	// Throws veyron2/vError.NoExist error
-	ThrowNoExist(ctx _gen_context.T, opts ..._gen_ipc.CallOpt) (err error)
+	ThrowNoExist(__context.T, ...__ipc.CallOpt) error
 	// Throws veyron2/vError.NoExistOrNoAccess error
-	ThrowNoExistOrNoAccess(ctx _gen_context.T, opts ..._gen_ipc.CallOpt) (err error)
+	ThrowNoExistOrNoAccess(__context.T, ...__ipc.CallOpt) error
 	// Throws veyron2/vError.Unknown error
-	ThrowUnknown(ctx _gen_context.T, opts ..._gen_ipc.CallOpt) (err error)
+	ThrowUnknown(__context.T, ...__ipc.CallOpt) error
 	// Throws normal Go error
-	ThrowGoError(ctx _gen_context.T, opts ..._gen_ipc.CallOpt) (err error)
+	ThrowGoError(__context.T, ...__ipc.CallOpt) error
 	// Throws custom error created by using Standard
-	ThrowCustomStandardError(ctx _gen_context.T, opts ..._gen_ipc.CallOpt) (err error)
+	ThrowCustomStandardError(__context.T, ...__ipc.CallOpt) error
 	// Lists all errors Ids available in veyron2/verror
-	ListAllBuiltInErrorIDs(ctx _gen_context.T, opts ..._gen_ipc.CallOpt) (reply []string, err error)
-}
-type ErrorThrower interface {
-	_gen_ipc.UniversalServiceMethods
-	ErrorThrower_ExcludingUniversal
+	ListAllBuiltInErrorIDs(__context.T, ...__ipc.CallOpt) ([]string, error)
 }
 
-// ErrorThrowerService is the interface the server implements.
-type ErrorThrowerService interface {
-
-	// Throws veyron2/vError.Aborted error
-	ThrowAborted(context _gen_ipc.ServerContext) (err error)
-	// Throws veyron2/vError.BadArg error
-	ThrowBadArg(context _gen_ipc.ServerContext) (err error)
-	// Throws veyron2/vError.BadProtocol error
-	ThrowBadProtocol(context _gen_ipc.ServerContext) (err error)
-	// Throws veyron2/vError.Internal error
-	ThrowInternal(context _gen_ipc.ServerContext) (err error)
-	// Throws veyron2/vError.NoAccess error
-	ThrowNoAccess(context _gen_ipc.ServerContext) (err error)
-	// Throws veyron2/vError.NoExist error
-	ThrowNoExist(context _gen_ipc.ServerContext) (err error)
-	// Throws veyron2/vError.NoExistOrNoAccess error
-	ThrowNoExistOrNoAccess(context _gen_ipc.ServerContext) (err error)
-	// Throws veyron2/vError.Unknown error
-	ThrowUnknown(context _gen_ipc.ServerContext) (err error)
-	// Throws normal Go error
-	ThrowGoError(context _gen_ipc.ServerContext) (err error)
-	// Throws custom error created by using Standard
-	ThrowCustomStandardError(context _gen_ipc.ServerContext) (err error)
-	// Lists all errors Ids available in veyron2/verror
-	ListAllBuiltInErrorIDs(context _gen_ipc.ServerContext) (reply []string, err error)
+// ErrorThrowerClientStub adds universal methods to ErrorThrowerClientMethods.
+type ErrorThrowerClientStub interface {
+	ErrorThrowerClientMethods
+	__ipc.UniversalServiceMethods
 }
 
-// BindErrorThrower returns the client stub implementing the ErrorThrower
-// interface.
-//
-// If no _gen_ipc.Client is specified, the default _gen_ipc.Client in the
-// global Runtime is used.
-func BindErrorThrower(name string, opts ..._gen_ipc.BindOpt) (ErrorThrower, error) {
-	var client _gen_ipc.Client
-	switch len(opts) {
-	case 0:
-		// Do nothing.
-	case 1:
-		if clientOpt, ok := opts[0].(_gen_ipc.Client); opts[0] == nil || ok {
+// ErrorThrowerClient returns a client stub for ErrorThrower.
+func ErrorThrowerClient(name string, opts ...__ipc.BindOpt) ErrorThrowerClientStub {
+	var client __ipc.Client
+	for _, opt := range opts {
+		if clientOpt, ok := opt.(__ipc.Client); ok {
 			client = clientOpt
-		} else {
-			return nil, _gen_vdlutil.ErrUnrecognizedOption
 		}
-	default:
-		return nil, _gen_vdlutil.ErrTooManyOptionsToBind
 	}
-	stub := &clientStubErrorThrower{defaultClient: client, name: name}
-
-	return stub, nil
+	return implErrorThrowerClientStub{name, client}
 }
 
-// NewServerErrorThrower creates a new server stub.
+type implErrorThrowerClientStub struct {
+	name   string
+	client __ipc.Client
+}
+
+func (c implErrorThrowerClientStub) c(ctx __context.T) __ipc.Client {
+	if c.client != nil {
+		return c.client
+	}
+	return __veyron2.RuntimeFromContext(ctx).Client()
+}
+
+func (c implErrorThrowerClientStub) ThrowAborted(ctx __context.T, opts ...__ipc.CallOpt) (err error) {
+	var call __ipc.Call
+	if call, err = c.c(ctx).StartCall(ctx, c.name, "ThrowAborted", nil, opts...); err != nil {
+		return
+	}
+	if ierr := call.Finish(&err); ierr != nil {
+		err = ierr
+	}
+	return
+}
+
+func (c implErrorThrowerClientStub) ThrowBadArg(ctx __context.T, opts ...__ipc.CallOpt) (err error) {
+	var call __ipc.Call
+	if call, err = c.c(ctx).StartCall(ctx, c.name, "ThrowBadArg", nil, opts...); err != nil {
+		return
+	}
+	if ierr := call.Finish(&err); ierr != nil {
+		err = ierr
+	}
+	return
+}
+
+func (c implErrorThrowerClientStub) ThrowBadProtocol(ctx __context.T, opts ...__ipc.CallOpt) (err error) {
+	var call __ipc.Call
+	if call, err = c.c(ctx).StartCall(ctx, c.name, "ThrowBadProtocol", nil, opts...); err != nil {
+		return
+	}
+	if ierr := call.Finish(&err); ierr != nil {
+		err = ierr
+	}
+	return
+}
+
+func (c implErrorThrowerClientStub) ThrowInternal(ctx __context.T, opts ...__ipc.CallOpt) (err error) {
+	var call __ipc.Call
+	if call, err = c.c(ctx).StartCall(ctx, c.name, "ThrowInternal", nil, opts...); err != nil {
+		return
+	}
+	if ierr := call.Finish(&err); ierr != nil {
+		err = ierr
+	}
+	return
+}
+
+func (c implErrorThrowerClientStub) ThrowNoAccess(ctx __context.T, opts ...__ipc.CallOpt) (err error) {
+	var call __ipc.Call
+	if call, err = c.c(ctx).StartCall(ctx, c.name, "ThrowNoAccess", nil, opts...); err != nil {
+		return
+	}
+	if ierr := call.Finish(&err); ierr != nil {
+		err = ierr
+	}
+	return
+}
+
+func (c implErrorThrowerClientStub) ThrowNoExist(ctx __context.T, opts ...__ipc.CallOpt) (err error) {
+	var call __ipc.Call
+	if call, err = c.c(ctx).StartCall(ctx, c.name, "ThrowNoExist", nil, opts...); err != nil {
+		return
+	}
+	if ierr := call.Finish(&err); ierr != nil {
+		err = ierr
+	}
+	return
+}
+
+func (c implErrorThrowerClientStub) ThrowNoExistOrNoAccess(ctx __context.T, opts ...__ipc.CallOpt) (err error) {
+	var call __ipc.Call
+	if call, err = c.c(ctx).StartCall(ctx, c.name, "ThrowNoExistOrNoAccess", nil, opts...); err != nil {
+		return
+	}
+	if ierr := call.Finish(&err); ierr != nil {
+		err = ierr
+	}
+	return
+}
+
+func (c implErrorThrowerClientStub) ThrowUnknown(ctx __context.T, opts ...__ipc.CallOpt) (err error) {
+	var call __ipc.Call
+	if call, err = c.c(ctx).StartCall(ctx, c.name, "ThrowUnknown", nil, opts...); err != nil {
+		return
+	}
+	if ierr := call.Finish(&err); ierr != nil {
+		err = ierr
+	}
+	return
+}
+
+func (c implErrorThrowerClientStub) ThrowGoError(ctx __context.T, opts ...__ipc.CallOpt) (err error) {
+	var call __ipc.Call
+	if call, err = c.c(ctx).StartCall(ctx, c.name, "ThrowGoError", nil, opts...); err != nil {
+		return
+	}
+	if ierr := call.Finish(&err); ierr != nil {
+		err = ierr
+	}
+	return
+}
+
+func (c implErrorThrowerClientStub) ThrowCustomStandardError(ctx __context.T, opts ...__ipc.CallOpt) (err error) {
+	var call __ipc.Call
+	if call, err = c.c(ctx).StartCall(ctx, c.name, "ThrowCustomStandardError", nil, opts...); err != nil {
+		return
+	}
+	if ierr := call.Finish(&err); ierr != nil {
+		err = ierr
+	}
+	return
+}
+
+func (c implErrorThrowerClientStub) ListAllBuiltInErrorIDs(ctx __context.T, opts ...__ipc.CallOpt) (o0 []string, err error) {
+	var call __ipc.Call
+	if call, err = c.c(ctx).StartCall(ctx, c.name, "ListAllBuiltInErrorIDs", nil, opts...); err != nil {
+		return
+	}
+	if ierr := call.Finish(&o0, &err); ierr != nil {
+		err = ierr
+	}
+	return
+}
+
+func (c implErrorThrowerClientStub) Signature(ctx __context.T, opts ...__ipc.CallOpt) (o0 __ipc.ServiceSignature, err error) {
+	var call __ipc.Call
+	if call, err = c.c(ctx).StartCall(ctx, c.name, "Signature", nil, opts...); err != nil {
+		return
+	}
+	if ierr := call.Finish(&o0, &err); ierr != nil {
+		err = ierr
+	}
+	return
+}
+
+func (c implErrorThrowerClientStub) GetMethodTags(ctx __context.T, method string, opts ...__ipc.CallOpt) (o0 []interface{}, err error) {
+	var call __ipc.Call
+	if call, err = c.c(ctx).StartCall(ctx, c.name, "GetMethodTags", []interface{}{method}, opts...); err != nil {
+		return
+	}
+	if ierr := call.Finish(&o0, &err); ierr != nil {
+		err = ierr
+	}
+	return
+}
+
+// ErrorThrowerServerMethods is the interface a server writer
+// implements for ErrorThrower.
 //
-// It takes a regular server implementing the ErrorThrowerService
-// interface, and returns a new server stub.
-func NewServerErrorThrower(server ErrorThrowerService) interface{} {
-	stub := &ServerStubErrorThrower{
-		service: server,
+// A testing interface with methods that throw various types of errors
+type ErrorThrowerServerMethods interface {
+	// Throws veyron2/vError.Aborted error
+	ThrowAborted(__ipc.ServerContext) error
+	// Throws veyron2/vError.BadArg error
+	ThrowBadArg(__ipc.ServerContext) error
+	// Throws veyron2/vError.BadProtocol error
+	ThrowBadProtocol(__ipc.ServerContext) error
+	// Throws veyron2/vError.Internal error
+	ThrowInternal(__ipc.ServerContext) error
+	// Throws veyron2/vError.NoAccess error
+	ThrowNoAccess(__ipc.ServerContext) error
+	// Throws veyron2/vError.NoExist error
+	ThrowNoExist(__ipc.ServerContext) error
+	// Throws veyron2/vError.NoExistOrNoAccess error
+	ThrowNoExistOrNoAccess(__ipc.ServerContext) error
+	// Throws veyron2/vError.Unknown error
+	ThrowUnknown(__ipc.ServerContext) error
+	// Throws normal Go error
+	ThrowGoError(__ipc.ServerContext) error
+	// Throws custom error created by using Standard
+	ThrowCustomStandardError(__ipc.ServerContext) error
+	// Lists all errors Ids available in veyron2/verror
+	ListAllBuiltInErrorIDs(__ipc.ServerContext) ([]string, error)
+}
+
+// ErrorThrowerServerStubMethods is the server interface containing
+// ErrorThrower methods, as expected by ipc.Server.  The difference between
+// this interface and ErrorThrowerServerMethods is that the first context
+// argument for each method is always ipc.ServerCall here, while it is either
+// ipc.ServerContext or a typed streaming context there.
+type ErrorThrowerServerStubMethods interface {
+	// Throws veyron2/vError.Aborted error
+	ThrowAborted(__ipc.ServerCall) error
+	// Throws veyron2/vError.BadArg error
+	ThrowBadArg(__ipc.ServerCall) error
+	// Throws veyron2/vError.BadProtocol error
+	ThrowBadProtocol(__ipc.ServerCall) error
+	// Throws veyron2/vError.Internal error
+	ThrowInternal(__ipc.ServerCall) error
+	// Throws veyron2/vError.NoAccess error
+	ThrowNoAccess(__ipc.ServerCall) error
+	// Throws veyron2/vError.NoExist error
+	ThrowNoExist(__ipc.ServerCall) error
+	// Throws veyron2/vError.NoExistOrNoAccess error
+	ThrowNoExistOrNoAccess(__ipc.ServerCall) error
+	// Throws veyron2/vError.Unknown error
+	ThrowUnknown(__ipc.ServerCall) error
+	// Throws normal Go error
+	ThrowGoError(__ipc.ServerCall) error
+	// Throws custom error created by using Standard
+	ThrowCustomStandardError(__ipc.ServerCall) error
+	// Lists all errors Ids available in veyron2/verror
+	ListAllBuiltInErrorIDs(__ipc.ServerCall) ([]string, error)
+}
+
+// ErrorThrowerServerStub adds universal methods to ErrorThrowerServerStubMethods.
+type ErrorThrowerServerStub interface {
+	ErrorThrowerServerStubMethods
+	// GetMethodTags will be replaced with DescribeInterfaces.
+	GetMethodTags(call __ipc.ServerCall, method string) ([]interface{}, error)
+	// Signature will be replaced with DescribeInterfaces.
+	Signature(call __ipc.ServerCall) (__ipc.ServiceSignature, error)
+}
+
+// ErrorThrowerServer returns a server stub for ErrorThrower.
+// It converts an implementation of ErrorThrowerServerMethods into
+// an object that may be used by ipc.Server.
+func ErrorThrowerServer(impl ErrorThrowerServerMethods) ErrorThrowerServerStub {
+	stub := implErrorThrowerServerStub{
+		impl: impl,
 	}
-	var gs _gen_ipc.GlobState
-	var self interface{} = stub
-	// VAllGlobber is implemented by the server object, which is wrapped in
-	// a VDL generated server stub.
-	if x, ok := self.(_gen_ipc.VAllGlobber); ok {
-		gs.VAllGlobber = x
+	// Initialize GlobState; always check the stub itself first, to handle the
+	// case where the user has the Glob method defined in their VDL source.
+	if gs := __ipc.NewGlobState(stub); gs != nil {
+		stub.gs = gs
+	} else if gs := __ipc.NewGlobState(impl); gs != nil {
+		stub.gs = gs
 	}
-	// VAllGlobber is implemented by the server object without using a VDL
-	// generated stub.
-	if x, ok := server.(_gen_ipc.VAllGlobber); ok {
-		gs.VAllGlobber = x
-	}
-	// VChildrenGlobber is implemented in the server object.
-	if x, ok := server.(_gen_ipc.VChildrenGlobber); ok {
-		gs.VChildrenGlobber = x
-	}
-	stub.gs = &gs
 	return stub
 }
 
-// clientStubErrorThrower implements ErrorThrower.
-type clientStubErrorThrower struct {
-	defaultClient _gen_ipc.Client
-	name          string
+type implErrorThrowerServerStub struct {
+	impl ErrorThrowerServerMethods
+	gs   *__ipc.GlobState
 }
 
-func (__gen_c *clientStubErrorThrower) client(ctx _gen_context.T) _gen_ipc.Client {
-	if __gen_c.defaultClient != nil {
-		return __gen_c.defaultClient
-	}
-	return _gen_veyron2.RuntimeFromContext(ctx).Client()
+func (s implErrorThrowerServerStub) ThrowAborted(call __ipc.ServerCall) error {
+	return s.impl.ThrowAborted(call)
 }
 
-func (__gen_c *clientStubErrorThrower) ThrowAborted(ctx _gen_context.T, opts ..._gen_ipc.CallOpt) (err error) {
-	var call _gen_ipc.Call
-	if call, err = __gen_c.client(ctx).StartCall(ctx, __gen_c.name, "ThrowAborted", nil, opts...); err != nil {
-		return
-	}
-	if ierr := call.Finish(&err); ierr != nil {
-		err = ierr
-	}
-	return
+func (s implErrorThrowerServerStub) ThrowBadArg(call __ipc.ServerCall) error {
+	return s.impl.ThrowBadArg(call)
 }
 
-func (__gen_c *clientStubErrorThrower) ThrowBadArg(ctx _gen_context.T, opts ..._gen_ipc.CallOpt) (err error) {
-	var call _gen_ipc.Call
-	if call, err = __gen_c.client(ctx).StartCall(ctx, __gen_c.name, "ThrowBadArg", nil, opts...); err != nil {
-		return
-	}
-	if ierr := call.Finish(&err); ierr != nil {
-		err = ierr
-	}
-	return
+func (s implErrorThrowerServerStub) ThrowBadProtocol(call __ipc.ServerCall) error {
+	return s.impl.ThrowBadProtocol(call)
 }
 
-func (__gen_c *clientStubErrorThrower) ThrowBadProtocol(ctx _gen_context.T, opts ..._gen_ipc.CallOpt) (err error) {
-	var call _gen_ipc.Call
-	if call, err = __gen_c.client(ctx).StartCall(ctx, __gen_c.name, "ThrowBadProtocol", nil, opts...); err != nil {
-		return
-	}
-	if ierr := call.Finish(&err); ierr != nil {
-		err = ierr
-	}
-	return
+func (s implErrorThrowerServerStub) ThrowInternal(call __ipc.ServerCall) error {
+	return s.impl.ThrowInternal(call)
 }
 
-func (__gen_c *clientStubErrorThrower) ThrowInternal(ctx _gen_context.T, opts ..._gen_ipc.CallOpt) (err error) {
-	var call _gen_ipc.Call
-	if call, err = __gen_c.client(ctx).StartCall(ctx, __gen_c.name, "ThrowInternal", nil, opts...); err != nil {
-		return
-	}
-	if ierr := call.Finish(&err); ierr != nil {
-		err = ierr
-	}
-	return
+func (s implErrorThrowerServerStub) ThrowNoAccess(call __ipc.ServerCall) error {
+	return s.impl.ThrowNoAccess(call)
 }
 
-func (__gen_c *clientStubErrorThrower) ThrowNoAccess(ctx _gen_context.T, opts ..._gen_ipc.CallOpt) (err error) {
-	var call _gen_ipc.Call
-	if call, err = __gen_c.client(ctx).StartCall(ctx, __gen_c.name, "ThrowNoAccess", nil, opts...); err != nil {
-		return
-	}
-	if ierr := call.Finish(&err); ierr != nil {
-		err = ierr
-	}
-	return
+func (s implErrorThrowerServerStub) ThrowNoExist(call __ipc.ServerCall) error {
+	return s.impl.ThrowNoExist(call)
 }
 
-func (__gen_c *clientStubErrorThrower) ThrowNoExist(ctx _gen_context.T, opts ..._gen_ipc.CallOpt) (err error) {
-	var call _gen_ipc.Call
-	if call, err = __gen_c.client(ctx).StartCall(ctx, __gen_c.name, "ThrowNoExist", nil, opts...); err != nil {
-		return
-	}
-	if ierr := call.Finish(&err); ierr != nil {
-		err = ierr
-	}
-	return
+func (s implErrorThrowerServerStub) ThrowNoExistOrNoAccess(call __ipc.ServerCall) error {
+	return s.impl.ThrowNoExistOrNoAccess(call)
 }
 
-func (__gen_c *clientStubErrorThrower) ThrowNoExistOrNoAccess(ctx _gen_context.T, opts ..._gen_ipc.CallOpt) (err error) {
-	var call _gen_ipc.Call
-	if call, err = __gen_c.client(ctx).StartCall(ctx, __gen_c.name, "ThrowNoExistOrNoAccess", nil, opts...); err != nil {
-		return
-	}
-	if ierr := call.Finish(&err); ierr != nil {
-		err = ierr
-	}
-	return
+func (s implErrorThrowerServerStub) ThrowUnknown(call __ipc.ServerCall) error {
+	return s.impl.ThrowUnknown(call)
 }
 
-func (__gen_c *clientStubErrorThrower) ThrowUnknown(ctx _gen_context.T, opts ..._gen_ipc.CallOpt) (err error) {
-	var call _gen_ipc.Call
-	if call, err = __gen_c.client(ctx).StartCall(ctx, __gen_c.name, "ThrowUnknown", nil, opts...); err != nil {
-		return
-	}
-	if ierr := call.Finish(&err); ierr != nil {
-		err = ierr
-	}
-	return
+func (s implErrorThrowerServerStub) ThrowGoError(call __ipc.ServerCall) error {
+	return s.impl.ThrowGoError(call)
 }
 
-func (__gen_c *clientStubErrorThrower) ThrowGoError(ctx _gen_context.T, opts ..._gen_ipc.CallOpt) (err error) {
-	var call _gen_ipc.Call
-	if call, err = __gen_c.client(ctx).StartCall(ctx, __gen_c.name, "ThrowGoError", nil, opts...); err != nil {
-		return
-	}
-	if ierr := call.Finish(&err); ierr != nil {
-		err = ierr
-	}
-	return
+func (s implErrorThrowerServerStub) ThrowCustomStandardError(call __ipc.ServerCall) error {
+	return s.impl.ThrowCustomStandardError(call)
 }
 
-func (__gen_c *clientStubErrorThrower) ThrowCustomStandardError(ctx _gen_context.T, opts ..._gen_ipc.CallOpt) (err error) {
-	var call _gen_ipc.Call
-	if call, err = __gen_c.client(ctx).StartCall(ctx, __gen_c.name, "ThrowCustomStandardError", nil, opts...); err != nil {
-		return
-	}
-	if ierr := call.Finish(&err); ierr != nil {
-		err = ierr
-	}
-	return
+func (s implErrorThrowerServerStub) ListAllBuiltInErrorIDs(call __ipc.ServerCall) ([]string, error) {
+	return s.impl.ListAllBuiltInErrorIDs(call)
 }
 
-func (__gen_c *clientStubErrorThrower) ListAllBuiltInErrorIDs(ctx _gen_context.T, opts ..._gen_ipc.CallOpt) (reply []string, err error) {
-	var call _gen_ipc.Call
-	if call, err = __gen_c.client(ctx).StartCall(ctx, __gen_c.name, "ListAllBuiltInErrorIDs", nil, opts...); err != nil {
-		return
-	}
-	if ierr := call.Finish(&reply, &err); ierr != nil {
-		err = ierr
-	}
-	return
+func (s implErrorThrowerServerStub) VGlob() *__ipc.GlobState {
+	return s.gs
 }
 
-func (__gen_c *clientStubErrorThrower) UnresolveStep(ctx _gen_context.T, opts ..._gen_ipc.CallOpt) (reply []string, err error) {
-	var call _gen_ipc.Call
-	if call, err = __gen_c.client(ctx).StartCall(ctx, __gen_c.name, "UnresolveStep", nil, opts...); err != nil {
-		return
-	}
-	if ierr := call.Finish(&reply, &err); ierr != nil {
-		err = ierr
-	}
-	return
-}
-
-func (__gen_c *clientStubErrorThrower) Signature(ctx _gen_context.T, opts ..._gen_ipc.CallOpt) (reply _gen_ipc.ServiceSignature, err error) {
-	var call _gen_ipc.Call
-	if call, err = __gen_c.client(ctx).StartCall(ctx, __gen_c.name, "Signature", nil, opts...); err != nil {
-		return
-	}
-	if ierr := call.Finish(&reply, &err); ierr != nil {
-		err = ierr
-	}
-	return
-}
-
-func (__gen_c *clientStubErrorThrower) GetMethodTags(ctx _gen_context.T, method string, opts ..._gen_ipc.CallOpt) (reply []interface{}, err error) {
-	var call _gen_ipc.Call
-	if call, err = __gen_c.client(ctx).StartCall(ctx, __gen_c.name, "GetMethodTags", []interface{}{method}, opts...); err != nil {
-		return
-	}
-	if ierr := call.Finish(&reply, &err); ierr != nil {
-		err = ierr
-	}
-	return
-}
-
-// ServerStubErrorThrower wraps a server that implements
-// ErrorThrowerService and provides an object that satisfies
-// the requirements of veyron2/ipc.ReflectInvoker.
-type ServerStubErrorThrower struct {
-	service ErrorThrowerService
-	gs      *_gen_ipc.GlobState
-}
-
-func (__gen_s *ServerStubErrorThrower) GetMethodTags(call _gen_ipc.ServerCall, method string) ([]interface{}, error) {
-	// TODO(bprosnitz) GetMethodTags() will be replaces with Signature().
-	// Note: This exhibits some weird behavior like returning a nil error if the method isn't found.
-	// This will change when it is replaced with Signature().
+func (s implErrorThrowerServerStub) GetMethodTags(call __ipc.ServerCall, method string) ([]interface{}, error) {
+	// TODO(toddw): Replace with new DescribeInterfaces implementation.
 	switch method {
 	case "ThrowAborted":
 		return []interface{}{}, nil
@@ -337,155 +386,79 @@ func (__gen_s *ServerStubErrorThrower) GetMethodTags(call _gen_ipc.ServerCall, m
 	}
 }
 
-func (__gen_s *ServerStubErrorThrower) Signature(call _gen_ipc.ServerCall) (_gen_ipc.ServiceSignature, error) {
-	result := _gen_ipc.ServiceSignature{Methods: make(map[string]_gen_ipc.MethodSignature)}
-	result.Methods["ListAllBuiltInErrorIDs"] = _gen_ipc.MethodSignature{
-		InArgs: []_gen_ipc.MethodArgument{},
-		OutArgs: []_gen_ipc.MethodArgument{
+func (s implErrorThrowerServerStub) Signature(call __ipc.ServerCall) (__ipc.ServiceSignature, error) {
+	// TODO(toddw) Replace with new DescribeInterfaces implementation.
+	result := __ipc.ServiceSignature{Methods: make(map[string]__ipc.MethodSignature)}
+	result.Methods["ListAllBuiltInErrorIDs"] = __ipc.MethodSignature{
+		InArgs: []__ipc.MethodArgument{},
+		OutArgs: []__ipc.MethodArgument{
 			{Name: "", Type: 61},
 			{Name: "", Type: 65},
 		},
 	}
-	result.Methods["ThrowAborted"] = _gen_ipc.MethodSignature{
-		InArgs: []_gen_ipc.MethodArgument{},
-		OutArgs: []_gen_ipc.MethodArgument{
+	result.Methods["ThrowAborted"] = __ipc.MethodSignature{
+		InArgs: []__ipc.MethodArgument{},
+		OutArgs: []__ipc.MethodArgument{
 			{Name: "", Type: 65},
 		},
 	}
-	result.Methods["ThrowBadArg"] = _gen_ipc.MethodSignature{
-		InArgs: []_gen_ipc.MethodArgument{},
-		OutArgs: []_gen_ipc.MethodArgument{
+	result.Methods["ThrowBadArg"] = __ipc.MethodSignature{
+		InArgs: []__ipc.MethodArgument{},
+		OutArgs: []__ipc.MethodArgument{
 			{Name: "", Type: 65},
 		},
 	}
-	result.Methods["ThrowBadProtocol"] = _gen_ipc.MethodSignature{
-		InArgs: []_gen_ipc.MethodArgument{},
-		OutArgs: []_gen_ipc.MethodArgument{
+	result.Methods["ThrowBadProtocol"] = __ipc.MethodSignature{
+		InArgs: []__ipc.MethodArgument{},
+		OutArgs: []__ipc.MethodArgument{
 			{Name: "", Type: 65},
 		},
 	}
-	result.Methods["ThrowCustomStandardError"] = _gen_ipc.MethodSignature{
-		InArgs: []_gen_ipc.MethodArgument{},
-		OutArgs: []_gen_ipc.MethodArgument{
+	result.Methods["ThrowCustomStandardError"] = __ipc.MethodSignature{
+		InArgs: []__ipc.MethodArgument{},
+		OutArgs: []__ipc.MethodArgument{
 			{Name: "", Type: 65},
 		},
 	}
-	result.Methods["ThrowGoError"] = _gen_ipc.MethodSignature{
-		InArgs: []_gen_ipc.MethodArgument{},
-		OutArgs: []_gen_ipc.MethodArgument{
+	result.Methods["ThrowGoError"] = __ipc.MethodSignature{
+		InArgs: []__ipc.MethodArgument{},
+		OutArgs: []__ipc.MethodArgument{
 			{Name: "", Type: 65},
 		},
 	}
-	result.Methods["ThrowInternal"] = _gen_ipc.MethodSignature{
-		InArgs: []_gen_ipc.MethodArgument{},
-		OutArgs: []_gen_ipc.MethodArgument{
+	result.Methods["ThrowInternal"] = __ipc.MethodSignature{
+		InArgs: []__ipc.MethodArgument{},
+		OutArgs: []__ipc.MethodArgument{
 			{Name: "", Type: 65},
 		},
 	}
-	result.Methods["ThrowNoAccess"] = _gen_ipc.MethodSignature{
-		InArgs: []_gen_ipc.MethodArgument{},
-		OutArgs: []_gen_ipc.MethodArgument{
+	result.Methods["ThrowNoAccess"] = __ipc.MethodSignature{
+		InArgs: []__ipc.MethodArgument{},
+		OutArgs: []__ipc.MethodArgument{
 			{Name: "", Type: 65},
 		},
 	}
-	result.Methods["ThrowNoExist"] = _gen_ipc.MethodSignature{
-		InArgs: []_gen_ipc.MethodArgument{},
-		OutArgs: []_gen_ipc.MethodArgument{
+	result.Methods["ThrowNoExist"] = __ipc.MethodSignature{
+		InArgs: []__ipc.MethodArgument{},
+		OutArgs: []__ipc.MethodArgument{
 			{Name: "", Type: 65},
 		},
 	}
-	result.Methods["ThrowNoExistOrNoAccess"] = _gen_ipc.MethodSignature{
-		InArgs: []_gen_ipc.MethodArgument{},
-		OutArgs: []_gen_ipc.MethodArgument{
+	result.Methods["ThrowNoExistOrNoAccess"] = __ipc.MethodSignature{
+		InArgs: []__ipc.MethodArgument{},
+		OutArgs: []__ipc.MethodArgument{
 			{Name: "", Type: 65},
 		},
 	}
-	result.Methods["ThrowUnknown"] = _gen_ipc.MethodSignature{
-		InArgs: []_gen_ipc.MethodArgument{},
-		OutArgs: []_gen_ipc.MethodArgument{
+	result.Methods["ThrowUnknown"] = __ipc.MethodSignature{
+		InArgs: []__ipc.MethodArgument{},
+		OutArgs: []__ipc.MethodArgument{
 			{Name: "", Type: 65},
 		},
 	}
 
-	result.TypeDefs = []_gen_vdlutil.Any{
-		_gen_wiretype.NamedPrimitiveType{Type: 0x1, Name: "error", Tags: []string(nil)}}
+	result.TypeDefs = []__vdlutil.Any{
+		__wiretype.NamedPrimitiveType{Type: 0x1, Name: "error", Tags: []string(nil)}}
 
 	return result, nil
-}
-
-func (__gen_s *ServerStubErrorThrower) UnresolveStep(call _gen_ipc.ServerCall) (reply []string, err error) {
-	if unresolver, ok := __gen_s.service.(_gen_ipc.Unresolver); ok {
-		return unresolver.UnresolveStep(call)
-	}
-	if call.Server() == nil {
-		return
-	}
-	var published []string
-	if published, err = call.Server().Published(); err != nil || published == nil {
-		return
-	}
-	reply = make([]string, len(published))
-	for i, p := range published {
-		reply[i] = _gen_naming.Join(p, call.Name())
-	}
-	return
-}
-
-func (__gen_s *ServerStubErrorThrower) VGlob() *_gen_ipc.GlobState {
-	return __gen_s.gs
-}
-
-func (__gen_s *ServerStubErrorThrower) ThrowAborted(call _gen_ipc.ServerCall) (err error) {
-	err = __gen_s.service.ThrowAborted(call)
-	return
-}
-
-func (__gen_s *ServerStubErrorThrower) ThrowBadArg(call _gen_ipc.ServerCall) (err error) {
-	err = __gen_s.service.ThrowBadArg(call)
-	return
-}
-
-func (__gen_s *ServerStubErrorThrower) ThrowBadProtocol(call _gen_ipc.ServerCall) (err error) {
-	err = __gen_s.service.ThrowBadProtocol(call)
-	return
-}
-
-func (__gen_s *ServerStubErrorThrower) ThrowInternal(call _gen_ipc.ServerCall) (err error) {
-	err = __gen_s.service.ThrowInternal(call)
-	return
-}
-
-func (__gen_s *ServerStubErrorThrower) ThrowNoAccess(call _gen_ipc.ServerCall) (err error) {
-	err = __gen_s.service.ThrowNoAccess(call)
-	return
-}
-
-func (__gen_s *ServerStubErrorThrower) ThrowNoExist(call _gen_ipc.ServerCall) (err error) {
-	err = __gen_s.service.ThrowNoExist(call)
-	return
-}
-
-func (__gen_s *ServerStubErrorThrower) ThrowNoExistOrNoAccess(call _gen_ipc.ServerCall) (err error) {
-	err = __gen_s.service.ThrowNoExistOrNoAccess(call)
-	return
-}
-
-func (__gen_s *ServerStubErrorThrower) ThrowUnknown(call _gen_ipc.ServerCall) (err error) {
-	err = __gen_s.service.ThrowUnknown(call)
-	return
-}
-
-func (__gen_s *ServerStubErrorThrower) ThrowGoError(call _gen_ipc.ServerCall) (err error) {
-	err = __gen_s.service.ThrowGoError(call)
-	return
-}
-
-func (__gen_s *ServerStubErrorThrower) ThrowCustomStandardError(call _gen_ipc.ServerCall) (err error) {
-	err = __gen_s.service.ThrowCustomStandardError(call)
-	return
-}
-
-func (__gen_s *ServerStubErrorThrower) ListAllBuiltInErrorIDs(call _gen_ipc.ServerCall) (reply []string, err error) {
-	reply, err = __gen_s.service.ListAllBuiltInErrorIDs(call)
-	return
 }

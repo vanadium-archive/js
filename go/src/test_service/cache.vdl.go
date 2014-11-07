@@ -4,413 +4,105 @@
 package test_service
 
 import (
-	// The non-user imports are prefixed with "_gen_" to prevent collisions.
-	_gen_io "io"
-	_gen_veyron2 "veyron.io/veyron/veyron2"
-	_gen_context "veyron.io/veyron/veyron2/context"
-	_gen_ipc "veyron.io/veyron/veyron2/ipc"
-	_gen_naming "veyron.io/veyron/veyron2/naming"
-	_gen_vdlutil "veyron.io/veyron/veyron2/vdl/vdlutil"
-	_gen_wiretype "veyron.io/veyron/veyron2/wiretype"
+	// The non-user imports are prefixed with "__" to prevent collisions.
+	__io "io"
+	__veyron2 "veyron.io/veyron/veyron2"
+	__context "veyron.io/veyron/veyron2/context"
+	__ipc "veyron.io/veyron/veyron2/ipc"
+	__vdlutil "veyron.io/veyron/veyron2/vdl/vdlutil"
+	__wiretype "veyron.io/veyron/veyron2/wiretype"
 )
+
+// TODO(toddw): Remove this line once the new signature support is done.
+// It corrects a bug where __wiretype is unused in VDL pacakges where only
+// bootstrap types are used on interfaces.
+const _ = __wiretype.TypeIDInvalid
 
 // KeyValuePair is a representation of a cached key and value pair.
 type KeyValuePair struct {
 	Key   string
-	Value _gen_vdlutil.Any
+	Value __vdlutil.Any
 }
 
-// TODO(toddw): Remove this line once the new signature support is done.
-// It corrects a bug where _gen_wiretype is unused in VDL pacakges where only
-// bootstrap types are used on interfaces.
-const _ = _gen_wiretype.TypeIDInvalid
-
+// CacheClientMethods is the client interface
+// containing Cache methods.
+//
 // A Cache service mimics the memcache interface.
-// Cache is the interface the client binds and uses.
-// Cache_ExcludingUniversal is the interface without internal framework-added methods
-// to enable embedding without method collisions.  Not to be used directly by clients.
-type Cache_ExcludingUniversal interface {
+type CacheClientMethods interface {
 	// Set sets a value for a key.
-	Set(ctx _gen_context.T, key string, value _gen_vdlutil.Any, opts ..._gen_ipc.CallOpt) (err error)
+	Set(ctx __context.T, key string, value __vdlutil.Any, opts ...__ipc.CallOpt) error
 	// Get returns the value for a key.  If the value is not found, returns
 	// a not found error.
-	Get(ctx _gen_context.T, key string, opts ..._gen_ipc.CallOpt) (reply _gen_vdlutil.Any, err error)
+	Get(ctx __context.T, key string, opts ...__ipc.CallOpt) (__vdlutil.Any, error)
 	// Same as Get, but casts the return argument to an byte.
-	GetAsByte(ctx _gen_context.T, key string, opts ..._gen_ipc.CallOpt) (reply byte, err error)
+	GetAsByte(ctx __context.T, key string, opts ...__ipc.CallOpt) (byte, error)
 	// Same as Get, but casts the return argument to an int32.
-	GetAsInt32(ctx _gen_context.T, key string, opts ..._gen_ipc.CallOpt) (reply int32, err error)
+	GetAsInt32(ctx __context.T, key string, opts ...__ipc.CallOpt) (int32, error)
 	// Same as Get, but casts the return argument to an int64.
-	GetAsInt64(ctx _gen_context.T, key string, opts ..._gen_ipc.CallOpt) (reply int64, err error)
+	GetAsInt64(ctx __context.T, key string, opts ...__ipc.CallOpt) (int64, error)
 	// Same as Get, but casts the return argument to an uint32.
-	GetAsUint32(ctx _gen_context.T, key string, opts ..._gen_ipc.CallOpt) (reply uint32, err error)
+	GetAsUint32(ctx __context.T, key string, opts ...__ipc.CallOpt) (uint32, error)
 	// Same as Get, but casts the return argument to an uint64.
-	GetAsUint64(ctx _gen_context.T, key string, opts ..._gen_ipc.CallOpt) (reply uint64, err error)
+	GetAsUint64(ctx __context.T, key string, opts ...__ipc.CallOpt) (uint64, error)
 	// Same as Get, but casts the return argument to an float32.
-	GetAsFloat32(ctx _gen_context.T, key string, opts ..._gen_ipc.CallOpt) (reply float32, err error)
+	GetAsFloat32(ctx __context.T, key string, opts ...__ipc.CallOpt) (float32, error)
 	// Same as Get, but casts the return argument to an float64.
-	GetAsFloat64(ctx _gen_context.T, key string, opts ..._gen_ipc.CallOpt) (reply float64, err error)
+	GetAsFloat64(ctx __context.T, key string, opts ...__ipc.CallOpt) (float64, error)
 	// Same as Get, but casts the return argument to a string.
-	GetAsString(ctx _gen_context.T, key string, opts ..._gen_ipc.CallOpt) (reply string, err error)
+	GetAsString(ctx __context.T, key string, opts ...__ipc.CallOpt) (string, error)
 	// Same as Get, but casts the return argument to a bool.
-	GetAsBool(ctx _gen_context.T, key string, opts ..._gen_ipc.CallOpt) (reply bool, err error)
+	GetAsBool(ctx __context.T, key string, opts ...__ipc.CallOpt) (bool, error)
 	// Same as Get, but casts the return argument to an error.
-	GetAsError(ctx _gen_context.T, key string, opts ..._gen_ipc.CallOpt) (reply error, err error)
+	GetAsError(ctx __context.T, key string, opts ...__ipc.CallOpt) (error, error)
 	// AsMap returns the full contents of the cache as a map.
-	AsMap(ctx _gen_context.T, opts ..._gen_ipc.CallOpt) (reply map[string]_gen_vdlutil.Any, err error)
+	AsMap(__context.T, ...__ipc.CallOpt) (map[string]__vdlutil.Any, error)
 	// KeyValuePairs returns the full contents of the cache as a slice of pairs.
-	KeyValuePairs(ctx _gen_context.T, opts ..._gen_ipc.CallOpt) (reply []KeyValuePair, err error)
+	KeyValuePairs(__context.T, ...__ipc.CallOpt) ([]KeyValuePair, error)
 	// MostRecentSet returns the key and value and the timestamp for the most
 	// recent set operation
 	// TODO(bprosnitz) support type types and change time to native time type
-	MostRecentSet(ctx _gen_context.T, opts ..._gen_ipc.CallOpt) (value KeyValuePair, time int64, err error)
+	MostRecentSet(__context.T, ...__ipc.CallOpt) (value KeyValuePair, time int64, err error)
 	// KeyPage indexes into the keys (in alphanumerically sorted order) and
 	// returns the indexth page of 10 keys.
-	KeyPage(ctx _gen_context.T, index int64, opts ..._gen_ipc.CallOpt) (reply [10]string, err error)
+	KeyPage(ctx __context.T, index int64, opts ...__ipc.CallOpt) ([10]string, error)
 	// Size returns the total number of entries in the cache.
-	Size(ctx _gen_context.T, opts ..._gen_ipc.CallOpt) (reply int64, err error)
+	Size(__context.T, ...__ipc.CallOpt) (int64, error)
 	// MultiGet sets up a stream that allows fetching multiple keys.
-	MultiGet(ctx _gen_context.T, opts ..._gen_ipc.CallOpt) (reply CacheMultiGetCall, err error)
-}
-type Cache interface {
-	_gen_ipc.UniversalServiceMethods
-	Cache_ExcludingUniversal
+	MultiGet(__context.T, ...__ipc.CallOpt) (CacheMultiGetCall, error)
 }
 
-// CacheService is the interface the server implements.
-type CacheService interface {
-
-	// Set sets a value for a key.
-	Set(context _gen_ipc.ServerContext, key string, value _gen_vdlutil.Any) (err error)
-	// Get returns the value for a key.  If the value is not found, returns
-	// a not found error.
-	Get(context _gen_ipc.ServerContext, key string) (reply _gen_vdlutil.Any, err error)
-	// Same as Get, but casts the return argument to an byte.
-	GetAsByte(context _gen_ipc.ServerContext, key string) (reply byte, err error)
-	// Same as Get, but casts the return argument to an int32.
-	GetAsInt32(context _gen_ipc.ServerContext, key string) (reply int32, err error)
-	// Same as Get, but casts the return argument to an int64.
-	GetAsInt64(context _gen_ipc.ServerContext, key string) (reply int64, err error)
-	// Same as Get, but casts the return argument to an uint32.
-	GetAsUint32(context _gen_ipc.ServerContext, key string) (reply uint32, err error)
-	// Same as Get, but casts the return argument to an uint64.
-	GetAsUint64(context _gen_ipc.ServerContext, key string) (reply uint64, err error)
-	// Same as Get, but casts the return argument to an float32.
-	GetAsFloat32(context _gen_ipc.ServerContext, key string) (reply float32, err error)
-	// Same as Get, but casts the return argument to an float64.
-	GetAsFloat64(context _gen_ipc.ServerContext, key string) (reply float64, err error)
-	// Same as Get, but casts the return argument to a string.
-	GetAsString(context _gen_ipc.ServerContext, key string) (reply string, err error)
-	// Same as Get, but casts the return argument to a bool.
-	GetAsBool(context _gen_ipc.ServerContext, key string) (reply bool, err error)
-	// Same as Get, but casts the return argument to an error.
-	GetAsError(context _gen_ipc.ServerContext, key string) (reply error, err error)
-	// AsMap returns the full contents of the cache as a map.
-	AsMap(context _gen_ipc.ServerContext) (reply map[string]_gen_vdlutil.Any, err error)
-	// KeyValuePairs returns the full contents of the cache as a slice of pairs.
-	KeyValuePairs(context _gen_ipc.ServerContext) (reply []KeyValuePair, err error)
-	// MostRecentSet returns the key and value and the timestamp for the most
-	// recent set operation
-	// TODO(bprosnitz) support type types and change time to native time type
-	MostRecentSet(context _gen_ipc.ServerContext) (value KeyValuePair, time int64, err error)
-	// KeyPage indexes into the keys (in alphanumerically sorted order) and
-	// returns the indexth page of 10 keys.
-	KeyPage(context _gen_ipc.ServerContext, index int64) (reply [10]string, err error)
-	// Size returns the total number of entries in the cache.
-	Size(context _gen_ipc.ServerContext) (reply int64, err error)
-	// MultiGet sets up a stream that allows fetching multiple keys.
-	MultiGet(context _gen_ipc.ServerContext, stream CacheServiceMultiGetStream) (err error)
+// CacheClientStub adds universal methods to CacheClientMethods.
+type CacheClientStub interface {
+	CacheClientMethods
+	__ipc.UniversalServiceMethods
 }
 
-// CacheMultiGetCall is the interface for call object of the method
-// MultiGet in the service interface Cache.
-type CacheMultiGetCall interface {
-	// RecvStream returns the recv portion of the stream
-	RecvStream() interface {
-		// Advance stages an element so the client can retrieve it
-		// with Value.  Advance returns true iff there is an
-		// element to retrieve.  The client must call Advance before
-		// calling Value. Advance may block if an element is not
-		// immediately available.
-		Advance() bool
-
-		// Value returns the element that was staged by Advance.
-		// Value may panic if Advance returned false or was not
-		// called at all.  Value does not block.
-		Value() _gen_vdlutil.Any
-
-		// Err returns a non-nil error iff the stream encountered
-		// any errors.  Err does not block.
-		Err() error
-	}
-
-	// SendStream returns the send portion of the stream
-	SendStream() interface {
-		// Send places the item onto the output stream, blocking if there is no
-		// buffer space available.  Calls to Send after having called Close
-		// or Cancel will fail.  Any blocked Send calls will be unblocked upon
-		// calling Cancel.
-		Send(item string) error
-
-		// Close indicates to the server that no more items will be sent;
-		// server Recv calls will receive io.EOF after all sent items.  This is
-		// an optional call - it's used by streaming clients that need the
-		// server to receive the io.EOF terminator before the client calls
-		// Finish (for example, if the client needs to continue receiving items
-		// from the server after having finished sending).
-		// Calls to Close after having called Cancel will fail.
-		// Like Send, Close blocks when there's no buffer space available.
-		Close() error
-	}
-
-	// Finish performs the equivalent of SendStream().Close, then blocks until the server
-	// is done, and returns the positional return values for call.
-	// If Cancel has been called, Finish will return immediately; the output of
-	// Finish could either be an error signalling cancelation, or the correct
-	// positional return values from the server depending on the timing of the
-	// call.
-	//
-	// Calling Finish is mandatory for releasing stream resources, unless Cancel
-	// has been called or any of the other methods return an error.
-	// Finish should be called at most once.
-	Finish() (err error)
-
-	// Cancel cancels the RPC, notifying the server to stop processing.  It
-	// is safe to call Cancel concurrently with any of the other stream methods.
-	// Calling Cancel after Finish has returned is a no-op.
-	Cancel()
-}
-
-type implCacheMultiGetStreamSender struct {
-	clientCall _gen_ipc.Call
-}
-
-func (c *implCacheMultiGetStreamSender) Send(item string) error {
-	return c.clientCall.Send(item)
-}
-
-func (c *implCacheMultiGetStreamSender) Close() error {
-	return c.clientCall.CloseSend()
-}
-
-type implCacheMultiGetStreamIterator struct {
-	clientCall _gen_ipc.Call
-	val        _gen_vdlutil.Any
-	err        error
-}
-
-func (c *implCacheMultiGetStreamIterator) Advance() bool {
-	c.val = nil
-	c.err = c.clientCall.Recv(&c.val)
-	return c.err == nil
-}
-
-func (c *implCacheMultiGetStreamIterator) Value() _gen_vdlutil.Any {
-	return c.val
-}
-
-func (c *implCacheMultiGetStreamIterator) Err() error {
-	if c.err == _gen_io.EOF {
-		return nil
-	}
-	return c.err
-}
-
-// Implementation of the CacheMultiGetCall interface that is not exported.
-type implCacheMultiGetCall struct {
-	clientCall  _gen_ipc.Call
-	writeStream implCacheMultiGetStreamSender
-	readStream  implCacheMultiGetStreamIterator
-}
-
-func (c *implCacheMultiGetCall) SendStream() interface {
-	Send(item string) error
-	Close() error
-} {
-	return &c.writeStream
-}
-
-func (c *implCacheMultiGetCall) RecvStream() interface {
-	Advance() bool
-	Value() _gen_vdlutil.Any
-	Err() error
-} {
-	return &c.readStream
-}
-
-func (c *implCacheMultiGetCall) Finish() (err error) {
-	if ierr := c.clientCall.Finish(&err); ierr != nil {
-		err = ierr
-	}
-	return
-}
-
-func (c *implCacheMultiGetCall) Cancel() {
-	c.clientCall.Cancel()
-}
-
-type implCacheServiceMultiGetStreamSender struct {
-	serverCall _gen_ipc.ServerCall
-}
-
-func (s *implCacheServiceMultiGetStreamSender) Send(item _gen_vdlutil.Any) error {
-	return s.serverCall.Send(item)
-}
-
-type implCacheServiceMultiGetStreamIterator struct {
-	serverCall _gen_ipc.ServerCall
-	val        string
-	err        error
-}
-
-func (s *implCacheServiceMultiGetStreamIterator) Advance() bool {
-	s.err = s.serverCall.Recv(&s.val)
-	return s.err == nil
-}
-
-func (s *implCacheServiceMultiGetStreamIterator) Value() string {
-	return s.val
-}
-
-func (s *implCacheServiceMultiGetStreamIterator) Err() error {
-	if s.err == _gen_io.EOF {
-		return nil
-	}
-	return s.err
-}
-
-// CacheServiceMultiGetStream is the interface for streaming responses of the method
-// MultiGet in the service interface Cache.
-type CacheServiceMultiGetStream interface {
-	// SendStream returns the send portion of the stream.
-	SendStream() interface {
-		// Send places the item onto the output stream, blocking if there is no buffer
-		// space available.  If the client has canceled, an error is returned.
-		Send(item _gen_vdlutil.Any) error
-	}
-	// RecvStream returns the recv portion of the stream
-	RecvStream() interface {
-		// Advance stages an element so the client can retrieve it
-		// with Value.  Advance returns true iff there is an
-		// element to retrieve.  The client must call Advance before
-		// calling Value.  Advance may block if an element is not
-		// immediately available.
-		Advance() bool
-
-		// Value returns the element that was staged by Advance.
-		// Value may panic if Advance returned false or was not
-		// called at all.  Value does not block.
-		Value() string
-
-		// Err returns a non-nil error iff the stream encountered
-		// any errors.  Err does not block.
-		Err() error
-	}
-}
-
-// Implementation of the CacheServiceMultiGetStream interface that is not exported.
-type implCacheServiceMultiGetStream struct {
-	writer implCacheServiceMultiGetStreamSender
-	reader implCacheServiceMultiGetStreamIterator
-}
-
-func (s *implCacheServiceMultiGetStream) SendStream() interface {
-	// Send places the item onto the output stream, blocking if there is no buffer
-	// space available.  If the client has canceled, an error is returned.
-	Send(item _gen_vdlutil.Any) error
-} {
-	return &s.writer
-}
-
-func (s *implCacheServiceMultiGetStream) RecvStream() interface {
-	// Advance stages an element so the client can retrieve it
-	// with Value.  Advance returns true iff there is an
-	// element to retrieve.  The client must call Advance before
-	// calling Value.  The client must call Cancel if it does
-	// not iterate through all elements (i.e. until Advance
-	// returns false).  Advance may block if an element is not
-	// immediately available.
-	Advance() bool
-
-	// Value returns the element that was staged by Advance.
-	// Value may panic if Advance returned false or was not
-	// called at all.  Value does not block.
-	Value() string
-
-	// Err returns a non-nil error iff the stream encountered
-	// any errors.  Err does not block.
-	Err() error
-} {
-	return &s.reader
-}
-
-// BindCache returns the client stub implementing the Cache
-// interface.
-//
-// If no _gen_ipc.Client is specified, the default _gen_ipc.Client in the
-// global Runtime is used.
-func BindCache(name string, opts ..._gen_ipc.BindOpt) (Cache, error) {
-	var client _gen_ipc.Client
-	switch len(opts) {
-	case 0:
-		// Do nothing.
-	case 1:
-		if clientOpt, ok := opts[0].(_gen_ipc.Client); opts[0] == nil || ok {
+// CacheClient returns a client stub for Cache.
+func CacheClient(name string, opts ...__ipc.BindOpt) CacheClientStub {
+	var client __ipc.Client
+	for _, opt := range opts {
+		if clientOpt, ok := opt.(__ipc.Client); ok {
 			client = clientOpt
-		} else {
-			return nil, _gen_vdlutil.ErrUnrecognizedOption
 		}
-	default:
-		return nil, _gen_vdlutil.ErrTooManyOptionsToBind
 	}
-	stub := &clientStubCache{defaultClient: client, name: name}
-
-	return stub, nil
+	return implCacheClientStub{name, client}
 }
 
-// NewServerCache creates a new server stub.
-//
-// It takes a regular server implementing the CacheService
-// interface, and returns a new server stub.
-func NewServerCache(server CacheService) interface{} {
-	stub := &ServerStubCache{
-		service: server,
-	}
-	var gs _gen_ipc.GlobState
-	var self interface{} = stub
-	// VAllGlobber is implemented by the server object, which is wrapped in
-	// a VDL generated server stub.
-	if x, ok := self.(_gen_ipc.VAllGlobber); ok {
-		gs.VAllGlobber = x
-	}
-	// VAllGlobber is implemented by the server object without using a VDL
-	// generated stub.
-	if x, ok := server.(_gen_ipc.VAllGlobber); ok {
-		gs.VAllGlobber = x
-	}
-	// VChildrenGlobber is implemented in the server object.
-	if x, ok := server.(_gen_ipc.VChildrenGlobber); ok {
-		gs.VChildrenGlobber = x
-	}
-	stub.gs = &gs
-	return stub
+type implCacheClientStub struct {
+	name   string
+	client __ipc.Client
 }
 
-// clientStubCache implements Cache.
-type clientStubCache struct {
-	defaultClient _gen_ipc.Client
-	name          string
-}
-
-func (__gen_c *clientStubCache) client(ctx _gen_context.T) _gen_ipc.Client {
-	if __gen_c.defaultClient != nil {
-		return __gen_c.defaultClient
+func (c implCacheClientStub) c(ctx __context.T) __ipc.Client {
+	if c.client != nil {
+		return c.client
 	}
-	return _gen_veyron2.RuntimeFromContext(ctx).Client()
+	return __veyron2.RuntimeFromContext(ctx).Client()
 }
 
-func (__gen_c *clientStubCache) Set(ctx _gen_context.T, key string, value _gen_vdlutil.Any, opts ..._gen_ipc.CallOpt) (err error) {
-	var call _gen_ipc.Call
-	if call, err = __gen_c.client(ctx).StartCall(ctx, __gen_c.name, "Set", []interface{}{key, value}, opts...); err != nil {
+func (c implCacheClientStub) Set(ctx __context.T, i0 string, i1 __vdlutil.Any, opts ...__ipc.CallOpt) (err error) {
+	var call __ipc.Call
+	if call, err = c.c(ctx).StartCall(ctx, c.name, "Set", []interface{}{i0, i1}, opts...); err != nil {
 		return
 	}
 	if ierr := call.Finish(&err); ierr != nil {
@@ -419,236 +111,530 @@ func (__gen_c *clientStubCache) Set(ctx _gen_context.T, key string, value _gen_v
 	return
 }
 
-func (__gen_c *clientStubCache) Get(ctx _gen_context.T, key string, opts ..._gen_ipc.CallOpt) (reply _gen_vdlutil.Any, err error) {
-	var call _gen_ipc.Call
-	if call, err = __gen_c.client(ctx).StartCall(ctx, __gen_c.name, "Get", []interface{}{key}, opts...); err != nil {
+func (c implCacheClientStub) Get(ctx __context.T, i0 string, opts ...__ipc.CallOpt) (o0 __vdlutil.Any, err error) {
+	var call __ipc.Call
+	if call, err = c.c(ctx).StartCall(ctx, c.name, "Get", []interface{}{i0}, opts...); err != nil {
 		return
 	}
-	if ierr := call.Finish(&reply, &err); ierr != nil {
+	if ierr := call.Finish(&o0, &err); ierr != nil {
 		err = ierr
 	}
 	return
 }
 
-func (__gen_c *clientStubCache) GetAsByte(ctx _gen_context.T, key string, opts ..._gen_ipc.CallOpt) (reply byte, err error) {
-	var call _gen_ipc.Call
-	if call, err = __gen_c.client(ctx).StartCall(ctx, __gen_c.name, "GetAsByte", []interface{}{key}, opts...); err != nil {
+func (c implCacheClientStub) GetAsByte(ctx __context.T, i0 string, opts ...__ipc.CallOpt) (o0 byte, err error) {
+	var call __ipc.Call
+	if call, err = c.c(ctx).StartCall(ctx, c.name, "GetAsByte", []interface{}{i0}, opts...); err != nil {
 		return
 	}
-	if ierr := call.Finish(&reply, &err); ierr != nil {
+	if ierr := call.Finish(&o0, &err); ierr != nil {
 		err = ierr
 	}
 	return
 }
 
-func (__gen_c *clientStubCache) GetAsInt32(ctx _gen_context.T, key string, opts ..._gen_ipc.CallOpt) (reply int32, err error) {
-	var call _gen_ipc.Call
-	if call, err = __gen_c.client(ctx).StartCall(ctx, __gen_c.name, "GetAsInt32", []interface{}{key}, opts...); err != nil {
+func (c implCacheClientStub) GetAsInt32(ctx __context.T, i0 string, opts ...__ipc.CallOpt) (o0 int32, err error) {
+	var call __ipc.Call
+	if call, err = c.c(ctx).StartCall(ctx, c.name, "GetAsInt32", []interface{}{i0}, opts...); err != nil {
 		return
 	}
-	if ierr := call.Finish(&reply, &err); ierr != nil {
+	if ierr := call.Finish(&o0, &err); ierr != nil {
 		err = ierr
 	}
 	return
 }
 
-func (__gen_c *clientStubCache) GetAsInt64(ctx _gen_context.T, key string, opts ..._gen_ipc.CallOpt) (reply int64, err error) {
-	var call _gen_ipc.Call
-	if call, err = __gen_c.client(ctx).StartCall(ctx, __gen_c.name, "GetAsInt64", []interface{}{key}, opts...); err != nil {
+func (c implCacheClientStub) GetAsInt64(ctx __context.T, i0 string, opts ...__ipc.CallOpt) (o0 int64, err error) {
+	var call __ipc.Call
+	if call, err = c.c(ctx).StartCall(ctx, c.name, "GetAsInt64", []interface{}{i0}, opts...); err != nil {
 		return
 	}
-	if ierr := call.Finish(&reply, &err); ierr != nil {
+	if ierr := call.Finish(&o0, &err); ierr != nil {
 		err = ierr
 	}
 	return
 }
 
-func (__gen_c *clientStubCache) GetAsUint32(ctx _gen_context.T, key string, opts ..._gen_ipc.CallOpt) (reply uint32, err error) {
-	var call _gen_ipc.Call
-	if call, err = __gen_c.client(ctx).StartCall(ctx, __gen_c.name, "GetAsUint32", []interface{}{key}, opts...); err != nil {
+func (c implCacheClientStub) GetAsUint32(ctx __context.T, i0 string, opts ...__ipc.CallOpt) (o0 uint32, err error) {
+	var call __ipc.Call
+	if call, err = c.c(ctx).StartCall(ctx, c.name, "GetAsUint32", []interface{}{i0}, opts...); err != nil {
 		return
 	}
-	if ierr := call.Finish(&reply, &err); ierr != nil {
+	if ierr := call.Finish(&o0, &err); ierr != nil {
 		err = ierr
 	}
 	return
 }
 
-func (__gen_c *clientStubCache) GetAsUint64(ctx _gen_context.T, key string, opts ..._gen_ipc.CallOpt) (reply uint64, err error) {
-	var call _gen_ipc.Call
-	if call, err = __gen_c.client(ctx).StartCall(ctx, __gen_c.name, "GetAsUint64", []interface{}{key}, opts...); err != nil {
+func (c implCacheClientStub) GetAsUint64(ctx __context.T, i0 string, opts ...__ipc.CallOpt) (o0 uint64, err error) {
+	var call __ipc.Call
+	if call, err = c.c(ctx).StartCall(ctx, c.name, "GetAsUint64", []interface{}{i0}, opts...); err != nil {
 		return
 	}
-	if ierr := call.Finish(&reply, &err); ierr != nil {
+	if ierr := call.Finish(&o0, &err); ierr != nil {
 		err = ierr
 	}
 	return
 }
 
-func (__gen_c *clientStubCache) GetAsFloat32(ctx _gen_context.T, key string, opts ..._gen_ipc.CallOpt) (reply float32, err error) {
-	var call _gen_ipc.Call
-	if call, err = __gen_c.client(ctx).StartCall(ctx, __gen_c.name, "GetAsFloat32", []interface{}{key}, opts...); err != nil {
+func (c implCacheClientStub) GetAsFloat32(ctx __context.T, i0 string, opts ...__ipc.CallOpt) (o0 float32, err error) {
+	var call __ipc.Call
+	if call, err = c.c(ctx).StartCall(ctx, c.name, "GetAsFloat32", []interface{}{i0}, opts...); err != nil {
 		return
 	}
-	if ierr := call.Finish(&reply, &err); ierr != nil {
+	if ierr := call.Finish(&o0, &err); ierr != nil {
 		err = ierr
 	}
 	return
 }
 
-func (__gen_c *clientStubCache) GetAsFloat64(ctx _gen_context.T, key string, opts ..._gen_ipc.CallOpt) (reply float64, err error) {
-	var call _gen_ipc.Call
-	if call, err = __gen_c.client(ctx).StartCall(ctx, __gen_c.name, "GetAsFloat64", []interface{}{key}, opts...); err != nil {
+func (c implCacheClientStub) GetAsFloat64(ctx __context.T, i0 string, opts ...__ipc.CallOpt) (o0 float64, err error) {
+	var call __ipc.Call
+	if call, err = c.c(ctx).StartCall(ctx, c.name, "GetAsFloat64", []interface{}{i0}, opts...); err != nil {
 		return
 	}
-	if ierr := call.Finish(&reply, &err); ierr != nil {
+	if ierr := call.Finish(&o0, &err); ierr != nil {
 		err = ierr
 	}
 	return
 }
 
-func (__gen_c *clientStubCache) GetAsString(ctx _gen_context.T, key string, opts ..._gen_ipc.CallOpt) (reply string, err error) {
-	var call _gen_ipc.Call
-	if call, err = __gen_c.client(ctx).StartCall(ctx, __gen_c.name, "GetAsString", []interface{}{key}, opts...); err != nil {
+func (c implCacheClientStub) GetAsString(ctx __context.T, i0 string, opts ...__ipc.CallOpt) (o0 string, err error) {
+	var call __ipc.Call
+	if call, err = c.c(ctx).StartCall(ctx, c.name, "GetAsString", []interface{}{i0}, opts...); err != nil {
 		return
 	}
-	if ierr := call.Finish(&reply, &err); ierr != nil {
+	if ierr := call.Finish(&o0, &err); ierr != nil {
 		err = ierr
 	}
 	return
 }
 
-func (__gen_c *clientStubCache) GetAsBool(ctx _gen_context.T, key string, opts ..._gen_ipc.CallOpt) (reply bool, err error) {
-	var call _gen_ipc.Call
-	if call, err = __gen_c.client(ctx).StartCall(ctx, __gen_c.name, "GetAsBool", []interface{}{key}, opts...); err != nil {
+func (c implCacheClientStub) GetAsBool(ctx __context.T, i0 string, opts ...__ipc.CallOpt) (o0 bool, err error) {
+	var call __ipc.Call
+	if call, err = c.c(ctx).StartCall(ctx, c.name, "GetAsBool", []interface{}{i0}, opts...); err != nil {
 		return
 	}
-	if ierr := call.Finish(&reply, &err); ierr != nil {
+	if ierr := call.Finish(&o0, &err); ierr != nil {
 		err = ierr
 	}
 	return
 }
 
-func (__gen_c *clientStubCache) GetAsError(ctx _gen_context.T, key string, opts ..._gen_ipc.CallOpt) (reply error, err error) {
-	var call _gen_ipc.Call
-	if call, err = __gen_c.client(ctx).StartCall(ctx, __gen_c.name, "GetAsError", []interface{}{key}, opts...); err != nil {
+func (c implCacheClientStub) GetAsError(ctx __context.T, i0 string, opts ...__ipc.CallOpt) (o0 error, err error) {
+	var call __ipc.Call
+	if call, err = c.c(ctx).StartCall(ctx, c.name, "GetAsError", []interface{}{i0}, opts...); err != nil {
 		return
 	}
-	if ierr := call.Finish(&reply, &err); ierr != nil {
+	if ierr := call.Finish(&o0, &err); ierr != nil {
 		err = ierr
 	}
 	return
 }
 
-func (__gen_c *clientStubCache) AsMap(ctx _gen_context.T, opts ..._gen_ipc.CallOpt) (reply map[string]_gen_vdlutil.Any, err error) {
-	var call _gen_ipc.Call
-	if call, err = __gen_c.client(ctx).StartCall(ctx, __gen_c.name, "AsMap", nil, opts...); err != nil {
+func (c implCacheClientStub) AsMap(ctx __context.T, opts ...__ipc.CallOpt) (o0 map[string]__vdlutil.Any, err error) {
+	var call __ipc.Call
+	if call, err = c.c(ctx).StartCall(ctx, c.name, "AsMap", nil, opts...); err != nil {
 		return
 	}
-	if ierr := call.Finish(&reply, &err); ierr != nil {
+	if ierr := call.Finish(&o0, &err); ierr != nil {
 		err = ierr
 	}
 	return
 }
 
-func (__gen_c *clientStubCache) KeyValuePairs(ctx _gen_context.T, opts ..._gen_ipc.CallOpt) (reply []KeyValuePair, err error) {
-	var call _gen_ipc.Call
-	if call, err = __gen_c.client(ctx).StartCall(ctx, __gen_c.name, "KeyValuePairs", nil, opts...); err != nil {
+func (c implCacheClientStub) KeyValuePairs(ctx __context.T, opts ...__ipc.CallOpt) (o0 []KeyValuePair, err error) {
+	var call __ipc.Call
+	if call, err = c.c(ctx).StartCall(ctx, c.name, "KeyValuePairs", nil, opts...); err != nil {
 		return
 	}
-	if ierr := call.Finish(&reply, &err); ierr != nil {
+	if ierr := call.Finish(&o0, &err); ierr != nil {
 		err = ierr
 	}
 	return
 }
 
-func (__gen_c *clientStubCache) MostRecentSet(ctx _gen_context.T, opts ..._gen_ipc.CallOpt) (value KeyValuePair, time int64, err error) {
-	var call _gen_ipc.Call
-	if call, err = __gen_c.client(ctx).StartCall(ctx, __gen_c.name, "MostRecentSet", nil, opts...); err != nil {
+func (c implCacheClientStub) MostRecentSet(ctx __context.T, opts ...__ipc.CallOpt) (o0 KeyValuePair, o1 int64, err error) {
+	var call __ipc.Call
+	if call, err = c.c(ctx).StartCall(ctx, c.name, "MostRecentSet", nil, opts...); err != nil {
 		return
 	}
-	if ierr := call.Finish(&value, &time, &err); ierr != nil {
+	if ierr := call.Finish(&o0, &o1, &err); ierr != nil {
 		err = ierr
 	}
 	return
 }
 
-func (__gen_c *clientStubCache) KeyPage(ctx _gen_context.T, index int64, opts ..._gen_ipc.CallOpt) (reply [10]string, err error) {
-	var call _gen_ipc.Call
-	if call, err = __gen_c.client(ctx).StartCall(ctx, __gen_c.name, "KeyPage", []interface{}{index}, opts...); err != nil {
+func (c implCacheClientStub) KeyPage(ctx __context.T, i0 int64, opts ...__ipc.CallOpt) (o0 [10]string, err error) {
+	var call __ipc.Call
+	if call, err = c.c(ctx).StartCall(ctx, c.name, "KeyPage", []interface{}{i0}, opts...); err != nil {
 		return
 	}
-	if ierr := call.Finish(&reply, &err); ierr != nil {
+	if ierr := call.Finish(&o0, &err); ierr != nil {
 		err = ierr
 	}
 	return
 }
 
-func (__gen_c *clientStubCache) Size(ctx _gen_context.T, opts ..._gen_ipc.CallOpt) (reply int64, err error) {
-	var call _gen_ipc.Call
-	if call, err = __gen_c.client(ctx).StartCall(ctx, __gen_c.name, "Size", nil, opts...); err != nil {
+func (c implCacheClientStub) Size(ctx __context.T, opts ...__ipc.CallOpt) (o0 int64, err error) {
+	var call __ipc.Call
+	if call, err = c.c(ctx).StartCall(ctx, c.name, "Size", nil, opts...); err != nil {
 		return
 	}
-	if ierr := call.Finish(&reply, &err); ierr != nil {
+	if ierr := call.Finish(&o0, &err); ierr != nil {
 		err = ierr
 	}
 	return
 }
 
-func (__gen_c *clientStubCache) MultiGet(ctx _gen_context.T, opts ..._gen_ipc.CallOpt) (reply CacheMultiGetCall, err error) {
-	var call _gen_ipc.Call
-	if call, err = __gen_c.client(ctx).StartCall(ctx, __gen_c.name, "MultiGet", nil, opts...); err != nil {
+func (c implCacheClientStub) MultiGet(ctx __context.T, opts ...__ipc.CallOpt) (ocall CacheMultiGetCall, err error) {
+	var call __ipc.Call
+	if call, err = c.c(ctx).StartCall(ctx, c.name, "MultiGet", nil, opts...); err != nil {
 		return
 	}
-	reply = &implCacheMultiGetCall{clientCall: call, writeStream: implCacheMultiGetStreamSender{clientCall: call}, readStream: implCacheMultiGetStreamIterator{clientCall: call}}
+	ocall = &implCacheMultiGetCall{call, implCacheMultiGetClientRecv{call: call}, implCacheMultiGetClientSend{call}}
 	return
 }
 
-func (__gen_c *clientStubCache) UnresolveStep(ctx _gen_context.T, opts ..._gen_ipc.CallOpt) (reply []string, err error) {
-	var call _gen_ipc.Call
-	if call, err = __gen_c.client(ctx).StartCall(ctx, __gen_c.name, "UnresolveStep", nil, opts...); err != nil {
+func (c implCacheClientStub) Signature(ctx __context.T, opts ...__ipc.CallOpt) (o0 __ipc.ServiceSignature, err error) {
+	var call __ipc.Call
+	if call, err = c.c(ctx).StartCall(ctx, c.name, "Signature", nil, opts...); err != nil {
 		return
 	}
-	if ierr := call.Finish(&reply, &err); ierr != nil {
+	if ierr := call.Finish(&o0, &err); ierr != nil {
 		err = ierr
 	}
 	return
 }
 
-func (__gen_c *clientStubCache) Signature(ctx _gen_context.T, opts ..._gen_ipc.CallOpt) (reply _gen_ipc.ServiceSignature, err error) {
-	var call _gen_ipc.Call
-	if call, err = __gen_c.client(ctx).StartCall(ctx, __gen_c.name, "Signature", nil, opts...); err != nil {
+func (c implCacheClientStub) GetMethodTags(ctx __context.T, method string, opts ...__ipc.CallOpt) (o0 []interface{}, err error) {
+	var call __ipc.Call
+	if call, err = c.c(ctx).StartCall(ctx, c.name, "GetMethodTags", []interface{}{method}, opts...); err != nil {
 		return
 	}
-	if ierr := call.Finish(&reply, &err); ierr != nil {
+	if ierr := call.Finish(&o0, &err); ierr != nil {
 		err = ierr
 	}
 	return
 }
 
-func (__gen_c *clientStubCache) GetMethodTags(ctx _gen_context.T, method string, opts ..._gen_ipc.CallOpt) (reply []interface{}, err error) {
-	var call _gen_ipc.Call
-	if call, err = __gen_c.client(ctx).StartCall(ctx, __gen_c.name, "GetMethodTags", []interface{}{method}, opts...); err != nil {
-		return
+// CacheMultiGetClientStream is the client stream for Cache.MultiGet.
+type CacheMultiGetClientStream interface {
+	// RecvStream returns the receiver side of the client stream.
+	RecvStream() interface {
+		// Advance stages an item so that it may be retrieved via Value.  Returns
+		// true iff there is an item to retrieve.  Advance must be called before
+		// Value is called.  May block if an item is not available.
+		Advance() bool
+		// Value returns the item that was staged by Advance.  May panic if Advance
+		// returned false or was not called.  Never blocks.
+		Value() __vdlutil.Any
+		// Err returns any error encountered by Advance.  Never blocks.
+		Err() error
 	}
-	if ierr := call.Finish(&reply, &err); ierr != nil {
+	// SendStream returns the send side of the client stream.
+	SendStream() interface {
+		// Send places the item onto the output stream.  Returns errors encountered
+		// while sending, or if Send is called after Close or Cancel.  Blocks if
+		// there is no buffer space; will unblock when buffer space is available or
+		// after Cancel.
+		Send(item string) error
+		// Close indicates to the server that no more items will be sent; server
+		// Recv calls will receive io.EOF after all sent items.  This is an optional
+		// call - e.g. a client might call Close if it needs to continue receiving
+		// items from the server after it's done sending.  Returns errors
+		// encountered while closing, or if Close is called after Cancel.  Like
+		// Send, blocks if there is no buffer space available.
+		Close() error
+	}
+}
+
+// CacheMultiGetCall represents the call returned from Cache.MultiGet.
+type CacheMultiGetCall interface {
+	CacheMultiGetClientStream
+	// Finish performs the equivalent of SendStream().Close, then blocks until
+	// the server is done, and returns the positional return values for the call.
+	//
+	// Finish returns immediately if Cancel has been called; depending on the
+	// timing the output could either be an error signaling cancelation, or the
+	// valid positional return values from the server.
+	//
+	// Calling Finish is mandatory for releasing stream resources, unless Cancel
+	// has been called or any of the other methods return an error.  Finish should
+	// be called at most once.
+	Finish() error
+	// Cancel cancels the RPC, notifying the server to stop processing.  It is
+	// safe to call Cancel concurrently with any of the other stream methods.
+	// Calling Cancel after Finish has returned is a no-op.
+	Cancel()
+}
+
+type implCacheMultiGetClientRecv struct {
+	call __ipc.Call
+	val  __vdlutil.Any
+	err  error
+}
+
+func (c *implCacheMultiGetClientRecv) Advance() bool {
+	c.val = nil
+	c.err = c.call.Recv(&c.val)
+	return c.err == nil
+}
+func (c *implCacheMultiGetClientRecv) Value() __vdlutil.Any {
+	return c.val
+}
+func (c *implCacheMultiGetClientRecv) Err() error {
+	if c.err == __io.EOF {
+		return nil
+	}
+	return c.err
+}
+
+type implCacheMultiGetClientSend struct {
+	call __ipc.Call
+}
+
+func (c *implCacheMultiGetClientSend) Send(item string) error {
+	return c.call.Send(item)
+}
+func (c *implCacheMultiGetClientSend) Close() error {
+	return c.call.CloseSend()
+}
+
+type implCacheMultiGetCall struct {
+	call __ipc.Call
+	recv implCacheMultiGetClientRecv
+	send implCacheMultiGetClientSend
+}
+
+func (c *implCacheMultiGetCall) RecvStream() interface {
+	Advance() bool
+	Value() __vdlutil.Any
+	Err() error
+} {
+	return &c.recv
+}
+func (c *implCacheMultiGetCall) SendStream() interface {
+	Send(item string) error
+	Close() error
+} {
+	return &c.send
+}
+func (c *implCacheMultiGetCall) Finish() (err error) {
+	if ierr := c.call.Finish(&err); ierr != nil {
 		err = ierr
 	}
 	return
 }
-
-// ServerStubCache wraps a server that implements
-// CacheService and provides an object that satisfies
-// the requirements of veyron2/ipc.ReflectInvoker.
-type ServerStubCache struct {
-	service CacheService
-	gs      *_gen_ipc.GlobState
+func (c *implCacheMultiGetCall) Cancel() {
+	c.call.Cancel()
 }
 
-func (__gen_s *ServerStubCache) GetMethodTags(call _gen_ipc.ServerCall, method string) ([]interface{}, error) {
-	// TODO(bprosnitz) GetMethodTags() will be replaces with Signature().
-	// Note: This exhibits some weird behavior like returning a nil error if the method isn't found.
-	// This will change when it is replaced with Signature().
+// CacheServerMethods is the interface a server writer
+// implements for Cache.
+//
+// A Cache service mimics the memcache interface.
+type CacheServerMethods interface {
+	// Set sets a value for a key.
+	Set(ctx __ipc.ServerContext, key string, value __vdlutil.Any) error
+	// Get returns the value for a key.  If the value is not found, returns
+	// a not found error.
+	Get(ctx __ipc.ServerContext, key string) (__vdlutil.Any, error)
+	// Same as Get, but casts the return argument to an byte.
+	GetAsByte(ctx __ipc.ServerContext, key string) (byte, error)
+	// Same as Get, but casts the return argument to an int32.
+	GetAsInt32(ctx __ipc.ServerContext, key string) (int32, error)
+	// Same as Get, but casts the return argument to an int64.
+	GetAsInt64(ctx __ipc.ServerContext, key string) (int64, error)
+	// Same as Get, but casts the return argument to an uint32.
+	GetAsUint32(ctx __ipc.ServerContext, key string) (uint32, error)
+	// Same as Get, but casts the return argument to an uint64.
+	GetAsUint64(ctx __ipc.ServerContext, key string) (uint64, error)
+	// Same as Get, but casts the return argument to an float32.
+	GetAsFloat32(ctx __ipc.ServerContext, key string) (float32, error)
+	// Same as Get, but casts the return argument to an float64.
+	GetAsFloat64(ctx __ipc.ServerContext, key string) (float64, error)
+	// Same as Get, but casts the return argument to a string.
+	GetAsString(ctx __ipc.ServerContext, key string) (string, error)
+	// Same as Get, but casts the return argument to a bool.
+	GetAsBool(ctx __ipc.ServerContext, key string) (bool, error)
+	// Same as Get, but casts the return argument to an error.
+	GetAsError(ctx __ipc.ServerContext, key string) (error, error)
+	// AsMap returns the full contents of the cache as a map.
+	AsMap(__ipc.ServerContext) (map[string]__vdlutil.Any, error)
+	// KeyValuePairs returns the full contents of the cache as a slice of pairs.
+	KeyValuePairs(__ipc.ServerContext) ([]KeyValuePair, error)
+	// MostRecentSet returns the key and value and the timestamp for the most
+	// recent set operation
+	// TODO(bprosnitz) support type types and change time to native time type
+	MostRecentSet(__ipc.ServerContext) (value KeyValuePair, time int64, err error)
+	// KeyPage indexes into the keys (in alphanumerically sorted order) and
+	// returns the indexth page of 10 keys.
+	KeyPage(ctx __ipc.ServerContext, index int64) ([10]string, error)
+	// Size returns the total number of entries in the cache.
+	Size(__ipc.ServerContext) (int64, error)
+	// MultiGet sets up a stream that allows fetching multiple keys.
+	MultiGet(CacheMultiGetContext) error
+}
+
+// CacheServerStubMethods is the server interface containing
+// Cache methods, as expected by ipc.Server.  The difference between
+// this interface and CacheServerMethods is that the first context
+// argument for each method is always ipc.ServerCall here, while it is either
+// ipc.ServerContext or a typed streaming context there.
+type CacheServerStubMethods interface {
+	// Set sets a value for a key.
+	Set(call __ipc.ServerCall, key string, value __vdlutil.Any) error
+	// Get returns the value for a key.  If the value is not found, returns
+	// a not found error.
+	Get(call __ipc.ServerCall, key string) (__vdlutil.Any, error)
+	// Same as Get, but casts the return argument to an byte.
+	GetAsByte(call __ipc.ServerCall, key string) (byte, error)
+	// Same as Get, but casts the return argument to an int32.
+	GetAsInt32(call __ipc.ServerCall, key string) (int32, error)
+	// Same as Get, but casts the return argument to an int64.
+	GetAsInt64(call __ipc.ServerCall, key string) (int64, error)
+	// Same as Get, but casts the return argument to an uint32.
+	GetAsUint32(call __ipc.ServerCall, key string) (uint32, error)
+	// Same as Get, but casts the return argument to an uint64.
+	GetAsUint64(call __ipc.ServerCall, key string) (uint64, error)
+	// Same as Get, but casts the return argument to an float32.
+	GetAsFloat32(call __ipc.ServerCall, key string) (float32, error)
+	// Same as Get, but casts the return argument to an float64.
+	GetAsFloat64(call __ipc.ServerCall, key string) (float64, error)
+	// Same as Get, but casts the return argument to a string.
+	GetAsString(call __ipc.ServerCall, key string) (string, error)
+	// Same as Get, but casts the return argument to a bool.
+	GetAsBool(call __ipc.ServerCall, key string) (bool, error)
+	// Same as Get, but casts the return argument to an error.
+	GetAsError(call __ipc.ServerCall, key string) (error, error)
+	// AsMap returns the full contents of the cache as a map.
+	AsMap(__ipc.ServerCall) (map[string]__vdlutil.Any, error)
+	// KeyValuePairs returns the full contents of the cache as a slice of pairs.
+	KeyValuePairs(__ipc.ServerCall) ([]KeyValuePair, error)
+	// MostRecentSet returns the key and value and the timestamp for the most
+	// recent set operation
+	// TODO(bprosnitz) support type types and change time to native time type
+	MostRecentSet(__ipc.ServerCall) (value KeyValuePair, time int64, err error)
+	// KeyPage indexes into the keys (in alphanumerically sorted order) and
+	// returns the indexth page of 10 keys.
+	KeyPage(call __ipc.ServerCall, index int64) ([10]string, error)
+	// Size returns the total number of entries in the cache.
+	Size(__ipc.ServerCall) (int64, error)
+	// MultiGet sets up a stream that allows fetching multiple keys.
+	MultiGet(__ipc.ServerCall) error
+}
+
+// CacheServerStub adds universal methods to CacheServerStubMethods.
+type CacheServerStub interface {
+	CacheServerStubMethods
+	// GetMethodTags will be replaced with DescribeInterfaces.
+	GetMethodTags(call __ipc.ServerCall, method string) ([]interface{}, error)
+	// Signature will be replaced with DescribeInterfaces.
+	Signature(call __ipc.ServerCall) (__ipc.ServiceSignature, error)
+}
+
+// CacheServer returns a server stub for Cache.
+// It converts an implementation of CacheServerMethods into
+// an object that may be used by ipc.Server.
+func CacheServer(impl CacheServerMethods) CacheServerStub {
+	stub := implCacheServerStub{
+		impl: impl,
+	}
+	// Initialize GlobState; always check the stub itself first, to handle the
+	// case where the user has the Glob method defined in their VDL source.
+	if gs := __ipc.NewGlobState(stub); gs != nil {
+		stub.gs = gs
+	} else if gs := __ipc.NewGlobState(impl); gs != nil {
+		stub.gs = gs
+	}
+	return stub
+}
+
+type implCacheServerStub struct {
+	impl CacheServerMethods
+	gs   *__ipc.GlobState
+}
+
+func (s implCacheServerStub) Set(call __ipc.ServerCall, i0 string, i1 __vdlutil.Any) error {
+	return s.impl.Set(call, i0, i1)
+}
+
+func (s implCacheServerStub) Get(call __ipc.ServerCall, i0 string) (__vdlutil.Any, error) {
+	return s.impl.Get(call, i0)
+}
+
+func (s implCacheServerStub) GetAsByte(call __ipc.ServerCall, i0 string) (byte, error) {
+	return s.impl.GetAsByte(call, i0)
+}
+
+func (s implCacheServerStub) GetAsInt32(call __ipc.ServerCall, i0 string) (int32, error) {
+	return s.impl.GetAsInt32(call, i0)
+}
+
+func (s implCacheServerStub) GetAsInt64(call __ipc.ServerCall, i0 string) (int64, error) {
+	return s.impl.GetAsInt64(call, i0)
+}
+
+func (s implCacheServerStub) GetAsUint32(call __ipc.ServerCall, i0 string) (uint32, error) {
+	return s.impl.GetAsUint32(call, i0)
+}
+
+func (s implCacheServerStub) GetAsUint64(call __ipc.ServerCall, i0 string) (uint64, error) {
+	return s.impl.GetAsUint64(call, i0)
+}
+
+func (s implCacheServerStub) GetAsFloat32(call __ipc.ServerCall, i0 string) (float32, error) {
+	return s.impl.GetAsFloat32(call, i0)
+}
+
+func (s implCacheServerStub) GetAsFloat64(call __ipc.ServerCall, i0 string) (float64, error) {
+	return s.impl.GetAsFloat64(call, i0)
+}
+
+func (s implCacheServerStub) GetAsString(call __ipc.ServerCall, i0 string) (string, error) {
+	return s.impl.GetAsString(call, i0)
+}
+
+func (s implCacheServerStub) GetAsBool(call __ipc.ServerCall, i0 string) (bool, error) {
+	return s.impl.GetAsBool(call, i0)
+}
+
+func (s implCacheServerStub) GetAsError(call __ipc.ServerCall, i0 string) (error, error) {
+	return s.impl.GetAsError(call, i0)
+}
+
+func (s implCacheServerStub) AsMap(call __ipc.ServerCall) (map[string]__vdlutil.Any, error) {
+	return s.impl.AsMap(call)
+}
+
+func (s implCacheServerStub) KeyValuePairs(call __ipc.ServerCall) ([]KeyValuePair, error) {
+	return s.impl.KeyValuePairs(call)
+}
+
+func (s implCacheServerStub) MostRecentSet(call __ipc.ServerCall) (KeyValuePair, int64, error) {
+	return s.impl.MostRecentSet(call)
+}
+
+func (s implCacheServerStub) KeyPage(call __ipc.ServerCall, i0 int64) ([10]string, error) {
+	return s.impl.KeyPage(call, i0)
+}
+
+func (s implCacheServerStub) Size(call __ipc.ServerCall) (int64, error) {
+	return s.impl.Size(call)
+}
+
+func (s implCacheServerStub) MultiGet(call __ipc.ServerCall) error {
+	ctx := &implCacheMultiGetContext{call, implCacheMultiGetServerRecv{call: call}, implCacheMultiGetServerSend{call}}
+	return s.impl.MultiGet(ctx)
+}
+
+func (s implCacheServerStub) VGlob() *__ipc.GlobState {
+	return s.gs
+}
+
+func (s implCacheServerStub) GetMethodTags(call __ipc.ServerCall, method string) ([]interface{}, error) {
+	// TODO(toddw): Replace with new DescribeInterfaces implementation.
 	switch method {
 	case "Set":
 		return []interface{}{}, nil
@@ -691,284 +677,248 @@ func (__gen_s *ServerStubCache) GetMethodTags(call _gen_ipc.ServerCall, method s
 	}
 }
 
-func (__gen_s *ServerStubCache) Signature(call _gen_ipc.ServerCall) (_gen_ipc.ServiceSignature, error) {
-	result := _gen_ipc.ServiceSignature{Methods: make(map[string]_gen_ipc.MethodSignature)}
-	result.Methods["AsMap"] = _gen_ipc.MethodSignature{
-		InArgs: []_gen_ipc.MethodArgument{},
-		OutArgs: []_gen_ipc.MethodArgument{
+func (s implCacheServerStub) Signature(call __ipc.ServerCall) (__ipc.ServiceSignature, error) {
+	// TODO(toddw) Replace with new DescribeInterfaces implementation.
+	result := __ipc.ServiceSignature{Methods: make(map[string]__ipc.MethodSignature)}
+	result.Methods["AsMap"] = __ipc.MethodSignature{
+		InArgs: []__ipc.MethodArgument{},
+		OutArgs: []__ipc.MethodArgument{
 			{Name: "", Type: 68},
 			{Name: "", Type: 66},
 		},
 	}
-	result.Methods["Get"] = _gen_ipc.MethodSignature{
-		InArgs: []_gen_ipc.MethodArgument{
+	result.Methods["Get"] = __ipc.MethodSignature{
+		InArgs: []__ipc.MethodArgument{
 			{Name: "key", Type: 3},
 		},
-		OutArgs: []_gen_ipc.MethodArgument{
+		OutArgs: []__ipc.MethodArgument{
 			{Name: "", Type: 65},
 			{Name: "", Type: 66},
 		},
 	}
-	result.Methods["GetAsBool"] = _gen_ipc.MethodSignature{
-		InArgs: []_gen_ipc.MethodArgument{
+	result.Methods["GetAsBool"] = __ipc.MethodSignature{
+		InArgs: []__ipc.MethodArgument{
 			{Name: "key", Type: 3},
 		},
-		OutArgs: []_gen_ipc.MethodArgument{
+		OutArgs: []__ipc.MethodArgument{
 			{Name: "", Type: 2},
 			{Name: "", Type: 66},
 		},
 	}
-	result.Methods["GetAsByte"] = _gen_ipc.MethodSignature{
-		InArgs: []_gen_ipc.MethodArgument{
+	result.Methods["GetAsByte"] = __ipc.MethodSignature{
+		InArgs: []__ipc.MethodArgument{
 			{Name: "key", Type: 3},
 		},
-		OutArgs: []_gen_ipc.MethodArgument{
+		OutArgs: []__ipc.MethodArgument{
 			{Name: "", Type: 67},
 			{Name: "", Type: 66},
 		},
 	}
-	result.Methods["GetAsError"] = _gen_ipc.MethodSignature{
-		InArgs: []_gen_ipc.MethodArgument{
+	result.Methods["GetAsError"] = __ipc.MethodSignature{
+		InArgs: []__ipc.MethodArgument{
 			{Name: "key", Type: 3},
 		},
-		OutArgs: []_gen_ipc.MethodArgument{
+		OutArgs: []__ipc.MethodArgument{
 			{Name: "", Type: 66},
 			{Name: "", Type: 66},
 		},
 	}
-	result.Methods["GetAsFloat32"] = _gen_ipc.MethodSignature{
-		InArgs: []_gen_ipc.MethodArgument{
+	result.Methods["GetAsFloat32"] = __ipc.MethodSignature{
+		InArgs: []__ipc.MethodArgument{
 			{Name: "key", Type: 3},
 		},
-		OutArgs: []_gen_ipc.MethodArgument{
+		OutArgs: []__ipc.MethodArgument{
 			{Name: "", Type: 25},
 			{Name: "", Type: 66},
 		},
 	}
-	result.Methods["GetAsFloat64"] = _gen_ipc.MethodSignature{
-		InArgs: []_gen_ipc.MethodArgument{
+	result.Methods["GetAsFloat64"] = __ipc.MethodSignature{
+		InArgs: []__ipc.MethodArgument{
 			{Name: "key", Type: 3},
 		},
-		OutArgs: []_gen_ipc.MethodArgument{
+		OutArgs: []__ipc.MethodArgument{
 			{Name: "", Type: 26},
 			{Name: "", Type: 66},
 		},
 	}
-	result.Methods["GetAsInt32"] = _gen_ipc.MethodSignature{
-		InArgs: []_gen_ipc.MethodArgument{
+	result.Methods["GetAsInt32"] = __ipc.MethodSignature{
+		InArgs: []__ipc.MethodArgument{
 			{Name: "key", Type: 3},
 		},
-		OutArgs: []_gen_ipc.MethodArgument{
+		OutArgs: []__ipc.MethodArgument{
 			{Name: "", Type: 36},
 			{Name: "", Type: 66},
 		},
 	}
-	result.Methods["GetAsInt64"] = _gen_ipc.MethodSignature{
-		InArgs: []_gen_ipc.MethodArgument{
+	result.Methods["GetAsInt64"] = __ipc.MethodSignature{
+		InArgs: []__ipc.MethodArgument{
 			{Name: "key", Type: 3},
 		},
-		OutArgs: []_gen_ipc.MethodArgument{
+		OutArgs: []__ipc.MethodArgument{
 			{Name: "", Type: 37},
 			{Name: "", Type: 66},
 		},
 	}
-	result.Methods["GetAsString"] = _gen_ipc.MethodSignature{
-		InArgs: []_gen_ipc.MethodArgument{
+	result.Methods["GetAsString"] = __ipc.MethodSignature{
+		InArgs: []__ipc.MethodArgument{
 			{Name: "key", Type: 3},
 		},
-		OutArgs: []_gen_ipc.MethodArgument{
+		OutArgs: []__ipc.MethodArgument{
 			{Name: "", Type: 3},
 			{Name: "", Type: 66},
 		},
 	}
-	result.Methods["GetAsUint32"] = _gen_ipc.MethodSignature{
-		InArgs: []_gen_ipc.MethodArgument{
+	result.Methods["GetAsUint32"] = __ipc.MethodSignature{
+		InArgs: []__ipc.MethodArgument{
 			{Name: "key", Type: 3},
 		},
-		OutArgs: []_gen_ipc.MethodArgument{
+		OutArgs: []__ipc.MethodArgument{
 			{Name: "", Type: 52},
 			{Name: "", Type: 66},
 		},
 	}
-	result.Methods["GetAsUint64"] = _gen_ipc.MethodSignature{
-		InArgs: []_gen_ipc.MethodArgument{
+	result.Methods["GetAsUint64"] = __ipc.MethodSignature{
+		InArgs: []__ipc.MethodArgument{
 			{Name: "key", Type: 3},
 		},
-		OutArgs: []_gen_ipc.MethodArgument{
+		OutArgs: []__ipc.MethodArgument{
 			{Name: "", Type: 53},
 			{Name: "", Type: 66},
 		},
 	}
-	result.Methods["KeyPage"] = _gen_ipc.MethodSignature{
-		InArgs: []_gen_ipc.MethodArgument{
+	result.Methods["KeyPage"] = __ipc.MethodSignature{
+		InArgs: []__ipc.MethodArgument{
 			{Name: "index", Type: 37},
 		},
-		OutArgs: []_gen_ipc.MethodArgument{
+		OutArgs: []__ipc.MethodArgument{
 			{Name: "", Type: 71},
 			{Name: "", Type: 66},
 		},
 	}
-	result.Methods["KeyValuePairs"] = _gen_ipc.MethodSignature{
-		InArgs: []_gen_ipc.MethodArgument{},
-		OutArgs: []_gen_ipc.MethodArgument{
+	result.Methods["KeyValuePairs"] = __ipc.MethodSignature{
+		InArgs: []__ipc.MethodArgument{},
+		OutArgs: []__ipc.MethodArgument{
 			{Name: "", Type: 70},
 			{Name: "", Type: 66},
 		},
 	}
-	result.Methods["MostRecentSet"] = _gen_ipc.MethodSignature{
-		InArgs: []_gen_ipc.MethodArgument{},
-		OutArgs: []_gen_ipc.MethodArgument{
+	result.Methods["MostRecentSet"] = __ipc.MethodSignature{
+		InArgs: []__ipc.MethodArgument{},
+		OutArgs: []__ipc.MethodArgument{
 			{Name: "value", Type: 69},
 			{Name: "time", Type: 37},
 			{Name: "err", Type: 66},
 		},
 	}
-	result.Methods["MultiGet"] = _gen_ipc.MethodSignature{
-		InArgs: []_gen_ipc.MethodArgument{},
-		OutArgs: []_gen_ipc.MethodArgument{
+	result.Methods["MultiGet"] = __ipc.MethodSignature{
+		InArgs: []__ipc.MethodArgument{},
+		OutArgs: []__ipc.MethodArgument{
 			{Name: "", Type: 66},
 		},
 		InStream:  3,
 		OutStream: 65,
 	}
-	result.Methods["Set"] = _gen_ipc.MethodSignature{
-		InArgs: []_gen_ipc.MethodArgument{
+	result.Methods["Set"] = __ipc.MethodSignature{
+		InArgs: []__ipc.MethodArgument{
 			{Name: "key", Type: 3},
 			{Name: "value", Type: 65},
 		},
-		OutArgs: []_gen_ipc.MethodArgument{
+		OutArgs: []__ipc.MethodArgument{
 			{Name: "", Type: 66},
 		},
 	}
-	result.Methods["Size"] = _gen_ipc.MethodSignature{
-		InArgs: []_gen_ipc.MethodArgument{},
-		OutArgs: []_gen_ipc.MethodArgument{
+	result.Methods["Size"] = __ipc.MethodSignature{
+		InArgs: []__ipc.MethodArgument{},
+		OutArgs: []__ipc.MethodArgument{
 			{Name: "", Type: 37},
 			{Name: "", Type: 66},
 		},
 	}
 
-	result.TypeDefs = []_gen_vdlutil.Any{
-		_gen_wiretype.NamedPrimitiveType{Type: 0x1, Name: "anydata", Tags: []string(nil)}, _gen_wiretype.NamedPrimitiveType{Type: 0x1, Name: "error", Tags: []string(nil)}, _gen_wiretype.NamedPrimitiveType{Type: 0x32, Name: "byte", Tags: []string(nil)}, _gen_wiretype.MapType{Key: 0x3, Elem: 0x41, Name: "", Tags: []string(nil)}, _gen_wiretype.StructType{
-			[]_gen_wiretype.FieldType{
-				_gen_wiretype.FieldType{Type: 0x3, Name: "Key"},
-				_gen_wiretype.FieldType{Type: 0x41, Name: "Value"},
+	result.TypeDefs = []__vdlutil.Any{
+		__wiretype.NamedPrimitiveType{Type: 0x1, Name: "anydata", Tags: []string(nil)}, __wiretype.NamedPrimitiveType{Type: 0x1, Name: "error", Tags: []string(nil)}, __wiretype.NamedPrimitiveType{Type: 0x32, Name: "byte", Tags: []string(nil)}, __wiretype.MapType{Key: 0x3, Elem: 0x41, Name: "", Tags: []string(nil)}, __wiretype.StructType{
+			[]__wiretype.FieldType{
+				__wiretype.FieldType{Type: 0x3, Name: "Key"},
+				__wiretype.FieldType{Type: 0x41, Name: "Value"},
 			},
 			"test_service.KeyValuePair", []string(nil)},
-		_gen_wiretype.SliceType{Elem: 0x45, Name: "", Tags: []string(nil)}, _gen_wiretype.ArrayType{Elem: 0x3, Len: 0xa, Name: "", Tags: []string(nil)}}
+		__wiretype.SliceType{Elem: 0x45, Name: "", Tags: []string(nil)}, __wiretype.ArrayType{Elem: 0x3, Len: 0xa, Name: "", Tags: []string(nil)}}
 
 	return result, nil
 }
 
-func (__gen_s *ServerStubCache) UnresolveStep(call _gen_ipc.ServerCall) (reply []string, err error) {
-	if unresolver, ok := __gen_s.service.(_gen_ipc.Unresolver); ok {
-		return unresolver.UnresolveStep(call)
+// CacheMultiGetServerStream is the server stream for Cache.MultiGet.
+type CacheMultiGetServerStream interface {
+	// RecvStream returns the receiver side of the server stream.
+	RecvStream() interface {
+		// Advance stages an item so that it may be retrieved via Value.  Returns
+		// true iff there is an item to retrieve.  Advance must be called before
+		// Value is called.  May block if an item is not available.
+		Advance() bool
+		// Value returns the item that was staged by Advance.  May panic if Advance
+		// returned false or was not called.  Never blocks.
+		Value() string
+		// Err returns any error encountered by Advance.  Never blocks.
+		Err() error
 	}
-	if call.Server() == nil {
-		return
+	// SendStream returns the send side of the server stream.
+	SendStream() interface {
+		// Send places the item onto the output stream.  Returns errors encountered
+		// while sending.  Blocks if there is no buffer space; will unblock when
+		// buffer space is available.
+		Send(item __vdlutil.Any) error
 	}
-	var published []string
-	if published, err = call.Server().Published(); err != nil || published == nil {
-		return
+}
+
+// CacheMultiGetContext represents the context passed to Cache.MultiGet.
+type CacheMultiGetContext interface {
+	__ipc.ServerContext
+	CacheMultiGetServerStream
+}
+
+type implCacheMultiGetServerRecv struct {
+	call __ipc.ServerCall
+	val  string
+	err  error
+}
+
+func (s *implCacheMultiGetServerRecv) Advance() bool {
+	s.err = s.call.Recv(&s.val)
+	return s.err == nil
+}
+func (s *implCacheMultiGetServerRecv) Value() string {
+	return s.val
+}
+func (s *implCacheMultiGetServerRecv) Err() error {
+	if s.err == __io.EOF {
+		return nil
 	}
-	reply = make([]string, len(published))
-	for i, p := range published {
-		reply[i] = _gen_naming.Join(p, call.Name())
-	}
-	return
+	return s.err
 }
 
-func (__gen_s *ServerStubCache) VGlob() *_gen_ipc.GlobState {
-	return __gen_s.gs
+type implCacheMultiGetServerSend struct {
+	call __ipc.ServerCall
 }
 
-func (__gen_s *ServerStubCache) Set(call _gen_ipc.ServerCall, key string, value _gen_vdlutil.Any) (err error) {
-	err = __gen_s.service.Set(call, key, value)
-	return
+func (s *implCacheMultiGetServerSend) Send(item __vdlutil.Any) error {
+	return s.call.Send(item)
 }
 
-func (__gen_s *ServerStubCache) Get(call _gen_ipc.ServerCall, key string) (reply _gen_vdlutil.Any, err error) {
-	reply, err = __gen_s.service.Get(call, key)
-	return
+type implCacheMultiGetContext struct {
+	__ipc.ServerContext
+	recv implCacheMultiGetServerRecv
+	send implCacheMultiGetServerSend
 }
 
-func (__gen_s *ServerStubCache) GetAsByte(call _gen_ipc.ServerCall, key string) (reply byte, err error) {
-	reply, err = __gen_s.service.GetAsByte(call, key)
-	return
+func (s *implCacheMultiGetContext) RecvStream() interface {
+	Advance() bool
+	Value() string
+	Err() error
+} {
+	return &s.recv
 }
-
-func (__gen_s *ServerStubCache) GetAsInt32(call _gen_ipc.ServerCall, key string) (reply int32, err error) {
-	reply, err = __gen_s.service.GetAsInt32(call, key)
-	return
-}
-
-func (__gen_s *ServerStubCache) GetAsInt64(call _gen_ipc.ServerCall, key string) (reply int64, err error) {
-	reply, err = __gen_s.service.GetAsInt64(call, key)
-	return
-}
-
-func (__gen_s *ServerStubCache) GetAsUint32(call _gen_ipc.ServerCall, key string) (reply uint32, err error) {
-	reply, err = __gen_s.service.GetAsUint32(call, key)
-	return
-}
-
-func (__gen_s *ServerStubCache) GetAsUint64(call _gen_ipc.ServerCall, key string) (reply uint64, err error) {
-	reply, err = __gen_s.service.GetAsUint64(call, key)
-	return
-}
-
-func (__gen_s *ServerStubCache) GetAsFloat32(call _gen_ipc.ServerCall, key string) (reply float32, err error) {
-	reply, err = __gen_s.service.GetAsFloat32(call, key)
-	return
-}
-
-func (__gen_s *ServerStubCache) GetAsFloat64(call _gen_ipc.ServerCall, key string) (reply float64, err error) {
-	reply, err = __gen_s.service.GetAsFloat64(call, key)
-	return
-}
-
-func (__gen_s *ServerStubCache) GetAsString(call _gen_ipc.ServerCall, key string) (reply string, err error) {
-	reply, err = __gen_s.service.GetAsString(call, key)
-	return
-}
-
-func (__gen_s *ServerStubCache) GetAsBool(call _gen_ipc.ServerCall, key string) (reply bool, err error) {
-	reply, err = __gen_s.service.GetAsBool(call, key)
-	return
-}
-
-func (__gen_s *ServerStubCache) GetAsError(call _gen_ipc.ServerCall, key string) (reply error, err error) {
-	reply, err = __gen_s.service.GetAsError(call, key)
-	return
-}
-
-func (__gen_s *ServerStubCache) AsMap(call _gen_ipc.ServerCall) (reply map[string]_gen_vdlutil.Any, err error) {
-	reply, err = __gen_s.service.AsMap(call)
-	return
-}
-
-func (__gen_s *ServerStubCache) KeyValuePairs(call _gen_ipc.ServerCall) (reply []KeyValuePair, err error) {
-	reply, err = __gen_s.service.KeyValuePairs(call)
-	return
-}
-
-func (__gen_s *ServerStubCache) MostRecentSet(call _gen_ipc.ServerCall) (value KeyValuePair, time int64, err error) {
-	value, time, err = __gen_s.service.MostRecentSet(call)
-	return
-}
-
-func (__gen_s *ServerStubCache) KeyPage(call _gen_ipc.ServerCall, index int64) (reply [10]string, err error) {
-	reply, err = __gen_s.service.KeyPage(call, index)
-	return
-}
-
-func (__gen_s *ServerStubCache) Size(call _gen_ipc.ServerCall) (reply int64, err error) {
-	reply, err = __gen_s.service.Size(call)
-	return
-}
-
-func (__gen_s *ServerStubCache) MultiGet(call _gen_ipc.ServerCall) (err error) {
-	stream := &implCacheServiceMultiGetStream{reader: implCacheServiceMultiGetStreamIterator{serverCall: call}, writer: implCacheServiceMultiGetStreamSender{serverCall: call}}
-	err = __gen_s.service.MultiGet(call, stream)
-	return
+func (s *implCacheMultiGetContext) SendStream() interface {
+	Send(item __vdlutil.Any) error
+} {
+	return &s.send
 }

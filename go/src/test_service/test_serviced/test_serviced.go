@@ -43,9 +43,9 @@ func StartServer(r veyron2.Runtime) (ipc.Server, naming.Endpoint, error) {
 	}
 
 	disp := &testServiceDispatcher{
-		cache:           test_service.NewServerCache(NewCached()),
-		errorThrower:    test_service.NewServerErrorThrower(NewErrorThrower()),
-		cancelCollector: test_service.NewServerCancelCollector(NewCancelCollector()),
+		cache:           test_service.CacheServer(NewCached()),
+		errorThrower:    test_service.ErrorThrowerServer(NewErrorThrower()),
+		cancelCollector: test_service.CancelCollectorServer(NewCancelCollector()),
 	}
 
 	// Create an endpoint and begin listening.

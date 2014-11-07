@@ -22,8 +22,8 @@ type cacheImpl struct {
 	lastUpdateTime time.Time
 }
 
-// NewCached returns a new implementation of the CacheService.
-func NewCached() test_service.CacheService {
+// NewCached returns a new implementation of CacheServerMethods.
+func NewCached() test_service.CacheServerMethods {
 	return &cacheImpl{cache: make(map[string]vdlutil.Any)}
 }
 
@@ -180,17 +180,14 @@ func (c *cacheImpl) Size(ipc.ServerContext) (int64, error) {
 // MultiGet handles a stream of get requests.  Returns an error if one of the
 // keys in the stream is not in the map or if there was an issue reading
 // the stream.
-func (c *cacheImpl) MultiGet(_ ipc.ServerContext, stream test_service.CacheServiceMultiGetStream) error {
-	rStream := stream.RecvStream()
-	sender := stream.SendStream()
-	for rStream.Advance() {
-		key := rStream.Value()
-
+func (c *cacheImpl) MultiGet(ctx test_service.CacheMultiGetContext) error {
+	for ctx.RecvStream().Advance() {
+		key := ctx.RecvStream().Value()
 		value, ok := c.cache[key]
 		if !ok {
 			return fmt.Errorf("key not found: %v", key)
 		}
-		sender.Send(value)
+		ctx.SendStream().Send(value)
 	}
-	return rStream.Err()
+	return ctx.RecvStream().Err()
 }

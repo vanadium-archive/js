@@ -9,8 +9,8 @@ import (
 	"test_service"
 )
 
-// NewCached returns a new implementation of the ErrorThrowerService.
-func NewErrorThrower() test_service.ErrorThrowerService {
+// NewErrorThrower returns a new implementation of ErrorThrowerServerMethods.
+func NewErrorThrower() test_service.ErrorThrowerServerMethods {
 	return &errorThrowerImpl{}
 }
 

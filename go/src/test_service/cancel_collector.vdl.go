@@ -4,116 +4,64 @@
 package test_service
 
 import (
-	// The non-user imports are prefixed with "_gen_" to prevent collisions.
-	_gen_veyron2 "veyron.io/veyron/veyron2"
-	_gen_context "veyron.io/veyron/veyron2/context"
-	_gen_ipc "veyron.io/veyron/veyron2/ipc"
-	_gen_naming "veyron.io/veyron/veyron2/naming"
-	_gen_vdlutil "veyron.io/veyron/veyron2/vdl/vdlutil"
-	_gen_wiretype "veyron.io/veyron/veyron2/wiretype"
+	// The non-user imports are prefixed with "__" to prevent collisions.
+	__veyron2 "veyron.io/veyron/veyron2"
+	__context "veyron.io/veyron/veyron2/context"
+	__ipc "veyron.io/veyron/veyron2/ipc"
+	__vdlutil "veyron.io/veyron/veyron2/vdl/vdlutil"
+	__wiretype "veyron.io/veyron/veyron2/wiretype"
 )
 
 // TODO(toddw): Remove this line once the new signature support is done.
-// It corrects a bug where _gen_wiretype is unused in VDL pacakges where only
+// It corrects a bug where __wiretype is unused in VDL pacakges where only
 // bootstrap types are used on interfaces.
-const _ = _gen_wiretype.TypeIDInvalid
+const _ = __wiretype.TypeIDInvalid
 
+// CancelCollectorClientMethods is the client interface
+// containing CancelCollector methods.
+//
 // CancelCollector is a test interface for use in testing cancellation and deadlines.
-// CancelCollector is the interface the client binds and uses.
-// CancelCollector_ExcludingUniversal is the interface without internal framework-added methods
-// to enable embedding without method collisions.  Not to be used directly by clients.
-type CancelCollector_ExcludingUniversal interface {
+type CancelCollectorClientMethods interface {
 	// A function that never returns, but records the status of the given key.
-	NeverReturn(ctx _gen_context.T, key int64, opts ..._gen_ipc.CallOpt) (err error)
+	NeverReturn(ctx __context.T, key int64, opts ...__ipc.CallOpt) error
 	// Wait for the call with the given key to have the given status.  Possible statuses are:
 	// "running", and, "cancelled".  Returns the number of nanoseconds left on
 	// the deadline of the specified call when the call first began.
-	WaitForStatus(ctx _gen_context.T, key int64, status string, opts ..._gen_ipc.CallOpt) (reply int64, err error)
-}
-type CancelCollector interface {
-	_gen_ipc.UniversalServiceMethods
-	CancelCollector_ExcludingUniversal
+	WaitForStatus(ctx __context.T, key int64, status string, opts ...__ipc.CallOpt) (timeout int64, err error)
 }
 
-// CancelCollectorService is the interface the server implements.
-type CancelCollectorService interface {
-
-	// A function that never returns, but records the status of the given key.
-	NeverReturn(context _gen_ipc.ServerContext, key int64) (err error)
-	// Wait for the call with the given key to have the given status.  Possible statuses are:
-	// "running", and, "cancelled".  Returns the number of nanoseconds left on
-	// the deadline of the specified call when the call first began.
-	WaitForStatus(context _gen_ipc.ServerContext, key int64, status string) (reply int64, err error)
+// CancelCollectorClientStub adds universal methods to CancelCollectorClientMethods.
+type CancelCollectorClientStub interface {
+	CancelCollectorClientMethods
+	__ipc.UniversalServiceMethods
 }
 
-// BindCancelCollector returns the client stub implementing the CancelCollector
-// interface.
-//
-// If no _gen_ipc.Client is specified, the default _gen_ipc.Client in the
-// global Runtime is used.
-func BindCancelCollector(name string, opts ..._gen_ipc.BindOpt) (CancelCollector, error) {
-	var client _gen_ipc.Client
-	switch len(opts) {
-	case 0:
-		// Do nothing.
-	case 1:
-		if clientOpt, ok := opts[0].(_gen_ipc.Client); opts[0] == nil || ok {
+// CancelCollectorClient returns a client stub for CancelCollector.
+func CancelCollectorClient(name string, opts ...__ipc.BindOpt) CancelCollectorClientStub {
+	var client __ipc.Client
+	for _, opt := range opts {
+		if clientOpt, ok := opt.(__ipc.Client); ok {
 			client = clientOpt
-		} else {
-			return nil, _gen_vdlutil.ErrUnrecognizedOption
 		}
-	default:
-		return nil, _gen_vdlutil.ErrTooManyOptionsToBind
 	}
-	stub := &clientStubCancelCollector{defaultClient: client, name: name}
-
-	return stub, nil
+	return implCancelCollectorClientStub{name, client}
 }
 
-// NewServerCancelCollector creates a new server stub.
-//
-// It takes a regular server implementing the CancelCollectorService
-// interface, and returns a new server stub.
-func NewServerCancelCollector(server CancelCollectorService) interface{} {
-	stub := &ServerStubCancelCollector{
-		service: server,
-	}
-	var gs _gen_ipc.GlobState
-	var self interface{} = stub
-	// VAllGlobber is implemented by the server object, which is wrapped in
-	// a VDL generated server stub.
-	if x, ok := self.(_gen_ipc.VAllGlobber); ok {
-		gs.VAllGlobber = x
-	}
-	// VAllGlobber is implemented by the server object without using a VDL
-	// generated stub.
-	if x, ok := server.(_gen_ipc.VAllGlobber); ok {
-		gs.VAllGlobber = x
-	}
-	// VChildrenGlobber is implemented in the server object.
-	if x, ok := server.(_gen_ipc.VChildrenGlobber); ok {
-		gs.VChildrenGlobber = x
-	}
-	stub.gs = &gs
-	return stub
+type implCancelCollectorClientStub struct {
+	name   string
+	client __ipc.Client
 }
 
-// clientStubCancelCollector implements CancelCollector.
-type clientStubCancelCollector struct {
-	defaultClient _gen_ipc.Client
-	name          string
-}
-
-func (__gen_c *clientStubCancelCollector) client(ctx _gen_context.T) _gen_ipc.Client {
-	if __gen_c.defaultClient != nil {
-		return __gen_c.defaultClient
+func (c implCancelCollectorClientStub) c(ctx __context.T) __ipc.Client {
+	if c.client != nil {
+		return c.client
 	}
-	return _gen_veyron2.RuntimeFromContext(ctx).Client()
+	return __veyron2.RuntimeFromContext(ctx).Client()
 }
 
-func (__gen_c *clientStubCancelCollector) NeverReturn(ctx _gen_context.T, key int64, opts ..._gen_ipc.CallOpt) (err error) {
-	var call _gen_ipc.Call
-	if call, err = __gen_c.client(ctx).StartCall(ctx, __gen_c.name, "NeverReturn", []interface{}{key}, opts...); err != nil {
+func (c implCancelCollectorClientStub) NeverReturn(ctx __context.T, i0 int64, opts ...__ipc.CallOpt) (err error) {
+	var call __ipc.Call
+	if call, err = c.c(ctx).StartCall(ctx, c.name, "NeverReturn", []interface{}{i0}, opts...); err != nil {
 		return
 	}
 	if ierr := call.Finish(&err); ierr != nil {
@@ -122,62 +70,111 @@ func (__gen_c *clientStubCancelCollector) NeverReturn(ctx _gen_context.T, key in
 	return
 }
 
-func (__gen_c *clientStubCancelCollector) WaitForStatus(ctx _gen_context.T, key int64, status string, opts ..._gen_ipc.CallOpt) (reply int64, err error) {
-	var call _gen_ipc.Call
-	if call, err = __gen_c.client(ctx).StartCall(ctx, __gen_c.name, "WaitForStatus", []interface{}{key, status}, opts...); err != nil {
+func (c implCancelCollectorClientStub) WaitForStatus(ctx __context.T, i0 int64, i1 string, opts ...__ipc.CallOpt) (o0 int64, err error) {
+	var call __ipc.Call
+	if call, err = c.c(ctx).StartCall(ctx, c.name, "WaitForStatus", []interface{}{i0, i1}, opts...); err != nil {
 		return
 	}
-	if ierr := call.Finish(&reply, &err); ierr != nil {
+	if ierr := call.Finish(&o0, &err); ierr != nil {
 		err = ierr
 	}
 	return
 }
 
-func (__gen_c *clientStubCancelCollector) UnresolveStep(ctx _gen_context.T, opts ..._gen_ipc.CallOpt) (reply []string, err error) {
-	var call _gen_ipc.Call
-	if call, err = __gen_c.client(ctx).StartCall(ctx, __gen_c.name, "UnresolveStep", nil, opts...); err != nil {
+func (c implCancelCollectorClientStub) Signature(ctx __context.T, opts ...__ipc.CallOpt) (o0 __ipc.ServiceSignature, err error) {
+	var call __ipc.Call
+	if call, err = c.c(ctx).StartCall(ctx, c.name, "Signature", nil, opts...); err != nil {
 		return
 	}
-	if ierr := call.Finish(&reply, &err); ierr != nil {
+	if ierr := call.Finish(&o0, &err); ierr != nil {
 		err = ierr
 	}
 	return
 }
 
-func (__gen_c *clientStubCancelCollector) Signature(ctx _gen_context.T, opts ..._gen_ipc.CallOpt) (reply _gen_ipc.ServiceSignature, err error) {
-	var call _gen_ipc.Call
-	if call, err = __gen_c.client(ctx).StartCall(ctx, __gen_c.name, "Signature", nil, opts...); err != nil {
+func (c implCancelCollectorClientStub) GetMethodTags(ctx __context.T, method string, opts ...__ipc.CallOpt) (o0 []interface{}, err error) {
+	var call __ipc.Call
+	if call, err = c.c(ctx).StartCall(ctx, c.name, "GetMethodTags", []interface{}{method}, opts...); err != nil {
 		return
 	}
-	if ierr := call.Finish(&reply, &err); ierr != nil {
+	if ierr := call.Finish(&o0, &err); ierr != nil {
 		err = ierr
 	}
 	return
 }
 
-func (__gen_c *clientStubCancelCollector) GetMethodTags(ctx _gen_context.T, method string, opts ..._gen_ipc.CallOpt) (reply []interface{}, err error) {
-	var call _gen_ipc.Call
-	if call, err = __gen_c.client(ctx).StartCall(ctx, __gen_c.name, "GetMethodTags", []interface{}{method}, opts...); err != nil {
-		return
-	}
-	if ierr := call.Finish(&reply, &err); ierr != nil {
-		err = ierr
-	}
-	return
+// CancelCollectorServerMethods is the interface a server writer
+// implements for CancelCollector.
+//
+// CancelCollector is a test interface for use in testing cancellation and deadlines.
+type CancelCollectorServerMethods interface {
+	// A function that never returns, but records the status of the given key.
+	NeverReturn(ctx __ipc.ServerContext, key int64) error
+	// Wait for the call with the given key to have the given status.  Possible statuses are:
+	// "running", and, "cancelled".  Returns the number of nanoseconds left on
+	// the deadline of the specified call when the call first began.
+	WaitForStatus(ctx __ipc.ServerContext, key int64, status string) (timeout int64, err error)
 }
 
-// ServerStubCancelCollector wraps a server that implements
-// CancelCollectorService and provides an object that satisfies
-// the requirements of veyron2/ipc.ReflectInvoker.
-type ServerStubCancelCollector struct {
-	service CancelCollectorService
-	gs      *_gen_ipc.GlobState
+// CancelCollectorServerStubMethods is the server interface containing
+// CancelCollector methods, as expected by ipc.Server.  The difference between
+// this interface and CancelCollectorServerMethods is that the first context
+// argument for each method is always ipc.ServerCall here, while it is either
+// ipc.ServerContext or a typed streaming context there.
+type CancelCollectorServerStubMethods interface {
+	// A function that never returns, but records the status of the given key.
+	NeverReturn(call __ipc.ServerCall, key int64) error
+	// Wait for the call with the given key to have the given status.  Possible statuses are:
+	// "running", and, "cancelled".  Returns the number of nanoseconds left on
+	// the deadline of the specified call when the call first began.
+	WaitForStatus(call __ipc.ServerCall, key int64, status string) (timeout int64, err error)
 }
 
-func (__gen_s *ServerStubCancelCollector) GetMethodTags(call _gen_ipc.ServerCall, method string) ([]interface{}, error) {
-	// TODO(bprosnitz) GetMethodTags() will be replaces with Signature().
-	// Note: This exhibits some weird behavior like returning a nil error if the method isn't found.
-	// This will change when it is replaced with Signature().
+// CancelCollectorServerStub adds universal methods to CancelCollectorServerStubMethods.
+type CancelCollectorServerStub interface {
+	CancelCollectorServerStubMethods
+	// GetMethodTags will be replaced with DescribeInterfaces.
+	GetMethodTags(call __ipc.ServerCall, method string) ([]interface{}, error)
+	// Signature will be replaced with DescribeInterfaces.
+	Signature(call __ipc.ServerCall) (__ipc.ServiceSignature, error)
+}
+
+// CancelCollectorServer returns a server stub for CancelCollector.
+// It converts an implementation of CancelCollectorServerMethods into
+// an object that may be used by ipc.Server.
+func CancelCollectorServer(impl CancelCollectorServerMethods) CancelCollectorServerStub {
+	stub := implCancelCollectorServerStub{
+		impl: impl,
+	}
+	// Initialize GlobState; always check the stub itself first, to handle the
+	// case where the user has the Glob method defined in their VDL source.
+	if gs := __ipc.NewGlobState(stub); gs != nil {
+		stub.gs = gs
+	} else if gs := __ipc.NewGlobState(impl); gs != nil {
+		stub.gs = gs
+	}
+	return stub
+}
+
+type implCancelCollectorServerStub struct {
+	impl CancelCollectorServerMethods
+	gs   *__ipc.GlobState
+}
+
+func (s implCancelCollectorServerStub) NeverReturn(call __ipc.ServerCall, i0 int64) error {
+	return s.impl.NeverReturn(call, i0)
+}
+
+func (s implCancelCollectorServerStub) WaitForStatus(call __ipc.ServerCall, i0 int64, i1 string) (int64, error) {
+	return s.impl.WaitForStatus(call, i0, i1)
+}
+
+func (s implCancelCollectorServerStub) VGlob() *__ipc.GlobState {
+	return s.gs
+}
+
+func (s implCancelCollectorServerStub) GetMethodTags(call __ipc.ServerCall, method string) ([]interface{}, error) {
+	// TODO(toddw): Replace with new DescribeInterfaces implementation.
 	switch method {
 	case "NeverReturn":
 		return []interface{}{}, nil
@@ -188,61 +185,30 @@ func (__gen_s *ServerStubCancelCollector) GetMethodTags(call _gen_ipc.ServerCall
 	}
 }
 
-func (__gen_s *ServerStubCancelCollector) Signature(call _gen_ipc.ServerCall) (_gen_ipc.ServiceSignature, error) {
-	result := _gen_ipc.ServiceSignature{Methods: make(map[string]_gen_ipc.MethodSignature)}
-	result.Methods["NeverReturn"] = _gen_ipc.MethodSignature{
-		InArgs: []_gen_ipc.MethodArgument{
+func (s implCancelCollectorServerStub) Signature(call __ipc.ServerCall) (__ipc.ServiceSignature, error) {
+	// TODO(toddw) Replace with new DescribeInterfaces implementation.
+	result := __ipc.ServiceSignature{Methods: make(map[string]__ipc.MethodSignature)}
+	result.Methods["NeverReturn"] = __ipc.MethodSignature{
+		InArgs: []__ipc.MethodArgument{
 			{Name: "key", Type: 37},
 		},
-		OutArgs: []_gen_ipc.MethodArgument{
+		OutArgs: []__ipc.MethodArgument{
 			{Name: "", Type: 65},
 		},
 	}
-	result.Methods["WaitForStatus"] = _gen_ipc.MethodSignature{
-		InArgs: []_gen_ipc.MethodArgument{
+	result.Methods["WaitForStatus"] = __ipc.MethodSignature{
+		InArgs: []__ipc.MethodArgument{
 			{Name: "key", Type: 37},
 			{Name: "status", Type: 3},
 		},
-		OutArgs: []_gen_ipc.MethodArgument{
+		OutArgs: []__ipc.MethodArgument{
 			{Name: "timeout", Type: 37},
 			{Name: "err", Type: 65},
 		},
 	}
 
-	result.TypeDefs = []_gen_vdlutil.Any{
-		_gen_wiretype.NamedPrimitiveType{Type: 0x1, Name: "error", Tags: []string(nil)}}
+	result.TypeDefs = []__vdlutil.Any{
+		__wiretype.NamedPrimitiveType{Type: 0x1, Name: "error", Tags: []string(nil)}}
 
 	return result, nil
-}
-
-func (__gen_s *ServerStubCancelCollector) UnresolveStep(call _gen_ipc.ServerCall) (reply []string, err error) {
-	if unresolver, ok := __gen_s.service.(_gen_ipc.Unresolver); ok {
-		return unresolver.UnresolveStep(call)
-	}
-	if call.Server() == nil {
-		return
-	}
-	var published []string
-	if published, err = call.Server().Published(); err != nil || published == nil {
-		return
-	}
-	reply = make([]string, len(published))
-	for i, p := range published {
-		reply[i] = _gen_naming.Join(p, call.Name())
-	}
-	return
-}
-
-func (__gen_s *ServerStubCancelCollector) VGlob() *_gen_ipc.GlobState {
-	return __gen_s.gs
-}
-
-func (__gen_s *ServerStubCancelCollector) NeverReturn(call _gen_ipc.ServerCall, key int64) (err error) {
-	err = __gen_s.service.NeverReturn(call, key)
-	return
-}
-
-func (__gen_s *ServerStubCancelCollector) WaitForStatus(call _gen_ipc.ServerCall, key int64, status string) (reply int64, err error) {
-	reply, err = __gen_s.service.WaitForStatus(call, key, status)
-	return
 }

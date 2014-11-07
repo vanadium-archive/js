@@ -28,8 +28,8 @@ func statusFromString(s string) callStatus {
 	}
 }
 
-// NewCached returns a new implementation of the ErrorThrowerService.
-func NewCancelCollector() test_service.CancelCollectorService {
+// NewCancelCollector returns a new implementation of CancelCollectorServerMethods.
+func NewCancelCollector() test_service.CancelCollectorServerMethods {
 	return &cancelCollectorImpl{
 		infoMap: make(map[int64]*callInfo),
 	}

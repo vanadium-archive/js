@@ -20,16 +20,12 @@ import (
 )
 
 // getCacheClient initializes the runtime and creates a client binding.
-func getCacheClient(address string) (test_service.Cache, error) {
+func getCacheClient(address string) (test_service.CacheClientMethods, error) {
 	rt.Init()
 
 	// Bind to a rooted, terminal name to bypass the MountTable which isn't
 	// actually used, nor needed, in these tests.
-	s, err := test_service.BindCache(naming.JoinAddressName(address, "//cache"))
-	if err != nil {
-		return nil, err
-	}
-
+	s := test_service.CacheClient(naming.JoinAddressName(address, "//cache"))
 	return s, nil
 }
 
@@ -37,12 +33,8 @@ func waitForStatus(r veyron2.Runtime, name string, status string) error {
 	ctx, cancel := r.NewContext().WithTimeout(10 * time.Second)
 	defer cancel()
 
-	stub, err := test_service.BindCancelCollector(name)
-	if err != nil {
-		return err
-	}
-
-	_, err = stub.WaitForStatus(ctx, 1, status)
+	stub := test_service.CancelCollectorClient(name)
+	_, err := stub.WaitForStatus(ctx, 1, status)
 	return err
 }
 
@@ -57,11 +49,7 @@ func TestCancelCollector(t *testing.T) {
 	defer s.Stop()
 
 	name := naming.JoinAddressName(endpoint.String(), "//cancelCollector")
-	stub, err := test_service.BindCancelCollector(name)
-	if err != nil {
-		t.Fatal("failed to bind: ", err)
-	}
-
+	stub := test_service.CancelCollectorClient(name)
 	ctx, cancel := r.NewContext().WithCancel()
 	go stub.NeverReturn(ctx, 1)
 
@@ -194,7 +182,7 @@ func populateObject(ctx context.T, s settable) error {
 }
 
 // setupManyResults starts a server and client and populates the server with the values in populateObject.
-func setupManyResults(t *testing.T) (test_service.Cache, ipc.Server) {
+func setupManyResults(t *testing.T) (test_service.CacheClientMethods, ipc.Server) {
 	r := rt.Init()
 	s, endpoint, err := StartServer(r)
 	if err != nil {
