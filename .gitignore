@@ -3,6 +3,7 @@ dist
 docs
 extension/build
 extension/example/*bundle*
+extension/veyron.crx
 nacl/out
 node_modules
 npm-debug.log

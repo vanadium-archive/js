@@ -101,9 +101,11 @@ validate-chromebin: chromebin-is-set
 nacl/out: nacl/out/wspr.nexe nacl/out/index.html nacl/out/manifest.json nacl/out/wspr.nmf nacl/out/wspr.js
 
 dist/veyron.js: src/veyron.js $(JS_SRC_FILES) $(NODE_MODULES_JS_FILES) | node_modules
+	mkdir -p dist
 	browserify $< $(BROWSERIFY_OPTS) --outfile $@
 
 dist/veyron.min.js: src/veyron.js $(JS_SRC_FILES) $(NODE_MODULES_JS_FILES) | node_modules
+	mkdir -p dist
 	browserify $< $(BROWSERIFY_OPTS) --plugin [ minifyify --map dist/veyron.js.map --output $@.map ] --outfile $@
 
 extension/veyron.crx:
