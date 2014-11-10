@@ -165,9 +165,8 @@ Service.prototype.kill = function() {
 
 function notfound(name) {
   var message = 'Veyron binary not found: ' + name + '\n' +
-      'Please run: \n' +
-      '  veyron go install veyron.io/... \n' +
-      ' path is ' + process.env.PATH;
+      'Please run "make clean" and try again.' +
+      'If problem persists, "make go/bin -B" can force building of binaries.';
 
   return new Error(message);
 }
