@@ -23,14 +23,15 @@ function get(key, callback) {
       return callback(err);
     }
 
-    if (jsonValue === null) {
+    if (jsonValue === null || jsonValue === undefined) {
       return callback(null, null);
     }
 
     try {
       return callback(null, JSON.parse(jsonValue));
     } catch (err) {
-      return callback(err);
+      return callback(new Error('Could not parse value from storage: ' +
+            jsonValue));
     }
   }));
 }

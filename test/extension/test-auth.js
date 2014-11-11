@@ -1,20 +1,22 @@
-var Postie = require('postie');
 var test = require('prova');
 
+var ExtensionEventProxy = require('../../src/proxy/event_proxy').Extension;
 var veyron = require('../../src/veyron');
 
-require('./message-passer');
-
 test('"auth" message gets "auth received" response', function(assert) {
+  var extensionEventProxy = new ExtensionEventProxy();
   assert.plan(1);
 
-  var extPort = new Postie(window.top);
-  extPort.on('auth:received', function() {
+  function handleMsg(msg) {
+    extensionEventProxy.removeListener('auth:received', handleMsg);
+    // Just assert that the callback runs.
     assert.ok(true);
     assert.end();
-  });
+  }
 
-  extPort.post('auth');
+  extensionEventProxy.on('auth:received', handleMsg);
+
+  extensionEventProxy.send('auth');
 });
 
 test('veyron.init({authenticate: true}) will timeout with error',

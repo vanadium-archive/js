@@ -2,6 +2,7 @@
  *  @fileoverview Public Veyron API.
  */
 
+
 var extend = require('xtend');
 var isBrowser = require('is-browser');
 
@@ -95,31 +96,30 @@ function getAccount(authTimeoutMs, cb) {
     return cb(new Error('authenticate=true requires browser environment'));
   }
 
-  var Postie = require('postie');
-  var contentScript = new Postie(window.top);
+  var extensionEventProxy = require('./proxy/event_proxy').Extension();
 
   // Initialized below.
   var timeout, authRequestInterval;
 
   // Runs when the auth request succeeds.
-  function handleAuthSuccess(data) {
+  function onAuthSuccess(data) {
     removeListeners();
     cb(null, data.account);
   }
 
-  function handleAuthError(data) {
+  function onAuthError(data) {
     removeListeners();
     cb(objectToError(data.error));
   }
 
   // Runs when the extension receives the auth request.
-  function handleAuthReceived() {
+  function onAuthReceived() {
     window.clearInterval(authRequestInterval);
   }
 
   // Runs when timeout occurs before getting 'auth:received' message.
-  function handleTimeout() {
-    handleAuthError({error: new Error(
+  function onTimeout() {
+    onAuthError({error: new Error(
         'Auth timeout. Please ensure that the Veyron Chrome Extension is ' +
         'installed and enabled. Download it here: ' +
         'https://github.com/veyron/veyron.js/raw/master/extension/veyron.crx'
@@ -129,24 +129,26 @@ function getAccount(authTimeoutMs, cb) {
   function removeListeners() {
     window.clearInterval(authRequestInterval);
     window.clearTimeout(timeout);
-    contentScript.removeListener('auth:success', handleAuthSuccess);
-    contentScript.removeListener('auth:error', handleAuthError);
+    extensionEventProxy.removeListener('auth:success', onAuthSuccess);
+    extensionEventProxy.removeListener('auth:error', onAuthError);
+    extensionEventProxy.removeListener('auth:received', onAuthReceived);
   }
 
-  contentScript.on('auth:success', handleAuthSuccess);
-  contentScript.on('auth:error', handleAuthError);
-  contentScript.on('auth:received', handleAuthReceived);
+  extensionEventProxy.on('auth:success', onAuthSuccess);
+  extensionEventProxy.on('auth:error', onAuthError);
+  extensionEventProxy.on('auth:received', onAuthReceived);
 
   // Repeatedly ask the extension to auth.  The first time this runs, the
   // extension might not be running yet, so we need to ask in a setInterval.
   authRequestInterval = window.setInterval(function() {
-    contentScript.post('auth');
+    extensionEventProxy.send('auth');
   }, 200);
 
   // Timeout if we don't get an 'auth:received' message before authTimeoutMs
   // milliseconds.
-  timeout = window.setTimeout(handleTimeout, authTimeoutMs);
+  timeout = window.setTimeout(onTimeout, authTimeoutMs);
 }
+
 
 // An error that gets sent via postMessage will be received as a plain Object.
 // This function turns it back into an Error object.

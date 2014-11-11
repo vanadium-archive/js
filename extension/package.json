@@ -10,7 +10,7 @@
   "license": "MIT",
   "dependencies": {
     "debug": "^1.0.4",
-    "domready": "^1.0.5",
+    "domready": "~1.0.7",
     "insert-css": "^0.2.0",
     "lodash": "^2.4.1",
     "mercury": "^8.0.0",
