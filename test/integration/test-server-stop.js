@@ -8,11 +8,11 @@ var dispatcher = leafDispatcher({
 });
 var name = 'my-test/service';
 
-test('server.stop(callback)', function(assert) {
+test('runtime.stop(callback)', function(assert) {
   serve(name, dispatcher, function(err, res) {
     assert.error(err);
 
-    res.server.stop(function(err) {
+    res.runtime.stop(function(err) {
       assert.error(err);
 
       res.service.foo(function(err, result) {
@@ -23,11 +23,11 @@ test('server.stop(callback)', function(assert) {
   });
 });
 
-test('var promise = server.stop()', function(assert) {
+test('var promise = runtime.stop()', function(assert) {
   serve(name, dispatcher, function(err, res) {
     assert.error(err);
 
-    res.server.stop()
+    res.runtime.stop()
     .then(function() {
       return res.service.foo();
     })
@@ -77,13 +77,13 @@ test('var promise = server.stop()', function(assert) {
 //   })
 // })
 
-test('var promise = server.stop() - re-serve', function(assert) {
+test('var promise = runtime.stop() - re-serve', function(assert) {
   serve(name, dispatcher, function(err, res) {
     assert.error(err);
 
-    res.server.stop()
+    res.runtime.stop()
     .then(function() {
-      return res.server.serve(name, dispatcher);
+      return res.runtime.serveDispatcher(name, dispatcher);
     })
     .then(function() {
       return res.runtime.bindTo(name);
@@ -102,14 +102,14 @@ test('var promise = server.stop() - re-serve', function(assert) {
   });
 });
 
-test('server.stop() - called twice', function(assert) {
+test('runtime.stop() - called twice', function(assert) {
   serve(name, dispatcher, function(err, res) {
     assert.error(err);
 
-    res.server.stop(function(err) {
+    res.runtime.stop(function(err) {
       assert.error(err);
 
-      res.server.stop(function(err) {
+      res.runtime.stop(function(err) {
         assert.error(err);
         res.end(assert);
       });

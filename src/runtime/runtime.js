@@ -86,36 +86,50 @@ Runtime.prototype.close = function(cb) {
 };
 
 /**
- * A Veyron server allows registration of services that can be
- * invoked remotely via RPCs.
- *
- * Usage:
- * var videoService = {
- *   play: function(videoName) {
- *     // Play video
- *   }
- * };
- *
- * var service = runtime.serve('mymedia/video', videoService)
- *
- * @param {string} name Name to serve under
- * @param {Object} serviceObject service object to serve
- * @param {*} serviceMetadata if provided a set of metadata for functions
- * in the service (such as number of return values).  It could either be
- * passed in as a properties object or a string that is the name of a
- * service that was defined in the idl files that the server knows about.
- * @param {function} cb if provided, the function will be called on
- * completion. The only argument is an error if there was one.
- * @return {Promise} Promise to be called when serve completes or fails
- * the endpoint address of the server will be returned as the value of promise
+ * Calls serve on the default server instance.
+ * @see server#serve
  */
-Runtime.prototype.serve = function(name, serviceObject, serviceMetadata, cb) {
+Runtime.prototype.serve = function(name, serviceObject, options, cb) {
   var server = this._getServer();
-  return server.serve(name, serviceObject, serviceMetadata, cb);
+  return server.serve(name, serviceObject, options, cb);
+};
+
+
+/**
+ * Calls serveDispatcher on the default server instance.
+ * @see server#serveDispatcher
+ */
+Runtime.prototype.serveDispatcher = function(name, dispatcher, cb) {
+  var server = this._getServer();
+  return server.serveDispatcher(name, dispatcher, cb);
 };
 
 /**
- * addIDL adds an IDL file to the set of definitions known by the server.
+ * Calls addName on the default server instance.
+ * @see server#addName
+ */
+Runtime.prototype.addName = function(name, cb) {
+  return this._getServer().addName(name, cb);
+};
+
+/**
+ * Calls removeName on the default server instance.
+ * @see server#removeName
+ */
+Runtime.prototype.removeName = function(name, cb) {
+  return this._getServer().removeName(name, cb);
+};
+
+/**
+ * Calls stop on the default server instance.
+ * @see server#stop
+ */
+Runtime.prototype.stop = function(cb) {
+  return this._getServer().stop(cb);
+};
+
+/**
+ * Adds an IDL file to the set of definitions known by the server.
  * Services defined in IDL files passed into this method can be used to
  * describe the interface exported by a serviceObject passed into register.
  * @param {object} updates the output of the vdl tool on an idl.
@@ -169,8 +183,8 @@ Runtime.prototype._getServer = function() {
 };
 
 /**
- * Create a new Namespace.
- * @param {string[]} Optional root names.
+ * Creates a new Namespace.
+ * @param {string[]} roots Optional root names.
  * @return {Namespace} A namespace client instance.
  */
 Runtime.prototype.newNamespace = function(roots) {
@@ -182,8 +196,8 @@ Runtime.prototype.newNamespace = function(roots) {
  * TODO(bjornick): This should probably produce a Principal and not Blessings,
  * but we don't have Principal store yet. This is mostly used for tests anyway.
  * Create new Blessings
- * @param {String} extension for the Blessings .
- * @param {function} cb if provided a callback that will be called with the
+ * @param {String} extension Extension for the Blessings .
+ * @param {function} [cb] If provided a callback that will be called with the
  * new Blessings.
  * @return {Promise} A promise that resolves to the new Blessings
  */

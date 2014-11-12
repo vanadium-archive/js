@@ -47,7 +47,7 @@ test('authorizer - errors are properly returned', function(assert) {
 
   function serve(runtime) {
     var dispatcher = createDispatcher(authorizer);
-    return runtime.serve('authorizer', dispatcher).then(function() {
+    return runtime.serveDispatcher('authorizer', dispatcher).then(function() {
       return runtime;
     });
   }
@@ -85,7 +85,7 @@ test('authorizer(ctx, cb) - errors are properly returned', function(assert) {
 
   function serve(runtime) {
     var dispatcher = createDispatcher(authorizer);
-    return runtime.serve('authorizer', dispatcher).then(function() {
+    return runtime.serveDispatcher('authorizer', dispatcher).then(function() {
       return runtime;
     });
   }
@@ -125,7 +125,7 @@ function(assert) {
 
   function serve(runtime) {
     var dispatcher = createDispatcher(authorizer);
-    return runtime.serve('authorizer', dispatcher).then(function() {
+    return runtime.serveDispatcher('authorizer', dispatcher).then(function() {
       return runtime;
     });
   }
@@ -162,7 +162,7 @@ test('authorizer(ctx, cb) - successes are handled', function(assert) {
 
   function serve(runtime) {
     var dispatcher = createDispatcher(authorizer);
-    return runtime.serve('authorizer', dispatcher).then(function() {
+    return runtime.serveDispatcher('authorizer', dispatcher).then(function() {
       return runtime;
     });
   }
@@ -199,7 +199,7 @@ test('var promise = authorizer(ctx) - successes are handled', function(assert) {
 
   function serve(runtime) {
     var dispatcher = createDispatcher(authorizer);
-    return runtime.serve('authorizer', dispatcher).then(function() {
+    return runtime.serveDispatcher('authorizer', dispatcher).then(function() {
       return runtime;
     });
   }
@@ -262,7 +262,7 @@ test('authorizer - validate context', function(assert) {
 
   function serve(runtime) {
     var dispatcher = createDispatcher(authorizer);
-    return runtime.serve('authorizer', dispatcher).then(function(ep) {
+    return runtime.serveDispatcher('authorizer', dispatcher).then(function(ep) {
       endpoint = ep;
       return runtime;
     });
@@ -299,7 +299,7 @@ test('authorizer - passing in labels', function(assert) {
 
   function serve(runtime) {
     var dispatcher = createDispatcher(authorizer, 4.0);
-    return runtime.serve('authorizer', dispatcher).then(function(ep) {
+    return runtime.serveDispatcher('authorizer', dispatcher).then(function(ep) {
       endpoint = ep;
       return runtime;
     });

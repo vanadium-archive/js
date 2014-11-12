@@ -404,8 +404,8 @@ Router.prototype.sendResult = function(messageId, name, value, err, metadata) {
 /**
  * Serves the server under the given name
  * @param {string} name Name to serve under
- * @param {Veyron.Server} The server who will handle the requests for this
- * name.
+ * @param {Veyron.Server} server The server who will handle the requests for
+ * this name.
  * @param {function} [cb] If provided, the function will be called when
  * serve completes.  The first argument passed in is the error if there
  * was any and the second argument is the endpoint.
@@ -424,11 +424,50 @@ Router.prototype.serve = function(name, server, cb) {
 
   var def = new Deferred(cb);
   var message = JSON.stringify(messageJSON);
-  var id = this._proxy.id;
-  this._proxy.id += 2;
-  var handler = new SimpleHandler(def, this._proxy, id);
-  // Send the serve request to the proxy
-  this._proxy.sendRequest(message, MessageType.SERVE, handler, id);
+  this._sendRequest(message, MessageType.SERVE, def);
+
+  return def.promise;
+};
+
+/**
+ * Sends an addName request to jspr.
+ * @param {string} name Name to publish
+ * @param {function} [cb] If provided, the function will be called on
+ * completion. The only argument is an error if there was one.
+ * @return {Promise} Promise to be called when operation completes or fails
+ */
+Router.prototype.addName = function(name, server, cb) {
+  var messageJSON = {
+    name: name,
+    serverId: server.id,
+  };
+
+  var def = new Deferred(cb);
+  var message = JSON.stringify(messageJSON);
+  this._sendRequest(message, MessageType.ADD_NAME, def);
+
+  return def.promise;
+};
+
+/**
+ * Sends an removeName request to jspr.
+ * @param {string} name Name to unpublish
+ * @param {function} [cb] If provided, the function will be called on
+ * completion. The only argument is an error if there was one.
+ * @return {Promise} Promise to be called when operation completes or fails
+ */
+Router.prototype.removeName = function(name, server, cb) {
+  var messageJSON = {
+    name: name,
+    serverId: server.id,
+  };
+
+  // Delete our bind cache entry for that name
+  delete this._proxy.bindCache[name];
+
+  var def = new Deferred(cb);
+  var message = JSON.stringify(messageJSON);
+  this._sendRequest(message, MessageType.REMOVE_NAME, def);
 
   return def.promise;
 };
@@ -436,7 +475,7 @@ Router.prototype.serve = function(name, server, cb) {
 /**
  * Sends a stop server request to jspr.
  * @param {Server} server Server object to stop.
- * @param {function} cb if provided, the function will be called on
+ * @param {function} [cb] If provided, the function will be called on
  * completion. The only argument is an error if there was one.
  * @return {Promise} Promise to be called when stop service completes or fails
  */
@@ -444,16 +483,24 @@ Router.prototype.stopServer = function(server, cb) {
   var self = this;
 
   var def = new Deferred(cb);
-  var id = this._proxy.id;
-  this._proxy.id += 2;
-  var handler = new SimpleHandler(def, this._proxy, id);
-  // Send the stop request to jspr
-  this._proxy.sendRequest(server.id.toString(), MessageType.STOP, handler, id);
+  this._sendRequest(server.id.toString(), MessageType.STOP, def);
 
   return def.promise.then(function(result) {
     delete self._servers[server.id];
     return result;
   });
+};
+
+/**
+ * Sends a request to jspr.
+ * @param {object} message Message to send.
+ * @param {MessageType} type Type of message
+ * @param {Deffered} def Deferred object
+ */
+Router.prototype._sendRequest = function(message, type, def) {
+  var id = this._proxy.nextId();
+  var handler = new SimpleHandler(def, this._proxy, id);
+  this._proxy.sendRequest(message, type, handler, id);
 };
 
 

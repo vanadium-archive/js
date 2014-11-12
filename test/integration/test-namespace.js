@@ -1,7 +1,6 @@
 var test = require('prova');
 var veyron = require('../../');
 var Promise = require('../../src/lib/promise');
-var leafDispatcher = require('../../src/ipc/leaf_dispatcher');
 var port = require('../services/config-wsprd').flags.port;
 var config = {
   wspr: 'http://localhost:' + port
@@ -11,14 +10,6 @@ var namespaceRootAddress = require('../services/config-mounttabled').flags[
 ];
 var PREFIX = 'namespace-testing/';
 
-// TODO(aghassemi) disabled temporary since behaviour depends
-// on being able to serve multiple times.
-// Re-enable when we support addName and removeName in JavaScript API.
-test('Skipped namespace tests', function(t) {
-  t.skip('Re-enable when we support addName and removeName in JavaScript API.');
-  t.end();
-});
-test.skip('Skipped namespace tests', function() {
 test('glob(' + PREFIX + '*)', function(assert) {
   var runtime;
 
@@ -320,8 +311,6 @@ test('setRoots() -> roots() (cb)', function(assert) {
   }
 });
 
-});
-
 /*
  * Given a glob stream, returns a promise that will resolve to an array
  * of glob results after all the results have been collected from the stream.
@@ -349,24 +338,29 @@ function readAllNames(stream) {
 }
 
 var SAMPLE_NAMESPACE = [
-  'namespace-testing/house/alarm',
-  'namespace-testing/house/living-room/lights',
-  'namespace-testing/house/living-room/smoke-detector',
-  'namespace-testing/house/kitchen/lights',
-  'namespace-testing/cottage/alarm',
-  'namespace-testing/cottage/lawn/back/sprinkler',
-  'namespace-testing/cottage/lawn/front/sprinkler',
+  'house/alarm',
+  'house/living-room/lights',
+  'house/living-room/smoke-detector',
+  'house/kitchen/lights',
+  'cottage/alarm',
+  'cottage/lawn/back/sprinkler',
+  'cottage/lawn/front/sprinkler',
 ];
 
 function init(config) {
   var runtime;
-  return veyron.init(config).then(function setupNamespaceSimulation(rt) {
+  return veyron.init(config)
+  .then(function serveEmptyService(rt) {
     runtime = rt;
-    var serveRequests = SAMPLE_NAMESPACE.map(function(name) {
-      return rt.serve(name, leafDispatcher({}));
+    return runtime.serve('', {});
+  })
+  .then(function publishUnderMultipleNames(){
+    var addNamesRequests = SAMPLE_NAMESPACE.map(function(name) {
+      return runtime.addName(PREFIX + name);
     });
-    return Promise.all(serveRequests);
-  }).then(function ready() {
+    return Promise.all(addNamesRequests);
+  })
+  .then(function ready() {
     return runtime;
   });
 }
