@@ -117,26 +117,18 @@ type CancelCollectorServerMethods interface {
 }
 
 // CancelCollectorServerStubMethods is the server interface containing
-// CancelCollector methods, as expected by ipc.Server.  The difference between
-// this interface and CancelCollectorServerMethods is that the first context
-// argument for each method is always ipc.ServerCall here, while it is either
-// ipc.ServerContext or a typed streaming context there.
-type CancelCollectorServerStubMethods interface {
-	// A function that never returns, but records the status of the given key.
-	NeverReturn(call __ipc.ServerCall, key int64) error
-	// Wait for the call with the given key to have the given status.  Possible statuses are:
-	// "running", and, "cancelled".  Returns the number of nanoseconds left on
-	// the deadline of the specified call when the call first began.
-	WaitForStatus(call __ipc.ServerCall, key int64, status string) (timeout int64, err error)
-}
+// CancelCollector methods, as expected by ipc.Server.
+// There is no difference between this interface and CancelCollectorServerMethods
+// since there are no streaming methods.
+type CancelCollectorServerStubMethods CancelCollectorServerMethods
 
 // CancelCollectorServerStub adds universal methods to CancelCollectorServerStubMethods.
 type CancelCollectorServerStub interface {
 	CancelCollectorServerStubMethods
 	// GetMethodTags will be replaced with DescribeInterfaces.
-	GetMethodTags(call __ipc.ServerCall, method string) ([]interface{}, error)
+	GetMethodTags(ctx __ipc.ServerContext, method string) ([]interface{}, error)
 	// Signature will be replaced with DescribeInterfaces.
-	Signature(call __ipc.ServerCall) (__ipc.ServiceSignature, error)
+	Signature(ctx __ipc.ServerContext) (__ipc.ServiceSignature, error)
 }
 
 // CancelCollectorServer returns a server stub for CancelCollector.
@@ -161,19 +153,19 @@ type implCancelCollectorServerStub struct {
 	gs   *__ipc.GlobState
 }
 
-func (s implCancelCollectorServerStub) NeverReturn(call __ipc.ServerCall, i0 int64) error {
-	return s.impl.NeverReturn(call, i0)
+func (s implCancelCollectorServerStub) NeverReturn(ctx __ipc.ServerContext, i0 int64) error {
+	return s.impl.NeverReturn(ctx, i0)
 }
 
-func (s implCancelCollectorServerStub) WaitForStatus(call __ipc.ServerCall, i0 int64, i1 string) (int64, error) {
-	return s.impl.WaitForStatus(call, i0, i1)
+func (s implCancelCollectorServerStub) WaitForStatus(ctx __ipc.ServerContext, i0 int64, i1 string) (int64, error) {
+	return s.impl.WaitForStatus(ctx, i0, i1)
 }
 
 func (s implCancelCollectorServerStub) VGlob() *__ipc.GlobState {
 	return s.gs
 }
 
-func (s implCancelCollectorServerStub) GetMethodTags(call __ipc.ServerCall, method string) ([]interface{}, error) {
+func (s implCancelCollectorServerStub) GetMethodTags(ctx __ipc.ServerContext, method string) ([]interface{}, error) {
 	// TODO(toddw): Replace with new DescribeInterfaces implementation.
 	switch method {
 	case "NeverReturn":
@@ -185,7 +177,7 @@ func (s implCancelCollectorServerStub) GetMethodTags(call __ipc.ServerCall, meth
 	}
 }
 
-func (s implCancelCollectorServerStub) Signature(call __ipc.ServerCall) (__ipc.ServiceSignature, error) {
+func (s implCancelCollectorServerStub) Signature(ctx __ipc.ServerContext) (__ipc.ServiceSignature, error) {
 	// TODO(toddw) Replace with new DescribeInterfaces implementation.
 	result := __ipc.ServiceSignature{Methods: make(map[string]__ipc.MethodSignature)}
 	result.Methods["NeverReturn"] = __ipc.MethodSignature{

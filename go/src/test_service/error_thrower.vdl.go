@@ -248,42 +248,18 @@ type ErrorThrowerServerMethods interface {
 }
 
 // ErrorThrowerServerStubMethods is the server interface containing
-// ErrorThrower methods, as expected by ipc.Server.  The difference between
-// this interface and ErrorThrowerServerMethods is that the first context
-// argument for each method is always ipc.ServerCall here, while it is either
-// ipc.ServerContext or a typed streaming context there.
-type ErrorThrowerServerStubMethods interface {
-	// Throws veyron2/vError.Aborted error
-	ThrowAborted(__ipc.ServerCall) error
-	// Throws veyron2/vError.BadArg error
-	ThrowBadArg(__ipc.ServerCall) error
-	// Throws veyron2/vError.BadProtocol error
-	ThrowBadProtocol(__ipc.ServerCall) error
-	// Throws veyron2/vError.Internal error
-	ThrowInternal(__ipc.ServerCall) error
-	// Throws veyron2/vError.NoAccess error
-	ThrowNoAccess(__ipc.ServerCall) error
-	// Throws veyron2/vError.NoExist error
-	ThrowNoExist(__ipc.ServerCall) error
-	// Throws veyron2/vError.NoExistOrNoAccess error
-	ThrowNoExistOrNoAccess(__ipc.ServerCall) error
-	// Throws veyron2/vError.Unknown error
-	ThrowUnknown(__ipc.ServerCall) error
-	// Throws normal Go error
-	ThrowGoError(__ipc.ServerCall) error
-	// Throws custom error created by using Standard
-	ThrowCustomStandardError(__ipc.ServerCall) error
-	// Lists all errors Ids available in veyron2/verror
-	ListAllBuiltInErrorIDs(__ipc.ServerCall) ([]string, error)
-}
+// ErrorThrower methods, as expected by ipc.Server.
+// There is no difference between this interface and ErrorThrowerServerMethods
+// since there are no streaming methods.
+type ErrorThrowerServerStubMethods ErrorThrowerServerMethods
 
 // ErrorThrowerServerStub adds universal methods to ErrorThrowerServerStubMethods.
 type ErrorThrowerServerStub interface {
 	ErrorThrowerServerStubMethods
 	// GetMethodTags will be replaced with DescribeInterfaces.
-	GetMethodTags(call __ipc.ServerCall, method string) ([]interface{}, error)
+	GetMethodTags(ctx __ipc.ServerContext, method string) ([]interface{}, error)
 	// Signature will be replaced with DescribeInterfaces.
-	Signature(call __ipc.ServerCall) (__ipc.ServiceSignature, error)
+	Signature(ctx __ipc.ServerContext) (__ipc.ServiceSignature, error)
 }
 
 // ErrorThrowerServer returns a server stub for ErrorThrower.
@@ -308,55 +284,55 @@ type implErrorThrowerServerStub struct {
 	gs   *__ipc.GlobState
 }
 
-func (s implErrorThrowerServerStub) ThrowAborted(call __ipc.ServerCall) error {
-	return s.impl.ThrowAborted(call)
+func (s implErrorThrowerServerStub) ThrowAborted(ctx __ipc.ServerContext) error {
+	return s.impl.ThrowAborted(ctx)
 }
 
-func (s implErrorThrowerServerStub) ThrowBadArg(call __ipc.ServerCall) error {
-	return s.impl.ThrowBadArg(call)
+func (s implErrorThrowerServerStub) ThrowBadArg(ctx __ipc.ServerContext) error {
+	return s.impl.ThrowBadArg(ctx)
 }
 
-func (s implErrorThrowerServerStub) ThrowBadProtocol(call __ipc.ServerCall) error {
-	return s.impl.ThrowBadProtocol(call)
+func (s implErrorThrowerServerStub) ThrowBadProtocol(ctx __ipc.ServerContext) error {
+	return s.impl.ThrowBadProtocol(ctx)
 }
 
-func (s implErrorThrowerServerStub) ThrowInternal(call __ipc.ServerCall) error {
-	return s.impl.ThrowInternal(call)
+func (s implErrorThrowerServerStub) ThrowInternal(ctx __ipc.ServerContext) error {
+	return s.impl.ThrowInternal(ctx)
 }
 
-func (s implErrorThrowerServerStub) ThrowNoAccess(call __ipc.ServerCall) error {
-	return s.impl.ThrowNoAccess(call)
+func (s implErrorThrowerServerStub) ThrowNoAccess(ctx __ipc.ServerContext) error {
+	return s.impl.ThrowNoAccess(ctx)
 }
 
-func (s implErrorThrowerServerStub) ThrowNoExist(call __ipc.ServerCall) error {
-	return s.impl.ThrowNoExist(call)
+func (s implErrorThrowerServerStub) ThrowNoExist(ctx __ipc.ServerContext) error {
+	return s.impl.ThrowNoExist(ctx)
 }
 
-func (s implErrorThrowerServerStub) ThrowNoExistOrNoAccess(call __ipc.ServerCall) error {
-	return s.impl.ThrowNoExistOrNoAccess(call)
+func (s implErrorThrowerServerStub) ThrowNoExistOrNoAccess(ctx __ipc.ServerContext) error {
+	return s.impl.ThrowNoExistOrNoAccess(ctx)
 }
 
-func (s implErrorThrowerServerStub) ThrowUnknown(call __ipc.ServerCall) error {
-	return s.impl.ThrowUnknown(call)
+func (s implErrorThrowerServerStub) ThrowUnknown(ctx __ipc.ServerContext) error {
+	return s.impl.ThrowUnknown(ctx)
 }
 
-func (s implErrorThrowerServerStub) ThrowGoError(call __ipc.ServerCall) error {
-	return s.impl.ThrowGoError(call)
+func (s implErrorThrowerServerStub) ThrowGoError(ctx __ipc.ServerContext) error {
+	return s.impl.ThrowGoError(ctx)
 }
 
-func (s implErrorThrowerServerStub) ThrowCustomStandardError(call __ipc.ServerCall) error {
-	return s.impl.ThrowCustomStandardError(call)
+func (s implErrorThrowerServerStub) ThrowCustomStandardError(ctx __ipc.ServerContext) error {
+	return s.impl.ThrowCustomStandardError(ctx)
 }
 
-func (s implErrorThrowerServerStub) ListAllBuiltInErrorIDs(call __ipc.ServerCall) ([]string, error) {
-	return s.impl.ListAllBuiltInErrorIDs(call)
+func (s implErrorThrowerServerStub) ListAllBuiltInErrorIDs(ctx __ipc.ServerContext) ([]string, error) {
+	return s.impl.ListAllBuiltInErrorIDs(ctx)
 }
 
 func (s implErrorThrowerServerStub) VGlob() *__ipc.GlobState {
 	return s.gs
 }
 
-func (s implErrorThrowerServerStub) GetMethodTags(call __ipc.ServerCall, method string) ([]interface{}, error) {
+func (s implErrorThrowerServerStub) GetMethodTags(ctx __ipc.ServerContext, method string) ([]interface{}, error) {
 	// TODO(toddw): Replace with new DescribeInterfaces implementation.
 	switch method {
 	case "ThrowAborted":
@@ -386,7 +362,7 @@ func (s implErrorThrowerServerStub) GetMethodTags(call __ipc.ServerCall, method 
 	}
 }
 
-func (s implErrorThrowerServerStub) Signature(call __ipc.ServerCall) (__ipc.ServiceSignature, error) {
+func (s implErrorThrowerServerStub) Signature(ctx __ipc.ServerContext) (__ipc.ServiceSignature, error) {
 	// TODO(toddw) Replace with new DescribeInterfaces implementation.
 	result := __ipc.ServiceSignature{Methods: make(map[string]__ipc.MethodSignature)}
 	result.Methods["ListAllBuiltInErrorIDs"] = __ipc.MethodSignature{
