@@ -35,7 +35,26 @@ build/js/options.js: lib/background/options.js $(JS_FILES) node_modules
 
 build/js: build/js/background.js build/js/content.js build/js/options.js
 
+build/nacl/main.nmf: nacl/main.nmf
+	mkdir -p build/nacl
+	cp nacl/main.nmf build/nacl
+
+build/nacl/main.nexe: GOROOT :=
+build/nacl/main.nexe: GOARCH := 386
+build/nacl/main.nexe: GOOS := nacl
+build/nacl/main.nexe: nacl/src/main.go
+	"${NACLGOROOT}/bin/go" install ...
+	veyron xgo --target_go=$(NACLGOROOT)/bin/go -novdl 386-nacl build -o $@ $<
+
+build/nacl: build/nacl/main.nmf build/nacl/main.nexe
+
 build: build/html build/images build/manifest.json build/js
+
+# Build the nacl binary and include it in the extension. This task depends on a
+# working go-nacl compiler in NACLGOROOT.
+# TODO(nlacasse): Once more devs have the NACLGOROOT environment, this task
+# should be renamed to just "build'.
+build-with-nacl: build build/nacl
 
 veyron.crx: build
 	./bin/crxmake.sh ./build ./dev-cert.pem veyron
@@ -44,7 +63,18 @@ example-server: example/index.bundle.js
 	static "example" -H '{"Cache-Control": "no-cache, must-revalidate"}'
 
 example/index.bundle.js: example/index.js node_modules
-	browserify $< --transform brfs --debug --plugin [ minifyify --map /index.bundle.js.map --output $@.map ] --outfile $@
+	browserify $< --transform brfs --debug --outfile $@
+
+run-chrome: CHROME_USER_DIR := $(shell mktemp -u -d)
+run-chrome: export CHROME_DEVEL_SANDBOX := $(dir $(CHROME_BIN))/chrome_sandbox
+run-chrome:
+	$(CHROME_BIN) \
+	--disable-restore-session-state --no-default-browser-check --start-maximized --disable-default-apps \
+	--disable-sync --enable-fixed-layout --no-first-run --noerrdialogs \
+	--vmodule=ppb*=4 --enable-logging=stderr --user-data-dir="${CHROME_USER_DIR}" \
+	--allow-nacl-socket-api=* \
+	--load-extension="$(PWD)/build" http://localhost:8080/index.html; \
+	rm -r "${CHROME_USER_DIR}"
 
 lint: node_modules
 	jshint lib/ example/index.js

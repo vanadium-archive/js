@@ -7,13 +7,13 @@
   "dependencies": {
     "bluebird": "^2.3.2",
     "is-browser": "^2.0.1",
-    "postie": "^0.4.5",
     "ws": "~0.4.31",
     "xtend": "^4.0.0",
-    "vom": "0.0.0"
+    "vom": "0.0.0",
+    "eventemitter2": "~0.4.14"
   },
   "devDependencies": {
-    "browserify": "~4.2.1",
+    "browserify": "~6.2.0",
     "child-killer": "~1.0.0",
     "comandante": "0.0.1",
     "debug": "^1.0.4",

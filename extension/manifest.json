@@ -6,8 +6,8 @@
   "icons": { "128": "images/icon_128.png" },
   "options_page": "html/options.html",
   "background": {
-    "persistent": false,
-    "scripts": [ "js/background.js" ]
+    "page": "html/background.html",
+    "persistent": true
   },
   "content_scripts": [{
     "matches": [ "<all_urls>" ],

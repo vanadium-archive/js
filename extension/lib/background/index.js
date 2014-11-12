@@ -1,27 +1,68 @@
 var debug = require('debug')('background:index');
-if (typeof window !== 'undefined') {
-  window.debug = require('debug');
-}
 
 var state = require('../state');
+var Nacl = require('./nacl');
+var nacl = new Nacl();
 var WSPR = require('./wspr');
+
+var ports = {};
+
+function portId(port) {
+  return port.sender.tab.id;
+}
 
 // Start listening connections from content scripts.
 chrome.runtime.onConnect.addListener(contentScriptListener);
 
 // Listen for messages from the content script and dispatch as necessary.
-// Currently the only message we care about is "auth".
 function contentScriptListener(port) {
   port.onMessage.addListener(function(msg){
     debug('background received message from content script.', msg);
+    if (msg.type === 'nacl') {
+      return handleNaclRequest(port, msg.body);
+    }
     if (msg.type === 'auth') {
       return handleAuthRequest(port);
     }
     console.error('unknown message.', msg);
   });
+
+  port.onDisconnect.addListener(function() {
+    delete ports[portId(port)];
+  });
 }
 
+// Start listening for messages from Nacl once the dom is loaded.
+nacl.on('message', naclListener);
+
+// Listens for messages from nacl and sends them back to the port from whence
+// they came.
+function naclListener(e) {
+  var instanceID = e.data.instanceID;
+  var msg = {
+    type: 'nacl',
+    body: e.data.body
+  };
+  var port = ports[instanceID];
+  if (!port) {
+    console.error('Message received not matching instance id: ', instanceID);
+    return;
+  }
+  port.postMessage(msg);
+}
+
+// Handle requests from the page with type 'nacl'.
+function handleNaclRequest(port, body) {
+  var instanceID = portId(port);
+  ports[instanceID] = port;
+  body.instanceID = instanceID;
+  nacl.sendMessage(body);
+}
+
+// Handle requests from the page with type 'auth'.
 function handleAuthRequest(port) {
+  port.postMessage({type: 'auth:received'});
+
   getAuthToken(function(err, token) {
     if (err) {
       return sendError('auth', port, err);
@@ -43,7 +84,9 @@ function handleAuthRequest(port) {
 
       port.postMessage({
         type: 'auth:success',
-        account: account
+        body: {
+          account: account
+        }
       });
     });
   });
@@ -85,7 +128,9 @@ function errorToObject(err) {
 function sendError(type, port, err) {
   port.postMessage({
     type: type + ':error',
-    error: errorToObject(err)
+    body: {
+      error: errorToObject(err)
+    }
   });
 }
 
