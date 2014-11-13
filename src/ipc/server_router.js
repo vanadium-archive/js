@@ -15,6 +15,7 @@ var vError = require('../lib/verror');
 var IdlHelper = require('./../idl/idl');
 var SecurityContext = require('../security/context');
 var ServerContext = require('./server_context');
+var DecodeUtil = require('../lib/decode_util');
 
 /**
  * A router that handles routing incoming requests to the right
@@ -241,6 +242,13 @@ Router.prototype.handleRPCRequest = function(messageId, request) {
         metadata);
   };
   var args = request.args;
+  try {
+   args = DecodeUtil.tryDecode(args);
+  } catch (e) {
+    sendInvocationError(
+      new vError.InternalError('Failed to decode args: ' + e));
+    return;
+  }
 
   var ctx = new ServerContext(request, this._proxy);
   this._contextMap[messageId] = ctx;
