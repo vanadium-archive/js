@@ -154,9 +154,11 @@ test('flushCacheEntry(' + PREFIX + 'house/alarm)', function(assert) {
   var namespace;
   var name = PREFIX + 'house/alarm';
 
-  init(config).then(function resolveSoItGetsCached(rt) {
+  init(config).then(function ensureCachingIsEnabled(rt) {
     runtime = rt;
     namespace = rt.newNamespace();
+    return namespace.disableCache(false);
+  }).then(function resolveSoItGetsCached(rt) {
     return namespace.resolve(name);
   }).then(function flushCacheEntry() {
     return namespace.flushCacheEntry(name);
