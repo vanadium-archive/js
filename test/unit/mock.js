@@ -1,8 +1,10 @@
-
+var vom = require('vom');
 module.exports = mock;
 
 function mock(name) {
   var m;
+  var writer;
+  var encoder;
 
   switch (name) {
   case 'proxy':
@@ -16,10 +18,13 @@ function mock(name) {
           throw new Error('message.isStreaming should be false.');
         }
 
-        handler.handleResponse(0, {
+        writer = new vom.ByteArrayMessageWriter();
+        encoder = new vom.Encoder(writer);
+        encoder.encode({
           methodName: message.method,
           args: message.inArgs
         });
+        handler.handleResponse(0, vom.Util.bytes2Hex(writer.getBytes()));
       },
       dequeue: function() {}
     };
@@ -36,7 +41,6 @@ function mock(name) {
         numOutArgs: 2
       }
     };
-
     break;
   default:
     throw new Error('No mock defined for "' + name + '"');

@@ -17,6 +17,7 @@ var MessageType = require('../proxy/message_type');
 var IncomingPayloadType = require('../proxy/incoming_payload_type');
 var context = require('../runtime/context');
 var constants = require('./constants');
+var DecodeUtil = require('../lib/decode_util');
 
 var OutstandingRPC = function(ctx, options, cb) {
   this._ctx = ctx;
@@ -80,6 +81,13 @@ OutstandingRPC.prototype.handleResponse = function(type, data) {
 };
 
 OutstandingRPC.prototype.handleCompletion = function(data) {
+  try {
+    data = DecodeUtil.tryDecode(data);
+  } catch (e) {
+    this.handleError(
+      new vError.InternalError('Failed to decode result: ' + e));
+      return;
+  }
   if (data.length === 1) {
     data = data[0];
   }
@@ -92,6 +100,14 @@ OutstandingRPC.prototype.handleCompletion = function(data) {
 
 OutstandingRPC.prototype.handleStreamData = function(data) {
   if (this._def.stream) {
+    try {
+      data = DecodeUtil.tryDecode(data);
+    } catch (e) {
+      this.handleError(
+        new vError.InternalError('Failed to decode result: ' + e));
+        return;
+    }
+
     this._def.stream._queueRead(data);
   } else {
     vLog.warn('Ignoring streaming message for non-streaming flow : ' +
@@ -198,11 +214,22 @@ Client.prototype.bindTo = function(ctx, name, optServiceSignature, cb) {
   var promise = def.promise;
 
   serviceSignaturePromise.then(function(serviceSignature) {
+    // If the signature came off the wire, we need to vom decode the bytes.
+    // TODO(bjornick): Move the try-catch to a different function so that
+    // v8 doesn't de-optimize this whole function.
+    if (typeof serviceSignature === 'string') {
+      try {
+        serviceSignature = DecodeUtil.tryDecode(serviceSignature);
+      } catch (e) {
+        def.reject(
+          new vError.InternalError('Failed to decode result: ' + e));
+          return;
+      }
+    }
     vLog.debug('Received signature for:', name, serviceSignature);
     var boundObject = {};
 
-    var bindMethod = function(methodName) {
-      var methodInfo = serviceSignature[methodName];
+    var bindMethod = function(methodName, methodInfo) {
       var numOutParams = methodInfo.numOutArgs;
 
       boundObject[methodName] = function() {
@@ -275,9 +302,15 @@ Client.prototype.bindTo = function(ctx, name, optServiceSignature, cb) {
       };
     };
 
-    for (var methodName in serviceSignature) {
-      if (serviceSignature.hasOwnProperty(methodName)) {
-        bindMethod(methodName);
+    if (serviceSignature instanceof Map) {
+      serviceSignature.forEach(function(value, key) {
+        bindMethod(key, value);
+      });
+    } else {
+      for (var methodName in serviceSignature) {
+        if (serviceSignature.hasOwnProperty(methodName)) {
+          bindMethod(methodName, serviceSignature[methodName]);
+        }
       }
     }
 

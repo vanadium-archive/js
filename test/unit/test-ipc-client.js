@@ -72,8 +72,8 @@ test('service.method() - callback success', function(assert) {
 
   function onmethod(err, result) {
     assert.error(err);
-    assert.equal(result.methodName, 'tripleArgMethod');
-    assert.deepEqual(result.args, [ 3, 'X', null ]);
+    assert.equal(result.get('methodName'), 'tripleArgMethod');
+    assert.deepEqual(result.get('args'), [ 3, 'X', null ]);
     assert.end();
   }
 });
@@ -89,8 +89,8 @@ test('service.method() - promise success', function(assert) {
     return service.singleArgMethod(1);
   })
   .then(function(result) {
-    assert.equal(result.methodName, 'singleArgMethod');
-    assert.deepEqual(result.args, [ 1 ]);
+    assert.equal(result.get('methodName'), 'singleArgMethod');
+    assert.deepEqual(result.get('args'), [ 1 ]);
     assert.end();
   })
   .catch(assert.end);
