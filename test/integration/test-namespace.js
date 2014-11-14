@@ -159,6 +159,11 @@ test('flushCacheEntry(' + PREFIX + 'house/alarm)', function(assert) {
     namespace = rt.newNamespace();
     return namespace.flushCacheEntry(name);
   }).then(function validate() {
+    // We don't check the return result of flushCachEntry since there is no
+    // guarantee that it was in the cache to be flushed in the first place.
+    // Even if we do a resolve() before this step to cache it, it may still get
+    // evicted by the time we call flushCacheEntry for different reasons such as
+    // cache being full, service remounting itself, parent mount-point expiring.
     assert.pass('cache flushed');
     end();
   }).catch(end);
