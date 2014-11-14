@@ -62,9 +62,7 @@ test('proxy.getServiceSignature(name) - stale cache', function(assert) {
     assert.equal(signature.foo, undefined);
 
     Object.keys(knownSignature).forEach(function(key) {
-      assert.ok(signature.hasOwnProperty(key));
-
-      var actual = signature[key];
+      var actual = signature.get(key);
       var expected = knownSignature[key];
 
       assert.deepEqual(actual.inArgs, expected.inArgs);
@@ -92,9 +90,7 @@ test('proxy.getServiceSignature(name) - set cache', function(assert) {
     assert.ok(after >= cache.fetched);
 
     Object.keys(knownSignature).forEach(function(key) {
-      assert.ok(signature.hasOwnProperty(key));
-
-      var actual = signature[key];
+      var actual = signature.get(key);
       var expected = knownSignature[key];
 
       assert.deepEqual(actual.inArgs, expected.inArgs);

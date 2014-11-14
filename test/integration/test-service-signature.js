@@ -44,9 +44,7 @@ test('service.signature([callback])', function(assert) {
     assert.error(err);
 
     Object.keys(knownSignature).forEach(function(key) {
-      assert.ok(signature.hasOwnProperty(key));
-
-      var actual = signature[key];
+      var actual = signature.get(key);
       var expected = knownSignature[key];
 
       assert.deepEqual(actual.inArgs, expected.inArgs);
@@ -71,9 +69,7 @@ test('service.signature() - promise', function(assert) {
   .then(getSignature)
   .then(function(signature) {
     Object.keys(knownSignature).forEach(function(key) {
-      assert.ok(signature.hasOwnProperty(key));
-
-      var actual = signature[key];
+      var actual = signature.get(key);
       var expected = knownSignature[key];
 
       assert.deepEqual(actual.inArgs, expected.inArgs);

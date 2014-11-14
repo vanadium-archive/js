@@ -113,11 +113,7 @@ function run(options) {
     });
 
     t.test('cache.set("myObject", object, callback)', function(t) {
-      var expected = {
-        a: 'foo',
-        b: 2
-      };
-
+      var expected = new Map([['a', 'foo'], ['b', 2]]);
       cache.set('myObject', expected, function(err, result) {
         t.error(err);
 

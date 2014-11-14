@@ -35,7 +35,7 @@ function contains(actual, expected, assert) {
     if (!expected.hasOwnProperty(key)) {
       continue;
     }
-    assert.deepEqual(actual[key], expected[key]);
+    assert.deepEqual(actual.get(key), expected[key]);
   }
 }
 
@@ -114,7 +114,7 @@ test('$context', function(assert) {
         assert.error(err);
 
         // remove the key attribute before comparison
-        delete context.remoteBlessings.key;
+        context.get('remoteBlessings').delete('key');
 
         contains(context, expectedContext, assert);
         res.end(assert);
@@ -135,14 +135,14 @@ test('$context - mixed with normal args', function(assert) {
         assert.error(err);
 
         // remove the key attribute before comparison
-        delete results.context.remoteBlessings.key;
+        results.get('context').get('remoteBlessings').delete('key');
 
         contains(results, {
           a1: '-a-',
           a2: '-b-',
           a3: '-c-'
         }, assert);
-        contains(results.context, expectedContext, assert);
+        contains(results.get('context'), expectedContext, assert);
         res.end(assert);
       });
     });

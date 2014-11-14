@@ -214,18 +214,6 @@ Client.prototype.bindTo = function(ctx, name, optServiceSignature, cb) {
   var promise = def.promise;
 
   serviceSignaturePromise.then(function(serviceSignature) {
-    // If the signature came off the wire, we need to vom decode the bytes.
-    // TODO(bjornick): Move the try-catch to a different function so that
-    // v8 doesn't de-optimize this whole function.
-    if (typeof serviceSignature === 'string') {
-      try {
-        serviceSignature = DecodeUtil.tryDecode(serviceSignature);
-      } catch (e) {
-        def.reject(
-          new vError.InternalError('Failed to decode result: ' + e));
-          return;
-      }
-    }
     vLog.debug('Received signature for:', name, serviceSignature);
     var boundObject = {};
 

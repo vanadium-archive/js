@@ -9,6 +9,8 @@ var Deferred = require('./../lib/deferred');
 var vLog = require('./../lib/vlog');
 var SimpleHandler = require('./simple_handler');
 var context = require('../runtime/context');
+var DecodeUtil = require('../lib/decode_util');
+var vError = require('./../lib/verror');
 
 // Cache the service signatures for one hour.
 var BIND_CACHE_TTL = 3600 * 1000;
@@ -106,7 +108,20 @@ Proxy.prototype.getServiceSignature = function(ctx, name) {
     return deferred.promise;
   }
 
-  deferred.promise.then(function(signature) {
+  var p = deferred.promise.then(function(signature) {
+    // If the signature came off the wire, we need to vom decode the bytes.
+    // TODO(bjornick): Move the try-catch to a different function so that
+    // v8 doesn't de-optimize this whole function.
+    if (typeof signature === 'string') {
+      try {
+        return DecodeUtil.tryDecode(signature);
+      } catch (e) {
+        return Promise.reject(
+          new vError.InternalError('Failed to decode result: ' + e));
+      }
+    }
+  });
+  p.then(function(signature) {
     proxy.bindCache[name] = {
       signature: signature,
       fetched: now()
@@ -121,7 +136,7 @@ Proxy.prototype.getServiceSignature = function(ctx, name) {
   this.cancelFromContext(ctx, id);
   proxy.sendRequest(message, MessageType.SIGNATURE, handler, id);
 
-  return deferred.promise;
+  return p;
 };
 
 
