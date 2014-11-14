@@ -44,7 +44,7 @@ function contentScriptListener(port) {
     if (msg.type === 'auth') {
       return handleAuthRequest(port);
     }
-    if (msg.type == 'assocAccount:finish') {
+    if (msg.type === 'assocAccount:finish') {
       if (port.sender.url.indexOf(chrome.extension.getURL(
           'html/addcaveats.html')) !== 0) {
         console.error('invalid requester for assocAccount:finish');
@@ -88,7 +88,7 @@ function naclListener(e) {
 
 // Handle requests from the page with type 'nacl'.
 function handleNaclRequest(port, body) {
-  body.instanceID = instanceID;
+  body.instanceID = portId(port);
   nacl.sendMessage(body);
 }
 

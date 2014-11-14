@@ -23,7 +23,7 @@ function sendCaveats() {
       });
     }
   }
-  backgroundPort = chrome.runtime.connect();
+  var backgroundPort = chrome.runtime.connect();
   backgroundPort.postMessage({
     type: 'assocAccount:finish',
     webappId: parseInt(params.webappId),
