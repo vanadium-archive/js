@@ -33,7 +33,10 @@ build/js/content.js: lib/content/index.js $(JS_FILES) node_modules
 build/js/options.js: lib/background/options.js $(JS_FILES) node_modules
 	$(call BROWSERIFY,$<,$@)
 
-build/js: build/js/background.js build/js/content.js build/js/options.js
+build/js/addcaveats.js: lib/background/addcaveats.js $(JS_FILES) node_modules
+	$(call BROWSERIFY,$<,$@)
+
+build/js: build/js/background.js build/js/content.js build/js/options.js build/js/addcaveats.js
 
 build/nacl/main.nmf: nacl/main.nmf
 	mkdir -p build/nacl

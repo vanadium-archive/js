@@ -1,0 +1,37 @@
+<!doctype html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>Blessings: Select caveats</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css">
+  <script src="/js/addcaveats.js"></script>
+</head>
+
+<body class="container">
+  <h2 id="header"></h2>
+  <form class="form-horizontal" method="POST" name="input" role="form">
+    <div class="row">
+      <div class="col-md-2">
+        <label>Expiry</label>
+      </div>
+      <div class="col-md-8">
+        <input type="text" id="ExpiryCaveat" class="form-control" placeholder="i.e. 2h45m. Valid time units are ns, us (or µs), ms, s, m, h.">
+      </div>
+    </div>
+    <br/>
+    <div class="row">
+      <div class="col-md-2">
+        <label>Method</label>
+      </div>
+      <div class="col-md-8">
+        <input type="text" id="MethodCaveat" class="form-control" placeholder="Comma-separated method names.">
+      </div>
+    </div>
+    <br/>
+    <button id="submit-caveats" class="btn btn-lg btn-primary btn-block" type="submit">Bless</button>
+  </form>
+</body>
+
+</html>

@@ -3,8 +3,8 @@ var request = require('superagent');
 module.exports = WSPR;
 
 // Module for interacting with the WSPR proxy.
-function WSPR(url){
-  if(!(this instanceof WSPR)){
+function WSPR(url) {
+  if (!(this instanceof WSPR)) {
     return new WSPR();
   }
   this.url = url;
@@ -17,7 +17,9 @@ function WSPR(url){
 WSPR.prototype.createAccount = function(accessToken, callback) {
   var that = this;
   request.post(this.url + '/create-account')
-    .send({ 'access_token': accessToken })
+    .send({
+      'access_token': accessToken
+    })
     .end(function(err, res) {
       if (err) {
         return callback(that.handleNetworkError(err));
@@ -27,8 +29,8 @@ WSPR.prototype.createAccount = function(accessToken, callback) {
       }
       if (!res.body || !res.body.account) {
         return callback(
-            new Error('createAccount got invalid response from WSPR: ' +
-              'missing "account".'));
+          new Error('createAccount got invalid response from WSPR: ' +
+            'missing "account".'));
       }
       // TODO(nlacasse): assert res.body
       callback(null, res.body.account);
@@ -39,12 +41,13 @@ WSPR.prototype.createAccount = function(accessToken, callback) {
 // previously created with createAccount(...).  Input is an account name to use:
 // { account: <account name> }
 // Response will be 200 OK if association is successful.
-WSPR.prototype.assocAccount = function (account, origin, callback) {
+WSPR.prototype.assocAccount = function(account, origin, caveats, callback) {
   var that = this;
   request.post(this.url + '/assoc-account')
     .send({
       account: account,
-      origin: origin
+      origin: origin,
+      caveats: caveats
     }).end(function(err, res) {
       if (err) {
         return callback(that.handleNetworkError(err));
@@ -52,19 +55,9 @@ WSPR.prototype.assocAccount = function (account, origin, callback) {
       if (res.error) {
         return callback(httpResponseToError(res));
       }
+      // TODO(ataly,nlacasse,suharshs): Why do we send account in this callback?
       callback(null, account);
     });
-};
-
-// Helper method that creates the account and associates it with the origin.
-WSPR.prototype.createAndAssocAccount = function(accessToken, origin, callback) {
-  var wspr = this;
-  this.createAccount(accessToken, function(err, account) {
-    if (err) {
-      return callback(err);
-    }
-    wspr.assocAccount(account, origin, callback);
-  });
 };
 
 // Detects if network error was caused by a missing or unresponsive WSPR, and

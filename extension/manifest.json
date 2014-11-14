@@ -3,15 +3,17 @@
   "version": "0.0.1",
   "description": "Access Veyron services from Javascript.",
   "manifest_version": 2,
-  "icons": { "128": "images/icon_128.png" },
+  "icons": {
+    "128": "images/icon_128.png"
+  },
   "options_page": "html/options.html",
   "background": {
     "page": "html/background.html",
     "persistent": true
   },
   "content_scripts": [{
-    "matches": [ "<all_urls>" ],
-    "js": [ "js/content.js" ]
+    "matches": ["<all_urls>"],
+    "js": ["js/content.js"]
   }],
   "permissions": [
     "<all_urls>",
@@ -32,4 +34,3 @@
   },
   "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAyp7mOsWQ+y18ZIpLr2JW+lv3OQECOap75RX8TCvxQKCvCNkq+kt1ibhp3uGHuB/Rf+jqB+vFATm62LvMSwqPiJ6d3KlMnmXmy9NZZTFWZDWTAEu8LUpSQMwSli17B5MhXcUvHXkxu3K0+fp5jkylmo1rrmjPjofB9VfjkubodV/eGLyvsK5c5HpPPAPf1MeV0SbGFG7c43kTJ8DuRkoX8m8lrYA8M8ZdI4Y/rHprfYrA/E2ItryFo6l/dcQ4nBWVgRgUu/OOrX13bXso68+2Cqa1XTjMnNa/yhLK4j4hd2YQzhUokRAoW8YiLc7YsMmgbfLwrhOPP7FWxJRvNwMRmQIDAQAB"
 }
-

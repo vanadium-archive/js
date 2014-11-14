@@ -18,9 +18,9 @@ pageEventProxy.onAny(function(body) {
 });
 
 // Forward any messages from the background page to the webApp.
-backgroundPort.onMessage.addListener(function(msg){
+backgroundPort.onMessage.addListener(function(msg) {
   debug('content script received message of type', msg.type,
-      'from page:', msg.body);
+    'from page:', msg.body);
   pageEventProxy.send(msg.type, msg.body);
 });
 

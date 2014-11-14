@@ -1,4 +1,3 @@
-
 var debug = require('debug')('storage');
 
 module.exports = {
@@ -31,14 +30,14 @@ function get(key, callback) {
       return callback(null, JSON.parse(jsonValue));
     } catch (err) {
       return callback(new Error('Could not parse value from storage: ' +
-            jsonValue));
+        jsonValue));
     }
   }));
 }
 
 // Wrapper for nice callbacks with errors
 function wrap(key, callback) {
-  return function (results){
+  return function(results) {
     var res = results ? results[key] : null;
     var err = chrome.runtime.lastError;
 

@@ -42,7 +42,9 @@ function create(settingsObj) {
   // Store any changes in storage.
   state(sendToStorage);
 
-  return { state: state };
+  return {
+    state: state
+  };
 }
 
 // Hydrate the state varhash with settings from obj.
@@ -62,7 +64,7 @@ function dehydrateState(state) {
 }
 
 // Load the state varhash from storage.
-function loadFromStorage(state){
+function loadFromStorage(state) {
   storage.get('settings', function(err, settings) {
     if (err) {
       console.error(err);

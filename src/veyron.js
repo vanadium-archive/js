@@ -13,7 +13,7 @@ var vlog = require('./lib/vlog');
 var defaults = {
   logLevel: vlog.level,
   authenticate: false,
-  authTimeout: 5000, // ms
+  authTimeout: 30000, // ms
 };
 
 /**
@@ -119,11 +119,13 @@ function getAccount(authTimeoutMs, cb) {
 
   // Runs when timeout occurs before getting 'auth:received' message.
   function onTimeout() {
-    onAuthError({error: new Error(
+    onAuthError({
+      error: new Error(
         'Auth timeout. Please ensure that the Veyron Chrome Extension is ' +
         'installed and enabled. Download it here: ' +
         'https://github.com/veyron/veyron.js/raw/master/extension/veyron.crx'
-    )});
+      )
+    });
   }
 
   function removeListeners() {

@@ -4,8 +4,11 @@ var state = require('../state');
 var Nacl = require('./nacl');
 var nacl = new Nacl();
 var WSPR = require('./wspr');
+var wsprAccount;
 
-var ports = {};
+// Map that stores tabId -> port so communication can be made using existing
+// connections.
+var webappPorts = {};
 
 function portId(port) {
   return port.sender.tab.id;
@@ -14,9 +17,26 @@ function portId(port) {
 // Start listening connections from content scripts.
 chrome.runtime.onConnect.addListener(contentScriptListener);
 
+// TODO(nlacasse): Fix this: This code will run before the settings have had
+// time to load, so state.settings().wspr.value will always be the default.
+var wspr = new WSPR(state.settings().wspr.value);
+
+getAuthToken(function(err, token) {
+  if (err) {
+    return console.error(err);
+  }
+  wspr.createAccount(token, function(err, account) {
+    if (err) {
+      return console.error(err);
+    }
+    wsprAccount = account;
+  });
+});
+
 // Listen for messages from the content script and dispatch as necessary.
 function contentScriptListener(port) {
-  port.onMessage.addListener(function(msg){
+  port.onMessage.addListener(function(msg) {
+    webappPorts[portId(port)] = port;
     debug('background received message from content script.', msg);
     if (msg.type === 'nacl') {
       return handleNaclRequest(port, msg.body);
@@ -24,11 +44,26 @@ function contentScriptListener(port) {
     if (msg.type === 'auth') {
       return handleAuthRequest(port);
     }
+    if (msg.type == 'assocAccount:finish') {
+      if (port.sender.url.indexOf(chrome.extension.getURL(
+          'html/addcaveats.html')) !== 0) {
+        console.error('invalid requester for assocAccount:finish');
+        return;
+      }
+      return handleFinishAuth({
+        webappId: msg.webappId,
+        origin: msg.origin,
+        account: msg.account,
+        caveats: msg.caveats,
+        addCaveatsId: port.sender.tab.id,
+        authState: msg.authState
+      });
+    }
     console.error('unknown message.', msg);
   });
 
   port.onDisconnect.addListener(function() {
-    delete ports[portId(port)];
+    delete webappPorts[portId(port)];
   });
 }
 
@@ -43,7 +78,7 @@ function naclListener(e) {
     type: 'nacl',
     body: e.data.body
   };
-  var port = ports[instanceID];
+  var port = webappPorts[instanceID];
   if (!port) {
     console.error('Message received not matching instance id: ', instanceID);
     return;
@@ -53,48 +88,59 @@ function naclListener(e) {
 
 // Handle requests from the page with type 'nacl'.
 function handleNaclRequest(port, body) {
-  var instanceID = portId(port);
-  ports[instanceID] = port;
   body.instanceID = instanceID;
   nacl.sendMessage(body);
 }
 
 // Handle requests from the page with type 'auth'.
 function handleAuthRequest(port) {
-  port.postMessage({type: 'auth:received'});
+  port.postMessage({
+    type: 'auth:received'
+  });
+  if (wsprAccount.length === 0) {
+    return sendError('auth', port, new Error(
+      'wspr account setup is not complete'));
+  }
 
-  getAuthToken(function(err, token) {
-    if (err) {
-      return sendError('auth', port, err);
-    }
+  var origin;
+  try {
+    origin = getOrigin(port.sender.url);
+  } catch (err) {
+    return sendError('auth', port, err);
+  }
 
-    var origin;
-    try {
-      origin = getOrigin(port.sender.url);
-    } catch (err) {
-      return sendError('auth', port, err);
-    }
+  port.authState = Math.random().toString(16).substring(2);
 
-    var wspr = new WSPR(state.settings().wspr.value);
+  chrome.tabs.create({
+    url: chrome.extension.getURL('html/addcaveats.html') + '?webappId=' +
+      port.sender.tab.id + '&origin=' + encodeURIComponent(origin) +
+      '&authState=' + port.authState
+  });
+}
 
-    wspr.createAndAssocAccount(token, origin, function(err, account) {
+function handleFinishAuth(args) {
+  chrome.tabs.remove(args.addCaveatsId);
+  var webappPort = webappPorts[args.webappId];
+  if (!webappPort || args.authState !== webappPort.authState) {
+    return console.error('port not authorized');
+  }
+  wspr.assocAccount(wsprAccount, args.origin, args.caveats,
+    function(err, account) {
       if (err) {
-        return sendError('auth', port, err);
+        return sendError('auth', webappPort, err);
       }
-
-      port.postMessage({
+      webappPort.postMessage({
         type: 'auth:success',
         body: {
           account: account
         }
       });
     });
-  });
 }
 
 // Get an access token from the chrome.identity API
 // See https://developer.chrome.com/apps/app_identity
-function getAuthToken(callback){
+function getAuthToken(callback) {
   // This will return an access token for the profile that the user is
   // signed in to chrome as.  If the user is not signed in to chrome, an
   // OAuth window will pop up and ask them to sign in.
@@ -103,7 +149,9 @@ function getAuthToken(callback){
   // like to use.  However, once the `chrome.identity.getAccounts` API call
   // gets out of dev/beta channel, we can get a list of accounts and prompt
   // the user for which one they would like to use with veyron.
-  chrome.identity.getAuthToken({ interactive: true }, function(token){
+  chrome.identity.getAuthToken({
+    interactive: true
+  }, function(token) {
     if (chrome.runtime.lastError) {
       console.error('Error getting auth token.', chrome.runtime.lastError);
       return callback(chrome.runtime.lastError);
