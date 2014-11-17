@@ -92,17 +92,6 @@ func (c implCancelCollectorClientStub) Signature(ctx __context.T, opts ...__ipc.
 	return
 }
 
-func (c implCancelCollectorClientStub) GetMethodTags(ctx __context.T, method string, opts ...__ipc.CallOpt) (o0 []interface{}, err error) {
-	var call __ipc.Call
-	if call, err = c.c(ctx).StartCall(ctx, c.name, "GetMethodTags", []interface{}{method}, opts...); err != nil {
-		return
-	}
-	if ierr := call.Finish(&o0, &err); ierr != nil {
-		err = ierr
-	}
-	return
-}
-
 // CancelCollectorServerMethods is the interface a server writer
 // implements for CancelCollector.
 //
@@ -125,9 +114,9 @@ type CancelCollectorServerStubMethods CancelCollectorServerMethods
 // CancelCollectorServerStub adds universal methods to CancelCollectorServerStubMethods.
 type CancelCollectorServerStub interface {
 	CancelCollectorServerStubMethods
-	// GetMethodTags will be replaced with DescribeInterfaces.
-	GetMethodTags(ctx __ipc.ServerContext, method string) ([]interface{}, error)
-	// Signature will be replaced with DescribeInterfaces.
+	// Describe the CancelCollector interfaces.
+	Describe__() []__ipc.InterfaceDesc
+	// Signature will be replaced with Describe__.
 	Signature(ctx __ipc.ServerContext) (__ipc.ServiceSignature, error)
 }
 
@@ -165,20 +154,46 @@ func (s implCancelCollectorServerStub) VGlob() *__ipc.GlobState {
 	return s.gs
 }
 
-func (s implCancelCollectorServerStub) GetMethodTags(ctx __ipc.ServerContext, method string) ([]interface{}, error) {
-	// TODO(toddw): Replace with new DescribeInterfaces implementation.
-	switch method {
-	case "NeverReturn":
-		return []interface{}{}, nil
-	case "WaitForStatus":
-		return []interface{}{}, nil
-	default:
-		return nil, nil
-	}
+func (s implCancelCollectorServerStub) Describe__() []__ipc.InterfaceDesc {
+	return []__ipc.InterfaceDesc{CancelCollectorDesc}
+}
+
+// CancelCollectorDesc describes the CancelCollector interface.
+var CancelCollectorDesc __ipc.InterfaceDesc = descCancelCollector
+
+// descCancelCollector hides the desc to keep godoc clean.
+var descCancelCollector = __ipc.InterfaceDesc{
+	Name:    "CancelCollector",
+	PkgPath: "test_service",
+	Doc:     "// CancelCollector is a test interface for use in testing cancellation and deadlines.",
+	Methods: []__ipc.MethodDesc{
+		{
+			Name: "NeverReturn",
+			Doc:  "// A function that never returns, but records the status of the given key.",
+			InArgs: []__ipc.ArgDesc{
+				{"key", ``}, // int64
+			},
+			OutArgs: []__ipc.ArgDesc{
+				{"", ``}, // error
+			},
+		},
+		{
+			Name: "WaitForStatus",
+			Doc:  "// Wait for the call with the given key to have the given status.  Possible statuses are:\n// \"running\", and, \"cancelled\".  Returns the number of nanoseconds left on\n// the deadline of the specified call when the call first began.",
+			InArgs: []__ipc.ArgDesc{
+				{"key", ``},    // int64
+				{"status", ``}, // string
+			},
+			OutArgs: []__ipc.ArgDesc{
+				{"timeout", ``}, // int64
+				{"err", ``},     // error
+			},
+		},
+	},
 }
 
 func (s implCancelCollectorServerStub) Signature(ctx __ipc.ServerContext) (__ipc.ServiceSignature, error) {
-	// TODO(toddw) Replace with new DescribeInterfaces implementation.
+	// TODO(toddw): Replace with new Describe__ implementation.
 	result := __ipc.ServiceSignature{Methods: make(map[string]__ipc.MethodSignature)}
 	result.Methods["NeverReturn"] = __ipc.MethodSignature{
 		InArgs: []__ipc.MethodArgument{

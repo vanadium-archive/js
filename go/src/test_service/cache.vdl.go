@@ -307,17 +307,6 @@ func (c implCacheClientStub) Signature(ctx __context.T, opts ...__ipc.CallOpt) (
 	return
 }
 
-func (c implCacheClientStub) GetMethodTags(ctx __context.T, method string, opts ...__ipc.CallOpt) (o0 []interface{}, err error) {
-	var call __ipc.Call
-	if call, err = c.c(ctx).StartCall(ctx, c.name, "GetMethodTags", []interface{}{method}, opts...); err != nil {
-		return
-	}
-	if ierr := call.Finish(&o0, &err); ierr != nil {
-		err = ierr
-	}
-	return
-}
-
 // CacheMultiGetClientStream is the client stream for Cache.MultiGet.
 type CacheMultiGetClientStream interface {
 	// RecvStream returns the receiver side of the Cache.MultiGet client stream.
@@ -522,9 +511,9 @@ type CacheServerStubMethods interface {
 // CacheServerStub adds universal methods to CacheServerStubMethods.
 type CacheServerStub interface {
 	CacheServerStubMethods
-	// GetMethodTags will be replaced with DescribeInterfaces.
-	GetMethodTags(ctx __ipc.ServerContext, method string) ([]interface{}, error)
-	// Signature will be replaced with DescribeInterfaces.
+	// Describe the Cache interfaces.
+	Describe__() []__ipc.InterfaceDesc
+	// Signature will be replaced with Describe__.
 	Signature(ctx __ipc.ServerContext) (__ipc.ServiceSignature, error)
 }
 
@@ -626,52 +615,207 @@ func (s implCacheServerStub) VGlob() *__ipc.GlobState {
 	return s.gs
 }
 
-func (s implCacheServerStub) GetMethodTags(ctx __ipc.ServerContext, method string) ([]interface{}, error) {
-	// TODO(toddw): Replace with new DescribeInterfaces implementation.
-	switch method {
-	case "Set":
-		return []interface{}{}, nil
-	case "Get":
-		return []interface{}{}, nil
-	case "GetAsByte":
-		return []interface{}{}, nil
-	case "GetAsInt32":
-		return []interface{}{}, nil
-	case "GetAsInt64":
-		return []interface{}{}, nil
-	case "GetAsUint32":
-		return []interface{}{}, nil
-	case "GetAsUint64":
-		return []interface{}{}, nil
-	case "GetAsFloat32":
-		return []interface{}{}, nil
-	case "GetAsFloat64":
-		return []interface{}{}, nil
-	case "GetAsString":
-		return []interface{}{}, nil
-	case "GetAsBool":
-		return []interface{}{}, nil
-	case "GetAsError":
-		return []interface{}{}, nil
-	case "AsMap":
-		return []interface{}{}, nil
-	case "KeyValuePairs":
-		return []interface{}{}, nil
-	case "MostRecentSet":
-		return []interface{}{}, nil
-	case "KeyPage":
-		return []interface{}{}, nil
-	case "Size":
-		return []interface{}{}, nil
-	case "MultiGet":
-		return []interface{}{}, nil
-	default:
-		return nil, nil
-	}
+func (s implCacheServerStub) Describe__() []__ipc.InterfaceDesc {
+	return []__ipc.InterfaceDesc{CacheDesc}
+}
+
+// CacheDesc describes the Cache interface.
+var CacheDesc __ipc.InterfaceDesc = descCache
+
+// descCache hides the desc to keep godoc clean.
+var descCache = __ipc.InterfaceDesc{
+	Name:    "Cache",
+	PkgPath: "test_service",
+	Doc:     "// A Cache service mimics the memcache interface.",
+	Methods: []__ipc.MethodDesc{
+		{
+			Name: "Set",
+			Doc:  "// Set sets a value for a key.",
+			InArgs: []__ipc.ArgDesc{
+				{"key", ``},   // string
+				{"value", ``}, // __vdlutil.Any
+			},
+			OutArgs: []__ipc.ArgDesc{
+				{"", ``}, // error
+			},
+		},
+		{
+			Name: "Get",
+			Doc:  "// Get returns the value for a key.  If the value is not found, returns\n// a not found error.",
+			InArgs: []__ipc.ArgDesc{
+				{"key", ``}, // string
+			},
+			OutArgs: []__ipc.ArgDesc{
+				{"", ``}, // __vdlutil.Any
+				{"", ``}, // error
+			},
+		},
+		{
+			Name: "GetAsByte",
+			Doc:  "// Same as Get, but casts the return argument to an byte.",
+			InArgs: []__ipc.ArgDesc{
+				{"key", ``}, // string
+			},
+			OutArgs: []__ipc.ArgDesc{
+				{"", ``}, // byte
+				{"", ``}, // error
+			},
+		},
+		{
+			Name: "GetAsInt32",
+			Doc:  "// Same as Get, but casts the return argument to an int32.",
+			InArgs: []__ipc.ArgDesc{
+				{"key", ``}, // string
+			},
+			OutArgs: []__ipc.ArgDesc{
+				{"", ``}, // int32
+				{"", ``}, // error
+			},
+		},
+		{
+			Name: "GetAsInt64",
+			Doc:  "// Same as Get, but casts the return argument to an int64.",
+			InArgs: []__ipc.ArgDesc{
+				{"key", ``}, // string
+			},
+			OutArgs: []__ipc.ArgDesc{
+				{"", ``}, // int64
+				{"", ``}, // error
+			},
+		},
+		{
+			Name: "GetAsUint32",
+			Doc:  "// Same as Get, but casts the return argument to an uint32.",
+			InArgs: []__ipc.ArgDesc{
+				{"key", ``}, // string
+			},
+			OutArgs: []__ipc.ArgDesc{
+				{"", ``}, // uint32
+				{"", ``}, // error
+			},
+		},
+		{
+			Name: "GetAsUint64",
+			Doc:  "// Same as Get, but casts the return argument to an uint64.",
+			InArgs: []__ipc.ArgDesc{
+				{"key", ``}, // string
+			},
+			OutArgs: []__ipc.ArgDesc{
+				{"", ``}, // uint64
+				{"", ``}, // error
+			},
+		},
+		{
+			Name: "GetAsFloat32",
+			Doc:  "// Same as Get, but casts the return argument to an float32.",
+			InArgs: []__ipc.ArgDesc{
+				{"key", ``}, // string
+			},
+			OutArgs: []__ipc.ArgDesc{
+				{"", ``}, // float32
+				{"", ``}, // error
+			},
+		},
+		{
+			Name: "GetAsFloat64",
+			Doc:  "// Same as Get, but casts the return argument to an float64.",
+			InArgs: []__ipc.ArgDesc{
+				{"key", ``}, // string
+			},
+			OutArgs: []__ipc.ArgDesc{
+				{"", ``}, // float64
+				{"", ``}, // error
+			},
+		},
+		{
+			Name: "GetAsString",
+			Doc:  "// Same as Get, but casts the return argument to a string.",
+			InArgs: []__ipc.ArgDesc{
+				{"key", ``}, // string
+			},
+			OutArgs: []__ipc.ArgDesc{
+				{"", ``}, // string
+				{"", ``}, // error
+			},
+		},
+		{
+			Name: "GetAsBool",
+			Doc:  "// Same as Get, but casts the return argument to a bool.",
+			InArgs: []__ipc.ArgDesc{
+				{"key", ``}, // string
+			},
+			OutArgs: []__ipc.ArgDesc{
+				{"", ``}, // bool
+				{"", ``}, // error
+			},
+		},
+		{
+			Name: "GetAsError",
+			Doc:  "// Same as Get, but casts the return argument to an error.",
+			InArgs: []__ipc.ArgDesc{
+				{"key", ``}, // string
+			},
+			OutArgs: []__ipc.ArgDesc{
+				{"", ``}, // error
+				{"", ``}, // error
+			},
+		},
+		{
+			Name: "AsMap",
+			Doc:  "// AsMap returns the full contents of the cache as a map.",
+			OutArgs: []__ipc.ArgDesc{
+				{"", ``}, // map[string]__vdlutil.Any
+				{"", ``}, // error
+			},
+		},
+		{
+			Name: "KeyValuePairs",
+			Doc:  "// KeyValuePairs returns the full contents of the cache as a slice of pairs.",
+			OutArgs: []__ipc.ArgDesc{
+				{"", ``}, // []KeyValuePair
+				{"", ``}, // error
+			},
+		},
+		{
+			Name: "MostRecentSet",
+			Doc:  "// MostRecentSet returns the key and value and the timestamp for the most\n// recent set operation\n// TODO(bprosnitz) support type types and change time to native time type",
+			OutArgs: []__ipc.ArgDesc{
+				{"value", ``}, // KeyValuePair
+				{"time", ``},  // int64
+				{"err", ``},   // error
+			},
+		},
+		{
+			Name: "KeyPage",
+			Doc:  "// KeyPage indexes into the keys (in alphanumerically sorted order) and\n// returns the indexth page of 10 keys.",
+			InArgs: []__ipc.ArgDesc{
+				{"index", ``}, // int64
+			},
+			OutArgs: []__ipc.ArgDesc{
+				{"", ``}, // [10]string
+				{"", ``}, // error
+			},
+		},
+		{
+			Name: "Size",
+			Doc:  "// Size returns the total number of entries in the cache.",
+			OutArgs: []__ipc.ArgDesc{
+				{"", ``}, // int64
+				{"", ``}, // error
+			},
+		},
+		{
+			Name: "MultiGet",
+			Doc:  "// MultiGet sets up a stream that allows fetching multiple keys.",
+			OutArgs: []__ipc.ArgDesc{
+				{"", ``}, // error
+			},
+		},
+	},
 }
 
 func (s implCacheServerStub) Signature(ctx __ipc.ServerContext) (__ipc.ServiceSignature, error) {
-	// TODO(toddw) Replace with new DescribeInterfaces implementation.
+	// TODO(toddw): Replace with new Describe__ implementation.
 	result := __ipc.ServiceSignature{Methods: make(map[string]__ipc.MethodSignature)}
 	result.Methods["AsMap"] = __ipc.MethodSignature{
 		InArgs: []__ipc.MethodArgument{},

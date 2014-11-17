@@ -207,17 +207,6 @@ func (c implErrorThrowerClientStub) Signature(ctx __context.T, opts ...__ipc.Cal
 	return
 }
 
-func (c implErrorThrowerClientStub) GetMethodTags(ctx __context.T, method string, opts ...__ipc.CallOpt) (o0 []interface{}, err error) {
-	var call __ipc.Call
-	if call, err = c.c(ctx).StartCall(ctx, c.name, "GetMethodTags", []interface{}{method}, opts...); err != nil {
-		return
-	}
-	if ierr := call.Finish(&o0, &err); ierr != nil {
-		err = ierr
-	}
-	return
-}
-
 // ErrorThrowerServerMethods is the interface a server writer
 // implements for ErrorThrower.
 //
@@ -256,9 +245,9 @@ type ErrorThrowerServerStubMethods ErrorThrowerServerMethods
 // ErrorThrowerServerStub adds universal methods to ErrorThrowerServerStubMethods.
 type ErrorThrowerServerStub interface {
 	ErrorThrowerServerStubMethods
-	// GetMethodTags will be replaced with DescribeInterfaces.
-	GetMethodTags(ctx __ipc.ServerContext, method string) ([]interface{}, error)
-	// Signature will be replaced with DescribeInterfaces.
+	// Describe the ErrorThrower interfaces.
+	Describe__() []__ipc.InterfaceDesc
+	// Signature will be replaced with Describe__.
 	Signature(ctx __ipc.ServerContext) (__ipc.ServiceSignature, error)
 }
 
@@ -332,38 +321,102 @@ func (s implErrorThrowerServerStub) VGlob() *__ipc.GlobState {
 	return s.gs
 }
 
-func (s implErrorThrowerServerStub) GetMethodTags(ctx __ipc.ServerContext, method string) ([]interface{}, error) {
-	// TODO(toddw): Replace with new DescribeInterfaces implementation.
-	switch method {
-	case "ThrowAborted":
-		return []interface{}{}, nil
-	case "ThrowBadArg":
-		return []interface{}{}, nil
-	case "ThrowBadProtocol":
-		return []interface{}{}, nil
-	case "ThrowInternal":
-		return []interface{}{}, nil
-	case "ThrowNoAccess":
-		return []interface{}{}, nil
-	case "ThrowNoExist":
-		return []interface{}{}, nil
-	case "ThrowNoExistOrNoAccess":
-		return []interface{}{}, nil
-	case "ThrowUnknown":
-		return []interface{}{}, nil
-	case "ThrowGoError":
-		return []interface{}{}, nil
-	case "ThrowCustomStandardError":
-		return []interface{}{}, nil
-	case "ListAllBuiltInErrorIDs":
-		return []interface{}{}, nil
-	default:
-		return nil, nil
-	}
+func (s implErrorThrowerServerStub) Describe__() []__ipc.InterfaceDesc {
+	return []__ipc.InterfaceDesc{ErrorThrowerDesc}
+}
+
+// ErrorThrowerDesc describes the ErrorThrower interface.
+var ErrorThrowerDesc __ipc.InterfaceDesc = descErrorThrower
+
+// descErrorThrower hides the desc to keep godoc clean.
+var descErrorThrower = __ipc.InterfaceDesc{
+	Name:    "ErrorThrower",
+	PkgPath: "test_service",
+	Doc:     "// A testing interface with methods that throw various types of errors",
+	Methods: []__ipc.MethodDesc{
+		{
+			Name: "ThrowAborted",
+			Doc:  "// Throws veyron2/vError.Aborted error",
+			OutArgs: []__ipc.ArgDesc{
+				{"", ``}, // error
+			},
+		},
+		{
+			Name: "ThrowBadArg",
+			Doc:  "// Throws veyron2/vError.BadArg error",
+			OutArgs: []__ipc.ArgDesc{
+				{"", ``}, // error
+			},
+		},
+		{
+			Name: "ThrowBadProtocol",
+			Doc:  "// Throws veyron2/vError.BadProtocol error",
+			OutArgs: []__ipc.ArgDesc{
+				{"", ``}, // error
+			},
+		},
+		{
+			Name: "ThrowInternal",
+			Doc:  "// Throws veyron2/vError.Internal error",
+			OutArgs: []__ipc.ArgDesc{
+				{"", ``}, // error
+			},
+		},
+		{
+			Name: "ThrowNoAccess",
+			Doc:  "// Throws veyron2/vError.NoAccess error",
+			OutArgs: []__ipc.ArgDesc{
+				{"", ``}, // error
+			},
+		},
+		{
+			Name: "ThrowNoExist",
+			Doc:  "// Throws veyron2/vError.NoExist error",
+			OutArgs: []__ipc.ArgDesc{
+				{"", ``}, // error
+			},
+		},
+		{
+			Name: "ThrowNoExistOrNoAccess",
+			Doc:  "// Throws veyron2/vError.NoExistOrNoAccess error",
+			OutArgs: []__ipc.ArgDesc{
+				{"", ``}, // error
+			},
+		},
+		{
+			Name: "ThrowUnknown",
+			Doc:  "// Throws veyron2/vError.Unknown error",
+			OutArgs: []__ipc.ArgDesc{
+				{"", ``}, // error
+			},
+		},
+		{
+			Name: "ThrowGoError",
+			Doc:  "// Throws normal Go error",
+			OutArgs: []__ipc.ArgDesc{
+				{"", ``}, // error
+			},
+		},
+		{
+			Name: "ThrowCustomStandardError",
+			Doc:  "// Throws custom error created by using Standard",
+			OutArgs: []__ipc.ArgDesc{
+				{"", ``}, // error
+			},
+		},
+		{
+			Name: "ListAllBuiltInErrorIDs",
+			Doc:  "// Lists all errors Ids available in veyron2/verror",
+			OutArgs: []__ipc.ArgDesc{
+				{"", ``}, // []string
+				{"", ``}, // error
+			},
+		},
+	},
 }
 
 func (s implErrorThrowerServerStub) Signature(ctx __ipc.ServerContext) (__ipc.ServiceSignature, error) {
-	// TODO(toddw) Replace with new DescribeInterfaces implementation.
+	// TODO(toddw): Replace with new Describe__ implementation.
 	result := __ipc.ServiceSignature{Methods: make(map[string]__ipc.MethodSignature)}
 	result.Methods["ListAllBuiltInErrorIDs"] = __ipc.MethodSignature{
 		InArgs: []__ipc.MethodArgument{},
