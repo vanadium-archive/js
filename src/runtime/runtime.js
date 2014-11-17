@@ -87,7 +87,7 @@ Runtime.prototype.close = function(cb) {
 
 /**
  * Calls serve on the default server instance.
- * @see server#serve
+ * @see Server#serve
  */
 Runtime.prototype.serve = function(name, serviceObject, options, cb) {
   var server = this._getServer();
@@ -97,7 +97,7 @@ Runtime.prototype.serve = function(name, serviceObject, options, cb) {
 
 /**
  * Calls serveDispatcher on the default server instance.
- * @see server#serveDispatcher
+ * @see Server#serveDispatcher
  */
 Runtime.prototype.serveDispatcher = function(name, dispatcher, cb) {
   var server = this._getServer();
@@ -106,7 +106,7 @@ Runtime.prototype.serveDispatcher = function(name, dispatcher, cb) {
 
 /**
  * Calls addName on the default server instance.
- * @see server#addName
+ * @see Server#addName
  */
 Runtime.prototype.addName = function(name, cb) {
   return this._getServer().addName(name, cb);
@@ -114,7 +114,7 @@ Runtime.prototype.addName = function(name, cb) {
 
 /**
  * Calls removeName on the default server instance.
- * @see server#removeName
+ * @see Server#removeName
  */
 Runtime.prototype.removeName = function(name, cb) {
   return this._getServer().removeName(name, cb);
@@ -122,10 +122,23 @@ Runtime.prototype.removeName = function(name, cb) {
 
 /**
  * Calls stop on the default server instance.
- * @see server#stop
+ * @see Server#stop
  */
 Runtime.prototype.stop = function(cb) {
   return this._getServer().stop(cb);
+};
+
+/**
+ * Creates a new server instance.
+ *
+ * Although runtime comes with a default server instance that methods such as
+ * runtime.serve(), runtime.stop(), etc... operate on, a new server instance
+ * can also be created using this newServer() method.
+ * @see Server
+ * @return {Server} A server instance.
+ */
+Runtime.prototype.newServer = function() {
+  return new Server(this._getRouter());
 };
 
 /**
@@ -137,49 +150,6 @@ Runtime.prototype.stop = function(cb) {
 Runtime.prototype.addIDL = function(updates) {
   var server = this._getServer();
   return server.addIDL(updates);
-};
-
-/**
- * Get or creates a new proxy connection
- * @return {ProxyConnection} A proxy connection
- */
-Runtime.prototype._getProxyConnection = function() {
-  if (!this._proxyConnection) {
-    this._proxyConnection = new ProxyConnection(this._wspr);
-  }
-  return this._proxyConnection;
-};
-
-/**
- * Get or creates a router
- * @return {ServerRouter} A router
- */
-Runtime.prototype._getRouter = function() {
-  if (!this._router) {
-    this._router = new ServerRouter(
-        this._getProxyConnection(),
-        this._name);
-  }
-  return this._router;
-};
-
-
-/**
- * Get or creates a client
- * @return {Client} A client
- */
-Runtime.prototype._getClient = function() {
-  this._client = this._client || new Client(this._getProxyConnection());
-  return this._client;
-};
-
-/**
- * Get or creates a server
- * @return {Server} A server
- */
-Runtime.prototype._getServer = function() {
-  this._server = this._server || new Server(this._getRouter());
-  return this._server;
 };
 
 /**
@@ -217,4 +187,46 @@ Runtime.prototype.newBlessings = function(extension, cb) {
   }, newBlessingsDef.reject);
 
   return newBlessingsDef.promise;
+};
+
+/**
+ * Get or creates a new proxy connection
+ * @return {ProxyConnection} A proxy connection
+ */
+Runtime.prototype._getProxyConnection = function() {
+  if (!this._proxyConnection) {
+    this._proxyConnection = new ProxyConnection(this._wspr);
+  }
+  return this._proxyConnection;
+};
+
+/**
+ * Get or creates a router
+ * @return {ServerRouter} A router
+ */
+Runtime.prototype._getRouter = function() {
+  if (!this._router) {
+    this._router = new ServerRouter(
+        this._getProxyConnection(),
+        this._name);
+  }
+  return this._router;
+};
+
+/**
+ * Get or creates a client
+ * @return {Client} A client
+ */
+Runtime.prototype._getClient = function() {
+  this._client = this._client || new Client(this._getProxyConnection());
+  return this._client;
+};
+
+/**
+ * Get or creates a server
+ * @return {Server} A server
+ */
+Runtime.prototype._getServer = function() {
+  this._server = this._server || new Server(this._getRouter());
+  return this._server;
 };
