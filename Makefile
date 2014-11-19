@@ -141,7 +141,7 @@ test-integration: lint test-integration-node test-integration-browser
 
 test-integration-node: test-precheck go/bin
 	node test/integration/runner.js --services=$(COMMON_SERVICES) -- \
-	prova test/integration/test-*.js $(TAP) $(NODE_OUTPUT)
+	prova test/integration/test-js-*.js $(TAP) $(NODE_OUTPUT)
 
 test-integration-browser: test-precheck go/bin
 	node test/integration/runner.js --services=$(COMMON_SERVICES) -- \

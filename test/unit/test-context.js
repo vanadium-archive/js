@@ -9,7 +9,8 @@ var ctx = context.Context();
 
 test('optionalContext', function(assert) {
   function f(ctx, x, y) {
-    y = context.optionalContext(arguments);
+    var args = context.optionalContext(arguments);
+    ctx = args[0], x = args[1], y = args[2];
     return {
       ctx: ctx,
       x: x,

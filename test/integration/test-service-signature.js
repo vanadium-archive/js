@@ -1,5 +1,6 @@
 var test = require('prova');
 var veyron = require('../../');
+var context = require('../../src/runtime/context');
 
 var config = {
   wspr: 'http://' + process.env.WSPR_ADDR
@@ -25,6 +26,7 @@ var knownSignature = {
 
 test('service.signature([callback])', function(assert) {
   var rt;
+  var ctx = context.Context();
 
   veyron.init(config, onruntime);
 
@@ -32,7 +34,7 @@ test('service.signature([callback])', function(assert) {
     assert.error(err);
 
     rt = runtime;
-    runtime.bindTo('test_service/cache', onbind);
+    runtime.bindTo(ctx, 'test_service/cache', onbind);
   }
 
   function onbind(err, service) {
@@ -59,6 +61,7 @@ test('service.signature([callback])', function(assert) {
 
 test('service.signature() - promise', function(assert) {
   var rt;
+  var ctx = context.Context();
 
   veyron
   .init(config)
@@ -80,7 +83,7 @@ test('service.signature() - promise', function(assert) {
 
   function bindTo(runtime) {
     rt = runtime;
-    return runtime.bindTo('test_service/cache');
+    return runtime.bindTo(ctx, 'test_service/cache');
   }
 
   function getSignature(service) {

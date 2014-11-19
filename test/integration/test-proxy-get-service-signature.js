@@ -1,6 +1,7 @@
 var test = require('prova');
 var url = 'ws://' + process.env.WSPR_ADDR;
 var ProxyWappedWebSocket = require('../../src/proxy/websocket');
+var context = require('../../src/runtime/context');
 var now = Date.now;
 
 var knownSignature = {
@@ -24,6 +25,7 @@ var knownSignature = {
 test('proxy.getServiceSignature(name) - valid cache', function(assert) {
   var proxy = new ProxyWappedWebSocket(url);
   var name = 'test_service/cache';
+  var ctx = context.Context();
 
   // fake a valid cached signature
   proxy.bindCache[name] = {
@@ -34,7 +36,7 @@ test('proxy.getServiceSignature(name) - valid cache', function(assert) {
   };
 
   proxy
-  .getServiceSignature(name)
+  .getServiceSignature(ctx, name)
   .then(function(signature) {
     assert.equal(signature.foo, 'bar');
     proxy.close(assert.end);
@@ -45,6 +47,7 @@ test('proxy.getServiceSignature(name) - valid cache', function(assert) {
 test('proxy.getServiceSignature(name) - stale cache', function(assert) {
   var proxy = new ProxyWappedWebSocket(url);
   var name = 'test_service/cache';
+  var ctx = context.Context();
 
   // stub with mock cached sig
   proxy.bindCache[name] = {
@@ -56,7 +59,7 @@ test('proxy.getServiceSignature(name) - stale cache', function(assert) {
   };
 
   proxy
-  .getServiceSignature(name)
+  .getServiceSignature(ctx, name)
   .then(function(signature) {
     assert.equal(signature.foo, undefined);
 
@@ -78,9 +81,10 @@ test('proxy.getServiceSignature(name) - set cache', function(assert) {
   var proxy = new ProxyWappedWebSocket(url);
   var name = 'test_service/cache';
   var before = now();
+  var ctx = context.Context();
 
   proxy
-  .getServiceSignature(name)
+  .getServiceSignature(ctx, name)
   .then(function(signature) {
     var cache = proxy.bindCache[name];
     var after = now();

@@ -5,6 +5,7 @@ var config = {
 };
 var ServiceWrapper = require('../../src/idl/idl').ServiceWrapper;
 var Deferred = require('../../src/lib/deferred');
+var context = require('../../src/runtime/context');
 
 var service = {
   call: function(arg) {
@@ -51,14 +52,16 @@ test('authorizer - errors are properly returned', function(assert) {
     });
   }
 
+  var ctx = context.Context();
+
   var rt;
   function bindTo(runtime) {
     rt = runtime;
-    return runtime.bindTo('authorizer/auth');
+    return runtime.bindTo(ctx, 'authorizer/auth');
   }
 
   function call(service) {
-    return service.call('foo').then(function(value) {
+    return service.call(ctx, 'foo').then(function(value) {
       assert.fail('call should not have succeeded' + value);
       assert.end();
     }).catch(function() {
@@ -89,14 +92,16 @@ test('authorizer(ctx, cb) - errors are properly returned', function(assert) {
     });
   }
 
+  var ctx = context.Context();
+
   var rt;
   function bindTo(runtime) {
     rt = runtime;
-    return runtime.bindTo('authorizer/auth');
+    return runtime.bindTo(ctx, 'authorizer/auth');
   }
 
   function call(service) {
-    return service.call('foo').then(function(value) {
+    return service.call(ctx, 'foo').then(function(value) {
       assert.fail('call should not have succeeded' + value);
     }).catch(function() {
       rt.close(assert.end);
@@ -129,14 +134,16 @@ function(assert) {
     });
   }
 
+  var ctx = context.Context();
+
   var rt;
   function bindTo(runtime) {
     rt = runtime;
-    return runtime.bindTo('authorizer/auth');
+    return runtime.bindTo(ctx, 'authorizer/auth');
   }
 
   function call(service) {
-    return service.call('foo').then(function() {
+    return service.call(ctx, 'foo').then(function() {
       assert.fail('call should not have succeeded');
     }).catch(function() {
       rt.close(assert.end);
@@ -166,14 +173,16 @@ test('authorizer(ctx, cb) - successes are handled', function(assert) {
     });
   }
 
+  var ctx = context.Context();
+
   var rt;
   function bindTo(runtime) {
     rt = runtime;
-    return runtime.bindTo('authorizer/auth');
+    return runtime.bindTo(ctx, 'authorizer/auth');
   }
 
   function call(service) {
-    return service.call('foo').then(function() {
+    return service.call(ctx, 'foo').then(function() {
       rt.close(assert.end);
     });
   }
@@ -203,14 +212,16 @@ test('var promise = authorizer(ctx) - successes are handled', function(assert) {
     });
   }
 
+  var ctx = context.Context();
+
   var rt;
   function bindTo(runtime) {
     rt = runtime;
-    return runtime.bindTo('authorizer/auth');
+    return runtime.bindTo(ctx, 'authorizer/auth');
   }
 
   function call(service) {
-    return service.call('foo').then(function() {
+    return service.call(ctx, 'foo').then(function() {
       rt.close(assert.end);
     });
   }
@@ -265,13 +276,15 @@ test('authorizer - validate context', function(assert) {
     });
   }
 
+  var ctx = context.Context();
+
   function bindTo(runtime) {
     rt = runtime;
-    return runtime.bindTo('authorizer/auth');
+    return runtime.bindTo(ctx, 'authorizer/auth');
   }
 
   function call(service) {
-    return service.call('foo').then(function(value) {
+    return service.call(ctx, 'foo').then(function(value) {
       assert.equal(value, 1, 'unexpected return value');
       rt.close(assert.end);
     });
@@ -300,14 +313,16 @@ test.skip('authorizer - passing in labels', function(assert) {
     });
   }
 
+  var ctx = context.Context();
+
   var rt;
   function bindTo(runtime) {
     rt = runtime;
-    return runtime.bindTo('authorizer/auth');
+    return runtime.bindTo(ctx, 'authorizer/auth');
   }
 
   function call(service) {
-    return service.call('foo').then(function(value) {
+    return service.call(ctx, 'foo').then(function(value) {
       assert.equal(value, 1, 'unexpected return value');
       rt.close(assert.end);
     });

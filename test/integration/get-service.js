@@ -22,13 +22,13 @@ module.exports = service;
 //       end(assert)
 //     })
 //
-function service(name, callback) {
+function service(ctx, name, callback) {
   veyron.init(config, function(err, runtime) {
     if (err) {
       return callback(err);
     }
 
-    runtime.bindTo(name, function(err, service) {
+    runtime.bindTo(ctx, name, function(err, service) {
       callback(err, service, end, runtime);
     });
 

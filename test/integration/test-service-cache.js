@@ -3,12 +3,14 @@ var veyron = require('../../');
 var service = require('./get-service');
 var VeyronError = veyron.errors.VeyronError;
 var Promise = require('bluebird');
+var context = require('../../src/runtime/context');
 
 test('cache.set(key, value, callback)', function(assert) {
-  service('test_service/cache', function(err, cache, end) {
+  var ctx = context.Context();
+  service(ctx, 'test_service/cache', function(err, cache, end) {
     assert.error(err);
 
-    cache.set('foo', 'bar', function(err, result) {
+    cache.set(ctx, 'foo', 'bar', function(err, result) {
       assert.error(err);
       end(assert);
     });
@@ -16,10 +18,11 @@ test('cache.set(key, value, callback)', function(assert) {
 });
 
 test('var promise = cache.set(key, value)', function(assert) {
-  service('test_service/cache', function(err, cache, end) {
+  var ctx = context.Context();
+  service(ctx, 'test_service/cache', function(err, cache, end) {
     assert.error(err);
 
-    cache.set('foo', 'bar')
+    cache.set(ctx, 'foo', 'bar')
     .then(function() {
       end(assert);
     }, function(err) {
@@ -30,13 +33,14 @@ test('var promise = cache.set(key, value)', function(assert) {
 });
 
 test('cache.get(key, value, callback)', function(assert) {
-  service('test_service/cache', function(err, cache, end) {
+  var ctx = context.Context();
+  service(ctx, 'test_service/cache', function(err, cache, end) {
     assert.error(err);
 
-    cache.set('baz', 'qux', function(err, result) {
+    cache.set(ctx, 'baz', 'qux', function(err, result) {
       assert.error(err);
 
-      cache.get('baz', function(err, value) {
+      cache.get(ctx, 'baz', function(err, value) {
         assert.error(err);
         assert.equal(value, 'qux');
         end(assert);
@@ -46,10 +50,11 @@ test('cache.get(key, value, callback)', function(assert) {
 });
 
 test('cache.get(key, value, callback) - failure', function(assert) {
-  service('test_service/cache', function(err, cache, end) {
+  var ctx = context.Context();
+  service(ctx, 'test_service/cache', function(err, cache, end) {
     assert.error(err);
 
-    cache.get('is not a thing', function(err, value) {
+    cache.get(ctx, 'is not a thing', function(err, value) {
       assert.ok(err instanceof VeyronError, 'should error');
       end(assert);
     });
@@ -58,12 +63,13 @@ test('cache.get(key, value, callback) - failure', function(assert) {
 
 
 test('var promise = cache.get(key, value)', function(assert) {
-  service('test_service/cache', function(err, cache, end) {
+  var ctx = context.Context();
+  service(ctx, 'test_service/cache', function(err, cache, end) {
     assert.error(err);
 
-    cache.set('baz', 'qux')
+    cache.set(ctx, 'baz', 'qux')
     .then(function() {
-      return cache.get('baz');
+      return cache.get(ctx, 'baz');
     })
     .then(function(value) {
       assert.equal(value, 'qux');
@@ -78,11 +84,12 @@ test('var promise = cache.get(key, value)', function(assert) {
 });
 
 test('var promise = cache.get(key, value) - failure', function(assert) {
-  service('test_service/cache', function(err, cache, end) {
+  var ctx = context.Context();
+  service(ctx, 'test_service/cache', function(err, cache, end) {
     assert.error(err);
 
     cache
-    .get('really not a thing')
+    .get(ctx, 'really not a thing')
     .then(function() {
       assert.fail('should not succeed');
       end(assert);
@@ -95,7 +102,8 @@ test('var promise = cache.get(key, value) - failure', function(assert) {
 });
 
 test('cache.badMethod() - exception', function(assert) {
-  service('test_service/cache', function(err, cache, end) {
+  var ctx = context.Context();
+  service(ctx, 'test_service/cache', function(err, cache, end) {
     assert.error(err);
 
     assert.throws(function() {
@@ -107,7 +115,8 @@ test('cache.badMethod() - exception', function(assert) {
 });
 
 test('var stream = cache.multiGet().stream', function(assert) {
-  service('test_service/cache', function(err, cache, end) {
+  var ctx = context.Context();
+  service(ctx, 'test_service/cache', function(err, cache, end) {
     assert.error(err);
 
     // `cache.mutliGet()` returns an object that has a "stream" attribute.
@@ -132,13 +141,13 @@ test('var stream = cache.multiGet().stream', function(assert) {
 
     // Add them to the cache
     var jobs = Object.keys(items).map(function(key) {
-      return cache.set(key, JSON.stringify(items[key]));
+      return cache.set(ctx, key, JSON.stringify(items[key]));
     });
 
     Promise
     .all(jobs)
     .then(function() {
-      var promise = cache.multiGet();
+      var promise = cache.multiGet(ctx);
       var stream = promise.stream;
 
       // Error handling boilerplate

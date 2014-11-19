@@ -188,13 +188,11 @@ function Client(proxyConnection) {
  * @return {Promise} An object with methods that perform rpcs to service methods
  */
 Client.prototype.bindTo = function(ctx, name, optServiceSignature, cb) {
-  cb = context.optionalContext(arguments);
   var self = this;
 
-  if (typeof cb !== 'function') {
-    optServiceSignature = cb;
-    cb = undefined;
-  }
+  var args = context.optionalContext(arguments);
+  ctx = args[0], name = args[1], optServiceSignature = args[2], cb = args[3];
+
   if (typeof optServiceSignature === 'function') {
     cb = optServiceSignature;
     optServiceSignature = undefined;

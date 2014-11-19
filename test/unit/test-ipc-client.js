@@ -1,6 +1,7 @@
 var test = require('prova');
 var Client = require('../../src/ipc/client.js');
 var mock = require('./mock');
+var context = require('../../src/runtime/context');
 
 test('creating instances', function(assert) {
   assert.equal(typeof Client, 'function');
@@ -11,8 +12,9 @@ test('creating instances', function(assert) {
 test('client.bindTo(name, [empty service], [callback])', function(assert) {
   var proxy = mock('proxy');
   var client = new Client(proxy);
+  var ctx = new context.Context();
 
-  client.bindTo('service-name', {}, onbind);
+  client.bindTo(ctx, 'service-name', {}, onbind);
 
   function onbind(err, service) {
     assert.error(err);
@@ -25,9 +27,10 @@ test('client.bindTo(name, [empty service], [callback])', function(assert) {
 test('client.bindTo(name, [empty service]) - promise', function(assert) {
   var proxy = mock('proxy');
   var client = new Client(proxy);
+  var ctx = new context.Context();
 
   client
-  .bindTo('service-name', {})
+  .bindTo(ctx, 'service-name', {})
   .then(success)
   .catch(assert.end);
 
@@ -42,8 +45,9 @@ test('non-empty service', function(assert) {
   var proxy = mock('proxy');
   var client = new Client(proxy);
   var signature = mock('client-signature');
+  var ctx = new context.Context();
 
-  client.bindTo('service-name', signature, function(err, service) {
+  client.bindTo(ctx, 'service-name', signature, function(err, service) {
     assert.error(err);
 
     Object.keys(signature).forEach(function(method) {
@@ -61,13 +65,14 @@ test('service.method() - callback success', function(assert) {
   var proxy = mock('proxy');
   var client = new Client(proxy);
   var signature = mock('client-signature');
+  var ctx = new context.Context();
 
-  client.bindTo('service-name', signature, onservice);
+  client.bindTo(ctx, 'service-name', signature, onservice);
 
   function onservice(err, service) {
     assert.error(err);
 
-    service.tripleArgMethod(3, 'X', null, onmethod);
+    service.tripleArgMethod(ctx, 3, 'X', null, onmethod);
   }
 
   function onmethod(err, result) {
@@ -82,11 +87,12 @@ test('service.method() - promise success', function(assert) {
   var proxy = mock('proxy');
   var client = new Client(proxy);
   var signature = mock('client-signature');
+  var ctx = new context.Context();
 
   client
-  .bindTo('service-name', signature)
+  .bindTo(ctx, 'service-name', signature)
   .then(function(service) {
-    return service.singleArgMethod(1);
+    return service.singleArgMethod(ctx, 1);
   })
   .then(function(result) {
     assert.equal(result.get('methodName'), 'singleArgMethod');
@@ -100,13 +106,14 @@ test('service.method() - callback error', function(assert) {
   var proxy = mock('proxy');
   var client = new Client(proxy);
   var signature = mock('client-signature');
+  var ctx = new context.Context();
 
-  client.bindTo('service-name', signature, onservice);
+  client.bindTo(ctx, 'service-name', signature, onservice);
 
   function onservice(err, service) {
     assert.error(err);
 
-    service.tripleArgMethod(3, 'X', onmethod);
+    service.tripleArgMethod(ctx, 3, 'X', onmethod);
   }
 
   function onmethod(err, result) {
@@ -119,15 +126,16 @@ test('service.method() - promise error', function(assert) {
   var proxy = mock('proxy');
   var client = new Client(proxy);
   var signature = mock('client-signature');
+  var ctx = new context.Context();
 
   client
-  .bindTo('service-name', signature)
+  .bindTo(ctx, 'service-name', signature)
   .then(triggerError)
   .catch(assert.end);
 
   function triggerError(service) {
     return service
-    .singleArgMethod(1, 2)
+    .singleArgMethod(ctx, 1, 2)
     .catch(function(err){
       assert.ok(err instanceof Error);
       assert.end();
@@ -139,8 +147,9 @@ test('service.signature([callback])', function(assert) {
   var proxy = mock('proxy');
   var client = new Client(proxy);
   var signature = mock('client-signature');
+  var ctx = new context.Context();
 
-  client.bindTo('service-name', signature, onservice);
+  client.bindTo(ctx, 'service-name', signature, onservice);
 
   function onservice(err, service) {
     assert.error(err);

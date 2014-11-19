@@ -1,16 +1,18 @@
 var test = require('prova');
 var veyron = require('../../');
+var context = require('../../src/runtime/context');
 
 var config = {
   wspr: 'http://' + process.env.WSPR_ADDR
 };
 
 test('runtime.close(cb)', function(assert) {
+  var ctx = context.Context();
   veyron.init(config, oninit);
 
   function oninit(err, runtime) {
     assert.error(err);
-    runtime.bindTo('test_service/cache', onbind);
+    runtime.bindTo(ctx, 'test_service/cache', onbind);
   }
 
   function onbind(err, service) {
@@ -28,10 +30,11 @@ test('var promise = runtime.close()', function(assert) {
   .catch(assert.end);
 
   var rt;
+  var ctx = context.Context();
 
   function bindTo(runtime) {
     rt = runtime;
-    return runtime.bindTo('test_service/cache');
+    return runtime.bindTo(ctx, 'test_service/cache');
   }
 
   function close(service) {

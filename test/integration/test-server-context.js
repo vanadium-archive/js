@@ -1,6 +1,7 @@
 var test = require('prova');
 var serve = require('./serve');
 var leafDispatcher = require('../../src/ipc/leaf_dispatcher');
+var context = require('../../src/runtime/context');
 // Services that handles anything in a/b/* where b is the service name
 var dispatcher = leafDispatcher({
   getSuffix: function($suffix) {
@@ -40,13 +41,14 @@ function contains(actual, expected, assert) {
 }
 
 test('$suffix - ', function(assert) {
-  serve('a/b', dispatcher, function(err, res) {
+  var ctx = context.Context();
+  serve(ctx, 'a/b', dispatcher, function(err, res) {
     assert.error(err);
 
-    res.runtime.bindTo('a/b/foo', function(err, service) {
+    res.runtime.bindTo(ctx, 'a/b/foo', function(err, service) {
       assert.error(err);
 
-      service.getSuffix(function(err, suffix) {
+      service.getSuffix(ctx, function(err, suffix) {
         assert.error(err);
         assert.equal(suffix, 'foo');
         res.end(assert);
@@ -56,13 +58,14 @@ test('$suffix - ', function(assert) {
 });
 
 test('$suffix - empty', function(assert) {
-  serve('a/b', dispatcher, function(err, res) {
+  var ctx = context.Context();
+  serve(ctx, 'a/b', dispatcher, function(err, res) {
     assert.error(err);
 
-    res.runtime.bindTo('a/b', function(err, service) {
+    res.runtime.bindTo(ctx, 'a/b', function(err, service) {
       assert.error(err);
 
-      service.getSuffix(function(err, suffix) {
+      service.getSuffix(ctx, function(err, suffix) {
         assert.error(err);
         assert.equal(suffix, '');
         res.end(assert);
@@ -72,13 +75,14 @@ test('$suffix - empty', function(assert) {
 });
 
 test('$suffix - nested', function(assert) {
-  serve('a/b', dispatcher, function(err, res) {
+  var ctx = context.Context();
+  serve(ctx, 'a/b', dispatcher, function(err, res) {
     assert.error(err);
 
-    res.runtime.bindTo('a/b/parent/suf', function(err, service) {
+    res.runtime.bindTo(ctx, 'a/b/parent/suf', function(err, service) {
       assert.error(err);
 
-      service.getSuffix(function(err, suffix) {
+      service.getSuffix(ctx, function(err, suffix) {
         assert.error(err);
         assert.equal(suffix, 'parent/suf');
         res.end(assert);
@@ -88,13 +92,14 @@ test('$suffix - nested', function(assert) {
 });
 
 test('$name', function(assert) {
-  serve('a/b', dispatcher, function(err, res) {
+  var ctx = context.Context();
+  serve(ctx, 'a/b', dispatcher, function(err, res) {
     assert.error(err);
 
-    res.runtime.bindTo('a/b/suf', function(err, service) {
+    res.runtime.bindTo(ctx, 'a/b/suf', function(err, service) {
       assert.error(err);
 
-      service.getName(function(err, name) {
+      service.getName(ctx, function(err, name) {
         assert.error(err);
         assert.equal(name, 'suf');
         res.end(assert);
@@ -104,13 +109,14 @@ test('$name', function(assert) {
 });
 
 test('$context', function(assert) {
-  serve('a/b', dispatcher, function(err, res) {
+  var ctx = context.Context();
+  serve(ctx, 'a/b', dispatcher, function(err, res) {
     assert.error(err);
 
-    res.runtime.bindTo('a/b/suf', function(err, service) {
+    res.runtime.bindTo(ctx, 'a/b/suf', function(err, service) {
       assert.error(err);
 
-      service.getContext(function(err, context) {
+      service.getContext(ctx, function(err, context) {
         assert.error(err);
 
         // remove the key attribute before comparison
@@ -124,14 +130,16 @@ test('$context', function(assert) {
 });
 
 test('$context - mixed with normal args', function(assert) {
-  serve('a/b', dispatcher, function(err, res) {
+  var ctx = context.Context();
+  serve(ctx, 'a/b', dispatcher, function(err, res) {
     assert.error(err);
 
-    res.runtime.bindTo('a/b/suf', function(err, service) {
+    res.runtime.bindTo(ctx, 'a/b/suf', function(err, service) {
       assert.error(err);
 
       service
-      .getContextMixedWithNormalArgs('-a-','-b-','-c-', function(err, results) {
+      .getContextMixedWithNormalArgs(
+        ctx, '-a-','-b-','-c-', function(err, results) {
         assert.error(err);
 
         // remove the key attribute before comparison
