@@ -90,24 +90,27 @@ test('mount -> resolve -> unmount -> resolve(cb)', function(assert) {
   var namespace;
   var MINUTE = 60 * 1000; // a minute
   var expectedServerAddress;
-  var name = PREFIX + 'new/name';
+  var initialName = PREFIX + 'first/name';
+  var secondaryName = PREFIX + 'new/name';
 
   veyron.init(config).then(function createServer(rt) {
     runtime = rt;
     namespace = rt.newNamespace();
-    return rt.serve(PREFIX + 'does/not/matter', {});
-  }).then(function mount(endpoint) {
-    expectedServerAddress = '/' + endpoint;
-    return namespace.mount(name, expectedServerAddress, MINUTE);
+    return rt.serve(initialName, {});
   }).then(function resolve() {
-    return namespace.resolve(name);
+    return namespace.resolve(initialName);
+  }).then(function mount(endpoints) {
+    expectedServerAddress = endpoints[0];
+    return namespace.mount(secondaryName, expectedServerAddress, MINUTE);
+  }).then(function resolve() {
+    return namespace.resolve(secondaryName);
   }).then(function validate(resolveResult) {
     assert.equals(resolveResult.length, 1);
     assert.equals(resolveResult[0], expectedServerAddress);
   }).then(function unmount() {
-    return namespace.unmount(name);
+    return namespace.unmount(secondaryName);
   }).then(function resolve() {
-    namespace.resolve(name, function cb(err) {
+    namespace.resolve(secondaryName, function cb(err) {
       assert.ok(err, 'no resolving after unmount()');
       end();
     });

@@ -416,9 +416,8 @@ Router.prototype.sendResult = function(messageId, name, value, err, metadata) {
  * this name.
  * @param {function} [cb] If provided, the function will be called when
  * serve completes.  The first argument passed in is the error if there
- * was any and the second argument is the endpoint.
- * @return {Promise} Promise to be called when serve completes or fails
- * the endpoint string of the server will be returned as the value of promise
+ * was any.
+ * @return {Promise} Promise to be called when serve completes or fails.
  */
 Router.prototype.serve = function(name, server, cb) {
   vLog.info('Serving under the name: ', name);

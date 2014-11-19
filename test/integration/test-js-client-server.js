@@ -88,8 +88,6 @@ function run(options) {
   serve('testing/cache', dispatcher, function(err, res) {
     t.error(err);
 
-    t.ok(res.endpoint.match('@2@tcp@'), 'should have endpoint');
-
     // waits to close the runtime until all the child tests have ended.
     t.on('end', function() {
       res.end(t);

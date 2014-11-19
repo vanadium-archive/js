@@ -40,26 +40,6 @@ test('var promise = runtime.bindTo(name)', function(assert) {
   }
 });
 
-test('runtime.bindTo(endpoint, callback) - bind to endpoint of a JS server',
-function(assert) {
-  var leafDispatcher = require('../../src/ipc/leaf_dispatcher');
-  var cache = require('./cache-service');
-  var dispatcher = leafDispatcher(cache);
-  var serve = require('./serve');
-
-  serve('testing/cache', dispatcher, function(err, res) {
-    assert.error(err);
-
-    var name = '/' + res.endpoint + '/cache';
-
-    res.runtime.bindTo(name, function(err, service) {
-      assert.error(err);
-      assert.ok(service);
-      res.end(assert);
-    });
-  });
-});
-
 test('runtime.bindTo(badName, callback) - failure', function(assert) {
   veyron.init(config, function(err, runtime) {
     assert.error(err);

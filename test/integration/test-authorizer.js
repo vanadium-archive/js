@@ -232,7 +232,6 @@ test('authorizer - validate context', function(assert) {
     }
   });
 
-  var endpoint = '';
   function authorizer(ctx) {
     if (ctx.remoteBlessingStrings[0] !== 'test') {
       return new Error('unknown blessings ' + ctx.remoteBlessingStrings);
@@ -261,8 +260,7 @@ test('authorizer - validate context', function(assert) {
 
   function serve(runtime) {
     var dispatcher = createDispatcher(authorizer);
-    return runtime.serveDispatcher('authorizer', dispatcher).then(function(ep) {
-      endpoint = ep;
+    return runtime.serveDispatcher('authorizer', dispatcher).then(function() {
       return runtime;
     });
   }
@@ -288,7 +286,6 @@ test('authorizer - passing in labels', function(assert) {
   .then(call)
   .catch(assert.end);
 
-  var endpoint = '';
   function authorizer(ctx) {
     if (ctx.label !== 4.0) {
       return new Error('wrong label ' + ctx.label);
@@ -298,8 +295,7 @@ test('authorizer - passing in labels', function(assert) {
 
   function serve(runtime) {
     var dispatcher = createDispatcher(authorizer, 4.0);
-    return runtime.serveDispatcher('authorizer', dispatcher).then(function(ep) {
-      endpoint = ep;
+    return runtime.serveDispatcher('authorizer', dispatcher).then(function() {
       return runtime;
     });
   }

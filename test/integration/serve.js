@@ -57,7 +57,7 @@ function serve(name, dispatcher, callback) {
       return callback(err);
     }
 
-    runtime.serveDispatcher(name, dispatcher, function(err, endpoint) {
+    runtime.serveDispatcher(name, dispatcher, function(err) {
       if (err) {
         return callback(err);
       }
@@ -65,7 +65,6 @@ function serve(name, dispatcher, callback) {
       var res = {
         runtime: runtime,
         config: config,
-        endpoint: endpoint,
         end: end
       };
 

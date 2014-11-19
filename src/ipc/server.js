@@ -81,8 +81,7 @@ function Server(router) {
  * @param {ServeOptions} options Object that includes metadata and authorizer
  * @param {function} [cb] If provided, the function will be called on
  * completion. The only argument is an error if there was one.
- * @return {Promise} Promise to be called when serve completes or fails
- * the endpoint address of the server will be returned as the value of promise
+ * @return {Promise} Promise to be called when serve completes or fails.
  */
 Server.prototype.serve = function(name, serviceObject, options, cb) {
   if (typeof options === 'function') {
@@ -170,8 +169,7 @@ Server.prototype.serve = function(name, serviceObject, options, cb) {
  * and the method to be called and return the service object for that suffix.
  * @param {function} [cb] If provided, the function will be called on
  * completion. The only argument is an error if there was one.
- * @return {Promise} Promise to be called when serve completes or fails
- * the endpoint address of the server will be returned as the value of promise
+ * @return {Promise} Promise to be called when serve completes or fails.
  */
 Server.prototype.serveDispatcher = function(name, dispatcher, cb) {
   this.dispatcher = dispatcher;

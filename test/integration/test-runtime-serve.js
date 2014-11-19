@@ -11,9 +11,8 @@ test('runtime.serve(name, service, callback)', function(assert) {
   veyron.init(config, function(err, runtime) {
     assert.error(err);
 
-    runtime.serve('livingroom/tv', service, function(err, endpoint) {
+    runtime.serve('livingroom/tv', service, function(err) {
       assert.error(err);
-      assert.ok(endpoint && endpoint.match('@2@tcp@'), 'got endpoint');
       runtime.close(assert.end);
     });
   });
@@ -23,7 +22,7 @@ test('runtime.serve(name, service, callback) - service', function(assert) {
   veyron.init({ wspr: 'http://bad-address.tld' }, function(err, runtime) {
     assert.error(err);
 
-    runtime.serve('livingroom/tv', service, function(err, endpoint) {
+    runtime.serve('livingroom/tv', service, function(err) {
       assert.ok(err instanceof Error, 'should fail');
       runtime.close(assert.end);
     });
@@ -36,8 +35,7 @@ test('var promise = runtime.serve(name, service)', function(assert) {
 
     runtime
     .serve('livingroom/tv', service)
-    .then(function(endpoint) {
-      assert.ok(endpoint.match('@2@tcp@'));
+    .then(function() {
       runtime.close(assert.end);
     })
     .catch(function(err) {
@@ -53,8 +51,7 @@ test('var promise = runtime.serve(name, service) - failure', function(assert) {
 
     runtime
     .serve('livingroom/tv', service)
-    .then(function(endpoint) {
-      assert.ok(endpoint.match('@2@tcp@'));
+    .then(function() {
       runtime.close(assert.end);
     })
     .catch(function(err) {
@@ -77,7 +74,7 @@ test( 'runtime.serve(name, service) - ' +
     runtime.serve('livingroom/tv', service, function(err, firstEndpoint) {
       assert.error(err);
 
-      runtime.serve('bedroom/tv', service, function(err, endpoint) {
+      runtime.serve('bedroom/tv', service, function(err) {
         assert.ok(err instanceof Error, 'should not be able to serve twice');
         runtime.close(assert.end);
       });
@@ -115,7 +112,7 @@ test('runtime.addName(name) & runtime.removeName(name) - ' +
 
     runtime
     .serve('livingroom/tv', service)
-    .then(function addSecondName(endpoint) {
+    .then(function addSecondName() {
       return runtime.addName('bedroom/tv');
     })
     .then(function bindToSecondName() {
