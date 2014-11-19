@@ -6,6 +6,7 @@ var leafDispatcher = require('../../src/ipc/leaf_dispatcher');
 var message = 'failure';
 var error = new Error(message);
 var builtInError = new veyron.errors.NoExistError(message);
+var context = require('../../src/runtime/context');
 var errorThrower = {
   throwError: function() {
     throw error;
@@ -53,10 +54,11 @@ var methods = Object.keys(errorThrower);
 
 methods.forEach(function(method) {
   test('jsErrorThrower.' + method + '(callback)', function(assert) {
-    serve('js/errorThrower', dispatcher, function(err, res) {
+    var ctx = context.Context();
+    serve(ctx, 'js/errorThrower', dispatcher, function(err, res) {
       assert.error(err);
 
-      res.service[method](function(err) {
+      res.service[method](ctx, function(err) {
         assert.ok(err, 'should error');
         assert.ok(err instanceof Error, 'should be Error');
         // TODO(jasoncampbell): The JS is missing support for server context
@@ -80,10 +82,11 @@ methods.forEach(function(method) {
 });
 
 test('jsErrorThrower.returnBuiltInError(callback)', function(assert) {
-  serve('js/errorThrower', dispatcher, function(err, res) {
+  var ctx = context.Context();
+  serve(ctx, 'js/errorThrower', dispatcher, function(err, res) {
     assert.error(err);
 
-    res.service.returnBuiltInError(function(err) {
+    res.service.returnBuiltInError(ctx, function(err) {
       assert.ok(err, 'should error');
       // TODO(jasoncampbell): Update once context and param support is
       // available in JS.
@@ -132,10 +135,11 @@ test('throw/reject of non-errors', function(t) {
 
   Object.keys(weirdErrors).forEach(function(method) {
     t.test('service.' + method + '()', function(assert) {
-      serve('js/thrower', dispatcher, function(err, res) {
+      var ctx = context.Context();
+      serve(ctx, 'js/thrower', dispatcher, function(err, res) {
         assert.error(err);
 
-        res.service[method](function(err) {
+        res.service[method](ctx, function(err) {
           assert.ok(err, 'should error');
           assert.ok(err instanceof Error, 'should be Error');
           // TODO(jasoncampbell): Update once context and param support is

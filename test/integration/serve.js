@@ -7,20 +7,21 @@ var defaults = {
 
 module.exports = serve;
 
-// # serve(name, dispatcher, callback)
+// # serve(ctx, name, dispatcher, callback)
 //
 // DRYs up test code by wrapping the default success case for:
 //
 //    veyron.init() ->
 //    runtime.server(name, dispatcher, ...) ->
-//    runtime.bindTo(name, ...) -> r
+//    runtime.bindTo(ctx, name, ...) -> r
 //    assertions ->
 //    untime.close()
 //
 // To make a connection to the default integration test wspr instance and
 // bind to a service use:
 //
-//     serve('test/service', dispatcher, function(err, res) {
+//     var ctx = context.Context()
+//     serve(ctx, 'test/service', dispatcher, function(err, res) {
 //       res.service.returnBuiltInError(function(err) {
 //         assert.error(err)
 //
@@ -41,7 +42,7 @@ module.exports = serve;
 //       })
 //     })
 //
-function serve(name, dispatcher, callback) {
+function serve(ctx, name, dispatcher, callback) {
   var options = defaults;
 
   // alternate: serve(options, callback)
@@ -72,7 +73,7 @@ function serve(name, dispatcher, callback) {
         return callback(err, res);
       }
 
-      runtime.bindTo(name, function(err, service) {
+      var onBind = function(err, service) {
         if (err) {
           return callback(err);
         }
@@ -80,7 +81,13 @@ function serve(name, dispatcher, callback) {
         res.service = service;
 
         callback(err, res);
-      });
+      };
+      
+      if (ctx) {
+        runtime.bindTo(ctx, name, onBind);
+      } else {
+        runtime.bindTo(name, onBind);
+      }
     });
 
     // hoisted and passed as the last argument to the callback argument.

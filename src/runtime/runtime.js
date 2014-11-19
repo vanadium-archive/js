@@ -12,6 +12,7 @@ var Principal = require('../security/principal');
 var Blessings = require('../security/blessings');
 var Deferred = require('../lib/deferred');
 var SimpleHandler = require('../proxy/simple_handler');
+var context = require('./context');
 
 module.exports = Runtime;
 
@@ -34,6 +35,7 @@ function Runtime(options) {
  * var service = runtime.bindTo('EndpointAddress', 'ServiceName')
  * var resultPromise = service.MethodName(arg);
  *
+ * @param {Context} A context.
  * @param {string} name the veyron name of the service to bind to.
  * @param {object} optServiceSignature if set, javascript signature of methods
  * available in the remote service.
@@ -45,9 +47,12 @@ function Runtime(options) {
  * @return {Promise} An object with methods that perform rpcs to service methods
  *
  */
-Runtime.prototype.bindTo = function(name, optServiceSignature, cb) {
+Runtime.prototype.bindTo = function(ctx, name, optServiceSignature, cb) {
   var runtime = this;
   var client = this._getClient();
+
+  var args = context.optionalContext(arguments);
+  ctx = args[0], name = args[1], optServiceSignature = args[2], cb = args[3];
 
   if (typeof optServiceSignature === 'function') {
     cb = optServiceSignature;
@@ -58,7 +63,7 @@ Runtime.prototype.bindTo = function(name, optServiceSignature, cb) {
     cb = cb.bind(runtime);
   }
 
-  return client.bindTo(name, optServiceSignature, cb);
+  return client.bindTo(ctx, name, optServiceSignature, cb);
 };
 
 /**

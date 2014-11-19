@@ -23,20 +23,17 @@ module.exports = {
  * This function returns the last argument, which you must assign
  * manually.
  * @param {arguments} A function arguments list.
- * @return {*} The last argument of the host function.
+ * @return {Array} An array containing the arguments in order.
  */
 function optionalContext(args) {
   var lastidx = args.length - 1;
   if (lastidx >= 0 && args[0] instanceof Context) {
-    return args[lastidx];
+    return args;
   }
 
-  var last = args[lastidx];
-  for (var i = lastidx; i > 0; i--) {
-    args[i] = args[i - 1];
-  }
-  args[0] = new Context({});
-  return last;
+  args = Array.prototype.slice.call(args, 0);
+  args.unshift(new Context());
+  return args;
 }
 
 /*

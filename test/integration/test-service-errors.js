@@ -1,12 +1,14 @@
 var test = require('prova');
 var service = require('./get-service');
 var verror = require('../../src/lib/verror');
+var context = require('../../src/runtime/context');
 
 test('errorThrower.method(callback) - AbortedError', function(assert) {
-  service('test_service/errorThrower', function(err, errorThrower, end) {
+  var ctx = context.Context();
+  service(ctx, 'test_service/errorThrower', function(err, errorThrower, end) {
     assert.error(err);
 
-    errorThrower.throwAborted(function(err) {
+    errorThrower.throwAborted(ctx, function(err) {
       assert.ok(err, 'should error');
       assert.ok(err.message.indexOf('Aborted!') !== -1);
       assert.ok(err instanceof verror.AbortedError, 'should be AbortedError');
@@ -16,10 +18,11 @@ test('errorThrower.method(callback) - AbortedError', function(assert) {
 });
 
 test('errorThrower.method(callback) - BadArgError', function(assert) {
-  service('test_service/errorThrower', function(err, errorThrower, end) {
+  var ctx = context.Context();
+  service(ctx, 'test_service/errorThrower', function(err, errorThrower, end) {
     assert.error(err);
 
-    errorThrower.throwBadArg(function(err) {
+    errorThrower.throwBadArg(ctx, function(err) {
       assert.ok(err, 'should error');
       assert.ok(err.message.indexOf('BadArg!') !== -1);
       assert.ok(err instanceof verror.BadArgError, 'should be BadArgError');
@@ -29,10 +32,11 @@ test('errorThrower.method(callback) - BadArgError', function(assert) {
 });
 
 test('errorThrower.method(callback) - BadProtocolError', function(assert) {
-  service('test_service/errorThrower', function(err, errorThrower, end) {
+  var ctx = context.Context();
+  service(ctx, 'test_service/errorThrower', function(err, errorThrower, end) {
     assert.error(err);
 
-    errorThrower.throwBadProtocol(function(err) {
+    errorThrower.throwBadProtocol(ctx, function(err) {
       assert.ok(err, 'should error');
       assert.ok(err.message.indexOf('BadProtocol!') !== -1);
       assert.ok(err instanceof verror.BadProtocolError,
@@ -43,10 +47,11 @@ test('errorThrower.method(callback) - BadProtocolError', function(assert) {
 });
 
 test('errorThrower.method(callback) - InternalError', function(assert) {
-  service('test_service/errorThrower', function(err, errorThrower, end) {
+  var ctx = context.Context();
+  service(ctx, 'test_service/errorThrower', function(err, errorThrower, end) {
     assert.error(err);
 
-    errorThrower.throwInternal(function(err) {
+    errorThrower.throwInternal(ctx, function(err) {
       assert.ok(err, 'should error');
       assert.ok(err.message.indexOf('Internal!') !== -1);
       assert.ok(err instanceof verror.InternalError,
@@ -57,10 +62,11 @@ test('errorThrower.method(callback) - InternalError', function(assert) {
 });
 
 test('errorThrower.method(callback) - NoAccess', function(assert) {
-  service('test_service/errorThrower', function(err, errorThrower, end) {
+  var ctx = context.Context();
+  service(ctx, 'test_service/errorThrower', function(err, errorThrower, end) {
     assert.error(err);
 
-    errorThrower.throwNoAccess(function(err) {
+    errorThrower.throwNoAccess(ctx, function(err) {
       assert.ok(err, 'should error');
       assert.ok(err.message.indexOf('NoAccess!') !== -1);
       assert.ok(err instanceof verror.NoAccessError,
@@ -71,10 +77,11 @@ test('errorThrower.method(callback) - NoAccess', function(assert) {
 });
 
 test('errorThrower.method(callback) - NoExist', function(assert) {
-  service('test_service/errorThrower', function(err, errorThrower, end) {
+  var ctx = context.Context();
+  service(ctx, 'test_service/errorThrower', function(err, errorThrower, end) {
     assert.error(err);
 
-    errorThrower.throwNoExist(function(err) {
+    errorThrower.throwNoExist(ctx, function(err) {
       assert.ok(err, 'should error');
       assert.ok(err.message.indexOf('NoExist!') !== -1);
       assert.ok(err instanceof verror.NoExistError, 'should be NoExistError');
@@ -84,10 +91,11 @@ test('errorThrower.method(callback) - NoExist', function(assert) {
 });
 
 test('errorThrower.method(callback) - NoExistOrNoAccess', function(assert) {
-  service('test_service/errorThrower', function(err, errorThrower, end) {
+  var ctx = context.Context();
+  service(ctx, 'test_service/errorThrower', function(err, errorThrower, end) {
     assert.error(err);
-
-    errorThrower.throwNoExistOrNoAccess(function(err) {
+    
+    errorThrower.throwNoExistOrNoAccess(ctx, function(err) {
       assert.ok(err, 'should error');
       assert.ok(err.message.indexOf('NoExistOrNoAccess!') !== -1);
       assert.ok(err instanceof verror.NoExistOrNoAccessError,
@@ -98,10 +106,11 @@ test('errorThrower.method(callback) - NoExistOrNoAccess', function(assert) {
 });
 
 test('errorThrower.method(callback) - Unknown Error', function(assert) {
-  service('test_service/errorThrower', function(err, errorThrower, end) {
+  var ctx = context.Context();
+  service(ctx, 'test_service/errorThrower', function(err, errorThrower, end) {
     assert.error(err);
 
-    errorThrower.throwUnknown(function(err) {
+    errorThrower.throwUnknown(ctx, function(err) {
       assert.ok(err, 'should error');
       assert.ok(err.message.indexOf('Unknown!') !== -1);
       assert.ok(err instanceof verror.VeyronError, 'should be VeyronError');
@@ -111,10 +120,11 @@ test('errorThrower.method(callback) - Unknown Error', function(assert) {
 });
 
 test('errorThrower.method(callback) - GoError Error', function(assert) {
-  service('test_service/errorThrower', function(err, errorThrower, end) {
+  var ctx = context.Context();
+  service(ctx, 'test_service/errorThrower', function(err, errorThrower, end) {
     assert.error(err);
 
-    errorThrower.throwGoError(function(err) {
+    errorThrower.throwGoError(ctx, function(err) {
       assert.ok(err, 'should error');
       assert.ok(err.message.indexOf('GoError!') !== -1);
       assert.ok(err instanceof verror.VeyronError, 'should be VeyronError');
@@ -124,10 +134,11 @@ test('errorThrower.method(callback) - GoError Error', function(assert) {
 });
 
 test('errorThrower.method(callback) - GoError Error', function(assert) {
-  service('test_service/errorThrower', function(err, errorThrower, end) {
+  var ctx = context.Context();
+  service(ctx, 'test_service/errorThrower', function(err, errorThrower, end) {
     assert.error(err);
 
-    errorThrower.throwCustomStandardError(function(err) {
+    errorThrower.throwCustomStandardError(ctx, function(err) {
       assert.ok(err, 'should error');
       assert.ok(err.message.indexOf('CustomStandard!') !== -1);
       assert.ok(err instanceof verror.VeyronError, 'should be VeyronError');

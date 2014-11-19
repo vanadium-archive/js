@@ -1,6 +1,7 @@
 var test = require('prova');
 var serve = require('./serve');
 var leafDispatcher = require('../../src/ipc/leaf_dispatcher');
+var context = require('../../src/runtime/context');
 var cacheSignature = {
   get: {
     inArgs: ['key'],
@@ -25,7 +26,8 @@ var dispatcher = leafDispatcher({
 });
 
 test('service.signature([callback]) - js server', function(assert) {
-  serve('testing/my-cache', dispatcher, function(err, res) {
+  var ctx = context.Context();
+  serve(ctx, 'testing/my-cache', dispatcher, function(err, res) {
     res.service.signature(function(err, signature) {
       assert.error(err);
 
@@ -44,7 +46,8 @@ test('service.signature([callback]) - js server', function(assert) {
 });
 
 test('var promise = service.signature() - js server', function(assert) {
-  serve('testing/my-cache', dispatcher, function(err, res) {
+  var ctx = context.Context();
+  serve(ctx, 'testing/my-cache', dispatcher, function(err, res) {
     assert.error(err);
 
     res.service.signature()

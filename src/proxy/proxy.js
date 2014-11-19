@@ -91,7 +91,8 @@ Proxy.prototype.nextId = function() {
  * @return {Promise} Signature of the service in JSON format
  */
 Proxy.prototype.getServiceSignature = function(ctx, name) {
-  name = context.optionalContext(arguments);
+  var args = context.optionalContext(arguments);
+  ctx = args[0], name = args[1];
 
   var proxy = this;
   var deferred = new Deferred();

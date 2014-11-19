@@ -3,6 +3,7 @@ var serve = require('./serve');
 var veyron = require('../../');
 var leafDispatcher = require('../../src/ipc/leaf_dispatcher');
 var Promise = require('../../src/lib/promise');
+var context = require('../../src/runtime/context');
 var idl = {
   package: 'foo',
   Cache: {
@@ -59,6 +60,42 @@ test('js client/server', function(t) {
       t: t
     });
   });
+
+  t.test('with IDL using callbacks, no contexts', function(t) {
+    run({
+      definition: require('./cache-service'),
+      idl: idl,
+      name: 'foo.Cache',
+      t: t,
+      noCtx: true
+    });
+  });
+
+  t.test('with IDL using promises, no contexts', function(t) {
+    run({
+      definition: require('./cache-service-promises'),
+      idl: idl,
+      name: 'foo.Cache',
+      t: t,
+      noCtx: true
+    });
+  });
+
+  t.test('server using callbacks, no contexts', function(t) {
+    run({
+      definition: require('./cache-service'),
+      t: t,
+      noCtx: true
+    });
+  });
+
+  t.test('server using promises, no contexts', function(t) {
+    run({
+      definition: require('./cache-service-promises'),
+      t: t,
+      noCtx: true
+    });
+  });
 });
 
 // optopns: defnition, idl, name, assert
@@ -85,7 +122,11 @@ function run(options) {
 
   var dispatcher = leafDispatcher(options.definition, optArg);
 
-  serve('testing/cache', dispatcher, function(err, res) {
+  var ctx = null;
+  if (!options.noCtx) {
+    ctx = context.Context();
+  }
+  serve(ctx, 'testing/cache', dispatcher, function(err, res) {
     t.error(err);
 
     // waits to close the runtime until all the child tests have ended.
@@ -94,44 +135,56 @@ function run(options) {
     });
 
     var cache = res.service;
+    
+    var onGet = function(t, expected, err, value) {
+      t.error(err);
+      t.deepEqual(value, expected);
+      console.log('ending...');
+      t.end();
+    };
+    
+    var onSet = function(t, key, value, err, result) {
+      t.error(err);
+      
+      // should be void result as defined in the optArg above
+      t.deepEqual(result, []);
+      if (ctx) {
+        cache.get(ctx, key, onGet.bind(null, t, value));
+      } else {
+        cache.get(key, onGet.bind(null, t, value));
+      }
+    };
 
     t.test('cache.set("foo", "bar") -> cache.get("foo")', function(t) {
-      cache.set('foo', 'bar', function(err, result) {
-        t.error(err);
-
-        // should be void result as defined in the optArg above
-        t.deepEqual(result, []);
-
-        cache.get('foo', function(err, value) {
-          t.error(err);
-          t.equal(value, 'bar');
-          t.end();
-        });
-      });
+      if (ctx) {
+        cache.set(ctx, 'foo', 'bar', onSet.bind(null, t, 'foo', 'bar'));
+      } else {
+        cache.set('foo', 'bar', onSet.bind(null, t, 'foo', 'bar'));
+      }
     });
 
     t.test('cache.set("myObject", object, callback)', function(t) {
       var expected = new Map([['a', 'foo'], ['b', 2]]);
-      cache.set('myObject', expected, function(err, result) {
-        t.error(err);
-
-        // should be void result as defined in the optArg above
-        t.deepEqual(result, []);
-
-        cache.get('myObject', function(err, value) {
-          t.error(err);
-          t.deepEqual(value, expected);
-          t.end();
-        });
-      });
+      if (ctx) {
+        cache.set(ctx, 'myObject', expected,
+                  onSet.bind(null, t, 'myObject', expected));
+      } else {
+        cache.set('myObject', expected, 
+                  onSet.bind(null, t, 'myObject', expected));
+      }
     });
 
     t.test('cache.get("bad-key", callback) - failure', function(t) {
-      cache.get('bad-key', function(err, result) {
+      var onGet = function(err, result) {
         t.ok(err, 'should error');
         t.deepEqual(err.idAction, veyron.errors.IdActions.Unknown);
         t.end();
-      });
+      };
+      if (ctx) {
+        cache.get(ctx, 'bad-key', onGet);
+      } else {
+        cache.get('bad-key', onGet);
+      }
     });
 
     t.test('cache.badMethod() - failure', function(t) {
@@ -164,13 +217,22 @@ function run(options) {
 
       // Add them to the cache
       var jobs = Object.keys(items).map(function(key) {
-        return cache.set(key, JSON.stringify(items[key]));
+        if (ctx) {
+          return cache.set(ctx, key, JSON.stringify(items[key]));
+        } else {
+          return cache.set(key, JSON.stringify(items[key]));
+        }
       });
 
       Promise
       .all(jobs)
       .then(function() {
-        var promise = cache.multiGet();
+        var promise;
+        if (ctx) {
+          promise = cache.multiGet(ctx);
+        } else {
+          promise = cache.multiGet();
+        }
         var stream = promise.stream;
         var writes = 0;
         var reads = 0;

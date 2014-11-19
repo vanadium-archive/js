@@ -2,19 +2,21 @@ var test = require('prova');
 var serve = require('./serve');
 var ServiceWrapper = require('../../src/idl/idl').ServiceWrapper;
 var Promise = require('../../src/lib/promise');
+var context = require('../../src/runtime/context');
 
 test('echoer.echo(callback)', function(assert) {
-  serve({
+  var ctx = context.Context();
+  serve(ctx, {
     name: 'dispatcher',
     dispatcher: dispatcher,
     autoBind: false
   }, function(err, res) {
     assert.error(err);
 
-    res.runtime.bindTo('dispatcher/echo/bar', function(err, service) {
+    res.runtime.bindTo(ctx, 'dispatcher/echo/bar', function(err, service) {
       assert.error(err);
 
-      service.echo(function(err, result) {
+      service.echo(ctx, function(err, result) {
         assert.error(err);
 
         assert.equal(result, 'bar');
@@ -25,17 +27,18 @@ test('echoer.echo(callback)', function(assert) {
 });
 
 test('counter.count()', function(assert) {
-  serve({
+  var ctx = context.Context();
+  serve(ctx, {
     name: 'dispatcher',
     dispatcher: dispatcher,
     autoBind: false
   }, function(err, res) {
     assert.error(err);
 
-    res.runtime.bindTo('dispatcher/count/bar', function(err, service) {
+    res.runtime.bindTo(ctx, 'dispatcher/count/bar', function(err, service) {
       assert.error(err);
 
-      service.count(function(err, result) {
+      service.count(ctx, function(err, result) {
         assert.error(err);
 
         assert.equal(result, 3);
@@ -46,7 +49,8 @@ test('counter.count()', function(assert) {
 });
 
 test('counter.count() - two different suffixes', function(assert) {
-  serve({
+  var ctx = context.Context();
+  serve(ctx, {
     name: 'dispatcher',
     dispatcher: dispatcher,
     autoBind: false
@@ -54,11 +58,11 @@ test('counter.count() - two different suffixes', function(assert) {
     assert.error(err);
 
     var promises = [
-      res.runtime.bindTo('dispatcher/count/bar').then(function(client) {
-        return client.count();
+      res.runtime.bindTo(ctx, 'dispatcher/count/bar').then(function(client) {
+        return client.count(ctx);
       }),
-      res.runtime.bindTo('dispatcher/count/longer').then(function(client) {
-        return client.count();
+      res.runtime.bindTo(ctx, 'dispatcher/count/longer').then(function(client) {
+        return client.count(ctx);
       })
     ];
 
@@ -75,14 +79,15 @@ test('counter.count() - two different suffixes', function(assert) {
 });
 
 test('runtime.bindTo("dispatcher/unknown") - failure', function(assert) {
-  serve({
+  var ctx = context.Context();
+  serve(ctx, {
     name: 'dispatcher',
     dispatcher: dispatcher,
     autoBind: false
   }, function(err, res) {
     assert.error(err);
 
-    res.runtime.bindTo('dispatcher/unknown', function(err, service) {
+    res.runtime.bindTo(ctx, 'dispatcher/unknown', function(err, service) {
       assert.ok(err, 'should fail');
       res.end(assert);
     });
@@ -90,17 +95,19 @@ test('runtime.bindTo("dispatcher/unknown") - failure', function(assert) {
 });
 
 test('runtime.bindTo("dispatcher/promise")', function(assert) {
-  serve({
+  var ctx = context.Context();
+  serve(ctx, {
     name: 'dispatcher',
     dispatcher: dispatcher,
     autoBind: false
   }, function(err, res) {
     assert.error(err);
 
-    res.runtime.bindTo('dispatcher/promise/whatever', function(err, service) {
+    var name = 'dispatcher/promise/whatever';
+    res.runtime.bindTo(ctx, name, function(err, service) {
       assert.error(err);
 
-      service.echo(function(err, result) {
+      service.echo(ctx, function(err, result) {
         assert.error(err);
         assert.equal(result, 'promise/whatever');
         res.end(assert);
@@ -110,14 +117,15 @@ test('runtime.bindTo("dispatcher/promise")', function(assert) {
 });
 
 test('runtime.bindTo("dispatcher/promise/fail") - failure', function(assert) {
-  serve({
+  var ctx = context.Context();
+  serve(ctx, {
     name: 'dispatcher',
     dispatcher: dispatcher,
     autoBind: false
   }, function(err, res) {
     assert.error(err);
 
-    res.runtime.bindTo('dispatcher/promise/fail', function(err, service) {
+    res.runtime.bindTo(ctx, 'dispatcher/promise/fail', function(err, service) {
       assert.ok(err, 'should fail');
       res.end(assert);
     });
@@ -125,17 +133,19 @@ test('runtime.bindTo("dispatcher/promise/fail") - failure', function(assert) {
 });
 
 test('runtime.bindTo("dispatcher/callback")', function(assert) {
-  serve({
+  var ctx = context.Context();
+  serve(ctx, {
     name: 'dispatcher',
     dispatcher: dispatcher,
     autoBind: false
   }, function(err, res) {
     assert.error(err);
-
-    res.runtime.bindTo('dispatcher/callback/whatever', function(err, service) {
+    
+    var name = 'dispatcher/callback/whatever';
+    res.runtime.bindTo(ctx, name, function(err, service) {
       assert.error(err);
 
-      service.echo(function(err, result) {
+      service.echo(ctx, function(err, result) {
         assert.error(err);
         assert.equal(result, 'callback/whatever');
         res.end(assert);
@@ -145,14 +155,15 @@ test('runtime.bindTo("dispatcher/callback")', function(assert) {
 });
 
 test('runtime.bindTo("dispatcher/callback/fail") - failure', function(assert) {
-  serve({
+  var ctx = context.Context();
+  serve(ctx, {
     name: 'dispatcher',
     dispatcher: dispatcher,
     autoBind: false
   }, function(err, res) {
     assert.error(err);
 
-    res.runtime.bindTo('dispatcher/callback/fail', function(err, service) {
+    res.runtime.bindTo(ctx, 'dispatcher/callback/fail', function(err, service) {
       assert.ok(err, 'should fail');
       res.end(assert);
     });

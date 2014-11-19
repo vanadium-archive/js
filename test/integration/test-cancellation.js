@@ -5,12 +5,13 @@ var serve = require('./serve');
 var leafDispatcher = require('../../src/ipc/leaf_dispatcher');
 var NO_TIMEOUT = require('../../src/ipc/constants').NO_TIMEOUT;
 
-function run(err, collector, end, assert) {
+
+function run(ctx, err, collector, end, assert) {
   assert.error(err);
 
   var id = Math.floor(Math.random() * 1000000);
   var timeout = 60 * 60 * 1000;
-  var ctx = new context.Context().withTimeout(timeout);
+  ctx = ctx.withTimeout(timeout);
 
   collector.neverReturn(ctx, id).catch(function(err) {
     if (!(err instanceof context.CancelledError)) {
@@ -42,8 +43,9 @@ function run(err, collector, end, assert) {
 }
 
 test('cancel: js client to go server', function(assert) {
-  service('test_service/cancel', function(err, collector, end) {
-    run(err, collector, end, assert);
+  var ctx = context.Context();
+  service(ctx, 'test_service/cancel', function(err, collector, end) {
+    run(ctx, err, collector, end, assert);
   });
 });
 
@@ -111,7 +113,8 @@ function newDispatcher() {
 }
 
 test('cancel: js client to js server', function(assert) {
-  serve('testing/cancel', newDispatcher(), function(err, res) {
-    run(err, res.service, res.end, assert);
+  var ctx = context.Context();
+  serve(ctx, 'testing/cancel', newDispatcher(), function(err, res) {
+    run(ctx, err, res.service, res.end, assert);
   });
 });
