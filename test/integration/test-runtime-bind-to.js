@@ -1,8 +1,7 @@
 var test = require('prova');
 var veyron = require('../../');
-var port = require('../services/config-wsprd').flags.port;
 var config = {
-  wspr: 'http://localhost:' + port
+  wspr: 'http://' + process.env.WSPR_ADDR
 };
 
 test('runtime.bindTo(name, callback)', function(assert) {
@@ -41,7 +40,7 @@ test('var promise = runtime.bindTo(name)', function(assert) {
   }
 });
 
-test('runtime.bindTo(endpoint, callback) - bind to enpoint of a JS server',
+test('runtime.bindTo(endpoint, callback) - bind to endpoint of a JS server',
 function(assert) {
   var leafDispatcher = require('../../src/ipc/leaf_dispatcher');
   var cache = require('./cache-service');

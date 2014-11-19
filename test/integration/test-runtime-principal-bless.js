@@ -127,9 +127,8 @@ test('var promise = i.bless(...) - bad caveats failure', function(assert) {
 
 
 function blessings(extension, callback) {
-  var port = require('../services/config-wsprd').flags.port;
   var config = {
-    wspr: 'http://localhost:' + port
+    wspr: 'http://' + process.env.WSPR_ADDR
   };
 
   veyron.init(config, function(err, runtime) {

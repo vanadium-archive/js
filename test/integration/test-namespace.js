@@ -1,13 +1,10 @@
 var test = require('prova');
 var veyron = require('../../');
 var Promise = require('../../src/lib/promise');
-var port = require('../services/config-wsprd').flags.port;
 var config = {
-  wspr: 'http://localhost:' + port
+  wspr: 'http://' + process.env.WSPR_ADDR
 };
-var namespaceRootAddress = require('../services/config-mounttabled').flags[
-  'veyron.tcp.address'
-];
+var namespaceRoot = process.env.NAMESPACE_ROOT;
 var PREFIX = 'namespace-testing/';
 
 test('glob(' + PREFIX + '*)', function(assert) {
@@ -133,9 +130,9 @@ test('resolveToMountTable(' + PREFIX + 'cottage)', function(assert) {
     runtime = rt;
     var namespace = rt.newNamespace();
     return namespace.resolveToMounttable(PREFIX + 'cottage');
-  }).then(function validate(mounttableAddresses) {
-    assert.equals(mounttableAddresses.length, 1);
-    assert.ok(mounttableAddresses[0].indexOf(namespaceRootAddress) > -1);
+  }).then(function validate(mounttableNames) {
+    assert.equals(mounttableNames.length, 1);
+    assert.ok(mounttableNames[0].indexOf(namespaceRoot) === 0);
     end();
   }).catch(end);
 
@@ -214,7 +211,7 @@ test('setRoots() -> valid', function(assert) {
     runtime = rt;
     namespace = rt.newNamespace();
     // Set the roots to a valid root, we expect normal glob results.
-    return namespace.setRoots('/' + namespaceRootAddress);
+    return namespace.setRoots(namespaceRoot);
   }).then(function glob() {
     var rpc = namespace.glob(PREFIX + '*');
     rpc.catch(end);
@@ -273,7 +270,7 @@ test('roots()', function(assert) {
     return namespace.roots();
   }).then(function validate(roots) {
     assert.equals(roots.length, 1);
-    assert.ok(roots[0].indexOf(namespaceRootAddress) > -1);
+    assert.ok(roots[0].indexOf(namespaceRoot) === 0);
     end();
   }).catch(end);
 

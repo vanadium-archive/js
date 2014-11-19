@@ -1,6 +1,10 @@
 var test = require('prova');
 var veyron = require('../../');
-var port = require('../services/config-wsprd').flags.port;
+
+var config = {
+  wspr: 'http://' + process.env.WSPR_ADDR
+};
+
 var knownSignature = {
   get: {
     inArgs: ['key'],
@@ -20,9 +24,6 @@ var knownSignature = {
 };
 
 test('service.signature([callback])', function(assert) {
-  var config = {
-    wspr: 'http://localhost:' + port
-  };
   var rt;
 
   veyron.init(config, onruntime);
@@ -57,10 +58,6 @@ test('service.signature([callback])', function(assert) {
 });
 
 test('service.signature() - promise', function(assert) {
-  var config = {
-    wspr: 'http://localhost:' + port
-  };
-
   var rt;
 
   veyron

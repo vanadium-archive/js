@@ -1,6 +1,5 @@
 var test = require('prova');
-var port = require('../services/config-wsprd').flags.port;
-var url = 'ws://localhost:' + port;
+var url = 'ws://' + process.env.WSPR_ADDR;
 var ProxyWappedWebSocket = require('../../src/proxy/websocket');
 var now = Date.now;
 

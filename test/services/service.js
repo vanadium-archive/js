@@ -4,7 +4,6 @@ var inherits = require('util').inherits;
 var EE = require('events').EventEmitter;
 var extend = require('xtend');
 var which = require('which');
-var endpointRegExp = /Mount table .+ endpoint: (\/.+@@)/;
 var PassThrough = require('stream').PassThrough;
 var fs = require('fs');
 
@@ -15,7 +14,7 @@ var VEYRON_BINS = [
 ];
 var DEFAULT_FLAGS = {
   v: 3,
-  log_dir: path.resolve('tmp/log') // jshint ignore:line
+  log_dir: path.resolve('tmp/log')  // jshint ignore:line
 };
 
 process.env.PATH += ':' + VEYRON_BINS.join(':');
@@ -23,7 +22,7 @@ process.env.PATH += ':' + VEYRON_BINS.join(':');
 module.exports = Service;
 
 function Service(name, env) {
-  if (! (this instanceof Service)) {
+  if (!(this instanceof Service)) {
     return new Service(name, env);
   }
 
@@ -38,21 +37,18 @@ function Service(name, env) {
   }
 
   service.name = name;
-  service.arguments = flags(extend(DEFAULT_FLAGS, service.config.flags));
-  service.bin = '';
+  service.args = flags(extend(DEFAULT_FLAGS, service.config.flags));
   service.env = env || {};
-  service.ready = false;
 }
 
 inherits(Service, EE);
 
-Service.prototype.spawn = function(args, options) {
+Service.prototype.spawn = function(args) {
   var service = this;
 
-  args = args || service.arguments;
-  options = options || { env: service.env };
+  args = args || service.args;
 
-  if (! VEYRON_ROOT) {
+  if (!VEYRON_ROOT) {
     var err = new Error('Please export $VEYRON_ROOT to proceed');
     return service.emit('error', err);
   }
@@ -64,19 +60,29 @@ Service.prototype.spawn = function(args, options) {
 
     var errlog = '';
 
-    service.bin = bin;
-    service.process = spawn(bin, args, options);
+    service.process = spawn(bin, args, {env: service.env});
 
-    if (service.name === 'write-wspr-config.js') {
-      // Wait for chrome to spin up.
-      setTimeout(function() {
+    if (service.name !== 'servicerunner') {
+      if (service.name === 'write-wspr-config.js') {
+        // HACK: Wait for chrome to spin up.
+        setTimeout(function() {
+          service.emit('ready');
+        }, 5000);
+      } else {
         service.emit('ready');
-      }, 5000);
+      }
     }
 
     if (service.process.stdout) {
       service.process.stdout.pipe(fs.createWriteStream(
         path.join('tmp', service.name + '.stdout.log')));
+
+      if (service.name === 'servicerunner') {
+        service.process.stdout.on('data', function(data) {
+          service.emit('vars', JSON.parse(data.toString()));
+          service.emit('ready');
+        });
+      }
     }
 
     // Buffer stderr until close so that a meaningful error can be emitted
@@ -90,34 +96,8 @@ Service.prototype.spawn = function(args, options) {
       stderr.pipe(fs.createWriteStream(
         path.join('tmp', service.name + '.stderr.log')));
 
-      stderr.on('data', function (data) {
+      stderr.on('data', function(data) {
         errlog += data;
-
-        if (service.ready) {
-          return;
-        }
-
-        // Scrape stderr for endpoints.
-        var out = data.toString();
-
-        if (service.name === 'wsprd') {
-          if (out.match('Listening at')) {
-            service.ready = true;
-            service.emit('ready');
-          }
-          return;
-        } else if (service.name === 'mounttabled') {
-          var match = out.match(endpointRegExp);
-          if (match && match[1]) {
-            service.ready = true;
-            service.emit('endpoint', service.endpoint = match[1]);
-            service.emit('ready');
-          }
-          return;
-        } else {
-          service.ready = true;
-          service.emit('ready');
-        }
       });
     }
 
@@ -136,7 +116,7 @@ Service.prototype.spawn = function(args, options) {
       service.emit('error', new Error(message));
     });
 
-    [ 'exit', 'close' ].forEach(function (name) {
+    [ 'exit', 'close' ].forEach(function(name) {
         service.process.on(name, service.emit.bind(service, name));
     });
 
@@ -148,11 +128,10 @@ Service.prototype.spawn = function(args, options) {
 // principal command.
 Service.prototype.exec = function(command, cb) {
   var service = this;
-
   service
-  .on('error', cb.bind(service))
-  .on('spawn', cb.bind(service, null))
-  .spawn(command.split(' '));
+    .on('error', cb.bind(service))
+    .on('spawn', cb.bind(service, null))
+    .spawn(command.split(' '));
 };
 
 Service.prototype.kill = function() {
@@ -172,7 +151,7 @@ function notfound(name) {
 }
 
 function flags(obj) {
-  var args = Object.keys(obj).map(function(key){
+  var args = Object.keys(obj).map(function(key) {
     return ['-', key, '=', obj[key]].join('');
   });
 

@@ -15,37 +15,21 @@ process.on('uncaughtException', function(err) {
 });
 process.on('SIGINT', stop);
 
-// Start services specified in the --services command line flag.
-function startServices(cb) {
-  var services = [];
-  if (argv.services && argv.services.length) {
-    services = argv.services.split(',');
-  }
-
-  debug('starting services: ' + services);
-
-  serviceRunner = new ServiceRunner(services);
-  serviceRunner
-  .on('start', cb)
-  .on('error', stop)
-  .start();
-}
-
 // Spawn test command and stop on exit.
 function runTests() {
   debug('running tests');
-  var debugArgs = {
+  var debugEnv = {
     DEBUG: argv.debug || process.env.DEBUG || '',
     DEBUG_COLORS: true
   };
-  var env = extend(process.env, debugArgs);
+  var env = extend(process.env, serviceRunner.env, debugEnv);
 
   var command = argv['--'];
-  var executableName = command[0];
+  var name = command[0];
   var args = command.slice(1);
-  var proc = spawn(executableName, args, { env: env });
+  var proc = spawn(name, args, {env: env});
 
-  // Pipe the test run's stdout and stderr to the parent process
+  // Pipe the test's stdout and stderr to the parent process.
   proc.stdout.pipe(process.stdout);
   proc.stderr.pipe(process.stderr);
   proc.on('error', function(err) {
@@ -72,10 +56,37 @@ function stop(err, code) {
     code = code || 0;
   }
 
-  serviceRunner.stop(function() {
-    debug('runner stopped, exiting: %s', code);
+  serviceRunner.stop(function(err) {
+    if (err) {
+      debug('warning: serviceRunner.stop() failed! exiting anyways: %s', code);
+    } else {
+      debug('runner stopped, exiting: %s', code);
+    }
     process.exit(code);
   });
 }
 
-startServices(runTests);
+// Starts the "servicerunner" service as well as any services specified in the
+// --services command line flag, then runs tests.
+function startServicesAndRunTests() {
+  var services = [];
+  if (argv.services && argv.services.length) {
+    services = argv.services.split(',');
+  }
+
+  debug('starting core services and: ' + services.join(', '));
+
+  // NOTE(sadovsky): There are all sorts of race conditions and unhandled edge
+  // cases in this code.
+  serviceRunner = new ServiceRunner(services);
+  serviceRunner
+    .on('error', stop)
+    .start(function(err) {
+      if (err) {
+        return stop(err);
+      }
+      runTests();
+    });
+}
+
+startServicesAndRunTests();

@@ -1,9 +1,8 @@
 var test = require('prova');
 var veyron = require('../../');
 var Blessings = require('../../src/security/blessings.js');
-var port = require('../services/config-wsprd').flags.port;
 var config = {
-  wspr: 'http://localhost:' + port
+  wspr: 'http://' + process.env.WSPR_ADDR
 };
 
 test('runtime.newBlessings(extension, callback)', function(assert) {

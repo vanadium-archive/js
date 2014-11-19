@@ -1,7 +1,6 @@
-var port = require('../services/config-wsprd').flags.port;
 var veyron = require('../../');
 var config = {
-  wspr: 'http://localhost:' + port
+  wspr: 'http://' + process.env.WSPR_ADDR
 };
 
 module.exports = service;

@@ -1,8 +1,7 @@
 var test = require('prova');
 var veyron = require('../../');
-var port = require('../services/config-wsprd').flags.port;
 var config = {
-  wspr: 'http://localhost:' + port
+  wspr: 'http://' + process.env.WSPR_ADDR
 };
 var ServiceWrapper = require('../../src/idl/idl').ServiceWrapper;
 var Deferred = require('../../src/lib/deferred');

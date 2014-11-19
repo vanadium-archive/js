@@ -1,9 +1,9 @@
 var test = require('prova');
 var veyron = require('../../');
 var Promise = require('../../src/lib/promise');
-var port = require('../services/config-wsprd').flags.port;
+
 var config = {
-  wspr: 'http://localhost:' + port
+  wspr: 'http://' + process.env.WSPR_ADDR
 };
 
 var NAME_PREFIX = 'new-server-testing/';

@@ -15,11 +15,10 @@ SHELL := /bin/bash -e -o pipefail
 UNAME := $(shell uname)
 BROWSER := chrome
 
-# For browser testing non Darwin machines get the --headless flag, this uses
-# xvfb underneath the hood (inside prova => launch-browser => node-headless).
-# Unfortunately OS X can't do the headless thing...
-#
-# SEE: https://github.com/kesla/node-headless/
+# When running browser tests on non-Darwin machines, set the --headless flag.
+# This uses Xvfb underneath the hood (inside prova => browser-launcher =>
+# headless), which is not supported on OS X.
+# See: https://github.com/kesla/node-headless/
 ifndef NOHEADLESS
 	ifneq ($(UNAME),Darwin)
 		HEADLESS := --headless
@@ -42,7 +41,7 @@ ifdef BROWSER_OUTPUT
 	BROWSER_OUTPUT := > $(BROWSER_OUTPUT)
 endif
 
-BROWSER_OPTS := --browser --launch $(BROWSER) $(HEADLESS) $(TAP) $(QUIT)
+BROWSER_OPTS := --browser --transform envify --launch $(BROWSER) $(HEADLESS) $(TAP) $(QUIT)
 
 JS_SRC_FILES = $(shell find src -name "*.js" | sed 's/ /\\ /')
 
@@ -50,7 +49,7 @@ JS_NACL_SRC_FILES = $(shell find nacl/html -name "*.js" | sed 's/ /\\ /')
 
 # Common services needed for all integration tests. Must be a comma-seperated
 # string with no spaces.
-COMMON_SERVICES := "proxyd,test_serviced"
+COMMON_SERVICES := "test_serviced"
 
 BROWSERIFY_OPTS := --debug --standalone veyron
 
@@ -74,7 +73,8 @@ ifeq (,$(wildcard $(NACLGOROOT)/src/make-nacl.sh))
 	$(error NACLGOROOT not set to a go compiler with NACL support. $(NACLGOROOT)/src/make-nacl.sh missing.)
 endif
 
-#TODO(bprosnitz) Remove the novdl flag once it works on non-host architectures
+# TODO(bprosnitz): Remove the -novdl flag once it works on non-host
+# architectures.
 nacl/out/wspr.nexe: validate-naclgoroot updated-go-compiler
 	GOROOT= veyron xgo --target_go=$(NACLGOROOT)/bin/go -novdl 386-nacl build -o $@ "veyron.io/wspr/veyron/services/wsprd/browspr/main"
 
@@ -136,15 +136,15 @@ test-unit-node: test-precheck
 test-unit-browser: test-precheck
 	prova test/unit/test-*.js $(BROWSER_OPTS) $(BROWSER_OUTPUT)
 
-#TODO(bprosnitz) Add test-integration-nacl
+# TODO(bprosnitz): Add test-integration-nacl.
 test-integration: lint test-integration-node test-integration-browser
 
 test-integration-node: test-precheck go/bin
-	node test/integration/runner.js --services=$(COMMON_SERVICES),wsprd -- \
+	node test/integration/runner.js --services=$(COMMON_SERVICES) -- \
 	prova test/integration/test-*.js $(TAP) $(NODE_OUTPUT)
 
 test-integration-browser: test-precheck go/bin
-	node test/integration/runner.js --services=$(COMMON_SERVICES),wsprd -- \
+	node test/integration/runner.js --services=$(COMMON_SERVICES) -- \
 	prova test/integration/test-*.js $(BROWSER_OPTS) $(BROWSER_OUTPUT)
 
 test-integration-nacl: validate-chromebin test-precheck nacl/out go/bin
@@ -154,14 +154,17 @@ test-integration-nacl: validate-chromebin test-precheck nacl/out go/bin
 
 test-extension: BROWSER_OPTS := --options="--load-extension=$(PWD)/extension/build/" $(BROWSER_OPTS)
 test-extension: test-precheck go/bin extension/veyron.crx
-	node test/integration/runner.js --services=$(COMMON_SERVICES),wsprd -- \
+	node test/integration/runner.js --services=$(COMMON_SERVICES) -- \
 	prova test/extension/test-*.js $(BROWSER_OPTS) $(BROWSER_OUTPUT)
 
+# TODO(sadovsky): Check whether we can remove mounttabled, proxyd, and wsprd now
+# that those are run via servicerunner.
 go/bin: $(GO_FILES)
 	@$(VGO) build -o $(GOBIN)/identityd veyron.io/veyron/veyron/services/identity/identityd
 	@$(VGO) build -o $(GOBIN)/mounttabled veyron.io/veyron/veyron/services/mounttable/mounttabled
 	@$(VGO) build -o $(GOBIN)/principal veyron.io/veyron/veyron/tools/principal
 	@$(VGO) build -o $(GOBIN)/proxyd veyron.io/veyron/veyron/services/proxy/proxyd
+	@$(VGO) build -o $(GOBIN)/servicerunner veyron.io/veyron/veyron/tools/servicerunner
 	@$(VGO) build -o $(GOBIN)/test_serviced test_service/test_serviced
 	@$(VGO) build -o $(GOBIN)/wsprd veyron.io/wspr/veyron/services/wsprd
 

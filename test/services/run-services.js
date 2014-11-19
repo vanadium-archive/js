@@ -1,192 +1,157 @@
-var parallel = require('run-parallel');
-var service = require('./service');
+// TODO(sadovsky): Rename this file service-runner.js.
+
 var debug = require('debug')('run-services');
 var EE = require('events').EventEmitter;
-var inherits = require('util').inherits;
 var extend = require('xtend');
-var path = require('path');
+var inherits = require('util').inherits;
 var mkdirp = require('mkdirp');
+var parallel = require('run-parallel');
+var path = require('path');
+var service = require('./service');
 
-module.exports = Run;
+module.exports = Runner;
 
 /**
- * var runner = Run(names=[], options={})
+ * var runner = Runner(names=[])
  *
- * Events: start, stop, error
+ * Emits: start, stop, error
  *
  * @param {Array} names of the veyron services to run.
- * @param {Object} An object holding the options that will be passed to each
- * service's spawn call
- * @returns {Run}
+ * @returns {Runner}
  */
-function Run(names, options) {
-  if (! (this instanceof Run)) {
-    return new Run(names, options);
+function Runner(names) {
+  if (!(this instanceof Runner)) {
+    return new Runner(names);
   }
 
-  if (! Array.isArray(names)) {
-    names = [ names ];
-  }
+  // TODO(sadovsky): Make these fields private.
+  var runner = this;
 
-  // TODO(jasoncampbell): Allow options to pass through and clearly document
-  // them.
-  var run = this;
-  var defaults = {
-    'tmp-dir': path.resolve('tmp'),
-    VEYRON_CREDENTIALS: path.resolve('tmp/test-credentials')
-  };
+  EE.call(runner);
 
-  EE.call(this);
+  // Env vars produced by servicerunner job. These are made visible to clients
+  // in case they want to pass them to other subprocesses.
+  runner.env = {};
 
-  run.options = extend(defaults, options);
-  run.names = names;
-  run.services = [];
-  run.status = 'new';
+  runner._names = names;
+  runner._services = [];
 
-  run.on('setup', function() {
-    run.status = 'ready';
-  });
-
-  run.on('start', function(){
-    run.status = 'running';
-  });
-
-  run.on('error', function(err) {
-    debug('error detected, shutting child porcesses down');
-    run.stop();
-  });
+  // Used to make start() and stop() idempotent.
+  runner._startCalled = false;
+  runner._stopCalled = false;
 }
 
-inherits(Run, EE);
+inherits(Runner, EE);
 
-Run.prototype.is = function (status) {
-  var run = this;
-
-  return run.status === status;
-};
-
-Run.prototype.start = function () {
-  var run = this;
-
-  if (! run.is('ready')) {
-    debug('deferring start');
-    run.once('setup', run.start);
-    run.setup();
-    return run;
+Runner.prototype.start = function(cb) {
+  var runner = this;
+  if (runner._startCalled) {
+    debug('warning: start called multiple times');
+    return;
   }
+  runner._startCalled = true;
 
-  debug('now starting...');
-
-  var jobs = run.names.map(function(name) {
-    var service = run.add(name);
-    return createStartWorker(service);
-  });
-
-  parallel(jobs, started);
-
-  function started(err) {
-    debug('started all services');
-    run.emit('start');
-  }
-
-  return run;
-};
-
-Run.prototype.setup = function() {
-  var run = this;
-  var tmp = path.join(run.options['tmp-dir'], 'log');
-  var VEYRON_CREDENTIALS = run.options.VEYRON_CREDENTIALS;
-
-  debug('setting up...');
-
-  mkdirp(tmp, createCredentials);
-
-  function createCredentials(err) {
-    if (err) {
-      return run.emit('error', err);
-    }
-
-    service('principal')
-    .exec('create --overwrite ' + VEYRON_CREDENTIALS + ' test',
-	  function(err, stdout, stderr) {
-      if (err) {
-        return run.emit('error', err);
-      }
-
-      stdout
-      .on('close', startMounttable);
+  debug('starting core services...');
+  runner._setup(function() {
+    debug('core services ready; starting additional services...');
+    var services = runner._names.map(runner._add.bind(runner));
+    // Note, we don't map over runner._services because that includes
+    // servicerunner.
+    var jobs = services.map(createStartWorker);
+    parallel(jobs, function(err) {
+      debug('started all services');
+      runner.emit('start');
+      cb(err);
     });
-  }
+  });
 
-  function startMounttable(){
-    run
-    .add('mounttabled')
-    .on('endpoint', function(endpoint){
-      run.options.NAMESPACE_ROOT = endpoint;
-      process.env.NAMESPACE_ROOT = endpoint;
-    })
-    .on('ready', function() {
-      debug('mounttabled running');
-      run.emit('setup');
-    })
-    .spawn();
-  }
+  return runner;
 };
 
-// Add services to the run list, this sets up some book keeping like error
-// tracking and allows a list of services to be iterated over later to help
-// with exiting everything cleanly.
-Run.prototype.add = function(name) {
-  var run = this;
-  var opts = extend(process.env, {
-    VEYRON_CREDENTIALS: run.options.VEYRON_CREDENTIALS
+Runner.prototype._add = function(name) {
+  var runner = this;
+  var env = extend(process.env, runner.env);
+  var s = service(name, env);
+  s.on('error', function(err) {
+    debug('error detected, stopping all services');
+    runner.emit('error', err);
+    runner.stop();
   });
-  if (run.options.NAMESPACE_ROOT) {
-    opts.NAMESPACE_ROOT = run.options.NAMESPACE_ROOT;
-  }
-
-  var s = service(name, opts);
-
-  s.on('error', run.emit.bind(run, 'error'));
-
-  // keep track so it can be sutdown later
-  run.services.push(s);
-
+  runner._services.push(s);
   return s;
 };
 
-Run.prototype.stop = function (cb) {
-  cb = cb || function(){};
+// Creates a temporary directory for output, generates a principal, starts core
+// services (mount table, proxyd, wsprd), writes various vars to runner.env,
+// then calls cb.
+Runner.prototype._setup = function(cb) {
+  var runner = this;
 
-  var run = this;
+  mkdirp(path.resolve('tmp/log'), createCredentials);
 
-  run.on('stop', cb);
+  function createCredentials(err) {
+    if (err) {
+      return runner.emit('error', err);
+    }
+    runner.env.VEYRON_CREDENTIALS = path.resolve('tmp/test-credentials');
+    service('principal')
+      .exec('create -overwrite ' + runner.env.VEYRON_CREDENTIALS + ' test',
+	          function(err, stdout, stderr) {
+              if (err) {
+                return runner.emit('error', err);
+              }
+              stdout.on('close', startCoreServices);
+            });
+  }
 
-  if (run.is('stopping')) {
+  function startCoreServices() {
+    runner
+      ._add('servicerunner')
+      .on('vars', function(vars) {
+        runner.env = extend(runner.env, {
+          NAMESPACE_ROOT: vars.MT_NAME,
+          WSPR_ADDR: vars.WSPR_ADDR
+        });
+      })
+      .on('ready', function() {
+        debug('core services running');
+        cb();
+      })
+      .spawn();
+  }
+};
+
+Runner.prototype.stop = function(cb) {
+  var runner = this;
+  if (runner._stopCalled) {
+    debug('warning: stop called multiple times');
     return;
   }
+  runner._stopCalled = true;
+
+  cb = cb || function() {};
 
   debug('stopping...');
-  run.status = 'stopping';
 
-  var jobs = run.services.map(createStopWorker);
+  // Remove all error listeners before killing any services so that services
+  // don't complain when other services they depend on are shut down.
+  runner._services.map(function(s) {
+    s.removeAllListeners('error');
+  });
 
-  parallel(jobs, stopped);
-
-  function stopped(err) {
+  var jobs = runner._services.map(createStopWorker);
+  parallel(jobs, function(err) {
     debug('stopped');
-    run.emit('stop');
-  }
+    runner.emit('stop');
+    cb(err);
+  });
 };
 
 function createStartWorker(service) {
   return function start(cb) {
     debug('spawning: %s', service.name);
-
     service.on('ready', function ready() {
       debug('ready: %s', service.name);
-      // Error listeners have already been listend to via the call to
-      // run.add(name)
       cb();
     });
     service.spawn();
@@ -194,12 +159,6 @@ function createStartWorker(service) {
 }
 
 function createStopWorker(service) {
-  // Errors need to be removed from each service ahead of exiting since
-  // things will start complaining about missing mountables etc. as all the
-  // points in the constellation start to come down.
-  service.removeAllListeners('error');
-  service.on('error', function() {});
-
   return function stop(cb) {
     debug('exiting %s', service.name);
     service.on('exit', cb);

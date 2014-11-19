@@ -1,5 +1,3 @@
-var wsprConfig = require('../services/config-wsprd');
-
 module.exports = {
-  wspr: 'http://localhost:' + wsprConfig.flags.port
+  wspr: 'http://' + process.env.WSPR_ADDR
 };

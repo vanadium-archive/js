@@ -18,6 +18,7 @@
     "comandante": "0.0.1",
     "debug": "^1.0.4",
     "dependency-check": "^1.1.5",
+    "envify": "^3.2.0",
     "ink-docstrap": "~0.4.12",
     "jsdoc": "^3.3.0-alpha9",
     "jshint": "^2.5.6",
