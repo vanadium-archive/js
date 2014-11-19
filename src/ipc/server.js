@@ -286,7 +286,7 @@ Server.prototype._handleLookupResult = function(object) {
 /*
  * Perform the lookup call to the user code on the suffix and method passed in.
  */
-Server.prototype._handleLookup = function(suffix, method) {
+Server.prototype._handleLookup = function(suffix) {
   var self = this;
   var def = new Deferred();
   function cb(e, v) {
@@ -304,7 +304,7 @@ Server.prototype._handleLookup = function(suffix, method) {
 
   var result;
   try {
-    result = this.dispatcher(suffix, method, cb);
+    result = this.dispatcher(suffix, cb);
   } catch (e) {
     def.reject(e);
     vLog.error(e);

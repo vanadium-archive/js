@@ -147,14 +147,13 @@ Router.prototype.handleLookupRequest = function(messageId, request) {
   }
 
   var self = this;
-  server._handleLookup(request.suffix, request.method).then(function(value) {
+  server._handleLookup(request.suffix).then(function(value) {
+    // TODO(bjornick): Add label support (again).
     var hasAuthorizer = (typeof value.authorizer === 'function');
-    var label = value.service.labelForMethod(request.method);
     var data = {
       signature: IdlHelper.generateIdlWireDescription(value.service),
       hasAuthorizer: hasAuthorizer,
       handle: value._handle,
-      label: label,
     };
     self._proxy.sendRequest(JSON.stringify(data), MessageType.LOOKUP_RESPONSE,
         null, messageId);

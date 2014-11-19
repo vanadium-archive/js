@@ -175,7 +175,7 @@ Echoer.prototype.echo = function() {
   return this.string;
 };
 
-function dispatcher(suffix, method, cb) {
+function dispatcher(suffix, cb) {
   // dispatcher/echo/:string
   if (suffix.indexOf('echo/') === 0) {
     return {
