@@ -158,13 +158,13 @@ Runtime.prototype.addIDL = function(updates) {
 };
 
 /**
- * Creates a new Namespace.
- * @param {string[]} roots Optional root names.
+ * Returns the pre-configured Namespace that is created
+ * when the Runtime is initialized.
  * @return {Namespace} A namespace client instance.
  */
-Runtime.prototype.newNamespace = function(roots) {
-  var proxy = this._getProxyConnection();
-  return new Namespace(proxy, roots);
+Runtime.prototype.namespace = function() {
+  this._ns = this._ns || new Namespace(this._getProxyConnection());
+  return this._ns;
 };
 
 /**

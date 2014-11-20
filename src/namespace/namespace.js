@@ -5,15 +5,14 @@ var StreamHandler = require('../proxy/stream_handler');
 var SimpleHandler = require('../proxy/simple_handler');
 
 module.exports = Namespace;
+
 /**
- * Create a new Namespace.
+ * Creates a Namespace client stub to current runtime's Namespace.
  * @param {Proxy} Proxy instance.
- * @param {string[]} Optional root names.
  * @constructor
  */
-function Namespace(proxy, roots) {
+function Namespace(proxy) {
   this._proxy = proxy;
-  this._roots = roots;
 }
 
 var NamespaceMethods = {
@@ -24,7 +23,8 @@ var NamespaceMethods = {
   RESOLVETOMT: 4,
   FLUSHCACHEENTRY: 5,
   DISABLECACHE: 6,
-  ROOTS: 7
+  ROOTS: 7,
+  SETROOTS: 8
 };
 
 /**
@@ -179,10 +179,11 @@ Namespace.prototype.setRoots = function(roots, cb) {
       cb = null;
     }
   }
-  var def = new Deferred(cb);
-  this._roots = roots;
-  def.resolve();
-  return def.promise;
+  var args = {
+    roots: roots
+  };
+
+  return this._sendRequest(NamespaceMethods.SETROOTS, args, cb);
 };
 
 //TODO(aghassemi) Implement Unresolve after Go library makes its changes.
@@ -212,8 +213,7 @@ Namespace.prototype._sendStreamingRequest = function(method, args, cb) {
 Namespace.prototype._createMessage = function(method, args) {
   var messageObject = {
     method: method,
-    args: args || null,
-    roots: this._roots || []
+    args: args || null
   };
 
   return JSON.stringify(messageObject);
