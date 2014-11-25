@@ -121,11 +121,12 @@ test-vdl: test-vdl-node test-vdl-browser
 # The command will generate all the dependent files as well.
 gen-vdl:
 	veyron run vdl generate -lang=javascript -js_out_dir="$(PWD)/src" veyron.io/veyron/veyron2/vdl/testdata/...
+	veyron run vdl generate -lang=javascript -js_out_dir="$(PWD)/src" veyron.io/veyron/veyron2/ipc/...
 
-test-vdl-node: gen-vdl node_modules
+test-vdl-node: gen-vdl test-precheck
 	prova test/vdl/test-*.js $(TAP)
 
-test-vdl-browser: gen-vdl node_modules
+test-vdl-browser: gen-vdl test-precheck
 	prova test/vdl/test-*.js $(BROWSER_OPTS)
 
 test-unit: test-unit-node test-unit-browser
