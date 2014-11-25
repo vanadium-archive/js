@@ -244,9 +244,9 @@ test('authorizer - validate context', function(assert) {
   });
 
   function authorizer(ctx) {
-    if (ctx.remoteBlessingStrings[0] !== 'test') {
+    if (ctx.remoteBlessingStrings[0] !== 'test/child') {
       return new Error('unknown blessings ' + ctx.remoteBlessingStrings);
-    } else if (ctx.localBlessingStrings[0] !== 'test') {
+    } else if (ctx.localBlessingStrings[0] !== 'test/child') {
       return new Error('unknown blessings ' + ctx.localBlessingStrings);
     } else if (ctx.method !== 'call') {
       return new Error('wrong method ' + ctx.method);

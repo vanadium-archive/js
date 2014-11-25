@@ -28,7 +28,7 @@ var expectedContext = {
   name: 'suf',
   suffix : 'suf',
   remoteBlessings: {},
-  remoteBlessingStrings: ['test']
+  remoteBlessingStrings: ['test/child']
 };
 
 function contains(actual, expected, assert) {
