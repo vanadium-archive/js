@@ -16,6 +16,7 @@ var IdlHelper = require('./../idl/idl');
 var SecurityContext = require('../security/context');
 var ServerContext = require('./server_context');
 var DecodeUtil = require('../lib/decode_util');
+var EncodeUtil = require('../lib/encode_util');
 
 /**
  * A router that handles routing incoming requests to the right
@@ -111,6 +112,15 @@ Router.prototype.handleRequest = function(messageId, type, request) {
 };
 
 Router.prototype.handleAuthorizationRequest = function(messageId, request) {
+  try {
+   request = DecodeUtil.decode(request);
+  } catch (e) {
+    JSON.stringify({
+      err: new vError.InternalError('Failed to decode ' + e)
+    });
+    this._proxy.sendRequest(data, MessageType.AUTHORIZATION_RESPONSE,
+        null, messageId);
+  }
   var server = this._servers[request.serverID];
   if (!server) {
     var data = JSON.stringify({
@@ -150,10 +160,19 @@ Router.prototype.handleLookupRequest = function(messageId, request) {
   server._handleLookup(request.suffix).then(function(value) {
     // TODO(bjornick): Add label support (again).
     var hasAuthorizer = (typeof value.authorizer === 'function');
+    var wireDesc = IdlHelper.generateIdlWireDescription(value.service);
+    var res;
+    try {
+      res = EncodeUtil.encode(wireDesc);
+    } catch (e) {
+      return Promise.reject(e);
+    }
+
+
     var data = {
-      signature: IdlHelper.generateIdlWireDescription(value.service),
-      hasAuthorizer: hasAuthorizer,
       handle: value._handle,
+      signature: res,
+      hasAuthorizer: hasAuthorizer,
     };
     self._proxy.sendRequest(JSON.stringify(data), MessageType.LOOKUP_RESPONSE,
         null, messageId);
@@ -192,7 +211,15 @@ Router.prototype.handleCancel = function(messageId) {
  */
 Router.prototype.handleRPCRequest = function(messageId, request) {
   var err;
+  try {
+   request = DecodeUtil.decode(request);
+  } catch (e) {
+    err = new Error('Failed to decode args: ' + e);
+    this.sendResult(messageId, request.method, null, err);
+    return;
+  }
   var server = this._servers[request.serverId];
+
   if (!server) {
     err = new Error('Request for unknown server ' + request.serverId);
     this.sendResult(messageId, request.method, null, err);
@@ -241,13 +268,6 @@ Router.prototype.handleRPCRequest = function(messageId, request) {
         metadata);
   };
   var args = request.args;
-  try {
-   args = DecodeUtil.tryDecode(args);
-  } catch (e) {
-    sendInvocationError(
-      new vError.InternalError('Failed to decode args: ' + e));
-    return;
-  }
 
   var ctx = new ServerContext(request, this._proxy);
   this._contextMap[messageId] = ctx;

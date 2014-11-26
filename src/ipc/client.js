@@ -82,7 +82,7 @@ OutstandingRPC.prototype.handleResponse = function(type, data) {
 
 OutstandingRPC.prototype.handleCompletion = function(data) {
   try {
-    data = DecodeUtil.tryDecode(data);
+    data = DecodeUtil.decode(data);
   } catch (e) {
     this.handleError(
       new vError.InternalError('Failed to decode result: ' + e));
@@ -101,7 +101,7 @@ OutstandingRPC.prototype.handleCompletion = function(data) {
 OutstandingRPC.prototype.handleStreamData = function(data) {
   if (this._def.stream) {
     try {
-      data = DecodeUtil.tryDecode(data);
+      data = DecodeUtil.decode(data);
     } catch (e) {
       this.handleError(
         new vError.InternalError('Failed to decode result: ' + e));

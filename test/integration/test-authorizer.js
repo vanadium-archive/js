@@ -13,7 +13,7 @@ var service = {
   }
 };
 
-function createDispatcher(authorizer, label) {
+function createDispatcher(authorizer, tags) {
   function auth(context, cb) {
     if (context.method === 'signature') {
       return null;
@@ -22,7 +22,7 @@ function createDispatcher(authorizer, label) {
   }
   var metadata = {
     call: {
-      label: label
+      tags: tags
     }
   };
   return function authDispatcher(suffix) {
@@ -254,8 +254,6 @@ test('authorizer - validate context', function(assert) {
       return new Error('wrong name ' + ctx.name);
     } else if (ctx.suffix !== 'auth') {
       return new Error('wrong suffix ' + ctx.suffix);
-    } else if (ctx.label !== 8.0) {
-      return new Error('wrong label ' + ctx.label);
     }
     // TODO(bjornick): Fix the endpoint format
     // } else if (ctx.remoteEndpoint === endpoint ||
@@ -291,7 +289,7 @@ test('authorizer - validate context', function(assert) {
   }
 });
 
-test.skip('authorizer - passing in labels', function(assert) {
+test('authorizer - passing in labels', function(assert) {
   veyron
   .init(config)
   .then(serve)
@@ -300,14 +298,14 @@ test.skip('authorizer - passing in labels', function(assert) {
   .catch(assert.end);
 
   function authorizer(ctx) {
-    if (ctx.label !== 4.0) {
+    if (ctx.methodTags[0] !== 'foo') {
       return new Error('wrong label ' + ctx.label);
     }
     return null;
   }
 
   function serve(runtime) {
-    var dispatcher = createDispatcher(authorizer, 4.0);
+    var dispatcher = createDispatcher(authorizer, ['foo']);
     return runtime.serveDispatcher('authorizer', dispatcher).then(function() {
       return runtime;
     });

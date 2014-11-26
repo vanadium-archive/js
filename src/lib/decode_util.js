@@ -1,9 +1,9 @@
 var vom = require('vom');
 module.exports = {
-  tryDecode: tryDecode,
+  decode: decode,
 };
 
-function tryDecode(hex) {
+function decode(hex) {
   var reader = new vom.ByteArrayMessageReader(vom.Util.hex2Bytes(hex));
   var decoder = new vom.Decoder(reader);
   var decoded = decoder.decode();

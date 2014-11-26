@@ -19,7 +19,7 @@ Handler.prototype.handleResponse = function(type, data) {
   switch (type) {
     case IncomingPayloadType.STREAM_RESPONSE:
       try {
-      data = DecodeUtil.tryDecode(data);
+      data = DecodeUtil.decode(data);
     } catch (e) {
       this._stream.emit(
         new vError.InternalError('Failed to decode result: ' + e));

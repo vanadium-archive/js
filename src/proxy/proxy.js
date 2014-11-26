@@ -115,7 +115,7 @@ Proxy.prototype.getServiceSignature = function(ctx, name) {
     // v8 doesn't de-optimize this whole function.
     if (typeof signature === 'string') {
       try {
-        return DecodeUtil.tryDecode(signature);
+        return DecodeUtil.decode(signature);
       } catch (e) {
         return Promise.reject(
           new vError.InternalError('Failed to decode result: ' + e));
