@@ -243,7 +243,7 @@ test('setRoots() -> invalid -> runtime bind failure', function(assert) {
     runtime = rt;
     namespace = rt.namespace();
     // Set the roots to a invalid roots, then we don't expect resolution.
-    return namespace.setRoots(['/bad-root-1.tld', '/bad-root-2.tld']);
+    return namespace.setRoots(['/bad-root-1.tld:80', '/bad-root-2.tld:1234']);
   }).then(function bind() {
     // Since setRoots changes runtimes Namespace roots, binding to any name
     // should now fail
@@ -300,7 +300,7 @@ test('setRoots() -> roots() (cb)', function(assert) {
     assert.error(err);
     runtime = rt;
     namespace = rt.namespace();
-    namespace.setRoots('/root1', '/root2', onSetRoots);
+    namespace.setRoots('/root1:80', '/root2:1234', onSetRoots);
   }
 
   function onSetRoots(err) {
@@ -310,7 +310,8 @@ test('setRoots() -> roots() (cb)', function(assert) {
 
   function onRoots(err, roots) {
     assert.error(err);
-    assert.deepEqual(roots, ['/root1', '/root2']);
+    assert.ok(roots[0].indexOf('root1:80' >= 0));
+    assert.ok(roots[1].indexOf('root2:1234' >= 0));
     if (runtime) {
       runtime.close(assert.end);
     }
