@@ -9,6 +9,7 @@ import (
 	__veyron2 "veyron.io/veyron/veyron2"
 	__context "veyron.io/veyron/veyron2/context"
 	__ipc "veyron.io/veyron/veyron2/ipc"
+	__vdl "veyron.io/veyron/veyron2/vdl"
 	__vdlutil "veyron.io/veyron/veyron2/vdl/vdlutil"
 	__wiretype "veyron.io/veyron/veyron2/wiretype"
 )
@@ -22,6 +23,15 @@ const _ = __wiretype.TypeIDInvalid
 type KeyValuePair struct {
 	Key   string
 	Value __vdlutil.Any
+}
+
+func (KeyValuePair) __VDLReflect(struct {
+	Name string "test_service.KeyValuePair"
+}) {
+}
+
+func init() {
+	__vdl.Register(KeyValuePair{})
 }
 
 // CacheClientMethods is the client interface
