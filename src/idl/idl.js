@@ -38,7 +38,7 @@ idlHelper.generateIdlWireDescription = function(service) {
         IsStreaming: methodMetadata.injections['$stream'] !== undefined,
       };
       if (methodMetadata.tags) {
-        idlWire[methodName].MethodTags = methodMetadata.tags;
+        idlWire[methodName].Tags = methodMetadata.tags;
       }
     }
   }

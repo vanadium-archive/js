@@ -9,7 +9,7 @@ function Context(ctx, proxy) {
   this.name = ctx.name;
   this.suffix = ctx.suffix;
   // TODO(bjornick): Use the enums.
-  this.label = ctx.label;
+  this.methodTags = ctx.methodTags;
   this.localBlessings = new Blessings(ctx.localBlessings.handle,
                                       ctx.localBlessings.publicKey,
                                       proxy);
