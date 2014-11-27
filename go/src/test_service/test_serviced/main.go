@@ -22,5 +22,5 @@ func main() {
 	defer s.Stop()
 
 	fmt.Printf("Listening at: %v\n", endpoint)
-	<-signals.ShutdownOnSignals()
+	<-signals.ShutdownOnSignals(r)
 }
