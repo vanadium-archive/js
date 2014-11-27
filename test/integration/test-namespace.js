@@ -85,6 +85,31 @@ test('glob(' + PREFIX + 'does/not/exist) - empty', function(assert) {
   }
 });
 
+test('glob(/RootedInvalidName.Google.tld:1234/*) - empty', function(assert) {
+  var runtime;
+
+  init(config).then(function glob(rt) {
+    runtime = rt;
+    var namespace = rt.namespace();
+    var rpc = namespace.glob('/RootedInvalidName.Google.tld:1234/*');
+    rpc.catch(end);
+    return readAllNames(rpc.stream);
+  }).then(function validate(actual) {
+    var expected = [];
+    assert.deepEqual(actual.sort(), expected.sort());
+    end();
+  }).catch(end);
+
+  function end(err) {
+    assert.error(err);
+    if (runtime) {
+      runtime.close(assert.end);
+    } else {
+      assert.end();
+    }
+  }
+});
+
 test('mount -> resolve -> unmount -> resolve(cb)', function(assert) {
   var runtime;
   var namespace;
@@ -326,12 +351,7 @@ function readAllNames(stream) {
   var names = [];
   return new Promise(function(resolve, reject) {
     stream.on('data', function(mountPoint) {
-      // TODO(aghassemi): this is temporary while we figure out how to
-      //  deprecate the notAnMT error classification in the Go glob client
-      // library.
-      if (!mountPoint.error) {
-        names.push(mountPoint.name);
-      }
+      names.push(mountPoint.name);
     });
 
     stream.on('end', function(name) {
