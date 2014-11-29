@@ -50,7 +50,8 @@ test('runtime.bindTo(badName, callback) - failure', function(assert) {
     var ctx = context.Context();
     runtime.bindTo(ctx, 'does-not/exist', function(err, service) {
       assert.ok(err instanceof Error);
-      assert.deepEqual(err.idAction, veyron.errors.IdActions.NoExist);
+
+      assert.deepEqual(err.idAction, veyron.errors.IdActions.NoServers);
       runtime.close(assert.end);
     });
   });
@@ -71,7 +72,7 @@ test('var promise = runtime.bindTo(badName) - failure', function(assert) {
     rt.close(assert.end);
   }, function(err) {
     assert.ok(err instanceof Error);
-    assert.deepEqual(err.idAction, veyron.errors.IdActions.NoExist);
+    assert.deepEqual(err.idAction, veyron.errors.IdActions.NoServers);
     rt.close(assert.end);
   })
   .catch(function(err) {

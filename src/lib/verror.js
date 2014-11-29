@@ -45,6 +45,10 @@ vError.IdActions = {
     id: 'veyron.io/veyron/veyron2/verror.NoExist',
     action: vError.Actions.NoRetry,
   },
+  NoServers: {
+    id: 'veyron.io/veyron/veyron2/verror.NoServers',
+    action: vError.Actions.RetryRefetch,
+  },
   NoExistOrNoAccess: {
     id: 'veyron.io/veyron/veyron2/verror.NoExistOrNoAccess',
     action: vError.Actions.NoRetry,
@@ -180,6 +184,20 @@ vError.NoExistError = function(message) {
   vError.VeyronError.call(this, message, vError.IdActions.NoExist);
 };
 inherits(vError.NoExistError, vError.VeyronError);
+
+/*
+ * Creates an Error object indicating requested entity (e.g. object, method)
+ * had no servers assigned to it.
+ * @param {string} message message
+ * @return {Error} Error object with name set to the not found error id.
+ */
+vError.NoServersError = function(message) {
+  if (!(this instanceof vError.NoServersError)) {
+    return new vError.NoServersError(message);
+  }
+  vError.VeyronError.call(this, message, vError.IdActions.NoServers);
+};
+inherits(vError.NoServersError, vError.VeyronError);
 
 /*
  * Creates an Error object indicating requested entity (e.g. object, method)
