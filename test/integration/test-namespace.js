@@ -1,6 +1,7 @@
 var test = require('prova');
 var veyron = require('../../');
 var Promise = require('../../src/lib/promise');
+var verror = veyron.errors;
 var config = {
   wspr: 'http://' + process.env.WSPR_ADDR
 };
@@ -85,19 +86,31 @@ test('glob(' + PREFIX + 'does/not/exist) - empty', function(assert) {
   }
 });
 
-test('glob(/RootedInvalidName.Google.tld:1234/*) - empty', function(assert) {
+test('glob(/RootedBadName.Google.tld:1234/*) - empty', function(assert) {
   var runtime;
 
   init(config).then(function glob(rt) {
     runtime = rt;
     var namespace = rt.namespace();
-    var rpc = namespace.glob('/RootedInvalidName.Google.tld:1234/*');
-    rpc.catch(end);
-    return readAllNames(rpc.stream);
-  }).then(function validate(actual) {
-    var expected = [];
-    assert.deepEqual(actual.sort(), expected.sort());
-    end();
+    var rpc = namespace.glob('/RootedBadName.Google.tld:1234/*');
+
+    // We expect no actual result items but one stream error result item
+    rpc.stream.on('data', function(item) {
+      assert.notOk(item, 'Should not get any actual results');
+    });
+
+    var numErrorItems = 0;
+    rpc.stream.on('error', function(errItem) {
+      if (numErrorItems > 0) {
+        end('expected only one error item');
+      }
+      numErrorItems++;
+      assert.ok(errItem, 'Should get one error result item');
+      assert.ok(errItem instanceof verror.NoServersError,
+        'error result item should be NoServersError');
+    });
+
+    rpc.stream.on('end', end);
   }).catch(end);
 
   function end(err) {
@@ -273,13 +286,13 @@ test('setRoots() -> invalid -> runtime bind failure', function(assert) {
     // Since setRoots changes runtimes Namespace roots, binding to any name
     // should now fail
     return runtime.bindTo(PREFIX + 'house/kitchen/lights')
-    .then(function() {
-      assert.fail('Should not have been able to bind with invalid roots');
-    }, function(err) {
-      assert.ok(err);
-      assert.ok(err instanceof Error);
-      end();
-    });
+      .then(function() {
+        assert.fail('Should not have been able to bind with invalid roots');
+      }, function(err) {
+        assert.ok(err);
+        assert.ok(err instanceof Error);
+        end();
+      });
   }).catch(end);
 
   function end(err) {
@@ -377,17 +390,17 @@ var SAMPLE_NAMESPACE = [
 function init(config) {
   var runtime;
   return veyron.init(config)
-  .then(function serveEmptyService(rt) {
-    runtime = rt;
-    return runtime.serve('', {});
-  })
-  .then(function publishUnderMultipleNames(){
-    var addNamesRequests = SAMPLE_NAMESPACE.map(function(name) {
-      return runtime.addName(PREFIX + name);
+    .then(function serveEmptyService(rt) {
+      runtime = rt;
+      return runtime.serve('', {});
+    })
+    .then(function publishUnderMultipleNames() {
+      var addNamesRequests = SAMPLE_NAMESPACE.map(function(name) {
+        return runtime.addName(PREFIX + name);
+      });
+      return Promise.all(addNamesRequests);
+    })
+    .then(function ready() {
+      return runtime;
     });
-    return Promise.all(addNamesRequests);
-  })
-  .then(function ready() {
-    return runtime;
-  });
 }
