@@ -1,5 +1,6 @@
 /**
  * @fileoverview Parses the Veyron IDL
+ * DEPRECATED: See replacement in src/vdl
  */
 
 var vError = require('../lib/verror');
