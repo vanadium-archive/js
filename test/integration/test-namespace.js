@@ -135,19 +135,22 @@ test('mount -> resolve -> unmount -> resolve(cb)', function(assert) {
     runtime = rt;
     namespace = rt.namespace();
     return rt.serve(initialName, {});
-  }).then(function resolve() {
+  }).then(wait(1000))
+  .then(function resolve() {
     return namespace.resolve(initialName);
   }).then(function mount(endpoints) {
     expectedServerAddress = endpoints[0];
     return namespace.mount(secondaryName, expectedServerAddress, MINUTE);
-  }).then(function resolve() {
+  }).then(wait(1000))
+  .then(function resolve() {
     return namespace.resolve(secondaryName);
   }).then(function validate(resolveResult) {
     assert.equals(resolveResult.length, 1);
     assert.equals(resolveResult[0], expectedServerAddress);
   }).then(function unmount() {
     return namespace.unmount(secondaryName);
-  }).then(function resolve() {
+  }).then(wait(1000))
+  .then(function resolve() {
     namespace.resolve(secondaryName, function cb(err) {
       assert.ok(err, 'no resolving after unmount()');
       end();
@@ -173,7 +176,10 @@ test('resolveToMountTable(' + PREFIX + 'cottage)', function(assert) {
     return namespace.resolveToMounttable(PREFIX + 'cottage');
   }).then(function validate(mounttableNames) {
     assert.equals(mounttableNames.length, 1);
-    assert.ok(mounttableNames[0].indexOf(namespaceRoot) === 0);
+    // The mounttable name we get from NaCl wspr has network set to "ws" instead
+    // of "tcp", so we must change it back to tcp.
+    var mounttableName = mounttableNames[0].replace('@ws@', '@tcp@');
+    assert.ok(mounttableName.indexOf(namespaceRoot) === 0);
     end();
   }).catch(end);
 
@@ -314,7 +320,10 @@ test('roots()', function(assert) {
     return namespace.roots();
   }).then(function validate(roots) {
     assert.equals(roots.length, 1);
-    assert.ok(roots[0].indexOf(namespaceRoot) === 0);
+    // The mounttable name we get from NaCl wspr has network set to "ws" instead
+    // of "tcp", so we must change it back to tcp.
+    var wsRoot = roots[0].replace('@ws@', '@tcp@');
+    assert.ok(wsRoot.indexOf(namespaceRoot === 0));
     end();
   }).catch(end);
 
@@ -400,7 +409,18 @@ function init(config) {
       });
       return Promise.all(addNamesRequests);
     })
+    // Wait a second for the services to be published.
+    .then(wait(1000))
     .then(function ready() {
       return runtime;
     });
+}
+
+// Helper function that waits the specified time in milliseconds and resolves.
+function wait(ms) {
+  return function(){
+    return new Promise(function(resolve) {
+      setTimeout(resolve, ms);
+    });
+  };
 }

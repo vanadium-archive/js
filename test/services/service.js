@@ -63,14 +63,7 @@ Service.prototype.spawn = function(args) {
     service.process = spawn(bin, args, {env: service.env});
 
     if (service.name !== 'servicerunner') {
-      if (service.name === 'write-wspr-config.js') {
-        // HACK: Wait for chrome to spin up.
-        setTimeout(function() {
-          service.emit('ready');
-        }, 5000);
-      } else {
         service.emit('ready');
-      }
     }
 
     if (service.process.stdout) {

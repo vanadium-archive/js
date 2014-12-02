@@ -1,6 +1,0 @@
-#!/bin/bash
-exec 1>tmp/chrome-nacl-stderr.log 2>tmp/chrome-nacl-stdout.log
-CHROME_DEVEL_SANDBOX="$(dirname ${CHROME_BIN})/chrome_sandbox" "${CHROME_BIN}" "$@" \
-     --vmodule=ppb*=4 --enable-logging=stderr --user-data-dir="${CHROME_USER_DIR}" \
-     --allow-nacl-socket-api=* \
-     --load-extension="${VEYRON_ROOT}/veyron.js/nacl/out","${VEYRON_ROOT}/veyron.js/extension/build"

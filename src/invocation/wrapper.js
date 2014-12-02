@@ -22,7 +22,7 @@ module.exports = wrapService;
 
 var argHelper = require('../lib/arg_helper');
 var Signature = require('../vdl/signature');
-var vError = require('../lib/vError');
+var vError = require('../lib/verror');
 var vlog = require('../lib/vlog');
 
 /**

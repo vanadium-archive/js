@@ -7,7 +7,9 @@ var NO_TIMEOUT = require('../../src/ipc/constants').NO_TIMEOUT;
 
 
 function run(ctx, err, collector, end, assert) {
-  assert.error(err);
+  if (err) {
+    return assert.end(err);
+  }
 
   var id = Math.floor(Math.random() * 1000000);
   var timeout = 60 * 60 * 1000;
@@ -115,6 +117,11 @@ function newDispatcher() {
 test('cancel: js client to js server', function(assert) {
   var ctx = context.Context();
   serve(ctx, 'testing/cancel', newDispatcher(), function(err, res) {
+    if (err) {
+      assert.error(err);
+      assert.end();
+      return;
+    }
     run(ctx, err, res.service, res.end, assert);
   });
 });

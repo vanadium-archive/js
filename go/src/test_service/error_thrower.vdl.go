@@ -317,7 +317,7 @@ func (s implErrorThrowerServerStub) ListAllBuiltInErrorIDs(ctx __ipc.ServerConte
 	return s.impl.ListAllBuiltInErrorIDs(ctx)
 }
 
-func (s implErrorThrowerServerStub) VGlob() *__ipc.GlobState {
+func (s implErrorThrowerServerStub) Globber() *__ipc.GlobState {
 	return s.gs
 }
 

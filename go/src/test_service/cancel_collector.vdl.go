@@ -150,7 +150,7 @@ func (s implCancelCollectorServerStub) WaitForStatus(ctx __ipc.ServerContext, i0
 	return s.impl.WaitForStatus(ctx, i0, i1)
 }
 
-func (s implCancelCollectorServerStub) VGlob() *__ipc.GlobState {
+func (s implCancelCollectorServerStub) Globber() *__ipc.GlobState {
 	return s.gs
 }
 

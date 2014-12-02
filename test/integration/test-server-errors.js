@@ -56,7 +56,9 @@ methods.forEach(function(method) {
   test('jsErrorThrower.' + method + '(callback)', function(assert) {
     var ctx = context.Context();
     serve(ctx, 'js/errorThrower', dispatcher, function(err, res) {
-      assert.error(err);
+      if (err) {
+        return assert.end(err);
+      }
 
       res.service[method](ctx, function(err) {
         assert.ok(err, 'should error');
@@ -84,7 +86,9 @@ methods.forEach(function(method) {
 test('jsErrorThrower.returnBuiltInError(callback)', function(assert) {
   var ctx = context.Context();
   serve(ctx, 'js/errorThrower', dispatcher, function(err, res) {
-    assert.error(err);
+    if (err) {
+      return assert.end(err);
+    }
 
     res.service.returnBuiltInError(ctx, function(err) {
       assert.ok(err, 'should error');
@@ -137,7 +141,9 @@ test('throw/reject of non-errors', function(t) {
     t.test('service.' + method + '()', function(assert) {
       var ctx = context.Context();
       serve(ctx, 'js/thrower', dispatcher, function(err, res) {
-        assert.error(err);
+        if (err) {
+          return assert.end(err);
+        }
 
         res.service[method](ctx, function(err) {
           assert.ok(err, 'should error');

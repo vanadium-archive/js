@@ -11,9 +11,11 @@ var Runtime = require('./runtime/runtime');
 var vlog = require('./lib/vlog');
 
 var defaults = {
-  logLevel: vlog.level,
+  appName: 'webapp',
   authenticate: false,
   authTimeout: 30000, // ms
+  logLevel: vlog.level,
+  wspr: 'http://localhost:8124'
 };
 
 /**
@@ -42,12 +44,14 @@ function init(config, cb) {
 
   config = extend(defaults, config);
 
-  var def = new Deferred(cb);
-
   var runtimeOpts = {
-    wspr: config.wspr || process.env['WSPR'] || 'http://localhost:8124',
-    appName: config.appName || 'webapp',
+    appName: config.appName,
+    // If isBrowser === true, then ignore config.wspr, since we will use the
+    // extension.
+    wspr: isBrowser ? null : config.wspr
   };
+
+  var def = new Deferred(cb);
 
   // If the user has set config.authenticate to true, get an authenticated
   // (blessed-by-Blessing-server) account for the user.  This requires the

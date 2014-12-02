@@ -10,7 +10,7 @@ test('runtime.bindTo(name, callback)', function(assert) {
   var ctx = context.Context();
 
   veyron.init(config, oninit);
-  
+
   function oninit(err, runtime) {
     assert.error(err);
 
@@ -82,6 +82,11 @@ test('var promise = runtime.bindTo(badName) - failure', function(assert) {
 });
 
 test('runtime.bindTo(name, [callback]) - bad wspr url', function(assert) {
+  if (require('is-browser')) {
+    // Browser doesn't use wspr url, so skip this test.
+    return assert.end();
+  }
+
   veyron.init({ wspr: 'http://bad-address.tld' }, onruntime);
   var ctx = context.Context();
 
@@ -97,6 +102,11 @@ test('runtime.bindTo(name, [callback]) - bad wspr url', function(assert) {
 });
 
 test('var promise = runtime.bindTo(name) - bad wspr url', function(assert) {
+  if (require('is-browser')) {
+    // Browser doesn't use wspr url, so skip this test.
+    return assert.end();
+  }
+
   veyron
   .init({ wspr: 'http://bad-address.tld' })
   .then(bindTo)

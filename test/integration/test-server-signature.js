@@ -28,8 +28,14 @@ var dispatcher = leafDispatcher({
 test('service.signature([callback]) - js server', function(assert) {
   var ctx = context.Context();
   serve(ctx, 'testing/my-cache', dispatcher, function(err, res) {
+    if (err) {
+      return assert.error(err);
+    }
+
     res.service.signature(function(err, signature) {
-      assert.error(err);
+      if (err) {
+        return assert.error(err);
+      }
 
       Object.keys(cacheSignature).forEach(function(key) {
         var actual = signature.get(key);
@@ -48,7 +54,9 @@ test('service.signature([callback]) - js server', function(assert) {
 test('var promise = service.signature() - js server', function(assert) {
   var ctx = context.Context();
   serve(ctx, 'testing/my-cache', dispatcher, function(err, res) {
-    assert.error(err);
+    if (err) {
+      return assert.error(err);
+    }
 
     res.service.signature()
     .then(function(signature) {

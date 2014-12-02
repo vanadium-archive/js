@@ -621,7 +621,7 @@ func (s implCacheServerStub) MultiGet(ctx *CacheMultiGetContextStub) error {
 	return s.impl.MultiGet(ctx)
 }
 
-func (s implCacheServerStub) VGlob() *__ipc.GlobState {
+func (s implCacheServerStub) Globber() *__ipc.GlobState {
 	return s.gs
 }
 

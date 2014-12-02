@@ -45,8 +45,6 @@ BROWSER_OPTS := --browser --transform envify --launch $(BROWSER) $(HEADLESS) $(T
 
 JS_SRC_FILES = $(shell find src -name "*.js" | sed 's/ /\\ /')
 
-JS_NACL_SRC_FILES = $(shell find nacl/html -name "*.js" | sed 's/ /\\ /')
-
 # Common services needed for all integration tests. Must be a comma-seperated
 # string with no spaces.
 COMMON_SERVICES := "test_serviced"
@@ -56,49 +54,6 @@ BROWSERIFY_OPTS := --debug --standalone veyron
 all: lint build
 
 build: dist/veyron.js dist/veyron.min.js extension/veyron.crx
-
-$(NACLGOROOT)/bin/go:
-	$(NACLGOROOT)/src/make-nacl.sh
-
-updated-go-compiler: validate-naclgoroot $(NACLGOROOT)/bin/go
-	GOROOT= GOARCH=386 GOOS=nacl "$(NACLGOROOT)/bin/go" install ...
-
-naclgoroot-is-set:
-ifndef NACLGOROOT
-	$(error NACLGOROOT is not set)
-endif
-
-validate-naclgoroot: naclgoroot-is-set
-ifeq (,$(wildcard $(NACLGOROOT)/src/make-nacl.sh))
-	$(error NACLGOROOT not set to a go compiler with NACL support. $(NACLGOROOT)/src/make-nacl.sh missing.)
-endif
-
-# TODO(bprosnitz): Remove the -novdl flag once it works on non-host
-# architectures.
-nacl/out/wspr.nexe: validate-naclgoroot updated-go-compiler
-	GOROOT= veyron xgo --target_go=$(NACLGOROOT)/bin/go -novdl 386-nacl build -o $@ "veyron.io/wspr/veyron/services/wsprd/browspr/main"
-
-nacl/out/index.html: nacl/html/index.html
-	@cp -f $< $@
-
-nacl/out/manifest.json: nacl/html/manifest.json
-	@cp -f $< $@
-
-nacl/out/wspr.nmf: nacl/html/wspr.nmf
-	@cp -f $< $@
-
-nacl/out/wspr.js: nacl/html/wspr.js $(JS_NACL_SRC_FILES) $(NODE_MODULE_JS_FILES) | node_modules
-	browserify $< --debug --outfile $@
-
-chromebin-is-set:
-ifndef CHROME_BIN
-	$(error CHROME_BIN is not set)
-endif
-
-validate-chromebin: chromebin-is-set
-	[[ `objdump -f $(CHROME_BIN) | grep architecture | cut -f2 -d\ | cut -f1 -d,` = "i386" ]] || { echo "CHROME_BIN does not contain a 32-bit chrome executable."; exit 1; }
-
-nacl/out: nacl/out/wspr.nexe nacl/out/index.html nacl/out/manifest.json nacl/out/wspr.nmf nacl/out/wspr.js
 
 dist/veyron.js: src/veyron.js $(JS_SRC_FILES) $(NODE_MODULES_JS_FILES) | node_modules
 	mkdir -p dist
@@ -113,7 +68,7 @@ extension/veyron.crx:
 
 test-precheck: lint dependency-check gen-vdl node_modules
 
-test: test-unit test-integration test-vdl test-extension
+test: test-unit test-integration test-vdl
 
 test-vdl: test-vdl-node test-vdl-browser
 
@@ -136,7 +91,6 @@ test-unit-node: test-precheck
 test-unit-browser: test-precheck
 	prova test/unit/test-*.js $(BROWSER_OPTS) $(BROWSER_OUTPUT)
 
-# TODO(bprosnitz): Add test-integration-nacl.
 test-integration: lint test-integration-node test-integration-browser
 
 test-integration-node: test-precheck go/bin
@@ -145,28 +99,21 @@ test-integration-node: test-precheck go/bin
 
 test-integration-browser: test-precheck go/bin
 	node test/integration/runner.js --services=$(COMMON_SERVICES) -- \
-	prova test/integration/test-*.js $(BROWSER_OPTS) $(BROWSER_OUTPUT)
+	make test-integration-browser-runner
 
-test-integration-nacl: validate-chromebin test-precheck nacl/out go/bin
-	nacl/scripts/run-with-user-dir.sh \
-	node test/integration/runner.js --services=$(COMMON_SERVICES),write-wspr-config.js -- \
-	prova test/integration/test-*.js $(BROWSER_OPTS) $(BROWSER_OUTPUT)
+# The EXTENSION_SETTINGS env variable is used by the extension to set the
+# default settings variables.
+test-integration-browser-runner: export EXTENSION_SETTINGS := {"namespaceRoot": "$(NAMESPACE_ROOT)", "proxy": "test/proxy"}
+test-integration-browser-runner: BROWSER_OPTS := --options="--load-extension=$(PWD)/extension/build-test/,--enable-logging=stderr" $(BROWSER_OPTS)
+test-integration-browser-runner:
+	@$(RM) -fr extension/build-test
+	$(MAKE) -C extension build-test
+	prova test/integration/test-*.js $(BROWSER_OPTS) --log=./tmp/chrome.log $(BROWSER_OUTPUT)
 
-test-extension: BROWSER_OPTS := --options="--load-extension=$(PWD)/extension/build/" $(BROWSER_OPTS)
-test-extension: test-precheck go/bin extension/veyron.crx
-	node test/integration/runner.js --services=$(COMMON_SERVICES) -- \
-	prova test/extension/test-*.js $(BROWSER_OPTS) $(BROWSER_OUTPUT)
-
-# TODO(sadovsky): Check whether we can remove mounttabled, proxyd, and wsprd now
-# that those are run via servicerunner.
 go/bin: $(GO_FILES)
-	@$(VGO) build -o $(GOBIN)/identityd veyron.io/veyron/veyron/services/identity/identityd
-	@$(VGO) build -o $(GOBIN)/mounttabled veyron.io/veyron/veyron/services/mounttable/mounttabled
 	@$(VGO) build -o $(GOBIN)/principal veyron.io/veyron/veyron/tools/principal
-	@$(VGO) build -o $(GOBIN)/proxyd veyron.io/veyron/veyron/services/proxy/proxyd
 	@$(VGO) build -o $(GOBIN)/servicerunner veyron.io/veyron/veyron/tools/servicerunner
 	@$(VGO) build -o $(GOBIN)/test_serviced test_service/test_serviced
-	@$(VGO) build -o $(GOBIN)/wsprd veyron.io/wspr/veyron/services/wsprd
 
 lint: node_modules
 	jshint .
@@ -180,7 +127,6 @@ clean:
 	@$(RM) -fr docs/*
 	@$(RM) -fr go/bin
 	@$(RM) -fr go/pkg
-	@$(RM) -fr nacl/out/*
 	@$(RM) -fr node_modules
 	@$(RM) -fr npm-debug.log
 	@$(RM) -fr tmp
@@ -203,18 +149,14 @@ check-that-npm-is-in-path:
 	@which npm > /dev/null || { echo "npm is not in the path. Did you remember to run 'veyron profile setup web'?"; exit 1; }
 
 .PHONY: all build clean dependency-check lint test
-.PHONY: test-extension
-.PHONY: test-integration test-integration-node test-integration-browser test-integration-nacl
+.PHONY: test-integration test-integration-node test-integration-browser
 .PHONY: test-unit test-unit-node test-unit-browser
-.PHONY: updated-go-compiler naclgoroot-is-set validate-naclgoroot
-.PHONY: chromebin-is-set validate-chromebin
 .PHONY: check-that-npm-is-in-path
 .PHONY: gen-vdl
 
 # Prevent the tests from running in parallel, which causes problems because it
 # starts multiple instances of the services at once, and also because it
 # interleaves the test output.
-.NOTPARALLEL: test-extension
 .NOTPARALLEL: test-integration test-integration-browser test-integration-node
 .NOTPARALLEL: test-unit test-unit-node test-unit-browser
 .NOTPARALLEL: test-vdl test-vdl-node test-vdl-browser

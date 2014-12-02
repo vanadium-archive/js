@@ -63,14 +63,15 @@ test('authorizer - errors are properly returned', function(assert) {
   function call(service) {
     return service.call(ctx, 'foo').then(function(value) {
       assert.fail('call should not have succeeded' + value);
-      assert.end();
+      rt.close(assert.end);
     }).catch(function() {
       rt.close(assert.end);
     });
   }
 });
 
-test('authorizer(ctx, cb) - errors are properly returned', function(assert) {
+test('authorizer(ctx, cb) - errors are properly returned',
+    function(assert) {
   veyron
   .init(config)
   .then(serve)
@@ -103,6 +104,7 @@ test('authorizer(ctx, cb) - errors are properly returned', function(assert) {
   function call(service) {
     return service.call(ctx, 'foo').then(function(value) {
       assert.fail('call should not have succeeded' + value);
+      rt.close(assert.end);
     }).catch(function() {
       rt.close(assert.end);
     });
@@ -145,6 +147,7 @@ function(assert) {
   function call(service) {
     return service.call(ctx, 'foo').then(function() {
       assert.fail('call should not have succeeded');
+      rt.close(assert.end);
     }).catch(function() {
       rt.close(assert.end);
     });
@@ -152,12 +155,16 @@ function(assert) {
 });
 
 test('authorizer(ctx, cb) - successes are handled', function(assert) {
+  var rt;
   veyron
   .init(config)
   .then(serve)
   .then(bindTo)
   .then(call)
-  .catch(assert.end);
+  .catch(function(err) {
+    assert.error(err);
+    rt.close(assert.end);
+  });
 
   function authorizer(ctx, cb) {
     function resolve() {
@@ -175,7 +182,6 @@ test('authorizer(ctx, cb) - successes are handled', function(assert) {
 
   var ctx = context.Context();
 
-  var rt;
   function bindTo(runtime) {
     rt = runtime;
     return runtime.bindTo(ctx, 'authorizer/auth');
@@ -194,7 +200,10 @@ test('var promise = authorizer(ctx) - successes are handled', function(assert) {
   .then(serve)
   .then(bindTo)
   .then(call)
-  .catch(assert.end);
+  .catch(function(err) {
+    assert.error(err);
+    rt.close(assert.end);
+  });
 
   function authorizer(ctx) {
     var def = new Deferred();

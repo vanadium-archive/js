@@ -18,7 +18,8 @@
   "permissions": [
     "<all_urls>",
     "identity",
-    "storage"
+    "storage",
+    "unlimitedStorage"
   ],
   "web_accessible_resources": [
     "js/background.js.map",

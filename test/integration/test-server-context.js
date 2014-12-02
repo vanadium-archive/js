@@ -43,10 +43,14 @@ function contains(actual, expected, assert) {
 test('$suffix - ', function(assert) {
   var ctx = context.Context();
   serve(ctx, 'a/b', dispatcher, function(err, res) {
-    assert.error(err);
+    if (err) {
+      return assert.end(err);
+    }
 
     res.runtime.bindTo(ctx, 'a/b/foo', function(err, service) {
-      assert.error(err);
+      if (err) {
+        return assert.end(err);
+      }
 
       service.getSuffix(ctx, function(err, suffix) {
         assert.error(err);
@@ -60,10 +64,14 @@ test('$suffix - ', function(assert) {
 test('$suffix - empty', function(assert) {
   var ctx = context.Context();
   serve(ctx, 'a/b', dispatcher, function(err, res) {
-    assert.error(err);
+    if (err) {
+      return assert.end(err);
+    }
 
     res.runtime.bindTo(ctx, 'a/b', function(err, service) {
-      assert.error(err);
+      if (err) {
+        return assert.end(err);
+      }
 
       service.getSuffix(ctx, function(err, suffix) {
         assert.error(err);
@@ -77,10 +85,14 @@ test('$suffix - empty', function(assert) {
 test('$suffix - nested', function(assert) {
   var ctx = context.Context();
   serve(ctx, 'a/b', dispatcher, function(err, res) {
-    assert.error(err);
+    if (err) {
+      return assert.end(err);
+    }
 
     res.runtime.bindTo(ctx, 'a/b/parent/suf', function(err, service) {
-      assert.error(err);
+      if (err) {
+        return assert.end(err);
+      }
 
       service.getSuffix(ctx, function(err, suffix) {
         assert.error(err);
@@ -94,10 +106,14 @@ test('$suffix - nested', function(assert) {
 test('$name', function(assert) {
   var ctx = context.Context();
   serve(ctx, 'a/b', dispatcher, function(err, res) {
-    assert.error(err);
+    if (err) {
+      return assert.end(err);
+    }
 
     res.runtime.bindTo(ctx, 'a/b/suf', function(err, service) {
-      assert.error(err);
+      if (err) {
+        return assert.end(err);
+      }
 
       service.getName(ctx, function(err, name) {
         assert.error(err);
@@ -111,10 +127,14 @@ test('$name', function(assert) {
 test('$context', function(assert) {
   var ctx = context.Context();
   serve(ctx, 'a/b', dispatcher, function(err, res) {
-    assert.error(err);
+    if (err) {
+      return assert.end(err);
+    }
 
     res.runtime.bindTo(ctx, 'a/b/suf', function(err, service) {
-      assert.error(err);
+      if (err) {
+        return assert.end(err);
+      }
 
       service.getContext(ctx, function(err, context) {
         assert.error(err);
@@ -132,10 +152,14 @@ test('$context', function(assert) {
 test('$context - mixed with normal args', function(assert) {
   var ctx = context.Context();
   serve(ctx, 'a/b', dispatcher, function(err, res) {
-    assert.error(err);
+    if (err) {
+      return assert.end(err);
+    }
 
     res.runtime.bindTo(ctx, 'a/b/suf', function(err, service) {
-      assert.error(err);
+      if (err) {
+        return assert.end(err);
+      }
 
       service
       .getContextMixedWithNormalArgs(

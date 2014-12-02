@@ -110,6 +110,7 @@ Runner.prototype._setup = function(cb) {
       .on('vars', function(vars) {
         runner.env = extend(runner.env, {
           NAMESPACE_ROOT: vars.MT_NAME,
+          PROXY_ADDR: vars.PROXY_ADDR,
           WSPR_ADDR: vars.WSPR_ADDR
         });
       })

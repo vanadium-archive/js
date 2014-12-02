@@ -13,6 +13,13 @@ import (
 	"test_service"
 )
 
+// openAuthorizer allows RPCs from all clients.
+type openAuthorizer struct{}
+
+func (openAuthorizer) Authorize(security.Context) error {
+	return nil
+}
+
 type testServiceDispatcher struct {
 	cache           interface{}
 	errorThrower    interface{}
@@ -20,19 +27,21 @@ type testServiceDispatcher struct {
 }
 
 func (sd *testServiceDispatcher) Lookup(suffix string) (interface{}, security.Authorizer, error) {
+	authorizer := openAuthorizer{}
+
 	if strings.HasPrefix(suffix, "cache") {
-		return ipc.ReflectInvoker(sd.cache), nil, nil
+		return ipc.ReflectInvoker(sd.cache), authorizer, nil
 	}
 
 	if strings.HasPrefix(suffix, "errorThrower") {
-		return ipc.ReflectInvoker(sd.errorThrower), nil, nil
+		return ipc.ReflectInvoker(sd.errorThrower), authorizer, nil
 	}
 
 	if strings.HasPrefix(suffix, "cancel") {
-		return ipc.ReflectInvoker(sd.cancelCollector), nil, nil
+		return ipc.ReflectInvoker(sd.cancelCollector), authorizer, nil
 	}
 
-	return ipc.ReflectInvoker(sd.cache), nil, nil
+	return ipc.ReflectInvoker(sd.cache), authorizer, nil
 }
 
 func StartServer(r veyron2.Runtime) (ipc.Server, naming.Endpoint, error) {

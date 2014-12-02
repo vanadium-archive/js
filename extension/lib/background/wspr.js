@@ -8,6 +8,8 @@ function WSPR(url) {
     return new WSPR();
   }
   this.url = url;
+
+  this.rootAccount = null;
 }
 
 // Create an account on WSPR with a blessing derived from an access token.
@@ -15,14 +17,14 @@ function WSPR(url) {
 // { access_token: <access_token> }
 // Returns the name of the new account.
 WSPR.prototype.createAccount = function(accessToken, callback) {
-  var that = this;
+  var wspr = this;
   request.post(this.url + '/create-account')
     .send({
       'access_token': accessToken
     })
     .end(function(err, res) {
       if (err) {
-        return callback(that.handleNetworkError(err));
+        return callback(wspr.handleNetworkError(err));
       }
       if (res.error) {
         return callback(httpResponseToError(res));
@@ -42,7 +44,7 @@ WSPR.prototype.createAccount = function(accessToken, callback) {
 // { account: <account name> }
 // Response will be 200 OK if association is successful.
 WSPR.prototype.assocAccount = function(account, origin, caveats, callback) {
-  var that = this;
+  var wspr = this;
   request.post(this.url + '/assoc-account')
     .send({
       account: account,
@@ -50,7 +52,7 @@ WSPR.prototype.assocAccount = function(account, origin, caveats, callback) {
       caveats: caveats
     }).end(function(err, res) {
       if (err) {
-        return callback(that.handleNetworkError(err));
+        return callback(wspr.handleNetworkError(err));
       }
       if (res.error) {
         return callback(httpResponseToError(res));

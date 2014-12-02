@@ -18,7 +18,12 @@ test('runtime.serve(name, service, callback)', function(assert) {
   });
 });
 
-test('runtime.serve(name, service, callback) - service', function(assert) {
+test('runtime.serve(name, service, callback) - bad wspr', function(assert) {
+  if (require('is-browser')) {
+    // Browser doesn't use wspr url, so skip this test.
+    return assert.end();
+  }
+
   veyron.init({ wspr: 'http://bad-address.tld' }, function(err, runtime) {
     assert.error(err);
 
@@ -61,7 +66,7 @@ test('var promise = runtime.serve(name, service) - failure', function(assert) {
   });
 });
 
-test( 'runtime.serve(name, service) - ' +
+test('runtime.serve(name, service) - ' +
   'serving multiple times should fail - cb', function(assert) {
   veyron.init(config, function(err, runtime) {
     assert.error(err);

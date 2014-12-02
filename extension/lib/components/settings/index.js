@@ -2,6 +2,7 @@ var _ = require('lodash');
 var debug = require('debug')('component:settings');
 var mercury = require('mercury');
 var h = mercury.h;
+var xtend = require('xtend');
 
 var setting = require('./setting');
 var storage = require('../../storage');
@@ -15,6 +16,10 @@ module.exports = create;
 module.exports.render = render;
 
 var defaults = {
+  identityd: '/proxy.envyor.com:8101/identity/veyron-test/google',
+  namespaceRoot: '/proxy.envyor.com:8101',
+  proxy: 'proxy.envyor.com:8100',
+  // TODO(nlacasse): Remove wspr settings once nacl-wspr is complete.
   wspr: 'http://localhost:8124'
 };
 
@@ -34,13 +39,26 @@ function create(settingsObj) {
   settingsObj = settingsObj || defaults;
 
   var state = mercury.varhash({});
+
+  if (process.env.EXTENSION_SETTINGS) {
+    // Load the settings from the environment variable, and don't sync with
+    // storage.
+    var envSettings;
+    try {
+      envSettings = JSON.parse(process.env.EXTENSION_SETTINGS);
+    } catch(e) {
+      throw new Error('Could not parse settings from environment:', e);
+    }
+    settingsObj = xtend(settingsObj, envSettings);
+  } else {
+    // Async load settings from storage.
+    loadFromStorage(state);
+
+    // Store any changes in storage.
+    state(sendToStorage);
+  }
+
   hydrateState(state, settingsObj);
-
-  // Async load settings from storage.
-  loadFromStorage(state);
-
-  // Store any changes in storage.
-  state(sendToStorage);
 
   return {
     state: state

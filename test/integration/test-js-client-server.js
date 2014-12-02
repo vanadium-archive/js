@@ -127,7 +127,9 @@ function run(options) {
     ctx = context.Context();
   }
   serve(ctx, 'testing/cache', dispatcher, function(err, res) {
-    t.error(err);
+    if (err) {
+      return t.end(err);
+    }
 
     // waits to close the runtime until all the child tests have ended.
     t.on('end', function() {
@@ -135,17 +137,17 @@ function run(options) {
     });
 
     var cache = res.service;
-    
+
     var onGet = function(t, expected, err, value) {
       t.error(err);
       t.deepEqual(value, expected);
       console.log('ending...');
       t.end();
     };
-    
+
     var onSet = function(t, key, value, err, result) {
       t.error(err);
-      
+
       // should be void result as defined in the optArg above
       t.deepEqual(result, []);
       if (ctx) {
@@ -169,7 +171,7 @@ function run(options) {
         cache.set(ctx, 'myObject', expected,
                   onSet.bind(null, t, 'myObject', expected));
       } else {
-        cache.set('myObject', expected, 
+        cache.set('myObject', expected,
                   onSet.bind(null, t, 'myObject', expected));
       }
     });

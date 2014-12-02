@@ -2,12 +2,13 @@ coverage
 dist
 docs
 extension/build
+extension/build-test
 extension/example/*bundle*
 extension/veyron.crx
-nacl/out
 node_modules
 npm-debug.log
 go/pkg
 go/bin
+src/veyron.io
 xunit.xml
 tmp

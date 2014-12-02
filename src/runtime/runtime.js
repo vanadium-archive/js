@@ -5,7 +5,6 @@
 var Server = require('../ipc/server');
 var ServerRouter = require('../ipc/server_router');
 var Client = require('../ipc/client');
-var ProxyConnection = require('../proxy/websocket');
 var MessageType = require('../proxy/message_type');
 var Namespace = require('../namespace/namespace');
 var Principal = require('../security/principal');
@@ -13,6 +12,7 @@ var Blessings = require('../security/blessings');
 var Deferred = require('../lib/deferred');
 var SimpleHandler = require('../proxy/simple_handler');
 var context = require('./context');
+
 
 module.exports = Runtime;
 
@@ -199,9 +199,19 @@ Runtime.prototype.newBlessings = function(extension, cb) {
  * @return {ProxyConnection} A proxy connection
  */
 Runtime.prototype._getProxyConnection = function() {
-  if (!this._proxyConnection) {
-    this._proxyConnection = new ProxyConnection(this._wspr);
+  if (this._proxyConnection) {
+    return this._proxyConnection;
   }
+
+  var ProxyConnection;
+  if (this._wspr) {
+    ProxyConnection = require('../proxy/websocket');
+    this._proxyConnection = new ProxyConnection(this._wspr);
+  } else {
+    ProxyConnection = require('../proxy/nacl');
+    this._proxyConnection = new ProxyConnection();
+  }
+
   return this._proxyConnection;
 };
 

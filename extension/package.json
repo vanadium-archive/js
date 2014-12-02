@@ -13,14 +13,14 @@
     "domready": "~1.0.7",
     "insert-css": "^0.2.0",
     "lodash": "^2.4.1",
-    "mercury": "^8.0.0",
+    "mercury": "^9.1.0",
     "postie": "^0.4.5",
     "superagent": "^0.18.2",
     "xtend": "^3.0.0"
   },
   "devDependencies": {
     "brfs": "^1.2.0",
-    "browserify": "^6.2.0",
+    "browserify": "~6.3.3",
     "dependency-check": "^1.1.5",
     "jshint": "^2.5.2",
     "minifyify": "^4.0.3",
