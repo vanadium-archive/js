@@ -54,10 +54,10 @@ function wrapService(service, desc) {
   * Translates args to the native list-of-injections-and-non-injections style.
   * @param {int[]} argOffsets List of original indicies of args. See
   * getArgOffsets().
-  * @param {map[string]int} injectionPositions Map from injection name to
+  * @param {Object.<string,number>} injectionPositions Map from injection name to
   * position.
   * @param {Object[]} args List of args coming off of the wire.
-  * @param {map[string]Object} Object containing possible injection values.
+  * @param {Object.<string,Object>} Object containing possible injection values.
   * @return {string[]} A list of combined injections and args off the wire.
   */
 function translateToTrueCallArgs(argOffsets, injectionPositions, args,
@@ -85,10 +85,10 @@ function translateToTrueCallArgs(argOffsets, injectionPositions, args,
   * @param {Function} method The method to invoke
   * @param {int[]} argOffsets List of original indicies of args. See
   * getArgOffsets().
-  * @param {map[string]int} injectionPositions Map from injection name to
+  * @param {Object.<string,number>} injectionPositions Map from injection name to
   * position.
   * @param {Object[]} args List of args coming off of the wire.
-  * @param {map[string]Object} Object containing possible injection values.
+  * @param {Object.<string,Object>} Object containing possible injection values.
   * @return {string[]} A list of combined injections and args off the wire.
   */
 function invoke(
