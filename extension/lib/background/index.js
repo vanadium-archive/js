@@ -115,7 +115,7 @@ BackgroundPage.prototype.handleMessageFromContentScript = function(port) {
     var pId = portId(port);
     var instanceIds = bp.instanceIds[pId] || [];
     instanceIds.forEach(function(instanceId) {
-      bp.handleBrowsprCleanup(instanceId);
+      bp.handleBrowsprCleanup(port, {body: {instanceId: instanceId}});
     });
     delete bp.instanceIds[pId];
   });

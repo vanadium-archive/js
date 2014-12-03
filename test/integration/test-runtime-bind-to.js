@@ -1,9 +1,7 @@
 var test = require('prova');
 var veyron = require('../../');
 var context = require('../../src/runtime/context');
-var config = {
-  wspr: 'http://' + process.env.WSPR_ADDR
-};
+var config = require('./default-config');
 
 test('runtime.bindTo(name, callback)', function(assert) {
   var rt;

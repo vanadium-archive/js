@@ -24,7 +24,8 @@
     "dependency-check": "^1.1.5",
     "jshint": "^2.5.2",
     "minifyify": "^4.0.3",
-    "node-static": "^0.7.4"
+    "node-static": "^0.7.4",
+    "envify": "~3.2.0"
   },
   "directories": {
     "example": "example"

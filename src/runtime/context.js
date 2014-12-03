@@ -26,8 +26,15 @@ module.exports = {
  * @return {Array} An array containing the arguments in order.
  */
 function optionalContext(args) {
-  var lastidx = args.length - 1;
-  if (lastidx >= 0 && args[0] instanceof Context) {
+  if (args[0] &&
+      (args[0] instanceof Context ||
+       // TODO(nlacasse,aghaseemi): Old versions of browserify (^4.2.3)  seem to
+       // run this file over and over every time it is required, instead of
+       // caching it.  This causes the 'instaceof' check to fail. The following
+       // HACK works around this, by checking the name of the constructor. We
+       // should get rid of this HACK once veyron browser has a newer version of
+       // browserify.
+       args[0].constructor.name === 'Context')) {
     return args;
   }
 

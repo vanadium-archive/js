@@ -1,7 +1,5 @@
 var veyron = require('../../');
-var config = {
-  wspr: 'http://' + process.env.WSPR_ADDR
-};
+var config = require('./default-config');
 
 module.exports = service;
 

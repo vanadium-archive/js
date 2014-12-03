@@ -19,11 +19,6 @@ test('runtime.serve(name, service, callback)', function(assert) {
 });
 
 test('runtime.serve(name, service, callback) - bad wspr', function(assert) {
-  if (require('is-browser')) {
-    // Browser doesn't use wspr url, so skip this test.
-    return assert.end();
-  }
-
   veyron.init({ wspr: 'http://bad-address.tld' }, function(err, runtime) {
     assert.error(err);
 

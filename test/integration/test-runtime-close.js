@@ -1,10 +1,7 @@
 var test = require('prova');
 var veyron = require('../../');
 var context = require('../../src/runtime/context');
-
-var config = {
-  wspr: 'http://' + process.env.WSPR_ADDR
-};
+var config = require('./default-config');
 
 test('runtime.close(cb)', function(assert) {
   var ctx = context.Context();

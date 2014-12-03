@@ -2,9 +2,7 @@ var test = require('prova');
 var veyron = require('../../');
 var Promise = require('../../src/lib/promise');
 var verror = veyron.errors;
-var config = {
-  wspr: 'http://' + process.env.WSPR_ADDR
-};
+var config = require('./default-config');
 var namespaceRoot = process.env.NAMESPACE_ROOT;
 var PREFIX = 'namespace-testing/';
 

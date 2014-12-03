@@ -15,7 +15,7 @@ var defaults = {
   authenticate: false,
   authTimeout: 30000, // ms
   logLevel: vlog.level,
-  wspr: 'http://localhost:8124'
+  wspr: isBrowser ? null : 'http://localhost:8124'
 };
 
 /**
@@ -46,9 +46,7 @@ function init(config, cb) {
 
   var runtimeOpts = {
     appName: config.appName,
-    // If isBrowser === true, then ignore config.wspr, since we will use the
-    // extension.
-    wspr: isBrowser ? null : config.wspr
+    wspr: config.wspr
   };
 
   var def = new Deferred(cb);

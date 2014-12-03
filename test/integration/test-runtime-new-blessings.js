@@ -1,9 +1,7 @@
 var test = require('prova');
 var veyron = require('../../');
 var Blessings = require('../../src/security/blessings.js');
-var config = {
-  wspr: 'http://' + process.env.WSPR_ADDR
-};
+var config = require('./default-config');
 
 test('runtime.newBlessings(extension, callback)', function(assert) {
   veyron.init(config, function(err, runtime) {

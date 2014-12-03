@@ -2,6 +2,7 @@ var test = require('prova');
 var veyron = require('../../');
 var caveat = require('../../src/security/caveat');
 var MethodCaveat = caveat.MethodCaveat;
+var config = require('./default-config');
 
 test('i.bless(..., callback)', function(assert) {
   blessings('alice', function(err, blessee, runtime) {
@@ -127,10 +128,6 @@ test('var promise = i.bless(...) - bad caveats failure', function(assert) {
 
 
 function blessings(extension, callback) {
-  var config = {
-    wspr: 'http://' + process.env.WSPR_ADDR
-  };
-
   veyron.init(config, function(err, runtime) {
     if (err) {
       return callback(err);

@@ -1,8 +1,6 @@
 var test = require('prova');
 var veyron = require('../../');
-var config = {
-  wspr: 'http://' + process.env.WSPR_ADDR
-};
+var config = require('./default-config');
 var ServiceWrapper = require('../../src/idl/idl').ServiceWrapper;
 var Deferred = require('../../src/lib/deferred');
 var context = require('../../src/runtime/context');
