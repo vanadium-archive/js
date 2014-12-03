@@ -49,24 +49,30 @@ ProxyConnection.prototype.getWebSocket = function() {
   var deferred = new Deferred();
   this.currentWebSocketPromise = deferred.promise;
   websocket.onopen = function() {
-    vLog.info('Connected to proxy at', self.url);
+    vLog.info('Connected to wspr at', self.url);
     deferred.resolve(websocket);
   };
   websocket.onerror = function(e) {
-    // TODO(jasoncampbell): there can be more errors than just faild
-    // connection, additionally there can be more than one error emited. We
-    // should take care to cover these cases.
-    vLog.error('Failed to connect to proxy at url:', self.url);
-
     var isEvent = isBrowser && !!window.Event && e instanceof window.Event;
     var isErrorEvent = isEvent && e.type === 'error';
 
-    // It's possible to get DOM Websocket error events into here
+    // It's possible to get a DOM WebSocket error event here, which is not an
+    // actual Error object, so we must turn it into one.
     if (isErrorEvent) {
-      e = new Error('WebSocket error - ' + self.url);
+      e = new Error('WebSocket error.');
     }
 
-    deferred.reject(e);
+    // Add a more descriptive message to the error.
+    // TODO(jasoncampbell): there can be more errors than just failed
+    // connection, additionally there can be more than one error emitted. We
+    // should take care to cover these cases.
+    // TODO(nlacasse): Add tests that check for this error when bad wspr url is
+    // provided.
+    var error = new Error('Failed to connect to wspr at url ' + self.url +
+        ': ' + e.message);
+
+    vLog.error(error);
+    deferred.reject(error);
   };
 
   websocket.onmessage = function(frame) {
