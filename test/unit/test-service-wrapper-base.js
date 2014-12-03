@@ -73,18 +73,12 @@ test('Service wrapper and signature for vdl-generated base.js',
                         'type': vom.Types.ERROR
                     }
                 ],
-                'inStreamHACK': {
-                    'name': '',
-                    'doc': '',
-                    'type': vom.Types.ANY
-                },
-                'outStreamHACK': {
+                'inStream': null,
+                'outStream': {
                     'name': '',
                     'doc': '',
                     'type': scalarsType
                 },
-                'hasInStreamHACK': false,
-                'hasOutStreamHACK': true,
                 'tags': [
                     {
                         val: 'tag'
@@ -111,18 +105,16 @@ test('Service wrapper and signature for vdl-generated base.js',
                         'type': vom.Types.ERROR
                     }
                 ],
-                'inStreamHACK': {
+                'inStream': {
                     'name': '',
                     'doc': '',
                     'type': vom.Types.INT32
                 },
-                'outStreamHACK': {
+                'outStream': {
                     'name': '',
                     'doc': '',
                     'type': vom.Types.STRING
                 },
-                'hasInStreamHACK': true,
-                'hasOutStreamHACK': true,
                 'tags': []
             },
             {
@@ -152,18 +144,8 @@ test('Service wrapper and signature for vdl-generated base.js',
                         'type': vom.Types.ERROR
                     }
                 ],
-                'hasInStreamHACK': false,
-                'hasOutStreamHACK': false,
-                'inStreamHACK': {
-                    'name': '',
-                    'doc': '',
-                    'type': vom.Types.ANY
-                },
-                'outStreamHACK': {
-                    'name': '',
-                    'doc': '',
-                    'type': vom.Types.ANY
-                },
+                'inStream': null,
+                'outStream': null,
                 'tags': []
             }
         ]

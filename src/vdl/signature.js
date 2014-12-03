@@ -7,7 +7,8 @@
 module.exports = Signature;
 
 var vom = require('vom');
-var ipc = require('../veyron.io/veyron/veyron2/ipc/ipc');
+var vdlsig =
+    require('../veyron.io/veyron/veyron2/vdl/vdlroot/src/signature/signature');
 var ReflectSignature = require('./reflect_signature');
 var vlog = require('../lib/vlog');
 
@@ -39,8 +40,6 @@ function Signature(service, desc) {
             name: reflectMethod.name,
             inArgs: reflectMethod.inArgs,
             outArgs: defaultOutArgs,
-            hasInStreamHACK: reflectMethod.streaming || false,
-            hasOutStreamHACK: reflectMethod.streaming || false
         };
         methods.push(thisMethod);
 
@@ -97,24 +96,12 @@ function Signature(service, desc) {
             }
 
             copyIfSet(thisMethod, descMethod, ['doc', 'outArgs',
-                'inStreamHACK', 'outStreamHACK', 'tags']);
-
-            if (reflectMethod.streaming === true) {
-                thisMethod.hasInStreamHACK = descMethod.hasInStreamHACK;
-                thisMethod.hasOutStreamHACK = descMethod.hasOutStreamHACK;
-                copyIfSet(thisMethod, descMethod,
-                    'hasInStreamHACK', 'hasOutStreamHACK');
-                if (thisMethod.hasInStreamHACK !== true &&
-                    thisMethod.hasOutStreamHACK !== true) {
-                        vlog.warn('Method is streaming, but descriptor ' +
-                            'indicates it is not');
-                }
-            }
+                'inStream', 'outStream', 'tags']);
         }
     });
  }
 
-Signature.prototype = new ipc.types.InterfaceSig();
+Signature.prototype = new vdlsig.types.Interface();
 
  function copyIfSet(dst, src, fields) {
     for (var i = 0; i < fields.length; i++) {

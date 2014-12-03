@@ -40,8 +40,6 @@ test('signature', function(t) {
                                 'type': vom.Types.ERROR
                             }
                         ],
-                        'hasInStreamHACK': true,
-                        'hasOutStreamHACK': true
                     },
                     {
                         'name': 'NoArgsFunction',
@@ -54,8 +52,6 @@ test('signature', function(t) {
                                 'type': vom.Types.ERROR
                             }
                         ],
-                        'hasInStreamHACK': false,
-                        'hasOutStreamHACK': false
                     },
                     {
                         'name': 'NamedFunction',
@@ -78,8 +74,6 @@ test('signature', function(t) {
                                 'type': vom.Types.ERROR
                             }
                         ],
-                        'hasInStreamHACK': false,
-                        'hasOutStreamHACK': false
                     }
                 ]
             }
@@ -118,14 +112,12 @@ test('signature', function(t) {
                                 'type': vom.Types.STRING
                             }
                         ],
-                        'inStreamHACK': {
+                        'inStream': {
                             'type': vom.Types.UINT32
                         },
-                        'hasInStreamHACK': true,
-                        'outStreamHACK': {
+                        'outStream': {
                             'type': vom.Types.UINT32
                         },
-                        'hasOutStreamHACK': true,
                         'tags': [
                             {
                                 val: 'aTag',
@@ -216,14 +208,12 @@ test('signature', function(t) {
                             'type': vom.Types.ERROR
                           }
                         ],
-                        'inStreamHACK': {
+                        'inStream': {
                             'type': vom.Types.UINT32
                         },
-                        'hasInStreamHACK': true,
-                        'outStreamHACK': {
+                        'outStream': {
                             'type': vom.Types.UINT32
                         },
-                        'hasOutStreamHACK': true,
                         'tags': [
                             {
                                 'val': 'aTag',
@@ -251,8 +241,6 @@ test('signature', function(t) {
                                 'type': vom.Types.STRING
                             }
                         ],
-                        'hasInStreamHACK': false,
-                        'hasOutStreamHACK': false
                     },
                     {
                         'name': 'NamedFunction',
@@ -282,8 +270,6 @@ test('signature', function(t) {
                             'type': vom.Types.ERROR
                           }
                         ],
-                        'hasInStreamHACK': false,
-                        'hasOutStreamHACK': false
                     },
                 ]
             }
@@ -344,8 +330,6 @@ test('signature', function(t) {
                                 'type': vom.Types.ERROR
                             }
                         ],
-                        'hasInStreamHACK': true,
-                        'hasOutStreamHACK': true
                     },
                     {
                         'name': 'NoArgsFunction',
@@ -358,8 +342,6 @@ test('signature', function(t) {
                                 'type': vom.Types.ERROR
                             }
                         ],
-                        'hasInStreamHACK': false,
-                        'hasOutStreamHACK': false
                     },
                     {
                         'name': 'NamedFunction',
@@ -382,8 +364,6 @@ test('signature', function(t) {
                                 'type': vom.Types.ERROR
                             }
                         ],
-                        'hasInStreamHACK': false,
-                        'hasOutStreamHACK': false
                     }
                 ]
             }

@@ -1,8 +1,8 @@
 var test = require('prova');
 var vom = require('vom');
-var serviceSignatureType = require(
-  '../../src/veyron.io/veyron/veyron2/ipc/ipc'
-).types.InterfaceSig;
+var ifaceSigType = require(
+  '../../src/veyron.io/veyron/veyron2/vdl/vdlroot/src/signature/signature'
+).types.Interface;
 
 test('import paths work', function(assert) {
   // We just need to require the arith package to make sure that
@@ -30,8 +30,8 @@ test('method signature match (temporary)', function(assert) {
     assert.ok(m, methodName + ' exists');
     assert.equal(methodData.inArgs.length, m.numInArgs);
     assert.equal(methodData.outArgs.length, m.numOutArgs + 1);
-    assert.equal(methodData.hasInStreamHACK, m.inputStreaming);
-    assert.equal(methodData.hasOutStreamHACK, m.outputStreaming);
+    assert.equal(methodData.inStream !== null, m.inputStreaming);
+    assert.equal(methodData.outStream !== null, m.outputStreaming);
     assert.equal(methodData.tags.length, m.tags.length);
   }
   assert.end();
@@ -56,7 +56,7 @@ test('method signature encode-decode match', function(assert) {
       // Encode the signature using the type defined in VDL-generated ipc.js
       writer = new vom.ByteArrayMessageWriter();
       encoder = new vom.Encoder(writer);
-      encoder.encode(signature, serviceSignatureType.prototype._type);
+      encoder.encode(signature, ifaceSigType.prototype._type);
       sigEncode = writer.getBytes();
 
       // Decode the signature.
@@ -70,7 +70,7 @@ test('method signature encode-decode match', function(assert) {
       // TODO The signature type should be attached to the generated signature
       // This is currently problematic (Issue 432), so manually attaching type
       // for now and NOT passing the type into the encoder.
-      var wrappedSignature = new serviceSignatureType(signature);
+      var wrappedSignature = new ifaceSigType(signature);
 
       // Encode the signature as a wrapped struct.
       writer = new vom.ByteArrayMessageWriter();
