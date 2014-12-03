@@ -15,7 +15,7 @@ var defaults = {
   authenticate: false,
   authTimeout: 30000, // ms
   logLevel: vlog.level,
-  wspr: isBrowser ? null : 'http://localhost:8124'
+  wspr: process.env.WSPR || (isBrowser ? null : 'http://localhost:8124')
 };
 
 /**
