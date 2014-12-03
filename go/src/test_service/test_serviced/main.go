@@ -8,11 +8,15 @@ import (
 	"veyron.io/veyron/veyron/lib/signals"
 	_ "veyron.io/veyron/veyron/profiles"
 	"veyron.io/veyron/veyron2/rt"
+	"veyron.io/veyron/veyron2/vlog"
 )
 
 func main() {
 	// Create the runtime
-	r := rt.Init()
+	r, err := rt.New()
+	if err != nil {
+		vlog.Fatalf("Could not initialize runtime: %s", err)
+	}
 	defer r.Cleanup()
 
 	s, endpoint, err := StartServer(r)
