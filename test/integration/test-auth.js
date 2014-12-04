@@ -1,6 +1,6 @@
 var test = require('prova');
 
-var ExtensionEventProxy = require('../../src/proxy/event_proxy').Extension;
+var ExtensionEventProxy = require('../../src/proxy/event_proxy');
 var veyron = require('../../src/veyron');
 
 test('"auth" message gets "auth received" response', function(assert) {

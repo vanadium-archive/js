@@ -1,5 +1,5 @@
 var veyron = require('../../src/veyron.js');
-var extensionProxy = require('../../src/proxy/event_proxy').Extension();
+var extensionProxy = require('../../src/proxy/event_proxy')();
 
 // TODO(nlacasse): Consider getting this url from the extension?  Might not be
 // worth it though, because soon WSPR will be included in the extension and

@@ -1,13 +1,9 @@
 var EE = require('eventemitter2').EventEmitter2;
 var inherits = require('util').inherits;
 
-module.exports = {
-  Extension: ExtensionEventProxy,
-  Page: PageEventProxy
-};
+var types = require('./event_proxy_message_types');
 
-var TO_EXTENSION = 'vanadiumMessageToExtension';
-var TO_PAGE = 'vanadiumMessageToPage';
+module.exports = ExtensionEventProxy;
 
 // ExtensionEventProxy sends messages to the extension, and listens for messages
 // coming from the extension.
@@ -17,7 +13,7 @@ function ExtensionEventProxy(){
   }
   EE.call(this);
   var that = this;
-  window.top.addEventListener(TO_PAGE, function(ev) {
+  window.top.addEventListener(types.TO_PAGE, function(ev) {
     that.emit(ev.detail.type, ev.detail.body);
   });
 }
@@ -25,32 +21,7 @@ inherits(ExtensionEventProxy, EE);
 
 ExtensionEventProxy.prototype.send = function(type, body) {
   window.top.dispatchEvent(
-    new window.CustomEvent(TO_EXTENSION, {
-      detail: {
-        type: type,
-        body: body
-      }
-    })
-  );
-};
-
-// PageEventProxy sends messages to the web page, and listens for messages
-// coming from the web page.
-function PageEventProxy(){
-  if (!(this instanceof PageEventProxy)) {
-    return new PageEventProxy();
-  }
-  EE.call(this);
-  var that = this;
-  window.top.addEventListener(TO_EXTENSION, function(ev) {
-    that.emit(ev.detail.type, ev.detail.body);
-  });
-}
-inherits(PageEventProxy, EE);
-
-PageEventProxy.prototype.send = function(type, body) {
-  window.top.dispatchEvent(
-    new window.CustomEvent(TO_PAGE, {
+    new window.CustomEvent(types.TO_EXTENSION, {
       detail: {
         type: type,
         body: body

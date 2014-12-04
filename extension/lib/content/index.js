@@ -1,6 +1,6 @@
 var debug = require('debug')('content-script:index');
 var random = require('../../../src/lib/random');
-var pageEventProxy = require('../../../src/proxy/event_proxy').Page();
+var pageEventProxy = require('./event_proxy')();
 
 // Port to communicate with background js.
 var backgroundPort = chrome.runtime.connect();

@@ -98,7 +98,7 @@ function getAccount(authTimeoutMs, cb) {
     return cb(new Error('authenticate=true requires browser environment'));
   }
 
-  var extensionEventProxy = require('./proxy/event_proxy').Extension();
+  var extensionEventProxy = require('./proxy/event_proxy')();
 
   // Initialized below.
   var timeout, authRequestInterval;

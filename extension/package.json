@@ -16,7 +16,8 @@
     "mercury": "^9.1.0",
     "postie": "^0.4.5",
     "superagent": "^0.18.2",
-    "xtend": "^3.0.0"
+    "xtend": "^3.0.0",
+    "eventemitter2": "~0.4.14"
   },
   "devDependencies": {
     "brfs": "^1.2.0",
@@ -25,7 +26,8 @@
     "jshint": "^2.5.2",
     "minifyify": "^4.0.3",
     "node-static": "^0.7.4",
-    "envify": "~3.2.0"
+    "envify": "~3.2.0",
+    "esprima": "~1.2.2"
   },
   "directories": {
     "example": "example"
