@@ -35,7 +35,7 @@ endif
 
 ifdef XUNIT
 	TAP := --tap # TAP must be set for xunit to work
-	OUTPUT_TRANSFORM := | tap-xunit
+	OUTPUT_TRANSFORM := | tap-xunit --package=javascript --replaceWithUnicodeDot
 endif
 
 ifdef NODE_OUTPUT
