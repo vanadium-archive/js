@@ -21,8 +21,6 @@ import (
 
 // getCacheClient initializes the runtime and creates a client binding.
 func getCacheClient(address string) (test_service.CacheClientMethods, error) {
-	rt.Init()
-
 	// Bind to a rooted, terminal name to bypass the MountTable which isn't
 	// actually used, nor needed, in these tests.
 	s := test_service.CacheClient(naming.JoinAddressName(address, "//cache"))
@@ -39,7 +37,11 @@ func waitForStatus(r veyron2.Runtime, name string, status string) error {
 }
 
 func TestCancelCollector(t *testing.T) {
-	r := rt.Init()
+	r, err := rt.New()
+	if err != nil {
+		t.Fatalf("Could not initialize runtime: %s", err)
+	}
+	defer r.Cleanup()
 
 	s, endpoint, err := StartServer(r)
 
@@ -65,6 +67,12 @@ func TestCancelCollector(t *testing.T) {
 
 // TestValueSetGet tests setting values and then calling various Get* functions.
 func TestValueSetGet(t *testing.T) {
+	r, err := rt.New()
+	if err != nil {
+		t.Fatalf("Could not initialize runtime: %s", err)
+	}
+	defer r.Cleanup()
+
 	type testCase struct {
 		mapFieldName    string
 		nameOfGetMethod string
@@ -92,7 +100,6 @@ func TestValueSetGet(t *testing.T) {
 		testCase{"err_i64", "GetAsInt64", int8(1), true},
 		testCase{"err_string", "GetAsString", true, true},
 	}
-	r := rt.Init()
 	ctx := r.NewContext()
 
 	s, endpoint, err := StartServer(r)
@@ -183,7 +190,6 @@ func populateObject(ctx context.T, s settable) error {
 
 // setupManyResults starts a server and client and populates the server with the values in populateObject.
 func setupManyResults(t *testing.T) (test_service.CacheClientMethods, ipc.Server) {
-	r := rt.Init()
 	s, endpoint, err := StartServer(r)
 	if err != nil {
 		t.Fatal("failed to start server: ", err)
@@ -210,10 +216,16 @@ func (sm settableMap) Set(ctx context.T, key string, val vdlutil.Any, opts ...ip
 
 // TestAsMap tests that AsMap returns the correct results.
 func TestAsMap(t *testing.T) {
+	r, err := rt.New()
+	if err != nil {
+		t.Fatalf("Could not initialize runtime: %s", err)
+	}
+	defer r.Cleanup()
+
 	c, s := setupManyResults(t)
 	defer s.Stop()
 
-	ctx := rt.R().NewContext()
+	ctx := r.NewContext()
 
 	res, err := c.AsMap(ctx)
 	if err != nil {
@@ -235,10 +247,16 @@ func TestAsMap(t *testing.T) {
 
 // TestKeyValuePairs tests that KeyValuePairs returns the correct results.
 func TestKeyValuePairs(t *testing.T) {
+	r, err := rt.New()
+	if err != nil {
+		t.Fatalf("Could not initialize runtime: %s", err)
+	}
+	defer r.Cleanup()
+
 	c, s := setupManyResults(t)
 	defer s.Stop()
 
-	ctx := rt.R().NewContext()
+	ctx := r.NewContext()
 	res, err := c.KeyValuePairs(ctx)
 	if err != nil {
 		t.Fatal("error calling KeyValuePairs: ", err)
@@ -259,10 +277,16 @@ func TestKeyValuePairs(t *testing.T) {
 
 // TestKeyPageAndSize tests the KeyPage and size methods.
 func TestKeyPageAndSize(t *testing.T) {
+	r, err := rt.New()
+	if err != nil {
+		t.Fatalf("Could not initialize runtime: %s", err)
+	}
+	defer r.Cleanup()
+
 	c, s := setupManyResults(t)
 	defer s.Stop()
 
-	ctx := rt.R().NewContext()
+	ctx := r.NewContext()
 	sz, err := c.Size(ctx)
 	if err != nil {
 		t.Fatal("error calling Size: ", err)
@@ -283,10 +307,16 @@ func TestKeyPageAndSize(t *testing.T) {
 
 // TestMostRecentSet tests the MostRecentSet method.
 func TestMostRecentSet(t *testing.T) {
+	r, err := rt.New()
+	if err != nil {
+		t.Fatalf("Could not initialize runtime: %s", err)
+	}
+	defer r.Cleanup()
+
 	c, s := setupManyResults(t)
 	defer s.Stop()
 
-	ctx := rt.R().NewContext()
+	ctx := r.NewContext()
 
 	timeBefore := time.Now().Unix()
 	if err := c.Set(ctx, "B", int32(8)); err != nil {
@@ -310,10 +340,16 @@ func TestMostRecentSet(t *testing.T) {
 
 // TestMultiGet tests the MultiGet method.
 func TestMultiGet(t *testing.T) {
+	r, err := rt.New()
+	if err != nil {
+		t.Fatalf("Could not initialize runtime: %s", err)
+	}
+	defer r.Cleanup()
+
 	c, s := setupManyResults(t)
 	defer s.Stop()
 
-	stream, err := c.MultiGet(rt.R().NewContext())
+	stream, err := c.MultiGet(r.NewContext())
 	if err != nil {
 		t.Fatal("error calling MultiGet: ", err)
 	}
