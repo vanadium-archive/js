@@ -33,12 +33,17 @@ ifndef NOQUIT
 	QUIT := --quit
 endif
 
+ifdef XUNIT
+	TAP := --tap # TAP must be set for xunit to work
+	OUTPUT_TRANSFORM := | tap-xunit
+endif
+
 ifdef NODE_OUTPUT
-	NODE_OUTPUT := > $(NODE_OUTPUT)
+	NODE_OUTPUT := $(OUTPUT_TRANSFORM) > $(NODE_OUTPUT)
 endif
 
 ifdef BROWSER_OUTPUT
-	BROWSER_OUTPUT := > $(BROWSER_OUTPUT)
+	BROWSER_OUTPUT := $(OUTPUT_TRANSFORM) > $(BROWSER_OUTPUT)
 endif
 
 BROWSER_OPTS := --browser --transform envify --launch $(BROWSER) $(HEADLESS) $(TAP) $(QUIT)

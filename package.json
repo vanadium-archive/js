@@ -29,6 +29,7 @@
     "prova": "jxson/prova#8cb346323fb",
     "run-parallel": "^1.0.0",
     "which": "^1.0.5",
-    "esprima": "~1.2.2"
+    "esprima": "~1.2.2",
+    "tap-xunit": "~1.0.1"
   }
 }
