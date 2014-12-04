@@ -14,27 +14,16 @@ define BROWSERIFY-TEST
 	browserify $1 --transform brfs --transform envify --debug --outfile $2
 endef
 
-all: veyron.crx
-
-naclgoroot-is-set:
-ifndef NACLGOROOT
-	$(error NACLGOROOT is not set)
-endif
-
-# TODO(nlacasse): Put the veyron-go-compiler in the web profile so other devs
-# will have it, and then make this task a prereq of build/ and build-test/
-# tasks.  For now, devs who want to the nacl binary will have to run "make
-# nacl" manually.
-# TODO(nlacasse): Update and recompile the compiler itself before building the
-# nacl plugin.
-nacl/main-64.nexe: GOROOT :=
-nacl/main-64.nexe: GOARCH := amd64p32
-nacl/main-64.nexe: GOOS := nacl
+define COMPILE-NACL-PLUGIN
+	mkdir -p $(dir $2)
 # TODO(bprosnitz) Remove the novdl flag once it works on non-host architectures
-nacl/main-64.nexe: $(VEYRON_ROOT)/veyron/go/src/veyron.io/wspr/veyron/services/wsprd/browspr/main/main_nacl.go
-	veyron xgo --target_go=$(NACLGOROOT)/bin/go -novdl amd64p32-nacl build -o $@ $<
+	GOARCH=amd64p32 \
+	GOOS=nacl \
+	GOROOT= \
+	veyron xgo --target_go=$(VEYRON_ROOT)/environment/go_ppapi/bin/go -novdl amd64p32-nacl build -o $2 $1
+endef
 
-nacl: nacl/main-64.nexe | naclgoroot-is-set
+all: veyron.crx
 
 build/html: html/*
 	mkdir -p build
@@ -62,8 +51,14 @@ build/js/addcaveats.js: lib/background/addcaveats.js $(JS_FILES) node_modules
 
 build/js: build/js/background.js build/js/content.js build/js/options.js build/js/addcaveats.js
 
-build/nacl:
-	cp -r nacl build
+build/nacl/main.nmf: nacl
+	mkdir -p $(dir $@)
+	cp -r nacl/main.nmf $@
+
+build/nacl/main-64.nexe: $(VEYRON_ROOT)/veyron/go/src/veyron.io/wspr/veyron/services/wsprd/browspr/main/main_nacl.go
+	$(call COMPILE-NACL-PLUGIN,$<,$@)
+
+build/nacl: build/nacl/main.nmf build/nacl/main-64.nexe
 
 build: build/html build/images build/manifest.json build/js build/nacl
 
@@ -96,8 +91,14 @@ build-test/js/addcaveats.js: lib/background/addcaveats.js $(JS_FILES) node_modul
 
 build-test/js: build-test/js/background.js build-test/js/content.js build-test/js/options.js build-test/js/addcaveats.js
 
-build-test/nacl:
-	cp -r nacl build-test
+build-test/nacl/main.nmf: nacl
+	mkdir -p $(dir $@)
+	cp -r nacl/main.nmf $@
+
+build-test/nacl/main-64.nexe: $(VEYRON_ROOT)/veyron/go/src/veyron.io/wspr/veyron/services/wsprd/browspr/main/main_nacl.go
+	$(call COMPILE-NACL-PLUGIN,$<,$@)
+
+build-test/nacl: build-test/nacl/main.nmf build-test/nacl/main-64.nexe
 
 build-test: build-test/html build-test/images build-test/manifest.json build-test/js build-test/nacl
 
@@ -122,8 +123,9 @@ node_modules: package.json
 	@npm install
 
 .PHONY: all build clean dependency-check lint wspr
-.PHONY: naclgoroot-is-set
-.PHONY: nacl nacl/main-64.nexe
+
+# Always rebuild the plugin.
+.PHONY: nacl/main-64.nexe
 
 # Always rebuild the example server.
 .PHONY: example/index.bundle.js
