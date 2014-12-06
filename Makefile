@@ -35,15 +35,21 @@ endif
 
 ifdef XUNIT
 	TAP := --tap # TAP must be set for xunit to work
-	OUTPUT_TRANSFORM := | tap-xunit --package=javascript --replaceWithUnicodeDot
+	OUTPUT_TRANSFORM := tap-xunit --package=javascript --replaceWithUnicodeDot
 endif
 
 ifdef NODE_OUTPUT
-	NODE_OUTPUT := $(OUTPUT_TRANSFORM) > $(NODE_OUTPUT)
+	ifdef OUTPUT_TRANSFORM
+		NODE_OUTPUT := >($(OUTPUT_TRANSFORM) > $(NODE_OUTPUT))
+	endif
+	NODE_OUTPUT := | tee $(NODE_OUTPUT)
 endif
 
 ifdef BROWSER_OUTPUT
-	BROWSER_OUTPUT := $(OUTPUT_TRANSFORM) > $(BROWSER_OUTPUT)
+	ifdef OUTPUT_TRANSFORM
+		BROWSER_OUTPUT := >($(OUTPUT_TRANSFORM) > $(BROWSER_OUTPUT))
+	endif
+	BROWSER_OUTPUT := | tee $(BROWSER_OUTPUT)
 endif
 
 BROWSER_OPTS := --browser --transform envify --launch $(BROWSER) $(HEADLESS) $(TAP) $(QUIT)
