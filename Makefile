@@ -149,7 +149,7 @@ docs: $(JS_SRC_FILES) | node_modules
 
 node_modules: package.json  check-that-npm-is-in-path | node_modules/vom/lib/index.js
 	@npm prune
-	@npm install
+	@npm install --quiet
 	@touch node_modules
 
 node_modules/vom/lib/index.js:

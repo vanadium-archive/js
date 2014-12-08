@@ -120,7 +120,7 @@ clean:
 
 node_modules: package.json
 	@npm prune
-	@npm install
+	@npm install --quiet
 
 .PHONY: all build clean dependency-check lint wspr
 
