@@ -5,6 +5,44 @@
 
 var vError = require('../lib/verror');
 var idlHelper = {};
+var vom = require('vom');
+// TODO(alexfandrianto): See the _type comment below.
+// We need to export some sort of type so that encoding matches old signature.
+// The service signature (deprecated) needs to be map[string]any, but this
+// will encode to struct when we manually assign _type.
+var Kind = vom.Kind;
+var Types = vom.Types;
+var idlWireDescType = {
+  kind: Kind.MAP,
+  key: Types.STRING,
+  elem: {
+    kind: Kind.STRUCT,
+    fields: [
+      {
+        name: 'InArgs',
+        type: {
+          kind: Kind.LIST,
+          elem: Types.STRING
+        }
+      },
+      {
+        name: 'NumOutArgs',
+        type: Types.INT64
+      },
+      {
+        name: 'IsStreaming',
+        type: Types.BOOL
+      },
+      {
+        name: 'Tags',
+        type: {
+          kind: Kind.LIST,
+          elem: Types.ANY
+        }
+      }
+    ]
+  }
+};
 
 /**
  * Generates an IDL wire description for a given service by iterating over the
@@ -43,6 +81,12 @@ idlHelper.generateIdlWireDescription = function(service) {
       }
     }
   }
+
+  // This hack makes the integration tests pass.
+  // TODO(alexfandrianto): If the service signature in veyron.js and wspr are
+  // not moved to the new signature (unlikely), then this is not adequate in the
+  // long run.
+  idlWire._type = idlWireDescType;
 
   return idlWire;
 };
@@ -174,3 +218,4 @@ idlHelper.ServiceWrapper.prototype.labelForMethod = function(method) {
  * Export the module
  */
 module.exports = idlHelper;
+module.exports.idlWireDescType = idlWireDescType;

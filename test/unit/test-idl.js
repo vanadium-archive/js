@@ -5,7 +5,9 @@ test('empty service', function(assert) {
   var service = new idl.ServiceWrapper({});
   var idlWire = idl.generateIdlWireDescription(service);
 
-  assert.deepEqual(idlWire, {});
+  assert.deepEqual(idlWire, {
+    _type: idl.idlWireDescType
+  });
   assert.end();
 });
 
@@ -13,6 +15,7 @@ test('empty method', function(assert) {
   var service = new idl.ServiceWrapper({ noop: noop });
   var idlWire = idl.generateIdlWireDescription(service);
   var expected = {
+    _type: idl.idlWireDescType,
     noop: {
       InArgs: [],
       NumOutArgs: 2,
@@ -28,6 +31,7 @@ test('method with args', function(assert) {
   var service = new idl.ServiceWrapper({ doubleArgs: doubleArgs });
   var idlWire = idl.generateIdlWireDescription(service);
   var expected = {
+    _type: idl.idlWireDescType,
     doubleArgs: {
       InArgs: ['arg1', 'arg2'],
       NumOutArgs: 2,
@@ -46,6 +50,7 @@ test('multiple methods', function(assert) {
   });
   var idlWire = idl.generateIdlWireDescription(service);
   var expected = {
+    _type: idl.idlWireDescType,
     noop: {
       InArgs: [],
       NumOutArgs: 2,
@@ -69,6 +74,7 @@ test('skips methods with prefix: "_"', function(assert) {
   });
   var idlWire = idl.generateIdlWireDescription(service);
   var expected = {
+    _type: idl.idlWireDescType,
     doubleArgs: {
       InArgs: ['arg1', 'arg2'],
       NumOutArgs: 2,
@@ -84,6 +90,7 @@ test('skips args with prefix: "$"', function(assert) {
   var service = new idl.ServiceWrapper({ dollars: dollars });
   var idlWire = idl.generateIdlWireDescription(service);
   var expected = {
+    _type: idl.idlWireDescType,
     dollars: {
       InArgs: ['two', 'four'],
       NumOutArgs: 2,
@@ -101,6 +108,7 @@ test('streaming', function(assert) {
   });
   var idlWire = idl.generateIdlWireDescription(service);
   var expected = {
+    _type: idl.idlWireDescType,
     method: {
       InArgs: ['one'],
       NumOutArgs: 2,
