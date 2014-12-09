@@ -39,17 +39,19 @@ ifdef XUNIT
 endif
 
 ifdef NODE_OUTPUT
+	NODE_OUTPUT_LOCAL = $(NODE_OUTPUT)
 	ifdef OUTPUT_TRANSFORM
-		NODE_OUTPUT := >($(OUTPUT_TRANSFORM) > $(NODE_OUTPUT))
+		NODE_OUTPUT_LOCAL := >($(OUTPUT_TRANSFORM) > $(NODE_OUTPUT_LOCAL))
 	endif
-	NODE_OUTPUT := | tee $(NODE_OUTPUT)
+	NODE_OUTPUT_LOCAL := | tee $(NODE_OUTPUT_LOCAL)
 endif
 
 ifdef BROWSER_OUTPUT
+	BROWSER_OUTPUT_LOCAL = $(BROWSER_OUTPUT)
 	ifdef OUTPUT_TRANSFORM
-		BROWSER_OUTPUT := >($(OUTPUT_TRANSFORM) > $(BROWSER_OUTPUT))
+		BROWSER_OUTPUT_LOCAL := >($(OUTPUT_TRANSFORM) > $(BROWSER_OUTPUT_LOCAL))
 	endif
-	BROWSER_OUTPUT := | tee $(BROWSER_OUTPUT)
+	BROWSER_OUTPUT_LOCAL := | tee $(BROWSER_OUTPUT_LOCAL)
 endif
 
 BROWSER_OPTS := --browser --transform envify --launch $(BROWSER) $(HEADLESS) $(TAP) $(QUIT)
@@ -89,24 +91,24 @@ gen-vdl:
 	veyron go -novdl run $(VEYRON_ROOT)/veyron/go/src/veyron.io/veyron/veyron2/vdl/vdl/main.go generate -lang=javascript -js_out_dir="$(VEYRON_ROOT)/veyron.js/src" vdltool signature veyron.io/veyron/veyron2/vdl/testdata/... veyron.io/veyron/veyron2/ipc/...
 
 test-vdl-node: gen-vdl test-precheck
-	prova test/vdl/test-*.js $(TAP) $(NODE_OUTPUT)
+	prova test/vdl/test-*.js $(TAP) $(NODE_OUTPUT_LOCAL)
 
 test-vdl-browser: gen-vdl test-precheck
-	prova test/vdl/test-*.js $(BROWSER_OPTS) $(BROWSER_OUTPUT)
+	prova test/vdl/test-*.js $(BROWSER_OPTS) $(BROWSER_OUTPUT_LOCAL)
 
 test-unit: test-unit-node test-unit-browser
 
 test-unit-node: test-precheck
-	prova test/unit/test-*.js $(TAP) $(NODE_OUTPUT)
+	prova test/unit/test-*.js $(TAP) $(NODE_OUTPUT_LOCAL)
 
 test-unit-browser: test-precheck
-	prova test/unit/test-*.js $(BROWSER_OPTS) $(BROWSER_OUTPUT)
+	prova test/unit/test-*.js $(BROWSER_OPTS) $(BROWSER_OUTPUT_LOCAL)
 
 test-integration: lint test-integration-node test-integration-browser
 
 test-integration-node: test-precheck go/bin
 	node test/integration/runner.js --services=$(COMMON_SERVICES) -- \
-	prova test/integration/test-*.js $(TAP) $(NODE_OUTPUT)
+	prova test/integration/test-*.js $(TAP) $(NODE_OUTPUT_LOCAL)
 
 test-integration-browser: test-precheck go/bin
 	node test/integration/runner.js --services=$(COMMON_SERVICES) -- \
@@ -119,7 +121,7 @@ test-integration-browser-runner: BROWSER_OPTS := --options="--load-extension=$(P
 test-integration-browser-runner:
 	@$(RM) -fr extension/build-test
 	$(MAKE) -C extension build-test
-	prova test/integration/test-*.js $(BROWSER_OPTS) --log=./tmp/chrome.log $(BROWSER_OUTPUT)
+	prova test/integration/test-*.js $(BROWSER_OPTS) --log=./tmp/chrome.log $(BROWSER_OUTPUT_LOCAL)
 
 go/bin: $(GO_FILES)
 	@$(VGO) build -o $(GOBIN)/principal veyron.io/veyron/veyron/tools/principal
