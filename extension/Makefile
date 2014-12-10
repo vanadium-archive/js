@@ -6,7 +6,7 @@ JS_FILES = $(shell find lib -name "*.js" -o -name "*.css")
 
 define BROWSERIFY
 	mkdir -p $(dir $2)
-	browserify $1 --transform brfs --debug --plugin [ minifyify --map /options.js.map --output $2.map ] --outfile $2
+	browserify $1 --transform brfs --debug --plugin [ minifyify --map /js/$(notdir $2).map --output $2.map ] --outfile $2
 endef
 
 define BROWSERIFY-TEST
