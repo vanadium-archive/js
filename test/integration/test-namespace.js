@@ -3,10 +3,11 @@ var veyron = require('../../');
 var Promise = require('../../src/lib/promise');
 var verror = veyron.errors;
 var config = require('./default-config');
+var timeouts = require('./timeouts');
 var namespaceRoot = process.env.NAMESPACE_ROOT;
 var PREFIX = 'namespace-testing/';
 
-test('glob(' + PREFIX + '*)', function(assert) {
+test('Test globbing children - glob(' + PREFIX + '*)', function(assert) {
   var runtime;
 
   init(config).then(function glob(rt) {
@@ -31,7 +32,8 @@ test('glob(' + PREFIX + '*)', function(assert) {
   }
 });
 
-test('glob(' + PREFIX + 'cottage/*/*/*) - nested', function(assert) {
+test('Test globbing nested levels - glob(' + PREFIX + 'cottage/*/*/*)',
+  function(assert) {
   var runtime;
 
   init(config).then(function glob(rt) {
@@ -59,7 +61,8 @@ test('glob(' + PREFIX + 'cottage/*/*/*) - nested', function(assert) {
   }
 });
 
-test('glob(' + PREFIX + 'does/not/exist) - empty', function(assert) {
+test('Test globbing non-existing name - glob(' + PREFIX + 'does/not/exist)',
+  function(assert) {
   var runtime;
 
   init(config).then(function glob(rt) {
@@ -84,9 +87,16 @@ test('glob(' + PREFIX + 'does/not/exist) - empty', function(assert) {
   }
 });
 
-test('glob(/RootedBadName.Google.tld:1234/*) - empty', function(assert) {
-  var runtime;
+// TODO(aghassemi) This test take arbitrarily long since it needs to timeout
+// on invalid name. Find a better way to do this.
+// Maybe namespace take context and timeout as well?
+test.skip('Test globbing non-existing rooted name - ' +
+  'glob(/RootedBadName.Google.tld:1234/*)', function(assert) {
 
+  // increase timeout for this test as it retries bad-url until timeout.
+  assert.timeout(timeouts.long);
+
+  var runtime;
   init(config).then(function glob(rt) {
     runtime = rt;
     var namespace = rt.namespace();
@@ -121,7 +131,9 @@ test('glob(/RootedBadName.Google.tld:1234/*) - empty', function(assert) {
   }
 });
 
-test('mount -> resolve -> unmount -> resolve(cb)', function(assert) {
+test('Test mounting and unmounting - ' +
+  'mount(' + PREFIX + 'new/name), unmount(' + PREFIX + 'new/name)',
+  function(assert) {
   var runtime;
   var namespace;
   var MINUTE = 60 * 1000; // a minute
@@ -165,7 +177,8 @@ test('mount -> resolve -> unmount -> resolve(cb)', function(assert) {
   }
 });
 
-test('resolveToMountTable(' + PREFIX + 'cottage)', function(assert) {
+test('Test resolving to mounttable - ' +
+  'resolveToMountTable(' + PREFIX + 'cottage)', function(assert) {
   var runtime;
 
   init(config).then(function resolveToMountTable(rt) {
@@ -191,7 +204,8 @@ test('resolveToMountTable(' + PREFIX + 'cottage)', function(assert) {
   }
 });
 
-test('flushCacheEntry(' + PREFIX + 'house/alarm)', function(assert) {
+test('Test flushing cache entry - ' +
+  'flushCacheEntry(' + PREFIX + 'house/alarm)', function(assert) {
   var runtime;
   var namespace;
   var name = PREFIX + 'house/alarm';
@@ -220,7 +234,7 @@ test('flushCacheEntry(' + PREFIX + 'house/alarm)', function(assert) {
   }
 });
 
-test('disableCache(true)', function(assert) {
+test('Test disabling cache - disableCache(true)', function(assert) {
   var runtime;
   var namespace;
   var name = PREFIX + 'house/alarm';
@@ -248,7 +262,8 @@ test('disableCache(true)', function(assert) {
   }
 });
 
-test('setRoots() -> valid', function(assert) {
+test('Test setting roots to valid endpoints - ' +
+  'setRoots(valid)', function(assert) {
   var runtime;
   var namespace;
 
@@ -277,7 +292,12 @@ test('setRoots() -> valid', function(assert) {
   }
 });
 
-test('setRoots() -> invalid -> runtime bind failure', function(assert) {
+test('Test setting roots to invalid endpoint - ' +
+  'setRoots(invalid)', function(assert) {
+
+  // increase timeout for this test as it retries bad-url until timeout.
+  assert.timeout(timeouts.long);
+
   var runtime;
   var namespace;
 
@@ -309,7 +329,7 @@ test('setRoots() -> invalid -> runtime bind failure', function(assert) {
   }
 });
 
-test('roots()', function(assert) {
+test('Test getting roots - roots()', function(assert) {
   var runtime;
 
   init(config).then(function roots(rt) {
@@ -335,7 +355,8 @@ test('roots()', function(assert) {
   }
 });
 
-test('setRoots() -> roots() (cb)', function(assert) {
+test('Test setting and getting roots - ' +
+  'setRoots(), roots(cb)', function(assert) {
   var runtime;
   var namespace;
 

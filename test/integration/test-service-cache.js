@@ -5,10 +5,14 @@ var VeyronError = veyron.errors.VeyronError;
 var Promise = require('bluebird');
 var context = require('../../src/runtime/context');
 
-test('cache.set(key, value, callback)', function(assert) {
+test('Test set() of Go sample cache service - ' +
+  'cache.set(key, value, callback)', function(assert) {
   var ctx = context.Context();
   service(ctx, 'test_service/cache', function(err, cache, end) {
     assert.error(err);
+    if (err) {
+      return end(assert);
+    }
 
     cache.set(ctx, 'foo', 'bar', function(err, result) {
       assert.error(err);
@@ -17,10 +21,14 @@ test('cache.set(key, value, callback)', function(assert) {
   });
 });
 
-test('var promise = cache.set(key, value)', function(assert) {
+test('Test set() of Go sample cache service - ' +
+  'var promise = cache.set(key, value)', function(assert) {
   var ctx = context.Context();
   service(ctx, 'test_service/cache', function(err, cache, end) {
     assert.error(err);
+    if (err) {
+      return end(assert);
+    }
 
     cache.set(ctx, 'foo', 'bar')
     .then(function() {
@@ -32,10 +40,14 @@ test('var promise = cache.set(key, value)', function(assert) {
   });
 });
 
-test('cache.get(key, value, callback)', function(assert) {
+test('Test get() of Go sample cache service - ' +
+  'cache.get(key, value, callback)', function(assert) {
   var ctx = context.Context();
   service(ctx, 'test_service/cache', function(err, cache, end) {
     assert.error(err);
+    if (err) {
+      return end(assert);
+    }
 
     cache.set(ctx, 'baz', 'qux', function(err, result) {
       assert.error(err);
@@ -49,23 +61,14 @@ test('cache.get(key, value, callback)', function(assert) {
   });
 });
 
-test('cache.get(key, value, callback) - failure', function(assert) {
+test('Test get() of Go sample cache service - ' +
+  'var promise = cache.get(key, value)', function(assert) {
   var ctx = context.Context();
   service(ctx, 'test_service/cache', function(err, cache, end) {
     assert.error(err);
-
-    cache.get(ctx, 'is not a thing', function(err, value) {
-      assert.ok(err instanceof VeyronError, 'should error');
-      end(assert);
-    });
-  });
-});
-
-
-test('var promise = cache.get(key, value)', function(assert) {
-  var ctx = context.Context();
-  service(ctx, 'test_service/cache', function(err, cache, end) {
-    assert.error(err);
+    if (err) {
+      return end(assert);
+    }
 
     cache.set(ctx, 'baz', 'qux')
     .then(function() {
@@ -83,10 +86,30 @@ test('var promise = cache.get(key, value)', function(assert) {
   });
 });
 
-test('var promise = cache.get(key, value) - failure', function(assert) {
+test('Test get() with invalid key of Go sample cache service - ' +
+  'cache.get(key, value, callback)', function(assert) {
   var ctx = context.Context();
   service(ctx, 'test_service/cache', function(err, cache, end) {
     assert.error(err);
+    if (err) {
+      return end(assert);
+    }
+
+    cache.get(ctx, 'is not a thing', function(err, value) {
+      assert.ok(err instanceof VeyronError, 'should error');
+      end(assert);
+    });
+  });
+});
+
+test('Test get() with invalid key of Go sample cache service - ' +
+  'var promise = cache.get(key, value) - failure', function(assert) {
+  var ctx = context.Context();
+  service(ctx, 'test_service/cache', function(err, cache, end) {
+    assert.error(err);
+    if (err) {
+      return end(assert);
+    }
 
     cache
     .get(ctx, 'really not a thing')
@@ -101,10 +124,14 @@ test('var promise = cache.get(key, value) - failure', function(assert) {
   });
 });
 
-test('cache.badMethod() - exception', function(assert) {
+test('Test calling a non-existing method of Go sample cache service - ' +
+  'cache.badMethod()', function(assert) {
   var ctx = context.Context();
   service(ctx, 'test_service/cache', function(err, cache, end) {
     assert.error(err);
+    if (err) {
+      return end(assert);
+    }
 
     assert.throws(function() {
       cache.notEvenAThing('whatever');
@@ -114,10 +141,14 @@ test('cache.badMethod() - exception', function(assert) {
   });
 });
 
-test('var stream = cache.multiGet().stream', function(assert) {
+test('Test multiGet() streaming method of Go sample cache service - ' +
+  'var stream = cache.multiGet().stream', function(assert) {
   var ctx = context.Context();
   service(ctx, 'test_service/cache', function(err, cache, end) {
     assert.error(err);
+    if (err) {
+      return end(assert);
+    }
 
     // `cache.mutliGet()` returns an object that has a "stream" attribute.
     // The way the streaming interface is implmented for cache.mutliGet()

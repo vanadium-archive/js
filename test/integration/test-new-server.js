@@ -2,6 +2,7 @@ var test = require('prova');
 var veyron = require('../../');
 var Promise = require('../../src/lib/promise');
 var config = require('./default-config');
+var timeouts = require('./timeouts');
 
 var NAME_PREFIX = 'new-server-testing/';
 
@@ -17,12 +18,16 @@ var barService = {
   }
 };
 
-test('runtime.newServer() - Concurrent servers', function(assert) {
+test('Test running several JS servers concurrently and under multiple names',
+  function(assert) {
   var runtime;
   var fooServer;
   var barServer;
   var fooStub;
   var barStub;
+
+  // big test, give it more time to finish
+  assert.timeout(timeouts.long);
 
   return veyron.init(config)
   .then(function createTwoServers(rt) {

@@ -21,7 +21,8 @@ var knownSignature = {
   }
 };
 
-test('service.signature([callback])', function(assert) {
+test('Test getting signature from a Go service - ' +
+  'service.signature(callback)', function(assert) {
   var rt;
   var ctx = context.Context();
 
@@ -56,7 +57,8 @@ test('service.signature([callback])', function(assert) {
   }
 });
 
-test('service.signature() - promise', function(assert) {
+test('Test getting signature from a Go service - ' +
+  'service.signature() - promise', function(assert) {
   var rt;
   var ctx = context.Context();
 

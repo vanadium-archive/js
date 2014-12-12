@@ -22,7 +22,8 @@ var knownSignature = {
   }
 };
 
-test('proxy.getServiceSignature(name) - valid cache', function(assert) {
+test('Test getting signature using valid cache - ' +
+  'proxy.getServiceSignature(name)', function(assert) {
   var proxy = new ProxyWappedWebSocket(url);
   var name = 'test_service/cache';
   var ctx = context.Context();
@@ -44,7 +45,8 @@ test('proxy.getServiceSignature(name) - valid cache', function(assert) {
   .catch(assert.end);
 });
 
-test('proxy.getServiceSignature(name) - stale cache', function(assert) {
+test('Test getting signature using stale cache - ' +
+  'proxy.getServiceSignature(name)', function(assert) {
   var proxy = new ProxyWappedWebSocket(url);
   var name = 'test_service/cache';
   var ctx = context.Context();
@@ -77,7 +79,8 @@ test('proxy.getServiceSignature(name) - stale cache', function(assert) {
   .catch(assert.end);
 });
 
-test('proxy.getServiceSignature(name) - set cache', function(assert) {
+test('Test service signature cache is set properly - ' +
+  'proxy.getServiceSignature(name)', function(assert) {
   var proxy = new ProxyWappedWebSocket(url);
   var name = 'test_service/cache';
   var before = now();

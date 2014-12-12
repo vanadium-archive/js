@@ -3,7 +3,8 @@ var service = require('./get-service');
 var verror = require('../../src/lib/verror');
 var context = require('../../src/runtime/context');
 
-test('errorThrower.method(callback) - AbortedError', function(assert) {
+test('Test Go service returning Aborted error - ' +
+  'errorThrower.method(callback)', function(assert) {
   var ctx = context.Context();
   service(ctx, 'test_service/errorThrower', function(err, errorThrower, end) {
     assert.error(err);
@@ -17,7 +18,8 @@ test('errorThrower.method(callback) - AbortedError', function(assert) {
   });
 });
 
-test('errorThrower.method(callback) - BadArgError', function(assert) {
+test('Test Go service returning BadArg error - ' +
+  'errorThrower.method(callback)', function(assert) {
   var ctx = context.Context();
   service(ctx, 'test_service/errorThrower', function(err, errorThrower, end) {
     assert.error(err);
@@ -31,7 +33,8 @@ test('errorThrower.method(callback) - BadArgError', function(assert) {
   });
 });
 
-test('errorThrower.method(callback) - BadProtocolError', function(assert) {
+test('Test Go service returning BadProtocol error - ' +
+  'errorThrower.method(callback)', function(assert) {
   var ctx = context.Context();
   service(ctx, 'test_service/errorThrower', function(err, errorThrower, end) {
     assert.error(err);
@@ -46,7 +49,8 @@ test('errorThrower.method(callback) - BadProtocolError', function(assert) {
   });
 });
 
-test('errorThrower.method(callback) - InternalError', function(assert) {
+test('Test Go service returning Internal error - ' +
+  'errorThrower.method(callback)', function(assert) {
   var ctx = context.Context();
   service(ctx, 'test_service/errorThrower', function(err, errorThrower, end) {
     assert.error(err);
@@ -61,7 +65,8 @@ test('errorThrower.method(callback) - InternalError', function(assert) {
   });
 });
 
-test('errorThrower.method(callback) - NoAccess', function(assert) {
+test('Test Go service returning NoAccess error - ' +
+  'errorThrower.method(callback)', function(assert) {
   var ctx = context.Context();
   service(ctx, 'test_service/errorThrower', function(err, errorThrower, end) {
     assert.error(err);
@@ -76,7 +81,8 @@ test('errorThrower.method(callback) - NoAccess', function(assert) {
   });
 });
 
-test('errorThrower.method(callback) - NoExist', function(assert) {
+test('Test Go service returning NoExist error - ' +
+  'errorThrower.method(callback)', function(assert) {
   var ctx = context.Context();
   service(ctx, 'test_service/errorThrower', function(err, errorThrower, end) {
     assert.error(err);
@@ -90,11 +96,12 @@ test('errorThrower.method(callback) - NoExist', function(assert) {
   });
 });
 
-test('errorThrower.method(callback) - NoExistOrNoAccess', function(assert) {
+test('Test Go service returning NoExistOrNoAccess error - ' +
+  'errorThrower.method(callback)', function(assert) {
   var ctx = context.Context();
   service(ctx, 'test_service/errorThrower', function(err, errorThrower, end) {
     assert.error(err);
-    
+
     errorThrower.throwNoExistOrNoAccess(ctx, function(err) {
       assert.ok(err, 'should error');
       assert.ok(err.message.indexOf('NoExistOrNoAccess!') !== -1);
@@ -105,7 +112,8 @@ test('errorThrower.method(callback) - NoExistOrNoAccess', function(assert) {
   });
 });
 
-test('errorThrower.method(callback) - Unknown Error', function(assert) {
+test('Test Go service returning Unknown error - ' +
+  'errorThrower.method(callback)', function(assert) {
   var ctx = context.Context();
   service(ctx, 'test_service/errorThrower', function(err, errorThrower, end) {
     assert.error(err);
@@ -119,7 +127,8 @@ test('errorThrower.method(callback) - Unknown Error', function(assert) {
   });
 });
 
-test('errorThrower.method(callback) - GoError Error', function(assert) {
+test('Test Go service returning GoError error - ' +
+  'errorThrower.method(callback)', function(assert) {
   var ctx = context.Context();
   service(ctx, 'test_service/errorThrower', function(err, errorThrower, end) {
     assert.error(err);
@@ -133,7 +142,8 @@ test('errorThrower.method(callback) - GoError Error', function(assert) {
   });
 });
 
-test('errorThrower.method(callback) - GoError Error', function(assert) {
+test('Test Go service returning CustomStandard error - ' +
+  'errorThrower.method(callback)', function(assert) {
   var ctx = context.Context();
   service(ctx, 'test_service/errorThrower', function(err, errorThrower, end) {
     assert.error(err);

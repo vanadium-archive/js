@@ -26,7 +26,7 @@
     "minimist": "^1.1.0",
     "mkdirp": "^0.5.0",
     "node-static": "^0.7.4",
-    "prova": "jxson/prova#8cb346323fb",
+    "prova": "aghassemi/prova#a41523197c",
     "run-parallel": "^1.0.0",
     "which": "^1.0.5",
     "esprima": "~1.2.2",

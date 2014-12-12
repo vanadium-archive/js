@@ -40,7 +40,8 @@ function contains(actual, expected, assert) {
   }
 }
 
-test('$suffix - ', function(assert) {
+test('Test non-empty suffix is available in context - ' +
+  '- $suffix', function(assert) {
   var ctx = context.Context();
   serve(ctx, 'a/b', dispatcher, function(err, res) {
     if (err) {
@@ -61,7 +62,8 @@ test('$suffix - ', function(assert) {
   });
 });
 
-test('$suffix - empty', function(assert) {
+test('Test empty suffix is available in context - ' +
+  '$suffix', function(assert) {
   var ctx = context.Context();
   serve(ctx, 'a/b', dispatcher, function(err, res) {
     if (err) {
@@ -82,7 +84,8 @@ test('$suffix - empty', function(assert) {
   });
 });
 
-test('$suffix - nested', function(assert) {
+test('Test nested suffix such as /parent/suffix is available in context - ' +
+  '$suffix', function(assert) {
   var ctx = context.Context();
   serve(ctx, 'a/b', dispatcher, function(err, res) {
     if (err) {
@@ -103,7 +106,8 @@ test('$suffix - nested', function(assert) {
   });
 });
 
-test('$name', function(assert) {
+test('Test name is available in context -' +
+  '$name', function(assert) {
   var ctx = context.Context();
   serve(ctx, 'a/b', dispatcher, function(err, res) {
     if (err) {
@@ -124,7 +128,8 @@ test('$name', function(assert) {
   });
 });
 
-test('$context', function(assert) {
+test('Test $context object containing all context variables is injected - ' +
+  '$context', function(assert) {
   var ctx = context.Context();
   serve(ctx, 'a/b', dispatcher, function(err, res) {
     if (err) {
@@ -149,7 +154,8 @@ test('$context', function(assert) {
   });
 });
 
-test('$context - mixed with normal args', function(assert) {
+test('Test $context object and individual context variables such as $name ' +
+  'and $suffix can be injected together', function(assert) {
   var ctx = context.Context();
   serve(ctx, 'a/b', dispatcher, function(err, res) {
     if (err) {

@@ -4,7 +4,8 @@ var caveat = require('../../src/security/caveat');
 var MethodCaveat = caveat.MethodCaveat;
 var config = require('./default-config');
 
-test('i.bless(..., callback)', function(assert) {
+test('Test blessing bob without caveats - ' +
+  'i.bless(..., callback)', function(assert) {
   blessings('alice', function(err, blessee, runtime) {
     assert.error(err);
 
@@ -21,7 +22,9 @@ test('i.bless(..., callback)', function(assert) {
   });
 });
 
-test('var promise = i.bless(...)', function(assert) {
+
+test('Test blessing bob without caveats - ' +
+  'var promise = i.bless(...)', function(assert) {
   blessings('alice', function(err, blessee, runtime) {
     assert.error(err);
 
@@ -42,7 +45,8 @@ test('var promise = i.bless(...)', function(assert) {
   });
 });
 
-test('i.bless(..., callback) - caveats', function(assert) {
+test('Test blessing bob with method caveats - ' +
+  'i.bless(..., callback) - caveats', function(assert) {
   blessings('alice', function(err, blessee, runtime) {
     assert.error(err);
 
@@ -62,7 +66,8 @@ test('i.bless(..., callback) - caveats', function(assert) {
   });
 });
 
-test('var promise = i.bless(...) - caveats', function(assert) {
+test('Test blessing bob with method caveats - ' +
+  'var promise = i.bless(...) - caveats', function(assert) {
   blessings('alice', function(err, blessee, runtime) {
     assert.error(err);
 
@@ -85,7 +90,8 @@ test('var promise = i.bless(...) - caveats', function(assert) {
   });
 });
 
-test('i.bless(..., callback) - bad caveats failure', function(assert) {
+test('Test blessing bob with invalid caveats - ' +
+  'i.bless(..., callback) - invalid caveats', function(assert) {
   blessings('alice', function(err, blessee, runtime) {
     assert.error(err);
 
@@ -103,7 +109,8 @@ test('i.bless(..., callback) - bad caveats failure', function(assert) {
   });
 });
 
-test('var promise = i.bless(...) - bad caveats failure', function(assert) {
+test('Test blessing bob with invalid caveats - ' +
+  'var promise = i.bless(...) - invalid caveats', function(assert) {
   blessings('alice', function(err, blessee, runtime) {
     assert.error(err);
 

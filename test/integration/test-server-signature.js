@@ -25,7 +25,8 @@ var dispatcher = leafDispatcher({
   multiGet: function($stream) {}
 });
 
-test('service.signature([callback]) - js server', function(assert) {
+test('Test getting signature from a JS service - ' +
+  'service.signature(callback)', function(assert) {
   var ctx = context.Context();
   serve(ctx, 'testing/my-cache', dispatcher, function(err, res) {
     if (err) {
@@ -51,7 +52,8 @@ test('service.signature([callback]) - js server', function(assert) {
   });
 });
 
-test('var promise = service.signature() - js server', function(assert) {
+test('Test getting signature from a JS service - ' +
+  'var promise = service.signature()', function(assert) {
   var ctx = context.Context();
   serve(ctx, 'testing/my-cache', dispatcher, function(err, res) {
     if (err) {

@@ -3,7 +3,8 @@ var veyron = require('../../');
 var Blessings = require('../../src/security/blessings.js');
 var config = require('./default-config');
 
-test('runtime.newBlessings(extension, callback)', function(assert) {
+test('Test creating a new blessing - ' +
+  'runtime.newBlessings(extension, callback)', function(assert) {
   veyron.init(config, function(err, runtime) {
     assert.error(err);
 
@@ -15,7 +16,8 @@ test('runtime.newBlessings(extension, callback)', function(assert) {
   });
 });
 
-test('var promise = runtime.newBlessings(extension)', function(assert) {
+test('Test creating a new blessing - ' +
+  'var promise = runtime.newBlessings(extension)', function(assert) {
   veyron.init(config, function(err, runtime) {
     assert.error(err);
 

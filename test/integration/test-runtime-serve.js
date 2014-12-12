@@ -7,7 +7,8 @@ var service = {
   }
 };
 
-test('runtime.serve(name, service, callback)', function(assert) {
+test('Test serving a JS service named livingroom/tv - ' +
+  'runtime.serve(name, service, callback)', function(assert) {
   veyron.init(config, function(err, runtime) {
     assert.error(err);
 
@@ -18,7 +19,25 @@ test('runtime.serve(name, service, callback)', function(assert) {
   });
 });
 
-test('runtime.serve(name, service, callback) - bad wspr', function(assert) {
+test('Test serving a JS service named livingroom/tv - ' +
+  'var promise = runtime.serve(name, service)', function(assert) {
+  veyron.init(config, function(err, runtime) {
+    assert.error(err);
+
+    runtime
+    .serve('livingroom/tv', service)
+    .then(function() {
+      runtime.close(assert.end);
+    })
+    .catch(function(err) {
+      assert.error(err);
+      runtime.close(assert.end);
+    });
+  });
+});
+
+test('Test serving a JS service when proxy Url is invalid - '+
+  'runtime.serve(name, service, callback)', function(assert) {
   veyron.init({ wspr: 'http://bad-address.tld' }, function(err, runtime) {
     assert.error(err);
 
@@ -29,13 +48,17 @@ test('runtime.serve(name, service, callback) - bad wspr', function(assert) {
   });
 });
 
-test('var promise = runtime.serve(name, service)', function(assert) {
-  veyron.init(config, function(err, runtime) {
+test('Test serving a JS service when proxy Url is invalid - '+
+  'var promise = runtime.serve(name, service)', function(assert) {
+  veyron.init({ wspr: 'http://bad-address.tld' }, function(err, runtime) {
     assert.error(err);
 
     runtime
     .serve('livingroom/tv', service)
     .then(function() {
+      assert.fail('should have errored');
+    },function(err) {
+      assert.ok(err instanceof Error, 'should fail');
       runtime.close(assert.end);
     })
     .catch(function(err) {
@@ -45,24 +68,8 @@ test('var promise = runtime.serve(name, service)', function(assert) {
   });
 });
 
-test('var promise = runtime.serve(name, service) - failure', function(assert) {
-  veyron.init(config, function(err, runtime) {
-    assert.error(err);
-
-    runtime
-    .serve('livingroom/tv', service)
-    .then(function() {
-      runtime.close(assert.end);
-    })
-    .catch(function(err) {
-      assert.error(err);
-      runtime.close(assert.end);
-    });
-  });
-});
-
-test('runtime.serve(name, service) - ' +
-  'serving multiple times should fail - cb', function(assert) {
+test('Test serving a JS service multiple times should fail - ' +
+  'runtime.serve(name, service)', function(assert) {
   veyron.init(config, function(err, runtime) {
     assert.error(err);
 
@@ -82,8 +89,8 @@ test('runtime.serve(name, service) - ' +
   });
 });
 
-test('var promise = runtime.serve(name, service) - ' +
-  'serving multiple times should fail', function(assert) {
+test('Test serving a JS service multiple times should fail - ' +
+  'var promise = runtime.serve(name, service)', function(assert) {
   veyron.init(config, function(err, runtime) {
     assert.error(err);
 
@@ -105,8 +112,8 @@ test('var promise = runtime.serve(name, service) - ' +
   });
 });
 
-test('runtime.addName(name) & runtime.removeName(name) - ' +
-   'serving under multiple names', function(assert) {
+test('Test serving a JS service under multiple names - ' +
+  'runtime.addName(name), runtime.removeName(name)', function(assert) {
   veyron.init(config, function(err, runtime) {
     assert.error(err);
 
@@ -141,7 +148,8 @@ test('runtime.addName(name) & runtime.removeName(name) - ' +
   });
 });
 
-test('runtime.addName(name,cb) - before serve() - fail', function(assert) {
+test('Test adding additional names before serving a JS service should fail - ' +
+  'runtime.addName(name, cb) - before runtime.serve()', function(assert) {
   veyron.init(config, function(err, runtime) {
     assert.error(err);
 
@@ -152,7 +160,8 @@ test('runtime.addName(name,cb) - before serve() - fail', function(assert) {
   });
 });
 
-test('runtime.removeName(name,cb) - before serve() - fail', function(assert) {
+test('Test removing names before serving a JS service should fail - ' +
+  'runtime.removeName(name, cb) - before runtime.serve()', function(assert) {
   veyron.init(config, function(err, runtime) {
     assert.error(err);
 
@@ -163,7 +172,8 @@ test('runtime.removeName(name,cb) - before serve() - fail', function(assert) {
   });
 });
 
-test('runtime.removeName(name,cb) - non-existing - fail', function(assert) {
+test('Test removing a non-existing name should fail - ' +
+  'runtime.removeName(name, cb)', function(assert) {
   veyron.init(config, function(err, runtime) {
     assert.error(err);
 

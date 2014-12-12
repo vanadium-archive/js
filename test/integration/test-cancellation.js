@@ -44,7 +44,7 @@ function run(ctx, err, collector, end, assert) {
     });
 }
 
-test('cancel: js client to go server', function(assert) {
+test('Test cancellation in JS client to Go server', function(assert) {
   var ctx = context.Context();
   service(ctx, 'test_service/cancel', function(err, collector, end) {
     run(ctx, err, collector, end, assert);
@@ -114,7 +114,7 @@ function newDispatcher() {
   });
 }
 
-test('cancel: js client to js server', function(assert) {
+test('Test cancellation in JS client to JS server', function(assert) {
   var ctx = context.Context();
   serve(ctx, 'testing/cancel', newDispatcher(), function(err, res) {
     if (err) {

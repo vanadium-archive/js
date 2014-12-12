@@ -3,7 +3,7 @@ var veyron = require('../../');
 var context = require('../../src/runtime/context');
 var config = require('./default-config');
 
-test('runtime.close(cb)', function(assert) {
+test('Test closing runtime - runtime.close(cb)', function(assert) {
   var ctx = context.Context();
   veyron.init(config, oninit);
 
@@ -18,7 +18,7 @@ test('runtime.close(cb)', function(assert) {
   }
 });
 
-test('var promise = runtime.close()', function(assert) {
+test('Test closing runtime - var promise = runtime.close()', function(assert) {
   veyron
   .init(config)
   .then(bindTo)

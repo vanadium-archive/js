@@ -3,7 +3,7 @@ var test = require('prova');
 var ExtensionEventProxy = require('../../src/proxy/event_proxy');
 var veyron = require('../../src/veyron');
 
-test('"auth" message gets "auth received" response', function(assert) {
+test('Test "auth" message gets "auth received" response', function(assert) {
   // Don't test this in node because there is no extension to talk to.
   if (!require('is-browser')) {
     return assert.end();
@@ -24,7 +24,7 @@ test('"auth" message gets "auth received" response', function(assert) {
   extensionEventProxy.send('auth');
 });
 
-test('veyron.init({authenticate: true}) will timeout with error',
+test('Test veyron.init({authenticate: true}) will timeout with error',
     function(assert) {
       // Don't test this in node because there is no extension to talk to.
       if (!require('is-browser')) {

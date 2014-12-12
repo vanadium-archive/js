@@ -4,7 +4,8 @@ var ServiceWrapper = require('../../src/idl/idl').ServiceWrapper;
 var Promise = require('../../src/lib/promise');
 var context = require('../../src/runtime/context');
 
-test('echoer.echo(callback)', function(assert) {
+test('Test sync dispatcher the echos suffixes - ' +
+  'dispatcher/echo/<suffix>', function(assert) {
   var ctx = context.Context();
   serve(ctx, {
     name: 'dispatcher',
@@ -32,7 +33,8 @@ test('echoer.echo(callback)', function(assert) {
   });
 });
 
-test('counter.count()', function(assert) {
+test('Test sync dispatcher that counts length of suffix - ' +
+  'dispatcher/count/<suffix> - one suffix', function(assert) {
   var ctx = context.Context();
   serve(ctx, {
     name: 'dispatcher',
@@ -58,7 +60,8 @@ test('counter.count()', function(assert) {
   });
 });
 
-test('counter.count() - two different suffixes', function(assert) {
+test('Test sync dispatcher that counts length of suffix - ' +
+  'dispatcher/count/<suffix> - two different suffixes', function(assert) {
   var ctx = context.Context();
   serve(ctx, {
     name: 'dispatcher',
@@ -90,7 +93,8 @@ test('counter.count() - two different suffixes', function(assert) {
   });
 });
 
-test('runtime.bindTo("dispatcher/unknown") - failure', function(assert) {
+test('Test unknown suffix should return error - ' +
+  'dispatcher/unknown', function(assert) {
   var ctx = context.Context();
   serve(ctx, {
     name: 'dispatcher',
@@ -108,7 +112,8 @@ test('runtime.bindTo("dispatcher/unknown") - failure', function(assert) {
   });
 });
 
-test('runtime.bindTo("dispatcher/promise")', function(assert) {
+test('Test async dispatcher using promises - dispatcher/promise ' +
+  '- success case', function(assert) {
   var ctx = context.Context();
   serve(ctx, {
     name: 'dispatcher',
@@ -134,7 +139,8 @@ test('runtime.bindTo("dispatcher/promise")', function(assert) {
   });
 });
 
-test('runtime.bindTo("dispatcher/promise/fail") - failure', function(assert) {
+test('Test async dispatcher using promises - dispatcher/promise/fail ' +
+  '- failure case', function(assert) {
   var ctx = context.Context();
   serve(ctx, {
     name: 'dispatcher',
@@ -152,7 +158,8 @@ test('runtime.bindTo("dispatcher/promise/fail") - failure', function(assert) {
   });
 });
 
-test('runtime.bindTo("dispatcher/callback")', function(assert) {
+test('Test async dispatcher using callbacks - dispatcher/callback ' +
+  '- success case', function(assert) {
   var ctx = context.Context();
   serve(ctx, {
     name: 'dispatcher',
@@ -178,7 +185,8 @@ test('runtime.bindTo("dispatcher/callback")', function(assert) {
   });
 });
 
-test('runtime.bindTo("dispatcher/callback/fail") - failure', function(assert) {
+test('Test async dispatcher using callbacks - dispatcher/callback/fail ' +
+  '- failure case', function(assert) {
   var ctx = context.Context();
   serve(ctx, {
     name: 'dispatcher',

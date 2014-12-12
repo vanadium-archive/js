@@ -3,7 +3,8 @@ var veyron = require('../../');
 var context = require('../../src/runtime/context');
 var config = require('./default-config');
 
-test('runtime.bindTo(name, callback)', function(assert) {
+test('Test binding to a Go service named test_service/cache - ' +
+  'runtime.bindTo(name, callback)', function(assert) {
   var rt;
   var ctx = context.Context();
 
@@ -24,7 +25,8 @@ test('runtime.bindTo(name, callback)', function(assert) {
   }
 });
 
-test('var promise = runtime.bindTo(name)', function(assert) {
+test('Test binding to a Go service named test_service/cache - ' +
+  'var promise = runtime.bindTo(name)', function(assert) {
   var ctx = context.Context();
   veyron
   .init(config)
@@ -41,7 +43,8 @@ test('var promise = runtime.bindTo(name)', function(assert) {
   }
 });
 
-test('runtime.bindTo(badName, callback) - failure', function(assert) {
+test('Test binding to a non-existing name - ' +
+  'runtime.bindTo(badName, callback)', function(assert) {
   veyron.init(config, function(err, runtime) {
     assert.error(err);
 
@@ -55,7 +58,8 @@ test('runtime.bindTo(badName, callback) - failure', function(assert) {
   });
 });
 
-test('var promise = runtime.bindTo(badName) - failure', function(assert) {
+test('Test binding to a non-existing name - ' +
+  'var promise = runtime.bindTo(badName) ', function(assert) {
   var rt;
   var ctx = context.Context();
 
@@ -79,7 +83,8 @@ test('var promise = runtime.bindTo(badName) - failure', function(assert) {
   });
 });
 
-test('runtime.bindTo(name, [callback]) - bad wspr url', function(assert) {
+test('Test binding when proxy Url is invalid - ' +
+  'runtime.bindTo(name, callback)', function(assert) {
   if (require('is-browser')) {
     // Browser doesn't use wspr url, so skip this test.
     return assert.end();
@@ -99,7 +104,8 @@ test('runtime.bindTo(name, [callback]) - bad wspr url', function(assert) {
   }
 });
 
-test('var promise = runtime.bindTo(name) - bad wspr url', function(assert) {
+test('Test binding when wspr Url is invalid - ' +
+  'var promise = runtime.bindTo(name) ', function(assert) {
   if (require('is-browser')) {
     // Browser doesn't use wspr url, so skip this test.
     return assert.end();
