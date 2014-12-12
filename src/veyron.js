@@ -30,6 +30,7 @@ module.exports = {
   createLeafDispatcher: require('./ipc/leaf_dispatcher'),
   caveats: require('./security/caveat'),
   aclAuthorizer: require('./security/acl_authorizer'),
+  context: require('./runtime/context'),
 };
 
 /**
