@@ -9,6 +9,5 @@ node_modules
 npm-debug.log
 go/pkg
 go/bin
-src/veyron.io
 xunit.xml
 tmp
