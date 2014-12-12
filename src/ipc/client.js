@@ -18,6 +18,8 @@ var IncomingPayloadType = require('../proxy/incoming_payload_type');
 var context = require('../runtime/context');
 var constants = require('./constants');
 var DecodeUtil = require('../lib/decode_util');
+var vom = require('vom');
+var EncodeUtil = require('../lib/encode_util');
 
 var OutstandingRPC = function(ctx, options, cb) {
   this._ctx = ctx;
@@ -131,7 +133,7 @@ OutstandingRPC.prototype.handleError = function(data) {
 
   if (this._def.stream) {
     this._def.stream.emit('error', err);
-    this._def.stream.queueRead(null);
+    this._def.stream._queueRead(null);
   }
   this._def.reject(err);
   this._proxy.dequeue(this._id);
@@ -152,12 +154,12 @@ OutstandingRPC.prototype.constructMessage = function() {
   var jsonMessage = {
     name: this._name,
     method: this._methodName,
-    inArgs: this._args || [],
+    inArgs: this._args,
     numOutArgs: this._numOutParams || 1,
     isStreaming: this._isStreaming,
     timeout: timeout
   };
-  return JSON.stringify(jsonMessage);
+  return EncodeUtil.encode(jsonMessage);
 };
 
 /**
@@ -215,34 +217,32 @@ Client.prototype.bindTo = function(ctx, name, optServiceSignature, cb) {
     vLog.debug('Received signature for:', name, serviceSignature);
     var boundObject = {};
 
-    var bindMethod = function(methodName, methodInfo) {
-      var numOutParams = methodInfo.numOutArgs;
-
-      boundObject[methodName] = function() {
+    var bindMethod = function(methodSig) {
+      boundObject[vom.MiscUtil.uncapitalize(methodSig.name)] =
+        function(ctx /*, __other_args__*/) {
         var callback;
-        var ctx;
-        var first = 0;
-        var last = arguments.length - 1;
-        if (last >= 0) {
-          // The first argument is an optional context
-          // TODO(mattr): The context will become non-optional at some point.
-          // The last argument is an optional callback
-          if (arguments[first] instanceof context.Context) {
-            first++;
-            ctx = arguments[0];
-          }
-          if (typeof arguments[last] === 'function') {
-            callback = arguments[last];
-            last--;
-          }
+        var exclusiveLastIndex = arguments.length;
+        // The + below is for the bound methodSig arg.
+        var expectedLength = methodSig.inArgs.length + 1;
+        if (typeof arguments[arguments.length - 1] === 'function') {
+          // Callback.
+          expectedLength++;
+          exclusiveLastIndex--;
+          callback = arguments[arguments.length - 1];
         }
-        var args = Array.prototype.slice.call(arguments, first, last + 1);
-
-
-        // TODO(mattr): Remove this when contexts become required.
-        if (!ctx) {
-          ctx = new context.Context();
+        if (arguments.length !== expectedLength) {
+          // TODO(bprosnitz) In the callback case, should we pass the error
+          // to the callback?
+          var expectedArgs = methodSig.inArgs.map(function(arg) {
+            return arg.name;
+          });
+          throw new Error('Client RPC call  ' + methodSig.name +'(' +
+            Array.prototype.slice.call(arguments, 1) + ') had an incorrect ' +
+            'number of arguments. Expected format: ' + methodSig.name +
+            '(' + expectedArgs + ')');
         }
+
+	  var args = Array.prototype.slice.call(arguments, 1, exclusiveLastIndex);
 
         // TODO(jasoncampbell): This should probably be a more meaningful
         // error with its own constructor so that it can be checked in a
@@ -254,63 +254,46 @@ Client.prototype.bindTo = function(ctx, name, optServiceSignature, cb) {
         //       console.error('invalid number of arguments')
         //     })
         //
-        var expected = methodInfo.inArgs.length;
-        var actual = args.length;
 
-        if (actual !== expected) {
-          var message = [
-            'Invalid number of arguments to',
-            '"' + methodName + '".',
-            'Expected',
-            expected,
-            'but there were',
-            actual + '.'
-          ].join(' ');
-
-          var deferred = new Deferred(callback);
-          var error = new Error(message);
-
-          deferred.reject(error);
-
-          return deferred.promise;
-        }
+        var isStreaming = (typeof methodSig.inStream === 'object'  &&
+          methodSig.inStream !== null) ||
+          (typeof methodSig.outStream === 'object' &&
+          methodSig.outStream !== null);
 
         var rpc = new OutstandingRPC(ctx, {
            proxy: self._proxyConnection,
            name: name,
-           methodName: methodName,
+           methodName: methodSig.name,
            args: args,
-           numOutParams: numOutParams,
-           isStreaming: methodInfo.isStreaming
+           numOutParams: methodSig.outArgs.length,
+           isStreaming: isStreaming
         }, callback);
 
         return rpc.start();
       };
     };
 
-    if (serviceSignature instanceof Map) {
-      serviceSignature.forEach(function(value, key) {
-        bindMethod(key, value);
+    serviceSignature.forEach(function(sig) {
+      sig.methods.forEach(function(meth) {
+        bindMethod(meth);
       });
-    } else {
-      for (var methodName in serviceSignature) {
-        if (serviceSignature.hasOwnProperty(methodName)) {
-          bindMethod(methodName, serviceSignature[methodName]);
-        }
+    });
+
+    boundObject['_signature'] = function(cb) {
+      if (cb) {
+        cb(undefined, serviceSignature);
       }
-    }
-
-    //Also stub out signature() on the bound object.
-    boundObject.signature = function(callback) {
-      var deferred = new Deferred(callback);
-
-      deferred.resolve(serviceSignature);
-
-      return deferred.promise;
+      return Promise.resolve(serviceSignature);
     };
 
     def.resolve(boundObject);
-  }).catch (def.reject);
+  }).catch (function(err) {
+    if (cb) {
+      cb(err);
+    } else {
+      def.reject(err);
+    }
+  });
 
   return promise;
 };

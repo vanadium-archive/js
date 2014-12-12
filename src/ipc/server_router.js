@@ -12,12 +12,12 @@ var vLog = require('./../lib/vlog');
 var SimpleHandler = require('../proxy/simple_handler');
 var StreamHandler = require('../proxy/stream_handler');
 var vError = require('../lib/verror');
-var IdlHelper = require('./../idl/idl');
 var SecurityContext = require('../security/context');
 var ServerContext = require('./server_context');
 var DecodeUtil = require('../lib/decode_util');
 var EncodeUtil = require('../lib/encode_util');
-
+var vom = require('vom')
+;
 /**
  * A router that handles routing incoming requests to the right
  * server
@@ -33,63 +33,6 @@ var Router = function(proxy, appName) {
   proxy.addIncomingHandler(IncomingPayloadType.LOOKUP_REQUEST, this);
   proxy.addIncomingHandler(IncomingPayloadType.AUTHORIZATION_REQUEST, this);
   proxy.addIncomingHandler(IncomingPayloadType.CANCEL, this);
-};
-
-/**
- * Injects the injections into the eight positions in args and
- * returns what was injected.
- * @param {Array} args The arguments to inject into.
- * @param {Object} injectionPositions A map of injected variables to the
- * position to put in args.
- * @param {Object} injections A map of injected variables to values.
- * @return {Array} the array of variables that were injected.
- */
-var inject = function(args, injectionPositions, injections) {
-  var keys = Object.keys(injectionPositions);
-  var invertedMap = {};
-  keys.forEach(function(key) {
-    invertedMap[injectionPositions[key]] = key;
-  });
-  var values = keys.map(function getValue(k) {
-    return injectionPositions[k];
-  });
-  values.filter(function removeUndefined(value) {
-    return value !== undefined;
-  });
-  values.sort();
-  var keysInserted = [];
-  values.forEach(function actuallyInject(pos) {
-    var key = invertedMap[pos];
-    args.splice(pos, 0, injections[key]);
-    keysInserted.push(key);
-  });
-  return keysInserted;
-};
-
-// Wraps the call to the method with a try block in the smallest
-// function possible, so that v8 de-optimizes as little as possible.
-Router.prototype.invokeMethod = function (receiver, method, args) {
-  // Call the registered method on the requested service
-  try {
-    return method.apply(receiver, args);
-  } catch (err) {
-
-    // Gaurd against rejecting non-errors
-    // TODO(jasoncampbell): consolidate all error conversion into verror
-    if (! (err instanceof Error)) {
-      var message;
-
-      if (typeof err === 'undefined' || err === null) {
-        message = 'Unknown exception.';
-      } else {
-        message = JSON.stringify(err);
-      }
-
-      return new Error(message);
-    }
-
-    return err;
-  }
 };
 
 Router.prototype.handleRequest = function(messageId, type, request) {
@@ -157,18 +100,17 @@ Router.prototype.handleLookupRequest = function(messageId, request) {
   }
 
   var self = this;
-  server._handleLookup(request.suffix).then(function(value) {
-    // TODO(bjornick): Add label support (again).
-    var hasAuthorizer = (typeof value.authorizer === 'function');
-    var wireDesc = IdlHelper.generateIdlWireDescription(value.service);
+  return server._handleLookup(request.suffix).then(function(value) {
+    // TODO(bprosnitz) Support multiple signatures.
+    var signatureList = value.invoker.signature();
     var res;
     try {
-      res = EncodeUtil.encode(wireDesc);
+      res = EncodeUtil.encode(signatureList);
     } catch (e) {
       return Promise.reject(e);
     }
 
-
+    var hasAuthorizer = (typeof value.authorizer === 'function');
     var data = {
       handle: value._handle,
       signature: res,
@@ -179,7 +121,7 @@ Router.prototype.handleLookupRequest = function(messageId, request) {
   }).catch(function(err) {
     var data = JSON.stringify({
       err: ErrorConversion.toStandardErrorStruct(err, self._appName,
-                                                 request.method),
+                                                 'signature'),
     });
     self._proxy.sendRequest(data, MessageType.LOOKUP_RESPONSE,
         null, messageId);
@@ -202,58 +144,66 @@ Router.prototype.handleCancel = function(messageId) {
  * Handles incoming requests from the server to invoke methods on registered
  * services in JavaScript.
  * @param {string} messageId Message Id set by the server.
- * @param {Object} request Invocation request JSON. Request's structure is
+ * @param {Object} vomRequest VOM encoded request. Request's structure is
  * {
  *   serverId: number // the server id
  *   method: string // Name of the method on the service to call
  *   args: [] // Array of positional arguments to be passed into the method
  * }
  */
-Router.prototype.handleRPCRequest = function(messageId, request) {
+Router.prototype.handleRPCRequest = function(messageId, vomRequest) {
   var err;
+  var request;
   try {
-   request = DecodeUtil.decode(request);
+   request = DecodeUtil.decode(vomRequest);
   } catch (e) {
     err = new Error('Failed to decode args: ' + e);
-    this.sendResult(messageId, request.method, null, err);
+    this.sendResult(messageId, '', null, err);
     return;
   }
+  var methodName = vom.MiscUtil.capitalize(request.method);
+
   var server = this._servers[request.serverId];
 
   if (!server) {
     err = new Error('Request for unknown server ' + request.serverId);
-    this.sendResult(messageId, request.method, null, err);
+    this.sendResult(messageId, methodName, null, err);
     return;
   }
 
-  var serviceWrapper = server.getServiceForHandle(request.handle);
-  if (!serviceWrapper) {
+  var invoker = server.getInvokerForHandle(request.handle);
+  if (!invoker) {
+    console.error('No invoker found: ', request);
     err = new Error('No service found');
-    this.sendResult(messageId, request.method, null, err);
+    this.sendResult(messageId, methodName, null, err);
     return;
   }
 
-  var serviceObject = serviceWrapper.object;
-
-  // Find the method
-  var serviceMethod = serviceObject[request.method];
-  if (serviceMethod === undefined) {
-    err = new Error('Requested method ' + request.method +
+  // Find the method signature.
+  var signature = invoker.signature();
+  var methodSig;
+  signature.forEach(function(ifaceSig) {
+    ifaceSig.methods.forEach(function(method) {
+      if (method.name === methodName) {
+        methodSig = method;
+      }
+    });
+  });
+  if (methodSig === undefined) {
+    err = new Error('Requested method ' + methodName +
         ' not found on');
-    this.sendResult(messageId, request.method, null, err);
+    this.sendResult(messageId, methodName, null, err);
     return;
   }
-  var metadata = serviceWrapper.metadata[request.method];
 
   var self = this;
-  var sendInvocationError = function(e, metadata) {
+  var sendInvocationError = function(e, numOutArgs) {
     var stackTrace;
     if (e instanceof Error && e.stack !== undefined) {
       stackTrace = e.stack;
     }
-    vLog.debug('Requested method ' + request.method +
+    vLog.debug('Requested method ' + methodName +
         ' threw an exception on invoke: ', e, stackTrace);
-    var numOutArgs = metadata.numOutArgs;
     var result;
     switch (numOutArgs) {
       case 0:
@@ -264,91 +214,44 @@ Router.prototype.handleRPCRequest = function(messageId, request) {
       default:
         result = new Array(numOutArgs);
     }
-    self.sendResult(messageId, request.method, result, e,
-        metadata);
+    self.sendResult(messageId, methodName, result, e,
+        numOutArgs);
   };
   var args = request.args;
 
   var ctx = new ServerContext(request, this._proxy);
   this._contextMap[messageId] = ctx;
 
-  // Create callback to pass to the function, if it is requested.
-  var finished = false;
-  var cb = function cb(e, v) {
-    if (finished) {
-      return;
-    }
-    finished = true;
-    ctx.remoteBlessings.release();
-    self.sendResult(messageId, request.method, v, e, metadata);
-  };
-
   var injections = {
-    $stream: new Stream(messageId, this._proxy.senderPromise, false),
-    $cb: cb,
-    $context: ctx,
-    $suffix: ctx.suffix,
-    $name: ctx.name,
-    $remoteBlessings: ctx.remoteBlessings
+    '$context': ctx,
+    '$suffix': ctx.suffix,
+    '$name': ctx.name,
+    '$remoteBlessings': ctx.remoteBlessings
   };
 
-  var variables = inject(args, metadata.injections, injections);
-  if (variables.indexOf('$stream') !== -1) {
-    var stream = injections['$stream'];
+  if ((typeof methodSig.inStream === 'object' &&
+    methodSig.inStream !== null) || (typeof methodSig.outStream === 'object' &&
+    methodSig.outStream !== null)) {
+    var stream = new Stream(messageId, this._proxy.senderPromise, false);
     this._streamMap[messageId] = stream;
     var rpc = new StreamHandler(stream);
     this._proxy.addIncomingStreamHandler(messageId, rpc);
+    injections['$stream'] = stream;
   }
 
-  // Invoke the method
-  var result = this.invokeMethod(serviceObject, serviceMethod, args);
-
-  if (result instanceof Error) {
-    sendInvocationError(result, metadata);
-    return;
-  }
-
-  // Normalize result to be a promise
-  var resultPromise = Promise.resolve(result);
-
-  if (variables.indexOf('$cb') !== -1) {
-    // The callback takes care of sending the result, so we don't use the
-    // promises.
-    return;
-  }
-
-  // Send the result back to the server
-  resultPromise.then(function(value) {
-    if (finished) {
-      return;
-    }
+  function InvocationFinishedCallback(err, result) {
     ctx.remoteBlessings.release();
-    finished = true;
-    self.sendResult(messageId, request.method, value,
-        null, metadata);
-  }, function(err) {
-    if (finished) {
+
+    if (err) {
+      sendInvocationError(err, methodSig.outArgs.length);
       return;
     }
 
-    finished = true;
+    self.sendResult(messageId, methodName, result, undefined,
+      methodSig.outArgs.length);
+  }
 
-    // Gaurd against rejecting non-errors
-    // TODO(jasoncampbell): consolidate all error conversion into verror
-    if (! (err instanceof Error)) {
-      var message;
-
-      if (typeof err === 'undefined' || err === null) {
-        message = 'Unknown exception.';
-      } else {
-        message = JSON.stringify(err);
-      }
-
-      err = new Error(message);
-    }
-
-    sendInvocationError(err, metadata);
-  });
+  invoker.invoke(methodName, args, injections, InvocationFinishedCallback);
 };
 
 /**
@@ -357,32 +260,32 @@ Router.prototype.handleRPCRequest = function(messageId, request) {
  * @param {string} name Name of method
  * @param {Object} value Result of the call
  * @param {Object} err Error from the call
- * @param {Object} metadata Metadata about the function.
  */
-Router.prototype.sendResult = function(messageId, name, value, err, metadata) {
+Router.prototype.sendResult = function(messageId, name, value, err,
+  numOutArgs) {
   var results = [];
-  if (metadata) {
-    switch (metadata.numOutArgs) {
-      case 0:
+  if (numOutArgs !== undefined) {
+    switch (numOutArgs) {
+      case 1:
         if (value !== undefined) {
           vLog.error('Unexpected return value from ' + name + ': ' + value);
         }
         results = [];
         break;
-      case 1:
+      case 2:
         results = [value];
         break;
       default:
         if (Array.isArray(value)) {
-          if (value.length !== metadata.numOutArgs) {
+          if (value.length !== numOutArgs - 1) {
             vLog.error('Wrong number of arguments returned by ' + name +
-                '. expected: ' + metadata.numOutArgs + ', got:' +
+                '. expected: ' + (numOutArgs - 1) + ', got:' +
                 value.length);
           }
           results = value;
         } else {
           vLog.error('Wrong number of arguments returned by ' + name +
-              '. expected: ' + metadata.numOutArgs + ', got: 1');
+              '. expected: ' + (numOutArgs - 1) + ', got: 1');
           results = [value];
         }
     }
@@ -422,8 +325,8 @@ Router.prototype.sendResult = function(messageId, name, value, err, metadata) {
       err: errorStruct
     };
 
-    var responseDataJSON = JSON.stringify(responseData);
-    this._proxy.sendRequest(responseDataJSON, MessageType.RESPONSE, null,
+    var responseDataVOM = EncodeUtil.encode(responseData);
+    this._proxy.sendRequest(responseDataVOM, MessageType.RESPONSE, null,
         messageId);
   }
 };

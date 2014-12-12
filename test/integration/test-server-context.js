@@ -36,7 +36,7 @@ function contains(actual, expected, assert) {
     if (!expected.hasOwnProperty(key)) {
       continue;
     }
-    assert.deepEqual(actual.get(key), expected[key]);
+    assert.deepEqual(actual[key], expected[key]);
   }
 }
 
@@ -145,7 +145,7 @@ test('Test $context object containing all context variables is injected - ' +
         assert.error(err);
 
         // remove the key attribute before comparison
-        context.get('remoteBlessings').delete('key');
+        delete context.remoteBlessings['key'];
 
         contains(context, expectedContext, assert);
         res.end(assert);
@@ -173,14 +173,14 @@ test('Test $context object and individual context variables such as $name ' +
         assert.error(err);
 
         // remove the key attribute before comparison
-        results.get('context').get('remoteBlessings').delete('key');
+        delete results.context.remoteBlessings['key'];
 
         contains(results, {
           a1: '-a-',
           a2: '-b-',
           a3: '-c-'
         }, assert);
-        contains(results.get('context'), expectedContext, assert);
+        contains(results.context, expectedContext, assert);
         res.end(assert);
       });
     });

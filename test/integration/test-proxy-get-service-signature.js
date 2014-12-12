@@ -4,23 +4,21 @@ var ProxyWappedWebSocket = require('../../src/proxy/websocket');
 var context = require('../../src/runtime/context');
 var now = Date.now;
 
-var knownSignature = {
-  get: {
-    inArgs: [ 'key' ],
-    numOutArgs: 2,
-    isStreaming: false
-  },
-  set: {
-    inArgs: [ 'key', 'value' ],
-    numOutArgs: 1,
-    isStreaming: false
-  },
-  multiGet: {
-    inArgs: [],
-    numOutArgs: 1,
-    isStreaming: true
+var expectedMethodNames = ['Get', 'Set', 'MultiGet'];
+
+function sigHasMethod(assert, sig, methodName) {
+  for (var i = 0; i < sig.length; i++)  {
+    var iface = sig[i];
+    for (var m = 0; m < iface.methods.length; m++) {
+      var method = iface.methods[m];
+      if (method.name === methodName) {
+        return;
+      }
+    }
   }
-};
+  assert.fail('Method ' + methodName + ' not found in signature ' +
+    JSON.stringify(sig));
+}
 
 test('Test getting signature using valid cache - ' +
   'proxy.getServiceSignature(name)', function(assert) {
@@ -65,13 +63,8 @@ test('Test getting signature using stale cache - ' +
   .then(function(signature) {
     assert.equal(signature.foo, undefined);
 
-    Object.keys(knownSignature).forEach(function(key) {
-      var actual = signature.get(key);
-      var expected = knownSignature[key];
-
-      assert.deepEqual(actual.inArgs, expected.inArgs);
-      assert.deepEqual(actual.numOutArgs, expected.numOutArgs);
-      assert.deepEqual(actual.isStreaming, expected.isStreaming);
+    expectedMethodNames.forEach(function(key) {
+      sigHasMethod(assert, signature, key);
     });
 
     proxy.close(assert.end);
@@ -95,13 +88,8 @@ test('Test service signature cache is set properly - ' +
     assert.ok(before <= cache.fetched);
     assert.ok(after >= cache.fetched);
 
-    Object.keys(knownSignature).forEach(function(key) {
-      var actual = signature.get(key);
-      var expected = knownSignature[key];
-
-      assert.deepEqual(actual.inArgs, expected.inArgs);
-      assert.deepEqual(actual.numOutArgs, expected.numOutArgs);
-      assert.deepEqual(actual.isStreaming, expected.isStreaming);
+    expectedMethodNames.forEach(function(key) {
+      sigHasMethod(assert, signature, key);
     });
 
     proxy.close(assert.end);

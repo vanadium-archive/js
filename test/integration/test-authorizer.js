@@ -1,9 +1,10 @@
 var test = require('prova');
 var veyron = require('../../');
 var config = require('./default-config');
-var ServiceWrapper = require('../../src/idl/idl').ServiceWrapper;
+var Invoker = require('../../src/invocation/invoker');
 var Deferred = require('../../src/lib/deferred');
 var context = require('../../src/runtime/context');
+var vom = require('vom');
 
 var service = {
   call: function(arg) {
@@ -12,20 +13,29 @@ var service = {
 };
 
 function createDispatcher(authorizer, tags) {
-  function auth(context, cb) {
-    if (context.method === 'signature') {
+  function auth($context, cb) {
+    if ($context.method === '__Signature') {
       return null;
     }
-    return authorizer(context, cb);
+    return authorizer($context, cb);
   }
-  var metadata = {
-    call: {
-      tags: tags
-    }
+  var desc = {
+    methods: [
+      {
+        name: 'Call',
+        inArgs: [
+          {
+            name: 'arg',
+            type: vom.Types.ANY
+          }
+        ],
+        tags: tags
+      }
+    ]
   };
   return function authDispatcher(suffix) {
     return {
-      service: new ServiceWrapper(service, metadata),
+      invoker: new Invoker(service, desc),
       authorizer: auth,
     };
   };

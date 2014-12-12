@@ -6,12 +6,11 @@ var leafDispatcher = require('../../src/ipc/leaf_dispatcher');
 var NO_TIMEOUT = require('../../src/ipc/constants').NO_TIMEOUT;
 
 
-function run(ctx, err, collector, end, assert) {
+function run(ctx, err, collector, end, assert, id) {
   if (err) {
     return assert.end(err);
   }
 
-  var id = Math.floor(Math.random() * 1000000);
   var timeout = 60 * 60 * 1000;
   ctx = ctx.withTimeout(timeout);
 
@@ -43,13 +42,6 @@ function run(ctx, err, collector, end, assert) {
       end(assert);
     });
 }
-
-test('Test cancellation in JS client to Go server', function(assert) {
-  var ctx = context.Context();
-  service(ctx, 'test_service/cancel', function(err, collector, end) {
-    run(ctx, err, collector, end, assert);
-  });
-});
 
 function newDispatcher() {
   return leafDispatcher({
@@ -114,9 +106,16 @@ function newDispatcher() {
   });
 }
 
-test('Test cancellation in JS client to JS server', function(assert) {
+test('Test cancellation from JS client to Go server', function(assert) {
+  var ctx = new context.CancelContext();
+  service(ctx, 'test_service/serviceToCancel', function(err, collector, end) {
+    run(ctx, err, collector, end, assert, 1);
+  });
+});
+
+test('Test cancellation from JS client to JS server', function(assert) {
   var ctx = context.Context();
-  serve(ctx, 'testing/cancel', newDispatcher(), function(err, res) {
+  serve(ctx, 'testing/serviceToCancel', newDispatcher(), function(err, res) {
     if (err) {
       assert.error(err);
       assert.end();

@@ -37,7 +37,7 @@ func (sd *testServiceDispatcher) Lookup(suffix string) (interface{}, security.Au
 		return ipc.ReflectInvoker(sd.errorThrower), authorizer, nil
 	}
 
-	if strings.HasPrefix(suffix, "cancel") {
+	if strings.HasPrefix(suffix, "serviceToCancel") {
 		return ipc.ReflectInvoker(sd.cancelCollector), authorizer, nil
 	}
 

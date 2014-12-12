@@ -1,6 +1,6 @@
 var test = require('prova');
 var serve = require('./serve');
-var ServiceWrapper = require('../../src/idl/idl').ServiceWrapper;
+var Invoker = require('../../src/invocation/invoker');
 var Promise = require('../../src/lib/promise');
 var context = require('../../src/runtime/context');
 
@@ -9,7 +9,7 @@ test('Test sync dispatcher the echos suffixes - ' +
   var ctx = context.Context();
   serve(ctx, {
     name: 'dispatcher',
-    dispatcher: dispatcher,
+    dispatcher: callbackDispatcher,
     autoBind: false
   }, function(err, res) {
     if (err) {
@@ -38,7 +38,7 @@ test('Test sync dispatcher that counts length of suffix - ' +
   var ctx = context.Context();
   serve(ctx, {
     name: 'dispatcher',
-    dispatcher: dispatcher,
+    dispatcher: promiseDispatcher,
     autoBind: false
   }, function(err, res) {
     if (err) {
@@ -65,7 +65,7 @@ test('Test sync dispatcher that counts length of suffix - ' +
   var ctx = context.Context();
   serve(ctx, {
     name: 'dispatcher',
-    dispatcher: dispatcher,
+    dispatcher: promiseDispatcher,
     autoBind: false
   }, function(err, res) {
     if (err) {
@@ -98,7 +98,7 @@ test('Test unknown suffix should return error - ' +
   var ctx = context.Context();
   serve(ctx, {
     name: 'dispatcher',
-    dispatcher: dispatcher,
+    dispatcher: callbackDispatcher,
     autoBind: false
   }, function(err, res) {
     if (err) {
@@ -117,7 +117,7 @@ test('Test async dispatcher using promises - dispatcher/promise ' +
   var ctx = context.Context();
   serve(ctx, {
     name: 'dispatcher',
-    dispatcher: dispatcher,
+    dispatcher: promiseDispatcher,
     autoBind: false
   }, function(err, res) {
     if (err) {
@@ -144,7 +144,7 @@ test('Test async dispatcher using promises - dispatcher/promise/fail ' +
   var ctx = context.Context();
   serve(ctx, {
     name: 'dispatcher',
-    dispatcher: dispatcher,
+    dispatcher: promiseDispatcher,
     autoBind: false
   }, function(err, res) {
     if (err) {
@@ -163,7 +163,7 @@ test('Test async dispatcher using callbacks - dispatcher/callback ' +
   var ctx = context.Context();
   serve(ctx, {
     name: 'dispatcher',
-    dispatcher: dispatcher,
+    dispatcher: callbackDispatcher,
     autoBind: false
   }, function(err, res) {
     if (err) {
@@ -190,7 +190,7 @@ test('Test async dispatcher using callbacks - dispatcher/callback/fail ' +
   var ctx = context.Context();
   serve(ctx, {
     name: 'dispatcher',
-    dispatcher: dispatcher,
+    dispatcher: callbackDispatcher,
     autoBind: false
   }, function(err, res) {
     if (err) {
@@ -220,16 +220,16 @@ Echoer.prototype.echo = function() {
   return this.string;
 };
 
-function dispatcher(suffix, cb) {
+function promiseDispatcher(suffix) {
   // dispatcher/echo/:string
   if (suffix.indexOf('echo/') === 0) {
     return {
-      service: new ServiceWrapper(new Echoer(suffix.substr(5)))
+      invoker: new Invoker(new Echoer(suffix.substr(5)))
     };
   // dispatcher/count/:string
   } else if (suffix.indexOf('count/') === 0) {
     return {
-      service: new ServiceWrapper(new Counter(suffix.substr(6)))
+      invoker: new Invoker(new Counter(suffix.substr(6)))
     };
   // dispatcher/promise/fail
   } else if (suffix.indexOf('promise/fail') === 0) {
@@ -237,14 +237,34 @@ function dispatcher(suffix, cb) {
   // dispatcher/promise/:string
   } else if (suffix.indexOf('promise') === 0) {
     return Promise.resolve({
-      service: new ServiceWrapper(new Echoer(suffix))
+      invoker: new Invoker(new Echoer(suffix))
     });
+  }
+
+  throw new Error('unknown suffix');
+}
+
+function callbackDispatcher(suffix, cb) {
+  // dispatcher/echo/:string
+  if (suffix.indexOf('echo/') === 0) {
+    cb(null, {
+      invoker: new Invoker(new Echoer(suffix.substr(5)))
+    });
+    return;
+  // dispatcher/count/:string
+  } else if (suffix.indexOf('count/') === 0) {
+    cb(null, {
+      invoker: new Invoker(new Counter(suffix.substr(6)))
+    });
+    return;
   // dispatcher/callback/fail
   } else if (suffix.indexOf('callback/fail') === 0) {
     cb(new Error('errorback'));
+    return;
   // dispatcher/callback/:string
   } else if (suffix.indexOf('callback') === 0) {
-    cb(null, { service: new ServiceWrapper(new Echoer(suffix))});
+    cb(null, { invoker: new Invoker(new Echoer(suffix))});
+    return;
   }
 
   throw new Error('unknown suffix');

@@ -135,8 +135,10 @@ go/bin: $(GO_FILES)
 	@$(VGO) build -o $(GOBIN)/test_serviced test_service/test_serviced
 
 lint: node_modules
+ifndef NOLINT
 	jshint .
 	$(MAKE) -C extension lint
+endif
 
 dependency-check: node_modules
 	dependency-check package.json --entry src/veyron.js
@@ -156,13 +158,17 @@ docs: $(JS_SRC_FILES) | node_modules
 	jsdoc $^ --template node_modules/ink-docstrap/template --destination $@
 
 node_modules: package.json  check-that-npm-is-in-path | node_modules/vom/lib/index.js
+ifndef NONPMUPDATE
 	@npm prune
 	@npm install --quiet
 	@touch node_modules
+endif
 
 node_modules/vom/lib/index.js:
+ifndef NONPMUPDATE
 	cd "$(VEYRON_ROOT)/veyron/javascript/vom" && npm link
 	:;npm link vom
+endif
 
 check-that-npm-is-in-path:
 	@which npm > /dev/null || { echo "npm is not in the path. Did you remember to run 'veyron profile setup web'?"; exit 1; }

@@ -16,4 +16,7 @@
  * from switching in the future.
  */
 
-module.exports = require('bluebird');
+var Promise = require('bluebird');
+Promise.longStackTraces();
+
+module.exports = Promise;

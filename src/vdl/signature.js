@@ -21,6 +21,10 @@ var defaultOutArgs = [
   }
 ];
 
+var defaultStreamingArg = {
+    type: vom.Types.ANY
+};
+
 function Signature(service, desc) {
     if (!(this instanceof Signature)) {
         return new Signature(service, desc);
@@ -39,8 +43,12 @@ function Signature(service, desc) {
         var thisMethod = {
             name: reflectMethod.name,
             inArgs: reflectMethod.inArgs,
-            outArgs: defaultOutArgs,
+            outArgs: defaultOutArgs
         };
+        if (reflectMethod.streaming) {
+            thisMethod.inStream = defaultStreamingArg;
+            thisMethod.outStream = defaultStreamingArg;
+        }
         methods.push(thisMethod);
 
         if (desc.hasOwnProperty('methods')) {
@@ -95,8 +103,13 @@ function Signature(service, desc) {
                 }
             }
 
-            copyIfSet(thisMethod, descMethod, ['doc', 'outArgs',
-                'inStream', 'outStream', 'tags']);
+            copyIfSet(thisMethod, descMethod, ['doc', 'outArgs', 'tags']);
+
+            if (reflectMethod.streaming === true) {
+                delete['inStream'];
+                delete['outStream'];
+                copyIfSet(thisMethod, descMethod, ['inStream', 'outStream']);
+            }
         }
     });
  }

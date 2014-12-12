@@ -64,7 +64,10 @@ Proxy.prototype.process = function(message) {
   if (!handler) {
     handler = this.incomingRequestHandlers[payload.type];
     if (!handler) {
-      vLog.warn('Dropping message for unknown invoke payload ' + payload.type);
+      // TODO(bprosnitz) There is a race condition where we receive STREAM_CLOSE
+      // before a method is invoked in js and see this warning.
+      vLog.warn('Dropping message for unknown invoke payload ' + payload.type +
+        ' (message id: ' + message.id + ')');
       return;
     }
     handler.handleRequest(message.id, payload.type, payload.message);

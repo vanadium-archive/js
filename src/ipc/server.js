@@ -15,10 +15,9 @@
 
 var Deferred = require('./../lib/deferred');
 var Promise = require('./../lib/promise');
-var IdlHelper = require('./../idl/idl');
 var leafDispatcher = require('./leaf_dispatcher');
-var ServiceWrapper = IdlHelper.ServiceWrapper;
 var vLog = require('./../lib/vlog');
+var argHelper = require('./../lib/arg_helper');
 
 var nextServerID = 1; // The ID for the next server.
 
@@ -50,7 +49,6 @@ function Server(router) {
 /**
  * @typedef ServeOptions
  * @type {Object}
- * @property {object} metadata The metadata is an optional parameter that adds
  * annotations to the functions exported by the functions.  This is generally
  * created by running the vdl compiler.
  * @property {Authorize} authorizer An Authorizer that will handle the
@@ -64,8 +62,7 @@ function Server(router) {
  * authorizer to authorize access to it.
  *
  * To serve names of the form "mymedia/*" make the calls:
- * serve("mymedia", serviceObject, { // optional metadata and authorizer
- *   metadata: serviceMetadata ,
+ * serve("mymedia", serviceObject, { // optional authorizer
  *   authorizer: serviceAuthorizer
  * });
  *
@@ -78,7 +75,7 @@ function Server(router) {
  * @param {string} name Name to serve under
  * @param {object} serviceObject The service object that has a set of
  * exported methods
- * @param {ServeOptions} options Object that includes metadata and authorizer
+ * @param {ServeOptions} options Options config
  * @param {function} [cb] If provided, the function will be called on
  * completion. The only argument is an error if there was one.
  * @return {Promise} Promise to be called when serve completes or fails.
@@ -89,21 +86,19 @@ Server.prototype.serve = function(name, serviceObject, options, cb) {
     options = undefined;
   }
 
-  var serviceMetadata;
   var authorizer;
 
   if (options) {
-    serviceMetadata = options.serviceMetadata;
     authorizer = options.authorizer;
   }
-  var dispatcher = leafDispatcher(serviceObject, serviceMetadata, authorizer);
+  var dispatcher = leafDispatcher(serviceObject, undefined, authorizer);
   return this.serveDispatcher(name, dispatcher, cb);
 };
 
 /**
  * @typedef DispatcherResponse
  * @type {Object}
- * @property {ServiceWrapper} service The ServiceWrapper that will handle
+ * @property {Invoker} service The Invoker that will handle
  * method call.
  * @property {Authorize} authorizer An Authorizer that will handle the
  * authorization for the method call.  If null, then the default strict
@@ -126,7 +121,7 @@ Server.prototype.serve = function(name, serviceObject, options, cb) {
  * Callback passed into Dispatcher
  * @callback Dispatcher-callback
  * @param {Error} err An error if one occurred
- * @param {ServiceWrapper} object The object that will handle the method call
+ * @param {Invoker} object The object that will handle the method call
  */
 
 /**
@@ -214,15 +209,14 @@ Server.prototype.removeName = function(name, cb) {
 };
 
 /*
- * Returns the service that maps to the handle that is passed in
  * @param {Number} handle The handle for the service
- * @return {Object} The service object for the handle.
+ * @return {Object} The invoker corresponding to the provided error.
  */
-Server.prototype.getServiceForHandle = function(handle) {
+Server.prototype.getInvokerForHandle = function(handle) {
   var result = this.serviceObjectHandles[handle];
   delete this.serviceObjectHandles[handle];
 
-  return result.service;
+  return result.invoker;
 };
 
 /*
@@ -273,15 +267,13 @@ Server.prototype.handleAuthorization = function(handle, request) {
  * Handles the result of lookup and returns an error if there was any.
  */
 Server.prototype._handleLookupResult = function(object) {
-  if (!(object.service instanceof ServiceWrapper)) {
-    return new Error('The result of lookup should be of type ServiceWrapper');
-  }
-
   object._handle = this._handle;
   this.serviceObjectHandles[object._handle] = object;
   this._handle++;
   return null;
 };
+
+
 
 /*
  * Perform the lookup call to the user code on the suffix and method passed in.
@@ -289,18 +281,16 @@ Server.prototype._handleLookupResult = function(object) {
 Server.prototype._handleLookup = function(suffix) {
   var self = this;
   var def = new Deferred();
-  function cb(e, v) {
-    if (e) {
-      def.reject(e);
-      return;
-    }
-    var err = self._handleLookupResult(v);
-    if (err) {
-      def.reject(err);
+
+  var argsNames = argHelper.getArgumentNamesFromFunction(this.dispatcher);
+  var useCallback = argsNames.length >= 2;
+  var cb = function(err, val) {
+    if (err === undefined || err === null) {
+      def.resolve(val);
     } else {
-      def.resolve(v);
+      def.reject(err);
     }
-  }
+  };
 
   var result;
   try {
@@ -311,6 +301,19 @@ Server.prototype._handleLookup = function(suffix) {
     return def.promise;
   }
 
+  if (!useCallback) {
+    if (result === undefined) {
+      return def.promise.then(handleResult);
+    }
+
+    if (result instanceof Error) {
+      def.reject(result);
+      return def.promise;
+    }
+
+    def.resolve(result);
+  }
+
   function handleResult(v) {
     var err = self._handleLookupResult(v);
     if (err) {
@@ -319,17 +322,7 @@ Server.prototype._handleLookup = function(suffix) {
     return Promise.resolve(v);
   }
 
-  if (result === undefined) {
-    return def.promise.then(handleResult);
-  }
-
-  if (result instanceof Error) {
-    def.reject(result);
-    return def.promise;
-  }
-
-  var promise = Promise.resolve(result);
-  return promise.then(handleResult);
+  return def.promise.then(handleResult);
 };
 
 /**

@@ -4,6 +4,7 @@
  */
 
 module.exports = {
+    getArgumentNamesFromFunction: getArgumentNamesFromFunction,
     getFunctionArgs: getFunctionArgs,
     getFunctionInjections: getFunctionInjections,
     getInjectionPositions: getInjectionPositions,

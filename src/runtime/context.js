@@ -10,6 +10,7 @@ var inherits = require('util').inherits;
 module.exports = {
   optionalContext: optionalContext,
   Context: Context,
+  CancelContext: CancelContext,
   ContextKey: ContextKey,
   DeadlineExceededError: DeadlineExceededError,
   CancelledError: CancelledError

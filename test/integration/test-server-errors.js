@@ -3,21 +3,17 @@ var veyron = require('../../');
 var Deferred = require('../../src/lib/deferred');
 var serve = require('./serve');
 var leafDispatcher = require('../../src/ipc/leaf_dispatcher');
-var context = require('../../src/runtime/context');
 var message = 'failure';
+var context = require('../../src/runtime/context');
 
 testStandardErrors();
 testNonStandardErrors();
 
 function testStandardErrors() {
   var error = new Error(message);
-  var builtInError = new veyron.errors.NoExistError(message);
   var errorThrower = {
     throwError: function() {
       throw error;
-    },
-    returnError: function() {
-      return error;
     },
     returnErrorInCallback: function($cb) {
       $cb(error, null);
@@ -30,7 +26,7 @@ function testStandardErrors() {
       def.reject(error);
       return def.promise;
     },
-    returnCustomError: function() {
+    throwCustomError: function() {
       function CustomError(message) {
         Error.call(this);
         this.name = 'CustomError';
@@ -40,21 +36,10 @@ function testStandardErrors() {
       CustomError.prototype = new Error();
       CustomError.prototype.constructor = CustomError;
 
-      return new CustomError(message);
-    },
-    returnBuiltInError: function() {
-      return builtInError;
-    },
-    returnErrorOnVoid: function() {
-      return error;
+      throw new CustomError(message);
     }
   };
-  var metadata = {
-    returnErrorOnVoid: {
-      numReturnArgs: 0
-    }
-  };
-  var dispatcher = leafDispatcher(errorThrower, metadata);
+  var dispatcher = leafDispatcher(errorThrower);
   var methods = Object.keys(errorThrower);
 
   methods.forEach(function(method) {
@@ -86,28 +71,6 @@ function testStandardErrors() {
             'the original stack should not be sent over the wire');
           res.end(assert);
         });
-      });
-    });
-  });
-
-  test('Test returning errors of builtin type verrors -' +
-    'returnBuiltInError(callback)', function(assert) {
-
-    var ctx = context.Context();
-    serve(ctx, 'js/errorThrower', dispatcher, function(err, res) {
-      if (err) {
-        return assert.end(err);
-      }
-
-      res.service.returnBuiltInError(ctx, function(err) {
-        assert.ok(err, 'should error');
-        // TODO(jasoncampbell): Update once context and param support is
-        // available in JS.
-        //
-        // SEE: test/integration/test-server-error.js:62
-        // assert.equal(err.message, message);
-        assert.deepEqual(err.idAction, veyron.errors.IdActions.NoExist);
-        res.end(assert);
       });
     });
   });
@@ -145,11 +108,9 @@ function testNonStandardErrors() {
       return def.promise;
     }
   };
-
   var dispatcher = leafDispatcher(nonStandardErrorThrower);
-  var methods = Object.keys(nonStandardErrorThrower);
 
-  methods.forEach(function(method) {
+  Object.keys(nonStandardErrorThrower).forEach(function(method) {
     test('Test returning errors that are not of standard type error() - ' +
       method + '()', function(assert) {
 
@@ -167,7 +128,11 @@ function testNonStandardErrors() {
           //
           // SEE: test/integration/test-server-error.js:62
           // assert.equal(err.message, 'Unknown exception.');
-          assert.deepEqual(err.idAction, veyron.errors.IdActions.Unknown);
+          // TODO(bprosnitz) Change back to
+          // assert.deepEquals(err.idAction, veyron.errors.IdActions);
+          assert.equal(err.idAction.id, veyron.errors.IdActions.Unknown.id);
+          assert.equal(err.idAction.action,
+            veyron.errors.IdActions.Unknown.action);
           assert.ok(err.stack);
           res.end(assert);
         });
@@ -175,4 +140,3 @@ function testNonStandardErrors() {
     });
   });
 }
-

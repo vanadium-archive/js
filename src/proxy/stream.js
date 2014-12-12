@@ -5,6 +5,7 @@
 var MessageType = require('./message_type');
 var Duplex = require('stream').Duplex;
 var inherits = require('util').inherits;
+var EncodeUtil = require('../lib/encode_util');
 
 /*
  * A stream that allows sending and receiving data for a streaming rpc.  If
@@ -52,7 +53,7 @@ Stream.prototype.serverClose = function(value, err) {
   var object = {
     id: this.flowId,
     type: MessageType.RESPONSE,
-    data: JSON.stringify({
+    data: EncodeUtil.encode({
       results: [value || null],
       err: err || null
     })
@@ -105,7 +106,7 @@ Stream.prototype._queueRead = function(object) {
 Stream.prototype.write = function(chunk, encoding, cb) {
   var object = {
     id: this.flowId,
-    data: JSON.stringify(chunk),
+    data: EncodeUtil.encode(chunk),
     type: MessageType.STREAM_VALUE
   };
   return Duplex.prototype.write.call(this, object, encoding, cb);

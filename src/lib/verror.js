@@ -4,9 +4,9 @@
 
 var inherits = require('util').inherits;
 
-var vError = {};
+var verror = {};
 
-vError.Actions = {
+verror.Actions = {
   NoRetry: 0,
   RetryConnection: 1,
   RetryRefetch: 2,
@@ -14,48 +14,48 @@ vError.Actions = {
 };
 
 /*
- * List of predefined error ids. Matches veyron2/vError/common.idl
+ * List of predefined error ids. Matches veyron2/verror/common.idl
  */
-vError.IdActions = {
+verror.IdActions = {
   Aborted: {
     id: 'veyron.io/veyron/veyron2/verror.Aborted',
-    action: vError.Actions.NoRetry,
+    action: verror.Actions.NoRetry,
   },
   BadArg: {
     id: 'veyron.io/veyron/veyron2/verror.BadArg',
-    action: vError.Actions.NoRetry,
+    action: verror.Actions.NoRetry,
   },
   BadProtocol: {
     id: 'veyron.io/veyron/veyron2/verror.BadProtocol',
-    action: vError.Actions.NoRetry,
+    action: verror.Actions.NoRetry,
   },
   Exists: {
     id: 'veyron.io/veyron/veyron2/verror.Exists',
-    action: vError.Actions.NoRetry,
+    action: verror.Actions.NoRetry,
   },
   Internal: {
     id: 'veyron.io/veyron/veyron2/verror.Internal',
-    action: vError.Actions.NoRetry,
+    action: verror.Actions.NoRetry,
   },
   NoAccess: {
     id: 'veyron.io/veyron/veyron2/verror.NoAccess',
-    action: vError.Actions.NoRetry,
+    action: verror.Actions.NoRetry,
   },
   NoExist: {
     id: 'veyron.io/veyron/veyron2/verror.NoExist',
-    action: vError.Actions.NoRetry,
+    action: verror.Actions.NoRetry,
   },
   NoServers: {
     id: 'veyron.io/veyron/veyron2/verror.NoServers',
-    action: vError.Actions.RetryRefetch,
+    action: verror.Actions.RetryRefetch,
   },
   NoExistOrNoAccess: {
     id: 'veyron.io/veyron/veyron2/verror.NoExistOrNoAccess',
-    action: vError.Actions.NoRetry,
+    action: verror.Actions.NoRetry,
   },
   Unknown: {
     id: 'veyron.io/veyron/veyron2/verror.Unknown',
-    action: vError.Actions.NoRetry,
+    action: verror.Actions.NoRetry,
   }
 };
 
@@ -63,44 +63,44 @@ vError.IdActions = {
  * Creates an error object given the ID as the name and a message
  * @constructor
  * @param {string} message message
- * @param {vError.IdActions} idAction idActionription of error
+ * @param {verror.IdActions} idAction idActionription of error
  */
-vError.VeyronError = function(message, idAction) {
-  if (!(this instanceof vError.VeyronError)) {
-    return new vError.VeyronError(message, idAction);
+verror.VeyronError = function(message, idAction) {
+  if (!(this instanceof verror.VeyronError)) {
+    return new verror.VeyronError(message, idAction);
   }
 
   Error.call(this);
 
   this.message = message || '';
 
-  this.idAction = idAction || vError.IdActions.Unknown;
+  this.idAction = idAction || verror.IdActions.Unknown;
 
   if (! this.idAction.id) {
-    this.idAction.id = vError.IdActions.Unknown.id;
+    this.idAction.id = verror.IdActions.Unknown.id;
   }
 
   if (typeof Error.captureStackTrace === 'function') {
-    Error.captureStackTrace(this, vError.VeyronError);
+    Error.captureStackTrace(this, verror.VeyronError);
   } else {
     this.stack = (new Error()).stack;
   }
 };
 
-inherits(vError.VeyronError, Error);
+inherits(verror.VeyronError, Error);
 
 /*
  * Creates an error object indicating operation aborted, e.g. connection closed.
  * @constructor
  * @param {string} message message
  */
-vError.AbortedError = function(message) {
-  if (!(this instanceof vError.AbortedError)) {
-    return new vError.AbortedError(message);
+verror.AbortedError = function(message) {
+  if (!(this instanceof verror.AbortedError)) {
+    return new verror.AbortedError(message);
   }
-  vError.VeyronError.call(this, message, vError.IdActions.Aborted);
+  verror.VeyronError.call(this, message, verror.IdActions.Aborted);
 };
-inherits(vError.AbortedError, vError.VeyronError);
+inherits(verror.AbortedError, verror.VeyronError);
 
 /*
  * Creates an error object indicating requester specified an invalid argument.
@@ -108,13 +108,13 @@ inherits(vError.AbortedError, vError.VeyronError);
  * @param {string} message message
  * @return {Error} Error object with name set to the badarg error id.
  */
-vError.BadArgError = function(message) {
-  if (!(this instanceof vError.BadArgError)) {
-    return new vError.BadArgError(message);
+verror.BadArgError = function(message) {
+  if (!(this instanceof verror.BadArgError)) {
+    return new verror.BadArgError(message);
   }
-  vError.VeyronError.call(this, message, vError.IdActions.BadArg);
+  verror.VeyronError.call(this, message, verror.IdActions.BadArg);
 };
-inherits(vError.BadArgError, vError.VeyronError);
+inherits(verror.BadArgError, verror.VeyronError);
 
 /*
  * Creates an error object indicating protocol mismatch,
@@ -122,26 +122,26 @@ inherits(vError.BadArgError, vError.VeyronError);
  * @param {string} message message
  * @return {Error} Error object with name set to the bad protocol error id.
  */
-vError.BadProtocolError = function(message) {
-  if (!(this instanceof vError.BadProtocolError)) {
-    return new vError.BadProtocolError(message);
+verror.BadProtocolError = function(message) {
+  if (!(this instanceof verror.BadProtocolError)) {
+    return new verror.BadProtocolError(message);
   }
-  vError.VeyronError.call(this, message, vError.IdActions.BadProtocol);
+  verror.VeyronError.call(this, message, verror.IdActions.BadProtocol);
 };
-inherits(vError.BadProtocolError, vError.VeyronError);
+inherits(verror.BadProtocolError, verror.VeyronError);
 
 /*
  * Creates an error object indicating requested entity already exists
  * @param {string} message message
  * @return {Error} Error object with name set to the exists error id.
  */
-vError.ExistsError = function(message) {
-  if (!(this instanceof vError.ExistsError)) {
-    return new vError.ExistsError(message);
+verror.ExistsError = function(message) {
+  if (!(this instanceof verror.ExistsError)) {
+    return new verror.ExistsError(message);
   }
-  vError.VeyronError.call(this, message, vError.IdActions.Exists);
+  verror.VeyronError.call(this, message, verror.IdActions.Exists);
 };
-inherits(vError.ExistsError, vError.VeyronError);
+inherits(verror.ExistsError, verror.VeyronError);
 
 /*
  * Creates an error object indicating internal invariants broken;
@@ -149,13 +149,13 @@ inherits(vError.ExistsError, vError.VeyronError);
  * @param {string} message message
  * @return {Error} Error object with name set to the internal error id.
  */
-vError.InternalError = function(message) {
-  if (!(this instanceof vError.InternalError)) {
-    return new vError.InternalError(message);
+verror.InternalError = function(message) {
+  if (!(this instanceof verror.InternalError)) {
+    return new verror.InternalError(message);
   }
-  vError.VeyronError.call(this, message, vError.IdActions.Internal);
+  verror.VeyronError.call(this, message, verror.IdActions.Internal);
 };
-inherits(vError.InternalError, vError.VeyronError);
+inherits(verror.InternalError, verror.VeyronError);
 
 /*
  * Creates an error object indicating requester isn't authorized
@@ -163,13 +163,13 @@ inherits(vError.InternalError, vError.VeyronError);
  * @param {string} message message
  * @return {Error} Error object with name set to the not authorized error id.
  */
-vError.NoAccessError = function(message) {
-  if (!(this instanceof vError.NoAccessError)) {
-    return new vError.NoAccessError(message);
+verror.NoAccessError = function(message) {
+  if (!(this instanceof verror.NoAccessError)) {
+    return new verror.NoAccessError(message);
   }
-  vError.VeyronError.call(this, message, vError.IdActions.NoAccess);
+  verror.VeyronError.call(this, message, verror.IdActions.NoAccess);
 };
-inherits(vError.NoAccessError, vError.VeyronError);
+inherits(verror.NoAccessError, verror.VeyronError);
 
 /*
  * Creates an Error object indicating requested entity (e.g. object, method)
@@ -177,13 +177,13 @@ inherits(vError.NoAccessError, vError.VeyronError);
  * @param {string} message message
  * @return {Error} Error object with name set to the not found error id.
  */
-vError.NoExistError = function(message) {
-  if (!(this instanceof vError.NoExistError)) {
-    return new vError.NoExistError(message);
+verror.NoExistError = function(message) {
+  if (!(this instanceof verror.NoExistError)) {
+    return new verror.NoExistError(message);
   }
-  vError.VeyronError.call(this, message, vError.IdActions.NoExist);
+  verror.VeyronError.call(this, message, verror.IdActions.NoExist);
 };
-inherits(vError.NoExistError, vError.VeyronError);
+inherits(verror.NoExistError, verror.VeyronError);
 
 /*
  * Creates an Error object indicating requested entity (e.g. object, method)
@@ -191,13 +191,13 @@ inherits(vError.NoExistError, vError.VeyronError);
  * @param {string} message message
  * @return {Error} Error object with name set to the not found error id.
  */
-vError.NoServersError = function(message) {
-  if (!(this instanceof vError.NoServersError)) {
-    return new vError.NoServersError(message);
+verror.NoServersError = function(message) {
+  if (!(this instanceof verror.NoServersError)) {
+    return new verror.NoServersError(message);
   }
-  vError.VeyronError.call(this, message, vError.IdActions.NoServers);
+  verror.VeyronError.call(this, message, verror.IdActions.NoServers);
 };
-inherits(vError.NoServersError, vError.VeyronError);
+inherits(verror.NoServersError, verror.VeyronError);
 
 /*
  * Creates an Error object indicating requested entity (e.g. object, method)
@@ -205,22 +205,22 @@ inherits(vError.NoServersError, vError.VeyronError);
  * @param {string} message message
  * @return {Error} Error object with name set to the not found error id.
  */
-vError.NoExistOrNoAccessError = function(message) {
-  if (!(this instanceof vError.NoExistOrNoAccessError)) {
-    return new vError.NoExistOrNoAccessError(message);
+verror.NoExistOrNoAccessError = function(message) {
+  if (!(this instanceof verror.NoExistOrNoAccessError)) {
+    return new verror.NoExistOrNoAccessError(message);
   }
-  vError.VeyronError.call(this, message, vError.IdActions.NoExistOrNoAccess);
+  verror.VeyronError.call(this, message, verror.IdActions.NoExistOrNoAccess);
 };
-inherits(vError.NoExistOrNoAccessError, vError.VeyronError);
+inherits(verror.NoExistOrNoAccessError, verror.VeyronError);
 
-vError.UnknownError = function(message) {
-  if (!(this instanceof vError.UnknownError)) {
-    return new vError.UnknownError(message);
+verror.UnknownError = function(message) {
+  if (!(this instanceof verror.UnknownError)) {
+    return new verror.UnknownError(message);
   }
 
-  vError.VeyronError.call(this, message);
+  verror.VeyronError.call(this, message);
 };
 
-inherits(vError.UnknownError, vError.VeyronError);
+inherits(verror.UnknownError, verror.VeyronError);
 
-module.exports = vError;
+module.exports = verror;

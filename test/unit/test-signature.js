@@ -40,6 +40,12 @@ test('signature', function(t) {
                                 'type': vom.Types.ERROR
                             }
                         ],
+                        'inStream': {
+                            'type': vom.Types.ANY
+                        },
+                        'outStream': {
+                            'type': vom.Types.ANY
+                        }
                     },
                     {
                         'name': 'NoArgsFunction',
@@ -73,7 +79,7 @@ test('signature', function(t) {
                             {
                                 'type': vom.Types.ERROR
                             }
-                        ],
+                        ]
                     }
                 ]
             }
@@ -240,7 +246,7 @@ test('signature', function(t) {
                                 'doc': 'secondDoc',
                                 'type': vom.Types.STRING
                             }
-                        ],
+                        ]
                     },
                     {
                         'name': 'NamedFunction',
@@ -269,7 +275,7 @@ test('signature', function(t) {
                           {
                             'type': vom.Types.ERROR
                           }
-                        ],
+                        ]
                     },
                 ]
             }
@@ -306,7 +312,13 @@ test('signature', function(t) {
                                 'name': 'z',
                                 'type': vom.Types.INT16
                             }
-                        ]
+                        ],
+                        'inStream': {
+                            'type': vom.Types.ANY
+                        },
+                        'outStream': {
+                            'type': vom.Types.STRING
+                        }
                     }
                 ]
             },
@@ -330,6 +342,12 @@ test('signature', function(t) {
                                 'type': vom.Types.ERROR
                             }
                         ],
+                        'inStream': {
+                            'type': vom.Types.ANY
+                        },
+                        'outStream': {
+                            'type': vom.Types.ANY
+                        }
                     },
                     {
                         'name': 'NoArgsFunction',
@@ -341,7 +359,7 @@ test('signature', function(t) {
                             {
                                 'type': vom.Types.ERROR
                             }
-                        ],
+                        ]
                     },
                     {
                         'name': 'NamedFunction',
@@ -363,7 +381,7 @@ test('signature', function(t) {
                             {
                                 'type': vom.Types.ERROR
                             }
-                        ],
+                        ]
                     }
                 ]
             }

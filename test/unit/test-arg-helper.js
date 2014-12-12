@@ -7,6 +7,13 @@ var argHelper = require('../../src/lib/arg_helper.js');
 
 var func = function(a, b, $inject1, c, d, $inject2) {};
 
+test('getArgumentNamesFromFunction()', function(t) {
+    var expect = ['a', 'b', '$inject1', 'c', 'd', '$inject2'];
+    var got = argHelper.getArgumentNamesFromFunction(func);
+    t.deepEquals(expect, got);
+    t.end();
+});
+
 test('getFunctionArgs()', function(t) {
     var expect = ['a', 'b', 'c', 'd'];
     var got = argHelper.getFunctionArgs(func);

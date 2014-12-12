@@ -1,139 +1,189 @@
 var test = require('prova');
 var serve = require('./serve');
-var veyron = require('../../');
 var leafDispatcher = require('../../src/ipc/leaf_dispatcher');
-var Promise = require('../../src/lib/promise');
-var context = require('../../src/runtime/context');
-var idl = {
-  package: 'foo',
-  Cache: {
-    set: {
-      numInArgs: 2,
-      numOutArgs: 0,
-      inputStreaming: false,
-      outputStreaming: false
-    },
-    get: {
-      numInArgs: 1,
-      numOutArgs: 1,
-      inputStreaming: false,
-      outputStreaming: false
-    },
-    multiGet: {
-      numInArgs: 0,
-      numOutArgs: 1,
-      inputStreaming: true,
-      outputStreaming: true
-    },
+//var Promise = require('../../src/lib/promise');
+var Deferred = require('../../src/lib/deferred');
+var vom = require('vom');
+
+var multiGetTestRunCount = 0;
+
+// TODO(bprosnitz) Combine CacheService and CacheServicePromises so there
+// isn't as much duplicated code.
+
+var CacheService = {
+  cacheMap: {},
+  set: function(key, value) {
+    if (value instanceof Map) {
+      // TODO(bprosnitz) Remove the type here.
+      // This is temporary because we currently guess map[any]any
+      // which is illegal.
+      var mapType = {
+          kind: vom.Kind.MAP,
+          key: vom.Types.STRING,
+          elem: vom.Types.ANY
+        };
+      Object.defineProperty(value, '_type', {
+        value: mapType
+      });
+    }
+    this.cacheMap[key] = value;
+  },
+  get: function(key, $cb) {
+    var val = this.cacheMap[key];
+    if (val === undefined) {
+      $cb('unknown key ' + JSON.stringify(key));
+    } else {
+      $cb(undefined, val);
+    }
+  } ,
+  // TODO(bprosnitz) Also test streaming with no return arg.
+  multiGet: function($cb, $stream) {
+    var numReceived = 0;
+    $stream.on('end', function close() {
+      $cb(null, numReceived);
+    });
+    $stream.on('error', function error(e) {
+      $cb(e);
+    });
+    var self = this;
+    $stream.on('data', function(key) {
+      numReceived++;
+      if (key !== null) {
+        var val = self.cacheMap[key];
+        if (val === undefined) {
+          $cb(new Error('unknown key'));
+        }
+        $stream.write(val);
+      }
+    });
+    $stream.read();
+  },
+  doNothingStream: function($stream) {
+  },
+  nonAsyncFunction: function() {
+    return 'RESULT';
   }
 };
 
-run({
-  testName: 'with IDL using callbacks',
-  definition: require('./cache-service'),
-  idl: idl,
-  name: 'foo.Cache',
-});
+var CacheServicePromises = {
+  cacheMap: {},
+  set: function(key, value) {
+    if (value instanceof Map) {
+      // TODO(bprosnitz) Remove the type here.
+      // This is temporary because we currently guess map[any]any
+      // which is illegal.
+      var mapType = {
+          kind: vom.Kind.MAP,
+          key: vom.Types.STRING,
+          elem: vom.Types.ANY
+        };
+      Object.defineProperty(value, '_type', {
+        value: mapType
+      });
+    }
+    this.cacheMap[key] = value;
+  },
+  get: function(key) {
+    var def = new Deferred();
+    var val = this.cacheMap[key];
+    if (val === undefined) {
+      def.reject('unknown key');
+    } else {
+      def.resolve(val);
+    }
+    return def.promise;
+  } ,
+  multiGet: function($stream) {
+    var numReceived = 0;
+    var def = new Deferred();
+    $stream.on('end', function() {
+      def.resolve(numReceived);
+    });
+
+    $stream.on('error', function(e) {
+      def.reject(e);
+    });
+    var self = this;
+    $stream.on('data', function(key) {
+      numReceived++;
+      if (key !== null) {
+        var val = self.cacheMap[key];
+        if (val === undefined) {
+          def.reject('unknown key');
+        }
+        $stream.write(val);
+      }
+    });
+    $stream.read();
+    return def.promise;
+  },
+  doNothingStream: function($stream) {
+  },
+  nonAsyncFunction: function() {
+    return 'RESULT';
+  }
+};
+
+var context = require('../../src/runtime/context');
+
+// TODO(bprosnitz) After we make it simpler to provide VDL type information,
+// add more test cases with types.
 
 run({
-  testName: 'with IDL using promises',
-  definition: require('./cache-service-promises'),
-  idl: idl,
+  testName: 'without VDL using callbacks',
+  definition: CacheService,
   name: 'foo.Cache'
 });
 
 run({
-  testName: 'using callbacks',
-  definition: require('./cache-service')
+  testName: 'without VDL using promises',
+  definition: CacheServicePromises,
+  name: 'foo.Cache'
 });
 
-run({
-  testName: 'using promises',
-  definition: require('./cache-service-promises'),
-});
-
-run({
-  testName: 'with IDL using callbacks, no contexts',
-  definition: require('./cache-service'),
-  idl: idl,
-  name: 'foo.Cache',
-  noCtx: true
-});
-
-run({
-  testName: 'with IDL using promises without contexts',
-  definition: require('./cache-service-promises'),
-  idl: idl,
-  name: 'foo.Cache',
-  noCtx: true
-});
-
-run({
-  testName: 'using callbacks without contexts',
-  definition: require('./cache-service'),
-  noCtx: true
-});
-
-run({
-  testName: 'using promises without contexts',
-  definition: require('./cache-service-promises'),
-  noCtx: true
-});
-
-// options: defnition, idl, name, testName
+// options: testName, definition, name
 function run(options) {
 
-  var ctx = null;
-  if (!options.noCtx) {
-    ctx = context.Context();
-  }
-
-  var setup = function(t, callback) {
-    var optArg;
-    if (options.idl) {
-      optArg = options.idl[options.name];
-    } else {
-      optArg = {
-        set:{
-          numReturnArgs: 0
-        }
-      };
-    }
-    var dispatcher = leafDispatcher(options.definition, optArg);
-    serve(ctx, 'testing/cache', dispatcher, function(err, res) {
+  var setup = function(t, cb) {
+    var serveCtx = context.Context();
+    var dispatcher = leafDispatcher(options.definition);
+    serve(serveCtx, 'testing/cache', dispatcher, function(err, res) {
       if (err) {
         return t.end(err);
       }
-
-      callback(res.service, res);
+      cb(res.service, res);
     });
   };
 
+  var ctx = context.Context();
+
+
   var namePrefix = 'Test JS client/server ipc ' + options.testName + ' - ';
 
-  test(namePrefix + 'cache.set("foo", "bar") -> cache.get("foo")',
+ test(namePrefix + 'cache.set("foo", "bar") -> cache.get("foo")',
     function(t) {
     setup(t, function(cache, res) {
-      if (ctx) {
-        cache.set(ctx, 'foo', 'bar',
-          onSet.bind(null, t, cache, res, 'foo', 'bar'));
-      } else {
-        cache.set('foo', 'bar',
-          onSet.bind(null, t, cache, res, 'foo', 'bar'));
-      }
+      cache.set(ctx, 'foo', 'bar',
+        onSet.bind(null, t, cache, res, 'foo', 'bar'));
     });
   });
 
   test(namePrefix + 'cache.set("myObject", object, callback)', function(t) {
     setup(t, function(cache, res) {
+      // TODO(bprosnitz) Remove the type here.
+      // This is temporary because we currently guess map[any]any
+      // which is illegal.
       var expected = new Map([['a', 'foo'], ['b', 2]]);
-      if (ctx) {
-        cache.set(ctx, 'myObject', expected,
-                  onSet.bind(null, t, cache, res, 'myObject', expected));
-      } else {
-        cache.set('myObject', expected,
-                  onSet.bind(null, t, cache, res, 'myObject', expected));
-      }
+      var mapType = {
+        kind: vom.Kind.MAP,
+        key: vom.Types.STRING,
+        elem: vom.Types.ANY
+      };
+      Object.defineProperty(expected, '_type', {
+        value: mapType
+      });
+      cache.set(ctx, 'myObject', expected,
+        onSet.bind(null, t, cache, res, 'myObject', expected));
     });
   });
 
@@ -141,14 +191,13 @@ function run(options) {
     setup(t, function(cache, res) {
       var onGet = function(err, result) {
         t.ok(err, 'should error');
-        t.deepEqual(err.idAction, veyron.errors.IdActions.Unknown);
+        // TODO(bprosnitz) Fix this when we update to the new verror.
+        //t.deepEqual(err.idAction, veyron.errors.IdActions.Unknown);
+        t.equals(err.idAction.action, 0);
+        t.equals(err.idAction.id, 'veyron.io/veyron/veyron2/verror.Unknown');
         res.end(t);
       };
-      if (ctx) {
-        cache.get(ctx, 'bad-key', onGet);
-      } else {
-        cache.get('bad-key', onGet);
-      }
+      cache.get(ctx, 'bad-key', onGet);
     });
   });
 
@@ -162,50 +211,49 @@ function run(options) {
   });
 
   test(namePrefix + 'cache.multiGet()', function(t) {
-    // `cache.mutliGet()` returns an object that has a "stream" attribute.
-    // The way the streaming interface is implmented for cache.mutliGet()
-    // is that you use stream.write(key) to get the value of a key. The value
-    // is emitted on the stream's data event. In this test there are a few
-    //  steps to set this up:
-    //
-    // * Prime the cache by setting a bunch of key/values
-    // * Add a listener or create a stream reader to recieve the values
-    // * Assert the values are correct
-    // * End the stream.
+      // `cache.multiGet()` returns an object that has a "stream" attribute.
+      // The way the streaming interface is implmented for cache.mutliGet()
+      // is that you use stream.write(key) to get the value of a key. The value
+      // is emitted on the stream's data event. In this test there are a few
+      //  steps to set this up:
+      //
+      // * Prime the cache by setting a bunch of key/values
+      // * Add a listener or create a stream reader to recieve the values
+      // * Assert the values are correct
+      // * End the stream.
     setup(t, function(cache, res){
+
       // Build a map of items
       var items = {};
-      for (var i = 0; i < 10; ++i) {
+      var numItems = 3;
+      multiGetTestRunCount++;
+      for (var i = 0; i < numItems; ++i) {
         items[i] = {
           key: i,
-          value: 'random value: ' + Math.random()
+          value: 'value: ' + (i + multiGetTestRunCount * 1000)
         };
       }
 
       // Add them to the cache
       var jobs = Object.keys(items).map(function(key) {
-        if (ctx) {
-          return cache.set(ctx, key, JSON.stringify(items[key]));
-        } else {
-          return cache.set(key, JSON.stringify(items[key]));
-        }
+        return cache.set(ctx, key, JSON.stringify(items[key]));
       });
 
       Promise
       .all(jobs)
       .then(function() {
-        var promise;
-        if (ctx) {
-          promise = cache.multiGet(ctx);
-        } else {
-          promise = cache.multiGet();
-        }
+        var promise = cache.multiGet(ctx);
         var stream = promise.stream;
         var writes = 0;
         var reads = 0;
 
         // Error handling boilerplate
-        promise.catch(error);
+        promise.then(function(numReceived) {
+          t.equal(numReceived, numItems, 'received correct number of items');
+          t.equal(reads, numItems, 'had correct number of reads');
+          t.equal(writes, numItems, 'has correct number of writes');
+          res.end(t);
+        }).catch(error);
         stream.on('error', error);
 
         // "data" event emits cached values
@@ -220,10 +268,14 @@ function run(options) {
           reads++;
         });
 
+        /*
+        //TODO(bprosnitz) We get a double end with the stream end.
+        //Fix this with Prova.
         stream.on('end', function() {
           t.equal(writes, reads);
           res.end(t);
         });
+        */
 
         Object.keys(items).forEach(function(key) {
           stream.write(key);
@@ -251,11 +303,7 @@ function run(options) {
     };
 
     // should be void result as defined in the optArg above
-    t.deepEqual(result, []);
-    if (ctx) {
-      cache.get(ctx, key, onGet.bind(null, value));
-    } else {
-      cache.get(key, onGet.bind(null, value));
-    }
+    t.deepEqual(result, null);
+    cache.get(ctx, key, onGet.bind(null, value));
   }
 }
