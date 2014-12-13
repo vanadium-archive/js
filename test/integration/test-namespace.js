@@ -187,9 +187,7 @@ test('Test resolving to mounttable - ' +
     return namespace.resolveToMounttable(PREFIX + 'cottage');
   }).then(function validate(mounttableNames) {
     assert.equals(mounttableNames.length, 1);
-    // The mounttable name we get from NaCl wspr has network set to "ws" instead
-    // of "tcp", so we must change it back to tcp.
-    var mounttableName = mounttableNames[0].replace('@ws@', '@tcp@');
+    var mounttableName = mounttableNames[0];
     assert.ok(mounttableName.indexOf(namespaceRoot) === 0);
     end();
   }).catch(end);
