@@ -4,6 +4,7 @@ var vom = require('vom');
 var Types = vom.Types;
 var Type = vom.Type;
 var Kind = vom.Kind;
+var BigInt = vom.BigInt;
 var Complex = vom.Complex;
 var Builtins = vom.Builtins;
 var Registry = vom.Registry;
@@ -247,9 +248,9 @@ var consts = {
   Cbool: new (Registry.lookupOrCreateConstructor(_type1))(true),
   Cbyte: new (Registry.lookupOrCreateConstructor(_type6))(1),
   Cint32: new (Registry.lookupOrCreateConstructor(_type5))(2),
-  Cint64: new (Registry.lookupOrCreateConstructor(_type10))(3),
+  Cint64: new (Registry.lookupOrCreateConstructor(_type10))(new BigInt(1, new Uint8Array([0x3]))),
   Cuint32: new (Registry.lookupOrCreateConstructor(_type2))(4),
-  Cuint64: new (Registry.lookupOrCreateConstructor(_type8))(5),
+  Cuint64: new (Registry.lookupOrCreateConstructor(_type8))(new BigInt(1, new Uint8Array([0x5]))),
   Cfloat32: new (Registry.lookupOrCreateConstructor(_type4))(6),
   Cfloat64: new (Registry.lookupOrCreateConstructor(_type11))(7),
   CNamedBool: new (Registry.lookupOrCreateConstructor(_typeNamedBool))(true),
@@ -264,8 +265,8 @@ var consts = {
   True: new (Registry.lookupOrCreateConstructor(_type1))(true),
   Foo: new (Registry.lookupOrCreateConstructor(_type3))("foo"),
   Five: new (Registry.lookupOrCreateConstructor(_type5))(5),
-  Six: new (Registry.lookupOrCreateConstructor(_type8))(6),
-  SixSquared: new (Registry.lookupOrCreateConstructor(_type8))(36),
+  Six: new (Registry.lookupOrCreateConstructor(_type8))(new BigInt(1, new Uint8Array([0x6]))),
+  SixSquared: new (Registry.lookupOrCreateConstructor(_type8))(new BigInt(1, new Uint8Array([0x24]))),
   FiveSquared: new (Registry.lookupOrCreateConstructor(_type5))(25),
 };
 
@@ -297,7 +298,7 @@ package: 'veyron.io/veyron/veyron2/vdl/testdata/base',
     numOutArgs: 1,
     inputStreaming: false,
     outputStreaming: true,
-    tags: [new (Registry.lookupOrCreateConstructor(_type3))("tag"), new (Registry.lookupOrCreateConstructor(_type8))(6), ]
+    tags: [new (Registry.lookupOrCreateConstructor(_type3))("tag"), new (Registry.lookupOrCreateConstructor(_type8))(new BigInt(1, new Uint8Array([0x6]))), ]
 },
     MethodA4: {
     numInArgs: 1,
@@ -335,7 +336,7 @@ package: 'veyron.io/veyron/veyron2/vdl/testdata/base',
     numOutArgs: 1,
     inputStreaming: false,
     outputStreaming: true,
-    tags: [new (Registry.lookupOrCreateConstructor(_type3))("tag"), new (Registry.lookupOrCreateConstructor(_type8))(6), ]
+    tags: [new (Registry.lookupOrCreateConstructor(_type3))("tag"), new (Registry.lookupOrCreateConstructor(_type8))(new BigInt(1, new Uint8Array([0x6]))), ]
 },
     MethodA4: {
     numInArgs: 1,
@@ -465,7 +466,7 @@ var _ServiceASignature = {
       doc: '',
       type: _typeScalars
     },
-    tags: [new (Registry.lookupOrCreateConstructor(_type3))("tag"), new (Registry.lookupOrCreateConstructor(_type8))(6), ]
+    tags: [new (Registry.lookupOrCreateConstructor(_type3))("tag"), new (Registry.lookupOrCreateConstructor(_type8))(new BigInt(1, new Uint8Array([0x6]))), ]
   },
     
       
@@ -640,7 +641,7 @@ var _ServiceBSignature = {
       doc: '',
       type: _typeScalars
     },
-    tags: [new (Registry.lookupOrCreateConstructor(_type3))("tag"), new (Registry.lookupOrCreateConstructor(_type8))(6), ]
+    tags: [new (Registry.lookupOrCreateConstructor(_type3))("tag"), new (Registry.lookupOrCreateConstructor(_type8))(new BigInt(1, new Uint8Array([0x6]))), ]
   },
     
       

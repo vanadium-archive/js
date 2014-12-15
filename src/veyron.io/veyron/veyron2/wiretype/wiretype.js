@@ -4,6 +4,7 @@ var vom = require('vom');
 var Types = vom.Types;
 var Type = vom.Type;
 var Kind = vom.Kind;
+var BigInt = vom.BigInt;
 var Complex = vom.Complex;
 var Builtins = vom.Builtins;
 var Registry = vom.Registry;

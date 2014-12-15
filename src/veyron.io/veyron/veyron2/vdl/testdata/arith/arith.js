@@ -4,6 +4,7 @@ var vom = require('vom');
 var Types = vom.Types;
 var Type = vom.Type;
 var Kind = vom.Kind;
+var BigInt = vom.BigInt;
 var Complex = vom.Complex;
 var Builtins = vom.Builtins;
 var Registry = vom.Registry;
@@ -75,9 +76,9 @@ var consts = {
   No: new (Registry.lookupOrCreateConstructor(_type8))(false),
   Hello: new (Registry.lookupOrCreateConstructor(_type4))("hello"),
   Int32Const: new (Registry.lookupOrCreateConstructor(_type9))(123),
-  Int64Const: new (Registry.lookupOrCreateConstructor(_type10))(128),
+  Int64Const: new (Registry.lookupOrCreateConstructor(_type10))(new BigInt(1, new Uint8Array([0x80]))),
   FloatConst: new (Registry.lookupOrCreateConstructor(_type1))(2),
-  Mask: new (Registry.lookupOrCreateConstructor(_type11))(256),
+  Mask: new (Registry.lookupOrCreateConstructor(_type11))(new BigInt(1, new Uint8Array([0x1, 0x0]))),
 };
 
 
@@ -163,7 +164,7 @@ package: 'veyron.io/veyron/veyron2/vdl/testdata/arith',
     numOutArgs: 0,
     inputStreaming: false,
     outputStreaming: false,
-    tags: [new (Registry.lookupOrCreateConstructor(_type4))("foo"), new (Registry.lookupOrCreateConstructor(_type4))("barz"), new (Registry.lookupOrCreateConstructor(_type4))("hello"), new (Registry.lookupOrCreateConstructor(_type9))(129), new (Registry.lookupOrCreateConstructor(_type11))(36), ]
+    tags: [new (Registry.lookupOrCreateConstructor(_type4))("foo"), new (Registry.lookupOrCreateConstructor(_type4))("barz"), new (Registry.lookupOrCreateConstructor(_type4))("hello"), new (Registry.lookupOrCreateConstructor(_type9))(129), new (Registry.lookupOrCreateConstructor(_type11))(new BigInt(1, new Uint8Array([0x24]))), ]
 },
     Count: {
     numInArgs: 1,
@@ -236,7 +237,7 @@ package: 'veyron.io/veyron/veyron2/vdl/testdata/arith',
     numOutArgs: 0,
     inputStreaming: false,
     outputStreaming: false,
-    tags: [new (Registry.lookupOrCreateConstructor(_type4))("foo"), new (Registry.lookupOrCreateConstructor(_type4))("barz"), new (Registry.lookupOrCreateConstructor(_type4))("hello"), new (Registry.lookupOrCreateConstructor(_type9))(129), new (Registry.lookupOrCreateConstructor(_type11))(36), ]
+    tags: [new (Registry.lookupOrCreateConstructor(_type4))("foo"), new (Registry.lookupOrCreateConstructor(_type4))("barz"), new (Registry.lookupOrCreateConstructor(_type4))("hello"), new (Registry.lookupOrCreateConstructor(_type9))(129), new (Registry.lookupOrCreateConstructor(_type11))(new BigInt(1, new Uint8Array([0x24]))), ]
 },
     Count: {
     numInArgs: 1,
@@ -670,7 +671,7 @@ var _ArithSignature = {
     ],
     inStream: null,
     outStream: null,
-    tags: [new (Registry.lookupOrCreateConstructor(_type4))("foo"), new (Registry.lookupOrCreateConstructor(_type4))("barz"), new (Registry.lookupOrCreateConstructor(_type4))("hello"), new (Registry.lookupOrCreateConstructor(_type9))(129), new (Registry.lookupOrCreateConstructor(_type11))(36), ]
+    tags: [new (Registry.lookupOrCreateConstructor(_type4))("foo"), new (Registry.lookupOrCreateConstructor(_type4))("barz"), new (Registry.lookupOrCreateConstructor(_type4))("hello"), new (Registry.lookupOrCreateConstructor(_type9))(129), new (Registry.lookupOrCreateConstructor(_type11))(new BigInt(1, new Uint8Array([0x24]))), ]
   },
     
       
@@ -984,7 +985,7 @@ var _CalculatorSignature = {
     ],
     inStream: null,
     outStream: null,
-    tags: [new (Registry.lookupOrCreateConstructor(_type4))("foo"), new (Registry.lookupOrCreateConstructor(_type4))("barz"), new (Registry.lookupOrCreateConstructor(_type4))("hello"), new (Registry.lookupOrCreateConstructor(_type9))(129), new (Registry.lookupOrCreateConstructor(_type11))(36), ]
+    tags: [new (Registry.lookupOrCreateConstructor(_type4))("foo"), new (Registry.lookupOrCreateConstructor(_type4))("barz"), new (Registry.lookupOrCreateConstructor(_type4))("hello"), new (Registry.lookupOrCreateConstructor(_type9))(129), new (Registry.lookupOrCreateConstructor(_type11))(new BigInt(1, new Uint8Array([0x24]))), ]
   },
     
       

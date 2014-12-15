@@ -4,6 +4,7 @@ var vom = require('vom');
 var Types = vom.Types;
 var Type = vom.Type;
 var Kind = vom.Kind;
+var BigInt = vom.BigInt;
 var Complex = vom.Complex;
 var Builtins = vom.Builtins;
 var Registry = vom.Registry;
@@ -124,17 +125,17 @@ _typeMethodSignature.kind = Kind.STRUCT;
 _typeMethodSignature.name = "veyron.io/veyron/veyron2/ipc.MethodSignature";
 _typeMethodSignature.fields = [{name: "InArgs", type: _type18}, {name: "OutArgs", type: _type18}, {name: "InStream", type: _typeTypeID}, {name: "OutStream", type: _typeTypeID}];
 _typeRequest.kind = Kind.STRUCT;
-_typeRequest.name = "veyron.io/veyron/veyron2/ipc.Request";
-_typeRequest.fields = [{name: "Suffix", type: _type1}, {name: "Method", type: _type1}, {name: "NumPosArgs", type: _type2}, {name: "EndStreamArgs", type: _type3}, {name: "Timeout", type: _type4}, {name: "GrantedBlessings", type: _typeWireBlessings}, {name: "NumDischarges", type: _type2}, {name: "TraceRequest", type: _typeRequest}];
-_typeRequest.kind = Kind.STRUCT;
 _typeRequest.name = "veyron.io/veyron/veyron2/vtrace.Request";
 _typeRequest.fields = [{name: "SpanID", type: _typeID}, {name: "TraceID", type: _typeID}, {name: "Method", type: _typeTraceMethod}];
-_typeResponse.kind = Kind.STRUCT;
-_typeResponse.name = "veyron.io/veyron/veyron2/vtrace.Response";
-_typeResponse.fields = [{name: "Method", type: _typeTraceMethod}, {name: "Trace", type: _typeTraceRecord}];
+_typeRequest.kind = Kind.STRUCT;
+_typeRequest.name = "veyron.io/veyron/veyron2/ipc.Request";
+_typeRequest.fields = [{name: "Suffix", type: _type1}, {name: "Method", type: _type1}, {name: "NumPosArgs", type: _type2}, {name: "EndStreamArgs", type: _type3}, {name: "Timeout", type: _type4}, {name: "GrantedBlessings", type: _typeWireBlessings}, {name: "NumDischarges", type: _type2}, {name: "TraceRequest", type: _typeRequest}];
 _typeResponse.kind = Kind.STRUCT;
 _typeResponse.name = "veyron.io/veyron/veyron2/ipc.Response";
 _typeResponse.fields = [{name: "Error", type: _type10}, {name: "EndStreamResults", type: _type3}, {name: "NumPosResults", type: _type2}, {name: "TraceResponse", type: _typeResponse}];
+_typeResponse.kind = Kind.STRUCT;
+_typeResponse.name = "veyron.io/veyron/veyron2/vtrace.Response";
+_typeResponse.fields = [{name: "Method", type: _typeTraceMethod}, {name: "Trace", type: _typeTraceRecord}];
 _typeServiceSignature.kind = Kind.STRUCT;
 _typeServiceSignature.name = "veyron.io/veyron/veyron2/ipc.ServiceSignature";
 _typeServiceSignature.fields = [{name: "TypeDefs", type: _type13}, {name: "Methods", type: _type17}];
@@ -180,7 +181,7 @@ types.error = Registry.lookupOrCreateConstructor(_typeerror, "error");
 
 
 var consts = { 
-  NoTimeout: new (Registry.lookupOrCreateConstructor(_type4))(9223372036854775807),
+  NoTimeout: new (Registry.lookupOrCreateConstructor(_type4))(new BigInt(1, new Uint8Array([0x7f, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff]))),
   GlobMethod: new (Registry.lookupOrCreateConstructor(_type1))("__Glob"),
   ReservedSignature: new (Registry.lookupOrCreateConstructor(_type1))("__Signature"),
   ReservedMethodSignature: new (Registry.lookupOrCreateConstructor(_type1))("__MethodSignature"),

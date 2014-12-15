@@ -82,7 +82,7 @@ test('Invoker and signature for vdl-generated base.js',
                             val: 'tag'
                         },
                         {
-                            val: 6
+                            val: new vom.BigInt(1, new Uint8Array([0x6]))
                         }
                     ]
                 },
