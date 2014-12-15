@@ -8,10 +8,14 @@ import (
 
 	"veyron.io/veyron/veyron2/ipc"
 	"veyron.io/veyron/veyron2/vdl/vdlutil"
-	"veyron.io/veyron/veyron2/verror"
+	verror "veyron.io/veyron/veyron2/verror2"
 
 	"test_service"
 )
+
+const pkgPath = "veyron.js/test_service/test_serviced"
+
+var errIndexOutOfBounds = verror.Register(pkgPath+".errIndexOutOfBounds", verror.NoRetry, "{1:}{2:} Page index out of bounds{:_}")
 
 var typedNil []int
 
@@ -37,12 +41,12 @@ func (c *cacheImpl) Set(_ ipc.ServerContext, key string, value vdlutil.Any) erro
 
 // Get returns the value for a key.  If the key is not in the map, it returns
 // an error.
-func (c *cacheImpl) Get(_ ipc.ServerContext, key string) (vdlutil.Any, error) {
+func (c *cacheImpl) Get(ctx ipc.ServerContext, key string) (vdlutil.Any, error) {
 	if value, ok := c.cache[key]; ok {
 		return value, nil
 	}
 
-	return typedNil, verror.NoExistf("key not found: %v", key)
+	return typedNil, verror.Make(verror.NoExist, ctx, key)
 }
 
 // getWithTypeCheck gets the key and tests if its type matches the given time, erroring if it does
@@ -137,17 +141,17 @@ func (c *cacheImpl) KeyValuePairs(ipc.ServerContext) ([]test_service.KeyValuePai
 // MostRecentSet returns the key and value and the timestamp for the most
 // recent set operation
 // TODO(bprosnitz) support type types and change time to native time type
-func (c *cacheImpl) MostRecentSet(ipc.ServerContext) (test_service.KeyValuePair, int64, error) {
+func (c *cacheImpl) MostRecentSet(ctx ipc.ServerContext) (test_service.KeyValuePair, int64, error) {
 	var err error
 	if c.lastUpdateTime.IsZero() {
-		err = verror.NoExistf("no values in the cache so cannot return most recent.")
+		err = verror.Make(verror.NoExist, ctx)
 	}
 	return c.mostRecent, c.lastUpdateTime.Unix(), err
 }
 
 // KeyPage indexes into the keys (in alphanumerically sorted order) and
 // returns the indexth page of 10 keys.
-func (c *cacheImpl) KeyPage(_ ipc.ServerContext, index int64) ([10]string, error) {
+func (c *cacheImpl) KeyPage(ctx ipc.ServerContext, index int64) ([10]string, error) {
 	results := [10]string{}
 
 	keys := sort.StringSlice{}
@@ -158,7 +162,7 @@ func (c *cacheImpl) KeyPage(_ ipc.ServerContext, index int64) ([10]string, error
 
 	lowIndex := int(index) * 10
 	if index < 0 || len(keys) <= lowIndex {
-		return results, verror.BadArgf("Page index out of bounds: %d", index)
+		return results, verror.Make(errIndexOutOfBounds, ctx, index)
 	}
 	highIndex := lowIndex + 9
 	if highIndex > len(keys)-1 {
@@ -185,7 +189,7 @@ func (c *cacheImpl) MultiGet(ctx test_service.CacheMultiGetContext) error {
 		key := ctx.RecvStream().Value()
 		value, ok := c.cache[key]
 		if !ok {
-			return fmt.Errorf("key not found: %v", key)
+			return verror.Make(verror.NoExist, ctx, key)
 		}
 		ctx.SendStream().Send(value)
 	}

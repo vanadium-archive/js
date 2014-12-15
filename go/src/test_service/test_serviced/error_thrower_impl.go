@@ -4,7 +4,7 @@ import (
 	"errors"
 
 	"veyron.io/veyron/veyron2/ipc"
-	"veyron.io/veyron/veyron2/verror"
+	verror "veyron.io/veyron/veyron2/verror2"
 
 	"test_service"
 )
@@ -16,47 +16,46 @@ func NewErrorThrower() test_service.ErrorThrowerServerMethods {
 
 type errorThrowerImpl struct{}
 
-func (e *errorThrowerImpl) ThrowAborted(_ ipc.ServerContext) error {
-	return verror.Abortedf("Aborted!")
+func (e *errorThrowerImpl) ThrowAborted(ctx ipc.ServerContext) error {
+	return verror.Make(verror.Aborted, ctx)
 }
 
-func (e *errorThrowerImpl) ThrowBadArg(_ ipc.ServerContext) error {
-	return verror.BadArgf("BadArg!")
+func (e *errorThrowerImpl) ThrowBadArg(ctx ipc.ServerContext) error {
+	return verror.Make(verror.BadArg, ctx)
 }
 
-func (e *errorThrowerImpl) ThrowBadProtocol(_ ipc.ServerContext) error {
-	return verror.BadProtocolf("BadProtocol!")
+func (e *errorThrowerImpl) ThrowBadProtocol(ctx ipc.ServerContext) error {
+	return verror.Make(verror.BadProtocol, ctx)
 }
 
-func (e *errorThrowerImpl) ThrowInternal(_ ipc.ServerContext) error {
-	return verror.Internalf("Internal!")
+func (e *errorThrowerImpl) ThrowInternal(ctx ipc.ServerContext) error {
+	return verror.Make(verror.Internal, ctx)
 }
 
-func (e *errorThrowerImpl) ThrowNoAccess(_ ipc.ServerContext) error {
-	return verror.NoAccessf("NoAccess!")
+func (e *errorThrowerImpl) ThrowNoAccess(ctx ipc.ServerContext) error {
+	return verror.Make(verror.NoAccess, ctx)
 }
 
-func (e *errorThrowerImpl) ThrowNoExist(_ ipc.ServerContext) error {
-	return verror.NoExistf("NoExist!")
+func (e *errorThrowerImpl) ThrowNoExist(ctx ipc.ServerContext) error {
+	return verror.Make(verror.NoExist, ctx)
 }
 
-func (e *errorThrowerImpl) ThrowNoExistOrNoAccess(_ ipc.ServerContext) error {
-	return verror.NoExistOrNoAccessf("NoExistOrNoAccess!")
+func (e *errorThrowerImpl) ThrowNoExistOrNoAccess(ctx ipc.ServerContext) error {
+	return verror.Make(verror.NoExistOrNoAccess, ctx)
 }
 
-func (e *errorThrowerImpl) ThrowUnknown(_ ipc.ServerContext) error {
-	return verror.Unknownf("Unknown!")
+func (e *errorThrowerImpl) ThrowUnknown(ctx ipc.ServerContext) error {
+	return verror.Make(verror.Unknown, ctx)
 }
 
-func (e *errorThrowerImpl) ThrowGoError(_ ipc.ServerContext) error {
+func (e *errorThrowerImpl) ThrowGoError(ctx ipc.ServerContext) error {
 	return errors.New("GoError!")
 }
 
-func (e *errorThrowerImpl) ThrowCustomStandardError(_ ipc.ServerContext) error {
-	return verror.Standard{
-		ID:  "MyCustomError",
-		Msg: "CustomStandard!",
-	}
+var customError = verror.Register(pkgPath+".customError", verror.NoRetry, "{1:}{2:} CustomStandard!{:_}")
+
+func (e *errorThrowerImpl) ThrowCustomStandardError(ctx ipc.ServerContext) error {
+	return verror.Make(customError, ctx)
 }
 
 func (e *errorThrowerImpl) ListAllBuiltInErrorIDs(_ ipc.ServerContext) ([]string, error) {

@@ -11,7 +11,7 @@ test('Test Go service returning Aborted error - ' +
 
     errorThrower.throwAborted(ctx, function(err) {
       assert.ok(err, 'should error');
-      assert.ok(err.message.indexOf('Aborted!') !== -1);
+      assert.ok(err.message.indexOf('Aborted') !== -1);
       assert.ok(err instanceof verror.AbortedError, 'should be AbortedError');
       end(assert);
     });
@@ -26,7 +26,7 @@ test('Test Go service returning BadArg error - ' +
 
     errorThrower.throwBadArg(ctx, function(err) {
       assert.ok(err, 'should error');
-      assert.ok(err.message.indexOf('BadArg!') !== -1);
+      assert.ok(err.message.indexOf('Bad argument') !== -1);
       assert.ok(err instanceof verror.BadArgError, 'should be BadArgError');
       end(assert);
     });
@@ -41,7 +41,7 @@ test('Test Go service returning BadProtocol error - ' +
 
     errorThrower.throwBadProtocol(ctx, function(err) {
       assert.ok(err, 'should error');
-      assert.ok(err.message.indexOf('BadProtocol!') !== -1);
+      assert.ok(err.message.indexOf('Bad protocol') !== -1);
       assert.ok(err instanceof verror.BadProtocolError,
         'should be BadProtocolError');
       end(assert);
@@ -57,7 +57,7 @@ test('Test Go service returning Internal error - ' +
 
     errorThrower.throwInternal(ctx, function(err) {
       assert.ok(err, 'should error');
-      assert.ok(err.message.indexOf('Internal!') !== -1);
+      assert.ok(err.message.indexOf('Internal error') !== -1);
       assert.ok(err instanceof verror.InternalError,
         'should be InternalError');
       end(assert);
@@ -73,7 +73,7 @@ test('Test Go service returning NoAccess error - ' +
 
     errorThrower.throwNoAccess(ctx, function(err) {
       assert.ok(err, 'should error');
-      assert.ok(err.message.indexOf('NoAccess!') !== -1);
+      assert.ok(err.message.indexOf('Access denied') !== -1);
       assert.ok(err instanceof verror.NoAccessError,
         'should be NoAccessError');
       end(assert);
@@ -89,7 +89,7 @@ test('Test Go service returning NoExist error - ' +
 
     errorThrower.throwNoExist(ctx, function(err) {
       assert.ok(err, 'should error');
-      assert.ok(err.message.indexOf('NoExist!') !== -1);
+      assert.ok(err.message.indexOf('Does not exist') !== -1);
       assert.ok(err instanceof verror.NoExistError, 'should be NoExistError');
       end(assert);
     });
@@ -104,7 +104,7 @@ test('Test Go service returning NoExistOrNoAccess error - ' +
 
     errorThrower.throwNoExistOrNoAccess(ctx, function(err) {
       assert.ok(err, 'should error');
-      assert.ok(err.message.indexOf('NoExistOrNoAccess!') !== -1);
+      assert.ok(err.message.indexOf('Does not exist or access denied') !== -1);
       assert.ok(err instanceof verror.NoExistOrNoAccessError,
         'should be NoExistOrNoAccess');
       end(assert);
@@ -120,7 +120,7 @@ test('Test Go service returning Unknown error - ' +
 
     errorThrower.throwUnknown(ctx, function(err) {
       assert.ok(err, 'should error');
-      assert.ok(err.message.indexOf('Unknown!') !== -1);
+      assert.ok(err.message.indexOf('Error') !== -1);
       assert.ok(err instanceof verror.VeyronError, 'should be VeyronError');
       end(assert);
     });
