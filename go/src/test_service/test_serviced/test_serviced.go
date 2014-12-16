@@ -59,7 +59,7 @@ func StartServer(r veyron2.Runtime) (ipc.Server, naming.Endpoint, error) {
 
 	// Create an endpoint and begin listening.
 	spec := ipc.ListenSpec{Addrs: ipc.ListenAddrs{{"ws", "127.0.0.1:0"}}}
-	endpoint, err := s.Listen(spec)
+	endpoints, err := s.Listen(spec)
 	if err != nil {
 		return nil, nil, fmt.Errorf("error listening to service: %v", err)
 	}
@@ -70,5 +70,5 @@ func StartServer(r veyron2.Runtime) (ipc.Server, naming.Endpoint, error) {
 		return nil, nil, fmt.Errorf("error publishing service '%s': %v", err)
 	}
 
-	return s, endpoint, nil
+	return s, endpoints[0], nil
 }
