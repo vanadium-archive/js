@@ -3,6 +3,7 @@ var base = require(
   '../../src/veyron.io/veyron/veyron2/vdl/testdata/base/base');
 var Kind = require('vom').Kind;
 var Types = require('vom').Types;
+var BigInt = require('vom').BigInt;
 
 test('named primitive types', function(assert) {
   var res = new base.types.NamedBool(false);
@@ -38,7 +39,7 @@ test('named primitive types', function(assert) {
     kind: Kind.UINT64,
     name: 'veyron.io/veyron/veyron2/vdl/testdata/base.NamedUint64',
   });
-  assert.equal(res.val, 1);
+  assert.deepEqual(res.val, BigInt.fromNativeNumber(1));
 
   res = new base.types.NamedInt16(1);
   assert.deepEqual(res._type, {
@@ -59,7 +60,7 @@ test('named primitive types', function(assert) {
     kind: Kind.INT64,
     name: 'veyron.io/veyron/veyron2/vdl/testdata/base.NamedInt64',
   });
-  assert.equal(res.val, 1);
+  assert.deepEqual(res.val, BigInt.fromNativeNumber(1));
 
   res = new base.types.NamedFloat32(1);
   assert.deepEqual(res._type, {
@@ -75,19 +76,19 @@ test('named primitive types', function(assert) {
   });
   assert.equal(res.val, 1);
 
-  res = new base.types.NamedComplex64(null);
+  res = new base.types.NamedComplex64({});
   assert.deepEqual(res._type, {
     kind: Kind.COMPLEX64,
     name: 'veyron.io/veyron/veyron2/vdl/testdata/base.NamedComplex64',
   });
-  assert.equal(res.val, null);
+  assert.deepEqual(res.val, { real: 0, imag: 0 });
 
-  res = new base.types.NamedComplex128(null);
+  res = new base.types.NamedComplex128({});
   assert.deepEqual(res._type, {
     kind: Kind.COMPLEX128,
     name: 'veyron.io/veyron/veyron2/vdl/testdata/base.NamedComplex128',
   });
-  assert.equal(res.val, null);
+  assert.deepEqual(res.val, { real: 0, imag: 0 });
 
   res = new base.types.NamedString('foo');
   assert.deepEqual(res._type, {
@@ -118,10 +119,8 @@ test('named composite types', function(assert) {
   assert.end();
 });
 
-// TODO(alexfandrianto): Don't forget about this! This wasn't on Jenkins.
-// TODO(bprosnitz): How do we want to handle structs with unset fields?
-// The current vom behavior in createConstructor is to leave them as undefined.
-test.skip('struct constructor', function(assert) {
+// The vom behavior in createConstructor is to set the fields to their 0-value.
+test('struct constructor', function(assert) {
   var res = new base.types.NamedStruct();
   // Make sure the default values are set.
   assert.equal(res.a, false);
