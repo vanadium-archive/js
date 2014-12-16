@@ -16,11 +16,10 @@ endef
 
 define COMPILE-NACL-PLUGIN
 	mkdir -p $(dir $2)
-# TODO(bprosnitz) Remove the novdl flag once it works on non-host architectures
 	GOARCH=amd64p32 \
 	GOOS=nacl \
 	GOROOT= \
-	veyron xgo --target_go=$(VEYRON_ROOT)/environment/go_ppapi/bin/go -novdl amd64p32-nacl build -o $2 $1
+	veyron xgo --target_go=$(VEYRON_ROOT)/environment/go_ppapi/bin/go amd64p32-nacl build -o $2 $1
 endef
 
 all: veyron.crx
