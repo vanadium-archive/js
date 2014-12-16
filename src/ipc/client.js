@@ -239,7 +239,7 @@ Client.prototype.bindTo = function(ctx, name, optServiceSignature, cb) {
           throw new Error('Client RPC call  ' + methodSig.name +'(' +
             Array.prototype.slice.call(arguments, 1) + ') had an incorrect ' +
             'number of arguments. Expected format: ' + methodSig.name +
-            '(' + expectedArgs + ')');
+            '(context,' + expectedArgs + ')');
         }
 
 	  var args = Array.prototype.slice.call(arguments, 1, exclusiveLastIndex);
