@@ -50,6 +50,10 @@ function init(config, cb) {
     wspr: config.wspr
   };
 
+  if (config.logLevel) {
+    vlog.level = config.logLevel;
+  }
+
   var def = new Deferred(cb);
 
   // If the user has set config.authenticate to true, get an authenticated

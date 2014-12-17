@@ -118,6 +118,38 @@ test('service.method() - promise success', function(assert) {
   .catch(assert.end);
 });
 
+test('service.method() - no context - callback', function(assert) {
+  var client = new Client(mockProxy);
+
+  client.bindTo('service-name', mockSignature, function(err, service) {
+    assert.error(err);
+
+    service.tripleArgMethod(3, 'X', null, function(err, result) {
+      assert.error(err);
+      assert.equal(result.method, 'TripleArgMethod');
+      assert.deepEqual(result.inArgs, [ 3, 'X', null ]);
+      assert.end();
+    });
+  });
+});
+
+test('service.method() - no context - promise', function(assert) {
+  var client = new Client(mockProxy);
+
+  client.bindTo('service-name', mockSignature, function(err, service) {
+    assert.error(err);
+
+    service
+    .singleArgMethod(1)
+    .then(function(result) {
+      assert.equal(result.method, 'SingleArgMethod');
+      assert.deepEqual(result.inArgs, [ 1 ]);
+      assert.end();
+    })
+    .catch(assert.end);
+  });
+});
+
 test('service.method() - callback error', function(assert) {
   var client = new Client(mockProxy);
   var ctx = new context.Context();
@@ -125,22 +157,15 @@ test('service.method() - callback error', function(assert) {
   client.bindTo(ctx, 'service-name', mockSignature, onservice);
 
   function onservice(err, service) {
-    assert.error(err);
+    assert.error(err, 'should not error');
 
-    try {
-      service.tripleArgMethod(ctx, 3, 'X', onmethod);
-    } catch (err) {
-      // expected
-      assert.end();
-      return;
-    }
-    // NOTE(bprosnitz) Is this the right behavior, or should callback be called?
-    assert.end(new Error('tripleArgMethod should throw an error with the ' +
-      'wrong number of arguments'));
+    service.tripleArgMethod(ctx, 3, 'X', onmethod);
   }
 
   function onmethod(err, result) {
-    assert.end(new Error('Callback should not have been called'));
+    assert.ok(err, 'should error');
+    assert.notOk(result, 'should not have results');
+    assert.end();
   }
 });
 
@@ -152,18 +177,16 @@ test('service.method() - promise error', function(assert) {
   .bindTo(ctx, 'service-name', mockSignature)
   .then(triggerError)
   .then(function(result) {
-    assert.fail('Unexpectedly got result from promise that threw: ' +
-      result);
-  })
-  .catch(function(err) {
-    assert.notOk(!err);
+    assert.fail('should not succeed');
+  }, function(err) {
+    assert.ok(err);
     assert.end();
-  });
+  })
+  .catch(assert.end);
 
   function triggerError(service) {
-    var promise = service.tripleArgMethod(ctx, 3, 'X');
-    assert.fail('Shouldn\'t get here - exception is thrown');
-    return promise;
+    // Calling with two args (after ctx)
+    return service.tripleArgMethod(ctx, 3, 'X');
   }
 });
 

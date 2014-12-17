@@ -12,7 +12,7 @@ var Blessings = require('../security/blessings');
 var Deferred = require('../lib/deferred');
 var SimpleHandler = require('../proxy/simple_handler');
 var context = require('./context');
-
+var vlog = require('../lib/vlog');
 
 module.exports = Runtime;
 
@@ -205,9 +205,11 @@ Runtime.prototype._getProxyConnection = function() {
 
   var ProxyConnection;
   if (this._wspr) {
+    vlog.info('Using WSPR at: %s', this._wspr);
     ProxyConnection = require('../proxy/websocket');
     this._proxyConnection = new ProxyConnection(this._wspr);
   } else {
+    vlog.info('Using the Veyron Extension\'s NaCl WSPR');
     ProxyConnection = require('../proxy/nacl');
     this._proxyConnection = new ProxyConnection();
   }

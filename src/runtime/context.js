@@ -27,6 +27,9 @@ module.exports = {
  * @return {Array} An array containing the arguments in order.
  */
 function optionalContext(args) {
+  // Coerce args into an array
+  args = Array.prototype.slice.call(args, 0);
+
   if (args[0] &&
       (args[0] instanceof Context ||
        // TODO(nlacasse,aghaseemi): Old versions of browserify (^4.2.3)  seem to
@@ -39,8 +42,8 @@ function optionalContext(args) {
     return args;
   }
 
-  args = Array.prototype.slice.call(args, 0);
   args.unshift(new Context());
+
   return args;
 }
 

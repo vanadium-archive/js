@@ -217,43 +217,49 @@ Client.prototype.bindTo = function(ctx, name, optServiceSignature, cb) {
     vLog.debug('Received signature for:', name, serviceSignature);
     var boundObject = {};
 
-    var bindMethod = function(methodSig) {
-      boundObject[vom.MiscUtil.uncapitalize(methodSig.name)] =
-        function(ctx /*, __other_args__*/) {
+    function bindMethod(methodSig) {
+      var method = vom.MiscUtil.uncapitalize(methodSig.name);
+
+      boundObject[method] = function(ctx /*, __other_args__*/) {
+        var args = context.optionalContext(arguments);
         var callback;
-        var exclusiveLastIndex = arguments.length;
-        // The + below is for the bound methodSig arg.
-        var expectedLength = methodSig.inArgs.length + 1;
-        if (typeof arguments[arguments.length - 1] === 'function') {
-          // Callback.
-          expectedLength++;
-          exclusiveLastIndex--;
-          callback = arguments[arguments.length - 1];
+
+        ctx = args.shift();
+
+        // Callback is the last function argument, pull it out of the args
+        if (typeof args[args.length - 1] === 'function') {
+          callback = args.pop();
         }
-        if (arguments.length !== expectedLength) {
-          // TODO(bprosnitz) In the callback case, should we pass the error
-          // to the callback?
+
+        if (args.length !== methodSig.inArgs.length) {
           var expectedArgs = methodSig.inArgs.map(function(arg) {
             return arg.name;
           });
-          throw new Error('Client RPC call  ' + methodSig.name +'(' +
-            Array.prototype.slice.call(arguments, 1) + ') had an incorrect ' +
-            'number of arguments. Expected format: ' + methodSig.name +
-            '(context,' + expectedArgs + ')');
+
+          // TODO(jasoncampbell): Create an constrcutor for this error so it
+          // can be created with less ceremony and checked in a
+          // programatic way:
+          //
+          //     service
+          //     .foo('bar')
+          //     .catch(ArgumentsArityError, function(err) {
+          //       console.error('invalid number of arguments')
+          //     })
+          //
+          var message = 'Client RPC call  ' + methodSig.name +
+            '(' + Array.prototype.slice.call(arguments, 1) + ') ' +
+            'had an incorrect number of arguments. '+
+            'Expected format: ' + methodSig.name +
+            '(' + expectedArgs + ')';
+          var err = new Error(message);
+
+          if (callback) {
+            return callback(err);
+          } else {
+            return Promise.reject(err);
+          }
         }
 
-	  var args = Array.prototype.slice.call(arguments, 1, exclusiveLastIndex);
-
-        // TODO(jasoncampbell): This should probably be a more meaningful
-        // error with its own constructor so that it can be checked in a
-        // programatic way:
-        //
-        //     service
-        //     .foo('bar')
-        //     .catch(ArgumentsArityError, function(err) {
-        //       console.error('invalid number of arguments')
-        //     })
-        //
 
         var isStreaming = (typeof methodSig.inStream === 'object'  &&
           methodSig.inStream !== null) ||
@@ -271,7 +277,7 @@ Client.prototype.bindTo = function(ctx, name, optServiceSignature, cb) {
 
         return rpc.start();
       };
-    };
+    }
 
     serviceSignature.forEach(function(sig) {
       sig.methods.forEach(function(meth) {
