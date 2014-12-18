@@ -26,10 +26,11 @@
     "minimist": "^1.1.0",
     "mkdirp": "^0.5.0",
     "node-static": "^0.7.4",
-    "prova": "aghassemi/prova#a41523197c",
+    "prova": "aghassemi/prova#9c52a25",
     "run-parallel": "^1.0.0",
     "which": "^1.0.5",
     "esprima": "~1.2.2",
-    "tap-xunit": "~1.1.1"
+    "tap-xunit": "~1.1.1",
+    "tap-colorize": "~1.2.0"
   }
 }
