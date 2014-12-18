@@ -7,7 +7,7 @@ test('Test event proxy connects to extension', function(assert) {
   }
 
   var timeout = 500;
-  var ExtensionEventProxy = require('../../src/proxy/event_proxy').ctor;
+  var ExtensionEventProxy = require('../../src/proxy/event-proxy').ctor;
   var extensionEventProxy = new ExtensionEventProxy(timeout);
 
   extensionEventProxy.on('error', function(err) {
@@ -31,7 +31,7 @@ test('Test event proxy fires error when timeout occurs before connection.',
       }
 
       var timeout = 0;
-      var ExtensionEventProxy = require('../../src/proxy/event_proxy').ctor;
+      var ExtensionEventProxy = require('../../src/proxy/event-proxy').ctor;
       var extensionEventProxy = new ExtensionEventProxy(timeout);
 
       extensionEventProxy.on('error', function(err) {

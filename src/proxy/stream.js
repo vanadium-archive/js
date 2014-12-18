@@ -2,10 +2,10 @@
  * @fileoverview Streaming RPC implementation on top of websockets.
  */
 
-var MessageType = require('./message_type');
+var MessageType = require('./message-type');
 var Duplex = require('stream').Duplex;
 var inherits = require('util').inherits;
-var EncodeUtil = require('../lib/encode_util');
+var EncodeUtil = require('../lib/encode-util');
 
 /*
  * A stream that allows sending and receiving data for a streaming rpc.  If

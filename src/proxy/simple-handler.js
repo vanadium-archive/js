@@ -2,8 +2,8 @@
  * @fileoverview A simple handler that resolves or rejects a promise
  * on a response from the proxy.
  */
-var IncomingPayloadType = require('./incoming_payload_type');
-var ErrorConversion = require('./error_conversion');
+var IncomingPayloadType = require('./incoming-payload-type');
+var ErrorConversion = require('./error-conversion');
 var vError = require('./../lib/verror');
 
 /**

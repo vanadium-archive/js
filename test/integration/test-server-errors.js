@@ -2,7 +2,7 @@ var test = require('prova');
 var veyron = require('../../');
 var Deferred = require('../../src/lib/deferred');
 var serve = require('./serve');
-var leafDispatcher = require('../../src/ipc/leaf_dispatcher');
+var leafDispatcher = require('../../src/ipc/leaf-dispatcher');
 var message = 'failure';
 var context = require('../../src/runtime/context');
 

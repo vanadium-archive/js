@@ -1,7 +1,7 @@
 var EE = require('eventemitter2').EventEmitter2;
 var inherits = require('util').inherits;
 
-var types = require('./event_proxy_message_types');
+var types = require('./event-proxy-message-types');
 
 var defaultTimeout = 5000; // ms
 

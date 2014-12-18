@@ -1,6 +1,6 @@
-var IncomingPayloadType = require('./incoming_payload_type');
-var ErrorConversion = require('./error_conversion');
-var DecodeUtil = require('../lib/decode_util');
+var IncomingPayloadType = require('./incoming-payload-type');
+var ErrorConversion = require('./error-conversion');
+var DecodeUtil = require('../lib/decode-util');
 var vError = require('../lib/verror');
 
 module.exports = Handler;

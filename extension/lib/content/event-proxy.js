@@ -1,7 +1,7 @@
 var EE = require('eventemitter2').EventEmitter2;
 var inherits = require('util').inherits;
 
-var types = require('../../../src/proxy/event_proxy_message_types');
+var types = require('../../../src/proxy/event-proxy-message-types');
 
 // PageEventProxy sends messages to the web page, and listens for messages
 // coming from the web page.

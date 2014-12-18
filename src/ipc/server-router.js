@@ -4,18 +4,18 @@
 
 var Promise = require('../lib/promise');
 var Stream = require('../proxy/stream');
-var MessageType = require('../proxy/message_type');
-var IncomingPayloadType = require('../proxy/incoming_payload_type');
-var ErrorConversion = require('../proxy/error_conversion');
+var MessageType = require('../proxy/message-type');
+var IncomingPayloadType = require('../proxy/incoming-payload-type');
+var ErrorConversion = require('../proxy/error-conversion');
 var Deferred = require('./../lib/deferred');
 var vLog = require('./../lib/vlog');
-var SimpleHandler = require('../proxy/simple_handler');
-var StreamHandler = require('../proxy/stream_handler');
+var SimpleHandler = require('../proxy/simple-handler');
+var StreamHandler = require('../proxy/stream-handler');
 var vError = require('../lib/verror');
 var SecurityContext = require('../security/context');
-var ServerContext = require('./server_context');
-var DecodeUtil = require('../lib/decode_util');
-var EncodeUtil = require('../lib/encode_util');
+var ServerContext = require('./server-context');
+var DecodeUtil = require('../lib/decode-util');
+var EncodeUtil = require('../lib/encode-util');
 var vom = require('vom')
 ;
 /**

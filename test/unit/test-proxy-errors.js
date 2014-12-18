@@ -1,6 +1,6 @@
 var test = require('prova');
 var verror = require('../../src/lib/verror');
-var ec = require('../../src/proxy/error_conversion');
+var ec = require('../../src/proxy/error-conversion');
 var message = 'Something bad happened.';
 
 test('var struct = ec.toStandardErrorStruct(err)', function(assert) {

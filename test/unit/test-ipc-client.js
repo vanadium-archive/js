@@ -3,7 +3,7 @@ var Client = require('../../src/ipc/client.js');
 var context = require('../../src/runtime/context');
 var Signature = require('../../src/vdl/signature');
 var vom = require('vom');
-var DecodeUtil = require('../../src/lib/decode_util');
+var DecodeUtil = require('../../src/lib/decode-util');
 
 var mockSignature = [new Signature({
   tripleArgMethod: function(a, b, c) {},

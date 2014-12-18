@@ -1,8 +1,8 @@
 var Deferred = require('../lib/deferred');
-var MessageType = require('../proxy/message_type');
+var MessageType = require('../proxy/message-type');
 var Stream = require('../proxy/stream');
-var StreamHandler = require('../proxy/stream_handler');
-var SimpleHandler = require('../proxy/simple_handler');
+var StreamHandler = require('../proxy/stream-handler');
+var SimpleHandler = require('../proxy/simple-handler');
 
 module.exports = Namespace;
 

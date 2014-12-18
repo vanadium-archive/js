@@ -15,9 +15,9 @@
 
 var Deferred = require('./../lib/deferred');
 var Promise = require('./../lib/promise');
-var leafDispatcher = require('./leaf_dispatcher');
+var leafDispatcher = require('./leaf-dispatcher');
 var vLog = require('./../lib/vlog');
-var argHelper = require('./../lib/arg_helper');
+var argHelper = require('./../lib/arg-helper');
 
 var nextServerID = 1; // The ID for the next server.
 

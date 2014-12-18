@@ -1,6 +1,6 @@
 var test = require('prova');
 var serve = require('./serve');
-var leafDispatcher = require('../../src/ipc/leaf_dispatcher');
+var leafDispatcher = require('../../src/ipc/leaf-dispatcher');
 var context = require('../../src/runtime/context');
 var dispatcher = leafDispatcher({
   foo: function() {

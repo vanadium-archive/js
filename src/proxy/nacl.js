@@ -2,7 +2,7 @@
  * @fileoverview Forwards messages to and from a nacl module.
  */
 
-var extensionEventProxy = require('./event_proxy');
+var extensionEventProxy = require('./event-proxy');
 var Deferred = require('./../lib/deferred');
 var Proxy = require('./proxy');
 var random = require('../lib/random');

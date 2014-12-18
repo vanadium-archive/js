@@ -10,16 +10,16 @@
 var Promise = require('../lib/promise');
 var Deferred = require('../lib/deferred');
 var vLog = require('../lib/vlog');
-var ErrorConversion = require('../proxy/error_conversion');
+var ErrorConversion = require('../proxy/error-conversion');
 var Stream = require('../proxy/stream');
 var vError = require('../lib/verror');
-var MessageType = require('../proxy/message_type');
-var IncomingPayloadType = require('../proxy/incoming_payload_type');
+var MessageType = require('../proxy/message-type');
+var IncomingPayloadType = require('../proxy/incoming-payload-type');
 var context = require('../runtime/context');
 var constants = require('./constants');
-var DecodeUtil = require('../lib/decode_util');
+var DecodeUtil = require('../lib/decode-util');
 var vom = require('vom');
-var EncodeUtil = require('../lib/encode_util');
+var EncodeUtil = require('../lib/encode-util');
 
 var OutstandingRPC = function(ctx, options, cb) {
   this._ctx = ctx;

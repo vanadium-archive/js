@@ -3,7 +3,7 @@
  */
 
 var test = require('prova');
-var argHelper = require('../../src/lib/arg_helper.js');
+var argHelper = require('../../src/lib/arg-helper.js');
 
 var func = function(a, b, $inject1, c, d, $inject2) {};
 

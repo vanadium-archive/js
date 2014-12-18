@@ -3,9 +3,9 @@
  */
 
 var Deferred = require('../lib/deferred');
-var SimpleHandler = require('../proxy/simple_handler');
+var SimpleHandler = require('../proxy/simple-handler');
 var Blessings = require('./blessings');
-var MessageType = require('../proxy/message_type');
+var MessageType = require('../proxy/message-type');
 
 /**
  * Principal represents an entity capable of making or receiving RPCs.

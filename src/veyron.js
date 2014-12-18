@@ -26,9 +26,9 @@ module.exports = {
   logLevels: require('./lib/vlog').levels,
   namespaceUtil: require('./namespace/util'),
   Promise: require('./lib/promise'),
-  createLeafDispatcher: require('./ipc/leaf_dispatcher'),
+  createLeafDispatcher: require('./ipc/leaf-dispatcher'),
   caveats: require('./security/caveat'),
-  aclAuthorizer: require('./security/acl_authorizer'),
+  aclAuthorizer: require('./security/acl-authorizer'),
   context: require('./runtime/context'),
 };
 
@@ -92,7 +92,7 @@ function getAccount(cb) {
     return cb(new Error('authenticate=true requires browser environment'));
   }
 
-  var extensionEventProxy = require('./proxy/event_proxy');
+  var extensionEventProxy = require('./proxy/event-proxy');
 
   function onAuthSuccess(data) {
     removeListeners();

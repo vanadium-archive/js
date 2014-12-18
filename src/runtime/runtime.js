@@ -3,14 +3,14 @@
  */
 
 var Server = require('../ipc/server');
-var ServerRouter = require('../ipc/server_router');
+var ServerRouter = require('../ipc/server-router');
 var Client = require('../ipc/client');
-var MessageType = require('../proxy/message_type');
+var MessageType = require('../proxy/message-type');
 var Namespace = require('../namespace/namespace');
 var Principal = require('../security/principal');
 var Blessings = require('../security/blessings');
 var Deferred = require('../lib/deferred');
-var SimpleHandler = require('../proxy/simple_handler');
+var SimpleHandler = require('../proxy/simple-handler');
 var context = require('./context');
 var vlog = require('../lib/vlog');
 

@@ -4,7 +4,7 @@
 
 module.exports = Invoker;
 
-var argHelper = require('../lib/arg_helper');
+var argHelper = require('../lib/arg-helper');
 var Signature = require('../vdl/signature');
 var verror = require('../lib/verror');
 var vlog = require('../lib/vlog');

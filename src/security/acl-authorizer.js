@@ -2,7 +2,7 @@
  * @fileoverview The ACL authorizer
  */
 
-var blessingMatches = require('./blessing_matching');
+var blessingMatches = require('./blessing-matching');
 var vError = require('./../lib/verror');
 
 module.exports = authorizer;

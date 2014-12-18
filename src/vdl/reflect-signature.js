@@ -4,7 +4,7 @@
 
 module.exports = ReflectSignature;
 
-var argHelper = require('../lib/arg_helper');
+var argHelper = require('../lib/arg-helper');
 var vom = require('vom');
 
 /**

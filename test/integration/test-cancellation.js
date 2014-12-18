@@ -2,7 +2,7 @@ var test = require('prova');
 var context = require('../../src/runtime/context');
 var service = require('./get-service');
 var serve = require('./serve');
-var leafDispatcher = require('../../src/ipc/leaf_dispatcher');
+var leafDispatcher = require('../../src/ipc/leaf-dispatcher');
 var NO_TIMEOUT = require('../../src/ipc/constants').NO_TIMEOUT;
 
 

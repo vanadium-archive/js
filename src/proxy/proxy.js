@@ -3,13 +3,13 @@
  * messages from the native veyron implementation.
  */
 
-var MessageType = require('./message_type');
-var IncomingPayloadType = require('./incoming_payload_type');
+var MessageType = require('./message-type');
+var IncomingPayloadType = require('./incoming-payload-type');
 var Deferred = require('./../lib/deferred');
 var vLog = require('./../lib/vlog');
-var SimpleHandler = require('./simple_handler');
+var SimpleHandler = require('./simple-handler');
 var context = require('../runtime/context');
-var DecodeUtil = require('../lib/decode_util');
+var DecodeUtil = require('../lib/decode-util');
 var vError = require('./../lib/verror');
 
 // Cache the service signatures for one hour.

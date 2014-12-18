@@ -2,7 +2,7 @@
  * @fileoverview Blessings stub of veyron identities
  */
 
-var MessageType = require('../proxy/message_type');
+var MessageType = require('../proxy/message-type');
 
 /**
  * Blessings encapsulate the set of blessings (human-readable strings) have

@@ -3,11 +3,11 @@
  */
 
 var test = require('prova');
-var Router = require('../../src/ipc/server_router');
+var Router = require('../../src/ipc/server-router');
 var Server = require('../../src/ipc/server');
-var MessageType = require('../../src/proxy/message_type');
+var MessageType = require('../../src/proxy/message-type');
 var vom = require('vom');
-var DecodeUtil = require('../../src/lib/decode_util');
+var DecodeUtil = require('../../src/lib/decode-util');
 
 test('Server Router Signature Lookup', function(t) {
   var inputName = 'aName';
