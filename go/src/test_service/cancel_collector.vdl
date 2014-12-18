@@ -8,5 +8,5 @@ type CancelCollector interface {
 	// Wait for the call with the given key to have the given status.  Possible statuses are:
 	// "running", and, "cancelled".  Returns the number of nanoseconds left on
 	// the deadline of the specified call when the call first began.
-	WaitForStatus(key int64, status string) (timeout int64, err error)
+	WaitForStatus(key int64, status string) (timeout int64 | error)
 }

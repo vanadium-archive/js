@@ -33,5 +33,5 @@ type ErrorThrower interface {
     ThrowCustomStandardError() error
 
     // Lists all errors Ids available in veyron2/verror
-    ListAllBuiltInErrorIDs() ([]string, error)
+    ListAllBuiltInErrorIDs() ([]string | error)
 }

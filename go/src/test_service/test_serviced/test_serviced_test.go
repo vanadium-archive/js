@@ -189,7 +189,7 @@ func populateObject(ctx context.T, s settable) error {
 }
 
 // setupManyResults starts a server and client and populates the server with the values in populateObject.
-func setupManyResults(t *testing.T) (test_service.CacheClientMethods, ipc.Server) {
+func setupManyResults(t *testing.T, r veyron2.Runtime) (test_service.CacheClientMethods, ipc.Server) {
 	s, endpoint, err := StartServer(r)
 	if err != nil {
 		t.Fatal("failed to start server: ", err)
@@ -222,7 +222,7 @@ func TestAsMap(t *testing.T) {
 	}
 	defer r.Cleanup()
 
-	c, s := setupManyResults(t)
+	c, s := setupManyResults(t, r)
 	defer s.Stop()
 
 	ctx := r.NewContext()
@@ -253,7 +253,7 @@ func TestKeyValuePairs(t *testing.T) {
 	}
 	defer r.Cleanup()
 
-	c, s := setupManyResults(t)
+	c, s := setupManyResults(t, r)
 	defer s.Stop()
 
 	ctx := r.NewContext()
@@ -283,7 +283,7 @@ func TestKeyPageAndSize(t *testing.T) {
 	}
 	defer r.Cleanup()
 
-	c, s := setupManyResults(t)
+	c, s := setupManyResults(t, r)
 	defer s.Stop()
 
 	ctx := r.NewContext()
@@ -313,7 +313,7 @@ func TestMostRecentSet(t *testing.T) {
 	}
 	defer r.Cleanup()
 
-	c, s := setupManyResults(t)
+	c, s := setupManyResults(t, r)
 	defer s.Stop()
 
 	ctx := r.NewContext()
@@ -346,7 +346,7 @@ func TestMultiGet(t *testing.T) {
 	}
 	defer r.Cleanup()
 
-	c, s := setupManyResults(t)
+	c, s := setupManyResults(t, r)
 	defer s.Stop()
 
 	stream, err := c.MultiGet(r.NewContext())
