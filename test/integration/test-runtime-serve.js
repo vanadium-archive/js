@@ -1,6 +1,7 @@
 var test = require('prova');
 var veyron = require('../../');
 var config = require('./default-config');
+var context = require('../../src/runtime/context');
 var service = {
   changeChannel: function() {
     throw new Error('NotImplemented');
@@ -114,6 +115,8 @@ test('Test serving a JS service multiple times should fail - ' +
 
 test('Test serving a JS service under multiple names - ' +
   'runtime.addName(name), runtime.removeName(name)', function(assert) {
+  var ctx = context.Context();
+
   veyron.init(config, function(err, runtime) {
     assert.error(err);
 
@@ -123,7 +126,7 @@ test('Test serving a JS service under multiple names - ' +
       return runtime.addName('bedroom/tv');
     })
     .then(function bindToSecondName() {
-      return runtime.bindTo('bedroom/tv');
+      return runtime.bindTo(ctx, 'bedroom/tv');
     })
     .then(function verifySecondName(newObject){
       assert.ok(newObject && newObject.changeChannel, 'new name works');
@@ -132,7 +135,7 @@ test('Test serving a JS service under multiple names - ' +
       return runtime.removeName('bedroom/tv');
     })
     .then(function bindToRemovedSecondName() {
-      return runtime.bindTo('bedroom/tv')
+      return runtime.bindTo(ctx, 'bedroom/tv')
       .then(function verifyRemovedSecondName(a) {
         assert.fail('should not be able to bind to a removed name');
         runtime.close(assert.end);

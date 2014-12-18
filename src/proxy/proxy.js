@@ -8,7 +8,6 @@ var IncomingPayloadType = require('./incoming-payload-type');
 var Deferred = require('./../lib/deferred');
 var vLog = require('./../lib/vlog');
 var SimpleHandler = require('./simple-handler');
-var context = require('../runtime/context');
 var DecodeUtil = require('../lib/decode-util');
 var vError = require('./../lib/verror');
 
@@ -94,9 +93,6 @@ Proxy.prototype.nextId = function() {
  * @return {Promise} Signature of the service in JSON format
  */
 Proxy.prototype.getServiceSignature = function(ctx, name) {
-  var args = context.optionalContext(arguments);
-  ctx = args[0], name = args[1];
-
   var proxy = this;
   var deferred = new Deferred();
   var now = Date.now;

@@ -11,7 +11,6 @@ var Principal = require('../security/principal');
 var Blessings = require('../security/blessings');
 var Deferred = require('../lib/deferred');
 var SimpleHandler = require('../proxy/simple-handler');
-var context = require('./context');
 var vlog = require('../lib/vlog');
 
 module.exports = Runtime;
@@ -50,17 +49,17 @@ function Runtime(options) {
 Runtime.prototype.bindTo = function(ctx, name, optServiceSignature, cb) {
   var runtime = this;
   var client = this._getClient();
+  var last = arguments.length - 1;
 
-  var args = context.optionalContext(arguments);
-  ctx = args[0], name = args[1], optServiceSignature = args[2], cb = args[3];
-
-  if (typeof optServiceSignature === 'function') {
-    cb = optServiceSignature;
-    optServiceSignature = undefined;
+  // If there is a callback bind it to the runtime (helps with tests)
+  if (typeof arguments[last] === 'function') {
+    cb = arguments[last].bind(runtime);
   }
 
-  if (cb) {
-    cb = cb.bind(runtime);
+  // It's possible that cb is double assigned if the optServiceSignature was
+  // not passed in.
+  if (optServiceSignature === cb) {
+    optServiceSignature = null;
   }
 
   return client.bindTo(ctx, name, optServiceSignature, cb);

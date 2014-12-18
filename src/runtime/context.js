@@ -8,44 +8,12 @@ var vError = require('../lib/verror');
 var inherits = require('util').inherits;
 
 module.exports = {
-  optionalContext: optionalContext,
   Context: Context,
   CancelContext: CancelContext,
   ContextKey: ContextKey,
   DeadlineExceededError: DeadlineExceededError,
   CancelledError: CancelledError
 };
-
-/*
- * Adjusts the arg positions if the context is not present.  This is
- * intended as a temporary measure to ease the transition to having
- * context as a required first parameter.  Eventually this can be
- * changed to throw errors and then be removed altogether.
- * This function returns the last argument, which you must assign
- * manually.
- * @param {arguments} A function arguments list.
- * @return {Array} An array containing the arguments in order.
- */
-function optionalContext(args) {
-  // Coerce args into an array
-  args = Array.prototype.slice.call(args, 0);
-
-  if (args[0] &&
-      (args[0] instanceof Context ||
-       // TODO(nlacasse,aghaseemi): Old versions of browserify (^4.2.3)  seem to
-       // run this file over and over every time it is required, instead of
-       // caching it.  This causes the 'instaceof' check to fail. The following
-       // HACK works around this, by checking the name of the constructor. We
-       // should get rid of this HACK once veyron browser has a newer version of
-       // browserify.
-       args[0].constructor.name === 'Context')) {
-    return args;
-  }
-
-  args.unshift(new Context());
-
-  return args;
-}
 
 /*
  * Creates an Error object indicating that the context was cancelled

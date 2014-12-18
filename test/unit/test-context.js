@@ -7,22 +7,6 @@ var context = require('../../src/runtime/context');
 
 var ctx = context.Context();
 
-test('optionalContext', function(assert) {
-  function f(ctx, x, y) {
-    var args = context.optionalContext(arguments);
-    ctx = args[0], x = args[1], y = args[2];
-    return {
-      ctx: ctx,
-      x: x,
-      y: y
-    };
-  }
-
-  assert.deepEqual(f(ctx, 3, 6), {ctx: ctx, x: 3, y: 6});
-  assert.deepEqual(f(3, 6), {ctx: ctx, x: 3, y: 6});
-  assert.end();
-});
-
 test('Root Context', function(assert) {
   assert.equal(ctx.deadline(), null);
   assert.equal(ctx.done(), false);

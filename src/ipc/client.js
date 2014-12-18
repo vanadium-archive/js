@@ -190,28 +190,40 @@ function Client(proxyConnection) {
  * @return {Promise} An object with methods that perform rpcs to service methods
  */
 Client.prototype.bindTo = function(ctx, name, optServiceSignature, cb) {
-  var self = this;
+  var client = this;
+  var last = arguments.length - 1;
 
-  var args = context.optionalContext(arguments);
-  ctx = args[0], name = args[1], optServiceSignature = args[2], cb = args[3];
-
-  if (typeof optServiceSignature === 'function') {
-    cb = optServiceSignature;
-    optServiceSignature = undefined;
+  // grab the callback
+  if (typeof arguments[last] === 'function') {
+    cb = arguments[last];
   }
 
   var def = new Deferred(cb);
+
+  // unset optServiceSignature if it wasn't passed in
+  // if (optServiceSignature === cb) {
+  if (typeof optServiceSignature !== 'object') {
+    optServiceSignature = null;
+  }
+
+  // Require first arg to be a Context
+  if (! (ctx instanceof context.Context)) {
+    var err = new Error('First argument must be a Context object.');
+
+    def.reject(err);
+
+    return def.promise;
+  }
+
   var serviceSignaturePromise;
 
-  if (optServiceSignature !== undefined) {
+  if (optServiceSignature) {
     serviceSignaturePromise = Promise.resolve(optServiceSignature);
   } else {
     vLog.debug('Requesting service signature for:', name);
-    var proxy = self._proxyConnection;
+    var proxy = client._proxyConnection;
     serviceSignaturePromise = proxy.getServiceSignature(ctx, name);
   }
-
-  var promise = def.promise;
 
   serviceSignaturePromise.then(function(serviceSignature) {
     vLog.debug('Received signature for:', name, serviceSignature);
@@ -220,15 +232,27 @@ Client.prototype.bindTo = function(ctx, name, optServiceSignature, cb) {
     function bindMethod(methodSig) {
       var method = vom.MiscUtil.uncapitalize(methodSig.name);
 
-      boundObject[method] = function(ctx /*, __other_args__*/) {
-        var args = context.optionalContext(arguments);
+      boundObject[method] = function(ctx /*, arg1, arg2, ..., callback*/) {
+        var args = Array.prototype.slice.call(arguments, 0);
         var callback;
-
-        ctx = args.shift();
+        var err;
 
         // Callback is the last function argument, pull it out of the args
         if (typeof args[args.length - 1] === 'function') {
           callback = args.pop();
+        }
+
+        // Require first arg to be a Context
+        if (args[0] instanceof context.Context) {
+          ctx = args.shift();
+        } else {
+          err = new Error('First argument must be a Context object.');
+
+          if (callback) {
+            return callback(err);
+          } else {
+            return Promise.reject(err);
+          }
         }
 
         if (args.length !== methodSig.inArgs.length) {
@@ -251,7 +275,8 @@ Client.prototype.bindTo = function(ctx, name, optServiceSignature, cb) {
             'had an incorrect number of arguments. '+
             'Expected format: ' + methodSig.name +
             '(' + expectedArgs + ')';
-          var err = new Error(message);
+
+          err = new Error(message);
 
           if (callback) {
             return callback(err);
@@ -267,7 +292,7 @@ Client.prototype.bindTo = function(ctx, name, optServiceSignature, cb) {
           methodSig.outStream !== null);
 
         var rpc = new OutstandingRPC(ctx, {
-           proxy: self._proxyConnection,
+           proxy: client._proxyConnection,
            name: name,
            methodName: methodSig.name,
            args: args,
@@ -293,15 +318,11 @@ Client.prototype.bindTo = function(ctx, name, optServiceSignature, cb) {
     };
 
     def.resolve(boundObject);
-  }).catch (function(err) {
-    if (cb) {
-      cb(err);
-    } else {
-      def.reject(err);
-    }
+  }).catch(function(err) {
+    def.reject(err);
   });
 
-  return promise;
+  return def.promise;
 };
 
 /**
