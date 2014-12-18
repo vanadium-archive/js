@@ -22,6 +22,7 @@
     "unlimitedStorage"
   ],
   "web_accessible_resources": [
+    "images/1x1.png", // Used by web apps to detect if extension is loaded.
     "js/background.js.map",
     "js/content.js.map",
     "js/options.js.map"

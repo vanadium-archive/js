@@ -3,8 +3,6 @@ var inherits = require('util').inherits;
 
 var types = require('../../../src/proxy/event_proxy_message_types');
 
-module.exports = PageEventProxy;
-
 // PageEventProxy sends messages to the web page, and listens for messages
 // coming from the web page.
 function PageEventProxy(){
@@ -12,9 +10,14 @@ function PageEventProxy(){
     return new PageEventProxy();
   }
   EE.call(this);
-  var that = this;
+  var proxy = this;
   window.top.addEventListener(types.TO_EXTENSION, function(ev) {
-    that.emit(ev.detail.type, ev.detail.body);
+    proxy.emit(ev.detail.type, ev.detail.body);
+  });
+
+  // Respond to "is_ready" events with "ready" events.
+  window.top.addEventListener(types.EXTENSION_IS_READY, function() {
+    window.top.dispatchEvent(new CustomEvent(types.EXTENSION_READY));
   });
 }
 inherits(PageEventProxy, EE);
@@ -29,3 +32,5 @@ PageEventProxy.prototype.send = function(type, body) {
     })
   );
 };
+
+module.exports = new PageEventProxy();

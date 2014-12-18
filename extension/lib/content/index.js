@@ -1,6 +1,6 @@
 var debug = require('debug')('content-script:index');
 var random = require('../../../src/lib/random');
-var pageEventProxy = require('./event_proxy')();
+var pageEventProxy = require('./event_proxy');
 
 // Port to communicate with background js.
 var backgroundPort = chrome.runtime.connect();
@@ -28,10 +28,15 @@ pageEventProxy.onAny(function(body) {
     body.instanceId = outgoingInstanceId;
   }
 
-  backgroundPort.postMessage({
-    type: this.event,
-    body: body
-  });
+  try {
+    backgroundPort.postMessage({
+      type: this.event,
+      body: body
+    });
+  } catch (err) {
+    pageEventProxy.send('error', 'Error posting message, ' +
+          'you may need to reload this tab. ' + err);
+  }
 });
 
 // Forward any messages from the background page to the webApp.

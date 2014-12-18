@@ -13,7 +13,6 @@ var vlog = require('./lib/vlog');
 var defaults = {
   appName: 'webapp',
   authenticate: false,
-  authTimeout: 30000, // ms
   logLevel: vlog.level,
   wspr: process.env.WSPR || (isBrowser ? null : 'http://localhost:8124')
 };
@@ -65,7 +64,7 @@ function init(config, cb) {
   //
   // Otherwise, create a runtime with accountName 'unknown'.
   if (config.authenticate) {
-    getAccount(config.authTimeout, function(err, account) {
+    getAccount(function(err, account) {
       if (err) {
         def.reject(err);
         return def.promise;
@@ -85,79 +84,47 @@ function init(config, cb) {
 // access token for the user, and exchanges that access token for an account
 // which is then associated with the origin of the web app.
 //
-// The flow starts by repeatedly sending an 'auth' message to the Veyron
-// Extension content script.  It must perform this repeatedly because the first
-// messages might get sent before the content script has had time to start.
-//
-// When the content script eventually receives the 'auth' message, it responds
-// with an 'auth:received' message to let us know we can stop requesting auth.
-//
-// If no 'auth:received' message is received within config.authTimeout
-// milliseconds, we timeout with an error.
-//
 // Once the extension has received the 'auth' message, it will perform the OAuth
 // <-> WSPR identity flow, and respond with either an 'auth:success' message or
 // an 'auth:error' message.
-function getAccount(authTimeoutMs, cb) {
+function getAccount(cb) {
   if (!isBrowser) {
     return cb(new Error('authenticate=true requires browser environment'));
   }
 
-  var extensionEventProxy = require('./proxy/event_proxy')();
+  var extensionEventProxy = require('./proxy/event_proxy');
 
-  // Initialized below.
-  var timeout, authRequestInterval;
-
-  // Runs when the auth request succeeds.
   function onAuthSuccess(data) {
     removeListeners();
     cb(null, data.account);
   }
 
+  // Handle auth-specific errors.
   function onAuthError(data) {
     removeListeners();
-    cb(objectToError(data.error));
+    cb(objectToError(data.body.error));
   }
 
-  // Runs when the extension receives the auth request.
-  function onAuthReceived() {
-    window.clearInterval(authRequestInterval);
-  }
-
-  // Runs when timeout occurs before getting 'auth:received' message.
-  function onTimeout() {
-    onAuthError({
-      error: new Error(
-        'Auth timeout. Please ensure that the Veyron Chrome Extension is ' +
-        'installed and enabled. Download it here: ' +
-        'https://github.com/veyron/veyron.js/raw/master/extension/veyron.crx'
-      )
-    });
+  // Handle generic error event, which can be triggered if the extension is not
+  // running.
+  function onError(err) {
+    removeListeners();
+    cb(err);
   }
 
   function removeListeners() {
-    window.clearInterval(authRequestInterval);
-    window.clearTimeout(timeout);
     extensionEventProxy.removeListener('auth:success', onAuthSuccess);
     extensionEventProxy.removeListener('auth:error', onAuthError);
-    extensionEventProxy.removeListener('auth:received', onAuthReceived);
+    extensionEventProxy.removeListener('error', onAuthError);
   }
 
   extensionEventProxy.on('auth:success', onAuthSuccess);
   extensionEventProxy.on('auth:error', onAuthError);
-  extensionEventProxy.on('auth:received', onAuthReceived);
+  extensionEventProxy.on('error', onError);
 
-  // Repeatedly ask the extension to auth.  The first time this runs, the
-  // extension might not be running yet, so we need to ask in a setInterval.
-  authRequestInterval = window.setInterval(function() {
-    extensionEventProxy.send('auth');
-  }, 200);
-
-  // Timeout if we don't get an 'auth:received' message before authTimeoutMs
-  // milliseconds.
-  timeout = window.setTimeout(onTimeout, authTimeoutMs);
+  // Send auth request.
+  extensionEventProxy.send('auth');
 }
-
 
 // An error that gets sent via postMessage will be received as a plain Object.
 // This function turns it back into an Error object.
