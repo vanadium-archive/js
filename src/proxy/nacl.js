@@ -7,6 +7,7 @@ var Deferred = require('./../lib/deferred');
 var Proxy = require('./proxy');
 var random = require('../lib/random');
 var vLog = require('./../lib/vlog');
+var DecodeUtil = require('../lib/decode_util');
 
 module.exports = ProxyConnection;
 
@@ -23,7 +24,7 @@ function ProxyConnection() {
   extensionEventProxy.on('browsprMsg', function(msg) {
     var body;
     try {
-      body = JSON.parse(msg.body);
+      body = DecodeUtil.decode(msg.body);
     } catch (e) {
       vLog.warn('Failed to parse ' + body);
       return;

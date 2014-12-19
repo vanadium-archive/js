@@ -1,8 +1,16 @@
 var test = require('prova');
 var url = 'ws://' + process.env.WSPR_ADDR;
-var ProxyWappedWebSocket = require('../../src/proxy/websocket');
+var isBrowser = require('is-browser');
 var context = require('../../src/runtime/context');
 var now = Date.now;
+
+// TODO(bprosnitz) This test probably doesn't need to use proxy directly.
+var Proxy;
+if (isBrowser) {
+  Proxy = require('../../src/proxy/nacl');
+} else {
+  Proxy = require('../../src/proxy/websocket');
+}
 
 var expectedMethodNames = ['Get', 'Set', 'MultiGet'];
 
@@ -22,7 +30,7 @@ function sigHasMethod(assert, sig, methodName) {
 
 test('Test getting signature using valid cache - ' +
   'proxy.getServiceSignature(name)', function(assert) {
-  var proxy = new ProxyWappedWebSocket(url);
+  var proxy = new Proxy(url);
   var name = 'test_service/cache';
   var ctx = context.Context();
 
@@ -45,7 +53,7 @@ test('Test getting signature using valid cache - ' +
 
 test('Test getting signature using stale cache - ' +
   'proxy.getServiceSignature(name)', function(assert) {
-  var proxy = new ProxyWappedWebSocket(url);
+  var proxy = new Proxy(url);
   var name = 'test_service/cache';
   var ctx = context.Context();
 
@@ -74,7 +82,7 @@ test('Test getting signature using stale cache - ' +
 
 test('Test service signature cache is set properly - ' +
   'proxy.getServiceSignature(name)', function(assert) {
-  var proxy = new ProxyWappedWebSocket(url);
+  var proxy = new Proxy(url);
   var name = 'test_service/cache';
   var before = now();
   var ctx = context.Context();

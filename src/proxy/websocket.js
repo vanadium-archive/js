@@ -7,6 +7,7 @@ var Deferred = require('./../lib/deferred');
 var vLog = require('./../lib/vlog');
 var Proxy = require('./proxy');
 var isBrowser = require('is-browser');
+var DecodeUtil = require('../lib/decode_util');
 
 /**
  * A client for the veyron service using websockets. Connects to the veyron wspr
@@ -78,7 +79,7 @@ ProxyConnection.prototype.getWebSocket = function() {
   websocket.onmessage = function(frame) {
     var message;
     try {
-      message = JSON.parse(frame.data);
+      message = DecodeUtil.decode(frame.data);
     } catch (e) {
       vLog.warn('Failed to parse ' + frame.data);
       return;

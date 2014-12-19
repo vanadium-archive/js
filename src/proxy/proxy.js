@@ -17,18 +17,18 @@ var BIND_CACHE_TTL = 3600 * 1000;
 /**
  * A client for the native veyron implementation.
  * @constructor
- * @param {Promise} sender A promise that is resolved when we are able to send
- * a message to the native veron implementation. It should be resolved with an
- * object that has a send function that will send messages to the native
+ * @param {Promise} senderPromise A promise that is resolved when we are able
+ * to send a message to the native veron implementation. It should be resolved
+ * with an object that has a send function that will send messages to the native
  * implementation.
  */
-function Proxy(sender) {
+function Proxy(senderPromise) {
   // We use odd numbers for the message ids, so that the server can use even
   // numbers.
   this.id = 1;
   this.outstandingRequests = {};
   this.bindCache = {};
-  this.senderPromise = sender;
+  this.senderPromise = senderPromise;
   this.incomingRequestHandlers = {};
 }
 
@@ -44,7 +44,7 @@ Proxy.prototype.process = function(message) {
 
   var payload;
   try {
-    payload = JSON.parse(message.data);
+    payload = DecodeUtil.decode(message.data);
   } catch (e) {
     if (!isServerOriginatedMessage) {
       handler.handleResponse(IncomingPayloadType.ERROR_RESPONSE, message.data);
