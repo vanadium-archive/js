@@ -77,7 +77,7 @@ COMMON_SERVICES := "test_serviced"
 
 BROWSERIFY_OPTS := --debug --standalone veyron
 
-all: lint build
+all: gen-vdl lint build
 
 build: dist/veyron.js dist/veyron.min.js extension/veyron.crx
 

@@ -22,23 +22,8 @@ var _type12 = new Type();
 var _type13 = new Type();
 var _type14 = new Type();
 var _type15 = new Type();
-var _type16 = new Type();
-var _type17 = new Type();
-var _type18 = new Type();
-var _type19 = new Type();
 var _type2 = new Type();
-var _type20 = new Type();
-var _type21 = new Type();
-var _type22 = new Type();
-var _type23 = new Type();
-var _type24 = new Type();
-var _type25 = new Type();
-var _type26 = new Type();
-var _type27 = new Type();
-var _type28 = new Type();
-var _type29 = new Type();
 var _type3 = new Type();
-var _type30 = new Type();
 var _type4 = new Type();
 var _type5 = new Type();
 var _type6 = new Type();
@@ -70,104 +55,74 @@ var _typeNamedUint64 = new Type();
 var _typeNestedArgs = new Type();
 var _typeScalars = new Type();
 var _typeerror = new Type();
-_type1.kind = Kind.BOOL;
+_type1.kind = Kind.NILABLE;
 _type1.name = "";
-_type10.kind = Kind.INT64;
+_type1.elem = _typeerror;
+_type10.kind = Kind.MAP;
 _type10.name = "";
-_type11.kind = Kind.FLOAT64;
+_type10.elem = Types.COMPLEX128;
+_type10.key = Types.STRING;
+_type11.kind = Kind.ARRAY;
 _type11.name = "";
-_type12.kind = Kind.COMPLEX64;
+_type11.len = 2;
+_type11.elem = _typeComposites;
+_type12.kind = Kind.LIST;
 _type12.name = "";
-_type13.kind = Kind.COMPLEX128;
+_type12.elem = _typeComposites;
+_type13.kind = Kind.MAP;
 _type13.name = "";
-_type14.kind = Kind.NILABLE;
+_type13.elem = _typeComposites;
+_type13.key = Types.STRING;
+_type14.kind = Kind.MAP;
 _type14.name = "";
-_type14.elem = _typeerror;
-_type15.kind = Kind.STRUCT;
+_type14.elem = _type15;
+_type14.key = _typeKeyScalars;
+_type15.kind = Kind.LIST;
 _type15.name = "";
-_type15.fields = [{name: "ID", type: _type3}, {name: "Action", type: _type2}];
-_type16.kind = Kind.LIST;
-_type16.name = "";
-_type16.elem = _type17;
-_type17.kind = Kind.ANY;
-_type17.name = "";
-_type18.kind = Kind.TYPEOBJECT;
-_type18.name = "";
-_type19.kind = Kind.ARRAY;
-_type19.name = "";
-_type19.len = 2;
-_type19.elem = _typeScalars;
-_type2.kind = Kind.UINT32;
+_type15.elem = _type13;
+_type2.kind = Kind.STRUCT;
 _type2.name = "";
-_type20.kind = Kind.LIST;
-_type20.name = "";
-_type20.elem = _typeScalars;
-_type21.kind = Kind.SET;
-_type21.name = "";
-_type21.key = _typeKeyScalars;
-_type22.kind = Kind.MAP;
-_type22.name = "";
-_type22.elem = _typeScalars;
-_type22.key = _type3;
-_type23.kind = Kind.MAP;
-_type23.name = "";
-_type23.elem = _type24;
-_type23.key = _typeKeyScalars;
-_type24.kind = Kind.LIST;
-_type24.name = "";
-_type24.elem = _type25;
-_type25.kind = Kind.MAP;
-_type25.name = "";
-_type25.elem = _type13;
-_type25.key = _type3;
-_type26.kind = Kind.ARRAY;
-_type26.name = "";
-_type26.len = 2;
-_type26.elem = _typeComposites;
-_type27.kind = Kind.LIST;
-_type27.name = "";
-_type27.elem = _typeComposites;
-_type28.kind = Kind.MAP;
-_type28.name = "";
-_type28.elem = _typeComposites;
-_type28.key = _type3;
-_type29.kind = Kind.MAP;
-_type29.name = "";
-_type29.elem = _type30;
-_type29.key = _typeKeyScalars;
-_type3.kind = Kind.STRING;
+_type2.fields = [{name: "ID", type: Types.STRING}, {name: "Action", type: Types.UINT32}];
+_type3.kind = Kind.LIST;
 _type3.name = "";
-_type30.kind = Kind.LIST;
-_type30.name = "";
-_type30.elem = _type28;
-_type4.kind = Kind.FLOAT32;
+_type3.elem = Types.ANY;
+_type4.kind = Kind.ARRAY;
 _type4.name = "";
-_type5.kind = Kind.INT32;
+_type4.len = 2;
+_type4.elem = _typeScalars;
+_type5.kind = Kind.LIST;
 _type5.name = "";
-_type6.kind = Kind.BYTE;
+_type5.elem = _typeScalars;
+_type6.kind = Kind.SET;
 _type6.name = "";
-_type7.kind = Kind.UINT16;
+_type6.key = _typeKeyScalars;
+_type7.kind = Kind.MAP;
 _type7.name = "";
-_type8.kind = Kind.UINT64;
+_type7.elem = _typeScalars;
+_type7.key = Types.STRING;
+_type8.kind = Kind.MAP;
 _type8.name = "";
-_type9.kind = Kind.INT16;
+_type8.elem = _type9;
+_type8.key = _typeKeyScalars;
+_type9.kind = Kind.LIST;
 _type9.name = "";
+_type9.elem = _type10;
 _typeArgs.kind = Kind.STRUCT;
 _typeArgs.name = "veyron.io/veyron/veyron2/vdl/testdata/base.Args";
-_typeArgs.fields = [{name: "A", type: _type5}, {name: "B", type: _type5}];
+_typeArgs.fields = [{name: "A", type: Types.INT32}, {name: "B", type: Types.INT32}];
 _typeCompComp.kind = Kind.STRUCT;
 _typeCompComp.name = "veyron.io/veyron/veyron2/vdl/testdata/base.CompComp";
-_typeCompComp.fields = [{name: "A0", type: _typeComposites}, {name: "A1", type: _type26}, {name: "A2", type: _type27}, {name: "A3", type: _type28}, {name: "A4", type: _type29}];
+_typeCompComp.fields = [{name: "A0", type: _typeComposites}, {name: "A1", type: _type11}, {name: "A2", type: _type12}, {name: "A3", type: _type13}, {name: "A4", type: _type14}];
 _typeComposites.kind = Kind.STRUCT;
 _typeComposites.name = "veyron.io/veyron/veyron2/vdl/testdata/base.Composites";
-_typeComposites.fields = [{name: "A0", type: _typeScalars}, {name: "A1", type: _type19}, {name: "A2", type: _type20}, {name: "A3", type: _type21}, {name: "A4", type: _type22}, {name: "A5", type: _type23}];
+_typeComposites.fields = [{name: "A0", type: _typeScalars}, {name: "A1", type: _type4}, {name: "A2", type: _type5}, {name: "A3", type: _type6}, {name: "A4", type: _type7}, {name: "A5", type: _type8}];
 _typeKeyScalars.kind = Kind.STRUCT;
 _typeKeyScalars.name = "veyron.io/veyron/veyron2/vdl/testdata/base.KeyScalars";
-_typeKeyScalars.fields = [{name: "A0", type: _type1}, {name: "A1", type: _type6}, {name: "A2", type: _type7}, {name: "A3", type: _type2}, {name: "A4", type: _type8}, {name: "A5", type: _type9}, {name: "A6", type: _type5}, {name: "A7", type: _type10}, {name: "A8", type: _type4}, {name: "A9", type: _type11}, {name: "A10", type: _type12}, {name: "A11", type: _type13}, {name: "A12", type: _type3}, {name: "B0", type: _typeNamedBool}, {name: "B1", type: _typeNamedByte}, {name: "B2", type: _typeNamedUint16}, {name: "B3", type: _typeNamedUint32}, {name: "B4", type: _typeNamedUint64}, {name: "B5", type: _typeNamedInt16}, {name: "B6", type: _typeNamedInt32}, {name: "B7", type: _typeNamedInt64}, {name: "B8", type: _typeNamedFloat32}, {name: "B9", type: _typeNamedFloat64}, {name: "B10", type: _typeNamedComplex64}, {name: "B11", type: _typeNamedComplex128}, {name: "B12", type: _typeNamedString}];
+_typeKeyScalars.fields = [{name: "A0", type: Types.BOOL}, {name: "A1", type: Types.BYTE}, {name: "A2", type: Types.UINT16}, {name: "A3", type: Types.UINT32}, {name: "A4", type: Types.UINT64}, {name: "A5", type: Types.INT16}, {name: "A6", type: Types.INT32}, {name: "A7", type: Types.INT64}, {name: "A8", type: Types.FLOAT32}, {name: "A9", type: Types.FLOAT64}, {name: "A10", type: Types.COMPLEX64}, {name: "A11", type: Types.COMPLEX128}, {name: "A12", type: Types.STRING}, {name: "B0", type: _typeNamedBool}, {name: "B1", type: _typeNamedByte}, {name: "B2", type: _typeNamedUint16}, {name: "B3", type: _typeNamedUint32}, {name: "B4", type: _typeNamedUint64}, {name: "B5", type: _typeNamedInt16}, {name: "B6", type: _typeNamedInt32}, {name: "B7", type: _typeNamedInt64}, {name: "B8", type: _typeNamedFloat32}, {name: "B9", type: _typeNamedFloat64}, {name: "B10", type: _typeNamedComplex64}, {name: "B11", type: _typeNamedComplex128}, {name: "B12", type: _typeNamedString}];
 _typeNamedArray.kind = Kind.ARRAY;
 _typeNamedArray.name = "veyron.io/veyron/veyron2/vdl/testdata/base.NamedArray";
 _typeNamedArray.len = 2;
-_typeNamedArray.elem = _type1;
+_typeNamedArray.elem = Types.BOOL;
 _typeNamedBool.kind = Kind.BOOL;
 _typeNamedBool.name = "veyron.io/veyron/veyron2/vdl/testdata/base.NamedBool";
 _typeNamedByte.kind = Kind.BYTE;
@@ -188,19 +143,19 @@ _typeNamedInt64.kind = Kind.INT64;
 _typeNamedInt64.name = "veyron.io/veyron/veyron2/vdl/testdata/base.NamedInt64";
 _typeNamedList.kind = Kind.LIST;
 _typeNamedList.name = "veyron.io/veyron/veyron2/vdl/testdata/base.NamedList";
-_typeNamedList.elem = _type2;
+_typeNamedList.elem = Types.UINT32;
 _typeNamedMap.kind = Kind.MAP;
 _typeNamedMap.name = "veyron.io/veyron/veyron2/vdl/testdata/base.NamedMap";
-_typeNamedMap.elem = _type4;
-_typeNamedMap.key = _type3;
+_typeNamedMap.elem = Types.FLOAT32;
+_typeNamedMap.key = Types.STRING;
 _typeNamedSet.kind = Kind.SET;
 _typeNamedSet.name = "veyron.io/veyron/veyron2/vdl/testdata/base.NamedSet";
-_typeNamedSet.key = _type3;
+_typeNamedSet.key = Types.STRING;
 _typeNamedString.kind = Kind.STRING;
 _typeNamedString.name = "veyron.io/veyron/veyron2/vdl/testdata/base.NamedString";
 _typeNamedStruct.kind = Kind.STRUCT;
 _typeNamedStruct.name = "veyron.io/veyron/veyron2/vdl/testdata/base.NamedStruct";
-_typeNamedStruct.fields = [{name: "A", type: _type1}, {name: "B", type: _type3}, {name: "C", type: _type5}];
+_typeNamedStruct.fields = [{name: "A", type: Types.BOOL}, {name: "B", type: Types.STRING}, {name: "C", type: Types.INT32}];
 _typeNamedUint16.kind = Kind.UINT16;
 _typeNamedUint16.name = "veyron.io/veyron/veyron2/vdl/testdata/base.NamedUint16";
 _typeNamedUint32.kind = Kind.UINT32;
@@ -212,10 +167,10 @@ _typeNestedArgs.name = "veyron.io/veyron/veyron2/vdl/testdata/base.NestedArgs";
 _typeNestedArgs.fields = [{name: "Args", type: _typeArgs}];
 _typeScalars.kind = Kind.STRUCT;
 _typeScalars.name = "veyron.io/veyron/veyron2/vdl/testdata/base.Scalars";
-_typeScalars.fields = [{name: "A0", type: _type1}, {name: "A1", type: _type6}, {name: "A2", type: _type7}, {name: "A3", type: _type2}, {name: "A4", type: _type8}, {name: "A5", type: _type9}, {name: "A6", type: _type5}, {name: "A7", type: _type10}, {name: "A8", type: _type4}, {name: "A9", type: _type11}, {name: "A10", type: _type12}, {name: "A11", type: _type13}, {name: "A12", type: _type3}, {name: "A13", type: _type14}, {name: "A14", type: _type17}, {name: "A15", type: _type18}, {name: "B0", type: _typeNamedBool}, {name: "B1", type: _typeNamedByte}, {name: "B2", type: _typeNamedUint16}, {name: "B3", type: _typeNamedUint32}, {name: "B4", type: _typeNamedUint64}, {name: "B5", type: _typeNamedInt16}, {name: "B6", type: _typeNamedInt32}, {name: "B7", type: _typeNamedInt64}, {name: "B8", type: _typeNamedFloat32}, {name: "B9", type: _typeNamedFloat64}, {name: "B10", type: _typeNamedComplex64}, {name: "B11", type: _typeNamedComplex128}, {name: "B12", type: _typeNamedString}];
+_typeScalars.fields = [{name: "A0", type: Types.BOOL}, {name: "A1", type: Types.BYTE}, {name: "A2", type: Types.UINT16}, {name: "A3", type: Types.UINT32}, {name: "A4", type: Types.UINT64}, {name: "A5", type: Types.INT16}, {name: "A6", type: Types.INT32}, {name: "A7", type: Types.INT64}, {name: "A8", type: Types.FLOAT32}, {name: "A9", type: Types.FLOAT64}, {name: "A10", type: Types.COMPLEX64}, {name: "A11", type: Types.COMPLEX128}, {name: "A12", type: Types.STRING}, {name: "A13", type: _type1}, {name: "A14", type: Types.ANY}, {name: "A15", type: Types.TYPEOBJECT}, {name: "B0", type: _typeNamedBool}, {name: "B1", type: _typeNamedByte}, {name: "B2", type: _typeNamedUint16}, {name: "B3", type: _typeNamedUint32}, {name: "B4", type: _typeNamedUint64}, {name: "B5", type: _typeNamedInt16}, {name: "B6", type: _typeNamedInt32}, {name: "B7", type: _typeNamedInt64}, {name: "B8", type: _typeNamedFloat32}, {name: "B9", type: _typeNamedFloat64}, {name: "B10", type: _typeNamedComplex64}, {name: "B11", type: _typeNamedComplex128}, {name: "B12", type: _typeNamedString}];
 _typeerror.kind = Kind.STRUCT;
 _typeerror.name = "error";
-_typeerror.fields = [{name: "IDAction", type: _type15}, {name: "Msg", type: _type3}, {name: "ParamList", type: _type16}];
+_typeerror.fields = [{name: "IDAction", type: _type2}, {name: "Msg", type: Types.STRING}, {name: "ParamList", type: _type3}];
 types.Args = Registry.lookupOrCreateConstructor(_typeArgs, "Args");
 types.CompComp = Registry.lookupOrCreateConstructor(_typeCompComp, "CompComp");
 types.Composites = Registry.lookupOrCreateConstructor(_typeComposites, "Composites");
@@ -245,29 +200,29 @@ types.error = Registry.lookupOrCreateConstructor(_typeerror, "error");
 
 
 var consts = { 
-  Cbool: new (Registry.lookupOrCreateConstructor(_type1))(true),
-  Cbyte: new (Registry.lookupOrCreateConstructor(_type6))(1),
-  Cint32: new (Registry.lookupOrCreateConstructor(_type5))(2),
-  Cint64: new (Registry.lookupOrCreateConstructor(_type10))(new BigInt(1, new Uint8Array([0x3]))),
-  Cuint32: new (Registry.lookupOrCreateConstructor(_type2))(4),
-  Cuint64: new (Registry.lookupOrCreateConstructor(_type8))(new BigInt(1, new Uint8Array([0x5]))),
-  Cfloat32: new (Registry.lookupOrCreateConstructor(_type4))(6),
-  Cfloat64: new (Registry.lookupOrCreateConstructor(_type11))(7),
+  Cbool: new (Registry.lookupOrCreateConstructor(Types.BOOL))(true),
+  Cbyte: new (Registry.lookupOrCreateConstructor(Types.BYTE))(1),
+  Cint32: new (Registry.lookupOrCreateConstructor(Types.INT32))(2),
+  Cint64: new (Registry.lookupOrCreateConstructor(Types.INT64))(new BigInt(1, new Uint8Array([0x3]))),
+  Cuint32: new (Registry.lookupOrCreateConstructor(Types.UINT32))(4),
+  Cuint64: new (Registry.lookupOrCreateConstructor(Types.UINT64))(new BigInt(1, new Uint8Array([0x5]))),
+  Cfloat32: new (Registry.lookupOrCreateConstructor(Types.FLOAT32))(6),
+  Cfloat64: new (Registry.lookupOrCreateConstructor(Types.FLOAT64))(7),
   CNamedBool: new (Registry.lookupOrCreateConstructor(_typeNamedBool))(true),
   CNamedStruct: new (Registry.lookupOrCreateConstructor(_typeNamedStruct))({
   'a': true,
   'b': "test",
   'c': 0,
 }),
-  Ccomplex64: new (Registry.lookupOrCreateConstructor(_type12))(new Complex(8.000000, 9.000000)),
-  Ccomplex128: new (Registry.lookupOrCreateConstructor(_type13))(new Complex(10.000000, 11.000000)),
-  Cstring: new (Registry.lookupOrCreateConstructor(_type3))("foo"),
-  True: new (Registry.lookupOrCreateConstructor(_type1))(true),
-  Foo: new (Registry.lookupOrCreateConstructor(_type3))("foo"),
-  Five: new (Registry.lookupOrCreateConstructor(_type5))(5),
-  Six: new (Registry.lookupOrCreateConstructor(_type8))(new BigInt(1, new Uint8Array([0x6]))),
-  SixSquared: new (Registry.lookupOrCreateConstructor(_type8))(new BigInt(1, new Uint8Array([0x24]))),
-  FiveSquared: new (Registry.lookupOrCreateConstructor(_type5))(25),
+  Ccomplex64: new (Registry.lookupOrCreateConstructor(Types.COMPLEX64))(new Complex(8.000000, 9.000000)),
+  Ccomplex128: new (Registry.lookupOrCreateConstructor(Types.COMPLEX128))(new Complex(10.000000, 11.000000)),
+  Cstring: new (Registry.lookupOrCreateConstructor(Types.STRING))("foo"),
+  True: new (Registry.lookupOrCreateConstructor(Types.BOOL))(true),
+  Foo: new (Registry.lookupOrCreateConstructor(Types.STRING))("foo"),
+  Five: new (Registry.lookupOrCreateConstructor(Types.INT32))(5),
+  Six: new (Registry.lookupOrCreateConstructor(Types.UINT64))(new BigInt(1, new Uint8Array([0x6]))),
+  SixSquared: new (Registry.lookupOrCreateConstructor(Types.UINT64))(new BigInt(1, new Uint8Array([0x24]))),
+  FiveSquared: new (Registry.lookupOrCreateConstructor(Types.INT32))(25),
 };
 
 
@@ -298,7 +253,7 @@ package: 'veyron.io/veyron/veyron2/vdl/testdata/base',
     numOutArgs: 1,
     inputStreaming: false,
     outputStreaming: true,
-    tags: [new (Registry.lookupOrCreateConstructor(_type3))("tag"), new (Registry.lookupOrCreateConstructor(_type8))(new BigInt(1, new Uint8Array([0x6]))), ]
+    tags: [new (Registry.lookupOrCreateConstructor(Types.STRING))("tag"), new (Registry.lookupOrCreateConstructor(Types.UINT64))(new BigInt(1, new Uint8Array([0x6]))), ]
 },
     MethodA4: {
     numInArgs: 1,
@@ -336,7 +291,7 @@ package: 'veyron.io/veyron/veyron2/vdl/testdata/base',
     numOutArgs: 1,
     inputStreaming: false,
     outputStreaming: true,
-    tags: [new (Registry.lookupOrCreateConstructor(_type3))("tag"), new (Registry.lookupOrCreateConstructor(_type8))(new BigInt(1, new Uint8Array([0x6]))), ]
+    tags: [new (Registry.lookupOrCreateConstructor(Types.STRING))("tag"), new (Registry.lookupOrCreateConstructor(Types.UINT64))(new BigInt(1, new Uint8Array([0x6]))), ]
 },
     MethodA4: {
     numInArgs: 1,
@@ -400,7 +355,7 @@ var _ServiceASignature = {
     outArgs: [{
       name: '',
       doc: "",
-      type: _type14
+      type: _type1
     },
     ],
     inStream: null,
@@ -415,23 +370,23 @@ var _ServiceASignature = {
     inArgs: [{
       name: 'a',
       doc: "",
-      type: _type5
+      type: Types.INT32
     },
     {
       name: 'b',
       doc: "",
-      type: _type3
+      type: Types.STRING
     },
     ],
     outArgs: [{
       name: 's',
       doc: "",
-      type: _type3
+      type: Types.STRING
     },
     {
       name: 'err',
       doc: "",
-      type: _type14
+      type: _type1
     },
     ],
     inStream: null,
@@ -446,18 +401,18 @@ var _ServiceASignature = {
     inArgs: [{
       name: 'a',
       doc: "",
-      type: _type5
+      type: Types.INT32
     },
     ],
     outArgs: [{
       name: 's',
       doc: "",
-      type: _type3
+      type: Types.STRING
     },
     {
       name: 'err',
       doc: "",
-      type: _type14
+      type: _type1
     },
     ],
     inStream: null,
@@ -466,7 +421,7 @@ var _ServiceASignature = {
       doc: '',
       type: _typeScalars
     },
-    tags: [new (Registry.lookupOrCreateConstructor(_type3))("tag"), new (Registry.lookupOrCreateConstructor(_type8))(new BigInt(1, new Uint8Array([0x6]))), ]
+    tags: [new (Registry.lookupOrCreateConstructor(Types.STRING))("tag"), new (Registry.lookupOrCreateConstructor(Types.UINT64))(new BigInt(1, new Uint8Array([0x6]))), ]
   },
     
       
@@ -476,24 +431,24 @@ var _ServiceASignature = {
     inArgs: [{
       name: 'a',
       doc: "",
-      type: _type5
+      type: Types.INT32
     },
     ],
     outArgs: [{
       name: '',
       doc: "",
-      type: _type14
+      type: _type1
     },
     ],
     inStream: {
       name: '',
       doc: '',
-      type: _type5
+      type: Types.INT32
     },
     outStream: {
       name: '',
       doc: '',
-      type: _type3
+      type: Types.STRING
     },
     tags: []
   },
@@ -559,7 +514,7 @@ var _ServiceBSignature = {
     {
       name: 'err',
       doc: "",
-      type: _type14
+      type: _type1
     },
     ],
     inStream: null,
@@ -575,7 +530,7 @@ var _ServiceBSignature = {
     outArgs: [{
       name: '',
       doc: "",
-      type: _type14
+      type: _type1
     },
     ],
     inStream: null,
@@ -590,23 +545,23 @@ var _ServiceBSignature = {
     inArgs: [{
       name: 'a',
       doc: "",
-      type: _type5
+      type: Types.INT32
     },
     {
       name: 'b',
       doc: "",
-      type: _type3
+      type: Types.STRING
     },
     ],
     outArgs: [{
       name: 's',
       doc: "",
-      type: _type3
+      type: Types.STRING
     },
     {
       name: 'err',
       doc: "",
-      type: _type14
+      type: _type1
     },
     ],
     inStream: null,
@@ -621,18 +576,18 @@ var _ServiceBSignature = {
     inArgs: [{
       name: 'a',
       doc: "",
-      type: _type5
+      type: Types.INT32
     },
     ],
     outArgs: [{
       name: 's',
       doc: "",
-      type: _type3
+      type: Types.STRING
     },
     {
       name: 'err',
       doc: "",
-      type: _type14
+      type: _type1
     },
     ],
     inStream: null,
@@ -641,7 +596,7 @@ var _ServiceBSignature = {
       doc: '',
       type: _typeScalars
     },
-    tags: [new (Registry.lookupOrCreateConstructor(_type3))("tag"), new (Registry.lookupOrCreateConstructor(_type8))(new BigInt(1, new Uint8Array([0x6]))), ]
+    tags: [new (Registry.lookupOrCreateConstructor(Types.STRING))("tag"), new (Registry.lookupOrCreateConstructor(Types.UINT64))(new BigInt(1, new Uint8Array([0x6]))), ]
   },
     
       
@@ -651,24 +606,24 @@ var _ServiceBSignature = {
     inArgs: [{
       name: 'a',
       doc: "",
-      type: _type5
+      type: Types.INT32
     },
     ],
     outArgs: [{
       name: '',
       doc: "",
-      type: _type14
+      type: _type1
     },
     ],
     inStream: {
       name: '',
       doc: '',
-      type: _type5
+      type: Types.INT32
     },
     outStream: {
       name: '',
       doc: '',
-      type: _type3
+      type: Types.STRING
     },
     tags: []
   },

@@ -15,14 +15,11 @@ var Registry = vom.Registry;
 
 
 var types = {};
-var _type1 = new Type();
 var _typeID = new Type();
-_type1.kind = Kind.BYTE;
-_type1.name = "";
 _typeID.kind = Kind.ARRAY;
 _typeID.name = "veyron.io/veyron/veyron2/uniqueid.ID";
 _typeID.len = 16;
-_typeID.elem = _type1;
+_typeID.elem = Types.BYTE;
 types.ID = Registry.lookupOrCreateConstructor(_typeID, "ID");
 
 

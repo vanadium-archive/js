@@ -18,67 +18,33 @@ var base = require('./../base/base');
 
 var types = {};
 var _type1 = new Type();
-var _type10 = new Type();
-var _type11 = new Type();
 var _type2 = new Type();
 var _type3 = new Type();
-var _type4 = new Type();
-var _type5 = new Type();
-var _type6 = new Type();
-var _type7 = new Type();
-var _type8 = new Type();
-var _type9 = new Type();
-var _typeArgs = new Type();
-var _typeNestedArgs = new Type();
 var _typeerror = new Type();
-_type1.kind = Kind.FLOAT64;
+_type1.kind = Kind.NILABLE;
 _type1.name = "";
-_type10.kind = Kind.INT64;
-_type10.name = "";
-_type11.kind = Kind.UINT64;
-_type11.name = "";
-_type2.kind = Kind.NILABLE;
+_type1.elem = _typeerror;
+_type2.kind = Kind.STRUCT;
 _type2.name = "";
-_type2.elem = _typeerror;
-_type3.kind = Kind.STRUCT;
+_type2.fields = [{name: "ID", type: Types.STRING}, {name: "Action", type: Types.UINT32}];
+_type3.kind = Kind.LIST;
 _type3.name = "";
-_type3.fields = [{name: "ID", type: _type4}, {name: "Action", type: _type5}];
-_type4.kind = Kind.STRING;
-_type4.name = "";
-_type5.kind = Kind.UINT32;
-_type5.name = "";
-_type6.kind = Kind.LIST;
-_type6.name = "";
-_type6.elem = _type7;
-_type7.kind = Kind.ANY;
-_type7.name = "";
-_type8.kind = Kind.BOOL;
-_type8.name = "";
-_type9.kind = Kind.INT32;
-_type9.name = "";
-_typeArgs.kind = Kind.STRUCT;
-_typeArgs.name = "veyron.io/veyron/veyron2/vdl/testdata/base.Args";
-_typeArgs.fields = [{name: "A", type: _type9}, {name: "B", type: _type9}];
-_typeNestedArgs.kind = Kind.STRUCT;
-_typeNestedArgs.name = "veyron.io/veyron/veyron2/vdl/testdata/base.NestedArgs";
-_typeNestedArgs.fields = [{name: "Args", type: _typeArgs}];
+_type3.elem = Types.ANY;
 _typeerror.kind = Kind.STRUCT;
 _typeerror.name = "error";
-_typeerror.fields = [{name: "IDAction", type: _type3}, {name: "Msg", type: _type4}, {name: "ParamList", type: _type6}];
-types.Args = Registry.lookupOrCreateConstructor(_typeArgs, "Args");
-types.NestedArgs = Registry.lookupOrCreateConstructor(_typeNestedArgs, "NestedArgs");
+_typeerror.fields = [{name: "IDAction", type: _type2}, {name: "Msg", type: Types.STRING}, {name: "ParamList", type: _type3}];
 types.error = Registry.lookupOrCreateConstructor(_typeerror, "error");
 
 
 
 var consts = { 
-  Yes: new (Registry.lookupOrCreateConstructor(_type8))(true),
-  No: new (Registry.lookupOrCreateConstructor(_type8))(false),
-  Hello: new (Registry.lookupOrCreateConstructor(_type4))("hello"),
-  Int32Const: new (Registry.lookupOrCreateConstructor(_type9))(123),
-  Int64Const: new (Registry.lookupOrCreateConstructor(_type10))(new BigInt(1, new Uint8Array([0x80]))),
-  FloatConst: new (Registry.lookupOrCreateConstructor(_type1))(2),
-  Mask: new (Registry.lookupOrCreateConstructor(_type11))(new BigInt(1, new Uint8Array([0x1, 0x0]))),
+  Yes: new (Registry.lookupOrCreateConstructor(Types.BOOL))(true),
+  No: new (Registry.lookupOrCreateConstructor(Types.BOOL))(false),
+  Hello: new (Registry.lookupOrCreateConstructor(Types.STRING))("hello"),
+  Int32Const: new (Registry.lookupOrCreateConstructor(Types.INT32))(123),
+  Int64Const: new (Registry.lookupOrCreateConstructor(Types.INT64))(new BigInt(1, new Uint8Array([0x80]))),
+  FloatConst: new (Registry.lookupOrCreateConstructor(Types.FLOAT64))(2),
+  Mask: new (Registry.lookupOrCreateConstructor(Types.UINT64))(new BigInt(1, new Uint8Array([0x1, 0x0]))),
 };
 
 
@@ -164,7 +130,7 @@ package: 'veyron.io/veyron/veyron2/vdl/testdata/arith',
     numOutArgs: 0,
     inputStreaming: false,
     outputStreaming: false,
-    tags: [new (Registry.lookupOrCreateConstructor(_type4))("foo"), new (Registry.lookupOrCreateConstructor(_type4))("barz"), new (Registry.lookupOrCreateConstructor(_type4))("hello"), new (Registry.lookupOrCreateConstructor(_type9))(129), new (Registry.lookupOrCreateConstructor(_type11))(new BigInt(1, new Uint8Array([0x24]))), ]
+    tags: [new (Registry.lookupOrCreateConstructor(Types.STRING))("foo"), new (Registry.lookupOrCreateConstructor(Types.STRING))("barz"), new (Registry.lookupOrCreateConstructor(Types.STRING))("hello"), new (Registry.lookupOrCreateConstructor(Types.INT32))(129), new (Registry.lookupOrCreateConstructor(Types.UINT64))(new BigInt(1, new Uint8Array([0x24]))), ]
 },
     Count: {
     numInArgs: 1,
@@ -202,7 +168,7 @@ package: 'veyron.io/veyron/veyron2/vdl/testdata/arith',
     numOutArgs: 0,
     inputStreaming: false,
     outputStreaming: false,
-    tags: [new (Registry.lookupOrCreateConstructor(_type4))("offtag"), ]
+    tags: [new (Registry.lookupOrCreateConstructor(Types.STRING))("offtag"), ]
 },
     Add: {
     numInArgs: 2,
@@ -237,7 +203,7 @@ package: 'veyron.io/veyron/veyron2/vdl/testdata/arith',
     numOutArgs: 0,
     inputStreaming: false,
     outputStreaming: false,
-    tags: [new (Registry.lookupOrCreateConstructor(_type4))("foo"), new (Registry.lookupOrCreateConstructor(_type4))("barz"), new (Registry.lookupOrCreateConstructor(_type4))("hello"), new (Registry.lookupOrCreateConstructor(_type9))(129), new (Registry.lookupOrCreateConstructor(_type11))(new BigInt(1, new Uint8Array([0x24]))), ]
+    tags: [new (Registry.lookupOrCreateConstructor(Types.STRING))("foo"), new (Registry.lookupOrCreateConstructor(Types.STRING))("barz"), new (Registry.lookupOrCreateConstructor(Types.STRING))("hello"), new (Registry.lookupOrCreateConstructor(Types.INT32))(129), new (Registry.lookupOrCreateConstructor(Types.UINT64))(new BigInt(1, new Uint8Array([0x24]))), ]
 },
     Count: {
     numInArgs: 1,
@@ -335,18 +301,18 @@ var _TrigonometrySignature = {
     inArgs: [{
       name: 'angle',
       doc: "",
-      type: _type1
+      type: Types.FLOAT64
     },
     ],
     outArgs: [{
       name: '',
       doc: "",
-      type: _type1
+      type: Types.FLOAT64
     },
     {
       name: '',
       doc: "",
-      type: _type2
+      type: _type1
     },
     ],
     inStream: null,
@@ -361,18 +327,18 @@ var _TrigonometrySignature = {
     inArgs: [{
       name: 'angle',
       doc: "",
-      type: _type1
+      type: Types.FLOAT64
     },
     ],
     outArgs: [{
       name: '',
       doc: "",
-      type: _type1
+      type: Types.FLOAT64
     },
     {
       name: '',
       doc: "",
-      type: _type2
+      type: _type1
     },
     ],
     inStream: null,
@@ -424,18 +390,18 @@ var _AdvancedMathSignature = {
     inArgs: [{
       name: 'angle',
       doc: "",
-      type: _type1
+      type: Types.FLOAT64
     },
     ],
     outArgs: [{
       name: '',
       doc: "",
-      type: _type1
+      type: Types.FLOAT64
     },
     {
       name: '',
       doc: "",
-      type: _type2
+      type: _type1
     },
     ],
     inStream: null,
@@ -450,18 +416,18 @@ var _AdvancedMathSignature = {
     inArgs: [{
       name: 'angle',
       doc: "",
-      type: _type1
+      type: Types.FLOAT64
     },
     ],
     outArgs: [{
       name: '',
       doc: "",
-      type: _type1
+      type: Types.FLOAT64
     },
     {
       name: '',
       doc: "",
-      type: _type2
+      type: _type1
     },
     ],
     inStream: null,
@@ -476,18 +442,18 @@ var _AdvancedMathSignature = {
     inArgs: [{
       name: 'x',
       doc: "",
-      type: _type1
+      type: Types.FLOAT64
     },
     ],
     outArgs: [{
       name: '',
       doc: "",
-      type: _type1
+      type: Types.FLOAT64
     },
     {
       name: '',
       doc: "",
-      type: _type2
+      type: _type1
     },
     ],
     inStream: null,
@@ -546,23 +512,23 @@ var _ArithSignature = {
     inArgs: [{
       name: 'a',
       doc: "",
-      type: _type9
+      type: Types.INT32
     },
     {
       name: 'b',
       doc: "",
-      type: _type9
+      type: Types.INT32
     },
     ],
     outArgs: [{
       name: '',
       doc: "",
-      type: _type9
+      type: Types.INT32
     },
     {
       name: '',
       doc: "",
-      type: _type2
+      type: _type1
     },
     ],
     inStream: null,
@@ -577,28 +543,28 @@ var _ArithSignature = {
     inArgs: [{
       name: 'a',
       doc: "",
-      type: _type9
+      type: Types.INT32
     },
     {
       name: 'b',
       doc: "",
-      type: _type9
+      type: Types.INT32
     },
     ],
     outArgs: [{
       name: 'quot',
       doc: "",
-      type: _type9
+      type: Types.INT32
     },
     {
       name: 'rem',
       doc: "",
-      type: _type9
+      type: Types.INT32
     },
     {
       name: 'err',
       doc: "",
-      type: _type2
+      type: _type1
     },
     ],
     inStream: null,
@@ -613,18 +579,18 @@ var _ArithSignature = {
     inArgs: [{
       name: 'args',
       doc: "",
-      type: _typeArgs
+      type: base.Args
     },
     ],
     outArgs: [{
       name: '',
       doc: "",
-      type: _type9
+      type: Types.INT32
     },
     {
       name: '',
       doc: "",
-      type: _type2
+      type: _type1
     },
     ],
     inStream: null,
@@ -639,18 +605,18 @@ var _ArithSignature = {
     inArgs: [{
       name: 'nested',
       doc: "",
-      type: _typeNestedArgs
+      type: base.NestedArgs
     },
     ],
     outArgs: [{
       name: '',
       doc: "",
-      type: _type9
+      type: Types.INT32
     },
     {
       name: '',
       doc: "",
-      type: _type2
+      type: _type1
     },
     ],
     inStream: null,
@@ -666,12 +632,12 @@ var _ArithSignature = {
     outArgs: [{
       name: '',
       doc: "",
-      type: _type2
+      type: _type1
     },
     ],
     inStream: null,
     outStream: null,
-    tags: [new (Registry.lookupOrCreateConstructor(_type4))("foo"), new (Registry.lookupOrCreateConstructor(_type4))("barz"), new (Registry.lookupOrCreateConstructor(_type4))("hello"), new (Registry.lookupOrCreateConstructor(_type9))(129), new (Registry.lookupOrCreateConstructor(_type11))(new BigInt(1, new Uint8Array([0x24]))), ]
+    tags: [new (Registry.lookupOrCreateConstructor(Types.STRING))("foo"), new (Registry.lookupOrCreateConstructor(Types.STRING))("barz"), new (Registry.lookupOrCreateConstructor(Types.STRING))("hello"), new (Registry.lookupOrCreateConstructor(Types.INT32))(129), new (Registry.lookupOrCreateConstructor(Types.UINT64))(new BigInt(1, new Uint8Array([0x24]))), ]
   },
     
       
@@ -681,20 +647,20 @@ var _ArithSignature = {
     inArgs: [{
       name: 'start',
       doc: "",
-      type: _type9
+      type: Types.INT32
     },
     ],
     outArgs: [{
       name: '',
       doc: "",
-      type: _type2
+      type: _type1
     },
     ],
     inStream: null,
     outStream: {
       name: '',
       doc: '',
-      type: _type9
+      type: Types.INT32
     },
     tags: []
   },
@@ -707,23 +673,23 @@ var _ArithSignature = {
     outArgs: [{
       name: 'total',
       doc: "",
-      type: _type9
+      type: Types.INT32
     },
     {
       name: 'err',
       doc: "",
-      type: _type2
+      type: _type1
     },
     ],
     inStream: {
       name: '',
       doc: '',
-      type: _type9
+      type: Types.INT32
     },
     outStream: {
       name: '',
       doc: '',
-      type: _type9
+      type: Types.INT32
     },
     tags: []
   },
@@ -735,18 +701,18 @@ var _ArithSignature = {
     inArgs: [{
       name: 'a',
       doc: "",
-      type: _type7
+      type: Types.ANY
     },
     ],
     outArgs: [{
       name: '',
       doc: "",
-      type: _type7
+      type: Types.ANY
     },
     {
       name: '',
       doc: "",
-      type: _type2
+      type: _type1
     },
     ],
     inStream: null,
@@ -829,7 +795,7 @@ var _CalculatorSignature = {
     outArgs: [{
       name: '',
       doc: "",
-      type: _type2
+      type: _type1
     },
     ],
     inStream: null,
@@ -845,12 +811,12 @@ var _CalculatorSignature = {
     outArgs: [{
       name: '',
       doc: "",
-      type: _type2
+      type: _type1
     },
     ],
     inStream: null,
     outStream: null,
-    tags: [new (Registry.lookupOrCreateConstructor(_type4))("offtag"), ]
+    tags: [new (Registry.lookupOrCreateConstructor(Types.STRING))("offtag"), ]
   },
     
       
@@ -860,23 +826,23 @@ var _CalculatorSignature = {
     inArgs: [{
       name: 'a',
       doc: "",
-      type: _type9
+      type: Types.INT32
     },
     {
       name: 'b',
       doc: "",
-      type: _type9
+      type: Types.INT32
     },
     ],
     outArgs: [{
       name: '',
       doc: "",
-      type: _type9
+      type: Types.INT32
     },
     {
       name: '',
       doc: "",
-      type: _type2
+      type: _type1
     },
     ],
     inStream: null,
@@ -891,28 +857,28 @@ var _CalculatorSignature = {
     inArgs: [{
       name: 'a',
       doc: "",
-      type: _type9
+      type: Types.INT32
     },
     {
       name: 'b',
       doc: "",
-      type: _type9
+      type: Types.INT32
     },
     ],
     outArgs: [{
       name: 'quot',
       doc: "",
-      type: _type9
+      type: Types.INT32
     },
     {
       name: 'rem',
       doc: "",
-      type: _type9
+      type: Types.INT32
     },
     {
       name: 'err',
       doc: "",
-      type: _type2
+      type: _type1
     },
     ],
     inStream: null,
@@ -927,18 +893,18 @@ var _CalculatorSignature = {
     inArgs: [{
       name: 'args',
       doc: "",
-      type: _typeArgs
+      type: base.Args
     },
     ],
     outArgs: [{
       name: '',
       doc: "",
-      type: _type9
+      type: Types.INT32
     },
     {
       name: '',
       doc: "",
-      type: _type2
+      type: _type1
     },
     ],
     inStream: null,
@@ -953,18 +919,18 @@ var _CalculatorSignature = {
     inArgs: [{
       name: 'nested',
       doc: "",
-      type: _typeNestedArgs
+      type: base.NestedArgs
     },
     ],
     outArgs: [{
       name: '',
       doc: "",
-      type: _type9
+      type: Types.INT32
     },
     {
       name: '',
       doc: "",
-      type: _type2
+      type: _type1
     },
     ],
     inStream: null,
@@ -980,12 +946,12 @@ var _CalculatorSignature = {
     outArgs: [{
       name: '',
       doc: "",
-      type: _type2
+      type: _type1
     },
     ],
     inStream: null,
     outStream: null,
-    tags: [new (Registry.lookupOrCreateConstructor(_type4))("foo"), new (Registry.lookupOrCreateConstructor(_type4))("barz"), new (Registry.lookupOrCreateConstructor(_type4))("hello"), new (Registry.lookupOrCreateConstructor(_type9))(129), new (Registry.lookupOrCreateConstructor(_type11))(new BigInt(1, new Uint8Array([0x24]))), ]
+    tags: [new (Registry.lookupOrCreateConstructor(Types.STRING))("foo"), new (Registry.lookupOrCreateConstructor(Types.STRING))("barz"), new (Registry.lookupOrCreateConstructor(Types.STRING))("hello"), new (Registry.lookupOrCreateConstructor(Types.INT32))(129), new (Registry.lookupOrCreateConstructor(Types.UINT64))(new BigInt(1, new Uint8Array([0x24]))), ]
   },
     
       
@@ -995,20 +961,20 @@ var _CalculatorSignature = {
     inArgs: [{
       name: 'start',
       doc: "",
-      type: _type9
+      type: Types.INT32
     },
     ],
     outArgs: [{
       name: '',
       doc: "",
-      type: _type2
+      type: _type1
     },
     ],
     inStream: null,
     outStream: {
       name: '',
       doc: '',
-      type: _type9
+      type: Types.INT32
     },
     tags: []
   },
@@ -1021,23 +987,23 @@ var _CalculatorSignature = {
     outArgs: [{
       name: 'total',
       doc: "",
-      type: _type9
+      type: Types.INT32
     },
     {
       name: 'err',
       doc: "",
-      type: _type2
+      type: _type1
     },
     ],
     inStream: {
       name: '',
       doc: '',
-      type: _type9
+      type: Types.INT32
     },
     outStream: {
       name: '',
       doc: '',
-      type: _type9
+      type: Types.INT32
     },
     tags: []
   },
@@ -1049,18 +1015,18 @@ var _CalculatorSignature = {
     inArgs: [{
       name: 'a',
       doc: "",
-      type: _type7
+      type: Types.ANY
     },
     ],
     outArgs: [{
       name: '',
       doc: "",
-      type: _type7
+      type: Types.ANY
     },
     {
       name: '',
       doc: "",
-      type: _type2
+      type: _type1
     },
     ],
     inStream: null,
@@ -1075,18 +1041,18 @@ var _CalculatorSignature = {
     inArgs: [{
       name: 'angle',
       doc: "",
-      type: _type1
+      type: Types.FLOAT64
     },
     ],
     outArgs: [{
       name: '',
       doc: "",
-      type: _type1
+      type: Types.FLOAT64
     },
     {
       name: '',
       doc: "",
-      type: _type2
+      type: _type1
     },
     ],
     inStream: null,
@@ -1101,18 +1067,18 @@ var _CalculatorSignature = {
     inArgs: [{
       name: 'angle',
       doc: "",
-      type: _type1
+      type: Types.FLOAT64
     },
     ],
     outArgs: [{
       name: '',
       doc: "",
-      type: _type1
+      type: Types.FLOAT64
     },
     {
       name: '',
       doc: "",
-      type: _type2
+      type: _type1
     },
     ],
     inStream: null,
@@ -1127,18 +1093,18 @@ var _CalculatorSignature = {
     inArgs: [{
       name: 'x',
       doc: "",
-      type: _type1
+      type: Types.FLOAT64
     },
     ],
     outArgs: [{
       name: '',
       doc: "",
-      type: _type1
+      type: Types.FLOAT64
     },
     {
       name: '',
       doc: "",
-      type: _type2
+      type: _type1
     },
     ],
     inStream: null,
