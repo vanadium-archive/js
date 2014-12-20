@@ -7,7 +7,7 @@ var Deferred = require('./../lib/deferred');
 var Proxy = require('./proxy');
 var random = require('../lib/random');
 var vLog = require('./../lib/vlog');
-var DecodeUtil = require('../lib/decode_util');
+var DecodeUtil = require('../lib/decode-util');
 
 module.exports = ProxyConnection;
 

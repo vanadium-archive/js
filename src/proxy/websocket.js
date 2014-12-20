@@ -7,7 +7,7 @@ var Deferred = require('./../lib/deferred');
 var vLog = require('./../lib/vlog');
 var Proxy = require('./proxy');
 var isBrowser = require('is-browser');
-var DecodeUtil = require('../lib/decode_util');
+var DecodeUtil = require('../lib/decode-util');
 
 /**
  * A client for the veyron service using websockets. Connects to the veyron wspr
