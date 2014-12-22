@@ -70,7 +70,7 @@ func (c *cancelCollectorImpl) getInfoLocked(key int64) *callInfo {
 
 func (c *cancelCollectorImpl) NeverReturn(ctx ipc.ServerContext, key int64) error {
 	timeout := ipc.NoTimeout / 1000000
-	if deadline, ok := ctx.Deadline(); ok {
+	if deadline, ok := ctx.Context().Deadline(); ok {
 		timeout = int64(deadline.Sub(time.Now())) / 1000000
 	}
 
@@ -80,7 +80,7 @@ func (c *cancelCollectorImpl) NeverReturn(ctx ipc.ServerContext, key int64) erro
 	c.mu.Unlock()
 
 	c.setStatus(key, running)
-	<-ctx.Done()
+	<-ctx.Context().Done()
 	c.setStatus(key, cancelled)
 	return nil
 }
