@@ -1,11 +1,7 @@
-var veyron = require('../../src/veyron.js');
+var veyron = window.veyron = require('../../src/veyron.js');
 
-// TODO(nlacasse): Consider getting this url from the extension?  Might not be
-// worth it though, because soon WSPR will be included in the extension and
-// won't need any url.
 var veyronConfig = {
-  authenticate: true,
-  proxy: 'http://localhost:8124'
+  authenticate: true
 };
 
 document.addEventListener('DOMContentLoaded', function(){

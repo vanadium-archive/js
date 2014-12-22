@@ -2,20 +2,19 @@
  * @fileoverview Helper functions to get random values.
  */
 
+// This will use window.crypto in browser, and node's crypto library in node.
+var crypto = require('crypto');
+
 module.exports = {
-  integer: integer,
-  string: string
+  int32: int32,
+  hex: hex
 };
 
-// NOTE: This is the maximum integer size that NaCl can handle, not the maximum
-// JS integer size.
-var MAX_INT = 2147483647;
-
-function integer(max) {
-  max = max || MAX_INT;
-  return parseInt(Math.random() * max);
+function int32() {
+  return crypto.randomBytes(4).readInt32BE(0);
 }
 
-function string(len) {
-  return Math.random().toString(36).substr(2, len);
+function hex(len) {
+  len = len || 16;
+  return crypto.randomBytes(len/2).toString('hex');
 }

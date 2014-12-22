@@ -2,10 +2,9 @@ var _ = require('lodash');
 var debug = require('debug')('background:index');
 var domready = require('domready');
 
-var state = require('../state');
+var AuthHandler = require('./auth-handler');
+var getOrigin = require('./util').getOrigin;
 var Nacl = require('./nacl');
-var random = require('../../../src/lib/random');
-var WSPR = require('./wspr');
 
 domready(function() {
   // Start!
@@ -26,9 +25,11 @@ function BackgroundPage() {
   // instanceId when the port closes.
   this.instanceIds = {};
 
+  // Wraps the nacl element.
   this.nacl = new Nacl();
 
-  this._wspr = null;
+  // Handles auth messages.
+  this.authHandler = new AuthHandler(this.nacl);
 
   debug('background script loaded');
 }
@@ -41,74 +42,38 @@ BackgroundPage.prototype.listen = function() {
   );
 };
 
-BackgroundPage.prototype.getWspr = function(cb) {
-  if (this._wspr) {
-    return process.nextTick(cb.bind(this, null, this._wspr));
-  }
-
-  var wspr = new WSPR(state.settings().wspr.value);
-
-  var bp = this;
-  getAuthToken(function(err, token) {
-    if (err) {
-      return cb(err);
-    }
-    wspr.createAccount(token, function(err, account) {
-      if (err) {
-        return cb(err);
-      }
-      bp.wspr = wspr;
-      bp.wspr.rootAccount = account;
-      cb(null, bp.wspr);
-    });
-  });
-};
-
-BackgroundPage.prototype.handleMessageFromNacl = function(e) {
-  var instanceId = e.data.instanceId;
-  if (instanceId === -1) {
-    // Message originated from background page. Do not forward.
-    return;
-  }
+// Handle messages coming from Nacl by send them to the associated port.
+BackgroundPage.prototype.handleMessageFromNacl = function(msg) {
+  var instanceId = msg.instanceId;
   var port = this.ports[instanceId];
   if (!port) {
     console.error('Message received not matching instance id: ', instanceId);
     return;
   }
-  var msg = e.data;
   port.postMessage(msg);
 };
 
+// Handle messages coming from a content script.
 BackgroundPage.prototype.handleMessageFromContentScript = function(port) {
   var bp = this;
   port.onMessage.addListener(function(msg) {
-    debug('background received message from content script.', msg);
-    if (msg.type === 'browsprMsg') {
-      return bp.handleBrowsprMessage(port, msg);
-
-    }
-    if (msg.type === 'browsprCleanup') {
-      return bp.handleBrowsprCleanup(port, msg);
-    }
-    if (msg.type === 'auth') {
-      return bp.handleAuthRequest(port);
-    }
-    if (msg.type === 'assocAccount:finish') {
-      if (port.sender.url.indexOf(chrome.extension.getURL(
-          'html/addcaveats.html')) !== 0) {
-        console.error('invalid requester for assocAccount:finish');
-        return;
+    // Wrap in process.nextTick so chrome stack traces can use sourceMap.
+    process.nextTick(function() {
+      debug('background received message from content script.', msg);
+      // Dispatch on the type of the message.
+      switch (msg.type) {
+        case 'browsprMsg':
+          return bp.handleBrowsprMessage(port, msg);
+        case 'browsprCleanup':
+          return bp.handleBrowsprCleanup(port, msg);
+        case 'auth':
+          return bp.authHandler.handleAuthMessage(port);
+        case 'assocAccount:finish':
+          return bp.authHandler.handleFinishAuth(port, msg);
+        default:
+          console.error('unknown message.', msg);
       }
-      return bp.handleFinishAuth({
-        webappId: msg.webappId,
-        origin: msg.origin,
-        account: msg.account,
-        caveats: msg.caveats,
-        addCaveatsId: port.sender.tab.id,
-        authState: msg.authState
-      });
-    }
-    console.error('unknown message.', msg);
+    });
   });
 
   port.onDisconnect.addListener(function() {
@@ -117,10 +82,10 @@ BackgroundPage.prototype.handleMessageFromContentScript = function(port) {
     instanceIds.forEach(function(instanceId) {
       bp.handleBrowsprCleanup(port, {body: {instanceId: instanceId}});
     });
-    delete bp.instanceIds[pId];
   });
 };
 
+// Clean up an instance, and tell Nacl to clean it up as well.
 BackgroundPage.prototype.handleBrowsprCleanup = function(port, msg) {
   var instanceId = msg.body.instanceId;
 
@@ -134,13 +99,19 @@ BackgroundPage.prototype.handleBrowsprCleanup = function(port, msg) {
         ' that does not match port.');
   }
 
+  var pId = portId(port);
+
+  this.instanceIds[pId] = _.remove(this.instanceIds[pId], [instanceId]);
   delete this.ports[instanceId];
-  this.nacl.sendMessage({
-    type: 'browsprCleanup',
+
+  this.nacl.channel.performRpc('cleanup', {
     instanceId: instanceId
+  }, function (){
+    console.log('Cleaned up instance: ' + instanceId);
   });
 };
 
+// Handle messages that will be sent to Nacl.
 BackgroundPage.prototype.handleBrowsprMessage = function(port, msg) {
   var body = msg.body;
   if (!body) {
@@ -161,122 +132,17 @@ BackgroundPage.prototype.handleBrowsprMessage = function(port, msg) {
   this.instanceIds[portId] =
       _.union(this.instanceIds[portId] || [], [body.instanceId]);
 
+  // Cache the origin on the port object.
+  port.origin = port.origin || getOrigin(port.sender.tab.url);
+
   var naclMsg = {
     type: msg.type,
     instanceId: parseInt(body.instanceId),
+    origin: port.origin,
     body: body.msg
   };
   return this.nacl.sendMessage(naclMsg);
 };
-
-BackgroundPage.prototype.handleAuthRequest = function(port) {
-  port.postMessage({
-    type: 'auth:received'
-  });
-  var bp = this;
-  this.getWspr(function(err, wspr) {
-    if (err) {
-      return sendError('auth', port, err);
-    }
-
-    if (bp.wspr.rootAccount.length === 0) {
-      return sendError('auth', port, new Error(
-        'wspr account setup is not complete'));
-    }
-
-    var origin;
-    try {
-      origin = getOrigin(port.sender.url);
-    } catch (err) {
-      return sendError('auth', port, err);
-    }
-
-    port.authState = random().string();
-
-    chrome.tabs.create({
-      url: chrome.extension.getURL('html/addcaveats.html') + '?webappId=' +
-        port.sender.tab.id + '&origin=' + encodeURIComponent(origin) +
-        '&authState=' + port.authState
-    });
-  });
-};
-
-BackgroundPage.prototype.handleFinishAuth = function(args) {
-  chrome.tabs.remove(args.addCaveatsId);
-  var port = this.ports[args.webappId];
-  if (!port || args.authState !== port.authState) {
-    return console.error('port not authorized');
-  }
-
-  this.getWspr(function(err, wspr) {
-    if (err) {
-      return sendError('auth', port, err);
-    }
-    wspr.assocAccount(wspr.rootAccount, args.origin, args.caveats,
-      function(err, account) {
-        if (err) {
-          return sendError('auth', port, err);
-        }
-        port.postMessage({
-          type: 'auth:success',
-          body: {
-            account: account
-          }
-        });
-    });
-  });
-};
-
-// Get an access token from the chrome.identity API
-// See https://developer.chrome.com/apps/app_identity
-function getAuthToken(callback) {
-  // This will return an access token for the profile that the user is
-  // signed in to chrome as.  If the user is not signed in to chrome, an
-  // OAuth window will pop up and ask them to sign in.
-  //
-  // For now, we don't have a way to ask the user which profile they would
-  // like to use.  However, once the `chrome.identity.getAccounts` API call
-  // gets out of dev/beta channel, we can get a list of accounts and prompt
-  // the user for which one they would like to use with veyron.
-  chrome.identity.getAuthToken({
-    interactive: true
-  }, function(token) {
-    if (chrome.runtime.lastError) {
-      console.error('Error getting auth token.', chrome.runtime.lastError);
-      return callback(chrome.runtime.lastError);
-    }
-
-    return callback(null, token);
-  });
-}
-
-// Convert an Error object into a bare Object with the same properties.  We do
-// this because port.postMessage calls JSON.stringify, which ignores the message
-// and stack properties on Error objects.
-function errorToObject(err) {
-  var obj = {};
-  Object.getOwnPropertyNames(err).forEach(function(key) {
-    obj[key] = err[key];
-  });
-  return obj;
-}
-
-// Helper functions to send error message back to calling content script.
-function sendError(type, port, err) {
-  port.postMessage({
-    type: type + ':error',
-    body: {
-      error: errorToObject(err)
-    }
-  });
-}
-
-// Parse a url and return the origin.
-function getOrigin(url) {
-  var URL = require('url');
-  var parsed = URL.parse(url);
-  return parsed.protocol + '//' + parsed.host;
-}
 
 function portId(port) {
   return port.sender.tab.id;

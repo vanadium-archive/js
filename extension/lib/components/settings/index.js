@@ -16,11 +16,10 @@ module.exports = create;
 module.exports.render = render;
 
 var defaults = {
-  identityd: '/proxy.envyor.com:8101/identity/veyron-test/google',
-  namespaceRoot: '/proxy.envyor.com:8101',
-  proxy: 'proxy.envyor.com:8100',
-  // TODO(nlacasse): Remove wspr settings once nacl-wspr is complete.
-  wspr: 'http://localhost:8124'
+  identityd: 'identity/veyron-test/google',
+  identitydBlessingUrl: 'https://auth.dev.v.io:8125/blessing-root',
+  namespaceRoot: '/ns.dev.v.io:8111',
+  proxy: '/ns.dev.v.io:8111/proxy'
 };
 
 function render(settings) {

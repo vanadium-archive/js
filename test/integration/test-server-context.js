@@ -27,8 +27,7 @@ var dispatcher = leafDispatcher({
 var expectedContext = {
   name: 'suf',
   suffix : 'suf',
-  remoteBlessings: {},
-  remoteBlessingStrings: ['test/child']
+  remoteBlessings: {}
 };
 
 function contains(actual, expected, assert) {
@@ -37,6 +36,20 @@ function contains(actual, expected, assert) {
       continue;
     }
     assert.deepEqual(actual[key], expected[key]);
+  }
+}
+
+var defaultBlessingName = require('./default-blessing-name');
+
+// TODO(nlacasse): Clean this up once all tests require real authentication.
+function remoteBlessingStringsContain(ctx, name, assert) {
+  var remoteBlessingStrings = ctx.remoteBlessingStrings;
+  assert.ok(remoteBlessingStrings.length > 0,
+      'Context has remoteBlessingStrings');
+
+  for (var i = 0; i < remoteBlessingStrings.length; i++) {
+    assert.ok(remoteBlessingStrings[i].indexOf(name) >= 0,
+        'ctx.remoteBlessingString[' + i + '] matches expected name');
   }
 }
 
@@ -148,6 +161,7 @@ test('Test $context object containing all context variables is injected - ' +
         delete context.remoteBlessings['key'];
 
         contains(context, expectedContext, assert);
+        remoteBlessingStringsContain(context, defaultBlessingName, assert);
         res.end(assert);
       });
     });
@@ -180,7 +194,10 @@ test('Test $context object and individual context variables such as $name ' +
           a2: '-b-',
           a3: '-c-'
         }, assert);
-        contains(results.context, expectedContext, assert);
+
+        var context = results.context;
+        contains(context, expectedContext, assert);
+        remoteBlessingStringsContain(context, defaultBlessingName, assert);
         res.end(assert);
       });
     });

@@ -57,10 +57,8 @@ function init(config, cb) {
 
   // If the user has set config.authenticate to true, get an authenticated
   // (blessed-by-Blessing-server) account for the user.  This requires the
-  // Veyron Chrome Extension to be installed and enabled, and WSPR to be
-  // configured to talk to Veyron Blessing server, e.g. the one currently hosted
-  // at /proxy.envyor.com:8101/identity/veyron-test/google.  The resulting
-  // runtime will have runtime.accountName set of authenticated account.
+  // Veyron Chrome Extension to be installed and enabled.  The resulting runtime
+  // will have runtime.accountName set of authenticated account.
   //
   // Otherwise, create a runtime with accountName 'unknown'.
   if (config.authenticate) {
@@ -102,7 +100,7 @@ function getAccount(cb) {
   // Handle auth-specific errors.
   function onAuthError(data) {
     removeListeners();
-    cb(objectToError(data.body.error));
+    cb(objectToError(data.error));
   }
 
   // Handle generic error event, which can be triggered if the extension is not

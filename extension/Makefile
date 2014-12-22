@@ -36,7 +36,7 @@ build/manifest.json: manifest.json
 	mkdir -p build
 	cp manifest.json build
 
-build/js/background.js: lib/background/index.js $(JS_FILES) node_modules
+build/js/background.js: lib/background/index.js $(JS_FILES) gen-vdl node_modules
 	$(call BROWSERIFY,$<,$@)
 
 build/js/content.js: lib/content/index.js $(JS_FILES) node_modules
@@ -76,7 +76,7 @@ build-test/manifest.json: manifest.json
 	mkdir -p build-test
 	cp manifest.json build-test
 
-build-test/js/background.js: lib/background/index.js $(JS_FILES) node_modules
+build-test/js/background.js: lib/background/index.js $(JS_FILES) gen-vdl node_modules
 	$(call BROWSERIFY-TEST,$<,$@)
 
 build-test/js/content.js: lib/content/index.js $(JS_FILES) node_modules
@@ -101,6 +101,10 @@ build-test/nacl: build-test/nacl/main.nmf build-test/nacl/main-64.nexe
 
 build-test: build-test/html build-test/images build-test/manifest.json build-test/js build-test/nacl
 
+gen-vdl: $(VEYRON_ROOT)/veyron/go/src/veyron.io/wspr/veyron/services/wsprd/channel/channel.vdl
+	veyron go run $(VEYRON_ROOT)/veyron/go/src/veyron.io/veyron/veyron2/vdl/vdl/main.go \
+	generate -lang=javascript -js_out_dir="$(VEYRON_ROOT)/veyron.js/extension/vdl" $(dir $^)
+
 example-server: example/index.bundle.js
 	static "example" -H '{"Cache-Control": "no-cache, must-revalidate"}'
 
@@ -117,11 +121,18 @@ clean:
 	@$(RM) -fr node_modules npm-debug.log
 	@$(RM) -fr veyron.crx build build-test
 
-node_modules: package.json
+node_modules: package.json | check-that-npm-is-in-path node_modules/vom/lib/index.js
 	@npm prune
 	@npm install --quiet
 
-.PHONY: all build clean dependency-check lint wspr
+node_modules/vom/lib/index.js:
+	cd "$(VEYRON_ROOT)/veyron/javascript/vom" && npm link
+	:;npm link vom
+
+check-that-npm-is-in-path:
+	@which npm > /dev/null || { echo "npm is not in the path. Did you remember to run 'veyron profile setup web'?"; exit 1; }
+
+.PHONY: all build clean dependency-check gen-vdl lint
 
 # Always rebuild the plugin.
 .PHONY: nacl/main-64.nexe

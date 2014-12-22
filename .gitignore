@@ -4,6 +4,7 @@ docs
 extension/build
 extension/build-test
 extension/example/*bundle*
+extension/vdl
 extension/veyron.crx
 node_modules
 npm-debug.log

@@ -85,10 +85,6 @@ test('Test binding to a non-existing name - ' +
 
 test('Test binding when proxy Url is invalid - ' +
   'runtime.bindTo(name, callback)', function(assert) {
-  if (require('is-browser')) {
-    // Browser doesn't use wspr url, so skip this test.
-    return assert.end();
-  }
 
   veyron.init({ wspr: 'http://bad-address.tld' }, onruntime);
   var ctx = context.Context();
@@ -106,10 +102,6 @@ test('Test binding when proxy Url is invalid - ' +
 
 test('Test binding when wspr Url is invalid - ' +
   'var promise = runtime.bindTo(name) ', function(assert) {
-  if (require('is-browser')) {
-    // Browser doesn't use wspr url, so skip this test.
-    return assert.end();
-  }
 
   veyron
   .init({ wspr: 'http://bad-address.tld' })

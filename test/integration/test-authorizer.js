@@ -273,10 +273,12 @@ test('Test proper context is passed to authorizer', function(assert) {
   .then(call)
   .catch(end);
 
+  var defaultBlessingName = require('./default-blessing-name');
+
   function authorizer(ctx) {
-    if (ctx.remoteBlessingStrings[0] !== 'test/child') {
+    if (ctx.remoteBlessingStrings[0].indexOf(defaultBlessingName) < 0) {
       return new Error('unknown blessings ' + ctx.remoteBlessingStrings);
-    } else if (ctx.localBlessingStrings[0] !== 'test/child') {
+    } else if (ctx.localBlessingStrings[0].indexOf(defaultBlessingName) < 0) {
       return new Error('unknown blessings ' + ctx.localBlessingStrings);
     } else if (ctx.method !== 'call') {
       return new Error('wrong method ' + ctx.method);

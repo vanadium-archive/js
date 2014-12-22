@@ -2,6 +2,7 @@ var domready = require('domready');
 var EE = require('events').EventEmitter;
 var inherits = require('util').inherits;
 
+var Channel = require('./channel');
 var state = require('../state');
 
 module.exports = Nacl;
@@ -13,13 +14,13 @@ function Nacl() {
 
   EE.call(this);
 
+  // Channel for bi-directional RPCs.
+  this.channel = new Channel(this.sendMessage.bind(this));
+
   this.queuedMessages = [];
 
   // Send start message on load.
   this.once('load', this._start.bind(this));
-
-  // Send queued messages once browspr is started.
-  this.once('browsprStarted', this._sendQueuedMessages.bind(this));
 
   // Wait until the dom is ready, then add 'load' and 'message' listeners on the
   // nacl plugin that will trigger events on this object.
@@ -28,7 +29,14 @@ function Nacl() {
     nacl.naclElt = document.getElementById('nacl');
     // 'load' listener must have useCapture argument set to 'true'.
     nacl.naclElt.addEventListener('load', nacl.emit.bind(nacl, 'load'), true);
-    nacl.naclElt.addEventListener('message', nacl.emit.bind(nacl, 'message'));
+    nacl.naclElt.addEventListener('message', function(e) {
+      var msg = e.data;
+      if (msg instanceof ArrayBuffer) {
+        // Message is response from a channel RPC.
+        return nacl.channel.handleMessage(msg);
+      }
+      nacl.emit('message', msg);
+    });
   });
 }
 
@@ -44,43 +52,31 @@ Nacl.prototype.sendMessage = function(msg) {
 };
 
 Nacl.prototype._start = function() {
+  var nacl = this;
   var settings = state.settings();
   console.log(settings);
 
-  // Emit 'browsprStarted' event on the first 'browsprStarted' message.
-  var nacl = this;
-  this.on('message', function handleMsg(msg) {
-    if (msg.data && msg.data.type === 'browsprStarted') {
-      console.log('Browspr Started');
-      nacl.emit('browsprStarted');
-      nacl.removeListener('message', handleMsg);
-    }
-  });
+  this.getBlessingRoot(settings.identitydBlessingUrl.value,
+    function(err, identityBlessingRoot) {
+      if (err) {
+        console.error(err);
+      }
 
-  // Send the start message to Nacl.
-  this.sendMessage({
-    // -1 indicates the request is from background page
-    instanceId: -1,
-    type: 'browsprStart',
-    body: {
-      // TODO(nlacasse): Make sure that these settings have had time to load
-      // from localStorage.
-      identityd: settings.identityd.value,
-      namespaceRoot: settings.namespaceRoot.value,
-      proxy: settings.proxy.value,
+      var body = {
+        identitydBlessingRoot: identityBlessingRoot,
+        identityd: settings.identityd.value,
+        namespaceRoot: settings.namespaceRoot.value,
+        proxy: settings.proxy.value
+      };
 
-      // TODO(nlacasse,bprosnitz): Browspr should get these values from
-      // localStorage or TPM. For now the defaultBlessingName is hard-coded to
-      // make the authorizer tests pass.
-      defaultBlessingName: 'test/child',
-      pemPrivateKey: [
-        '-----BEGIN EC PRIVATE KEY-----',
-        'MHcCAQEEIIJ7zF8sTpNT5r5j8yvvD8tofAwIMKEFHfXTMoapZQGOoAoGCCqGSM49',
-        'AwEHoUQDQgAECsdd8fIh0s3xHlWOLrtc/l8vX/ZwS0rkb0rGbjL76yhbxZY+6muL',
-        '4Ss3dGUK87CNHee+8HiHrl6VVR+SrLOXqg==',
-          '-----END EC PRIVATE KEY-----'].join('\n')
-    }
-  });
+      nacl.channel.performRpc('start', body, function(err) {
+        if (err) {
+          return console.error(err);
+        }
+
+        nacl._sendQueuedMessages();
+      });
+    });
 };
 
 Nacl.prototype._sendQueuedMessages = function() {
@@ -90,4 +86,33 @@ Nacl.prototype._sendQueuedMessages = function() {
   });
   this.queuedMessages = [];
   console.log('Sent queued messages');
+};
+
+Nacl.prototype.getBlessingRoot = function(url, cb) {
+  // TODO(nlacasse): Currently the identity server has a self-signed cert, so we
+  // can't make an XHR to it to request the identity root.  Hence, I've just
+  // hard-coded the root value.  Once we have a real cert for the identity
+  // server, this should go away, and the superagent code below should be
+  // enabled.
+  var veyronTestRoot = {
+    names: ['veyron-test'],
+    publicKey: 'MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAERbKmIZ238zO5JL4cTwNlcLP' +
+        'a-lmJv2qJyOUGXGhDhFalljmt4SaFR6PRETzOH1lB_FvZhEMJi-CShgQhnzFZGw=='
+  };
+
+  return process.nextTick(cb.bind(null, null, veyronTestRoot));
+
+//  var request = require('superagent');
+//  request
+//      .get(url)
+//      .accept('application/json')
+//      end(function(err, res) {
+//        if (err) {
+//          cb(err);
+//        } else if (res.error) {
+//          cb(new Error('' + res.status ': ' + res.message));
+//        } else {
+//          cb(res.body);
+//        }
+//      })
 };

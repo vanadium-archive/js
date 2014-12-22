@@ -22,7 +22,7 @@ pageEventProxy.onAny(function(body) {
   // Swap the instanceId with a generated one.
   if (body && body.instanceId) {
     var outgoingInstanceId = pageToBackground[body.instanceId] ||
-        random.integer();
+        random.int32();
     pageToBackground[body.instanceId] = outgoingInstanceId;
     backgroundToPage[outgoingInstanceId] = body.instanceId;
     body.instanceId = outgoingInstanceId;

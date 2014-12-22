@@ -19,7 +19,7 @@ module.exports = ProxyConnection;
 function ProxyConnection() {
   var self = this;
 
-  this.instanceId = random.string();
+  this.instanceId = random.hex();
 
   extensionEventProxy.on('browsprMsg', function(msg) {
     var body;
