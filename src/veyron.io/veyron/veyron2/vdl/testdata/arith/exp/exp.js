@@ -18,31 +18,19 @@ var types = {};
 var _type1 = new Type();
 var _type2 = new Type();
 var _type3 = new Type();
-var _type4 = new Type();
-var _type5 = new Type();
-var _type6 = new Type();
-var _type7 = new Type();
 var _typeerror = new Type();
-_type1.kind = Kind.FLOAT64;
+_type1.kind = Kind.NILABLE;
 _type1.name = "";
-_type2.kind = Kind.NILABLE;
+_type1.elem = _typeerror;
+_type2.kind = Kind.STRUCT;
 _type2.name = "";
-_type2.elem = _typeerror;
-_type3.kind = Kind.STRUCT;
+_type2.fields = [{name: "ID", type: Types.STRING}, {name: "Action", type: Types.UINT32}];
+_type3.kind = Kind.LIST;
 _type3.name = "";
-_type3.fields = [{name: "ID", type: _type4}, {name: "Action", type: _type5}];
-_type4.kind = Kind.STRING;
-_type4.name = "";
-_type5.kind = Kind.UINT32;
-_type5.name = "";
-_type6.kind = Kind.LIST;
-_type6.name = "";
-_type6.elem = _type7;
-_type7.kind = Kind.ANY;
-_type7.name = "";
+_type3.elem = Types.ANY;
 _typeerror.kind = Kind.STRUCT;
 _typeerror.name = "error";
-_typeerror.fields = [{name: "IDAction", type: _type3}, {name: "Msg", type: _type4}, {name: "ParamList", type: _type6}];
+_typeerror.fields = [{name: "IDAction", type: _type2}, {name: "Msg", type: Types.STRING}, {name: "ParamList", type: _type3}];
 types.error = Registry.lookupOrCreateConstructor(_typeerror, "error");
 
 
@@ -109,18 +97,18 @@ var _ExpSignature = {
     inArgs: [{
       name: 'x',
       doc: "",
-      type: _type1
+      type: Types.FLOAT64
     },
     ],
     outArgs: [{
       name: '',
       doc: "",
-      type: _type1
+      type: Types.FLOAT64
     },
     {
       name: '',
       doc: "",
-      type: _type2
+      type: _type1
     },
     ],
     inStream: null,
