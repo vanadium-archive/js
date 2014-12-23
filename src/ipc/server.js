@@ -91,7 +91,7 @@ Server.prototype.serve = function(name, serviceObject, options, cb) {
   if (options) {
     authorizer = options.authorizer;
   }
-  var dispatcher = leafDispatcher(serviceObject, undefined, authorizer);
+  var dispatcher = leafDispatcher(serviceObject, authorizer);
   return this.serveDispatcher(name, dispatcher, cb);
 };
 

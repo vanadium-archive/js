@@ -33,9 +33,10 @@ function createDispatcher(authorizer, tags) {
       }
     ]
   };
+  service._description = desc;
   return function authDispatcher(suffix) {
     return {
-      invoker: new Invoker(service, desc),
+      invoker: new Invoker(service),
       authorizer: auth,
     };
   };

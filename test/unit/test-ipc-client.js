@@ -1,14 +1,14 @@
 var test = require('prova');
 var Client = require('../../src/ipc/client.js');
 var context = require('../../src/runtime/context');
-var Signature = require('../../src/vdl/signature');
+var createSignatures = require('../../src/vdl/create-signatures');
 var vom = require('vom');
 var DecodeUtil = require('../../src/lib/decode-util');
 
-var mockSignature = [new Signature({
+var mockSignature = createSignatures({
   tripleArgMethod: function(a, b, c) {},
   singleArgMethod: function(a) {}
-})];
+});
 
 var mockProxy = {
   cancelFromContext: function() {},
@@ -35,7 +35,7 @@ test('client.bindTo(ctx, name, [empty service], [callback])', function(assert) {
   var client = new Client(mockProxy);
   var ctx = new context.Context();
 
-  client.bindTo(ctx, 'service-name', [new Signature({})], onbind);
+  client.bindTo(ctx, 'service-name', createSignatures({}), onbind);
 
   function onbind(err, service) {
     assert.error(err);
@@ -50,7 +50,7 @@ test('client.bindTo(ctx, name, [empty service]) - promise', function(assert) {
   var ctx = new context.Context();
 
   client
-  .bindTo(ctx, 'service-name', [new Signature({})])
+  .bindTo(ctx, 'service-name', createSignatures({}))
   .then(success)
   .catch(assert.end);
 
@@ -63,7 +63,7 @@ test('client.bindTo(ctx, name, [empty service]) - promise', function(assert) {
 
 test('client.bindTo(name, service, callback) - no context', function(assert) {
   var client = new Client(mockProxy);
-  var service = [new Signature({})];
+  var service = createSignatures({});
 
   client.bindTo('service-name', service, function(err) {
     assert.ok(err);
@@ -73,7 +73,7 @@ test('client.bindTo(name, service, callback) - no context', function(assert) {
 
 test('client.bindTo(name, service) - promise - no context', function(assert) {
   var client = new Client(mockProxy);
-  var service = [new Signature({})];
+  var service = createSignatures({});
 
   client
   .bindTo('service-name', service)

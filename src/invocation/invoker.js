@@ -5,7 +5,7 @@
 module.exports = Invoker;
 
 var argHelper = require('../lib/arg-helper');
-var Signature = require('../vdl/signature');
+var createSignatures = require('../vdl/create-signatures');
 var verror = require('../lib/verror');
 var vlog = require('../lib/vlog');
 var vom = require('vom');
@@ -13,20 +13,15 @@ var vom = require('vom');
 /**
   * Create an invoker.
   * @param {Service} service Service object.
-  * @param {Descriptor=} desc Service descriptor, used for signature().
-  * See signature.js for more details.
   * @constructor
   */
-function Invoker(service, desc) {
+function Invoker(service) {
   if (!(this instanceof Invoker)) {
-    return new Invoker(service, desc);
+    return new Invoker(service);
   }
 
   this._service = service;
-  // TODO(bprosnitz) Support multiple desc.
-  this._signature = [
-    new Signature(service, desc)
-  ];
+  this._signature = createSignatures(service, service._description);
   this._invokableMethods = {};
 
   for (var methodName in service) {

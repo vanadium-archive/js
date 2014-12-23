@@ -20,32 +20,49 @@ test('signature', function(t) {
         {
             name: 'No descriptor',
             desc: undefined,
+            expected: { 'methods': [] }
+        },
+        {
+            name: 'Name-only descriptor',
+            desc: {
+                methods: [
+                    {
+                        name: 'NonPrototypeFunction'
+                    },
+                    {
+                        name: 'NoArgsFunction'
+                    },
+                    {
+                        name: 'NamedFunction'
+                    }
+                ]
+            },
             expected: {
                 'methods': [
                     {
                         'name': 'NonPrototypeFunction',
                         'inArgs': [
                             {
-                                'name': 'a'
+                                'name': 'a',
                             },
                             {
-                                'name': 'b'
+                                'name': 'b',
                             }
                         ],
                         'outArgs': [
-                            {
-                                'type': vom.Types.ANY
-                            },
-                            {
-                                'type': vom.Types.ERROR
-                            }
+                          {
+                            'type': vom.Types.ANY
+                          },
+                          {
+                            'type': vom.Types.ERROR
+                          }
                         ],
                         'inStream': {
                             'type': vom.Types.ANY
                         },
                         'outStream': {
                             'type': vom.Types.ANY
-                        }
+                        },
                     },
                     {
                         'name': 'NoArgsFunction',
@@ -57,30 +74,30 @@ test('signature', function(t) {
                             {
                                 'type': vom.Types.ERROR
                             }
-                        ],
+                        ]
                     },
                     {
                         'name': 'NamedFunction',
                         'inArgs': [
                             {
-                                'name': 'x'
+                                'name': 'x',
                             },
                             {
-                                'name': 'y'
+                                'name': 'y',
                             },
                             {
-                                'name': 'z'
+                                'name': 'z',
                             }
                         ],
                         'outArgs': [
-                            {
-                                'type': vom.Types.ANY
-                            },
-                            {
-                                'type': vom.Types.ERROR
-                            }
+                          {
+                            'type': vom.Types.ANY
+                          },
+                          {
+                            'type': vom.Types.ERROR
+                          }
                         ]
-                    }
+                    },
                 ]
             }
         },
@@ -348,18 +365,6 @@ test('signature', function(t) {
                         'outStream': {
                             'type': vom.Types.ANY
                         }
-                    },
-                    {
-                        'name': 'NoArgsFunction',
-                        'inArgs': [],
-                        'outArgs': [
-                            {
-                                'type': vom.Types.ANY
-                            },
-                            {
-                                'type': vom.Types.ERROR
-                            }
-                        ]
                     },
                     {
                         'name': 'NamedFunction',

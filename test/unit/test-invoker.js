@@ -13,13 +13,15 @@ function TestService() {
 
 var desc = {
     name: 'AName',
-    pkgPath: 'APkgPath'
+    pkgPath: 'APkgPath',
+    methods: [ { name: 'A' }]
 };
 
 function testInvoker(t, testService) {
     t.plan(5);
+    testService._description = desc;
 
-    var invoker = new Invoker(testService, desc);
+    var invoker = new Invoker(testService);
 
     // Normal call.
     invoker.invoke(
