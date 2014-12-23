@@ -22,6 +22,9 @@ function createSignatures(service, descs) {
       descs = [descs];
     }
   }
+
+  // TODO(bjornick): What should we do if different interfaces have different
+  // types on the same method.
   var sigs = descs.map(function(desc) {
     return new Signature(service, desc);
   });
@@ -40,8 +43,8 @@ function createSignatures(service, descs) {
     }
   }
 
-  // TODO(bjornick): What should we do if different interfaces have different
-  // types on the same method.
+  // TODO(bjornick): How terrible is it to create this leftover signature if the
+  // user provided a description and thought (incorrectly) that it was complete?
   if (leftOverSig.methods.length > 0) {
     sigs.push(new Signature(service, leftOverSig));
   }
