@@ -1,4 +1,4 @@
-PATH:=$(VEYRON_ROOT)/environment/cout/node/bin:../../node_modules/.bin:$(PATH)
+PATH:=$(VANADIUM_ROOT)/environment/cout/node/bin:../../node_modules/.bin:$(PATH)
 
 public/server/bundle.js: lib/server.js ../../node_modules
 	browserify $< --debug --outfile $@

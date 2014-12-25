@@ -7,10 +7,10 @@ var which = require('which');
 var PassThrough = require('stream').PassThrough;
 var fs = require('fs');
 
-var VEYRON_ROOT = process.env.VEYRON_ROOT;
+var VANADIUM_ROOT = process.env.VANADIUM_ROOT;
 var VEYRON_BINS = [
-  path.join(VEYRON_ROOT, 'veyron.js/go/bin'),
-  path.join(VEYRON_ROOT, 'veyron.js/nacl/scripts')
+  path.join(VANADIUM_ROOT, 'veyron.js/go/bin'),
+  path.join(VANADIUM_ROOT, 'veyron.js/nacl/scripts')
 ];
 var DEFAULT_FLAGS = {
   v: 3,
@@ -48,8 +48,8 @@ Service.prototype.spawn = function(args) {
 
   args = args || service.args;
 
-  if (!VEYRON_ROOT) {
-    var err = new Error('Please export $VEYRON_ROOT to proceed');
+  if (!VANADIUM_ROOT) {
+    var err = new Error('Please export $VANADIUM_ROOT to proceed');
     return service.emit('error', err);
   }
 

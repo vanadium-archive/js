@@ -15,7 +15,7 @@ You will need to run three services to get a fortune: mountabled, proxyd, and
 wspr.  In addition, we will need to connect to the identitd server running on
 envyor.
 
-These commands all expect that $VEYRON_ROOT/veyron/go/bin is in your path, and
+These commands all expect that $VANADIUM_ROOT/veyron/go/bin is in your path, and
 that you have installed all the veyron services.  See the "Developing Veyron"
 document for instructions on how to do this.
 

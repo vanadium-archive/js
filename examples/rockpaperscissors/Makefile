@@ -1,4 +1,4 @@
-VEYRON_JS_API= $(VEYRON_ROOT)/veyron/javascript/api
+VEYRON_JS_API= $(VANADIUM_ROOT)/veyron/javascript/api
 
 default: browser/lib
 

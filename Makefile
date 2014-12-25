@@ -1,10 +1,10 @@
-PATH := node_modules/.bin:${VEYRON_ROOT}/environment/cout/node/bin:$(PATH)
+PATH := node_modules/.bin:${VANADIUM_ROOT}/environment/cout/node/bin:$(PATH)
 
-GOPATH := $(VEYRON_ROOT)/veyron.js/go
+GOPATH := $(VANADIUM_ROOT)/veyron.js/go
 VDLPATH := $(GOPATH)
-GOBIN := $(VEYRON_ROOT)/veyron.js/go/bin
+GOBIN := $(VANADIUM_ROOT)/veyron.js/go/bin
 VGO := GOPATH="$(GOPATH)" VDLPATH="$(VDLPATH)" veyron go
-GO_FILES := $(shell find go/src $(VEYRON_ROOT)/veyron/go/src/veyron.io -name "*.go")
+GO_FILES := $(shell find go/src $(VANADIUM_ROOT)/veyron/go/src/veyron.io -name "*.go")
 
 NODE_MODULE_JS_FILES := $(shell find node_modules -name *.js | sed 's/ /\\ /')
 
@@ -102,7 +102,7 @@ test-vdl: test-vdl-node test-vdl-browser
 # The command will generate all the dependent files as well.
 gen-vdl:
 ifndef NOVDLGEN
-	veyron go run $(VEYRON_ROOT)/veyron/go/src/veyron.io/veyron/veyron2/vdl/vdl/main.go generate -lang=javascript -js_out_dir="$(VEYRON_ROOT)/veyron.js/src" vdltool signature veyron.io/veyron/veyron2/vdl/testdata/... veyron.io/veyron/veyron2/ipc/... veyron.io/veyron/veyron2/vdl/vdlroot/src/...
+	veyron go run $(VANADIUM_ROOT)/veyron/go/src/veyron.io/veyron/veyron2/vdl/vdl/main.go generate -lang=javascript -js_out_dir="$(VANADIUM_ROOT)/veyron.js/src" vdltool signature veyron.io/veyron/veyron2/vdl/testdata/... veyron.io/veyron/veyron2/ipc/... veyron.io/veyron/veyron2/vdl/vdlroot/src/...
 endif
 
 test-vdl-node: gen-vdl test-precheck
@@ -175,7 +175,7 @@ endif
 
 node_modules/vom/lib/index.js:
 ifndef NONPMUPDATE
-	cd "$(VEYRON_ROOT)/veyron/javascript/vom" && npm link
+	cd "$(VANADIUM_ROOT)/veyron/javascript/vom" && npm link
 	:;npm link vom
 endif
 
