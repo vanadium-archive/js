@@ -3,8 +3,8 @@ package main
 import (
 	"errors"
 
-	"veyron.io/veyron/veyron2/ipc"
-	verror "veyron.io/veyron/veyron2/verror2"
+	"v.io/veyron/veyron2/ipc"
+	verror "v.io/veyron/veyron2/verror2"
 
 	"test_service"
 )

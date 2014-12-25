@@ -70,19 +70,19 @@ _type9.kind = Kind.LIST;
 _type9.name = "";
 _type9.elem = vtrace.Annotation;
 _typeMethodArgument.kind = Kind.STRUCT;
-_typeMethodArgument.name = "veyron.io/veyron/veyron2/ipc.MethodArgument";
+_typeMethodArgument.name = "v.io/veyron/veyron2/ipc.MethodArgument";
 _typeMethodArgument.fields = [{name: "Name", type: Types.STRING}, {name: "Type", type: wiretype.TypeID}];
 _typeMethodSignature.kind = Kind.STRUCT;
-_typeMethodSignature.name = "veyron.io/veyron/veyron2/ipc.MethodSignature";
+_typeMethodSignature.name = "v.io/veyron/veyron2/ipc.MethodSignature";
 _typeMethodSignature.fields = [{name: "InArgs", type: _type11}, {name: "OutArgs", type: _type11}, {name: "InStream", type: wiretype.TypeID}, {name: "OutStream", type: wiretype.TypeID}];
 _typeRequest.kind = Kind.STRUCT;
-_typeRequest.name = "veyron.io/veyron/veyron2/ipc.Request";
+_typeRequest.name = "v.io/veyron/veyron2/ipc.Request";
 _typeRequest.fields = [{name: "Suffix", type: Types.STRING}, {name: "Method", type: Types.STRING}, {name: "NumPosArgs", type: Types.UINT64}, {name: "EndStreamArgs", type: Types.BOOL}, {name: "Timeout", type: Types.INT64}, {name: "GrantedBlessings", type: security.WireBlessings}, {name: "NumDischarges", type: Types.UINT64}, {name: "TraceRequest", type: vtrace.Request}];
 _typeResponse.kind = Kind.STRUCT;
-_typeResponse.name = "veyron.io/veyron/veyron2/ipc.Response";
+_typeResponse.name = "v.io/veyron/veyron2/ipc.Response";
 _typeResponse.fields = [{name: "Error", type: _type5}, {name: "EndStreamResults", type: Types.BOOL}, {name: "NumPosResults", type: Types.UINT64}, {name: "TraceResponse", type: vtrace.Response}];
 _typeServiceSignature.kind = Kind.STRUCT;
-_typeServiceSignature.name = "veyron.io/veyron/veyron2/ipc.ServiceSignature";
+_typeServiceSignature.name = "v.io/veyron/veyron2/ipc.ServiceSignature";
 _typeServiceSignature.fields = [{name: "TypeDefs", type: _type7}, {name: "Methods", type: _type10}];
 _typeerror.kind = Kind.STRUCT;
 _typeerror.name = "error";
@@ -110,13 +110,13 @@ function NotImplementedMethod(name) {
 
 
 var services = {
-package: 'veyron.io/veyron/veyron2/ipc',
+package: 'v.io/veyron/veyron2/ipc',
 
 };
 
 
 var serviceDefs = {
-  package: 'veyron.io/veyron/veyron2/ipc',
+  package: 'v.io/veyron/veyron2/ipc',
 
   
 

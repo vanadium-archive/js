@@ -54,7 +54,7 @@ build/nacl/main.nmf: nacl
 	mkdir -p $(dir $@)
 	cp -r nacl/main.nmf $@
 
-build/nacl/main-64.nexe: $(VANADIUM_ROOT)/veyron/go/src/veyron.io/wspr/veyron/services/wsprd/browspr/main/main_nacl.go
+build/nacl/main-64.nexe: $(VANADIUM_ROOT)/veyron/go/src/v.io/wspr/veyron/services/wsprd/browspr/main/main_nacl.go
 	$(call COMPILE-NACL-PLUGIN,$<,$@)
 
 build/nacl: build/nacl/main.nmf build/nacl/main-64.nexe
@@ -94,15 +94,15 @@ build-test/nacl/main.nmf: nacl
 	mkdir -p $(dir $@)
 	cp -r nacl/main.nmf $@
 
-build-test/nacl/main-64.nexe: $(VANADIUM_ROOT)/veyron/go/src/veyron.io/wspr/veyron/services/wsprd/browspr/main/main_nacl.go
+build-test/nacl/main-64.nexe: $(VANADIUM_ROOT)/veyron/go/src/v.io/wspr/veyron/services/wsprd/browspr/main/main_nacl.go
 	$(call COMPILE-NACL-PLUGIN,$<,$@)
 
 build-test/nacl: build-test/nacl/main.nmf build-test/nacl/main-64.nexe
 
 build-test: build-test/html build-test/images build-test/manifest.json build-test/js build-test/nacl
 
-gen-vdl: $(VANADIUM_ROOT)/veyron/go/src/veyron.io/wspr/veyron/services/wsprd/channel/channel.vdl
-	veyron go run $(VANADIUM_ROOT)/veyron/go/src/veyron.io/veyron/veyron2/vdl/vdl/main.go \
+gen-vdl: $(VANADIUM_ROOT)/veyron/go/src/v.io/wspr/veyron/services/wsprd/channel/channel.vdl
+	veyron go run $(VANADIUM_ROOT)/veyron/go/src/v.io/veyron/veyron2/vdl/vdl/main.go \
 	generate -lang=javascript -js_out_dir="$(VANADIUM_ROOT)/veyron.js/extension/vdl" $(dir $^)
 
 example-server: example/index.bundle.js

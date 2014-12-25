@@ -24,7 +24,7 @@ errors.forEach(function(key) {
 
 function idToErrorName(key) {
   var id = verror.IdActions[key].id;
-  var prefix = 'veyron.io/veyron/veyron2/verror.';
+  var prefix = 'v.io/veyron/veyron2/verror.';
   var name = id.replace(prefix, '');
 
   name += 'Error';

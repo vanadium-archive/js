@@ -71,48 +71,48 @@ _type9.kind = Kind.LIST;
 _type9.name = "";
 _type9.elem = _typeCertificate;
 _typeBlessingPattern.kind = Kind.STRING;
-_typeBlessingPattern.name = "veyron.io/veyron/veyron2/security.BlessingPattern";
+_typeBlessingPattern.name = "v.io/veyron/veyron2/security.BlessingPattern";
 _typeCaveat.kind = Kind.STRUCT;
-_typeCaveat.name = "veyron.io/veyron/veyron2/security.Caveat";
+_typeCaveat.name = "v.io/veyron/veyron2/security.Caveat";
 _typeCaveat.fields = [{name: "ValidatorVOM", type: _type3}];
 _typeCertificate.kind = Kind.STRUCT;
-_typeCertificate.name = "veyron.io/veyron/veyron2/security.Certificate";
+_typeCertificate.name = "v.io/veyron/veyron2/security.Certificate";
 _typeCertificate.fields = [{name: "Extension", type: Types.STRING}, {name: "PublicKey", type: _type3}, {name: "Caveats", type: _type2}, {name: "Signature", type: _typeSignature}];
 _typeDeprecatedACL.kind = Kind.STRUCT;
-_typeDeprecatedACL.name = "veyron.io/veyron/veyron2/security.DeprecatedACL";
+_typeDeprecatedACL.name = "v.io/veyron/veyron2/security.DeprecatedACL";
 _typeDeprecatedACL.fields = [{name: "In", type: _type4}, {name: "NotIn", type: _type5}];
 _typeDischargeImpetus.kind = Kind.STRUCT;
-_typeDischargeImpetus.name = "veyron.io/veyron/veyron2/security.DischargeImpetus";
+_typeDischargeImpetus.name = "v.io/veyron/veyron2/security.DischargeImpetus";
 _typeDischargeImpetus.fields = [{name: "Server", type: _type6}, {name: "Method", type: Types.STRING}, {name: "Arguments", type: _type7}];
 _typeHash.kind = Kind.STRING;
-_typeHash.name = "veyron.io/veyron/veyron2/security.Hash";
+_typeHash.name = "v.io/veyron/veyron2/security.Hash";
 _typeLabel.kind = Kind.UINT32;
-_typeLabel.name = "veyron.io/veyron/veyron2/security.Label";
+_typeLabel.name = "v.io/veyron/veyron2/security.Label";
 _typeLabelSet.kind = Kind.UINT32;
-_typeLabelSet.name = "veyron.io/veyron/veyron2/security.LabelSet";
+_typeLabelSet.name = "v.io/veyron/veyron2/security.LabelSet";
 _typeSignature.kind = Kind.STRUCT;
-_typeSignature.name = "veyron.io/veyron/veyron2/security.Signature";
+_typeSignature.name = "v.io/veyron/veyron2/security.Signature";
 _typeSignature.fields = [{name: "Purpose", type: _type3}, {name: "Hash", type: _typeHash}, {name: "R", type: _type3}, {name: "S", type: _type3}];
 _typeThirdPartyRequirements.kind = Kind.STRUCT;
-_typeThirdPartyRequirements.name = "veyron.io/veyron/veyron2/security.ThirdPartyRequirements";
+_typeThirdPartyRequirements.name = "v.io/veyron/veyron2/security.ThirdPartyRequirements";
 _typeThirdPartyRequirements.fields = [{name: "ReportServer", type: Types.BOOL}, {name: "ReportMethod", type: Types.BOOL}, {name: "ReportArguments", type: Types.BOOL}];
 _typeWireBlessings.kind = Kind.STRUCT;
-_typeWireBlessings.name = "veyron.io/veyron/veyron2/security.WireBlessings";
+_typeWireBlessings.name = "v.io/veyron/veyron2/security.WireBlessings";
 _typeWireBlessings.fields = [{name: "CertificateChains", type: _type8}];
 _typemethodCaveat.kind = Kind.LIST;
-_typemethodCaveat.name = "veyron.io/veyron/veyron2/security.methodCaveat";
+_typemethodCaveat.name = "v.io/veyron/veyron2/security.methodCaveat";
 _typemethodCaveat.elem = Types.STRING;
 _typepeerBlessingsCaveat.kind = Kind.LIST;
-_typepeerBlessingsCaveat.name = "veyron.io/veyron/veyron2/security.peerBlessingsCaveat";
+_typepeerBlessingsCaveat.name = "v.io/veyron/veyron2/security.peerBlessingsCaveat";
 _typepeerBlessingsCaveat.elem = _typeBlessingPattern;
 _typepublicKeyDischarge.kind = Kind.STRUCT;
-_typepublicKeyDischarge.name = "veyron.io/veyron/veyron2/security.publicKeyDischarge";
+_typepublicKeyDischarge.name = "v.io/veyron/veyron2/security.publicKeyDischarge";
 _typepublicKeyDischarge.fields = [{name: "ThirdPartyCaveatID", type: Types.STRING}, {name: "Caveats", type: _type2}, {name: "Signature", type: _typeSignature}];
 _typepublicKeyThirdPartyCaveat.kind = Kind.STRUCT;
-_typepublicKeyThirdPartyCaveat.name = "veyron.io/veyron/veyron2/security.publicKeyThirdPartyCaveat";
+_typepublicKeyThirdPartyCaveat.name = "v.io/veyron/veyron2/security.publicKeyThirdPartyCaveat";
 _typepublicKeyThirdPartyCaveat.fields = [{name: "Nonce", type: _type1}, {name: "Caveats", type: _type2}, {name: "DischargerKey", type: _type3}, {name: "DischargerLocation", type: Types.STRING}, {name: "DischargerRequirements", type: _typeThirdPartyRequirements}];
 _typeunixTimeExpiryCaveat.kind = Kind.INT64;
-_typeunixTimeExpiryCaveat.name = "veyron.io/veyron/veyron2/security.unixTimeExpiryCaveat";
+_typeunixTimeExpiryCaveat.name = "v.io/veyron/veyron2/security.unixTimeExpiryCaveat";
 types.BlessingPattern = Registry.lookupOrCreateConstructor(_typeBlessingPattern, "BlessingPattern");
 types.Caveat = Registry.lookupOrCreateConstructor(_typeCaveat, "Caveat");
 types.Certificate = Registry.lookupOrCreateConstructor(_typeCertificate, "Certificate");
@@ -157,13 +157,13 @@ function NotImplementedMethod(name) {
 
 
 var services = {
-package: 'veyron.io/veyron/veyron2/security',
+package: 'v.io/veyron/veyron2/security',
 
 };
 
 
 var serviceDefs = {
-  package: 'veyron.io/veyron/veyron2/security',
+  package: 'v.io/veyron/veyron2/security',
 
   
 

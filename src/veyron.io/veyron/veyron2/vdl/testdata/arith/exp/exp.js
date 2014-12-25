@@ -45,7 +45,7 @@ function NotImplementedMethod(name) {
 
 
 var services = {
-package: 'veyron.io/veyron/veyron2/vdl/testdata/arith/exp',
+package: 'v.io/veyron/veyron2/vdl/testdata/arith/exp',
   Exp: {
     Exp: {
     numInArgs: 1,
@@ -61,7 +61,7 @@ package: 'veyron.io/veyron/veyron2/vdl/testdata/arith/exp',
 
 
 var serviceDefs = {
-  package: 'veyron.io/veyron/veyron2/vdl/testdata/arith/exp',
+  package: 'v.io/veyron/veyron2/vdl/testdata/arith/exp',
 
   
   Exp: Exp,
@@ -85,7 +85,7 @@ Exp.prototype.signature = function ExpSignature() {
     
 var _ExpSignature = {
   name: 'Exp',
-  pkgPath: 'veyron.io/veyron/veyron2/vdl/testdata/arith/exp',
+  pkgPath: 'v.io/veyron/veyron2/vdl/testdata/arith/exp',
   doc: "",
   embeds: [],
   methods: [

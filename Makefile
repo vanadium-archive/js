@@ -4,7 +4,7 @@ GOPATH := $(VANADIUM_ROOT)/veyron.js/go
 VDLPATH := $(GOPATH)
 GOBIN := $(VANADIUM_ROOT)/veyron.js/go/bin
 VGO := GOPATH="$(GOPATH)" VDLPATH="$(VDLPATH)" veyron go
-GO_FILES := $(shell find go/src $(VANADIUM_ROOT)/veyron/go/src/veyron.io -name "*.go")
+GO_FILES := $(shell find go/src $(VANADIUM_ROOT)/veyron/go/src/v.io -name "*.go")
 
 NODE_MODULE_JS_FILES := $(shell find node_modules -name *.js | sed 's/ /\\ /')
 
@@ -98,11 +98,11 @@ test: test-unit test-integration test-vdl
 
 test-vdl: test-vdl-node test-vdl-browser
 
-# This generates the output of the vdl files in src/veyron.io/<package-path>
+# This generates the output of the vdl files in src/v.io/<package-path>
 # The command will generate all the dependent files as well.
 gen-vdl:
 ifndef NOVDLGEN
-	veyron go run $(VANADIUM_ROOT)/veyron/go/src/veyron.io/veyron/veyron2/vdl/vdl/main.go generate -lang=javascript -js_out_dir="$(VANADIUM_ROOT)/veyron.js/src" vdltool signature veyron.io/veyron/veyron2/vdl/testdata/... veyron.io/veyron/veyron2/ipc/... veyron.io/veyron/veyron2/vdl/vdlroot/src/...
+	veyron go run $(VANADIUM_ROOT)/veyron/go/src/v.io/veyron/veyron2/vdl/vdl/main.go generate -lang=javascript -js_out_dir="$(VANADIUM_ROOT)/veyron.js/src" vdltool signature v.io/veyron/veyron2/vdl/testdata/... v.io/veyron/veyron2/ipc/... v.io/veyron/veyron2/vdl/vdlroot/src/...
 endif
 
 test-vdl-node: gen-vdl test-precheck
@@ -139,8 +139,8 @@ test-integration-browser-runner:
 	prova test/integration/test-*.js --log=./tmp/chrome.log $(PROVA_OPTS) $(BROWSER_OPTS) $(BROWSER_OUTPUT_LOCAL)
 
 go/bin: $(GO_FILES)
-	@$(VGO) build -o $(GOBIN)/principal veyron.io/veyron/veyron/tools/principal
-	@$(VGO) build -o $(GOBIN)/servicerunner veyron.io/veyron/veyron/tools/servicerunner
+	@$(VGO) build -o $(GOBIN)/principal v.io/veyron/veyron/tools/principal
+	@$(VGO) build -o $(GOBIN)/servicerunner v.io/veyron/veyron/tools/servicerunner
 	@$(VGO) build -o $(GOBIN)/test_serviced test_service/test_serviced
 
 lint: node_modules

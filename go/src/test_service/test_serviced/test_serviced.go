@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"strings"
 
-	_ "veyron.io/veyron/veyron/profiles"
-	"veyron.io/veyron/veyron2"
-	"veyron.io/veyron/veyron2/ipc"
-	"veyron.io/veyron/veyron2/naming"
-	"veyron.io/veyron/veyron2/security"
+	_ "v.io/veyron/veyron/profiles"
+	"v.io/veyron/veyron2"
+	"v.io/veyron/veyron2/ipc"
+	"v.io/veyron/veyron2/naming"
+	"v.io/veyron/veyron2/security"
 
 	"test_service"
 )

@@ -31,21 +31,21 @@ _type2.kind = Kind.LIST;
 _type2.name = "";
 _type2.elem = _typeAnnotation;
 _typeAnnotation.kind = Kind.STRUCT;
-_typeAnnotation.name = "veyron.io/veyron/veyron2/vtrace.Annotation";
+_typeAnnotation.name = "v.io/veyron/veyron2/vtrace.Annotation";
 _typeAnnotation.fields = [{name: "When", type: Types.INT64}, {name: "Message", type: Types.STRING}];
 _typeRequest.kind = Kind.STRUCT;
-_typeRequest.name = "veyron.io/veyron/veyron2/vtrace.Request";
+_typeRequest.name = "v.io/veyron/veyron2/vtrace.Request";
 _typeRequest.fields = [{name: "SpanID", type: uniqueid.ID}, {name: "TraceID", type: uniqueid.ID}, {name: "Method", type: _typeTraceMethod}];
 _typeResponse.kind = Kind.STRUCT;
-_typeResponse.name = "veyron.io/veyron/veyron2/vtrace.Response";
+_typeResponse.name = "v.io/veyron/veyron2/vtrace.Response";
 _typeResponse.fields = [{name: "Method", type: _typeTraceMethod}, {name: "Trace", type: _typeTraceRecord}];
 _typeSpanRecord.kind = Kind.STRUCT;
-_typeSpanRecord.name = "veyron.io/veyron/veyron2/vtrace.SpanRecord";
+_typeSpanRecord.name = "v.io/veyron/veyron2/vtrace.SpanRecord";
 _typeSpanRecord.fields = [{name: "ID", type: uniqueid.ID}, {name: "Parent", type: uniqueid.ID}, {name: "Name", type: Types.STRING}, {name: "Start", type: Types.INT64}, {name: "End", type: Types.INT64}, {name: "Annotations", type: _type2}];
 _typeTraceMethod.kind = Kind.INT32;
-_typeTraceMethod.name = "veyron.io/veyron/veyron2/vtrace.TraceMethod";
+_typeTraceMethod.name = "v.io/veyron/veyron2/vtrace.TraceMethod";
 _typeTraceRecord.kind = Kind.STRUCT;
-_typeTraceRecord.name = "veyron.io/veyron/veyron2/vtrace.TraceRecord";
+_typeTraceRecord.name = "v.io/veyron/veyron2/vtrace.TraceRecord";
 _typeTraceRecord.fields = [{name: "ID", type: uniqueid.ID}, {name: "Spans", type: _type1}];
 types.Annotation = Registry.lookupOrCreateConstructor(_typeAnnotation, "Annotation");
 types.Request = Registry.lookupOrCreateConstructor(_typeRequest, "Request");
@@ -68,13 +68,13 @@ function NotImplementedMethod(name) {
 
 
 var services = {
-package: 'veyron.io/veyron/veyron2/vtrace',
+package: 'v.io/veyron/veyron2/vtrace',
 
 };
 
 
 var serviceDefs = {
-  package: 'veyron.io/veyron/veyron2/vtrace',
+  package: 'v.io/veyron/veyron2/vtrace',
 
   
 

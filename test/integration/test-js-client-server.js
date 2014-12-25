@@ -194,7 +194,7 @@ function run(options) {
         // TODO(bprosnitz) Fix this when we update to the new verror.
         //t.deepEqual(err.idAction, veyron.errors.IdActions.Unknown);
         t.equals(err.idAction.action, 0);
-        t.equals(err.idAction.id, 'veyron.io/veyron/veyron2/verror.Unknown');
+        t.equals(err.idAction.id, 'v.io/veyron/veyron2/verror.Unknown');
         res.end(t);
       };
       cache.get(ctx, 'bad-key', onGet);

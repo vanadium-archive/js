@@ -18,43 +18,43 @@ verror.Actions = {
  */
 verror.IdActions = {
   Aborted: {
-    id: 'veyron.io/veyron/veyron2/verror.Aborted',
+    id: 'v.io/veyron/veyron2/verror.Aborted',
     action: verror.Actions.NoRetry,
   },
   BadArg: {
-    id: 'veyron.io/veyron/veyron2/verror.BadArg',
+    id: 'v.io/veyron/veyron2/verror.BadArg',
     action: verror.Actions.NoRetry,
   },
   BadProtocol: {
-    id: 'veyron.io/veyron/veyron2/verror.BadProtocol',
+    id: 'v.io/veyron/veyron2/verror.BadProtocol',
     action: verror.Actions.NoRetry,
   },
   Exists: {
-    id: 'veyron.io/veyron/veyron2/verror.Exists',
+    id: 'v.io/veyron/veyron2/verror.Exists',
     action: verror.Actions.NoRetry,
   },
   Internal: {
-    id: 'veyron.io/veyron/veyron2/verror.Internal',
+    id: 'v.io/veyron/veyron2/verror.Internal',
     action: verror.Actions.NoRetry,
   },
   NoAccess: {
-    id: 'veyron.io/veyron/veyron2/verror.NoAccess',
+    id: 'v.io/veyron/veyron2/verror.NoAccess',
     action: verror.Actions.NoRetry,
   },
   NoExist: {
-    id: 'veyron.io/veyron/veyron2/verror.NoExist',
+    id: 'v.io/veyron/veyron2/verror.NoExist',
     action: verror.Actions.NoRetry,
   },
   NoServers: {
-    id: 'veyron.io/veyron/veyron2/verror.NoServers',
+    id: 'v.io/veyron/veyron2/verror.NoServers',
     action: verror.Actions.RetryRefetch,
   },
   NoExistOrNoAccess: {
-    id: 'veyron.io/veyron/veyron2/verror.NoExistOrNoAccess',
+    id: 'v.io/veyron/veyron2/verror.NoExistOrNoAccess',
     action: verror.Actions.NoRetry,
   },
   Unknown: {
-    id: 'veyron.io/veyron/veyron2/verror.Unknown',
+    id: 'v.io/veyron/veyron2/verror.Unknown',
     action: verror.Actions.NoRetry,
   }
 };

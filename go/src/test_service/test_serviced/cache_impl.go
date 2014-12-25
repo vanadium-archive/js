@@ -6,9 +6,9 @@ import (
 	"sort"
 	"time"
 
-	"veyron.io/veyron/veyron2/ipc"
-	"veyron.io/veyron/veyron2/vdl/vdlutil"
-	verror "veyron.io/veyron/veyron2/verror2"
+	"v.io/veyron/veyron2/ipc"
+	"v.io/veyron/veyron2/vdl/vdlutil"
+	verror "v.io/veyron/veyron2/verror2"
 
 	"test_service"
 )
