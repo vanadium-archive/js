@@ -54,7 +54,7 @@ function NotImplementedMethod(name) {
 
 
 var services = {
-package: 'v.io/veyron/veyron2/vdl/testdata/arith',
+package: 'v.io/core/veyron2/vdl/testdata/arith',
   Trigonometry: {
     Sine: {
     numInArgs: 1,
@@ -254,7 +254,7 @@ package: 'v.io/veyron/veyron2/vdl/testdata/arith',
 
 
 var serviceDefs = {
-  package: 'v.io/veyron/veyron2/vdl/testdata/arith',
+  package: 'v.io/core/veyron2/vdl/testdata/arith',
 
   
   Trigonometry: Trigonometry,
@@ -289,7 +289,7 @@ Trigonometry.prototype.signature = function TrigonometrySignature() {
     
 var _TrigonometrySignature = {
   name: 'Trigonometry',
-  pkgPath: 'v.io/veyron/veyron2/vdl/testdata/arith',
+  pkgPath: 'v.io/core/veyron2/vdl/testdata/arith',
   doc: "// Trigonometry is an interface that specifies a couple trigonometric functions.",
   embeds: [],
   methods: [
@@ -368,16 +368,16 @@ AdvancedMath.prototype.signature = function AdvancedMathSignature() {
     
 var _AdvancedMathSignature = {
   name: 'AdvancedMath',
-  pkgPath: 'v.io/veyron/veyron2/vdl/testdata/arith',
+  pkgPath: 'v.io/core/veyron2/vdl/testdata/arith',
   doc: "// AdvancedMath is an interface for more advanced math than arith.  It embeds\n// interfaces defined both in the same file and in an external package; and in\n// turn it is embedded by arith.Calculator (which is in the same package but\n// different file) to verify that embedding works in all these scenarios.",
   embeds: [{
       name: 'Trigonometry',
-      pkgPath: 'v.io/veyron/veyron2/vdl/testdata/arith',
+      pkgPath: 'v.io/core/veyron2/vdl/testdata/arith',
       doc: "// Trigonometry is an interface that specifies a couple trigonometric functions."
     },
     {
       name: 'Exp',
-      pkgPath: 'v.io/veyron/veyron2/vdl/testdata/arith/exp',
+      pkgPath: 'v.io/core/veyron2/vdl/testdata/arith/exp',
       doc: ""
     },
     ],
@@ -500,7 +500,7 @@ Arith.prototype.signature = function ArithSignature() {
     
 var _ArithSignature = {
   name: 'Arith',
-  pkgPath: 'v.io/veyron/veyron2/vdl/testdata/arith',
+  pkgPath: 'v.io/core/veyron2/vdl/testdata/arith',
   doc: "// Arith is an example of an interface definition for an arithmetic service.\n// Things to note:\n//   * There must be at least 1 out-arg, and the last out-arg must be error.",
   embeds: [],
   methods: [
@@ -772,16 +772,16 @@ Calculator.prototype.signature = function CalculatorSignature() {
     
 var _CalculatorSignature = {
   name: 'Calculator',
-  pkgPath: 'v.io/veyron/veyron2/vdl/testdata/arith',
+  pkgPath: 'v.io/core/veyron2/vdl/testdata/arith',
   doc: "",
   embeds: [{
       name: 'Arith',
-      pkgPath: 'v.io/veyron/veyron2/vdl/testdata/arith',
+      pkgPath: 'v.io/core/veyron2/vdl/testdata/arith',
       doc: "// Arith is an example of an interface definition for an arithmetic service.\n// Things to note:\n//   * There must be at least 1 out-arg, and the last out-arg must be error."
     },
     {
       name: 'AdvancedMath',
-      pkgPath: 'v.io/veyron/veyron2/vdl/testdata/arith',
+      pkgPath: 'v.io/core/veyron2/vdl/testdata/arith',
       doc: "// AdvancedMath is an interface for more advanced math than arith.  It embeds\n// interfaces defined both in the same file and in an external package; and in\n// turn it is embedded by arith.Calculator (which is in the same package but\n// different file) to verify that embedding works in all these scenarios."
     },
     ],

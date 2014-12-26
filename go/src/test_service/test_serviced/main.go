@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"log"
 
-	"v.io/veyron/veyron/lib/signals"
-	_ "v.io/veyron/veyron/profiles"
-	"v.io/veyron/veyron2/rt"
-	"v.io/veyron/veyron2/vlog"
+	"v.io/core/veyron/lib/signals"
+	_ "v.io/core/veyron/profiles"
+	"v.io/core/veyron2/rt"
+	"v.io/core/veyron2/vlog"
 )
 
 func main() {

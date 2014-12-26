@@ -19,7 +19,7 @@ define COMPILE-NACL-PLUGIN
 	GOARCH=amd64p32 \
 	GOOS=nacl \
 	GOROOT= \
-	veyron xgo --target_go=$(VANADIUM_ROOT)/environment/go_ppapi/bin/go amd64p32-nacl build -o $2 $1
+	v23 xgo --target_go=$(VANADIUM_ROOT)/environment/go_ppapi/bin/go amd64p32-nacl build -o $2 $1
 endef
 
 all: veyron.crx
@@ -54,7 +54,7 @@ build/nacl/main.nmf: nacl
 	mkdir -p $(dir $@)
 	cp -r nacl/main.nmf $@
 
-build/nacl/main-64.nexe: $(VANADIUM_ROOT)/veyron/go/src/v.io/wspr/veyron/services/wsprd/browspr/main/main_nacl.go
+build/nacl/main-64.nexe: $(VANADIUM_ROOT)/release/go/src/v.io/wspr/veyron/services/wsprd/browspr/main/main_nacl.go
 	$(call COMPILE-NACL-PLUGIN,$<,$@)
 
 build/nacl: build/nacl/main.nmf build/nacl/main-64.nexe
@@ -94,16 +94,16 @@ build-test/nacl/main.nmf: nacl
 	mkdir -p $(dir $@)
 	cp -r nacl/main.nmf $@
 
-build-test/nacl/main-64.nexe: $(VANADIUM_ROOT)/veyron/go/src/v.io/wspr/veyron/services/wsprd/browspr/main/main_nacl.go
+build-test/nacl/main-64.nexe: $(VANADIUM_ROOT)/release/go/src/v.io/wspr/veyron/services/wsprd/browspr/main/main_nacl.go
 	$(call COMPILE-NACL-PLUGIN,$<,$@)
 
 build-test/nacl: build-test/nacl/main.nmf build-test/nacl/main-64.nexe
 
 build-test: build-test/html build-test/images build-test/manifest.json build-test/js build-test/nacl
 
-gen-vdl: $(VANADIUM_ROOT)/veyron/go/src/v.io/wspr/veyron/services/wsprd/channel/channel.vdl
-	veyron go run $(VANADIUM_ROOT)/veyron/go/src/v.io/veyron/veyron2/vdl/vdl/main.go \
-	generate -lang=javascript -js_out_dir="$(VANADIUM_ROOT)/veyron.js/extension/vdl" $(dir $^)
+gen-vdl: $(VANADIUM_ROOT)/release/go/src/v.io/wspr/veyron/services/wsprd/channel/channel.vdl
+	v23 go run $(VANADIUM_ROOT)/release/go/src/v.io/core/veyron2/vdl/vdl/main.go \
+	generate -lang=javascript -js_out_dir="$(VANADIUM_ROOT)/release/javascript/core/extension/vdl" $(dir $^)
 
 example-server: example/index.bundle.js
 	static "example" -H '{"Cache-Control": "no-cache, must-revalidate"}'
@@ -126,11 +126,11 @@ node_modules: package.json | check-that-npm-is-in-path node_modules/vom/lib/inde
 	@npm install --quiet
 
 node_modules/vom/lib/index.js:
-	cd "$(VANADIUM_ROOT)/veyron/javascript/vom" && npm link
+	cd "$(VANADIUM_ROOT)/release/javascript/vom" && npm link
 	:;npm link vom
 
 check-that-npm-is-in-path:
-	@which npm > /dev/null || { echo "npm is not in the path. Did you remember to run 'veyron profile setup web'?"; exit 1; }
+	@which npm > /dev/null || { echo "npm is not in the path. Did you remember to run 'v23 profile setup web'?"; exit 1; }
 
 .PHONY: all build clean dependency-check gen-vdl lint
 

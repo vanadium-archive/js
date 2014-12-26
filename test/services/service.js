@@ -9,8 +9,8 @@ var fs = require('fs');
 
 var VANADIUM_ROOT = process.env.VANADIUM_ROOT;
 var VEYRON_BINS = [
-  path.join(VANADIUM_ROOT, 'veyron.js/go/bin'),
-  path.join(VANADIUM_ROOT, 'veyron.js/nacl/scripts')
+  path.join(VANADIUM_ROOT, 'release/javascript/core/go/bin'),
+  path.join(VANADIUM_ROOT, 'release/javascript/core/nacl/scripts')
 ];
 var DEFAULT_FLAGS = {
   v: 3,

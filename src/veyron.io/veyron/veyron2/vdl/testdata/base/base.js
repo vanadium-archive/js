@@ -108,65 +108,65 @@ _type9.kind = Kind.LIST;
 _type9.name = "";
 _type9.elem = _type10;
 _typeArgs.kind = Kind.STRUCT;
-_typeArgs.name = "v.io/veyron/veyron2/vdl/testdata/base.Args";
+_typeArgs.name = "v.io/core/veyron2/vdl/testdata/base.Args";
 _typeArgs.fields = [{name: "A", type: Types.INT32}, {name: "B", type: Types.INT32}];
 _typeCompComp.kind = Kind.STRUCT;
-_typeCompComp.name = "v.io/veyron/veyron2/vdl/testdata/base.CompComp";
+_typeCompComp.name = "v.io/core/veyron2/vdl/testdata/base.CompComp";
 _typeCompComp.fields = [{name: "A0", type: _typeComposites}, {name: "A1", type: _type11}, {name: "A2", type: _type12}, {name: "A3", type: _type13}, {name: "A4", type: _type14}];
 _typeComposites.kind = Kind.STRUCT;
-_typeComposites.name = "v.io/veyron/veyron2/vdl/testdata/base.Composites";
+_typeComposites.name = "v.io/core/veyron2/vdl/testdata/base.Composites";
 _typeComposites.fields = [{name: "A0", type: _typeScalars}, {name: "A1", type: _type4}, {name: "A2", type: _type5}, {name: "A3", type: _type6}, {name: "A4", type: _type7}, {name: "A5", type: _type8}];
 _typeKeyScalars.kind = Kind.STRUCT;
-_typeKeyScalars.name = "v.io/veyron/veyron2/vdl/testdata/base.KeyScalars";
+_typeKeyScalars.name = "v.io/core/veyron2/vdl/testdata/base.KeyScalars";
 _typeKeyScalars.fields = [{name: "A0", type: Types.BOOL}, {name: "A1", type: Types.BYTE}, {name: "A2", type: Types.UINT16}, {name: "A3", type: Types.UINT32}, {name: "A4", type: Types.UINT64}, {name: "A5", type: Types.INT16}, {name: "A6", type: Types.INT32}, {name: "A7", type: Types.INT64}, {name: "A8", type: Types.FLOAT32}, {name: "A9", type: Types.FLOAT64}, {name: "A10", type: Types.COMPLEX64}, {name: "A11", type: Types.COMPLEX128}, {name: "A12", type: Types.STRING}, {name: "B0", type: _typeNamedBool}, {name: "B1", type: _typeNamedByte}, {name: "B2", type: _typeNamedUint16}, {name: "B3", type: _typeNamedUint32}, {name: "B4", type: _typeNamedUint64}, {name: "B5", type: _typeNamedInt16}, {name: "B6", type: _typeNamedInt32}, {name: "B7", type: _typeNamedInt64}, {name: "B8", type: _typeNamedFloat32}, {name: "B9", type: _typeNamedFloat64}, {name: "B10", type: _typeNamedComplex64}, {name: "B11", type: _typeNamedComplex128}, {name: "B12", type: _typeNamedString}];
 _typeNamedArray.kind = Kind.ARRAY;
-_typeNamedArray.name = "v.io/veyron/veyron2/vdl/testdata/base.NamedArray";
+_typeNamedArray.name = "v.io/core/veyron2/vdl/testdata/base.NamedArray";
 _typeNamedArray.len = 2;
 _typeNamedArray.elem = Types.BOOL;
 _typeNamedBool.kind = Kind.BOOL;
-_typeNamedBool.name = "v.io/veyron/veyron2/vdl/testdata/base.NamedBool";
+_typeNamedBool.name = "v.io/core/veyron2/vdl/testdata/base.NamedBool";
 _typeNamedByte.kind = Kind.BYTE;
-_typeNamedByte.name = "v.io/veyron/veyron2/vdl/testdata/base.NamedByte";
+_typeNamedByte.name = "v.io/core/veyron2/vdl/testdata/base.NamedByte";
 _typeNamedComplex128.kind = Kind.COMPLEX128;
-_typeNamedComplex128.name = "v.io/veyron/veyron2/vdl/testdata/base.NamedComplex128";
+_typeNamedComplex128.name = "v.io/core/veyron2/vdl/testdata/base.NamedComplex128";
 _typeNamedComplex64.kind = Kind.COMPLEX64;
-_typeNamedComplex64.name = "v.io/veyron/veyron2/vdl/testdata/base.NamedComplex64";
+_typeNamedComplex64.name = "v.io/core/veyron2/vdl/testdata/base.NamedComplex64";
 _typeNamedFloat32.kind = Kind.FLOAT32;
-_typeNamedFloat32.name = "v.io/veyron/veyron2/vdl/testdata/base.NamedFloat32";
+_typeNamedFloat32.name = "v.io/core/veyron2/vdl/testdata/base.NamedFloat32";
 _typeNamedFloat64.kind = Kind.FLOAT64;
-_typeNamedFloat64.name = "v.io/veyron/veyron2/vdl/testdata/base.NamedFloat64";
+_typeNamedFloat64.name = "v.io/core/veyron2/vdl/testdata/base.NamedFloat64";
 _typeNamedInt16.kind = Kind.INT16;
-_typeNamedInt16.name = "v.io/veyron/veyron2/vdl/testdata/base.NamedInt16";
+_typeNamedInt16.name = "v.io/core/veyron2/vdl/testdata/base.NamedInt16";
 _typeNamedInt32.kind = Kind.INT32;
-_typeNamedInt32.name = "v.io/veyron/veyron2/vdl/testdata/base.NamedInt32";
+_typeNamedInt32.name = "v.io/core/veyron2/vdl/testdata/base.NamedInt32";
 _typeNamedInt64.kind = Kind.INT64;
-_typeNamedInt64.name = "v.io/veyron/veyron2/vdl/testdata/base.NamedInt64";
+_typeNamedInt64.name = "v.io/core/veyron2/vdl/testdata/base.NamedInt64";
 _typeNamedList.kind = Kind.LIST;
-_typeNamedList.name = "v.io/veyron/veyron2/vdl/testdata/base.NamedList";
+_typeNamedList.name = "v.io/core/veyron2/vdl/testdata/base.NamedList";
 _typeNamedList.elem = Types.UINT32;
 _typeNamedMap.kind = Kind.MAP;
-_typeNamedMap.name = "v.io/veyron/veyron2/vdl/testdata/base.NamedMap";
+_typeNamedMap.name = "v.io/core/veyron2/vdl/testdata/base.NamedMap";
 _typeNamedMap.elem = Types.FLOAT32;
 _typeNamedMap.key = Types.STRING;
 _typeNamedSet.kind = Kind.SET;
-_typeNamedSet.name = "v.io/veyron/veyron2/vdl/testdata/base.NamedSet";
+_typeNamedSet.name = "v.io/core/veyron2/vdl/testdata/base.NamedSet";
 _typeNamedSet.key = Types.STRING;
 _typeNamedString.kind = Kind.STRING;
-_typeNamedString.name = "v.io/veyron/veyron2/vdl/testdata/base.NamedString";
+_typeNamedString.name = "v.io/core/veyron2/vdl/testdata/base.NamedString";
 _typeNamedStruct.kind = Kind.STRUCT;
-_typeNamedStruct.name = "v.io/veyron/veyron2/vdl/testdata/base.NamedStruct";
+_typeNamedStruct.name = "v.io/core/veyron2/vdl/testdata/base.NamedStruct";
 _typeNamedStruct.fields = [{name: "A", type: Types.BOOL}, {name: "B", type: Types.STRING}, {name: "C", type: Types.INT32}];
 _typeNamedUint16.kind = Kind.UINT16;
-_typeNamedUint16.name = "v.io/veyron/veyron2/vdl/testdata/base.NamedUint16";
+_typeNamedUint16.name = "v.io/core/veyron2/vdl/testdata/base.NamedUint16";
 _typeNamedUint32.kind = Kind.UINT32;
-_typeNamedUint32.name = "v.io/veyron/veyron2/vdl/testdata/base.NamedUint32";
+_typeNamedUint32.name = "v.io/core/veyron2/vdl/testdata/base.NamedUint32";
 _typeNamedUint64.kind = Kind.UINT64;
-_typeNamedUint64.name = "v.io/veyron/veyron2/vdl/testdata/base.NamedUint64";
+_typeNamedUint64.name = "v.io/core/veyron2/vdl/testdata/base.NamedUint64";
 _typeNestedArgs.kind = Kind.STRUCT;
-_typeNestedArgs.name = "v.io/veyron/veyron2/vdl/testdata/base.NestedArgs";
+_typeNestedArgs.name = "v.io/core/veyron2/vdl/testdata/base.NestedArgs";
 _typeNestedArgs.fields = [{name: "Args", type: _typeArgs}];
 _typeScalars.kind = Kind.STRUCT;
-_typeScalars.name = "v.io/veyron/veyron2/vdl/testdata/base.Scalars";
+_typeScalars.name = "v.io/core/veyron2/vdl/testdata/base.Scalars";
 _typeScalars.fields = [{name: "A0", type: Types.BOOL}, {name: "A1", type: Types.BYTE}, {name: "A2", type: Types.UINT16}, {name: "A3", type: Types.UINT32}, {name: "A4", type: Types.UINT64}, {name: "A5", type: Types.INT16}, {name: "A6", type: Types.INT32}, {name: "A7", type: Types.INT64}, {name: "A8", type: Types.FLOAT32}, {name: "A9", type: Types.FLOAT64}, {name: "A10", type: Types.COMPLEX64}, {name: "A11", type: Types.COMPLEX128}, {name: "A12", type: Types.STRING}, {name: "A13", type: _type1}, {name: "A14", type: Types.ANY}, {name: "A15", type: Types.TYPEOBJECT}, {name: "B0", type: _typeNamedBool}, {name: "B1", type: _typeNamedByte}, {name: "B2", type: _typeNamedUint16}, {name: "B3", type: _typeNamedUint32}, {name: "B4", type: _typeNamedUint64}, {name: "B5", type: _typeNamedInt16}, {name: "B6", type: _typeNamedInt32}, {name: "B7", type: _typeNamedInt64}, {name: "B8", type: _typeNamedFloat32}, {name: "B9", type: _typeNamedFloat64}, {name: "B10", type: _typeNamedComplex64}, {name: "B11", type: _typeNamedComplex128}, {name: "B12", type: _typeNamedString}];
 _typeerror.kind = Kind.STRUCT;
 _typeerror.name = "error";
@@ -232,7 +232,7 @@ function NotImplementedMethod(name) {
 
 
 var services = {
-package: 'v.io/veyron/veyron2/vdl/testdata/base',
+package: 'v.io/core/veyron2/vdl/testdata/base',
   ServiceA: {
     MethodA1: {
     numInArgs: 0,
@@ -307,7 +307,7 @@ package: 'v.io/veyron/veyron2/vdl/testdata/base',
 
 
 var serviceDefs = {
-  package: 'v.io/veyron/veyron2/vdl/testdata/base',
+  package: 'v.io/core/veyron2/vdl/testdata/base',
 
   
   ServiceA: ServiceA,
@@ -342,7 +342,7 @@ ServiceA.prototype.signature = function ServiceASignature() {
     
 var _ServiceASignature = {
   name: 'ServiceA',
-  pkgPath: 'v.io/veyron/veyron2/vdl/testdata/base',
+  pkgPath: 'v.io/core/veyron2/vdl/testdata/base',
   doc: "",
   embeds: [],
   methods: [
@@ -481,11 +481,11 @@ ServiceB.prototype.signature = function ServiceBSignature() {
     
 var _ServiceBSignature = {
   name: 'ServiceB',
-  pkgPath: 'v.io/veyron/veyron2/vdl/testdata/base',
+  pkgPath: 'v.io/core/veyron2/vdl/testdata/base',
   doc: "",
   embeds: [{
       name: 'ServiceA',
-      pkgPath: 'v.io/veyron/veyron2/vdl/testdata/base',
+      pkgPath: 'v.io/core/veyron2/vdl/testdata/base',
       doc: ""
     },
     ],

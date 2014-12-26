@@ -17,7 +17,7 @@ var Registry = vom.Registry;
 var types = {};
 var _typeID = new Type();
 _typeID.kind = Kind.ARRAY;
-_typeID.name = "v.io/veyron/veyron2/uniqueid.ID";
+_typeID.name = "v.io/core/veyron2/uniqueid.ID";
 _typeID.len = 16;
 _typeID.elem = Types.BYTE;
 types.ID = Registry.lookupOrCreateConstructor(_typeID, "ID");
@@ -34,13 +34,13 @@ function NotImplementedMethod(name) {
 
 
 var services = {
-package: 'v.io/veyron/veyron2/uniqueid',
+package: 'v.io/core/veyron2/uniqueid',
 
 };
 
 
 var serviceDefs = {
-  package: 'v.io/veyron/veyron2/uniqueid',
+  package: 'v.io/core/veyron2/uniqueid',
 
   
 

@@ -15,7 +15,7 @@ You will need to run three services to get a fortune: mountabled, proxyd, and
 wspr.  In addition, we will need to connect to the identitd server running on
 envyor.
 
-These commands all expect that $VANADIUM_ROOT/veyron/go/bin is in your path, and
+These commands all expect that $VANADIUM_ROOT/release/go/bin is in your path, and
 that you have installed all the veyron services.  See the "Developing Veyron"
 document for instructions on how to do this.
 
@@ -84,7 +84,7 @@ Before you can run the server or client in a browser, you will first need to
 install the Veyron Chrome Extension.  The extension lives in the
 veyron-extension repo, and you can download it here:
 
-https://github.com/veyron/veyron.js/raw/master/extension/veyron.crx
+https://github.com/veyron/release/javascript/core/raw/master/extension/veyron.crx
 
 
 ### Browserify

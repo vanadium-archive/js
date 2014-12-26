@@ -1,4 +1,4 @@
-var veyron = window.veyron = require('../../src/veyron.js');
+var veyron = window.veyron = require('../../src/release/javascript/core');
 
 var veyronConfig = {
   authenticate: true

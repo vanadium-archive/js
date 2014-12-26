@@ -32,28 +32,28 @@ _type2.kind = Kind.LIST;
 _type2.name = "";
 _type2.elem = _typeFieldType;
 _typeArrayType.kind = Kind.STRUCT;
-_typeArrayType.name = "v.io/veyron/veyron2/wiretype.ArrayType";
+_typeArrayType.name = "v.io/core/veyron2/wiretype.ArrayType";
 _typeArrayType.fields = [{name: "Elem", type: _typeTypeID}, {name: "Len", type: Types.UINT64}, {name: "Name", type: Types.STRING}, {name: "Tags", type: _type1}];
 _typeFieldType.kind = Kind.STRUCT;
-_typeFieldType.name = "v.io/veyron/veyron2/wiretype.FieldType";
+_typeFieldType.name = "v.io/core/veyron2/wiretype.FieldType";
 _typeFieldType.fields = [{name: "Type", type: _typeTypeID}, {name: "Name", type: Types.STRING}];
 _typeMapType.kind = Kind.STRUCT;
-_typeMapType.name = "v.io/veyron/veyron2/wiretype.MapType";
+_typeMapType.name = "v.io/core/veyron2/wiretype.MapType";
 _typeMapType.fields = [{name: "Key", type: _typeTypeID}, {name: "Elem", type: _typeTypeID}, {name: "Name", type: Types.STRING}, {name: "Tags", type: _type1}];
 _typeNamedPrimitiveType.kind = Kind.STRUCT;
-_typeNamedPrimitiveType.name = "v.io/veyron/veyron2/wiretype.NamedPrimitiveType";
+_typeNamedPrimitiveType.name = "v.io/core/veyron2/wiretype.NamedPrimitiveType";
 _typeNamedPrimitiveType.fields = [{name: "Type", type: _typeTypeID}, {name: "Name", type: Types.STRING}, {name: "Tags", type: _type1}];
 _typePtrType.kind = Kind.STRUCT;
-_typePtrType.name = "v.io/veyron/veyron2/wiretype.PtrType";
+_typePtrType.name = "v.io/core/veyron2/wiretype.PtrType";
 _typePtrType.fields = [{name: "Elem", type: _typeTypeID}, {name: "Name", type: Types.STRING}, {name: "Tags", type: _type1}];
 _typeSliceType.kind = Kind.STRUCT;
-_typeSliceType.name = "v.io/veyron/veyron2/wiretype.SliceType";
+_typeSliceType.name = "v.io/core/veyron2/wiretype.SliceType";
 _typeSliceType.fields = [{name: "Elem", type: _typeTypeID}, {name: "Name", type: Types.STRING}, {name: "Tags", type: _type1}];
 _typeStructType.kind = Kind.STRUCT;
-_typeStructType.name = "v.io/veyron/veyron2/wiretype.StructType";
+_typeStructType.name = "v.io/core/veyron2/wiretype.StructType";
 _typeStructType.fields = [{name: "Fields", type: _type2}, {name: "Name", type: Types.STRING}, {name: "Tags", type: _type1}];
 _typeTypeID.kind = Kind.UINT64;
-_typeTypeID.name = "v.io/veyron/veyron2/wiretype.TypeID";
+_typeTypeID.name = "v.io/core/veyron2/wiretype.TypeID";
 types.ArrayType = Registry.lookupOrCreateConstructor(_typeArrayType, "ArrayType");
 types.FieldType = Registry.lookupOrCreateConstructor(_typeFieldType, "FieldType");
 types.MapType = Registry.lookupOrCreateConstructor(_typeMapType, "MapType");
@@ -75,13 +75,13 @@ function NotImplementedMethod(name) {
 
 
 var services = {
-package: 'v.io/veyron/veyron2/wiretype',
+package: 'v.io/core/veyron2/wiretype',
 
 };
 
 
 var serviceDefs = {
-  package: 'v.io/veyron/veyron2/wiretype',
+  package: 'v.io/core/veyron2/wiretype',
 
   
 

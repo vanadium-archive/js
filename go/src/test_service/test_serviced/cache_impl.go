@@ -6,14 +6,14 @@ import (
 	"sort"
 	"time"
 
-	"v.io/veyron/veyron2/ipc"
-	"v.io/veyron/veyron2/vdl/vdlutil"
-	verror "v.io/veyron/veyron2/verror2"
+	"v.io/core/veyron2/ipc"
+	"v.io/core/veyron2/vdl/vdlutil"
+	verror "v.io/core/veyron2/verror2"
 
 	"test_service"
 )
 
-const pkgPath = "veyron.js/test_service/test_serviced"
+const pkgPath = "release/javascript/core/test_service/test_serviced"
 
 var errIndexOutOfBounds = verror.Register(pkgPath+".errIndexOutOfBounds", verror.NoRetry, "{1:}{2:} Page index out of bounds{:_}")
 

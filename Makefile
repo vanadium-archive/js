@@ -1,10 +1,10 @@
 PATH := node_modules/.bin:${VANADIUM_ROOT}/environment/cout/node/bin:$(PATH)
 
-GOPATH := $(VANADIUM_ROOT)/veyron.js/go
+GOPATH := $(VANADIUM_ROOT)/release/javascript/core/go
 VDLPATH := $(GOPATH)
-GOBIN := $(VANADIUM_ROOT)/veyron.js/go/bin
-VGO := GOPATH="$(GOPATH)" VDLPATH="$(VDLPATH)" veyron go
-GO_FILES := $(shell find go/src $(VANADIUM_ROOT)/veyron/go/src/v.io -name "*.go")
+GOBIN := $(VANADIUM_ROOT)/release/javascript/core/go/bin
+VGO := GOPATH="$(GOPATH)" VDLPATH="$(VDLPATH)" v23 go
+GO_FILES := $(shell find go/src $(VANADIUM_ROOT)/release/go/src/v.io -name "*.go")
 
 NODE_MODULE_JS_FILES := $(shell find node_modules -name *.js | sed 's/ /\\ /')
 
@@ -79,15 +79,15 @@ BROWSERIFY_OPTS := --debug --standalone veyron
 
 all: gen-vdl lint build
 
-build: dist/veyron.js dist/veyron.min.js extension/veyron.crx
+build: dist/release/javascript/core dist/veyron.min.js extension/veyron.crx
 
-dist/veyron.js: src/veyron.js $(JS_SRC_FILES) $(NODE_MODULES_JS_FILES) | node_modules
+dist/release/javascript/core: src/release/javascript/core $(JS_SRC_FILES) $(NODE_MODULES_JS_FILES) | node_modules
 	mkdir -p dist
 	browserify $< $(BROWSERIFY_OPTS) --outfile $@
 
-dist/veyron.min.js: src/veyron.js $(JS_SRC_FILES) $(NODE_MODULES_JS_FILES) | node_modules
+dist/veyron.min.js: src/release/javascript/core $(JS_SRC_FILES) $(NODE_MODULES_JS_FILES) | node_modules
 	mkdir -p dist
-	browserify $< $(BROWSERIFY_OPTS) --plugin [ minifyify --map dist/veyron.js.map --output $@.map ] --outfile $@
+	browserify $< $(BROWSERIFY_OPTS) --plugin [ minifyify --map dist/release/javascript/core.map --output $@.map ] --outfile $@
 
 extension/veyron.crx:
 	$(MAKE) -C extension veyron.crx
@@ -102,7 +102,7 @@ test-vdl: test-vdl-node test-vdl-browser
 # The command will generate all the dependent files as well.
 gen-vdl:
 ifndef NOVDLGEN
-	veyron go run $(VANADIUM_ROOT)/veyron/go/src/v.io/veyron/veyron2/vdl/vdl/main.go generate -lang=javascript -js_out_dir="$(VANADIUM_ROOT)/veyron.js/src" vdltool signature v.io/veyron/veyron2/vdl/testdata/... v.io/veyron/veyron2/ipc/... v.io/veyron/veyron2/vdl/vdlroot/src/...
+	v23 go run $(VANADIUM_ROOT)/release/go/src/v.io/core/veyron2/vdl/vdl/main.go generate -lang=javascript -js_out_dir="$(VANADIUM_ROOT)/release/javascript/core/src" vdltool signature v.io/core/veyron2/vdl/testdata/... v.io/core/veyron2/ipc/... v.io/core/veyron2/vdl/vdlroot/src/...
 endif
 
 test-vdl-node: gen-vdl test-precheck
@@ -139,8 +139,8 @@ test-integration-browser-runner:
 	prova test/integration/test-*.js --log=./tmp/chrome.log $(PROVA_OPTS) $(BROWSER_OPTS) $(BROWSER_OUTPUT_LOCAL)
 
 go/bin: $(GO_FILES)
-	@$(VGO) build -o $(GOBIN)/principal v.io/veyron/veyron/tools/principal
-	@$(VGO) build -o $(GOBIN)/servicerunner v.io/veyron/veyron/tools/servicerunner
+	@$(VGO) build -o $(GOBIN)/principal v.io/core/veyron/tools/principal
+	@$(VGO) build -o $(GOBIN)/servicerunner v.io/core/veyron/tools/servicerunner
 	@$(VGO) build -o $(GOBIN)/test_serviced test_service/test_serviced
 
 lint: node_modules
@@ -150,7 +150,7 @@ ifndef NOLINT
 endif
 
 dependency-check: node_modules
-	dependency-check package.json --entry src/veyron.js
+	dependency-check package.json --entry src/release/javascript/core
 
 clean:
 	@$(RM) -fr dist/*
@@ -175,12 +175,12 @@ endif
 
 node_modules/vom/lib/index.js:
 ifndef NONPMUPDATE
-	cd "$(VANADIUM_ROOT)/veyron/javascript/vom" && npm link
+	cd "$(VANADIUM_ROOT)/release/javascript/vom" && npm link
 	:;npm link vom
 endif
 
 check-that-npm-is-in-path:
-	@which npm > /dev/null || { echo "npm is not in the path. Did you remember to run 'veyron profile setup web'?"; exit 1; }
+	@which npm > /dev/null || { echo "npm is not in the path. Did you remember to run 'v23 profile setup web'?"; exit 1; }
 
 .PHONY: all build clean dependency-check lint test
 .PHONY: test-integration test-integration-node test-integration-browser

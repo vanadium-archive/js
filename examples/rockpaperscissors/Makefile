@@ -1,4 +1,4 @@
-VEYRON_JS_API= $(VANADIUM_ROOT)/veyron/javascript/api
+VEYRON_JS_API= $(VANADIUM_ROOT)/release/javascript/api
 
 default: browser/lib
 
@@ -10,5 +10,5 @@ node_modules: package.json
 	npm install
 
 # Making node_modules a phony target ensures that everytime make is run the
-# most recent version of the veyron.js module is pulled down.
+# most recent version of the release/javascript/core module is pulled down.
 .PHONY: node_modules
