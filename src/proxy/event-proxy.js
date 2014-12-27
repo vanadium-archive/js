@@ -37,7 +37,8 @@ function ExtensionEventProxy(timeout){
       var error = new Error(
         'Error connecting to the Vanadium Chrome Extension.  Please make ' +
         'sure the extension is installed and enabled.  Download it here: ' +
-        'https://github.com/veyron/release/javascript/core/raw/master/extension/veyron.crx'
+        'https://github.com/veyron/release/javascript/core/raw/master/' +
+        'extension/veyron.crx'
       );
       proxy.emit('error', error);
       return;
