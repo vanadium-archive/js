@@ -3,6 +3,6 @@
   "name": "rockpaperscissors",
   "version": "0.0.0",
   "dependencies": {
-    "veyron": "git+ssh://git@github.com:veyron/release/javascript/core.git"
+    "veyron": "git+ssh://git@github.com:veyron/veyron.js.git"
   }
 }

@@ -65,7 +65,7 @@ One of the goals of this project is to only write the code once and have it run
 in both NodeJS and Browser. Therefore, specific build and testing steps have been
 designed in the project to ensure this goal.
 
-When run in a browser, release/javascript/core expects that the veyron extension will be
+When run in a browser, veyron.js expects that the veyron extension will be
 installed. The veyron extension is responsible for getting an oauth2 access
 token from the user and sending it to WSPR.  WSPR will use the access token to
 get a blessed identity from the identity server, and will use that identity for
