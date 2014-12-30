@@ -1,5 +1,6 @@
 /**
  * @fileoverview A context passed to the authorizer
+ * @private
  */
 var Blessings = require('./blessings.js');
 module.exports = Context;

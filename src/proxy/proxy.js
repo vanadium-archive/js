@@ -1,4 +1,5 @@
 /**
+ * @private
  * @fileoverview An object that handles marshaling and unmarshal
  * messages from the native veyron implementation.
  */
@@ -17,6 +18,7 @@ var BIND_CACHE_TTL = 3600 * 1000;
 /**
  * A client for the native veyron implementation.
  * @constructor
+ * @private
  * @param {Promise} senderPromise A promise that is resolved when we are able
  * to send a message to the native veron implementation. It should be resolved
  * with an object that has a send function that will send messages to the native
@@ -34,6 +36,7 @@ function Proxy(senderPromise) {
 
 /**
  * Handles a message from native veyron implementation.
+ * @private
  * @param {Object} messsage The message from the native veyron code.
  */
 Proxy.prototype.process = function(message) {
@@ -88,6 +91,7 @@ Proxy.prototype.nextId = function() {
 /**
  * Gets the signature including methods names, number of arguments for a given
  * service name.
+ * @private
  * @param {Context} A context instance.
  * @param {string} name the veyron name of the service to get signature for.
  * @return {Promise} Signature of the service in JSON format
@@ -148,10 +152,11 @@ Proxy.prototype.addIncomingStreamHandler = function(id, handler) {
   this.outstandingRequests[id] = handler;
 };
 
-/*
+/**
  * Arranges to notify downstream servers when the given
  * context is cancelled.  It also causes outstanding handlers for
  * those requests to receive a cancellation error.
+ * @private
  */
 Proxy.prototype.cancelFromContext = function(ctx, id) {
   var proxy = this;
@@ -169,6 +174,7 @@ Proxy.prototype.cancelFromContext = function(ctx, id) {
  * Establishes the connection if needed, frames the message with the next id,
  * adds the given deferred to outstanding requests queue and sends the request
  * to the server
+ * @private
  * @param {Object} message Message to send
  * @param {MessageType} type Type of message to send
  * @param {Object} handler An object with a handleResponse method that takes
@@ -199,7 +205,7 @@ Proxy.prototype.sendRequest = function(message, type, handler, id) {
   });
 };
 
-/**
+/*
  * Export the module
  */
 module.exports = Proxy;

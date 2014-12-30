@@ -1,5 +1,6 @@
 /**
  * @fileoverview Enum for incoming payload types
+ * @private
  */
 
 var IncomingPayloadType = {

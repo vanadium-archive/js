@@ -4,6 +4,7 @@
  * A deferred encapsulates a promise and its resolve/reject methods in a single
  * object.  This makes deferreds easier to pass to around and resolve or reject
  * from other pieces of code.
+ * @private
  */
 
 var Promise = require('./promise');

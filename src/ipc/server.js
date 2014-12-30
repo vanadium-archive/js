@@ -11,6 +11,7 @@
  *
  *  var s = new server(proxyConnection);
  *  s.serve('mymedia/video', videoService);
+ *  @private
  */
 
 var Deferred = require('./../lib/deferred');
@@ -21,11 +22,12 @@ var argHelper = require('./../lib/arg-helper');
 
 var nextServerID = 1; // The ID for the next server.
 
+// TODO(bjornick): Figure out how to get jsdoc to not generate comments for
+// the constructor
 /**
- * represents a veyron server which allows registration of services that can be
- * invoked remotely via RPCs.
- * @constructor
- * @param {Object} router the server router.
+ * Represents a vanadium server which allows registration of services that can be
+ * invoked remotely via RPCs. This constructor should not be used directly.
+ * @class
  */
 function Server(router) {
   if (!(this instanceof Server)) {
@@ -48,7 +50,6 @@ function Server(router) {
 
 /**
  * @typedef ServeOptions
- * @type {Object}
  * annotations to the functions exported by the functions.  This is generally
  * created by running the vdl compiler.
  * @property {Authorize} authorizer An Authorizer that will handle the
@@ -57,21 +58,24 @@ function Server(router) {
  */
 
 /**
- * Serve associates object with name by publishing the address
+ * <p>Serve associates object with name by publishing the address
  * of this server with the mount table under the supplied name and using
- * authorizer to authorize access to it.
+ * authorizer to authorize access to it.</p>
  *
- * To serve names of the form "mymedia/*" make the calls:
+ * <p>To serve names of the form "mymedia/*" make the calls:</p>
+ * <code>
  * serve("mymedia", serviceObject, { // optional authorizer
  *   authorizer: serviceAuthorizer
  * });
+ * </code>
+ * <p>If name is an empty string, no attempt will made to publish that
+ * name to a mount table. It is an error to call {@link Server#serve|serve}
+ * if either {@link Server#serveDispatcher|serveDispatcher} or
+ * {@link Server.serve|serve} has already been called.
+ * To serve the same object under multiple names,
+ * {@link Server#addName|addName} can be used.</p>
  *
- * If name is an empty string, no attempt will made to publish that
- * name to a mount table. It is an error to call Serve if ServeDispatcher has
- * already been called.
- * It is also an error to call Serve multiple times.
- * To serve the same object under multiple names, addName() can be used.
- *
+ * @public
  * @param {string} name Name to serve under
  * @param {object} serviceObject The service object that has a set of
  * exported methods
@@ -142,23 +146,28 @@ Server.prototype.serve = function(name, serviceObject, options, cb) {
  * and rejected if it failed.
  */
 /**
- * ServeDispatcher associates dispatcher with the portion of the mount
+ * <p>ServeDispatcher associates dispatcher with the portion of the mount
  * table's name space for which name is a prefix, by publishing the
  * address of this dispatcher with the mount table under the supplied name.
  * RPCs invoked on the supplied name will be delivered to the supplied
- * Dispatcher's lookup method which will in turn return the object
+ * Dispatcher's lookup method which will in turn return the object. </p>
  *
- * To serve names of the form "mymedia/*" make the calls:
+ * <p>To serve names of the form "mymedia/*" make the calls: </p>
+ * 
+ * <code>
  * serve("mymedia", dispatcher);
+ * </code>
  *
- * If name is an empty string, no attempt will made to publish that
- * name to a mount table.
+ * <p>If name is an empty string, no attempt will made to publish that
+ * name to a mount table. </p>
  *
- * It is an error to call ServeDispatcher if Serve has already been
- * called.
- * It is also an error to call ServeDispatcher multiple times.
- * To serve the same dispatcher under multiple names, addName() can be used.
+ * <p>It is an error to call {@link Server#serveDispatcher|serveDispatcher}
+ * if {@link Server#serve|serve} has already been called. It is also an error
+ * to call serveDispatcher multiple times.</p>
+ * To serve the same dispatcher under multiple names,
+ * {@link Server#addName|addName} can be used. </p>
  *
+ * @public
  * @param {string} name Name to serve under
  * @param {Dispatcher} dispatcher A function that will take in the suffix
  * and the method to be called and return the service object for that suffix.
@@ -186,6 +195,7 @@ Server.prototype.stop = function(cb) {
 /**
  * Adds the specified name to the mount table for the object or dispatcher
  * served by this server.
+ * @public
  * @param {string} name Name to publish
  * @param {function} [cb] If provided, the function will be called on
  * completion. The only argument is an error if there was one.
@@ -198,7 +208,9 @@ Server.prototype.addName = function(name, cb) {
 /**
  * Removes the specified name from the mount table. It is an
  * error to specify a name that was not previously added using
- * serve/serveDispatcher or addName.
+ * {@link Server#serve|serve}/{@link Server#serveDispatcher|
+ * serveDispatcher} or {@link Server#addName|addName}.
+ * @public
  * @param {string} name Name to remove
  * @param {function} [cb] If provided, the function will be called on
  * completion. The only argument is an error if there was one.
@@ -208,7 +220,8 @@ Server.prototype.removeName = function(name, cb) {
   return this._router.removeName(name, this, cb);
 };
 
-/*
+/**
+ * @private
  * @param {Number} handle The handle for the service
  * @return {Object} The invoker corresponding to the provided error.
  */
@@ -219,8 +232,9 @@ Server.prototype.getInvokerForHandle = function(handle) {
   return result.invoker;
 };
 
-/*
+/**
  * Handles the authorization for an RPC.
+ * @private
  * @param {Number} handle The handle for the authorizer
  * @param {object} request The context of the authorization
  * @return {Promise} a promise that will be fulfilled with the result.
@@ -263,8 +277,9 @@ Server.prototype.handleAuthorization = function(handle, request) {
   return Promise.reject(result);
 };
 
-/*
+/**
  * Handles the result of lookup and returns an error if there was any.
+ * @private
  */
 Server.prototype._handleLookupResult = function(object) {
   object._handle = this._handle;

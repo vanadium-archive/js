@@ -1,5 +1,6 @@
 /**
  * @fileoverview Enum for outgoing message types
+ * @private
  */
 
 var MessageType = {

@@ -1,5 +1,6 @@
 /**
  * @fileoverview conversion between JavaScript and veyron2/verror Error object
+ * @private
  */
 
 var vError = require('./../lib/verror');
@@ -21,7 +22,7 @@ var _standard = function(idAction, message, paramList) {
   this.paramList = paramList;
 };
 
-/*
+/**
  * Converts from a JavaScript error object to verror standard struct which
  * wspr expects as error format.
  * @private
@@ -68,7 +69,7 @@ Object.keys(vError.IdActions).forEach(function(key) {
   errors[value.id] = ctor;
 });
 
-/*
+/**
  * Converts from a verror standard struct which comes from wspr to JavaScript
  * Error object ensuring message and name are set properly
  * @private

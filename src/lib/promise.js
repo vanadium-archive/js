@@ -14,6 +14,7 @@
  * TODO(nlacasse): Wrap bluebird promises to only expose es6/A+ promise API.
  * Otherwise users might rely on non-A+ parts of the bluebird API, preventing us
  * from switching in the future.
+ * @private
  */
 
 var Promise = require('bluebird');

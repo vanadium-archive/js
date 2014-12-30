@@ -2,6 +2,7 @@
  * @fileoverview A lightweight logging framework for JavaScript to be used
  * in place of console so that we can persist the logs if needed and turn
  * logging off at different levels.
+ * @private
  */
 
 var extend = require('xtend');

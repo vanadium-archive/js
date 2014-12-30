@@ -5,6 +5,7 @@
  *  var cl = new client(proxyConnection);
  *  var service = cl.bindTo('EndpointAddress', 'ServiceName');
  *  resultPromise = service.MethodName(arg);
+ *  @private
  */
 
 var Promise = require('../lib/promise');
@@ -142,6 +143,7 @@ OutstandingRPC.prototype.handleError = function(data) {
 
 /**
  * Construct a message to send to the veyron native code
+ * @private
  * @return {string} json string to send to jspr
  */
 OutstandingRPC.prototype.constructMessage = function() {

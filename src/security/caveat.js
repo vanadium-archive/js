@@ -1,5 +1,6 @@
 /**
  * @fileoverview Caveats for blessings
+ * @private
  */
 
 module.exports = {

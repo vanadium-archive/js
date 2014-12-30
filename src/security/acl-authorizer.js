@@ -1,7 +1,7 @@
 /**
  * @fileoverview The ACL authorizer
+ * @private
  */
-
 var blessingMatches = require('./blessing-matching');
 var vError = require('./../lib/verror');
 

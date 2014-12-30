@@ -1,6 +1,7 @@
 /**
  * @fileoverview A method to create an array of signatures for a service
  * based on the descriptions passed in.
+ * @private
  */
 module.exports = createSignatures;
 

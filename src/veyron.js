@@ -1,7 +1,7 @@
 /**
  *  @fileoverview Public Veyron API.
+ *  @private
  */
-
 
 var extend = require('xtend');
 var isBrowser = require('is-browser');

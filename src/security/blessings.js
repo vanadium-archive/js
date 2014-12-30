@@ -1,5 +1,6 @@
 /**
  * @fileoverview Blessings stub of veyron identities
+ * @private
  */
 
 var MessageType = require('../proxy/message-type');
@@ -7,6 +8,7 @@ var MessageType = require('../proxy/message-type');
 /**
  * Blessings encapsulate the set of blessings (human-readable strings) have
  * been bound to a principal in a specific context.
+ * @constructor
  */
 function Blessings(id, key, proxy) {
   this._id = id;

@@ -1,5 +1,6 @@
 /**
  * @fileoverview built-in Veyron errors
+ * @private
  */
 
 var inherits = require('util').inherits;

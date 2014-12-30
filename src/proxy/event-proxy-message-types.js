@@ -1,5 +1,6 @@
 /**
  * @fileoverview Types of messages between web app and extension.
+ * @private
  */
 
 module.exports = {

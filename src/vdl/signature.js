@@ -2,6 +2,7 @@
  * @fileoverview Generator of service signature from javascript object.
  * This signature can optionally include additional information in a
  * descriptor object.
+ * @private
  */
 
 module.exports = Signature;

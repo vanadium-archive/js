@@ -1,5 +1,6 @@
 /**
  * @fileoverview Veyron Runtime
+ * @private
  */
 
 var Server = require('../ipc/server');

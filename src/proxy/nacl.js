@@ -1,5 +1,6 @@
 /**
  * @fileoverview Forwards messages to and from a nacl module.
+ * @private
  */
 
 var extensionEventProxy = require('./event-proxy');
@@ -15,6 +16,7 @@ module.exports = ProxyConnection;
  * A client for the veyron service using postMessage. Connects to the veyron
  * browspr and performs RPCs.
  * @constructor
+ * @private
  */
 function ProxyConnection() {
   var self = this;

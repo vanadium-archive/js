@@ -1,5 +1,6 @@
 /**
  * @fileoveriew A router that handles incoming server rpcs.
+ * @private
  */
 
 var Promise = require('../lib/promise');
@@ -22,6 +23,7 @@ var vom = require('vom')
  * A router that handles routing incoming requests to the right
  * server
  * @constructor
+ * @private
  */
 var Router = function(proxy, appName) {
   this._servers = {};
@@ -131,6 +133,7 @@ Router.prototype.handleLookupRequest = function(messageId, request) {
 /**
  * Handles cancellations of in-progress requests againsts Javascript service
  * invokations.
+ * @private
  * @param {string} messageId Message Id set by the server.
  */
 Router.prototype.handleCancel = function(messageId) {
@@ -143,6 +146,7 @@ Router.prototype.handleCancel = function(messageId) {
 /**
  * Handles incoming requests from the server to invoke methods on registered
  * services in JavaScript.
+ * @private
  * @param {string} messageId Message Id set by the server.
  * @param {Object} vomRequest VOM encoded request. Request's structure is
  * {
@@ -256,6 +260,7 @@ Router.prototype.handleRPCRequest = function(messageId, vomRequest) {
 
 /**
  * Sends the result of a requested invocation back to jspr
+ * @private
  * @param {string} messageId Message id of the original invocation request
  * @param {string} name Name of method
  * @param {Object} value Result of the call
@@ -333,6 +338,7 @@ Router.prototype.sendResult = function(messageId, name, value, err,
 
 /**
  * Serves the server under the given name
+ * @private
  * @param {string} name Name to serve under
  * @param {Veyron.Server} server The server who will handle the requests for
  * this name.
@@ -360,6 +366,7 @@ Router.prototype.serve = function(name, server, cb) {
 
 /**
  * Sends an addName request to jspr.
+ * @private
  * @param {string} name Name to publish
  * @param {function} [cb] If provided, the function will be called on
  * completion. The only argument is an error if there was one.
@@ -380,6 +387,7 @@ Router.prototype.addName = function(name, server, cb) {
 
 /**
  * Sends an removeName request to jspr.
+ * @private
  * @param {string} name Name to unpublish
  * @param {function} [cb] If provided, the function will be called on
  * completion. The only argument is an error if there was one.
@@ -403,6 +411,7 @@ Router.prototype.removeName = function(name, server, cb) {
 
 /**
  * Sends a stop server request to jspr.
+ * @private
  * @param {Server} server Server object to stop.
  * @param {function} [cb] If provided, the function will be called on
  * completion. The only argument is an error if there was one.
@@ -422,6 +431,7 @@ Router.prototype.stopServer = function(server, cb) {
 
 /**
  * Sends a request to jspr.
+ * @private
  * @param {object} message Message to send.
  * @param {MessageType} type Type of message
  * @param {Deffered} def Deferred object

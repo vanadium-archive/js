@@ -1,6 +1,7 @@
 /**
  * @fileoverview A simple handler that resolves or rejects a promise
  * on a response from the proxy.
+ * @private
  */
 var IncomingPayloadType = require('./incoming-payload-type');
 var ErrorConversion = require('./error-conversion');
@@ -10,6 +11,7 @@ var vError = require('./../lib/verror');
  * An object that rejects/resolves a promise based on a response
  * from the proxy.
  * @constructor
+ * @private
  * @param def the promise to resolve/reject
  * @param proxy the proxy from which to dequeue the handler
  * @param id the flow id of the message

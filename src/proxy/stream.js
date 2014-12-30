@@ -1,5 +1,6 @@
 /**
  * @fileoverview Streaming RPC implementation on top of websockets.
+ * @private
  */
 
 var MessageType = require('./message-type');
@@ -7,7 +8,7 @@ var Duplex = require('stream').Duplex;
 var inherits = require('util').inherits;
 var EncodeUtil = require('../lib/encode-util');
 
-/*
+/**
  * A stream that allows sending and receiving data for a streaming rpc.  If
  * onmessage is set and a function, it will be called whenever there is data on.
  * the stream. The stream implements the promise api.  When the rpc is complete,
@@ -65,6 +66,7 @@ Stream.prototype.serverClose = function(value, err) {
  * Implements the _read method needed by those subclassing Duplex.
  * The parameter passed in is ignored, since it doesn't really make
  * sense in object mode.
+ * @private
  */
 Stream.prototype._read = function() {
   // On a call to read, copy any objects in the websocket buffer into
@@ -84,6 +86,7 @@ Stream.prototype._read = function() {
 
 /**
  * Queue the object passed in for reading
+ * @private
  */
 Stream.prototype._queueRead = function(object) {
   if (this.shouldQueue) {

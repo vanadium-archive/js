@@ -1,5 +1,6 @@
 /**
  * @fileoverview Constants related to ipc.
+ * @private
  */
 
 module.exports = {

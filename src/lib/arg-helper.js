@@ -1,6 +1,7 @@
 /**
  * @fileoverview Declares helpers to parse information about function arguments
  * and injections.
+ * @private
  */
 
 module.exports = {
@@ -18,6 +19,7 @@ var cachedLastArgNames;
 /**
  * Returns an array of argument names for a function.
  * from go/fypon (stack overflow) and based on angularjs's implementation
+ * @private
  * @param {function} func the function object
  * @return {string[]} list of the arguments
  */
@@ -41,9 +43,10 @@ function getArgumentNamesFromFunction(func) {
 }
 
 /**
-  * @param {function} func the function object
-  * @return {string[]} the arguments that don't start with $ (not injection).
-  */
+ * @private
+ * @param {function} func the function object
+ * @return {string[]} the arguments that don't start with $ (not injection).
+ */
 function getFunctionArgs(func) {
     return getArgumentNamesFromFunction(func).filter(function(arg) {
         return arg[0] !== '$';
@@ -51,10 +54,11 @@ function getFunctionArgs(func) {
 }
 
 /**
-  * @param {function} func the function object
-  * @return {int[]} the original offsets of the args (the array has
-  * non-injections items)
-  */
+ * @private
+ * @param {function} func the function object
+ * @return {int[]} the original offsets of the args (the array has
+ * non-injections items)
+ */
 function getArgOffsets(func) {
   var allNames = getArgumentNamesFromFunction(func);
   return getFunctionArgs(func).map(function(arg) {
@@ -63,9 +67,10 @@ function getArgOffsets(func) {
 }
 
 /**
-  * @param {function} func the function object
-  * @return {string[]} the arguments that start with $ (are injections).
-  */
+ * @private
+ * @param {function} func the function object
+ * @return {string[]} the arguments that start with $ (are injections).
+ */
 function getFunctionInjections(func) {
     return getArgumentNamesFromFunction(func).filter(function(arg) {
         return arg[0] === '$';
@@ -73,8 +78,9 @@ function getFunctionInjections(func) {
 }
 
 /**
-  * @return a map from injection name to position.
-  */
+ * @private
+ * @return a map from injection name to position.
+ */
 function getInjectionPositions(func) {
     return getArgumentNamesFromFunction(func).map(function(name, index) {
       return {index: index, name: name};

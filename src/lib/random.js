@@ -1,5 +1,6 @@
 /**
  * @fileoverview Helper functions to get random values.
+ * @private
  */
 
 // This will use window.crypto in browser, and node's crypto library in node.

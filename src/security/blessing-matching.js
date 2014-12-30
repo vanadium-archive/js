@@ -1,5 +1,6 @@
 /**
  * @fileoverview blessing pattern matcher
+ * @private
  */
 module.exports = blessingMatches;
 

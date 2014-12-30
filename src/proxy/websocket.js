@@ -1,4 +1,5 @@
 /**
+ * @private
  * @fileoverview WebSocket client implementation
  */
 
@@ -13,6 +14,7 @@ var DecodeUtil = require('../lib/decode-util');
  * A client for the veyron service using websockets. Connects to the veyron wspr
  * and performs RPCs.
  * @constructor
+ * @private
  * @param {string} url of wspr that connects to the veyron network
  * identity
  */
@@ -35,6 +37,7 @@ ProxyConnection.prototype.constructor = ProxyConnection;
 
 /**
  * Connects to the server and returns an open web socket connection
+ * @private
  * @return {promise} a promise that will be fulfilled with a websocket object
  * when the connection is established.
  */

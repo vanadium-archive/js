@@ -1,5 +1,6 @@
 /**
  * @fileoverview Principal stub for veyron principals
+ * @private
  */
 
 var Deferred = require('../lib/deferred');
@@ -9,12 +10,13 @@ var MessageType = require('../proxy/message-type');
 
 /**
  * Principal represents an entity capable of making or receiving RPCs.
+ * @constructor
  */
 function Principal(proxy) {
   this._proxy = proxy;
 }
 
-/*
+/**
  * Blesses the blessee's public key with the given caveats.
  * @param {Blessings} blessee: a blessing on the public key to bless.
  * @param {String} extension: the extension for the blessing.
@@ -23,7 +25,6 @@ function Principal(proxy) {
  * @papram {function} cb an optional callback that will return the blessing
  * @return {Promise} a promise that will be resolved with the blessing
  */
-
 Principal.prototype.bless = function(blessee, extension, duration, caveats,
                                      cb) {
   var def = new Deferred(cb);

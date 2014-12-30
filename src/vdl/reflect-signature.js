@@ -1,5 +1,6 @@
 /**
  * @fileoverview Generator of typeless service signature from javascript object.
+ * @private
  */
 
 module.exports = ReflectSignature;
@@ -9,6 +10,7 @@ var vom = require('vom');
 
 /**
   * Create a signature for a service by inspecting the service object.
+  * @private
   * @param {Service} service The service.
   * @constructor
   */

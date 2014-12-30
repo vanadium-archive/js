@@ -1,5 +1,6 @@
 /**
  * @fileoverview Veyron Context
+ * @private
  */
 
 var Deferred = require('../lib/deferred');
@@ -15,7 +16,7 @@ module.exports = {
   CancelledError: CancelledError
 };
 
-/*
+/**
  * Creates an Error object indicating that the context was cancelled
  * due to an expired deadline.
  * @constructor
@@ -29,7 +30,7 @@ function DeadlineExceededError() {
 }
 inherits(DeadlineExceededError, vError.AbortedError);
 
-/*
+/**
  * Creates an Error object indicating that the context was manually
  * cancelled.
  * @constructor
@@ -42,7 +43,7 @@ function CancelledError() {
 }
 inherits(CancelledError, vError.AbortedError);
 
-/*
+/**
  * Creates an object than can be used as a key in the value and
  * withValue methods of a context.  Modules that want to attach data
  * to the context should first construct a key, then use that key
@@ -59,7 +60,7 @@ function ContextKey() {
 
 ContextKey._nextKey = 0;
 
-/*
+/**
  * Creates a new root context.  This should be used to generate a
  * context for a new operation which is unrealted to any ongoing
  * activity.
@@ -71,7 +72,7 @@ function Context() {
   }
 }
 
-/*
+/**
  * Returns the time at which this context will be automatically
  * canceled.  If no deadline has been set, null is returned.
  * @return {Date} The Date corresponding to the deadline
@@ -81,7 +82,7 @@ Context.prototype.deadline = function() {
 };
 
 
-/*
+/**
  * Returns true if the context has exceeded its deadline or has
  * been cancelled.
  * @return {boolean} True if the context is done
@@ -90,7 +91,7 @@ Context.prototype.done = function() {
   return false;
 };
 
-/*
+/**
  * Returns a promise that will be resolved when the context exceeds
  * its deadline or is cancelled.  Optionally you can pass a callback
  * that will be run when the promise is resolved.
@@ -103,7 +104,7 @@ Context.prototype.waitUntilDone = function(callback) {
   return new Promise(function(){});
 };
 
-/*
+/**
  * Returns the value corresponding to the given key.  The
  * value/withValue methods can be used to attach data to context that
  * will be carried across API boundaries.  You should use this only
@@ -118,7 +119,7 @@ Context.prototype.value = function(key) {
   return null;
 };
 
-/*
+/**
  * Returns a new context derived from the current context but that
  * will return the given value when value(key) is called with the
  * given key.
@@ -130,7 +131,7 @@ Context.prototype.withValue = function(key, value) {
   return new ValueContext(this, key, value);
 };
 
-/*
+/**
  * Returns a new context derived from the current context but that
  * can be cancelled.  The returned context will have an additional
  * method cancel() which can be used to cancel the context.
@@ -140,7 +141,7 @@ Context.prototype.withCancel = function() {
   return new CancelContext(this);
 };
 
-/*
+/**
  * Returns a new context derived from the current context but that
  * will be automatically cancelled after a given deadline.  The
  * returned context will have an additional method cancel() which can
@@ -152,7 +153,7 @@ Context.prototype.withDeadline = function(deadline) {
   return new DeadlineContext(this, deadline);
 };
 
-/*
+/**
  * Returns a new context derived from the current context but that
  * will be automatically cancelled after a given timeout.  The
  * returned context will have an additional method cancel() which can

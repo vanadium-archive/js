@@ -1,5 +1,6 @@
 /**
  * @fileoverview Helpers for manipulating veyron names.
+ * @private
  */
 
 var _numInitialSlashes = function(s) {

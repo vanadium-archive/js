@@ -1,5 +1,6 @@
 /**
  * @fileoverview Defines an invoker to invoke service methods.
+ * @private
  */
 
 module.exports = Invoker;
@@ -14,6 +15,7 @@ var vom = require('vom');
   * Create an invoker.
   * @param {Service} service Service object.
   * @constructor
+  * @private
   */
 function Invoker(service) {
   if (!(this instanceof Invoker)) {
@@ -38,6 +40,7 @@ function Invoker(service) {
 
 /**
  * Invoke a method.
+ * @private
  * @param {string} methodName The name of the method to invoke
  * (upper camel case).
  * @param {number[]} argOffsets A list of positions/offsets for function
@@ -70,6 +73,7 @@ Invoker.prototype.signature = function() {
 
 /**
   * Translates args to the native list-of-injections-and-non-injections style.
+  * @private
   * @param {int[]} argOffsets List of original indicies of args. See
   * getArgOffsets().
   * @param {Object.<string,number>} injectionPositions Map from injection name
@@ -101,6 +105,7 @@ function translateToTrueCallArgs(argOffsets, injectionPositions, args,
  * Wrap an error so that it is always of type Error.
  * This is used in cases where values are known to be errors even if they
  * are not of error type such as if they are thrown or rejected.
+ * @private
  * @param {Error} err The error or other value.
  * @return {Error} An error or type Error.
  */
@@ -113,6 +118,7 @@ function wrapError(err) {
 
 /**
   * Invoke a service method.
+  * @private
   * @param {Service} service The service object to invoke a method on.
   * @param {Function} methodName The name of the method to invoke
   * (upper camel case).
