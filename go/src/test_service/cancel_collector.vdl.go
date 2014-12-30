@@ -23,11 +23,11 @@ const _ = __wiretype.TypeIDInvalid
 // CancelCollector is a test interface for use in testing cancellation and deadlines.
 type CancelCollectorClientMethods interface {
 	// A function that never returns, but records the status of the given key.
-	NeverReturn(ctx __context.T, key int64, opts ...__ipc.CallOpt) error
+	NeverReturn(ctx *__context.T, key int64, opts ...__ipc.CallOpt) error
 	// Wait for the call with the given key to have the given status.  Possible statuses are:
 	// "running", and, "cancelled".  Returns the number of nanoseconds left on
 	// the deadline of the specified call when the call first began.
-	WaitForStatus(ctx __context.T, key int64, status string, opts ...__ipc.CallOpt) (timeout int64, err error)
+	WaitForStatus(ctx *__context.T, key int64, status string, opts ...__ipc.CallOpt) (timeout int64, err error)
 }
 
 // CancelCollectorClientStub adds universal methods to CancelCollectorClientMethods.
@@ -52,14 +52,14 @@ type implCancelCollectorClientStub struct {
 	client __ipc.Client
 }
 
-func (c implCancelCollectorClientStub) c(ctx __context.T) __ipc.Client {
+func (c implCancelCollectorClientStub) c(ctx *__context.T) __ipc.Client {
 	if c.client != nil {
 		return c.client
 	}
 	return __veyron2.RuntimeFromContext(ctx).Client()
 }
 
-func (c implCancelCollectorClientStub) NeverReturn(ctx __context.T, i0 int64, opts ...__ipc.CallOpt) (err error) {
+func (c implCancelCollectorClientStub) NeverReturn(ctx *__context.T, i0 int64, opts ...__ipc.CallOpt) (err error) {
 	var call __ipc.Call
 	if call, err = c.c(ctx).StartCall(ctx, c.name, "NeverReturn", []interface{}{i0}, opts...); err != nil {
 		return
@@ -70,7 +70,7 @@ func (c implCancelCollectorClientStub) NeverReturn(ctx __context.T, i0 int64, op
 	return
 }
 
-func (c implCancelCollectorClientStub) WaitForStatus(ctx __context.T, i0 int64, i1 string, opts ...__ipc.CallOpt) (o0 int64, err error) {
+func (c implCancelCollectorClientStub) WaitForStatus(ctx *__context.T, i0 int64, i1 string, opts ...__ipc.CallOpt) (o0 int64, err error) {
 	var call __ipc.Call
 	if call, err = c.c(ctx).StartCall(ctx, c.name, "WaitForStatus", []interface{}{i0, i1}, opts...); err != nil {
 		return
@@ -81,7 +81,7 @@ func (c implCancelCollectorClientStub) WaitForStatus(ctx __context.T, i0 int64, 
 	return
 }
 
-func (c implCancelCollectorClientStub) Signature(ctx __context.T, opts ...__ipc.CallOpt) (o0 __ipc.ServiceSignature, err error) {
+func (c implCancelCollectorClientStub) Signature(ctx *__context.T, opts ...__ipc.CallOpt) (o0 __ipc.ServiceSignature, err error) {
 	var call __ipc.Call
 	if call, err = c.c(ctx).StartCall(ctx, c.name, "Signature", nil, opts...); err != nil {
 		return
