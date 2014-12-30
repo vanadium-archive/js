@@ -25,8 +25,8 @@ var nextServerID = 1; // The ID for the next server.
 // TODO(bjornick): Figure out how to get jsdoc to not generate comments for
 // the constructor
 /**
- * Represents a vanadium server which allows registration of services that can be
- * invoked remotely via RPCs. This constructor should not be used directly.
+ * Represents a vanadium server which allows registration of services that can
+ * be invoked remotely via RPCs. This constructor should not be used directly.
  * @class
  */
 function Server(router) {
