@@ -79,11 +79,7 @@ function Exp(){}
 Exp.prototype.Exp = NotImplementedMethod;
     
     
-Exp.prototype.signature = function ExpSignature() {
-  return _ExpSignature;
-};
-    
-var _ExpSignature = {
+Exp.prototype._serviceDescription = {
   name: 'Exp',
   pkgPath: 'v.io/core/veyron2/vdl/testdata/arith/exp',
   doc: "",

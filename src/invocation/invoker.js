@@ -23,7 +23,7 @@ function Invoker(service) {
   }
 
   this._service = service;
-  this._signature = createSignatures(service, service._description);
+  this._signature = createSignatures(service, service._serviceDescription);
   this._invokableMethods = {};
 
   for (var methodName in service) {
