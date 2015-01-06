@@ -4,7 +4,6 @@ var config = require('./default-config');
 var Invoker = require('../../src/invocation/invoker');
 var Deferred = require('../../src/lib/deferred');
 var context = require('../../src/runtime/context');
-var vom = require('vom');
 
 var service = {
   call: function(arg) {
@@ -23,12 +22,6 @@ function createDispatcher(authorizer, tags) {
     methods: [
       {
         name: 'Call',
-        inArgs: [
-          {
-            name: 'arg',
-            type: vom.Types.ANY
-          }
-        ],
         tags: tags
       }
     ]

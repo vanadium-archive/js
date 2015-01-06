@@ -12,7 +12,7 @@ var Deferred = require('./../lib/deferred');
 var vLog = require('./../lib/vlog');
 var SimpleHandler = require('../proxy/simple-handler');
 var StreamHandler = require('../proxy/stream-handler');
-var vError = require('../lib/verror');
+var verror = require('../lib/verror');
 var SecurityContext = require('../security/context');
 var ServerContext = require('./server-context');
 var DecodeUtil = require('../lib/decode-util');
@@ -61,7 +61,7 @@ Router.prototype.handleAuthorizationRequest = function(messageId, request) {
    request = DecodeUtil.decode(request);
   } catch (e) {
     JSON.stringify({
-      err: new vError.InternalError('Failed to decode ' + e)
+      err: new verror.InternalError('Failed to decode ' + e)
     });
     this._proxy.sendRequest(data, MessageType.AUTHORIZATION_RESPONSE,
         null, messageId);
@@ -69,7 +69,7 @@ Router.prototype.handleAuthorizationRequest = function(messageId, request) {
   var server = this._servers[request.serverID];
   if (!server) {
     var data = JSON.stringify({
-      err: new vError.ExistsError('unknown server')
+      err: new verror.ExistsError('unknown server')
     });
     this._proxy.sendRequest(data, MessageType.AUTHORIZATION_RESPONSE,
         null, messageId);
@@ -94,7 +94,7 @@ Router.prototype.handleLookupRequest = function(messageId, request) {
   var server = this._servers[request.serverID];
   if (!server) {
     var data = JSON.stringify({
-      err: new vError.ExistsError('unknown server')
+      err: new verror.ExistsError('unknown server')
     });
     this._proxy.sendRequest(data, MessageType.LOOKUP_RESPONSE,
         null, messageId);
@@ -116,14 +116,14 @@ Router.prototype.handleLookupRequest = function(messageId, request) {
     var data = {
       handle: value._handle,
       signature: res,
-      hasAuthorizer: hasAuthorizer,
+      hasAuthorizer: hasAuthorizer
     };
     self._proxy.sendRequest(JSON.stringify(data), MessageType.LOOKUP_RESPONSE,
         null, messageId);
   }).catch(function(err) {
     var data = JSON.stringify({
       err: ErrorConversion.toStandardErrorStruct(err, self._appName,
-                                                 'signature'),
+                                                 '__Signature'),
     });
     self._proxy.sendRequest(data, MessageType.LOOKUP_RESPONSE,
         null, messageId);
@@ -170,6 +170,7 @@ Router.prototype.handleRPCRequest = function(messageId, vomRequest) {
   var server = this._servers[request.serverId];
 
   if (!server) {
+    // TODO(bprosnitz) What error type should this be.
     err = new Error('Request for unknown server ' + request.serverId);
     this.sendResult(messageId, methodName, null, err);
     return;
@@ -194,7 +195,7 @@ Router.prototype.handleRPCRequest = function(messageId, vomRequest) {
     });
   });
   if (methodSig === undefined) {
-    err = new Error('Requested method ' + methodName +
+    err = new verror.NoExistError('Requested method ' + methodName +
         ' not found on');
     this.sendResult(messageId, methodName, null, err);
     return;
@@ -270,27 +271,29 @@ Router.prototype.sendResult = function(messageId, name, value, err,
   numOutArgs) {
   var results = [];
   if (numOutArgs !== undefined) {
-    switch (numOutArgs) {
-      case 1:
+    // The err outArg is handled separately from value outArgs.
+    var numArgsWithoutErr = numOutArgs - 1;
+    switch (numArgsWithoutErr) {
+      case 0:
         if (value !== undefined) {
           vLog.error('Unexpected return value from ' + name + ': ' + value);
         }
         results = [];
         break;
-      case 2:
+      case 1:
         results = [value];
         break;
       default:
         if (Array.isArray(value)) {
-          if (value.length !== numOutArgs - 1) {
+          if (value.length !== numArgsWithoutErr) {
             vLog.error('Wrong number of arguments returned by ' + name +
-                '. expected: ' + (numOutArgs - 1) + ', got:' +
+                '. expected: ' + numArgsWithoutErr + ', got:' +
                 value.length);
           }
           results = value;
         } else {
           vLog.error('Wrong number of arguments returned by ' + name +
-              '. expected: ' + (numOutArgs - 1) + ', got: 1');
+              '. expected: ' + numArgsWithoutErr+ ', got: 1');
           results = [value];
         }
     }

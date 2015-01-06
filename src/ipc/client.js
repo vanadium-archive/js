@@ -13,7 +13,7 @@ var Deferred = require('../lib/deferred');
 var vLog = require('../lib/vlog');
 var ErrorConversion = require('../proxy/error-conversion');
 var Stream = require('../proxy/stream');
-var vError = require('../lib/verror');
+var verror = require('../lib/verror');
 var MessageType = require('../proxy/message-type');
 var IncomingPayloadType = require('../proxy/incoming-payload-type');
 var context = require('../runtime/context');
@@ -78,7 +78,7 @@ OutstandingRPC.prototype.handleResponse = function(type, data) {
       break;
     default:
       this.handleError(
-          new vError.InternalError('Recieved unknown response type from wspr'));
+          new verror.InternalError('Recieved unknown response type from wspr'));
       break;
   }
 };
@@ -88,7 +88,7 @@ OutstandingRPC.prototype.handleCompletion = function(data) {
     data = DecodeUtil.decode(data);
   } catch (e) {
     this.handleError(
-      new vError.InternalError('Failed to decode result: ' + e));
+      new verror.InternalError('Failed to decode result: ' + e));
       return;
   }
   if (data.length === 1) {
@@ -107,7 +107,7 @@ OutstandingRPC.prototype.handleStreamData = function(data) {
       data = DecodeUtil.decode(data);
     } catch (e) {
       this.handleError(
-        new vError.InternalError('Failed to decode result: ' + e));
+        new verror.InternalError('Failed to decode result: ' + e));
         return;
     }
 
@@ -242,7 +242,7 @@ Client.prototype.bindTo = function(ctx, name, optServiceSignature, cb) {
         // Callback is the last function argument, pull it out of the args
         if (typeof args[args.length - 1] === 'function') {
           callback = args.pop();
-        }
+       }
 
         // Require first arg to be a Context
         if (args[0] instanceof context.Context) {
@@ -278,7 +278,12 @@ Client.prototype.bindTo = function(ctx, name, optServiceSignature, cb) {
             'Expected format: ' + methodSig.name +
             '(' + expectedArgs + ')';
 
-          err = new Error(message);
+          // TODO(bprosnitz) v.io/core/javascript.IncorrectArgCount.
+          err = new verror.VeyronError(message,
+            {
+              id: 'v.io/core/javascript.IncorrectArgCount',
+              action: verror.Actions.NoRetry,
+            });
 
           if (callback) {
             return callback(err);
@@ -313,10 +318,9 @@ Client.prototype.bindTo = function(ctx, name, optServiceSignature, cb) {
     });
 
     boundObject['_signature'] = function(cb) {
-      if (cb) {
-        cb(undefined, serviceSignature);
-      }
-      return Promise.resolve(serviceSignature);
+      var def = new Deferred(cb);
+      def.resolve(serviceSignature);
+      return def.promise;
     };
 
     def.resolve(boundObject);

@@ -18,6 +18,8 @@ var Deferred = require('./../lib/deferred');
 var Promise = require('./../lib/promise');
 var leafDispatcher = require('./leaf-dispatcher');
 var vLog = require('./../lib/vlog');
+var Invoker = require('./../invocation/invoker');
+var verror = require('./../lib/verror');
 var argHelper = require('./../lib/arg-helper');
 
 var nextServerID = 1; // The ID for the next server.
@@ -153,7 +155,7 @@ Server.prototype.serve = function(name, serviceObject, options, cb) {
  * Dispatcher's lookup method which will in turn return the object. </p>
  *
  * <p>To serve names of the form "mymedia/*" make the calls: </p>
- * 
+ *
  * <code>
  * serve("mymedia", dispatcher);
  * </code>
@@ -282,6 +284,14 @@ Server.prototype.handleAuthorization = function(handle, request) {
  * @private
  */
 Server.prototype._handleLookupResult = function(object) {
+  if (!object.hasOwnProperty('invoker') ||
+    !(object.invoker instanceof Invoker)) {
+    throw new verror.VeyronError('Invoke called on non-invoker object',
+      {
+        id: 'v.io/core/javascript.InvokeOnNonInvoker',
+        action: verror.Actions.NoRetry
+      });
+  }
   object._handle = this._handle;
   this.serviceObjectHandles[object._handle] = object;
   this._handle++;
@@ -300,10 +310,10 @@ Server.prototype._handleLookup = function(suffix) {
   var argsNames = argHelper.getArgumentNamesFromFunction(this.dispatcher);
   var useCallback = argsNames.length >= 2;
   var cb = function(err, val) {
-    if (err === undefined || err === null) {
-      def.resolve(val);
-    } else {
+    if (err) {
       def.reject(err);
+    } else {
+      def.resolve(val);
     }
   };
 

@@ -7,6 +7,7 @@ module.exports = Invoker;
 
 var argHelper = require('../lib/arg-helper');
 var createSignatures = require('../vdl/create-signatures');
+var ServiceReflection = require('../lib/service-reflection');
 var verror = require('../lib/verror');
 var vlog = require('../lib/vlog');
 var vom = require('vom');
@@ -24,17 +25,21 @@ function Invoker(service) {
 
   this._service = service;
   this._signature = createSignatures(service, service._serviceDescription);
-  this._invokableMethods = {};
 
-  for (var methodName in service) {
-      if (typeof service[methodName] === 'function') {
-          var method = service[methodName];
-          var injectionPositions = argHelper.getInjectionPositions(method);
-          var argOffsets = argHelper.getArgOffsets(method);
-          var upperMethodName = vom.MiscUtil.capitalize(methodName);
-          this._invokableMethods[upperMethodName] = invoke.bind(null,
-            service, method, argOffsets, injectionPositions);
-      }
+  var methodNames = ServiceReflection.getExposedMethodNames(service);
+  var invokableMethodsList = methodNames.map(function(methodName) {
+    var method = service[methodName];
+    var injectionPositions = argHelper.getInjectionPositions(method);
+    var argOffsets = argHelper.getArgOffsets(method);
+    return invokeImpl.bind(null, service, method, argOffsets,
+      injectionPositions);
+  });
+
+  var upperMethodNames = methodNames.map(vom.MiscUtil.capitalize);
+
+  this._invokableMethods = {};
+  for (var i = 0; i < methodNames.length; i++) {
+    this._invokableMethods[upperMethodNames[i]] = invokableMethodsList[i];
   }
 }
 
@@ -43,24 +48,22 @@ function Invoker(service) {
  * @private
  * @param {string} methodName The name of the method to invoke
  * (upper camel case).
- * @param {number[]} argOffsets A list of positions/offsets for function
- * arguments in the original list (may differ because of injections).
- * e.g. function x(a,$stream,b) => [0, 2].
- * @param {Object.<string,number>} injectionPositions A map from
- * injection name to position.
+ * @param {Object[]} args List of args coming off of the wire.
+ * @param {Object.<string,Object>} potentialInjections Object containing
+ * possible injection values.
  * e.g. function(x,$stream,b) => {'$stream' :1}
  * @param {Function} The callback function(err, value) to call after
  * completion.
  */
 Invoker.prototype.invoke =
-  function(methodName, argOffsets, injectionPositions, cb) {
+  function(methodName, args, potentialInjections, cb) {
   if (!(methodName in this._invokableMethods)) {
     cb(verror.NoExistError('Method ' + methodName + ' does not exist.'));
     return;
   }
 
   var meth = this._invokableMethods[methodName];
-  return meth(argOffsets, injectionPositions, cb);
+  return meth(args, potentialInjections, cb);
 };
 
 /**
@@ -127,11 +130,12 @@ function wrapError(err) {
   * @param {Object.<string,number>} injectionPositions Map from injection name
   * to position.
   * @param {Object[]} args List of args coming off of the wire.
-  * @param {Object.<string,Object>} Object containing possible injection values.
+  * @param {Object.<string,Object>} potentialInjections Object containing
+  * possible injection values.
   * @param {Function} The callback function(err, value) to call after
   * completion.
   */
-function invoke(
+function invokeImpl(
   service, method, argOffsets, injectionPositions, // Bound by Invoker ctor.
   args, potentialInjections, cb // Passed on invocation.
   ) {
@@ -156,7 +160,7 @@ function invoke(
       cb(wrapError(err));
     }
 
-    // If there is no callback injection, so call the callback after the method
+    // There is no callback injection, so call the callback after the method
     // returns.
     if (!injectionPositions.hasOwnProperty('$cb')) {
       if (typeof res === 'object' && res !== null &&
@@ -164,7 +168,7 @@ function invoke(
         // If the result is "then-able" (like a promise), wait for it to
         // complete.
         var thisArg = undefined; // jshint ignore:line
-        res.then(cb.bind(thisArg, undefined)).catch(function(err) {
+        res.then(cb.bind(thisArg, null)).catch(function(err) {
           cb(wrapError(err));
         });
       } else {

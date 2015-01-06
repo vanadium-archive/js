@@ -121,6 +121,6 @@ test('Test cancellation from JS client to JS server', function(assert) {
       assert.end();
       return;
     }
-    run(ctx, err, res.service, res.end, assert);
+    run(ctx, err, res.service, res.end, assert, 2);
   });
 });
