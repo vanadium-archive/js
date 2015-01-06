@@ -19,7 +19,7 @@ var desc = {
 
 function testInvoker(t, testService) {
     t.plan(5);
-    testService._description = desc;
+    testService._serviceDescription = desc;
 
     var invoker = new Invoker(testService);
 

@@ -22,7 +22,8 @@ test('method signature match (temporary)', function(assert) {
   var arith = require(
     '../../src/v.io/core/veyron2/vdl/testdata/arith/arith');
   var service = arith.services.AdvancedMath;
-  var serviceDef = arith.serviceDefs.AdvancedMath.prototype.signature().methods;
+  var serviceDef = arith.serviceDefs.AdvancedMath.prototype.
+                   _serviceDescription.methods;
   for (var i = 0; i < serviceDef.length; i++) {
     var methodData = serviceDef[i];
     var methodName = methodData.name;
@@ -51,7 +52,8 @@ test('method signature encode-decode match', function(assert) {
   // For every service signature defined...
   for (var service in arith.serviceDefs) {
     if (arith.serviceDefs.hasOwnProperty(service) && service !== 'package') {
-      var signature = arith.serviceDefs.AdvancedMath.prototype.signature();
+      var signature = arith.serviceDefs.AdvancedMath.prototype.
+                      _serviceDescription;
 
       // Encode the signature using the type defined in VDL-generated ipc.js
       writer = new vom.ByteArrayMessageWriter();

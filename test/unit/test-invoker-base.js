@@ -26,9 +26,9 @@ BasePartialImpl.prototype.methodB1 = function(a, b) {
 
 test('Invoker and signature for vdl-generated base.js',
     function(t) {
-    var desc = new base.serviceDefs.ServiceB().signature();
     var impl = new BasePartialImpl();
-    impl._description = desc;
+    impl._serviceDescription = base.serviceDefs.ServiceB.
+                               prototype._serviceDescription;
     var invoker = new Invoker(impl);
 
     invoker.invoke('MethodA3', ['a'], {$stream: 'stream'}, function(err, res) {

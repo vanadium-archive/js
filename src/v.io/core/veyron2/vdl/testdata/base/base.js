@@ -336,11 +336,7 @@ ServiceA.prototype.MethodA3 = NotImplementedMethod;
 ServiceA.prototype.MethodA4 = NotImplementedMethod;
     
     
-ServiceA.prototype.signature = function ServiceASignature() {
-  return _ServiceASignature;
-};
-    
-var _ServiceASignature = {
+ServiceA.prototype._serviceDescription = {
   name: 'ServiceA',
   pkgPath: 'v.io/core/veyron2/vdl/testdata/base',
   doc: "",
@@ -475,11 +471,7 @@ ServiceB.prototype.MethodA3 = NotImplementedMethod;
 ServiceB.prototype.MethodA4 = NotImplementedMethod;
     
     
-ServiceB.prototype.signature = function ServiceBSignature() {
-  return _ServiceBSignature;
-};
-    
-var _ServiceBSignature = {
+ServiceB.prototype._serviceDescription = {
   name: 'ServiceB',
   pkgPath: 'v.io/core/veyron2/vdl/testdata/base',
   doc: "",

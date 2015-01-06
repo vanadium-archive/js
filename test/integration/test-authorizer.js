@@ -33,7 +33,7 @@ function createDispatcher(authorizer, tags) {
       }
     ]
   };
-  service._description = desc;
+  service._serviceDescription = desc;
   return function authDispatcher(suffix) {
     return {
       invoker: new Invoker(service),

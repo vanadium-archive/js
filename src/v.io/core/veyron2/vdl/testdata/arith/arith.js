@@ -283,11 +283,7 @@ Trigonometry.prototype.Sine = NotImplementedMethod;
 Trigonometry.prototype.Cosine = NotImplementedMethod;
     
     
-Trigonometry.prototype.signature = function TrigonometrySignature() {
-  return _TrigonometrySignature;
-};
-    
-var _TrigonometrySignature = {
+Trigonometry.prototype._serviceDescription = {
   name: 'Trigonometry',
   pkgPath: 'v.io/core/veyron2/vdl/testdata/arith',
   doc: "// Trigonometry is an interface that specifies a couple trigonometric functions.",
@@ -362,11 +358,7 @@ AdvancedMath.prototype.Cosine = NotImplementedMethod;
 AdvancedMath.prototype.Exp = NotImplementedMethod;
     
     
-AdvancedMath.prototype.signature = function AdvancedMathSignature() {
-  return _AdvancedMathSignature;
-};
-    
-var _AdvancedMathSignature = {
+AdvancedMath.prototype._serviceDescription = {
   name: 'AdvancedMath',
   pkgPath: 'v.io/core/veyron2/vdl/testdata/arith',
   doc: "// AdvancedMath is an interface for more advanced math than arith.  It embeds\n// interfaces defined both in the same file and in an external package; and in\n// turn it is embedded by arith.Calculator (which is in the same package but\n// different file) to verify that embedding works in all these scenarios.",
@@ -494,11 +486,7 @@ Arith.prototype.StreamingAdd = NotImplementedMethod;
 Arith.prototype.QuoteAny = NotImplementedMethod;
     
     
-Arith.prototype.signature = function ArithSignature() {
-  return _ArithSignature;
-};
-    
-var _ArithSignature = {
+Arith.prototype._serviceDescription = {
   name: 'Arith',
   pkgPath: 'v.io/core/veyron2/vdl/testdata/arith',
   doc: "// Arith is an example of an interface definition for an arithmetic service.\n// Things to note:\n//   * There must be at least 1 out-arg, and the last out-arg must be error.",
@@ -766,11 +754,7 @@ Calculator.prototype.Cosine = NotImplementedMethod;
 Calculator.prototype.Exp = NotImplementedMethod;
     
     
-Calculator.prototype.signature = function CalculatorSignature() {
-  return _CalculatorSignature;
-};
-    
-var _CalculatorSignature = {
+Calculator.prototype._serviceDescription = {
   name: 'Calculator',
   pkgPath: 'v.io/core/veyron2/vdl/testdata/arith',
   doc: "",
