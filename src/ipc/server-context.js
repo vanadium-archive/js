@@ -3,8 +3,8 @@
  * extra information about the state of a server call.
  */
 
-var Blessings = require('../security/blessings');
 var context = require('../runtime/context');
+var SecurityContext = require('../security/context');
 var inherits = require('util').inherits;
 var constants = require('./constants');
 
@@ -28,13 +28,16 @@ function ServerContext(request, proxy) {
   } else {
     this._ctx = this._ctx.withCancel();
   }
-  this.suffix = request.context.suffix;
-  this.name = request.context.name;
-  this.remoteBlessings = new Blessings(
-                               request.context.remoteBlessings.handle,
-                               request.context.remoteBlessings.publicKey,
-                               proxy);
-  this.remoteBlessingStrings = request.context.remoteBlessingStrings;
+  var security = new SecurityContext(request.context.securityContext, proxy);
+
+  this.suffix = security.suffix;
+  this.name = security.name;
+  this.localBlessings = security.localBlessings;
+  this.remoteBlessings = security.remoteBlessings;
+  this.localBlessingStrings = security.localBlessingStrings;
+  this.remoteBlessingStrings = security.remoteBlessingStrings;
+  this.localEndpoint = security.localEndpoint;
+  this.remoteEndpoint = security.remoteEndpoint;
 }
 inherits(ServerContext, context.Context);
 
