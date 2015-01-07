@@ -403,7 +403,7 @@ Router.prototype.removeName = function(name, server, cb) {
   };
 
   // Delete our bind cache entry for that name
-  delete this._proxy.bindCache[name];
+  this._proxy.signatureCache.del(name);
 
   var def = new Deferred(cb);
   var message = JSON.stringify(messageJSON);

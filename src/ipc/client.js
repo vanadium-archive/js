@@ -19,6 +19,7 @@ var IncomingPayloadType = require('../proxy/incoming-payload-type');
 var context = require('../runtime/context');
 var constants = require('./constants');
 var DecodeUtil = require('../lib/decode-util');
+var SimpleHandler = require('../proxy/simple-handler');
 var vom = require('vom');
 var EncodeUtil = require('../lib/encode-util');
 
@@ -182,8 +183,6 @@ function Client(proxyConnection) {
  * stub object.
  * @param {Context} A context.
  * @param {string} name the veyron name of the service to bind to.
- * @param {object} optServiceSignature if set, javascript signature of methods
- * available in the remote service.
  * @param {function} [cb] if given, this function will be called on
  * completion of the bind.  The first argument will be an error if there is
  * one, and the second argument is an object with methods that perform rpcs to
@@ -191,7 +190,7 @@ function Client(proxyConnection) {
  * methods.
  * @return {Promise} An object with methods that perform rpcs to service methods
  */
-Client.prototype.bindTo = function(ctx, name, optServiceSignature, cb) {
+Client.prototype.bindTo = function(ctx, name, cb) {
   var client = this;
   var last = arguments.length - 1;
 
@@ -202,12 +201,6 @@ Client.prototype.bindTo = function(ctx, name, optServiceSignature, cb) {
 
   var def = new Deferred(cb);
 
-  // unset optServiceSignature if it wasn't passed in
-  // if (optServiceSignature === cb) {
-  if (typeof optServiceSignature !== 'object') {
-    optServiceSignature = null;
-  }
-
   // Require first arg to be a Context
   if (! (ctx instanceof context.Context)) {
     var err = new Error('First argument must be a Context object.');
@@ -217,17 +210,7 @@ Client.prototype.bindTo = function(ctx, name, optServiceSignature, cb) {
     return def.promise;
   }
 
-  var serviceSignaturePromise;
-
-  if (optServiceSignature) {
-    serviceSignaturePromise = Promise.resolve(optServiceSignature);
-  } else {
-    vLog.debug('Requesting service signature for:', name);
-    var proxy = client._proxyConnection;
-    serviceSignaturePromise = proxy.getServiceSignature(ctx, name);
-  }
-
-  serviceSignaturePromise.then(function(serviceSignature) {
+  client.signature(ctx, name).then(function(serviceSignature) {
     vLog.debug('Received signature for:', name, serviceSignature);
     var boundObject = {};
 
@@ -317,18 +300,79 @@ Client.prototype.bindTo = function(ctx, name, optServiceSignature, cb) {
       });
     });
 
-    boundObject['_signature'] = function(cb) {
-      var def = new Deferred(cb);
-      def.resolve(serviceSignature);
-      return def.promise;
-    };
-
     def.resolve(boundObject);
   }).catch(function(err) {
     def.reject(err);
   });
 
   return def.promise;
+};
+
+/**
+ * Returns the object signatures for a given object name.
+ * @param {Context} A context.
+ * @param {string} name the veyron name of the service to bind to.
+ * @param {function} [cb] if given, this function will be called on
+ * completion. The first argument will be an error if there is
+ * one, and the second argument is the signature.
+ * methods.
+ * @return {Promise} Promise that will be resolved with the signatures or
+ * rejected with an error if there is one.
+ */
+Client.prototype.signature = function(ctx, name, cb) {
+  var last = arguments.length - 1;
+
+  // grab the callback
+  if (typeof arguments[last] === 'function') {
+    cb = arguments[last];
+  }
+
+  var deferred = new Deferred(cb);
+
+  // Require first arg to be a Context
+  if (! (ctx instanceof context.Context)) {
+    var err = new Error('First argument must be a Context object.');
+    deferred.reject(err);
+    return deferred.promise;
+  }
+
+  var proxy = this._proxyConnection;
+
+  var cacheEntry = proxy.signatureCache.get(name);
+  if (cacheEntry) {
+    deferred.resolve(cacheEntry);
+    return deferred.promise;
+  }
+
+  var requestDef = new Deferred();
+  requestDef.promise.then(function(signature) {
+    // If the signature came off the wire, we need to vom decode the bytes.
+    if (typeof signature === 'string') {
+      try {
+        return DecodeUtil.decode(signature);
+      } catch (e) {
+        return Promise.reject(
+          new verror.InternalError('Failed to decode result: ' + e));
+      }
+    } else {
+      return signature;
+    }
+  }).then(function(signature) {
+    proxy.signatureCache.set(name, signature);
+    deferred.resolve(signature);
+  }).catch(function(err) {
+    deferred.reject(err);
+  });
+
+  var messageJSON = { name: name };
+  var message = JSON.stringify(messageJSON);
+
+  var id = proxy.nextId();
+  var handler = new SimpleHandler(requestDef, proxy, id);
+  proxy.cancelFromContext(ctx, id);
+  proxy.sendRequest(message, MessageType.SIGNATURE, handler, id);
+
+  return deferred.promise;
 };
 
 /**

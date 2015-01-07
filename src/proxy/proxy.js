@@ -4,16 +4,14 @@
  * messages from the native veyron implementation.
  */
 
+var LRU = require('lru-cache');
 var MessageType = require('./message-type');
 var IncomingPayloadType = require('./incoming-payload-type');
-var Deferred = require('./../lib/deferred');
 var vLog = require('./../lib/vlog');
-var SimpleHandler = require('./simple-handler');
 var DecodeUtil = require('../lib/decode-util');
-var vError = require('./../lib/verror');
 
 // Cache the service signatures for one hour.
-var BIND_CACHE_TTL = 3600 * 1000;
+var SIGNATURE_CACHE_TTL = 3600 * 1000;
 
 /**
  * A client for the native veyron implementation.
@@ -29,7 +27,9 @@ function Proxy(senderPromise) {
   // numbers.
   this.id = 1;
   this.outstandingRequests = {};
-  this.bindCache = {};
+  this.signatureCache = new LRU({
+    maxAge: SIGNATURE_CACHE_TTL
+  });
   this.senderPromise = senderPromise;
   this.incomingRequestHandlers = {};
 }
@@ -86,61 +86,6 @@ Proxy.prototype.nextId = function() {
   var id = this.id;
   this.id += 2;
   return id;
-};
-
-/**
- * Gets the signature including methods names, number of arguments for a given
- * service name.
- * @private
- * @param {Context} A context instance.
- * @param {string} name the veyron name of the service to get signature for.
- * @return {Promise} Signature of the service in JSON format
- */
-Proxy.prototype.getServiceSignature = function(ctx, name) {
-  var proxy = this;
-  var deferred = new Deferred();
-  var now = Date.now;
-
-  // TODO(jasoncampbell): Cache logic should be isolated elsewhere and
-  // attached to the Proxy instance. The async-cache module with maxAge set
-  // to BIND_CACHE_TTL would be a good fit here:
-  // https://www.npmjs.org/package/async-cache
-  var cache = this.bindCache[name];
-
-  if (cache && (now() - cache.fetched < BIND_CACHE_TTL)) {
-    deferred.resolve(cache.signature);
-    return deferred.promise;
-  }
-
-  var p = deferred.promise.then(function(signature) {
-    // If the signature came off the wire, we need to vom decode the bytes.
-    // TODO(bjornick): Move the try-catch to a different function so that
-    // v8 doesn't de-optimize this whole function.
-    if (typeof signature === 'string') {
-      try {
-        return DecodeUtil.decode(signature);
-      } catch (e) {
-        return Promise.reject(
-          new vError.InternalError('Failed to decode result: ' + e));
-      }
-    }
-  });
-  p.then(function(signature) {
-    proxy.bindCache[name] = {
-      signature: signature,
-      fetched: now()
-    };
-  });
-
-  var messageJSON = { name: name };
-  var message = JSON.stringify(messageJSON);
-
-  var id = proxy.nextId();
-  var handler = new SimpleHandler(deferred, proxy, id);
-  this.cancelFromContext(ctx, id);
-  proxy.sendRequest(message, MessageType.SIGNATURE, handler, id);
-
-  return p;
 };
 
 

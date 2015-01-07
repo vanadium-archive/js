@@ -10,7 +10,8 @@
     "ws": "~0.4.31",
     "xtend": "^4.0.0",
     "vom": "0.0.0",
-    "eventemitter2": "~0.4.14"
+    "eventemitter2": "~0.4.14",
+    "lru-cache": "~2.5.0"
   },
   "devDependencies": {
     "browserify": "~6.3.3",

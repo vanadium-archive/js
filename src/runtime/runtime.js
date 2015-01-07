@@ -32,13 +32,19 @@ function Runtime(options) {
  * stub object.
  *
  * Usage:
- * var service = runtime.bindTo('EndpointAddress', 'ServiceName')
- * var resultPromise = service.MethodName(arg);
+ * runtime.bindTo(context, 'Service/Name').then(function(service) {
+ *    service.fooMethod(fooArgs).then(function(methodCallResult) {
+ *      // Do stuff with results.
+ *    }).catch(function(err) {
+        // Calling fooMethod failed.
+      });
+ * }).catch(function(err) {
+      // Binding to Service/Name failed.
+ * });
+ *
  *
  * @param {Context} A context.
  * @param {string} name the veyron name of the service to bind to.
- * @param {object} optServiceSignature if set, javascript signature of methods
- * available in the remote service.
  * @param {function} [cb] if given, this function will be called on
  * completion of the bind.  The first argument will be an error if there is
  * one, and the second argument is an object with methods that perform rpcs to
@@ -47,7 +53,7 @@ function Runtime(options) {
  * @return {Promise} An object with methods that perform rpcs to service methods
  *
  */
-Runtime.prototype.bindTo = function(ctx, name, optServiceSignature, cb) {
+Runtime.prototype.bindTo = function(ctx, name, cb) {
   var runtime = this;
   var client = this._getClient();
   var last = arguments.length - 1;
@@ -57,13 +63,23 @@ Runtime.prototype.bindTo = function(ctx, name, optServiceSignature, cb) {
     cb = arguments[last].bind(runtime);
   }
 
-  // It's possible that cb is double assigned if the optServiceSignature was
-  // not passed in.
-  if (optServiceSignature === cb) {
-    optServiceSignature = null;
-  }
+  return client.bindTo(ctx, name, cb);
+};
 
-  return client.bindTo(ctx, name, optServiceSignature, cb);
+/**
+ * Returns the object signatures for a given object name.
+ * @param {Context} A context.
+ * @param {string} name the veyron name of the service to bind to.
+ * @param {function} [cb] if given, this function will be called on
+ * completion. The first argument will be an error if there is
+ * one, and the second argument is the signature.
+ * methods.
+ * @return {Promise} Promise that will be resolved with the signatures or
+ * rejected with an error if there is one.
+ */
+Runtime.prototype.signature = function(ctx, name, cb) {
+  var client = this._getClient();
+  return client.signature(ctx, name, cb);
 };
 
 /**
@@ -144,6 +160,19 @@ Runtime.prototype.stop = function(cb) {
  */
 Runtime.prototype.newServer = function() {
   return new Server(this._getRouter());
+};
+
+/**
+ * Creates a new client instance.
+ *
+ * Although runtime comes with a default client instance that methods such as
+ * runtime.bindTo() operate on, a new client instance can also be created using
+ * this newClient() method.
+ * @see Client
+ * @return {Client} A Client instance.
+ */
+Runtime.prototype.newClient = function() {
+  return new Client(this._getProxyConnection());
 };
 
 /**

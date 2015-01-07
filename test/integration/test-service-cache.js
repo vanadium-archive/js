@@ -1,5 +1,6 @@
 var test = require('prova');
 var veyron = require('../../');
+var config = require('./default-config');
 var service = require('./get-service');
 var VeyronError = veyron.errors.VeyronError;
 var Promise = require('bluebird');
@@ -210,5 +211,39 @@ test('Test multiGet() streaming method of Go sample cache service - ' +
       assert.error(err);
       end(assert);
     }
+  });
+});
+
+test('Test getting signature of Go sample cache service - ' +
+  'var promise = client.signature(ctx, test_service/cache)', function(assert) {
+  var ctx = context.Context();
+  veyron.init(config)
+  .then(function(runtime) {
+    runtime.signature(ctx, 'test_service/cache')
+    .then(function(sigs) {
+      assert.ok(sigs);
+      assert.ok(Array.isArray(sigs));
+      runtime.close(assert.end);
+    }).catch(function(err) {
+      assert.error(err);
+      runtime.close(assert.end);
+    });
+  }).catch(assert.end);
+});
+
+test('Test getting signature of Go sample cache service - ' +
+  'client.signature(ctx, test_service/cache, callback)', function(assert) {
+  var ctx = context.Context();
+  veyron.init(config, function(err, runtime) {
+    if(err) {
+      assert.end(err);
+    }
+
+    runtime.signature(ctx, 'test_service/cache', function(err, sigs) {
+      assert.error(err);
+      assert.ok(sigs);
+      assert.ok(Array.isArray(sigs));
+      runtime.close(assert.end);
+    });
   });
 });

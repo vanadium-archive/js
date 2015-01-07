@@ -2,28 +2,28 @@ var test = require('prova');
 var Client = require('../../src/ipc/client.js');
 var context = require('../../src/runtime/context');
 var createSignatures = require('../../src/vdl/create-signatures');
+var MessageType = require('../../src/proxy/message-type');
 var vom = require('vom');
-var DecodeUtil = require('../../src/lib/decode-util');
+var createMockProxy = require('./mock-proxy');
 
 var mockSignature = createSignatures({
   tripleArgMethod: function(a, b, c) {},
   singleArgMethod: function(a) {}
 });
 
-var mockProxy = {
-  cancelFromContext: function() {},
-  nextId: function() { return 0; },
-  sendRequest: function(data, type, handler, id) {
-    var message = DecodeUtil.decode(data);
-
-    if (message.isStreaming) {
-      throw new Error('message.isStreaming should be false.');
+function createProxy(signature) {
+  return createMockProxy(function(data, type) {
+    if (type === MessageType.SIGNATURE) {
+      if (signature) {
+        return signature;
+      } else {
+        return mockSignature;
+      }
+    } else {
+      return data;
     }
-
-    handler.handleResponse(0, data);
-  },
-  dequeue: function() {}
-};
+  });
+}
 
 test('creating instances', function(assert) {
   assert.equal(typeof Client, 'function');
@@ -32,67 +32,68 @@ test('creating instances', function(assert) {
 });
 
 test('client.bindTo(ctx, name, [empty service], [callback])', function(assert) {
+  var mockProxy = createProxy(createSignatures({}));
   var client = new Client(mockProxy);
   var ctx = new context.Context();
 
-  client.bindTo(ctx, 'service-name', createSignatures({}), onbind);
+  client.bindTo(ctx, 'service-name', onbind);
 
   function onbind(err, service) {
     assert.error(err);
-    assert.equal(typeof service._signature, 'function');
-    assert.equal(Object.keys(service).length, 1);
+    assert.equal(Object.keys(service).length, 0);
     assert.end();
   }
 });
 
 test('client.bindTo(ctx, name, [empty service]) - promise', function(assert) {
+  var mockProxy = createProxy(createSignatures({}));
   var client = new Client(mockProxy);
   var ctx = new context.Context();
 
   client
-  .bindTo(ctx, 'service-name', createSignatures({}))
-  .then(success)
-  .catch(assert.end);
+    .bindTo(ctx, 'service-name')
+    .then(success)
+    .catch(assert.end);
 
   function success(service) {
-    assert.equal(typeof service._signature, 'function');
-    assert.equal(Object.keys(service).length, 1);
+    assert.equal(Object.keys(service).length, 0);
     assert.end();
   }
 });
 
 test('client.bindTo(name, service, callback) - no context', function(assert) {
+  var mockProxy = createProxy(createSignatures({}));
   var client = new Client(mockProxy);
-  var service = createSignatures({});
 
-  client.bindTo('service-name', service, function(err) {
+  client.bindTo('service-name', function(err) {
     assert.ok(err);
     assert.end();
   });
 });
 
 test('client.bindTo(name, service) - promise - no context', function(assert) {
+  var mockProxy = createProxy(createSignatures({}));
   var client = new Client(mockProxy);
-  var service = createSignatures({});
 
   client
-  .bindTo('service-name', service)
-  .then(function() {
-    assert.fail('should not succeed');
-    assert.end();
-  }, function(err) {
-    assert.ok(err);
-    assert.end();
-  })
-  .catch(assert.end);
+    .bindTo('service-name')
+    .then(function() {
+      assert.fail('should not succeed');
+      assert.end();
+    }, function(err) {
+      assert.ok(err);
+      assert.end();
+    })
+    .catch(assert.end);
 });
 
 
 test('non-empty service', function(assert) {
+  var mockProxy = createProxy(mockSignature);
   var client = new Client(mockProxy);
   var ctx = new context.Context();
 
-  client.bindTo(ctx, 'service-name', mockSignature, function(err, service) {
+  client.bindTo(ctx, 'service-name', function(err, service) {
     assert.error(err);
 
     mockSignature.forEach(function(sig) {
@@ -103,16 +104,16 @@ test('non-empty service', function(assert) {
       });
     });
 
-    assert.ok(service._signature, 'Missing service._signature');
     assert.end();
   });
 });
 
 test('service.method() - callback success', function(assert) {
+  var mockProxy = createProxy(mockSignature);
   var client = new Client(mockProxy);
   var ctx = new context.Context();
 
-  client.bindTo(ctx, 'service-name', mockSignature, onservice);
+  client.bindTo(ctx, 'service-name', onservice);
 
   function onservice(err, service) {
     assert.error(err);
@@ -123,33 +124,35 @@ test('service.method() - callback success', function(assert) {
   function onmethod(err, result) {
     assert.error(err);
     assert.equal(result.method, 'TripleArgMethod');
-    assert.deepEqual(result.inArgs, [ 3, 'X', null ]);
+    assert.deepEqual(result.inArgs, [3, 'X', null]);
     assert.end();
   }
 });
 
 test('service.method() - promise success', function(assert) {
+  var mockProxy = createProxy(mockSignature);
   var client = new Client(mockProxy);
   var ctx = new context.Context();
 
   client
-  .bindTo(ctx, 'service-name', mockSignature)
-  .then(function(service) {
-    return service.singleArgMethod(ctx, 1);
-  })
-  .then(function(result) {
-    assert.equal(result.method, 'SingleArgMethod');
-    assert.deepEqual(result.inArgs, [ 1 ]);
-    assert.end();
-  })
-  .catch(assert.end);
+    .bindTo(ctx, 'service-name')
+    .then(function(service) {
+      return service.singleArgMethod(ctx, 1);
+    })
+    .then(function(result) {
+      assert.equal(result.method, 'SingleArgMethod');
+      assert.deepEqual(result.inArgs, [1]);
+      assert.end();
+    })
+    .catch(assert.end);
 });
 
 test('service.method() - no context - callback', function(assert) {
+  var mockProxy = createProxy(mockSignature);
   var client = new Client(mockProxy);
   var ctx = new context.Context();
 
-  client.bindTo(ctx, 'service-name', mockSignature, function(err, service) {
+  client.bindTo(ctx, 'service-name', function(err, service) {
     assert.error(err);
 
     service.tripleArgMethod(3, 'X', null, function(err, result) {
@@ -161,30 +164,32 @@ test('service.method() - no context - callback', function(assert) {
 });
 
 test('service.method() - no context - promise', function(assert) {
+  var mockProxy = createProxy(mockSignature);
   var client = new Client(mockProxy);
   var ctx = new context.Context();
 
-  client.bindTo(ctx, 'service-name', mockSignature, function(err, service) {
+  client.bindTo(ctx, 'service-name', function(err, service) {
     assert.error(err);
 
     service
-    .singleArgMethod(1)
-    .then(function(result) {
-      assert.fail('should not succeed');
-      assert.end();
-    }, function(err) {
-      assert.ok(err);
-      assert.end();
-    })
-    .catch(assert.end);
+      .singleArgMethod(1)
+      .then(function(result) {
+        assert.fail('should not succeed');
+        assert.end();
+      }, function(err) {
+        assert.ok(err);
+        assert.end();
+      })
+      .catch(assert.end);
   });
 });
 
 test('service.method() - callback error', function(assert) {
+  var mockProxy = createProxy(mockSignature);
   var client = new Client(mockProxy);
   var ctx = new context.Context();
 
-  client.bindTo(ctx, 'service-name', mockSignature, onservice);
+  client.bindTo(ctx, 'service-name', onservice);
 
   function onservice(err, service) {
     assert.error(err, 'should not error');
@@ -200,19 +205,20 @@ test('service.method() - callback error', function(assert) {
 });
 
 test('service.method() - promise error', function(assert) {
+  var mockProxy = createProxy(mockSignature);
   var client = new Client(mockProxy);
   var ctx = new context.Context();
 
   client
-  .bindTo(ctx, 'service-name', mockSignature)
-  .then(triggerError)
-  .then(function(result) {
-    assert.fail('should not succeed');
-  }, function(err) {
-    assert.ok(err);
-    assert.end();
-  })
-  .catch(assert.end);
+    .bindTo(ctx, 'service-name')
+    .then(triggerError)
+    .then(function(result) {
+      assert.fail('should not succeed');
+    }, function(err) {
+      assert.ok(err);
+      assert.end();
+    })
+    .catch(assert.end);
 
   function triggerError(service) {
     // Calling with two args (after ctx)
@@ -220,21 +226,55 @@ test('service.method() - promise error', function(assert) {
   }
 });
 
-test('service._signature([callback])', function(assert) {
+test('var promise = client.signature(ctx, name) - promise', function(assert) {
+  var mockProxy = createProxy(mockSignature);
   var client = new Client(mockProxy);
   var ctx = new context.Context();
 
-  client.bindTo(ctx, 'service-name', mockSignature, onservice);
-
-  function onservice(err, service) {
-    assert.error(err);
-
-    service._signature(onsignature);
-  }
-
-  function onsignature(err, sig) {
-    assert.error(err);
-    assert.deepEqual(sig, mockSignature);
+  client.signature(ctx, 'service-name')
+  .then(function(sigs) {
+    assert.deepEqual(sigs, mockSignature);
     assert.end();
-  }
+  }).catch(function(err) {
+    assert.error(err);
+    assert.end();
+  });
+});
+
+test('client.signature(ctx, name, callback) - callback', function(assert) {
+  var mockProxy = createProxy(mockSignature);
+  var client = new Client(mockProxy);
+  var ctx = new context.Context();
+
+  client.signature(ctx, 'service-name', function(err, sigs) {
+    assert.error(err);
+    assert.deepEqual(sigs, mockSignature);
+    assert.end();
+  });
+
+});
+
+test('client.signature(name, callback) - no context', function(assert) {
+  var mockProxy = createProxy(mockSignature);
+  var client = new Client(mockProxy);
+
+  client.signature('service-name', function(err, sigs) {
+    assert.ok(err);
+    assert.notOk(sigs);
+    assert.end();
+  });
+});
+
+test('var promise = client.signature(name) - no context', function(assert) {
+  var mockProxy = createProxy(mockSignature);
+  var client = new Client(mockProxy);
+
+  client.signature('service-name')
+  .then(function(sigs) {
+      assert.fail('should not succeed');
+      assert.end();
+  }).catch(function(err) {
+    assert.ok(err);
+    assert.end();
+  });
 });
