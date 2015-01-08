@@ -124,7 +124,7 @@ Invoker.prototype.invoke = function(name, args, injections, cb) {
   //
   // NOTE: It's possible to get falsey return values (false, empty string) so
   // always check for results === undefined.
-  if (results === undefined) {
+  if (results === undefined && method.args.hasCallback()) {
     return;
   }
 

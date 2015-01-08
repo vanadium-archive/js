@@ -62,6 +62,21 @@ ArgumentInspector.prototype.hasContext = function() {
 };
 
 /**
+ * ArgumentInspector.prototype.hasCallback - Helper to know if a context is in
+ * the argument list and is in the right position.
+ *
+ * @return {Boolean} Wether or not the
+ */
+ArgumentInspector.prototype.hasCallback = function() {
+  var lastIndex = this.names.length - 1;
+  var hasCb = this.contains('cb') && this.position('cb') === lastIndex;
+  var hasCallback = this.contains('callback') &&
+    this.position('callback') === lastIndex;
+
+  return hasCb || hasCallback;
+};
+
+/**
  * ArgumentInspector.prototype.arity - Returns the inspected arguments airty
  * sans context and callback.
  *

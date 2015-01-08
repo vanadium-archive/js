@@ -95,24 +95,6 @@ var CacheServicePromises = {
     }
 
     this.cacheMap[key] = value;
-
-    // NOTE: There are three ways for the invoker to know if the service
-    // method is done or not:
-    //
-    // * Use the callback passed as the last argument
-    // * Return a promise which will be resolved or rejected in the future
-    // * Return anything that isn't a promise, this is assumed to be the
-    //   results value to returned to the calling client
-    //
-    // Since this is a promise based service the code below mimicks an async
-    // promise that will be resolved on the next tick of the event loop.
-    var promise = new Promise(function(resolve, reject) {
-      process.nextTick(function() {
-        resolve();
-      });
-    });
-
-    return promise;
   },
   get: function(context, key) {
     var def = new Deferred();
