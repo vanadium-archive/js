@@ -30,18 +30,18 @@ func (sd *testServiceDispatcher) Lookup(suffix string) (interface{}, security.Au
 	authorizer := openAuthorizer{}
 
 	if strings.HasPrefix(suffix, "cache") {
-		return ipc.ReflectInvoker(sd.cache), authorizer, nil
+		return ipc.ReflectInvokerOrDie(sd.cache), authorizer, nil
 	}
 
 	if strings.HasPrefix(suffix, "errorThrower") {
-		return ipc.ReflectInvoker(sd.errorThrower), authorizer, nil
+		return ipc.ReflectInvokerOrDie(sd.errorThrower), authorizer, nil
 	}
 
 	if strings.HasPrefix(suffix, "serviceToCancel") {
-		return ipc.ReflectInvoker(sd.cancelCollector), authorizer, nil
+		return ipc.ReflectInvokerOrDie(sd.cancelCollector), authorizer, nil
 	}
 
-	return ipc.ReflectInvoker(sd.cache), authorizer, nil
+	return ipc.ReflectInvokerOrDie(sd.cache), authorizer, nil
 }
 
 func StartServer(r veyron2.Runtime) (ipc.Server, naming.Endpoint, error) {
