@@ -7,11 +7,11 @@ var Signature = require('../../src/vdl/signature.js');
 var vom = require('vom');
 
 function TestService() {
-    this.nonPrototypeFunction = function(a, $stream, b) {};
+    this.nonPrototypeFunction = function(ctx, a, $stream, b) {};
 }
 
-TestService.prototype.noArgsFunction = function() {};
-TestService.prototype.namedFunction = function NamedFunc(x, $a, y, z, $b) {};
+TestService.prototype.noArgsFunction = function(ctx) {};
+TestService.prototype.namedFunction = function NamedFunc(ctx, x, y, z) {};
 
 test('signature', function(t) {
     var testService = new TestService();

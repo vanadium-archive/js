@@ -6,8 +6,8 @@ var MessageType = require('../../src/proxy/message-type');
 var createMockProxy = require('./mock-proxy');
 
 var mockService = {
-  tripleArgMethod: function(a, b, c) {},
-  singleArgMethod: function(a) {}
+  tripleArgMethod: function(ctx, a, b, c) {},
+  singleArgMethod: function(ctx, a) {}
 };
 
 var mockSignature = createSignatures(mockService);

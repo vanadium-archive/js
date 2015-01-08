@@ -18,9 +18,9 @@ var Deferred = require('./../lib/deferred');
 var Promise = require('./../lib/promise');
 var leafDispatcher = require('./leaf-dispatcher');
 var vLog = require('./../lib/vlog');
+var inspector = require('./../lib/arg-inspector');
 var Invoker = require('./../invocation/invoker');
 var verror = require('./../lib/verror');
-var argHelper = require('./../lib/arg-helper');
 
 var nextServerID = 1; // The ID for the next server.
 
@@ -97,7 +97,9 @@ Server.prototype.serve = function(name, serviceObject, options, cb) {
   if (options) {
     authorizer = options.authorizer;
   }
+
   var dispatcher = leafDispatcher(serviceObject, authorizer);
+
   return this.serveDispatcher(name, dispatcher, cb);
 };
 
@@ -307,7 +309,7 @@ Server.prototype._handleLookup = function(suffix) {
   var self = this;
   var def = new Deferred();
 
-  var argsNames = argHelper.getArgumentNamesFromFunction(this.dispatcher);
+  var argsNames = inspector(this.dispatcher).names;
   var useCallback = argsNames.length >= 2;
   var cb = function(err, val) {
     if (err) {

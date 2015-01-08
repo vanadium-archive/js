@@ -228,10 +228,7 @@ Router.prototype.handleRPCRequest = function(messageId, vomRequest) {
   this._contextMap[messageId] = ctx;
 
   var injections = {
-    '$context': ctx,
-    '$suffix': ctx.suffix,
-    '$name': ctx.name,
-    '$remoteBlessings': ctx.remoteBlessings
+    context: ctx
   };
 
   if ((typeof methodSig.inStream === 'object' &&
@@ -241,13 +238,20 @@ Router.prototype.handleRPCRequest = function(messageId, vomRequest) {
     this._streamMap[messageId] = stream;
     var rpc = new StreamHandler(stream);
     this._proxy.addIncomingStreamHandler(messageId, rpc);
-    injections['$stream'] = stream;
+    injections['stream'] = stream;
   }
 
   function InvocationFinishedCallback(err, result) {
     ctx.remoteBlessings.release();
 
     if (err) {
+      // TODO(jasoncampbell): This sendInvocationError function should become
+      // async and the error should be thrown as soon as we are relatively
+      // certian the client was sent an unknown error. Similar to an http
+      // 500 error.
+      //
+      // SEE: http://git.io/zk2gzQ
+      // SEE: veyron/release-issues#678
       sendInvocationError(err, methodSig.outArgs.length);
       return;
     }

@@ -6,7 +6,7 @@ var Deferred = require('../../src/lib/deferred');
 var context = require('../../src/runtime/context');
 
 var service = {
-  call: function(arg) {
+  call: function(ctx, arg) {
     return 1;
   }
 };

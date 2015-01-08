@@ -46,7 +46,7 @@ function run(ctx, err, collector, end, assert, id) {
 function newDispatcher() {
   return leafDispatcher({
     callInfo: {},
-    processWaiters: function(key) {
+    processWaiters: function(ctx, key) {
       var info = this.callInfo[key];
       if (!info || !info.waiters) {
         return;
@@ -62,13 +62,13 @@ function newDispatcher() {
       }
       info.waiters = remaining;
     },
-    onCancel: function(key, err) {
+    _onCancel: function(key, err) {
       var info = this.callInfo[key];
       info.status = 'cancelled';
       this.processWaiters(key);
       info.cb(err);
     },
-    neverReturn: function(key, $context, $cb) {
+    neverReturn: function(context, key, cb) {
       var info = this.callInfo[key];
       if (!info) {
         info = {};
@@ -76,17 +76,17 @@ function newDispatcher() {
       }
       info.status = 'running';
       info.timeout = NO_TIMEOUT;
-      var deadline = $context.deadline();
+      var deadline = context.deadline();
       if (deadline !== null) {
         info.timeout = deadline - Date.now();
       }
-      info.cb = $cb;
+      info.cb = cb;
       this.processWaiters(key);
 
 
-      $context.waitUntilDone().catch(this.onCancel.bind(this, key));
+      context.waitUntilDone().catch(this._onCancel.bind(this, key));
     },
-    waitForStatus: function(key, status, $cb) {
+    waitForStatus: function(context, key, status, cb) {
       var info = this.callInfo[key];
       if (!info) {
         info = {
@@ -95,13 +95,13 @@ function newDispatcher() {
         this.callInfo[key] = info;
       }
       if (status === info.status) {
-        $cb(null, info.timeout);
+        cb(null, info.timeout);
         return;
       }
       if (!info.waiters) {
         info.waiters = [];
       }
-      info.waiters.push({status: status, cb: $cb});
+      info.waiters.push({status: status, cb: cb});
     }
   });
 }

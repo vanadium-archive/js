@@ -12,21 +12,21 @@ testNonStandardErrors();
 function testStandardErrors() {
   var error = new Error(message);
   var errorThrower = {
-    throwError: function() {
+    throwError: function(ctx) {
       throw error;
     },
-    returnErrorInCallback: function($cb) {
-      $cb(error, null);
+    returnErrorInCallback: function(ctx, cb) {
+      cb(error, null);
     },
-    returnStringErrorInCallback: function($cb) {
-      $cb(message, null);
+    returnStringErrorInCallback: function(ctx, cb) {
+      cb(message, null);
     },
-    rejectPromise: function() {
+    rejectPromise: function(ctx) {
       var def = new Deferred();
       def.reject(error);
       return def.promise;
     },
-    throwCustomError: function() {
+    throwCustomError: function(ctx) {
       function CustomError(message) {
         Error.call(this);
         this.name = 'CustomError';
@@ -78,31 +78,31 @@ function testStandardErrors() {
 
 function testNonStandardErrors() {
   var nonStandardErrorThrower = {
-    throwString: function() {
+    throwString: function(ctx) {
       throw message;
     },
-    rejectPromiseWithString: function() {
+    rejectPromiseWithString: function(ctx) {
       var def = new Deferred();
       def.reject(message);
       return def.promise;
     },
-    throwNull: function() {
+    throwNull: function(ctx) {
       throw null;
     },
-    throwEmpty: function() {
+    throwEmpty: function(ctx) {
       throw '';
     },
-    rejectNothing: function() {
+    rejectNothing: function(ctx) {
       var def = new Deferred();
       def.reject();
       return def.promise;
     },
-    rejectNull: function() {
+    rejectNull: function(ctx) {
       var def = new Deferred();
       def.reject(null);
       return def.promise;
     },
-    rejectEmpty: function() {
+    rejectEmpty: function(ctx) {
       var def = new Deferred();
       def.reject('');
       return def.promise;

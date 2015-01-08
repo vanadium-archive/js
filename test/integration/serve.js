@@ -70,19 +70,19 @@ function serve(ctx, name, dispatcher, callback) {
       };
 
       if (options.autoBind === false) {
-        return callback(err, res);
+        return callback(err, res, end);
       }
 
-      var onBind = function(err, service) {
+      function onBind(err, service) {
         if (err) {
           return callback(err);
         }
 
         res.service = service;
 
-        callback(err, res);
-      };
-      
+        callback(err, res, end);
+      }
+
       if (ctx) {
         runtime.bindTo(ctx, name, onBind);
       } else {
@@ -95,7 +95,10 @@ function serve(ctx, name, dispatcher, callback) {
       if (typeof assert === 'function') {
         return runtime.close(assert);
       } else if (!! assert.end && typeof assert.end === 'function') {
-        return runtime.close(assert.end);
+        return runtime.close(function(err) {
+          assert.error(err, 'should not error on runtime.close(...)');
+          assert.end();
+        });
       } else {
         var message = 'end(callback) requires a callback or assert object';
         throw new Error(message);

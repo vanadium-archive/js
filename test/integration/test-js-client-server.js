@@ -4,46 +4,58 @@ var leafDispatcher = require('../../src/ipc/leaf-dispatcher');
 //var Promise = require('../../src/lib/promise');
 var Deferred = require('../../src/lib/deferred');
 var vom = require('vom');
-
-var multiGetTestRunCount = 0;
+var veyron = require('../../');
 
 // TODO(bprosnitz) Combine CacheService and CacheServicePromises so there
 // isn't as much duplicated code.
 
 var CacheService = {
   cacheMap: {},
-  set: function(key, value) {
+  set: function(context, key, value, cb) {
     if (value instanceof Map) {
       // TODO(bprosnitz) Remove the type here.
       // This is temporary because we currently guess map[any]any
       // which is illegal.
       var mapType = {
-          kind: vom.Kind.MAP,
-          key: vom.Types.STRING,
-          elem: vom.Types.ANY
-        };
+        kind: vom.Kind.MAP,
+        key: vom.Types.STRING,
+        elem: vom.Types.ANY
+      };
+
       Object.defineProperty(value, '_type', {
         value: mapType
       });
     }
+
     this.cacheMap[key] = value;
+
+    process.nextTick(function() {
+      cb();
+    });
   },
-  get: function(key, $cb) {
+  get: function(context, key, cb) {
     var val = this.cacheMap[key];
     if (val === undefined) {
-      $cb('unknown key ' + JSON.stringify(key));
+      var message = 'unknown key ' + JSON.stringify(key);
+      var err = new Error(message);
+
+      process.nextTick(function() {
+        cb(err);
+      });
     } else {
-      $cb(undefined, val);
+      process.nextTick(function() {
+        cb(undefined, val);
+      });
     }
   } ,
   // TODO(bprosnitz) Also test streaming with no return arg.
-  multiGet: function($cb, $stream) {
+  multiGet: function(context, $stream, cb) {
     var numReceived = 0;
     $stream.on('end', function close() {
-      $cb(null, numReceived);
+      cb(null, numReceived);
     });
     $stream.on('error', function error(e) {
-      $cb(e);
+      cb(e);
     });
     var self = this;
     $stream.on('data', function(key) {
@@ -51,23 +63,23 @@ var CacheService = {
       if (key !== null) {
         var val = self.cacheMap[key];
         if (val === undefined) {
-          $cb(new Error('unknown key'));
+          cb(new Error('unknown key'));
         }
         $stream.write(val);
       }
     });
     $stream.read();
   },
-  doNothingStream: function($stream) {
+  doNothingStream: function(ctx, $stream) {
   },
-  nonAsyncFunction: function() {
+  nonAsyncFunction: function(ctx) {
     return 'RESULT';
   }
 };
 
 var CacheServicePromises = {
   cacheMap: {},
-  set: function(key, value) {
+  set: function(context, key, value) {
     if (value instanceof Map) {
       // TODO(bprosnitz) Remove the type here.
       // This is temporary because we currently guess map[any]any
@@ -81,9 +93,28 @@ var CacheServicePromises = {
         value: mapType
       });
     }
+
     this.cacheMap[key] = value;
+
+    // NOTE: There are three ways for the invoker to know if the service
+    // method is done or not:
+    //
+    // * Use the callback passed as the last argument
+    // * Return a promise which will be resolved or rejected in the future
+    // * Return anything that isn't a promise, this is assumed to be the
+    //   results value to returned to the calling client
+    //
+    // Since this is a promise based service the code below mimicks an async
+    // promise that will be resolved on the next tick of the event loop.
+    var promise = new Promise(function(resolve, reject) {
+      process.nextTick(function() {
+        resolve();
+      });
+    });
+
+    return promise;
   },
-  get: function(key) {
+  get: function(context, key) {
     var def = new Deferred();
     var val = this.cacheMap[key];
     if (val === undefined) {
@@ -93,7 +124,7 @@ var CacheServicePromises = {
     }
     return def.promise;
   } ,
-  multiGet: function($stream) {
+  multiGet: function(context, $stream) {
     var numReceived = 0;
     var def = new Deferred();
     $stream.on('end', function() {
@@ -117,9 +148,9 @@ var CacheServicePromises = {
     $stream.read();
     return def.promise;
   },
-  doNothingStream: function($stream) {
+  doNothingStream: function(ctx, $stream) {
   },
-  nonAsyncFunction: function() {
+  nonAsyncFunction: function(ctx) {
     return 'RESULT';
   }
 };
@@ -143,33 +174,30 @@ run({
 
 // options: testName, definition, name
 function run(options) {
-
-  var setup = function(t, cb) {
-    var serveCtx = context.Context();
-    var dispatcher = leafDispatcher(options.definition);
-    serve(serveCtx, 'testing/cache', dispatcher, function(err, res) {
-      if (err) {
-        return t.end(err);
-      }
-      cb(res.service, res);
-    });
-  };
-
   var ctx = context.Context();
-
-
   var namePrefix = 'Test JS client/server ipc ' + options.testName + ' - ';
 
- test(namePrefix + 'cache.set("foo", "bar") -> cache.get("foo")',
-    function(t) {
-    setup(t, function(cache, res) {
-      cache.set(ctx, 'foo', 'bar',
-        onSet.bind(null, t, cache, res, 'foo', 'bar'));
+  test(namePrefix + 'cache.set(key, string) -> cache.get(key)', function(t) {
+    setup(options, function(err, cache, end) {
+      t.error(err, 'should not error on setup');
+
+      cache.set(ctx, 'foo', 'bar', function(err, res) {
+        t.error(err, 'should not error on set(...)');
+        t.notOk(res, 'should be null');
+
+        cache.get(ctx, 'foo', function(err, res) {
+          t.error(err, 'should not error on get(...)');
+          t.equal(res, 'bar');
+          end(t);
+        });
+      });
     });
   });
 
-  test(namePrefix + 'cache.set("myObject", object, callback)', function(t) {
-    setup(t, function(cache, res) {
+  test(namePrefix + 'cache.set(key, object, callback)', function(t) {
+    setup(options, function(err, cache, end) {
+      t.error(err, 'should not error on setup');
+
       // TODO(bprosnitz) Remove the type here.
       // This is temporary because we currently guess map[any]any
       // which is illegal.
@@ -179,58 +207,72 @@ function run(options) {
         key: vom.Types.STRING,
         elem: vom.Types.ANY
       };
+
       Object.defineProperty(expected, '_type', {
         value: mapType
       });
-      cache.set(ctx, 'myObject', expected,
-        onSet.bind(null, t, cache, res, 'myObject', expected));
+
+      cache.set(ctx, 'myObject', expected, function(err, res) {
+        t.error(err, 'should not error on set(...)');
+        t.equal(res, null, 'should be null');
+
+        cache.get(ctx, 'myObject', function(err, res) {
+          t.error(err, 'should not error on get(...)');
+          t.deepEqual(res, expected);
+          end(t);
+        });
+      });
     });
   });
 
   test(namePrefix + 'cache.get("bad-key", callback) - failure', function(t) {
-    setup(t, function(cache, res) {
-      var onGet = function(err, result) {
-        t.ok(err, 'should error');
+    setup(options, function(err, cache, end) {
+      t.error(err, 'should not error on setup');
+
+      cache.get(ctx, 'bad-key', function(err, res) {
+        t.ok(err, 'should not err on get(...)');
         // TODO(bprosnitz) Fix this when we update to the new verror.
-        //t.deepEqual(err.idAction, veyron.errors.IdActions.Unknown);
-        t.equals(err.idAction.action, 0);
-        t.equals(err.idAction.id, 'v.io/core/veyron2/verror.Unknown');
-        res.end(t);
-      };
-      cache.get(ctx, 'bad-key', onGet);
+        delete err.idAction.iD;
+        t.deepEqual(err.idAction, veyron.errors.IdActions.Unknown);
+        end(t);
+      });
     });
   });
 
   test(namePrefix + 'cache.badMethod() - failure', function(t) {
-    setup(t, function(cache, res) {
+    setup(options, function(err, cache, end) {
+      t.error(err, 'should not error on setup');
+
       t.throws(function() {
         cache.badMethod();
       });
-      res.end(t);
+
+      end(t);
     });
   });
 
   test(namePrefix + 'cache.multiGet()', function(t) {
-      // `cache.multiGet()` returns an object that has a "stream" attribute.
-      // The way the streaming interface is implmented for cache.mutliGet()
-      // is that you use stream.write(key) to get the value of a key. The value
-      // is emitted on the stream's data event. In this test there are a few
-      //  steps to set this up:
-      //
-      // * Prime the cache by setting a bunch of key/values
-      // * Add a listener or create a stream reader to recieve the values
-      // * Assert the values are correct
-      // * End the stream.
-    setup(t, function(cache, res){
+    // `cache.multiGet()` returns an object that has a "stream" attribute.
+    // The way the streaming interface is implmented for cache.mutliGet()
+    // is that you use stream.write(key) to get the value of a key. The value
+    // is emitted on the stream's data event. In this test there are a few
+    //  steps to set this up:
+    //
+    // 1. Prime the cache by setting a bunch of key/values
+    // 2. Add a listener or create a stream reader to recieve the values
+    // 3. Assert the values are correct
+    // 4. End the stream.
+    setup(options, function(err, cache, end){
+      // 1. Prime the cache by setting a bunch of key/values
 
       // Build a map of items
       var items = {};
       var numItems = 3;
-      multiGetTestRunCount++;
+
       for (var i = 0; i < numItems; ++i) {
         items[i] = {
           key: i,
-          value: 'value: ' + (i + multiGetTestRunCount * 1000)
+          value: 'value: ' + i
         };
       }
 
@@ -242,6 +284,8 @@ function run(options) {
       Promise
       .all(jobs)
       .then(function() {
+
+        // 2. Add a listener or create a stream reader to recieve the values
         var promise = cache.multiGet(ctx);
         var stream = promise.stream;
         var writes = 0;
@@ -252,11 +296,13 @@ function run(options) {
           t.equal(numReceived, numItems, 'received correct number of items');
           t.equal(reads, numItems, 'had correct number of reads');
           t.equal(writes, numItems, 'has correct number of writes');
-          res.end(t);
+          end(t);
         }).catch(error);
+
         stream.on('error', error);
 
-        // "data" event emits cached values
+        // 3. Assert the values are correct
+        // stream "data" event emits cached values
         stream.on('data', function(value) {
           var string = value.toString();
           var json = JSON.parse(string);
@@ -283,27 +329,23 @@ function run(options) {
           writes++;
         });
 
+        // 4. End the stream.
         stream.end();
       });
 
       function error(err) {
-        t.error(err);
-        res.end(t);
+        t.error(err, 'should not error');
+        end(t);
       }
     });
   });
 
-  function onSet(t, cache, res, key, value, err, result) {
-    t.error(err);
+  function setup(options, cb) {
+    var serveCtx = context.Context();
+    var dispatcher = leafDispatcher(options.definition);
 
-    var onGet = function(expected, err, value) {
-      t.error(err);
-      t.deepEqual(value, expected);
-      res.end(t);
-    };
-
-    // should be void result as defined in the optArg above
-    t.deepEqual(result, null);
-    cache.get(ctx, key, onGet.bind(null, value));
+    serve(serveCtx, 'testing/cache', dispatcher, function(err, res) {
+      cb(err, res.service, res.end);
+    });
   }
 }
