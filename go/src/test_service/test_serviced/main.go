@@ -19,6 +19,8 @@ func main() {
 	}
 	defer r.Cleanup()
 
+	ctx := r.NewContext()
+
 	s, endpoint, err := StartServer(r)
 	if err != nil {
 		log.Fatal("", err)
@@ -26,5 +28,5 @@ func main() {
 	defer s.Stop()
 
 	fmt.Printf("Listening at: %v\n", endpoint)
-	<-signals.ShutdownOnSignals(r)
+	<-signals.ShutdownOnSignals(ctx)
 }
