@@ -5,12 +5,12 @@
 
 module.exports = Invoker;
 
-var argHelper = require('../lib/arg-helper');
 var createSignatures = require('../vdl/create-signatures');
-var ServiceReflection = require('../lib/service-reflection');
+var isPublicMethod = require('../lib/service-reflection').isPublicMethod;
 var verror = require('../lib/verror');
-var vlog = require('../lib/vlog');
 var vom = require('vom');
+var format = require('util').format;
+var ArgInspector = require('../lib/arg-inspector');
 
 /**
   * Create an invoker.
@@ -23,48 +23,128 @@ function Invoker(service) {
     return new Invoker(service);
   }
 
-  this._service = service;
-  this._signature = createSignatures(service, service._serviceDescription);
+  var invoker = this;
 
-  var methodNames = ServiceReflection.getExposedMethodNames(service);
-  var invokableMethodsList = methodNames.map(function(methodName) {
-    var method = service[methodName];
-    var injectionPositions = argHelper.getInjectionPositions(method);
-    var argOffsets = argHelper.getArgOffsets(method);
-    return invokeImpl.bind(null, service, method, argOffsets,
-      injectionPositions);
-  });
+  invoker._service = service;
+  invoker._signature = createSignatures(service, service._serviceDescription);
+  invoker._methods = {};
 
-  var upperMethodNames = methodNames.map(vom.MiscUtil.capitalize);
+  // See comment in src/vdl/reflect-signature.js for..in loop
+  for (var key in service) { // jshint ignore:line
+    if (!isPublicMethod(key, service)) {
+      continue;
+    }
 
-  this._invokableMethods = {};
-  for (var i = 0; i < methodNames.length; i++) {
-    this._invokableMethods[upperMethodNames[i]] = invokableMethodsList[i];
+    var capitalizedMethodName = vom.MiscUtil.capitalize(key);
+    var method = service[key];
+
+    invoker._methods[capitalizedMethodName] = {
+      name: capitalizedMethodName,
+      fn: method,
+      args: new ArgInspector(method)
+    };
   }
 }
 
 /**
- * Invoke a method.
- * @private
- * @param {string} methodName The name of the method to invoke
- * (upper camel case).
- * @param {Object[]} args List of args coming off of the wire.
- * @param {Object.<string,Object>} potentialInjections Object containing
- * possible injection values.
- * e.g. function(x,$stream,b) => {'$stream' :1}
- * @param {Function} The callback function(err, value) to call after
- * completion.
+ * Invoker.prototype.invoke - Invoke a method
+ *
+ * @param  {String} name - The upper camel case name of the method to invoke.
+ * @param  {Array} args - A list of arguments to call the method with, may
+ * differ because of injections e.g. function x(a,$stream,b) => [0, 2].
+ * @param  {Object} injections - A map of injections, should always
+ * contain `context`, could also contain `stream`
+ * e.g. function(ctx, x, $stream, b)
+ * @param  {Invoker~invokeCallback} cb - The callback fired after completion.
  */
-Invoker.prototype.invoke =
-  function(methodName, args, potentialInjections, cb) {
-  if (!(methodName in this._invokableMethods)) {
-    cb(verror.NoExistError('Method ' + methodName + ' does not exist.'));
+Invoker.prototype.invoke = function(name, args, injections, cb) {
+  // TODO(jasoncampbell): Maybe throw if there are unkown injections
+
+  var invoker = this;
+  var service = invoker._service;
+  var method = invoker._methods[name];
+  var message;
+  var err;
+
+  if (!injections.context) {
+    message = 'Can not call invoker.invoke(...) without a context injection';
+    err = verror.InternalError(message);
+    cb(err);
     return;
   }
 
-  var meth = this._invokableMethods[methodName];
-  return meth(args, potentialInjections, cb);
+  if (!method) {
+    message = format('Method "%s" does not exist.', name);
+    err = verror.NoExistError(message);
+    cb(err);
+    return;
+  }
+
+  var arity = method.args.arity();
+
+  // Check argument arity against the method's declared arity
+  if (args.length !== arity) {
+    var template = 'Expected %d arguments but got "%s"';
+
+    message = format(template, arity, args.join(', '));
+    err = verror.BadArgError(message);
+    cb(err);
+    return;
+  }
+
+  // Clone the array so we can simply manipulate and apply later
+  var clone = args.slice(0);
+
+  // context goes in front
+  clone.unshift(injections.context);
+
+  // callback in the back
+  clone.push(cb);
+
+  // splice in stream
+  if (injections.stream) {
+    var start = method.args.position('$stream');
+    var deleteCount = 0;
+
+    clone.splice(start, deleteCount, injections.stream);
+  }
+
+  var results;
+
+  try {
+    results = method.fn.apply(service, clone);
+  } catch (e) {
+    // This might be a good place to throw if there was a developer error
+    // service side...
+    cb(wrapError(e));
+    return;
+  }
+
+  // No need to carry on if the method didn't return anythig.
+  //
+  // NOTE: It's possible to get falsey return values (false, empty string) so
+  // always check for results === undefined.
+  if (results === undefined) {
+    return;
+  }
+
+  // Use Promise.resolve to to handle thenable (promises) and null checking
+  Promise
+  .resolve(results)
+  .then(function (res) {
+    cb(null, res);
+  })
+  .catch(function error(err) {
+    cb(wrapError(err));
+  });
 };
+
+/**
+ * This callback is fired on completion of invoker.invoke.
+ * @callback Invoker~invokeCallback
+ * @param {Error} err
+ * @param {results} results
+ */
 
 /**
  * Return the signature of the service.
@@ -73,36 +153,6 @@ Invoker.prototype.invoke =
 Invoker.prototype.signature = function() {
   return this._signature;
 };
-
-/**
-  * Translates args to the native list-of-injections-and-non-injections style.
-  * @private
-  * @param {int[]} argOffsets List of original indicies of args. See
-  * getArgOffsets().
-  * @param {Object.<string,number>} injectionPositions Map from injection name
-  * to position.
-  * @param {Object[]} args List of args coming off of the wire.
-  * @param {Object.<string,Object>} Object containing possible injection values.
-  * @return {string[]} A list of combined injections and args off the wire.
-  */
-function translateToTrueCallArgs(argOffsets, injectionPositions, args,
-  potentialInjections) {
-    var callArgs = new Array(argOffsets.length +
-      Object.keys(injectionPositions).length);
-    for (var i = 0; i < args.length; i++) {
-        callArgs[argOffsets[i]] = args[i];
-    }
-    for (var injection in injectionPositions) {
-        if (injectionPositions.hasOwnProperty(injection)) {
-          if (!potentialInjections.hasOwnProperty(injection)) {
-            vlog.warn('Function received unknown injection ' + injection);
-          }
-          callArgs[injectionPositions[injection]] =
-            potentialInjections[injection];
-        }
-    }
-    return callArgs;
-}
 
 /**
  * Wrap an error so that it is always of type Error.
@@ -115,65 +165,7 @@ function translateToTrueCallArgs(argOffsets, injectionPositions, args,
 function wrapError(err) {
   if (!(err instanceof Error)) {
     return new Error(err);
+  } else {
+    return err;
   }
-  return err;
-}
-
-/**
-  * Invoke a service method.
-  * @private
-  * @param {Service} service The service object to invoke a method on.
-  * @param {Function} methodName The name of the method to invoke
-  * (upper camel case).
-  * @param {int[]} argOffsets List of original indicies of args. See
-  * getArgOffsets().
-  * @param {Object.<string,number>} injectionPositions Map from injection name
-  * to position.
-  * @param {Object[]} args List of args coming off of the wire.
-  * @param {Object.<string,Object>} potentialInjections Object containing
-  * possible injection values.
-  * @param {Function} The callback function(err, value) to call after
-  * completion.
-  */
-function invokeImpl(
-  service, method, argOffsets, injectionPositions, // Bound by Invoker ctor.
-  args, potentialInjections, cb // Passed on invocation.
-  ) {
-    if (args.length !== argOffsets.length) {
-        cb(new verror.BadArgError('Expected ' + argOffsets + ' args, got ' +
-          args));
-        return;
-    }
-
-    // Inject the callback if it is requested.
-    if (injectionPositions.hasOwnProperty('$cb')) {
-      potentialInjections['$cb'] = cb;
-    }
-
-    var callArgs = translateToTrueCallArgs(argOffsets, injectionPositions,
-      args, potentialInjections);
-
-    var res;
-    try {
-      res = method.apply(service, callArgs);
-    } catch(err) {
-      cb(wrapError(err));
-    }
-
-    // There is no callback injection, so call the callback after the method
-    // returns.
-    if (!injectionPositions.hasOwnProperty('$cb')) {
-      if (typeof res === 'object' && res !== null &&
-        typeof res.then === 'function') {
-        // If the result is "then-able" (like a promise), wait for it to
-        // complete.
-        var thisArg = undefined; // jshint ignore:line
-        res.then(cb.bind(thisArg, null)).catch(function(err) {
-          cb(wrapError(err));
-        });
-      } else {
-        // If it is not "then-able", pass the result in directly.
-        cb(undefined, res);
-      }
-    }
 }

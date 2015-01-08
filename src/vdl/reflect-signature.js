@@ -5,9 +5,10 @@
 
 module.exports = ReflectSignature;
 
-var argHelper = require('../lib/arg-helper');
-var ServiceReflection = require('../lib/service-reflection');
+var ArgInspector = require('../lib/arg-inspector');
+var isPublicMethod = require('../lib/service-reflection').isPublicMethod;
 var vom = require('vom');
+var format = require('util').format;
 
 /**
   * Create a signature for a service by inspecting the service object.
@@ -20,22 +21,54 @@ function ReflectSignature(service) {
     return new ReflectSignature(service);
   }
 
-  this.methods = ServiceReflection.getExposedMethodNames(service).map(
-    function(methodName) {
-    var method = service[methodName];
-    var methodSig = {
-      name: vom.MiscUtil.capitalize(methodName)
+  var signature = this;
+
+  signature.methods = [];
+
+  // NOTE: service.hasOwnProperty(key) is intentionally omitted so that
+  // methods defined on the prototype chain are mapped into the signature
+  // correctly. This supports services defined using constructors:
+  //
+  //     function Service() {
+  //
+  //     }
+  //
+  //     Service.prototype.method = function() {
+  //
+  //     }
+  //
+  // TODO(jasoncampbell): At some point we should try to avoid inherited
+  // properties so we don't unintentionally publish a service's internal
+  // implementation where inheritence has been used (event emitters etc.).
+  //
+  // SEE: http://git.io/mi6jDg
+  // SEE: veyron/release-issues#657
+  for (var key in service) { // jshint ignore:line
+    if (!isPublicMethod(key, service)) {
+      continue;
+    }
+
+    var method = service[key];
+    var methodSignature = {
+      name: vom.MiscUtil.capitalize(key),
+      streaming: false
     };
 
-    var argNames = argHelper.getFunctionArgs(method);
-    methodSig.inArgs = argNames.map(function(name) {
-      return {name: name};
-    }); // jshint ignore:line
+    var argInspector = new ArgInspector(method);
 
-    if (argHelper.getFunctionInjections(method).indexOf(
-      '$stream') !== -1) {
-      methodSig.streaming = true;
+    if (!argInspector.hasContext()) {
+      var message = format('Service method "%s" is missing the required ' +
+        '`context` object as the first argument in its definition.', key);
+      throw new Error(message);
     }
-    return methodSig;
-  });
+
+    methodSignature.inArgs = argInspector.filteredNames.map(function(name) {
+      return { name: name };
+    });
+
+    methodSignature.streaming = argInspector.contains('$stream');
+
+    // Add this method's signature to it's service signature
+    signature.methods.push(methodSignature);
+  }
 }

@@ -1,21 +1,25 @@
 var test = require('prova');
-var ServiceReflection = require('../../src/lib/service-reflection.js');
+var isPublicMethod = require('../../src/lib/service-reflection').isPublicMethod;
 
-test('getExposedMethodNames()', function(t) {
-  function AConstructor() {
-    this._privateMethod1 = function(){};
-    this.exposedMethod1 = function(){};
-    this[''] = 8;
-    this.exposedField1 = 9;
-  }
-  AConstructor.prototype._privateMethod2 = function(){};
-  AConstructor.prototype.exposedMethod2 = function(){};
-  AConstructor.prototype.exposedField2 = 10;
+function AConstructor() {
+  this._privateMethod1 = function(){};
+  this.exposedMethod1 = function(){};
+  this[''] = 8;
+  this.exposedField1 = 9;
+}
 
-  t.deepEqual(
-    ServiceReflection.getExposedMethodNames(new AConstructor()).sort(),
-    ['exposedMethod1', 'exposedMethod2'],
-    'Only exposed methods are generated');
+AConstructor.prototype._privateMethod2 = function(){};
+AConstructor.prototype.exposedMethod2 = function(){};
+AConstructor.prototype.exposedField2 = 10;
 
+test('isPublicMethod(key, service)', function(t) {
+  var service = new AConstructor();
+
+  t.equal(isPublicMethod('exposedMethod1', service), true);
+  t.equal(isPublicMethod('exposedMethod2', service), true);
+  t.equal(isPublicMethod('_privateMethod1', service), false);
+  t.equal(isPublicMethod('', service), false);
+  t.equal(isPublicMethod('exposedField1', service), false);
+  t.equal(isPublicMethod('exposedField2', service), false);
   t.end();
 });

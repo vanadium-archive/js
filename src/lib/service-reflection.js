@@ -5,29 +5,25 @@
  */
 
 module.exports = {
-  getExposedMethodNames: getExposedMethodNames
+  isPublicMethod: isPublicMethod
 };
 
 /**
- * Gets the names of methods on the provided service that are not marked
- * as private (with '_'). This descends the prototype chain.
- * @private
- * @param {Service} serviceObject The service
- * @return A list of names of the object that are exposed.
+ * isPublicMethod - Test wether a key on a service object is a valid method
+ * that should be refelcetd.
+ *
+ * @param  {String} key - The attribute key to test on the service object.
+ * @param  {Object} service - The service object.
+ * @return {Boolean} valid - Wether or not the method should be reflected.
  */
-function getExposedMethodNames(serviceObject) {
-  var methodNames = [];
-  for (var key in serviceObject) { // jshint ignore:line
-    // NOTE: We are iterating over the entire prototype chain.
-    if (key.length === 0 || key[0] === '_') {
-      // Private.
-      continue;
-    }
-    if (typeof serviceObject[key] !== 'function') {
-      // Not function.
-      continue;
-    }
-    methodNames.push(key);
+function isPublicMethod(key, service) {
+  // Not a valid method name if key is falsey (length 0, null, etc.)
+  if (!key) {
+    return false;
   }
-  return methodNames;
+
+  var isPrefixed = key[0] === '_';
+  var isFunction = typeof service[key] === 'function';
+
+  return !isPrefixed && isFunction;
 }

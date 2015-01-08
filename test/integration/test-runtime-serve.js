@@ -3,7 +3,7 @@ var veyron = require('../../');
 var config = require('./default-config');
 var context = require('../../src/runtime/context');
 var service = {
-  changeChannel: function() {
+  changeChannel: function(ctx) {
     throw new Error('NotImplemented');
   }
 };

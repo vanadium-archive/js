@@ -35,7 +35,10 @@ function service(ctx, name, callback) {
       if (typeof assert === 'function') {
         return runtime.close(assert);
       } else if (!! assert.end && typeof assert.end === 'function') {
-        return runtime.close(assert.end);
+        return runtime.close(function(err) {
+          assert.error(err, 'should not error on runtime.close(...)');
+          assert.end();
+        });
       } else {
         var message = 'end(callback) requires a callback or assert object';
         throw new Error(message);

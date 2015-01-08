@@ -3,32 +3,26 @@ var serve = require('./serve');
 var leafDispatcher = require('../../src/ipc/leaf-dispatcher');
 var context = require('../../src/runtime/context');
 
-function cleanupContext(ctx) {
-  ctx.remoteBlessings._id = undefined;
-  ctx.localBlessings._id = undefined;
-  delete ctx.remoteBlessings['key'];
-  delete ctx.localBlessings['key'];
-}
-
 // Services that handles anything in a/b/* where b is the service name
 var dispatcher = leafDispatcher({
-  getSuffix: function($suffix) {
-    return $suffix;
+  getSuffix: function(ctx) {
+    return ctx.suffix;
   },
-  getName: function($name) {
-    return $name;
+  getName: function(ctx) {
+    return ctx.name;
   },
-  getContext: function($context) {
-    cleanupContext($context);
-    return $context;
+  getContext: function(ctx, callback) {
+    return ctx;
   },
-  getContextMixedWithNormalArgs: function(a1, $context, a2, $cb, a3) {
-    cleanupContext($context);
-    $cb(null,
-      {a1: a1,
-       context: $context,
-       a2: a2,
-       a3: a3});
+  getArgs: function(ctx, a, b, c, $stream, cb) {
+    var results = {
+      context: ctx,
+      a: a,
+      b: b,
+      c: c
+    };
+
+    cb(null, results);
   }
 });
 
@@ -75,147 +69,119 @@ function validateContext(ctx, assert) {
   validateEndpoint(ctx.remoteEndpoint, assert);
 }
 
-test('Test non-empty suffix is available in context - ' +
-  '- $suffix', function(assert) {
+test('Test non-empty suffix is available in context', function(assert) {
   var ctx = context.Context();
-  serve(ctx, 'a/b', dispatcher, function(err, res) {
-    if (err) {
-      return assert.end(err);
-    }
+
+  serve(ctx, 'a/b', dispatcher, function(err, res, end) {
+    assert.error(err, 'should not error on serve(...)');
 
     res.runtime.bindTo(ctx, 'a/b/foo', function(err, service) {
-      if (err) {
-        return assert.end(err);
-      }
+      assert.error(err, 'should not error on runtime.bindTo(...)');
 
       service.getSuffix(ctx, function(err, suffix) {
-        assert.error(err);
+        assert.error(err, 'should not error on getSuffix(...)');
         assert.equal(suffix, 'foo');
-        res.end(assert);
+        end(assert);
       });
     });
   });
 });
 
-test('Test empty suffix is available in context - ' +
-  '$suffix', function(assert) {
+test('Test empty suffix is available in context - ', function(assert) {
   var ctx = context.Context();
-  serve(ctx, 'a/b', dispatcher, function(err, res) {
-    if (err) {
-      return assert.end(err);
-    }
+
+  serve(ctx, 'a/b', dispatcher, function(err, res, end) {
+    assert.error(err, 'should not error on serve(...)');
 
     res.runtime.bindTo(ctx, 'a/b', function(err, service) {
-      if (err) {
-        return assert.end(err);
-      }
+      assert.error(err, 'should not error on runtime.bindTo(...)');
 
       service.getSuffix(ctx, function(err, suffix) {
-        assert.error(err);
+        assert.error(err, 'should not error on getSuffix(...)');
         assert.equal(suffix, '');
-        res.end(assert);
+        end(assert);
       });
     });
   });
 });
 
-test('Test nested suffix such as /parent/suffix is available in context - ' +
-  '$suffix', function(assert) {
+test('Test nested suffix /parent/suffix ', function(assert) {
   var ctx = context.Context();
-  serve(ctx, 'a/b', dispatcher, function(err, res) {
-    if (err) {
-      return assert.end(err);
-    }
+
+  serve(ctx, 'a/b', dispatcher, function(err, res, end) {
+    assert.error(err, 'should not error on serve(...)');
 
     res.runtime.bindTo(ctx, 'a/b/parent/suf', function(err, service) {
-      if (err) {
-        return assert.end(err);
-      }
+      assert.error(err, 'should not error on runtime.bindTo(...)');
 
       service.getSuffix(ctx, function(err, suffix) {
-        assert.error(err);
+        assert.error(err, 'should not error on getSuffix(...)');
         assert.equal(suffix, 'parent/suf');
-        res.end(assert);
+        end(assert);
       });
     });
   });
 });
 
-test('Test name is available in context -' +
-  '$name', function(assert) {
+test('Test name is available in context', function(assert) {
   var ctx = context.Context();
-  serve(ctx, 'a/b', dispatcher, function(err, res) {
-    if (err) {
-      return assert.end(err);
-    }
+
+  serve(ctx, 'a/b', dispatcher, function(err, res, end) {
+    assert.error(err, 'should not error on serve(...)');
 
     res.runtime.bindTo(ctx, 'a/b/suf', function(err, service) {
-      if (err) {
-        return assert.end(err);
-      }
+      assert.error(err, 'should not error on runtime.bindTo(...)');
 
       service.getName(ctx, function(err, name) {
-        assert.error(err);
+        assert.error(err, 'should not error on getName(...)');
         assert.equal(name, 'suf');
-        res.end(assert);
+        end(assert);
       });
     });
   });
 });
 
-test('Test $context object containing all context variables is injected - ' +
-  '$context', function(assert) {
+test('Test context object', function(assert) {
   var ctx = context.Context();
-  serve(ctx, 'a/b', dispatcher, function(err, res) {
-    if (err) {
-      return assert.end(err);
-    }
+
+  serve(ctx, 'a/b', dispatcher, function(err, res, end) {
+    assert.error(err, 'should not error on serve(...)');
 
     res.runtime.bindTo(ctx, 'a/b/suf', function(err, service) {
-      if (err) {
-        return assert.end(err);
-      }
+      assert.error(err, 'should not error on runtime.bindTo(...)');
 
       service.getContext(ctx, function(err, context) {
-        assert.error(err);
-
+        assert.error(err, 'should not error on getContext(...)');
         contains(context, expectedContext, assert);
         validateContext(context, assert);
-        res.end(assert);
+        end(assert);
       });
     });
   });
 });
 
-test('Test $context object and individual context variables such as $name ' +
-  'and $suffix can be injected together', function(assert) {
+test('Test context object and injected stream', function(assert) {
   var ctx = context.Context();
-  serve(ctx, 'a/b', dispatcher, function(err, res) {
-    if (err) {
-      return assert.end(err);
-    }
+
+  serve(ctx, 'a/b', dispatcher, function(err, res, end) {
+    assert.error(err, 'should not error on serve(...)');
 
     res.runtime.bindTo(ctx, 'a/b/suf', function(err, service) {
-      if (err) {
-        return assert.end(err);
-      }
+      assert.error(err, 'should not error on runtime.bindTo(...)');
 
-      service
-      .getContextMixedWithNormalArgs(
-        ctx, '-a-','-b-','-c-', function(err, results) {
-        assert.error(err);
-
+      service.getArgs(ctx, '-a-','-b-','-c-', function(err, results) {
+        assert.error(err, 'service.getArgs(...) should not error');
 
         contains(results, {
-          a1: '-a-',
-          a2: '-b-',
-          a3: '-c-'
+          a: '-a-',
+          b: '-b-',
+          c: '-c-'
         }, assert);
 
         var context = results.context;
         contains(context, expectedContext, assert);
         validateContext(context, assert);
-        res.end(assert);
+        end(assert);
       });
     });
   });

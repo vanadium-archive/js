@@ -9,9 +9,10 @@ var vom = require('vom');
 function TestService() {
 }
 
-TestService.prototype.noArgsFunction = function() {};
-TestService.prototype.namedFunction = function NamedFunc(x, $a, y, z, $b) {};
-TestService.prototype.streamingFunction = function($stream) {};
+TestService.prototype.noArgsFunction = function(ctx) {};
+TestService.prototype.namedFunction = NamedFunc;
+function NamedFunc(context, x, y, z ) {}
+TestService.prototype.streamingFunction = function(context, $stream) {};
 
 test('create signatures with no description', function(t) {
   var testService = new TestService();
@@ -339,4 +340,3 @@ test('create signatures with multiple descs and missing methods',
   t.equals(stringifiedResult, stringifiedExpected);
   t.end();
 });
-

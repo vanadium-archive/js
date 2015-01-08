@@ -208,7 +208,7 @@ function Counter(string) {
   this.string = string;
 }
 
-Counter.prototype.count = function() {
+Counter.prototype.count = function(ctx) {
   return this.string.length;
 };
 
@@ -216,7 +216,7 @@ function Echoer(string) {
   this.string = string;
 }
 
-Echoer.prototype.echo = function() {
+Echoer.prototype.echo = function(ctx) {
   return this.string;
 };
 
