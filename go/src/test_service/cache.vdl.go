@@ -107,7 +107,7 @@ func (c implCacheClientStub) c(ctx *__context.T) __ipc.Client {
 	if c.client != nil {
 		return c.client
 	}
-	return __veyron2.RuntimeFromContext(ctx).Client()
+	return __veyron2.GetClient(ctx)
 }
 
 func (c implCacheClientStub) Set(ctx *__context.T, i0 string, i1 __vdlutil.Any, opts ...__ipc.CallOpt) (err error) {
