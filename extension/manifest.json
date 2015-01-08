@@ -1,7 +1,7 @@
 {
-  "name": "Veyron Extension",
-  "version": "0.0.1",
-  "description": "Access Veyron services from Javascript.",
+  "name": "Vanadium Extension",
+  "version": "0.0.12",
+  "description": "Access and create Vanadium services from Javascript.",
   "manifest_version": 2,
   "icons": {
     "128": "images/icon_128.png"
@@ -22,17 +22,15 @@
     "unlimitedStorage"
   ],
   "web_accessible_resources": [
-    "images/1x1.png", // Used by web apps to detect if extension is loaded.
+    "images/1x1.png",
     "js/background.js.map",
     "js/content.js.map",
     "js/options.js.map"
   ],
-  // See https://developer.chrome.com/apps/app_identity
   "oauth2": {
-    "client_id": "761523829214-7s0ph21rs7pebc8eauvh9l0p12c6dnne.apps.googleusercontent.com",
+    "client_id": "761523829214-699klhsi24o5a8ss459ph45het3qv4jm.apps.googleusercontent.com",
     "scopes": [
       "email"
     ]
-  },
-  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAyp7mOsWQ+y18ZIpLr2JW+lv3OQECOap75RX8TCvxQKCvCNkq+kt1ibhp3uGHuB/Rf+jqB+vFATm62LvMSwqPiJ6d3KlMnmXmy9NZZTFWZDWTAEu8LUpSQMwSli17B5MhXcUvHXkxu3K0+fp5jkylmo1rrmjPjofB9VfjkubodV/eGLyvsK5c5HpPPAPf1MeV0SbGFG7c43kTJ8DuRkoX8m8lrYA8M8ZdI4Y/rHprfYrA/E2ItryFo6l/dcQ4nBWVgRgUu/OOrX13bXso68+2Cqa1XTjMnNa/yhLK4j4hd2YQzhUokRAoW8YiLc7YsMmgbfLwrhOPP7FWxJRvNwMRmQIDAQAB"
+  }
 }

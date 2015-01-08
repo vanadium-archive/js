@@ -75,6 +75,7 @@ build-test/images: images/*
 build-test/manifest.json: manifest.json
 	mkdir -p build-test
 	cp manifest.json build-test
+	patch build-test/manifest.json < manifest-test.json.patch # Adds "key" as first line.
 
 build-test/js/background.js: lib/background/index.js $(JS_FILES) gen-vdl node_modules
 	$(call BROWSERIFY-TEST,$<,$@)

@@ -114,9 +114,13 @@ ExtensionEventProxy.prototype.waitForExtension = function(timeout) {
 // Check if the extension is installed by making a request to a web accessible
 // image.  See http://stackoverflow.com/questions/8042548
 ExtensionEventProxy.prototype.isExtensionInstalled = function(cb) {
-  // TODO(nlacasse): Update this extensionId once we are hosted in the web
-  // store.
-  var extensionId = 'geagjbjjbbamldjlcbpabgdpeopikgne';
+  var publishedExtensionID = 'jcaelnibllfoobpedofhlaobfcoknpap';
+  var extensionId = publishedExtensionID;
+  if (process.env.VANADIUM_EXTENSION_ID) {
+    // Optionally use a different extension ID for testing.
+    // This is injected by envify during browserify.
+    extensionId = process.env.VANADIUM_EXTENSION_ID;
+  }
   var imgUrl = 'chrome-extension://' + extensionId + '/images/1x1.png';
 
   var img = window.document.createElement('img');

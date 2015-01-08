@@ -1,0 +1,10 @@
+--- manifest.json	2015-01-08 13:00:37.812010013 -0800
++++ manifest-test.json	2015-01-08 13:01:50.273312593 -0800
+@@ -1,1 +1,2 @@
+ {
++  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAyp7mOsWQ+y18ZIpLr2JW+lv3OQECOap75RX8TCvxQKCvCNkq+kt1ibhp3uGHuB/Rf+jqB+vFATm62LvMSwqPiJ6d3KlMnmXmy9NZZTFWZDWTAEu8LUpSQMwSli17B5MhXcUvHXkxu3K0+fp5jkylmo1rrmjPjofB9VfjkubodV/eGLyvsK5c5HpPPAPf1MeV0SbGFG7c43kTJ8DuRkoX8m8lrYA8M8ZdI4Y/rHprfYrA/E2ItryFo6l/dcQ4nBWVgRgUu/OOrX13bXso68+2Cqa1XTjMnNa/yhLK4j4hd2YQzhUokRAoW8YiLc7YsMmgbfLwrhOPP7FWxJRvNwMRmQIDAQAB",
+@@ -30,3 +31,3 @@
+   "oauth2": {
+-    "client_id": "761523829214-699klhsi24o5a8ss459ph45het3qv4jm.apps.googleusercontent.com",
++    "client_id": "761523829214-7s0ph21rs7pebc8eauvh9l0p12c6dnne.apps.googleusercontent.com",
+     "scopes": [
