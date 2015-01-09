@@ -26,9 +26,12 @@ function Nacl() {
   // nacl plugin that will trigger events on this object.
   var nacl = this;
   domready(function(){
-    nacl.naclElt = document.getElementById('nacl');
+    nacl.naclElt = _createNaclElement();
+    document.body.appendChild(nacl.naclElt);
+
     // 'load' listener must have useCapture argument set to 'true'.
     nacl.naclElt.addEventListener('load', nacl.emit.bind(nacl, 'load'), true);
+    nacl.naclElt.addEventListener('crash', nacl.emit.bind(nacl, 'crash'), true);
     nacl.naclElt.addEventListener('message', function(e) {
       var msg = e.data;
       if (msg instanceof ArrayBuffer) {
@@ -41,6 +44,25 @@ function Nacl() {
 }
 
 inherits(Nacl, EE);
+
+// Create an embed tag that will contain the nacl plugin.
+function _createNaclElement() {
+  var naclElt = document.createElement('embed');
+
+  var idAttr = document.createAttribute('id');
+  idAttr.value = 'nacl';
+  naclElt.setAttributeNode(idAttr);
+
+  var srcAttr = document.createAttribute('src');
+  srcAttr.value = '/nacl/main.nmf';
+  naclElt.setAttributeNode(srcAttr);
+
+  var typeAttr = document.createAttribute('type');
+  typeAttr.value = 'application/x-nacl';
+  naclElt.setAttributeNode(typeAttr);
+
+  return naclElt;
+}
 
 // Send message from content script to Nacl.
 Nacl.prototype.sendMessage = function(msg) {
@@ -115,4 +137,11 @@ Nacl.prototype.getBlessingRoot = function(url, cb) {
 //          cb(res.body);
 //        }
 //      })
+};
+
+// Destroy state associated with this Nacl instance.
+// In particular, this removed the added embed tag.
+Nacl.prototype.destroy = function() {
+  this.naclElt.parentNode.removeChild(this.naclElt);
+  this.naclElt = null;
 };

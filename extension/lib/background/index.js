@@ -2,14 +2,14 @@ var _ = require('lodash');
 var debug = require('debug')('background:index');
 var domready = require('domready');
 
-var AuthHandler = require('./auth-handler');
 var getOrigin = require('./util').getOrigin;
 var Nacl = require('./nacl');
+var AuthHandler = require('./auth-handler');
 
 domready(function() {
   // Start!
   var bp = new BackgroundPage();
-  bp.listen();
+  bp.registerListeners();
 });
 
 function BackgroundPage() {
@@ -35,11 +35,17 @@ function BackgroundPage() {
 }
 
 // Start listening to messages from Nacl and content scripts.
-BackgroundPage.prototype.listen = function() {
-  this.nacl.on('message', this.handleMessageFromNacl.bind(this));
+BackgroundPage.prototype.registerListeners = function() {
+  this.registerNaclListeners();
   chrome.runtime.onConnect.addListener(
-      this.handleMessageFromContentScript.bind(this)
+      this.handleNewContentScriptConnection.bind(this)
   );
+};
+
+// Start listening to messages from the Nacl plugin.
+BackgroundPage.prototype.registerNaclListeners = function() {
+  this.nacl.on('message', this.handleMessageFromNacl.bind(this));
+  this.nacl.on('crash', this.handleNaclCrash.bind(this));
 };
 
 // Handle messages coming from Nacl by send them to the associated port.
@@ -53,29 +59,35 @@ BackgroundPage.prototype.handleMessageFromNacl = function(msg) {
   port.postMessage(msg);
 };
 
-// Handle messages coming from a content script.
-BackgroundPage.prototype.handleMessageFromContentScript = function(port) {
-  var bp = this;
-  port.onMessage.addListener(function(msg) {
-    // Wrap in process.nextTick so chrome stack traces can use sourceMap.
-    process.nextTick(function() {
-      debug('background received message from content script.', msg);
-      // Dispatch on the type of the message.
-      switch (msg.type) {
-        case 'browsprMsg':
-          return bp.handleBrowsprMessage(port, msg);
-        case 'browsprCleanup':
-          return bp.handleBrowsprCleanup(port, msg);
-        case 'auth':
-          return bp.authHandler.handleAuthMessage(port);
-        case 'assocAccount:finish':
-          return bp.authHandler.handleFinishAuth(port, msg);
-        default:
-          console.error('unknown message.', msg);
-      }
-    });
-  });
 
+// Handle messages coming from a content script.
+BackgroundPage.prototype.handleMessageFromContentScript = function(port, msg) {
+  // Wrap in process.nextTick so chrome stack traces can use sourceMap.
+  var bp = this;
+  process.nextTick(function() {
+    debug('background received message from content script.', msg);
+    // Dispatch on the type of the message.
+    switch (msg.type) {
+      case 'browsprMsg':
+        return bp.handleBrowsprMessage(port, msg);
+      case 'browsprCleanup':
+        return bp.handleBrowsprCleanup(port, msg);
+      case 'auth':
+        return bp.authHandler.handleAuthMessage(port);
+      case 'assocAccount:finish':
+        return bp.authHandler.handleFinishAuth(port, msg);
+      default:
+        console.error('unknown message.', msg);
+    }
+  });
+};
+
+// Handle a content script connecting to this background script.
+BackgroundPage.prototype.handleNewContentScriptConnection = function(port) {
+  port.onMessage.addListener(
+    this.handleMessageFromContentScript.bind(this, port));
+
+  var bp = this;
   port.onDisconnect.addListener(function() {
     var pId = portId(port);
     var instanceIds = bp.instanceIds[pId] || [];
@@ -147,3 +159,30 @@ BackgroundPage.prototype.handleBrowsprMessage = function(port, msg) {
 function portId(port) {
   return port.sender.tab.id;
 }
+
+// Restart the nacl plugin -- clean up state and remove the plugin and then
+// re-add it to the page.
+BackgroundPage.prototype.restartNaclPlugin = function() {
+  this.nacl.destroy();
+  this.nacl = new Nacl();
+  this.registerNaclListeners();
+  this.authHandler = new AuthHandler(this.nacl);
+};
+
+// Restart nacl when it crashes.
+BackgroundPage.prototype.handleNaclCrash = function() {
+  // Log the crash to the extension's console.
+  console.error('NACL plugin crashed. Restarting...');
+
+  // Restart the plugin
+  this.restartNaclPlugin();
+
+  // Notify all content scripts about the failure.
+  var crashNotificationMsg = {
+    type: 'crash'
+  };
+  var ports = this.ports;
+  Object.keys(ports).forEach(function(instanceId) {
+    ports[instanceId].postMessage(crashNotificationMsg);
+  });
+};

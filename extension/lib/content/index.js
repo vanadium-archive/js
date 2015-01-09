@@ -42,7 +42,17 @@ pageEventProxy.onAny(function(body) {
 // Forward any messages from the background page to the webApp.
 backgroundPort.onMessage.addListener(function(msg) {
   debug('content script received message of type', msg.type,
-    'from page:', msg.body);
+    'from background script:', msg.body);
+
+  if (msg.type === 'crash') {
+    // TODO(bprosnitz) We may want to send the event to the page, or even
+    // find a way to restart the libraries automatically. Hopefully this
+    // doesn't happen frequently enough to make it worthwhile to do this.
+    console.error('Vanadium plug-in crashed and is restarting. ' +
+      'It may be necessary to reload this page for Vanadium to continue ' +
+      'to fully function.');
+    return;
+  }
 
   // Swap the instanceId with the original one.
   if (msg.instanceId) {
