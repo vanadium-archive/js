@@ -1,7 +1,6 @@
 var Deferred = require('../lib/deferred');
 var MessageType = require('../proxy/message-type');
 var Stream = require('../proxy/stream');
-var StreamHandler = require('../proxy/stream-handler');
 var SimpleHandler = require('../proxy/simple-handler');
 
 module.exports = Namespace;
@@ -39,7 +38,7 @@ Namespace.prototype.glob = function(pattern, cb) {
     pattern: pattern
   };
 
-  return this._sendStreamingRequest(NamespaceMethods.GLOB, args, cb);
+  return this._sendRequest(NamespaceMethods.GLOB, args, cb, true);
 };
 
 /*
@@ -188,25 +187,16 @@ Namespace.prototype.setRoots = function(roots, cb) {
 
 //TODO(aghassemi) Implement Unresolve after Go library makes its changes.
 
-Namespace.prototype._sendRequest = function(method, args, cb) {
+Namespace.prototype._sendRequest = function(method, args, cb, isStreaming) {
   var def = new Deferred(cb);
   var id = this._proxy.nextId();
+  if( isStreaming) {
+    def.stream = new Stream(id, this._proxy.senderPromise, true);
+    def.promise.stream = def.stream;
+  }
   var handler = new SimpleHandler(def, this._proxy, id);
   var message = this._createMessage(method, args);
   this._proxy.sendRequest(message, MessageType.NAMESPACE_REQUEST, handler, id);
-  return def.promise;
-};
-
-Namespace.prototype._sendStreamingRequest = function(method, args, cb) {
-  var def = new Deferred(cb);
-  var id = this._proxy.nextId();
-  def.stream = new Stream(id, this._proxy.senderPromise, true);
-  var handler = new StreamHandler(def.stream);
-  var message = this._createMessage(method, args);
-  this._proxy.sendRequest(message, MessageType.NAMESPACE_REQUEST, null, id);
-  this._proxy.addIncomingStreamHandler(id, handler);
-
-  def.promise.stream = def.stream;
   return def.promise;
 };
 
