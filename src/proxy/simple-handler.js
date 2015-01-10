@@ -5,6 +5,7 @@
  */
 var IncomingPayloadType = require('./incoming-payload-type');
 var ErrorConversion = require('./error-conversion');
+var StreamHandler = require('./stream-handler');
 var vError = require('./../lib/verror');
 
 /**
@@ -20,9 +21,19 @@ var Handler = function(def, proxy, id) {
   this._proxy = proxy;
   this._def = def;
   this._id = id;
+  if (def.stream) {
+    this._streamHandler = new StreamHandler(def.stream);
+  }
+
 };
 
 Handler.prototype.handleResponse = function(type, message) {
+  // If there is a stream, let stream handler process it.
+  if (this._streamHandler &&
+    this._streamHandler.handleResponse(type, message)) {
+    return;
+  }
+
   switch (type) {
     case IncomingPayloadType.FINAL_RESPONSE:
       this._def.resolve(message);
@@ -30,13 +41,13 @@ Handler.prototype.handleResponse = function(type, message) {
     case IncomingPayloadType.ERROR_RESPONSE:
       var err = message;
       if (!(err instanceof Error)) {
-	      err = ErrorConversion.toJSerror(message);
+        err = ErrorConversion.toJSerror(message);
       }
       this._def.reject(err);
       break;
     default:
       this._def.reject(
-          new vError.InternalError('unknown response type ' + type));
+        new vError.InternalError('unknown response type ' + type));
   }
   this._proxy.dequeue(this._id);
 };

@@ -19,20 +19,23 @@ Handler.prototype.handleResponse = function(type, data) {
   switch (type) {
     case IncomingPayloadType.STREAM_RESPONSE:
       try {
-      data = DecodeUtil.decode(data);
-    } catch (e) {
-      this._stream.emit(
-        new vError.InternalError('Failed to decode result: ' + e));
-        return;
-    }
+        data = DecodeUtil.decode(data);
+      } catch (e) {
+        this._stream.emit(
+          new vError.InternalError('Failed to decode result: ' + e));
+        return true;
+      }
 
       this._stream._queueRead(data);
-      break;
+      return true;
     case IncomingPayloadType.STREAM_CLOSE:
       this._stream._queueRead(null);
-      break;
+      return true;
     case IncomingPayloadType.ERROR_RESPONSE:
       this._stream.emit('error', ErrorConversion.toJSerror(data));
-      break;
+      return true;
   }
+
+  // can't handle the given type
+  return false;
 };

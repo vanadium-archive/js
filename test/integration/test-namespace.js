@@ -87,6 +87,56 @@ test('Test globbing non-existing name - glob(' + PREFIX + 'does/not/exist)',
   }
 });
 
+test('Test glob\'s promise is resolved when glob finishes.' +
+  '- var promise = glob(' + PREFIX + '*)', function(assert) {
+  var runtime;
+
+  init(config).then(function glob(rt) {
+    runtime = rt;
+    var namespace = rt.namespace();
+    return namespace.glob(PREFIX + '*');
+  }).then(function(finalResult) {
+    assert.notOk(finalResult, 'there is no final result for glob');
+    assert.pass('Promise resolved when glob finished.');
+    end();
+  }).catch(end);
+
+  function end(err) {
+    assert.error(err);
+    if (runtime) {
+      runtime.close(assert.end);
+    } else {
+      assert.end();
+    }
+  }
+});
+
+test('Test glob\'s callback is called when glob finishes.' +
+  '- glob(' + PREFIX + '*, cb)', function(assert) {
+  var runtime;
+
+  init(config).then(function glob(rt) {
+    runtime = rt;
+    var namespace = rt.namespace();
+    namespace.glob(PREFIX + '*', function(err, finalResult) {
+      assert.error(err);
+
+      assert.notOk(finalResult, 'there is no final result for glob');
+      assert.pass('Promise resolved when glob finished.');
+      end();
+    });
+  }).catch(end);
+
+  function end(err) {
+    assert.error(err);
+    if (runtime) {
+      runtime.close(assert.end);
+    } else {
+      assert.end();
+    }
+  }
+});
+
 // TODO(aghassemi) This test take arbitrarily long since it needs to timeout
 // on invalid name. Find a better way to do this.
 // Maybe namespace take context and timeout as well?
