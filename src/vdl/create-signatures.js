@@ -24,8 +24,6 @@ function createSignatures(service, descs) {
     }
   }
 
-  // TODO(bjornick): What should we do if different interfaces have different
-  // types on the same method.
   var sigs = descs.map(function(desc) {
     return new Signature(service, desc);
   });
@@ -50,5 +48,32 @@ function createSignatures(service, descs) {
     sigs.push(new Signature(service, leftOverSig));
   }
 
+  checkForConflicts(sigs);
   return sigs;
+}
+
+// Looks through all the InterfaceSigs and makes sure any duplicate methods
+// have the signature.  Throws if there are any conflicts.
+function checkForConflicts(sigs) {
+  // Keep track of the methods sigs seen so far.  The key is the method name.
+  // the value is the an object containing the interface name under the key
+  // 'interfaceName' and the method signature under the key 'sig'.
+  var methodsSeen = {};
+  sigs.forEach(function(sig) {
+    sig.methods.forEach(function(method) {
+      if (methodsSeen[method.name]) {
+        var seenMethod = methodsSeen[method.name].sig;
+        var iname = methodsSeen[method.name].interfaceName;
+        if (vom.Stringify(method) !== vom.Stringify(seenMethod)) {
+          throw new Error('Method ' + method.name + ' has conflicting ' +
+                          'signatures in ' + iname + ' and ' + sig.name);
+        }
+      } else {
+        methodsSeen[method.name] = {
+          sig: method,
+          interfaceName: sig.name
+        };
+      }
+    });
+  });
 }
