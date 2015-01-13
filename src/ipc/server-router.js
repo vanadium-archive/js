@@ -17,8 +17,12 @@ var SecurityContext = require('../security/context');
 var ServerContext = require('./server-context');
 var DecodeUtil = require('../lib/decode-util');
 var EncodeUtil = require('../lib/encode-util');
-var vom = require('vom')
-;
+var vom = require('vom');
+var namespaceUtil = require('../namespace/util');
+var naming = require('../v.io/core/veyron2/naming/naming');
+var Glob = require('./glob');
+var GlobStream = require('./glob-stream');
+
 /**
  * A router that handles routing incoming requests to the right
  * server
@@ -31,6 +35,7 @@ var Router = function(proxy, appName) {
   this._streamMap = {};
   this._contextMap = {};
   this._appName = appName;
+  this._outstandingRequestForId = {};
   proxy.addIncomingHandler(IncomingPayloadType.INVOKE_REQUEST, this);
   proxy.addIncomingHandler(IncomingPayloadType.LOOKUP_REQUEST, this);
   proxy.addIncomingHandler(IncomingPayloadType.AUTHORIZATION_REQUEST, this);
@@ -113,10 +118,12 @@ Router.prototype.handleLookupRequest = function(messageId, request) {
     }
 
     var hasAuthorizer = (typeof value.authorizer === 'function');
+    var hasGlobber = value.invoker.hasGlobber();
     var data = {
       handle: value._handle,
       signature: res,
-      hasAuthorizer: hasAuthorizer
+      hasAuthorizer: hasAuthorizer,
+      hasGlobber: hasGlobber
     };
     self._proxy.sendRequest(JSON.stringify(data), MessageType.LOOKUP_RESPONSE,
         null, messageId);
@@ -156,6 +163,7 @@ Router.prototype.handleCancel = function(messageId) {
  * }
  */
 Router.prototype.handleRPCRequest = function(messageId, vomRequest) {
+  // TODO(bjornick): Break this method up into smaller methods.
   var err;
   var request;
   try {
@@ -184,6 +192,32 @@ Router.prototype.handleRPCRequest = function(messageId, vomRequest) {
     return;
   }
 
+  var self = this;
+  var stream;
+  if (request.method === 'Glob__') {
+    if (!invoker.hasGlobber()) {
+      err = new Error('Glob is not implemented');
+      self.sendResult(messageId, 'Glob__', null, err);
+      return;
+    }
+    stream = new Stream(messageId, this._proxy.senderPromise, false);
+    this._streamMap[messageId] = stream;
+    var ctx = new ServerContext(request, this._proxy);
+    this._contextMap[messageId] = ctx;
+    this._outstandingRequestForId[messageId] = 0;
+    this.incrementOutstandingRequestForId(messageId);
+    this.handleGlobRequest(messageId, ctx.suffix,
+                           server, new Glob(request.args[0]),  ctx, invoker,
+                           completion);
+    return;
+  }
+
+  function completion() {
+    // There is no results to a glob method.  Everything is sent back
+    // through the stream.
+    self.sendResult(messageId, methodName, [], undefined, 1);
+  }
+
   // Find the method signature.
   var signature = invoker.signature();
   var methodSig;
@@ -201,8 +235,27 @@ Router.prototype.handleRPCRequest = function(messageId, vomRequest) {
     return;
   }
 
-  var self = this;
-  var sendInvocationError = function(e, numOutArgs) {
+  var options = {
+    methodName: methodName,
+    args: request.args,
+    methodSig: methodSig,
+    ctx: new ServerContext(request, this._proxy)
+  };
+
+  this._contextMap[messageId] = options.ctx;
+  if (methodIsStreaming(methodSig)) {
+    stream = new Stream(messageId, this._proxy.senderPromise, false);
+    this._streamMap[messageId] = stream;
+    var rpc = new StreamHandler(stream);
+    this._proxy.addIncomingStreamHandler(messageId, rpc);
+    options.stream = stream;
+  }
+
+  // Invoke the method;
+  this.invokeMethod(invoker, options).then(function(result) {
+    self.sendResult(messageId, methodName, result, undefined,
+                    methodSig.outArgs.length);
+  }, function(e) {
     var stackTrace;
     if (e instanceof Error && e.stack !== undefined) {
       stackTrace = e.stack;
@@ -210,6 +263,7 @@ Router.prototype.handleRPCRequest = function(messageId, vomRequest) {
     vLog.debug('Requested method ' + methodName +
         ' threw an exception on invoke: ', e, stackTrace);
     var result;
+    var numOutArgs = methodSig.outArgs.length;
     switch (numOutArgs) {
       case 0:
         break;
@@ -221,46 +275,141 @@ Router.prototype.handleRPCRequest = function(messageId, vomRequest) {
     }
     self.sendResult(messageId, methodName, result, e,
         numOutArgs);
-  };
-  var args = request.args;
+  });
+};
 
-  var ctx = new ServerContext(request, this._proxy);
-  this._contextMap[messageId] = ctx;
+function methodIsStreaming(methodSig) {
+  return (typeof methodSig.inStream === 'object' &&
+    methodSig.inStream !== null) || (typeof methodSig.outStream === 'object' &&
+    methodSig.outStream !== null);
+}
+
+/**
+ * Invokes a method with a methodSig
+ */
+Router.prototype.invokeMethod = function(invoker, options) {
+  var methodName = options.methodName;
+  var args = options.args;
+  var ctx = options.ctx;
 
   var injections = {
-    context: ctx
+    context: ctx,
+    stream: options.stream
   };
 
-  if ((typeof methodSig.inStream === 'object' &&
-    methodSig.inStream !== null) || (typeof methodSig.outStream === 'object' &&
-    methodSig.outStream !== null)) {
-    var stream = new Stream(messageId, this._proxy.senderPromise, false);
-    this._streamMap[messageId] = stream;
-    var rpc = new StreamHandler(stream);
-    this._proxy.addIncomingStreamHandler(messageId, rpc);
-    injections['stream'] = stream;
-  }
+  var def = new Deferred();
 
   function InvocationFinishedCallback(err, result) {
     ctx.remoteBlessings.release();
 
     if (err) {
-      // TODO(jasoncampbell): This sendInvocationError function should become
-      // async and the error should be thrown as soon as we are relatively
-      // certian the client was sent an unknown error. Similar to an http
-      // 500 error.
-      //
-      // SEE: http://git.io/zk2gzQ
-      // SEE: veyron/release-issues#678
-      sendInvocationError(err, methodSig.outArgs.length);
+      def.reject(err);
       return;
     }
-
-    self.sendResult(messageId, methodName, result, undefined,
-      methodSig.outArgs.length);
+    def.resolve(result);
   }
 
   invoker.invoke(methodName, args, injections, InvocationFinishedCallback);
+  return def.promise;
+};
+
+/**
+ */
+Router.prototype.handleGlobRequest = function(messageId, name, server, glob,
+                                              context, invoker, cb) {
+  var self = this;
+  var options;
+  if (invoker.hasMethod('__glob')) {
+    options = {
+      methodName: '__glob',
+      args: [glob.toString()],
+      methodSig: { outArgs: [] },
+      ctx: context,
+      // For the glob__ method we just write the
+      // results directly out to the rpc stream.
+      stream: this._streamMap[messageId]
+    };
+    this.invokeMethod(invoker, options).then(function() {
+      self.decrementOutstandingRequestForId(messageId, cb);
+    }, function(err) {
+      vLog.info(name + '.__glob(' + glob + ') failed with ' + err);
+      self.decrementOutstandingRequestForId(messageId, cb);
+    });
+  } else if (invoker.hasMethod('__globChildren')) {
+    if (glob.length() === 0) {
+      // This means we match the current object.
+      this._streamMap[messageId].write(new naming.types.VDLMountEntry({
+        name: name}));
+    }
+
+    if (glob.finished()) {
+      this.decrementOutstandingRequestForId(messageId, cb);
+      return;
+    }
+    // Create a GlobStream
+    var globStream = new GlobStream();
+    options = {
+      methodName: '__globChildren',
+      args: [],
+      methodSig: { outArgs: [] },
+      ctx: context,
+      stream: globStream
+    };
+    globStream.on('data', function(child) {
+      // TODO(bjornick): Allow for escaped slashes.
+      if (child.indexOf('/') !== -1) {
+        vLog.error(name + '.__globChildren returned a bad child ' +  child);
+        return;
+      }
+
+      var suffix = namespaceUtil.join(name, child);
+      self.incrementOutstandingRequestForId(messageId);
+      var ctx = new ServerContext(context);
+      ctx.suffix = suffix;
+      var nextInvoker;
+      server._handleLookup(suffix).then(function(value) {
+        nextInvoker = value.invoker;
+        return server.handleAuthorization(value._handle, ctx);
+      }).then(function() {
+        var match = glob.matchInitialSegment(child);
+        if (match.match) {
+          self.handleGlobRequest(messageId, suffix, server, match.remainder,
+                                 ctx, nextInvoker, cb);
+        } else {
+          self.decrementOutstandingRequestForId(messageId, cb);
+        }
+      }).catch(function(e) {
+        self.decrementOutstandingRequestForId(messageId, cb);
+        vLog.info('ipc Glob: client not authorized ' + suffix + ' : ' + e);
+      });
+    });
+
+    this.invokeMethod(invoker, options).then(function() {
+      self.decrementOutstandingRequestForId(messageId, cb);
+    }, function(err) {
+      vLog.info('ipc Glob: ' + name + '.__globChildren failed with ' + err);
+      self.decrementOutstandingRequestForId(messageId, cb);
+    });
+  } else {
+    // This is a leaf of the globChildren call so we return this as
+    // a result.
+    this._streamMap[messageId].write(new naming.types.VDLMountEntry({
+      name: name}));
+
+    this.decrementOutstandingRequestForId(messageId, cb);
+  }
+};
+
+Router.prototype.incrementOutstandingRequestForId = function(id) {
+  this._outstandingRequestForId[id]++;
+};
+
+Router.prototype.decrementOutstandingRequestForId = function(id, cb) {
+  this._outstandingRequestForId[id]--;
+  if (this._outstandingRequestForId[id] === 0) {
+    cb();
+    delete this._outstandingRequestForId[id];
+  }
 };
 
 /**
@@ -325,7 +474,7 @@ Router.prototype.sendResult = function(messageId, name, value, err,
   // If this is a streaming request, queue up the final response after all
   // the other stream requests are done.
   var stream = this._streamMap[messageId];
-  if (stream) {
+  if (stream && typeof stream.serverClose === 'function') {
     // We should probably remove the stream from the dictionary, but it's
     // not clear if there is still a reference being held elsewhere.  If there
     // isn't, then GC might prevent this final message from being sent out.

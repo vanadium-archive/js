@@ -102,7 +102,12 @@ test-vdl: test-vdl-node test-vdl-browser
 # The command will generate all the dependent files as well.
 gen-vdl:
 ifndef NOVDLGEN
-	v23 go run $(VANADIUM_ROOT)/release/go/src/v.io/core/veyron2/vdl/vdl/main.go generate -lang=javascript -js_out_dir="$(VANADIUM_ROOT)/release/javascript/core/src" vdltool signature v.io/core/veyron2/vdl/testdata/... v.io/core/veyron2/ipc/... v.io/core/veyron2/vdl/vdlroot/src/...
+	v23 go run $(VANADIUM_ROOT)/release/go/src/v.io/core/veyron2/vdl/vdl/main.go generate -lang=javascript \
+		-js_out_dir="$(VANADIUM_ROOT)/release/javascript/core/src" vdltool signature \
+		v.io/core/veyron2/vdl/testdata/... \
+		v.io/core/veyron2/ipc/... \
+		v.io/core/veyron2/vdl/vdlroot/src/...\
+	 	v.io/core/veyron2/naming/...
 endif
 
 test-vdl-node: gen-vdl test-precheck

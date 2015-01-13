@@ -14,30 +14,45 @@ module.exports = ServerContext;
  * A ServerContext is a context.Context subclass that includes additional
  * information about an ongoing server call.
  * @constructor
- * @param request An rpc request object.
- * @param proxy A proxy instance.
+ * @param request An rpc request object or a ServerContext to clone from.
+ * @param proxy A proxy instance.  This is only needed if the first arg
+ * is not a ServerContext.
  */
 function ServerContext(request, proxy) {
   if (!(this instanceof ServerContext)) {
     return new ServerContext();
   }
 
-  this._ctx = new context.Context();
-  if (request.context.timeout !== constants.NO_TIMEOUT) {
-    this._ctx = this._ctx.withTimeout(request.context.timeout);
+  if (request instanceof ServerContext) {
+    this._ctx = request._ctx;
+    this.suffix = request.suffix;
+    this.name = request.name;
+    this.localBlessings = request.localBlessings;
+    this.remoteBlessings = request.remoteBlessings;
+    this.localBlessingStrings = request.localBlessingStrings;
+    this.remoteBlessingStrings = request.remoteBlessingStrings;
+    this.localEndpoint = request.localEndpoint;
+    this.remoteEndpoint = request.remoteEndpoint;
+    this.methodTags = request.methodTags;
   } else {
-    this._ctx = this._ctx.withCancel();
-  }
-  var security = new SecurityContext(request.context.securityContext, proxy);
+    this._ctx = new context.Context();
+    if (request.context.timeout !== constants.NO_TIMEOUT) {
+      this._ctx = this._ctx.withTimeout(request.context.timeout);
+    } else {
+      this._ctx = this._ctx.withCancel();
+    }
+    var security = new SecurityContext(request.context.securityContext, proxy);
 
-  this.suffix = security.suffix;
-  this.name = security.name;
-  this.localBlessings = security.localBlessings;
-  this.remoteBlessings = security.remoteBlessings;
-  this.localBlessingStrings = security.localBlessingStrings;
-  this.remoteBlessingStrings = security.remoteBlessingStrings;
-  this.localEndpoint = security.localEndpoint;
-  this.remoteEndpoint = security.remoteEndpoint;
+    this.suffix = security.suffix;
+    this.name = security.name;
+    this.localBlessings = security.localBlessings;
+    this.remoteBlessings = security.remoteBlessings;
+    this.localBlessingStrings = security.localBlessingStrings;
+    this.remoteBlessingStrings = security.remoteBlessingStrings;
+    this.localEndpoint = security.localEndpoint;
+    this.remoteEndpoint = security.remoteEndpoint;
+    this.methodTags = security.methodTags;
+  }
 }
 inherits(ServerContext, context.Context);
 
