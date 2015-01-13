@@ -12,3 +12,6 @@ go/pkg
 go/bin
 xunit.xml
 tmp
+
+# Vanadium
+/.v23
