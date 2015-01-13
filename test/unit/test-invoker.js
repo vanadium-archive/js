@@ -28,7 +28,7 @@ BasePartialImpl.prototype.methodB1 = function(context, a, b) {
 test('Invoker and signature for vdl-generated base.js',
     function(t) {
     var impl = new BasePartialImpl();
-    impl._serviceDescription = base.serviceDefs.ServiceB.
+    impl._serviceDescription = base.ServiceB.
                                prototype._serviceDescription;
     var injections = {
       context: new Context(),
@@ -39,9 +39,9 @@ test('Invoker and signature for vdl-generated base.js',
     invoker.invoke('MethodA3', ['a'], injections, function(err, res) {
         t.deepEquals(res, ['methodA3', 'stream', 'a']);
 
-        var scalarsType = new base.types.Scalars()._type;
-        var compositesType = new base.types.Composites()._type;
-        var compCompType = new base.types.CompComp()._type;
+        var scalarsType = new base.Scalars()._type;
+        var compositesType = new base.Composites()._type;
+        var compCompType = new base.CompComp()._type;
 
         var sig = invoker.signature();
         var expectedSig = [{

@@ -14,8 +14,11 @@ var Registry = vom.Registry;
 
 var uniqueid = require('./../uniqueid/uniqueid');
 
+module.exports = {};
 
-var types = {};
+
+
+// Types:
 var _type1 = new Type();
 var _type2 = new Type();
 var _typeAnnotation = new Type();
@@ -47,19 +50,23 @@ _typeTraceMethod.name = "v.io/core/veyron2/vtrace.TraceMethod";
 _typeTraceRecord.kind = Kind.STRUCT;
 _typeTraceRecord.name = "v.io/core/veyron2/vtrace.TraceRecord";
 _typeTraceRecord.fields = [{name: "ID", type: uniqueid.ID}, {name: "Spans", type: _type1}];
-types.Annotation = Registry.lookupOrCreateConstructor(_typeAnnotation, "Annotation");
-types.Request = Registry.lookupOrCreateConstructor(_typeRequest, "Request");
-types.Response = Registry.lookupOrCreateConstructor(_typeResponse, "Response");
-types.SpanRecord = Registry.lookupOrCreateConstructor(_typeSpanRecord, "SpanRecord");
-types.TraceMethod = Registry.lookupOrCreateConstructor(_typeTraceMethod, "TraceMethod");
-types.TraceRecord = Registry.lookupOrCreateConstructor(_typeTraceRecord, "TraceRecord");
+module.exports.Annotation = Registry.lookupOrCreateConstructor(_typeAnnotation, "Annotation");
+module.exports.Request = Registry.lookupOrCreateConstructor(_typeRequest, "Request");
+module.exports.Response = Registry.lookupOrCreateConstructor(_typeResponse, "Response");
+module.exports.SpanRecord = Registry.lookupOrCreateConstructor(_typeSpanRecord, "SpanRecord");
+module.exports.TraceMethod = Registry.lookupOrCreateConstructor(_typeTraceMethod, "TraceMethod");
+module.exports.TraceRecord = Registry.lookupOrCreateConstructor(_typeTraceRecord, "TraceRecord");
 
 
 
-var consts = { 
-  None: new (Registry.lookupOrCreateConstructor(_typeTraceMethod))(0),
-  InMemory: new (Registry.lookupOrCreateConstructor(_typeTraceMethod))(1),
-};
+
+// Consts:
+
+  module.exports.None = new (Registry.lookupOrCreateConstructor(_typeTraceMethod))(0);
+
+  module.exports.InMemory = new (Registry.lookupOrCreateConstructor(_typeTraceMethod))(1);
+
+
 
 
 function NotImplementedMethod(name) {
@@ -67,27 +74,8 @@ function NotImplementedMethod(name) {
 }
 
 
-var services = {
-package: 'v.io/core/veyron2/vtrace',
 
-};
-
-
-var serviceDefs = {
-  package: 'v.io/core/veyron2/vtrace',
-
-  
-
-};
+   
+ 
 
 
-
-  
-
-
-module.exports = {
-  types: types,
-  serviceDefs: serviceDefs,
-  services: services,
-  consts: consts,
-};

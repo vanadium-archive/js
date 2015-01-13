@@ -13,8 +13,11 @@ var Registry = vom.Registry;
 
 
 
+module.exports = {};
 
-var types = {};
+
+
+// Types:
 var _type1 = new Type();
 var _type2 = new Type();
 var _type3 = new Type();
@@ -51,15 +54,17 @@ _typeInterface.fields = [{name: "Name", type: Types.STRING}, {name: "PkgPath", t
 _typeMethod.kind = Kind.STRUCT;
 _typeMethod.name = "signature.Method";
 _typeMethod.fields = [{name: "Name", type: Types.STRING}, {name: "Doc", type: Types.STRING}, {name: "InArgs", type: _type3}, {name: "OutArgs", type: _type3}, {name: "InStream", type: _type4}, {name: "OutStream", type: _type4}, {name: "Tags", type: _type5}];
-types.Arg = Registry.lookupOrCreateConstructor(_typeArg, "Arg");
-types.Embed = Registry.lookupOrCreateConstructor(_typeEmbed, "Embed");
-types.Interface = Registry.lookupOrCreateConstructor(_typeInterface, "Interface");
-types.Method = Registry.lookupOrCreateConstructor(_typeMethod, "Method");
+module.exports.Arg = Registry.lookupOrCreateConstructor(_typeArg, "Arg");
+module.exports.Embed = Registry.lookupOrCreateConstructor(_typeEmbed, "Embed");
+module.exports.Interface = Registry.lookupOrCreateConstructor(_typeInterface, "Interface");
+module.exports.Method = Registry.lookupOrCreateConstructor(_typeMethod, "Method");
 
 
 
-var consts = { 
-};
+
+// Consts:
+
+
 
 
 function NotImplementedMethod(name) {
@@ -67,27 +72,8 @@ function NotImplementedMethod(name) {
 }
 
 
-var services = {
-package: 'signature',
 
-};
-
-
-var serviceDefs = {
-  package: 'signature',
-
-  
-
-};
+   
+ 
 
 
-
-  
-
-
-module.exports = {
-  types: types,
-  serviceDefs: serviceDefs,
-  services: services,
-  consts: consts,
-};

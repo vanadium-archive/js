@@ -22,7 +22,7 @@ test('method signature match (temporary)', function(assert) {
   var arith = require(
     '../../src/v.io/core/veyron2/vdl/testdata/arith/arith');
   var service = arith.services.AdvancedMath;
-  var serviceDef = arith.serviceDefs.AdvancedMath.prototype.
+  var serviceDef = arith.AdvancedMath.prototype.
                    _serviceDescription.methods;
   for (var i = 0; i < serviceDef.length; i++) {
     var methodData = serviceDef[i];
@@ -50,44 +50,47 @@ test('method signature encode-decode match', function(assert) {
   var sigDecode;
 
   // For every service signature defined...
-  for (var service in arith.serviceDefs) {
-    if (arith.serviceDefs.hasOwnProperty(service) && service !== 'package') {
-      var signature = arith.serviceDefs.AdvancedMath.prototype.
-                      _serviceDescription;
-
-      // Encode the signature using the type defined in VDL-generated ipc.js
-      writer = new vom.ByteArrayMessageWriter();
-      encoder = new vom.Encoder(writer);
-      encoder.encode(signature, ifaceSigType.prototype._type);
-      sigEncode = writer.getBytes();
-
-      // Decode the signature.
-      reader = new vom.ByteArrayMessageReader(sigEncode);
-      decoder = new vom.Decoder(reader);
-      sigDecode = decoder.decode();
-
-      // Ensure that what was decoded matches the original signature deeply.
-      assert.deepEqual(sigDecode, signature, service + ' signature match');
-
-      // TODO The signature type should be attached to the generated signature
-      // This is currently problematic (Issue 432), so manually attaching type
-      // for now and NOT passing the type into the encoder.
-      var wrappedSignature = new ifaceSigType(signature);
-
-      // Encode the signature as a wrapped struct.
-      writer = new vom.ByteArrayMessageWriter();
-      encoder = new vom.Encoder(writer);
-      encoder.encode(wrappedSignature);
-      sigEncode = writer.getBytes();
-
-      // Decode the signature.
-      reader = new vom.ByteArrayMessageReader(sigEncode);
-      decoder = new vom.Decoder(reader);
-      sigDecode = decoder.decode();
-
-      assert.deepEqual(sigDecode, wrappedSignature, service +
-        ' wrapped signature match');
+  var serviceNames = ['Arith', 'Calculator'];
+  serviceNames.forEach(function(serviceName) {
+    if (!arith.hasOwnProperty(serviceName)) {
+      assert.fail('Expected interface ' + serviceName + ' to be defined');
+      return;
     }
-  }
+    var signature = arith.AdvancedMath.prototype.
+                    _serviceDescription;
+
+    // Encode the signature using the type defined in VDL-generated ipc.js
+    writer = new vom.ByteArrayMessageWriter();
+    encoder = new vom.Encoder(writer);
+    encoder.encode(signature, ifaceSigType.prototype._type);
+    sigEncode = writer.getBytes();
+
+    // Decode the signature.
+    reader = new vom.ByteArrayMessageReader(sigEncode);
+    decoder = new vom.Decoder(reader);
+    sigDecode = decoder.decode();
+
+    // Ensure that what was decoded matches the original signature deeply.
+    assert.deepEqual(sigDecode, signature, serviceName + ' signature match');
+
+    // TODO The signature type should be attached to the generated signature
+    // This is currently problematic (Issue 432), so manually attaching type
+    // for now and NOT passing the type into the encoder.
+    var wrappedSignature = new ifaceSigType(signature);
+
+    // Encode the signature as a wrapped struct.
+    writer = new vom.ByteArrayMessageWriter();
+    encoder = new vom.Encoder(writer);
+    encoder.encode(wrappedSignature);
+    sigEncode = writer.getBytes();
+
+    // Decode the signature.
+    reader = new vom.ByteArrayMessageReader(sigEncode);
+    decoder = new vom.Decoder(reader);
+    sigDecode = decoder.decode();
+
+    assert.deepEqual(sigDecode, wrappedSignature, serviceName +
+      ' wrapped signature match');
+  });
   assert.end();
 });

@@ -13,8 +13,11 @@ var Registry = vom.Registry;
 
 
 
+module.exports = {};
 
-var types = {};
+
+
+// Types:
 var _type1 = new Type();
 var _type2 = new Type();
 var _type3 = new Type();
@@ -113,42 +116,59 @@ _typepublicKeyThirdPartyCaveat.name = "v.io/core/veyron2/security.publicKeyThird
 _typepublicKeyThirdPartyCaveat.fields = [{name: "Nonce", type: _type1}, {name: "Caveats", type: _type2}, {name: "DischargerKey", type: _type3}, {name: "DischargerLocation", type: Types.STRING}, {name: "DischargerRequirements", type: _typeThirdPartyRequirements}];
 _typeunixTimeExpiryCaveat.kind = Kind.INT64;
 _typeunixTimeExpiryCaveat.name = "v.io/core/veyron2/security.unixTimeExpiryCaveat";
-types.BlessingPattern = Registry.lookupOrCreateConstructor(_typeBlessingPattern, "BlessingPattern");
-types.Caveat = Registry.lookupOrCreateConstructor(_typeCaveat, "Caveat");
-types.Certificate = Registry.lookupOrCreateConstructor(_typeCertificate, "Certificate");
-types.DeprecatedACL = Registry.lookupOrCreateConstructor(_typeDeprecatedACL, "DeprecatedACL");
-types.DischargeImpetus = Registry.lookupOrCreateConstructor(_typeDischargeImpetus, "DischargeImpetus");
-types.Hash = Registry.lookupOrCreateConstructor(_typeHash, "Hash");
-types.Label = Registry.lookupOrCreateConstructor(_typeLabel, "Label");
-types.LabelSet = Registry.lookupOrCreateConstructor(_typeLabelSet, "LabelSet");
-types.Signature = Registry.lookupOrCreateConstructor(_typeSignature, "Signature");
-types.ThirdPartyRequirements = Registry.lookupOrCreateConstructor(_typeThirdPartyRequirements, "ThirdPartyRequirements");
-types.WireBlessings = Registry.lookupOrCreateConstructor(_typeWireBlessings, "WireBlessings");
-types.methodCaveat = Registry.lookupOrCreateConstructor(_typemethodCaveat, "methodCaveat");
-types.peerBlessingsCaveat = Registry.lookupOrCreateConstructor(_typepeerBlessingsCaveat, "peerBlessingsCaveat");
-types.publicKeyDischarge = Registry.lookupOrCreateConstructor(_typepublicKeyDischarge, "publicKeyDischarge");
-types.publicKeyThirdPartyCaveat = Registry.lookupOrCreateConstructor(_typepublicKeyThirdPartyCaveat, "publicKeyThirdPartyCaveat");
-types.unixTimeExpiryCaveat = Registry.lookupOrCreateConstructor(_typeunixTimeExpiryCaveat, "unixTimeExpiryCaveat");
+module.exports.BlessingPattern = Registry.lookupOrCreateConstructor(_typeBlessingPattern, "BlessingPattern");
+module.exports.Caveat = Registry.lookupOrCreateConstructor(_typeCaveat, "Caveat");
+module.exports.Certificate = Registry.lookupOrCreateConstructor(_typeCertificate, "Certificate");
+module.exports.DeprecatedACL = Registry.lookupOrCreateConstructor(_typeDeprecatedACL, "DeprecatedACL");
+module.exports.DischargeImpetus = Registry.lookupOrCreateConstructor(_typeDischargeImpetus, "DischargeImpetus");
+module.exports.Hash = Registry.lookupOrCreateConstructor(_typeHash, "Hash");
+module.exports.Label = Registry.lookupOrCreateConstructor(_typeLabel, "Label");
+module.exports.LabelSet = Registry.lookupOrCreateConstructor(_typeLabelSet, "LabelSet");
+module.exports.Signature = Registry.lookupOrCreateConstructor(_typeSignature, "Signature");
+module.exports.ThirdPartyRequirements = Registry.lookupOrCreateConstructor(_typeThirdPartyRequirements, "ThirdPartyRequirements");
+module.exports.WireBlessings = Registry.lookupOrCreateConstructor(_typeWireBlessings, "WireBlessings");
+module.exports.methodCaveat = Registry.lookupOrCreateConstructor(_typemethodCaveat, "methodCaveat");
+module.exports.peerBlessingsCaveat = Registry.lookupOrCreateConstructor(_typepeerBlessingsCaveat, "peerBlessingsCaveat");
+module.exports.publicKeyDischarge = Registry.lookupOrCreateConstructor(_typepublicKeyDischarge, "publicKeyDischarge");
+module.exports.publicKeyThirdPartyCaveat = Registry.lookupOrCreateConstructor(_typepublicKeyThirdPartyCaveat, "publicKeyThirdPartyCaveat");
+module.exports.unixTimeExpiryCaveat = Registry.lookupOrCreateConstructor(_typeunixTimeExpiryCaveat, "unixTimeExpiryCaveat");
 
 
 
-var consts = { 
-  AllPrincipals: new (Registry.lookupOrCreateConstructor(_typeBlessingPattern))("..."),
-  ChainSeparator: new (Registry.lookupOrCreateConstructor(Types.STRING))("/"),
-  ResolveLabel: new (Registry.lookupOrCreateConstructor(_typeLabel))(1),
-  ReadLabel: new (Registry.lookupOrCreateConstructor(_typeLabel))(2),
-  WriteLabel: new (Registry.lookupOrCreateConstructor(_typeLabel))(4),
-  AdminLabel: new (Registry.lookupOrCreateConstructor(_typeLabel))(8),
-  DebugLabel: new (Registry.lookupOrCreateConstructor(_typeLabel))(16),
-  MonitoringLabel: new (Registry.lookupOrCreateConstructor(_typeLabel))(32),
-  SHA1Hash: new (Registry.lookupOrCreateConstructor(_typeHash))("SHA1"),
-  SHA256Hash: new (Registry.lookupOrCreateConstructor(_typeHash))("SHA256"),
-  SHA384Hash: new (Registry.lookupOrCreateConstructor(_typeHash))("SHA384"),
-  SHA512Hash: new (Registry.lookupOrCreateConstructor(_typeHash))("SHA512"),
-  SignatureForMessageSigning: new (Registry.lookupOrCreateConstructor(Types.STRING))("S"),
-  SignatureForBlessingCertificates: new (Registry.lookupOrCreateConstructor(Types.STRING))("B"),
-  SignatureForDischarge: new (Registry.lookupOrCreateConstructor(Types.STRING))("D"),
-};
+
+// Consts:
+
+  module.exports.AllPrincipals = new (Registry.lookupOrCreateConstructor(_typeBlessingPattern))("...");
+
+  module.exports.ChainSeparator = new (Registry.lookupOrCreateConstructor(Types.STRING))("/");
+
+  module.exports.ResolveLabel = new (Registry.lookupOrCreateConstructor(_typeLabel))(1);
+
+  module.exports.ReadLabel = new (Registry.lookupOrCreateConstructor(_typeLabel))(2);
+
+  module.exports.WriteLabel = new (Registry.lookupOrCreateConstructor(_typeLabel))(4);
+
+  module.exports.AdminLabel = new (Registry.lookupOrCreateConstructor(_typeLabel))(8);
+
+  module.exports.DebugLabel = new (Registry.lookupOrCreateConstructor(_typeLabel))(16);
+
+  module.exports.MonitoringLabel = new (Registry.lookupOrCreateConstructor(_typeLabel))(32);
+
+  module.exports.SHA1Hash = new (Registry.lookupOrCreateConstructor(_typeHash))("SHA1");
+
+  module.exports.SHA256Hash = new (Registry.lookupOrCreateConstructor(_typeHash))("SHA256");
+
+  module.exports.SHA384Hash = new (Registry.lookupOrCreateConstructor(_typeHash))("SHA384");
+
+  module.exports.SHA512Hash = new (Registry.lookupOrCreateConstructor(_typeHash))("SHA512");
+
+  module.exports.SignatureForMessageSigning = new (Registry.lookupOrCreateConstructor(Types.STRING))("S");
+
+  module.exports.SignatureForBlessingCertificates = new (Registry.lookupOrCreateConstructor(Types.STRING))("B");
+
+  module.exports.SignatureForDischarge = new (Registry.lookupOrCreateConstructor(Types.STRING))("D");
+
+
 
 
 function NotImplementedMethod(name) {
@@ -156,31 +176,10 @@ function NotImplementedMethod(name) {
 }
 
 
-var services = {
-package: 'v.io/core/veyron2/security',
 
-};
+   
 
-
-var serviceDefs = {
-  package: 'v.io/core/veyron2/security',
-
-  
-
-  
-
-};
+   
+ 
 
 
-
-  
-
-  
-
-
-module.exports = {
-  types: types,
-  serviceDefs: serviceDefs,
-  services: services,
-  consts: consts,
-};

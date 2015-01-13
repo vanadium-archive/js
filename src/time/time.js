@@ -13,8 +13,11 @@ var Registry = vom.Registry;
 
 
 
+module.exports = {};
 
-var types = {};
+
+
+// Types:
 var _typeDuration = new Type();
 var _typeTime = new Type();
 _typeDuration.kind = Kind.STRUCT;
@@ -23,13 +26,15 @@ _typeDuration.fields = [{name: "Seconds", type: Types.INT64}, {name: "Nano", typ
 _typeTime.kind = Kind.STRUCT;
 _typeTime.name = "time.Time";
 _typeTime.fields = [{name: "Seconds", type: Types.INT64}, {name: "Nano", type: Types.INT32}];
-types.Duration = Registry.lookupOrCreateConstructor(_typeDuration, "Duration");
-types.Time = Registry.lookupOrCreateConstructor(_typeTime, "Time");
+module.exports.Duration = Registry.lookupOrCreateConstructor(_typeDuration, "Duration");
+module.exports.Time = Registry.lookupOrCreateConstructor(_typeTime, "Time");
 
 
 
-var consts = { 
-};
+
+// Consts:
+
+
 
 
 function NotImplementedMethod(name) {
@@ -37,27 +42,8 @@ function NotImplementedMethod(name) {
 }
 
 
-var services = {
-package: 'time',
 
-};
-
-
-var serviceDefs = {
-  package: 'time',
-
-  
-
-};
+   
+ 
 
 
-
-  
-
-
-module.exports = {
-  types: types,
-  serviceDefs: serviceDefs,
-  services: services,
-  consts: consts,
-};

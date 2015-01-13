@@ -16,8 +16,11 @@ var security = require('./../security/security');
 var vtrace = require('./../vtrace/vtrace');
 var wiretype = require('./../wiretype/wiretype');
 
+module.exports = {};
 
-var types = {};
+
+
+// Types:
 var _type1 = new Type();
 var _type10 = new Type();
 var _type11 = new Type();
@@ -95,22 +98,28 @@ _typeServiceSignature.fields = [{name: "TypeDefs", type: _type6}, {name: "Method
 _typeerror.kind = Kind.STRUCT;
 _typeerror.name = "error";
 _typeerror.fields = [{name: "IDAction", type: _type8}, {name: "Msg", type: Types.STRING}, {name: "ParamList", type: _type6}];
-types.BlessingsRequest = Registry.lookupOrCreateConstructor(_typeBlessingsRequest, "BlessingsRequest");
-types.MethodArgument = Registry.lookupOrCreateConstructor(_typeMethodArgument, "MethodArgument");
-types.MethodSignature = Registry.lookupOrCreateConstructor(_typeMethodSignature, "MethodSignature");
-types.Request = Registry.lookupOrCreateConstructor(_typeRequest, "Request");
-types.Response = Registry.lookupOrCreateConstructor(_typeResponse, "Response");
-types.ServiceSignature = Registry.lookupOrCreateConstructor(_typeServiceSignature, "ServiceSignature");
-types.error = Registry.lookupOrCreateConstructor(_typeerror, "error");
+module.exports.BlessingsRequest = Registry.lookupOrCreateConstructor(_typeBlessingsRequest, "BlessingsRequest");
+module.exports.MethodArgument = Registry.lookupOrCreateConstructor(_typeMethodArgument, "MethodArgument");
+module.exports.MethodSignature = Registry.lookupOrCreateConstructor(_typeMethodSignature, "MethodSignature");
+module.exports.Request = Registry.lookupOrCreateConstructor(_typeRequest, "Request");
+module.exports.Response = Registry.lookupOrCreateConstructor(_typeResponse, "Response");
+module.exports.ServiceSignature = Registry.lookupOrCreateConstructor(_typeServiceSignature, "ServiceSignature");
+module.exports.error = Registry.lookupOrCreateConstructor(_typeerror, "error");
 
 
 
-var consts = { 
-  NoTimeout: new (Registry.lookupOrCreateConstructor(Types.INT64))(new BigInt(1, new Uint8Array([0x7f, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff]))),
-  GlobMethod: new (Registry.lookupOrCreateConstructor(Types.STRING))("__Glob"),
-  ReservedSignature: new (Registry.lookupOrCreateConstructor(Types.STRING))("__Signature"),
-  ReservedMethodSignature: new (Registry.lookupOrCreateConstructor(Types.STRING))("__MethodSignature"),
-};
+
+// Consts:
+
+  module.exports.NoTimeout = new (Registry.lookupOrCreateConstructor(Types.INT64))(new BigInt(1, new Uint8Array([0x7f, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff])));
+
+  module.exports.GlobMethod = new (Registry.lookupOrCreateConstructor(Types.STRING))("__Glob");
+
+  module.exports.ReservedSignature = new (Registry.lookupOrCreateConstructor(Types.STRING))("__Signature");
+
+  module.exports.ReservedMethodSignature = new (Registry.lookupOrCreateConstructor(Types.STRING))("__MethodSignature");
+
+
 
 
 function NotImplementedMethod(name) {
@@ -118,31 +127,10 @@ function NotImplementedMethod(name) {
 }
 
 
-var services = {
-package: 'v.io/core/veyron2/ipc',
 
-};
+   
 
-
-var serviceDefs = {
-  package: 'v.io/core/veyron2/ipc',
-
-  
-
-  
-
-};
+   
+ 
 
 
-
-  
-
-  
-
-
-module.exports = {
-  types: types,
-  serviceDefs: serviceDefs,
-  services: services,
-  consts: consts,
-};

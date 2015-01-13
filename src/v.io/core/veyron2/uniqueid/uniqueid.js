@@ -13,19 +13,24 @@ var Registry = vom.Registry;
 
 
 
+module.exports = {};
 
-var types = {};
+
+
+// Types:
 var _typeID = new Type();
 _typeID.kind = Kind.ARRAY;
 _typeID.name = "v.io/core/veyron2/uniqueid.ID";
 _typeID.len = 16;
 _typeID.elem = Types.BYTE;
-types.ID = Registry.lookupOrCreateConstructor(_typeID, "ID");
+module.exports.ID = Registry.lookupOrCreateConstructor(_typeID, "ID");
 
 
 
-var consts = { 
-};
+
+// Consts:
+
+
 
 
 function NotImplementedMethod(name) {
@@ -33,27 +38,8 @@ function NotImplementedMethod(name) {
 }
 
 
-var services = {
-package: 'v.io/core/veyron2/uniqueid',
 
-};
-
-
-var serviceDefs = {
-  package: 'v.io/core/veyron2/uniqueid',
-
-  
-
-};
+   
+ 
 
 
-
-  
-
-
-module.exports = {
-  types: types,
-  serviceDefs: serviceDefs,
-  services: services,
-  consts: consts,
-};

@@ -13,8 +13,11 @@ var Registry = vom.Registry;
 
 
 
+module.exports = {};
 
-var types = {};
+
+
+// Types:
 var _type1 = new Type();
 var _type2 = new Type();
 var _type3 = new Type();
@@ -51,17 +54,19 @@ _typeJavaConfig.fields = [];
 _typeJavascriptConfig.kind = Kind.STRUCT;
 _typeJavascriptConfig.name = "vdltool.JavascriptConfig";
 _typeJavascriptConfig.fields = [];
-types.Config = Registry.lookupOrCreateConstructor(_typeConfig, "Config");
-types.GenLanguage = Registry.lookupOrCreateConstructor(_typeGenLanguage, "GenLanguage");
-types.GoConfig = Registry.lookupOrCreateConstructor(_typeGoConfig, "GoConfig");
-types.GoNativeType = Registry.lookupOrCreateConstructor(_typeGoNativeType, "GoNativeType");
-types.JavaConfig = Registry.lookupOrCreateConstructor(_typeJavaConfig, "JavaConfig");
-types.JavascriptConfig = Registry.lookupOrCreateConstructor(_typeJavascriptConfig, "JavascriptConfig");
+module.exports.Config = Registry.lookupOrCreateConstructor(_typeConfig, "Config");
+module.exports.GenLanguage = Registry.lookupOrCreateConstructor(_typeGenLanguage, "GenLanguage");
+module.exports.GoConfig = Registry.lookupOrCreateConstructor(_typeGoConfig, "GoConfig");
+module.exports.GoNativeType = Registry.lookupOrCreateConstructor(_typeGoNativeType, "GoNativeType");
+module.exports.JavaConfig = Registry.lookupOrCreateConstructor(_typeJavaConfig, "JavaConfig");
+module.exports.JavascriptConfig = Registry.lookupOrCreateConstructor(_typeJavascriptConfig, "JavascriptConfig");
 
 
 
-var consts = { 
-};
+
+// Consts:
+
+
 
 
 function NotImplementedMethod(name) {
@@ -69,27 +74,8 @@ function NotImplementedMethod(name) {
 }
 
 
-var services = {
-package: 'vdltool',
 
-};
-
-
-var serviceDefs = {
-  package: 'vdltool',
-
-  
-
-};
+   
+ 
 
 
-
-  
-
-
-module.exports = {
-  types: types,
-  serviceDefs: serviceDefs,
-  services: services,
-  consts: consts,
-};

@@ -13,8 +13,11 @@ var Registry = vom.Registry;
 
 
 
+module.exports = {};
 
-var types = {};
+
+
+// Types:
 var _type1 = new Type();
 var _type2 = new Type();
 var _typeArrayType = new Type();
@@ -54,19 +57,21 @@ _typeStructType.name = "v.io/core/veyron2/wiretype.StructType";
 _typeStructType.fields = [{name: "Fields", type: _type2}, {name: "Name", type: Types.STRING}, {name: "Tags", type: _type1}];
 _typeTypeID.kind = Kind.UINT64;
 _typeTypeID.name = "v.io/core/veyron2/wiretype.TypeID";
-types.ArrayType = Registry.lookupOrCreateConstructor(_typeArrayType, "ArrayType");
-types.FieldType = Registry.lookupOrCreateConstructor(_typeFieldType, "FieldType");
-types.MapType = Registry.lookupOrCreateConstructor(_typeMapType, "MapType");
-types.NamedPrimitiveType = Registry.lookupOrCreateConstructor(_typeNamedPrimitiveType, "NamedPrimitiveType");
-types.PtrType = Registry.lookupOrCreateConstructor(_typePtrType, "PtrType");
-types.SliceType = Registry.lookupOrCreateConstructor(_typeSliceType, "SliceType");
-types.StructType = Registry.lookupOrCreateConstructor(_typeStructType, "StructType");
-types.TypeID = Registry.lookupOrCreateConstructor(_typeTypeID, "TypeID");
+module.exports.ArrayType = Registry.lookupOrCreateConstructor(_typeArrayType, "ArrayType");
+module.exports.FieldType = Registry.lookupOrCreateConstructor(_typeFieldType, "FieldType");
+module.exports.MapType = Registry.lookupOrCreateConstructor(_typeMapType, "MapType");
+module.exports.NamedPrimitiveType = Registry.lookupOrCreateConstructor(_typeNamedPrimitiveType, "NamedPrimitiveType");
+module.exports.PtrType = Registry.lookupOrCreateConstructor(_typePtrType, "PtrType");
+module.exports.SliceType = Registry.lookupOrCreateConstructor(_typeSliceType, "SliceType");
+module.exports.StructType = Registry.lookupOrCreateConstructor(_typeStructType, "StructType");
+module.exports.TypeID = Registry.lookupOrCreateConstructor(_typeTypeID, "TypeID");
 
 
 
-var consts = { 
-};
+
+// Consts:
+
+
 
 
 function NotImplementedMethod(name) {
@@ -74,27 +79,8 @@ function NotImplementedMethod(name) {
 }
 
 
-var services = {
-package: 'v.io/core/veyron2/wiretype',
 
-};
-
-
-var serviceDefs = {
-  package: 'v.io/core/veyron2/wiretype',
-
-  
-
-};
+   
+ 
 
 
-
-  
-
-
-module.exports = {
-  types: types,
-  serviceDefs: serviceDefs,
-  services: services,
-  consts: consts,
-};

@@ -118,7 +118,7 @@ function Signature(service, desc) {
   });
 }
 
-Signature.prototype = new vdlsig.types.Interface();
+Signature.prototype = new vdlsig.Interface();
 
 function copyIfSet(dst, src, fields) {
   for (var i = 0; i < fields.length; i++) {

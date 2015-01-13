@@ -13,8 +13,11 @@ var Registry = vom.Registry;
 
 
 
+module.exports = {};
 
-var types = {};
+
+
+// Types:
 var _type1 = new Type();
 var _type10 = new Type();
 var _type11 = new Type();
@@ -171,59 +174,80 @@ _typeScalars.fields = [{name: "A0", type: Types.BOOL}, {name: "A1", type: Types.
 _typeerror.kind = Kind.STRUCT;
 _typeerror.name = "error";
 _typeerror.fields = [{name: "IDAction", type: _type2}, {name: "Msg", type: Types.STRING}, {name: "ParamList", type: _type3}];
-types.Args = Registry.lookupOrCreateConstructor(_typeArgs, "Args");
-types.CompComp = Registry.lookupOrCreateConstructor(_typeCompComp, "CompComp");
-types.Composites = Registry.lookupOrCreateConstructor(_typeComposites, "Composites");
-types.KeyScalars = Registry.lookupOrCreateConstructor(_typeKeyScalars, "KeyScalars");
-types.NamedArray = Registry.lookupOrCreateConstructor(_typeNamedArray, "NamedArray");
-types.NamedBool = Registry.lookupOrCreateConstructor(_typeNamedBool, "NamedBool");
-types.NamedByte = Registry.lookupOrCreateConstructor(_typeNamedByte, "NamedByte");
-types.NamedComplex128 = Registry.lookupOrCreateConstructor(_typeNamedComplex128, "NamedComplex128");
-types.NamedComplex64 = Registry.lookupOrCreateConstructor(_typeNamedComplex64, "NamedComplex64");
-types.NamedFloat32 = Registry.lookupOrCreateConstructor(_typeNamedFloat32, "NamedFloat32");
-types.NamedFloat64 = Registry.lookupOrCreateConstructor(_typeNamedFloat64, "NamedFloat64");
-types.NamedInt16 = Registry.lookupOrCreateConstructor(_typeNamedInt16, "NamedInt16");
-types.NamedInt32 = Registry.lookupOrCreateConstructor(_typeNamedInt32, "NamedInt32");
-types.NamedInt64 = Registry.lookupOrCreateConstructor(_typeNamedInt64, "NamedInt64");
-types.NamedList = Registry.lookupOrCreateConstructor(_typeNamedList, "NamedList");
-types.NamedMap = Registry.lookupOrCreateConstructor(_typeNamedMap, "NamedMap");
-types.NamedSet = Registry.lookupOrCreateConstructor(_typeNamedSet, "NamedSet");
-types.NamedString = Registry.lookupOrCreateConstructor(_typeNamedString, "NamedString");
-types.NamedStruct = Registry.lookupOrCreateConstructor(_typeNamedStruct, "NamedStruct");
-types.NamedUint16 = Registry.lookupOrCreateConstructor(_typeNamedUint16, "NamedUint16");
-types.NamedUint32 = Registry.lookupOrCreateConstructor(_typeNamedUint32, "NamedUint32");
-types.NamedUint64 = Registry.lookupOrCreateConstructor(_typeNamedUint64, "NamedUint64");
-types.NestedArgs = Registry.lookupOrCreateConstructor(_typeNestedArgs, "NestedArgs");
-types.Scalars = Registry.lookupOrCreateConstructor(_typeScalars, "Scalars");
-types.error = Registry.lookupOrCreateConstructor(_typeerror, "error");
+module.exports.Args = Registry.lookupOrCreateConstructor(_typeArgs, "Args");
+module.exports.CompComp = Registry.lookupOrCreateConstructor(_typeCompComp, "CompComp");
+module.exports.Composites = Registry.lookupOrCreateConstructor(_typeComposites, "Composites");
+module.exports.KeyScalars = Registry.lookupOrCreateConstructor(_typeKeyScalars, "KeyScalars");
+module.exports.NamedArray = Registry.lookupOrCreateConstructor(_typeNamedArray, "NamedArray");
+module.exports.NamedBool = Registry.lookupOrCreateConstructor(_typeNamedBool, "NamedBool");
+module.exports.NamedByte = Registry.lookupOrCreateConstructor(_typeNamedByte, "NamedByte");
+module.exports.NamedComplex128 = Registry.lookupOrCreateConstructor(_typeNamedComplex128, "NamedComplex128");
+module.exports.NamedComplex64 = Registry.lookupOrCreateConstructor(_typeNamedComplex64, "NamedComplex64");
+module.exports.NamedFloat32 = Registry.lookupOrCreateConstructor(_typeNamedFloat32, "NamedFloat32");
+module.exports.NamedFloat64 = Registry.lookupOrCreateConstructor(_typeNamedFloat64, "NamedFloat64");
+module.exports.NamedInt16 = Registry.lookupOrCreateConstructor(_typeNamedInt16, "NamedInt16");
+module.exports.NamedInt32 = Registry.lookupOrCreateConstructor(_typeNamedInt32, "NamedInt32");
+module.exports.NamedInt64 = Registry.lookupOrCreateConstructor(_typeNamedInt64, "NamedInt64");
+module.exports.NamedList = Registry.lookupOrCreateConstructor(_typeNamedList, "NamedList");
+module.exports.NamedMap = Registry.lookupOrCreateConstructor(_typeNamedMap, "NamedMap");
+module.exports.NamedSet = Registry.lookupOrCreateConstructor(_typeNamedSet, "NamedSet");
+module.exports.NamedString = Registry.lookupOrCreateConstructor(_typeNamedString, "NamedString");
+module.exports.NamedStruct = Registry.lookupOrCreateConstructor(_typeNamedStruct, "NamedStruct");
+module.exports.NamedUint16 = Registry.lookupOrCreateConstructor(_typeNamedUint16, "NamedUint16");
+module.exports.NamedUint32 = Registry.lookupOrCreateConstructor(_typeNamedUint32, "NamedUint32");
+module.exports.NamedUint64 = Registry.lookupOrCreateConstructor(_typeNamedUint64, "NamedUint64");
+module.exports.NestedArgs = Registry.lookupOrCreateConstructor(_typeNestedArgs, "NestedArgs");
+module.exports.Scalars = Registry.lookupOrCreateConstructor(_typeScalars, "Scalars");
+module.exports.error = Registry.lookupOrCreateConstructor(_typeerror, "error");
 
 
 
-var consts = { 
-  Cbool: new (Registry.lookupOrCreateConstructor(Types.BOOL))(true),
-  Cbyte: new (Registry.lookupOrCreateConstructor(Types.BYTE))(1),
-  Cint32: new (Registry.lookupOrCreateConstructor(Types.INT32))(2),
-  Cint64: new (Registry.lookupOrCreateConstructor(Types.INT64))(new BigInt(1, new Uint8Array([0x3]))),
-  Cuint32: new (Registry.lookupOrCreateConstructor(Types.UINT32))(4),
-  Cuint64: new (Registry.lookupOrCreateConstructor(Types.UINT64))(new BigInt(1, new Uint8Array([0x5]))),
-  Cfloat32: new (Registry.lookupOrCreateConstructor(Types.FLOAT32))(6),
-  Cfloat64: new (Registry.lookupOrCreateConstructor(Types.FLOAT64))(7),
-  CNamedBool: new (Registry.lookupOrCreateConstructor(_typeNamedBool))(true),
-  CNamedStruct: new (Registry.lookupOrCreateConstructor(_typeNamedStruct))({
+
+// Consts:
+
+  module.exports.Cbool = new (Registry.lookupOrCreateConstructor(Types.BOOL))(true);
+
+  module.exports.Cbyte = new (Registry.lookupOrCreateConstructor(Types.BYTE))(1);
+
+  module.exports.Cint32 = new (Registry.lookupOrCreateConstructor(Types.INT32))(2);
+
+  module.exports.Cint64 = new (Registry.lookupOrCreateConstructor(Types.INT64))(new BigInt(1, new Uint8Array([0x3])));
+
+  module.exports.Cuint32 = new (Registry.lookupOrCreateConstructor(Types.UINT32))(4);
+
+  module.exports.Cuint64 = new (Registry.lookupOrCreateConstructor(Types.UINT64))(new BigInt(1, new Uint8Array([0x5])));
+
+  module.exports.Cfloat32 = new (Registry.lookupOrCreateConstructor(Types.FLOAT32))(6);
+
+  module.exports.Cfloat64 = new (Registry.lookupOrCreateConstructor(Types.FLOAT64))(7);
+
+  module.exports.CNamedBool = new (Registry.lookupOrCreateConstructor(_typeNamedBool))(true);
+
+  module.exports.CNamedStruct = new (Registry.lookupOrCreateConstructor(_typeNamedStruct))({
   'a': true,
   'b': "test",
   'c': 0,
-}),
-  Ccomplex64: new (Registry.lookupOrCreateConstructor(Types.COMPLEX64))(new Complex(8.000000, 9.000000)),
-  Ccomplex128: new (Registry.lookupOrCreateConstructor(Types.COMPLEX128))(new Complex(10.000000, 11.000000)),
-  Cstring: new (Registry.lookupOrCreateConstructor(Types.STRING))("foo"),
-  True: new (Registry.lookupOrCreateConstructor(Types.BOOL))(true),
-  Foo: new (Registry.lookupOrCreateConstructor(Types.STRING))("foo"),
-  Five: new (Registry.lookupOrCreateConstructor(Types.INT32))(5),
-  Six: new (Registry.lookupOrCreateConstructor(Types.UINT64))(new BigInt(1, new Uint8Array([0x6]))),
-  SixSquared: new (Registry.lookupOrCreateConstructor(Types.UINT64))(new BigInt(1, new Uint8Array([0x24]))),
-  FiveSquared: new (Registry.lookupOrCreateConstructor(Types.INT32))(25),
-};
+});
+
+  module.exports.Ccomplex64 = new (Registry.lookupOrCreateConstructor(Types.COMPLEX64))(new Complex(8.000000, 9.000000));
+
+  module.exports.Ccomplex128 = new (Registry.lookupOrCreateConstructor(Types.COMPLEX128))(new Complex(10.000000, 11.000000));
+
+  module.exports.Cstring = new (Registry.lookupOrCreateConstructor(Types.STRING))("foo");
+
+  module.exports.True = new (Registry.lookupOrCreateConstructor(Types.BOOL))(true);
+
+  module.exports.Foo = new (Registry.lookupOrCreateConstructor(Types.STRING))("foo");
+
+  module.exports.Five = new (Registry.lookupOrCreateConstructor(Types.INT32))(5);
+
+  module.exports.Six = new (Registry.lookupOrCreateConstructor(Types.UINT64))(new BigInt(1, new Uint8Array([0x6])));
+
+  module.exports.SixSquared = new (Registry.lookupOrCreateConstructor(Types.UINT64))(new BigInt(1, new Uint8Array([0x24])));
+
+  module.exports.FiveSquared = new (Registry.lookupOrCreateConstructor(Types.INT32))(25);
+
+
 
 
 function NotImplementedMethod(name) {
@@ -231,97 +255,12 @@ function NotImplementedMethod(name) {
 }
 
 
-var services = {
-package: 'v.io/core/veyron2/vdl/testdata/base',
-  ServiceA: {
-    MethodA1: {
-    numInArgs: 0,
-    numOutArgs: 0,
-    inputStreaming: false,
-    outputStreaming: false,
-    tags: []
-},
-    MethodA2: {
-    numInArgs: 2,
-    numOutArgs: 1,
-    inputStreaming: false,
-    outputStreaming: false,
-    tags: []
-},
-    MethodA3: {
-    numInArgs: 1,
-    numOutArgs: 1,
-    inputStreaming: false,
-    outputStreaming: true,
-    tags: [new (Registry.lookupOrCreateConstructor(Types.STRING))("tag"), new (Registry.lookupOrCreateConstructor(Types.UINT64))(new BigInt(1, new Uint8Array([0x6]))), ]
-},
-    MethodA4: {
-    numInArgs: 1,
-    numOutArgs: 0,
-    inputStreaming: true,
-    outputStreaming: true,
-    tags: []
-},
-
-},
-  ServiceB: {
-    MethodB1: {
-    numInArgs: 2,
-    numOutArgs: 1,
-    inputStreaming: false,
-    outputStreaming: false,
-    tags: []
-},
-    MethodA1: {
-    numInArgs: 0,
-    numOutArgs: 0,
-    inputStreaming: false,
-    outputStreaming: false,
-    tags: []
-},
-    MethodA2: {
-    numInArgs: 2,
-    numOutArgs: 1,
-    inputStreaming: false,
-    outputStreaming: false,
-    tags: []
-},
-    MethodA3: {
-    numInArgs: 1,
-    numOutArgs: 1,
-    inputStreaming: false,
-    outputStreaming: true,
-    tags: [new (Registry.lookupOrCreateConstructor(Types.STRING))("tag"), new (Registry.lookupOrCreateConstructor(Types.UINT64))(new BigInt(1, new Uint8Array([0x6]))), ]
-},
-    MethodA4: {
-    numInArgs: 1,
-    numOutArgs: 0,
-    inputStreaming: true,
-    outputStreaming: true,
-    tags: []
-},
-
-},
-
-};
-
-
-var serviceDefs = {
-  package: 'v.io/core/veyron2/vdl/testdata/base',
-
-  
-  ServiceA: ServiceA,
-  
-  ServiceB: ServiceB,
-  
-
-};
-
-
 
   
     
 function ServiceA(){}
+module.exports.ServiceA = ServiceA
+
     
       
 ServiceA.prototype.MethodA1 = NotImplementedMethod;
@@ -334,7 +273,8 @@ ServiceA.prototype.MethodA3 = NotImplementedMethod;
     
       
 ServiceA.prototype.MethodA4 = NotImplementedMethod;
-    
+     
+
     
 ServiceA.prototype._serviceDescription = {
   name: 'ServiceA',
@@ -448,12 +388,15 @@ ServiceA.prototype._serviceDescription = {
     },
     tags: []
   },
-    
+     
   ]
 };
+
   
     
 function ServiceB(){}
+module.exports.ServiceB = ServiceB
+
     
       
 ServiceB.prototype.MethodB1 = NotImplementedMethod;
@@ -469,7 +412,8 @@ ServiceB.prototype.MethodA3 = NotImplementedMethod;
     
       
 ServiceB.prototype.MethodA4 = NotImplementedMethod;
-    
+     
+
     
 ServiceB.prototype._serviceDescription = {
   name: 'ServiceB',
@@ -619,15 +563,11 @@ ServiceB.prototype._serviceDescription = {
     },
     tags: []
   },
-    
+     
   ]
 };
-  
+
+   
+ 
 
 
-module.exports = {
-  types: types,
-  serviceDefs: serviceDefs,
-  services: services,
-  consts: consts,
-};
