@@ -12,8 +12,18 @@ var backgroundPort = chrome.runtime.connect();
 var backgroundToPage = {};
 var pageToBackground = {};
 
+// If the plug-in crashed, the state of the connected Vanadium instances
+// are invalid. We will block any further messages.
+var invalidated = false;
+
 // Forward messages from the webApp to the background page.
 pageEventProxy.onAny(function(body) {
+  if (invalidated && !process.env.ALLOW_INTENTIONAL_CRASH) {
+    pageEventProxy.send('error', 'Refusing to send Vanadium message. ' +
+      'Plug-in crashed and page must be reloaded.');
+    return;
+  }
+
   // 'this' is bound to event emitter2 instance, which sets 'this.event' to the
   // type of the event.
   var type = this.event;
@@ -45,12 +55,17 @@ backgroundPort.onMessage.addListener(function(msg) {
     'from background script:', msg.body);
 
   if (msg.type === 'crash') {
+    // Block any future messages, as we don't currently have a way to
+    // be sure the response will be correct.
+    invalidated = true;
+
     // TODO(bprosnitz) We may want to send the event to the page, or even
     // find a way to restart the libraries automatically. Hopefully this
     // doesn't happen frequently enough to make it worthwhile to do this.
-    console.error('Vanadium plug-in crashed and is restarting. ' +
-      'It may be necessary to reload this page for Vanadium to continue ' +
+    pageEventProxy.send('error', 'Vanadium plug-in crashed. ' +
+      'It is be necessary to reload this page for Vanadium to continue ' +
       'to fully function.');
+
     return;
   }
 

@@ -89,6 +89,7 @@ build-test/js/options.js: lib/background/options.js $(JS_FILES) node_modules
 build-test/js/addcaveats.js: lib/background/addcaveats.js $(JS_FILES) node_modules
 	$(call BROWSERIFY-TEST,$<,$@)
 
+build-test/js: export ALLOW_INTENTIONAL_CRASH := true
 build-test/js: build-test/js/background.js build-test/js/content.js build-test/js/options.js build-test/js/addcaveats.js
 
 build-test/nacl/main.nmf: nacl

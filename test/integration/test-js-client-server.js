@@ -6,6 +6,8 @@ var Deferred = require('../../src/lib/deferred');
 var vom = require('vom');
 var veyron = require('../../');
 
+var context = require('../../src/runtime/context');
+
 // TODO(bprosnitz) Combine CacheService and CacheServicePromises so there
 // isn't as much duplicated code.
 
@@ -136,8 +138,6 @@ var CacheServicePromises = {
     return 'RESULT';
   }
 };
-
-var context = require('../../src/runtime/context');
 
 // TODO(bprosnitz) After we make it simpler to provide VDL type information,
 // add more test cases with types.

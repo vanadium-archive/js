@@ -9,7 +9,8 @@ var AuthHandler = require('./auth-handler');
 domready(function() {
   // Start!
   var bp = new BackgroundPage();
-  bp.registerListeners();
+  chrome.runtime.onConnect.addListener(
+    bp.handleNewContentScriptConnection.bind(bp));
 });
 
 function BackgroundPage() {
@@ -25,22 +26,8 @@ function BackgroundPage() {
   // instanceId when the port closes.
   this.instanceIds = {};
 
-  // Wraps the nacl element.
-  this.nacl = new Nacl();
-
-  // Handles auth messages.
-  this.authHandler = new AuthHandler(this.nacl);
-
   debug('background script loaded');
 }
-
-// Start listening to messages from Nacl and content scripts.
-BackgroundPage.prototype.registerListeners = function() {
-  this.registerNaclListeners();
-  chrome.runtime.onConnect.addListener(
-      this.handleNewContentScriptConnection.bind(this)
-  );
-};
 
 // Start listening to messages from the Nacl plugin.
 BackgroundPage.prototype.registerNaclListeners = function() {
@@ -66,6 +53,7 @@ BackgroundPage.prototype.handleMessageFromContentScript = function(port, msg) {
   var bp = this;
   process.nextTick(function() {
     debug('background received message from content script.', msg);
+
     // Dispatch on the type of the message.
     switch (msg.type) {
       case 'browsprMsg':
@@ -76,10 +64,25 @@ BackgroundPage.prototype.handleMessageFromContentScript = function(port, msg) {
         return bp.authHandler.handleAuthMessage(port);
       case 'assocAccount:finish':
         return bp.authHandler.handleFinishAuth(port, msg);
+      case 'intentionallyPanic': // Only for tests.
+        return bp._triggerIntentionalPanic();
       default:
         console.error('unknown message.', msg);
     }
   });
+};
+
+// Trigger a panic in the plug-in (only for tests).
+BackgroundPage.prototype._triggerIntentionalPanic = function() {
+  if (process.env.ALLOW_INTENTIONAL_CRASH) {
+      var panicMsg = {
+        type: 'intentionallyPanic',
+        instanceId: 0,
+        origin: '',
+        body: ''
+      };
+      this.nacl.sendMessage(panicMsg);
+    }
 };
 
 // Handle a content script connecting to this background script.
@@ -99,6 +102,11 @@ BackgroundPage.prototype.handleNewContentScriptConnection = function(port) {
 
 // Clean up an instance, and tell Nacl to clean it up as well.
 BackgroundPage.prototype.handleBrowsprCleanup = function(port, msg) {
+  if (!this.naclPluginIsActive()) {
+    // If the plugin isn't started, no need to clean it up.
+    return;
+  }
+
   var instanceId = msg.body.instanceId;
 
   if (!this.ports[instanceId]) {
@@ -116,15 +124,16 @@ BackgroundPage.prototype.handleBrowsprCleanup = function(port, msg) {
   this.instanceIds[pId] = _.remove(this.instanceIds[pId], [instanceId]);
   delete this.ports[instanceId];
 
-  this.nacl.channel.performRpc('cleanup', {
-    instanceId: instanceId
-  }, function (){
-    console.log('Cleaned up instance: ' + instanceId);
-  });
+  this.nacl.cleanupInstance(instanceId);
 };
 
 // Handle messages that will be sent to Nacl.
 BackgroundPage.prototype.handleBrowsprMessage = function(port, msg) {
+  if (!this.naclPluginIsActive()) {
+    // Start the plugin if it is not started.
+    this.startNaclPlugin();
+  }
+
   var body = msg.body;
   if (!body) {
     return console.error('Got message with no body: ', msg);
@@ -160,22 +169,33 @@ function portId(port) {
   return port.sender.tab.id;
 }
 
-// Restart the nacl plugin -- clean up state and remove the plugin and then
-// re-add it to the page.
-BackgroundPage.prototype.restartNaclPlugin = function() {
+// Return true if the nacl plug-in is running.
+BackgroundPage.prototype.naclPluginIsActive = function() {
+  return this.hasOwnProperty('nacl');
+};
+
+// Start the nacl plug-in -- add it to the page and register handlers.
+BackgroundPage.prototype.startNaclPlugin = function() {
+  var bp = this;
+  bp.nacl = new Nacl();
+  bp.registerNaclListeners();
+  bp.authHandler = new AuthHandler(bp.nacl.channel);
+};
+
+// Stop the nacl plug-in - remove it from the page and clean up state.
+BackgroundPage.prototype.stopNaclPlugin = function() {
+  // TODO(bprosnitz) Should we call nacl.cleanupInstance()?
   this.nacl.destroy();
-  this.nacl = new Nacl();
-  this.registerNaclListeners();
-  this.authHandler = new AuthHandler(this.nacl);
+  delete this.nacl;
 };
 
 // Restart nacl when it crashes.
 BackgroundPage.prototype.handleNaclCrash = function() {
   // Log the crash to the extension's console.
-  console.error('NACL plugin crashed. Restarting...');
+  console.error('NACL plugin crashed.');
 
   // Restart the plugin
-  this.restartNaclPlugin();
+  this.stopNaclPlugin();
 
   // Notify all content scripts about the failure.
   var crashNotificationMsg = {

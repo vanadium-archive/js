@@ -7,12 +7,12 @@ var random = require('../../../src/lib/random');
 
 module.exports = AuthHandler;
 
-function AuthHandler(nacl) {
+function AuthHandler(channel) {
   if (!(this instanceof AuthHandler)) {
-    return new AuthHandler(nacl);
+    return new AuthHandler(channel);
   }
 
-  this._channel = nacl.channel;
+  this._channel = channel;
 
   // Map for tabIds to ports.
   this._ports = {};

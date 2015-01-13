@@ -48,7 +48,13 @@ function ExtensionEventProxy(timeout){
     // messages.
     proxy.waitForExtension(timeout);
   });
+
+  // Echo any errors we receive to the console.
+  this.on('error', function(err) {
+    console.error('Error message received from content script: ' + err);
+  });
 }
+
 inherits(ExtensionEventProxy, EE);
 
 ExtensionEventProxy.prototype.send = function(type, body) {
