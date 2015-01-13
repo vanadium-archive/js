@@ -21,6 +21,7 @@ var vLog = require('./../lib/vlog');
 var inspector = require('./../lib/arg-inspector');
 var Invoker = require('./../invocation/invoker');
 var verror = require('./../lib/verror');
+var defaultAuthorizer = require('../security/default-authorizer');
 
 var nextServerID = 1; // The ID for the next server.
 
@@ -245,8 +246,9 @@ Server.prototype.getInvokerForHandle = function(handle) {
  */
 Server.prototype.handleAuthorization = function(handle, request) {
   var handler = this.serviceObjectHandles[handle];
-  if (!handler || !handler.authorizer) {
-    return Promise.reject(new Error('Unknown handle ' + handle));
+  var authorizer = defaultAuthorizer;
+  if (handler && handler.authorizer) {
+    authorizer = handler.authorizer;
   }
   var def = new Deferred();
 
@@ -260,7 +262,7 @@ Server.prototype.handleAuthorization = function(handle, request) {
 
   var result;
   try {
-    result = handler.authorizer(request, cb);
+    result = authorizer(request, cb);
   } catch (e) {
     vLog.error(e);
     return Promise.reject(e);

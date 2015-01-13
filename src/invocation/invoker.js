@@ -44,7 +44,45 @@ function Invoker(service) {
       args: new ArgInspector(method)
     };
   }
+
+
+  var args;
+  if (typeof service.__glob === 'function') {
+    args = new ArgInspector(service.__glob);
+    if (args.filteredNames.length !== 1 ||
+        args.names.indexOf('$stream') === -1) {
+      // TODO(bjornick): Throw a verror of appropriate type.
+      throw new Error(
+        '__glob needs to take in a string and be streaming');
+    }
+
+    this._methods.__glob = {
+      name: '__glob',
+      fn: service.__glob,
+      args: args
+    };
+  }
+
+  if (typeof service.__globChildren === 'function') {
+    args = new ArgInspector(service.__globChildren);
+    if (args.filteredNames.length !== 0 ||
+        args.names.indexOf('$stream') === -1 ) {
+      // TODO(bjornick): Throw a verror of appropriate type.
+      throw new Error(
+        '__globChildren needs to take in no args and be streaming');
+    }
+
+    this._methods.__globChildren = {
+      name: '__globChildren',
+      fn: service.__globChildren,
+      args: args
+    };
+  }
 }
+
+Invoker.prototype.hasGlobber = function() {
+  return this.hasMethod('__glob') || this.hasMethod('__globChildren');
+};
 
 /**
  * Invoker.prototype.invoke - Invoke a method
@@ -169,3 +207,13 @@ function wrapError(err) {
     return err;
   }
 }
+
+/**
+ * returns whether the function <name> is invokable.
+ * @param {string} name the name of the function
+ * @return {boolean} whether the function is invokable.
+ */
+Invoker.prototype.hasMethod = function(name) {
+  return !!this._methods[name];
+};
+

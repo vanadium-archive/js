@@ -33,6 +33,10 @@ var _joinNamePartsOnArray = function(parts) {
     return '';
   }
 
+  if (parts[0] === '') {
+    parts = parts.slice(1);
+  }
+
   var name = parts[0];
   for (var i = 1; i < parts.length; i++) {
     var addedPart = parts[i];

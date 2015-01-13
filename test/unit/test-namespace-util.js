@@ -5,7 +5,7 @@ var ep = '/@2@tcp@h:0@@@@@';
 test('names.join(...)', function(assert) {
   assert.equal(names.join('a', 'b'), 'a/b');
   assert.equal(names.join('a/', 'b/'), 'a/b/');
-  assert.equal(names.join('', 'b'), '/b');
+  assert.equal(names.join('', 'b'), 'b');
   assert.equal(names.join('', '/b'), '/b');
   assert.equal(names.join('a', ''), 'a/');
   assert.equal(names.join('a/', ''), 'a/');
