@@ -21,7 +21,7 @@ func main() {
 
 	ctx := r.NewContext()
 
-	s, endpoint, err := StartServer(r)
+	s, endpoint, err := StartServer(ctx)
 	if err != nil {
 		log.Fatal("", err)
 	}
