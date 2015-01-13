@@ -33,7 +33,7 @@ if (require('is-browser')) {
     // nacl plugin.
     validateCommunication(t, 'test/name1', function() {
       // Handle the crash.
-      eventProxy.on('error', vanadiumCrashEvent);
+      eventProxy.once('error', vanadiumCrashEvent);
 
       var receivedError = false;
 

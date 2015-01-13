@@ -10,13 +10,21 @@ test('Test event proxy connects to extension', function(assert) {
   var ExtensionEventProxy = require('../../src/proxy/event-proxy').ctor;
   var extensionEventProxy = new ExtensionEventProxy(timeout);
 
-  extensionEventProxy.on('error', function(err) {
-    assert.fail(err);
-    assert.end();
+  var finished = false;
+
+  extensionEventProxy.once('error', function(err) {
+    if (!finished) {
+      finished = true;
+      assert.fail(err);
+      assert.end();
+    }
   });
 
-  extensionEventProxy.on('connected', function() {
-    assert.end();
+  extensionEventProxy.once('connected', function() {
+    if (!finished) {
+      finished = true;
+      assert.end();
+    }
   });
 });
 
@@ -34,13 +42,21 @@ test('Test event proxy fires error when timeout occurs before connection.',
       var ExtensionEventProxy = require('../../src/proxy/event-proxy').ctor;
       var extensionEventProxy = new ExtensionEventProxy(timeout);
 
-      extensionEventProxy.on('error', function(err) {
-        assert.ok((/timeout/i).test(err.message));
-        assert.end();
+      var finished = false;
+
+      extensionEventProxy.once('error', function(err) {
+        if (!finished) {
+          finished = true;
+          assert.ok((/timeout/i).test(err.message));
+          assert.end();
+        }
       });
 
-      extensionEventProxy.on('connected', function() {
-        assert.fail('Expected the event proxy to timeout, but it did not.');
-        assert.end();
+      extensionEventProxy.once('connected', function() {
+        if (!finished) {
+          finished = true;
+          assert.fail('Expected the event proxy to timeout, but it did not.');
+          assert.end();
+        }
       });
 });
