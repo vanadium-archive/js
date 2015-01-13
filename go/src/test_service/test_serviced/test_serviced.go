@@ -6,6 +6,7 @@ import (
 
 	_ "v.io/core/veyron/profiles"
 	"v.io/core/veyron2"
+	"v.io/core/veyron2/context"
 	"v.io/core/veyron2/ipc"
 	"v.io/core/veyron2/naming"
 	"v.io/core/veyron2/security"
@@ -44,9 +45,9 @@ func (sd *testServiceDispatcher) Lookup(suffix string) (interface{}, security.Au
 	return ipc.ReflectInvokerOrDie(sd.cache), authorizer, nil
 }
 
-func StartServer(r veyron2.Runtime) (ipc.Server, naming.Endpoint, error) {
+func StartServer(ctx *context.T) (ipc.Server, naming.Endpoint, error) {
 	// Create a new server instance.
-	s, err := r.NewServer()
+	s, err := veyron2.NewServer(ctx)
 	if err != nil {
 		return nil, nil, fmt.Errorf("failure creating server: %v", err)
 	}
