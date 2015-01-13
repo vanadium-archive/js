@@ -203,6 +203,10 @@ BackgroundPage.prototype.handleNaclCrash = function() {
   };
   var ports = this.ports;
   Object.keys(ports).forEach(function(instanceId) {
-    ports[instanceId].postMessage(crashNotificationMsg);
+    try {
+      ports[instanceId].postMessage(crashNotificationMsg);
+    } catch (e) {
+      // Port no longer exists.  Safe to ignore.
+    }
   });
 };
