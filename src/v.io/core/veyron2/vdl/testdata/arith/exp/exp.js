@@ -13,8 +13,11 @@ var Registry = vom.Registry;
 
 
 
+module.exports = {};
 
-var types = {};
+
+
+// Types:
 var _type1 = new Type();
 var _type2 = new Type();
 var _type3 = new Type();
@@ -31,12 +34,14 @@ _type3.elem = Types.ANY;
 _typeerror.kind = Kind.STRUCT;
 _typeerror.name = "error";
 _typeerror.fields = [{name: "IDAction", type: _type2}, {name: "Msg", type: Types.STRING}, {name: "ParamList", type: _type3}];
-types.error = Registry.lookupOrCreateConstructor(_typeerror, "error");
+module.exports.error = Registry.lookupOrCreateConstructor(_typeerror, "error");
 
 
 
-var consts = { 
-};
+
+// Consts:
+
+
 
 
 function NotImplementedMethod(name) {
@@ -44,40 +49,17 @@ function NotImplementedMethod(name) {
 }
 
 
-var services = {
-package: 'v.io/core/veyron2/vdl/testdata/arith/exp',
-  Exp: {
-    Exp: {
-    numInArgs: 1,
-    numOutArgs: 1,
-    inputStreaming: false,
-    outputStreaming: false,
-    tags: []
-},
-
-},
-
-};
-
-
-var serviceDefs = {
-  package: 'v.io/core/veyron2/vdl/testdata/arith/exp',
-
-  
-  Exp: Exp,
-  
-
-};
-
-
 
   
     
 function Exp(){}
+module.exports.Exp = Exp
+
     
       
 Exp.prototype.Exp = NotImplementedMethod;
-    
+     
+
     
 Exp.prototype._serviceDescription = {
   name: 'Exp',
@@ -111,15 +93,11 @@ Exp.prototype._serviceDescription = {
     outStream: null,
     tags: []
   },
-    
+     
   ]
 };
-  
+
+   
+ 
 
 
-module.exports = {
-  types: types,
-  serviceDefs: serviceDefs,
-  services: services,
-  consts: consts,
-};

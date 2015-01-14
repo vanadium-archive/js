@@ -15,8 +15,11 @@ var Registry = vom.Registry;
 var exp = require('./exp/exp');
 var base = require('./../base/base');
 
+module.exports = {};
 
-var types = {};
+
+
+// Types:
 var _type1 = new Type();
 var _type2 = new Type();
 var _type3 = new Type();
@@ -33,19 +36,28 @@ _type3.elem = Types.ANY;
 _typeerror.kind = Kind.STRUCT;
 _typeerror.name = "error";
 _typeerror.fields = [{name: "IDAction", type: _type2}, {name: "Msg", type: Types.STRING}, {name: "ParamList", type: _type3}];
-types.error = Registry.lookupOrCreateConstructor(_typeerror, "error");
+module.exports.error = Registry.lookupOrCreateConstructor(_typeerror, "error");
 
 
 
-var consts = { 
-  Yes: new (Registry.lookupOrCreateConstructor(Types.BOOL))(true),
-  No: new (Registry.lookupOrCreateConstructor(Types.BOOL))(false),
-  Hello: new (Registry.lookupOrCreateConstructor(Types.STRING))("hello"),
-  Int32Const: new (Registry.lookupOrCreateConstructor(Types.INT32))(123),
-  Int64Const: new (Registry.lookupOrCreateConstructor(Types.INT64))(new BigInt(1, new Uint8Array([0x80]))),
-  FloatConst: new (Registry.lookupOrCreateConstructor(Types.FLOAT64))(2),
-  Mask: new (Registry.lookupOrCreateConstructor(Types.UINT64))(new BigInt(1, new Uint8Array([0x1, 0x0]))),
-};
+
+// Consts:
+
+  module.exports.Yes = new (Registry.lookupOrCreateConstructor(Types.BOOL))(true);
+
+  module.exports.No = new (Registry.lookupOrCreateConstructor(Types.BOOL))(false);
+
+  module.exports.Hello = new (Registry.lookupOrCreateConstructor(Types.STRING))("hello");
+
+  module.exports.Int32Const = new (Registry.lookupOrCreateConstructor(Types.INT32))(123);
+
+  module.exports.Int64Const = new (Registry.lookupOrCreateConstructor(Types.INT64))(new BigInt(1, new Uint8Array([0x80])));
+
+  module.exports.FloatConst = new (Registry.lookupOrCreateConstructor(Types.FLOAT64))(2);
+
+  module.exports.Mask = new (Registry.lookupOrCreateConstructor(Types.UINT64))(new BigInt(1, new Uint8Array([0x1, 0x0])));
+
+
 
 
 function NotImplementedMethod(name) {
@@ -53,235 +65,20 @@ function NotImplementedMethod(name) {
 }
 
 
-var services = {
-package: 'v.io/core/veyron2/vdl/testdata/arith',
-  Trigonometry: {
-    Sine: {
-    numInArgs: 1,
-    numOutArgs: 1,
-    inputStreaming: false,
-    outputStreaming: false,
-    tags: []
-},
-    Cosine: {
-    numInArgs: 1,
-    numOutArgs: 1,
-    inputStreaming: false,
-    outputStreaming: false,
-    tags: []
-},
-
-},
-  AdvancedMath: {
-    Sine: {
-    numInArgs: 1,
-    numOutArgs: 1,
-    inputStreaming: false,
-    outputStreaming: false,
-    tags: []
-},
-    Cosine: {
-    numInArgs: 1,
-    numOutArgs: 1,
-    inputStreaming: false,
-    outputStreaming: false,
-    tags: []
-},
-    Exp: {
-    numInArgs: 1,
-    numOutArgs: 1,
-    inputStreaming: false,
-    outputStreaming: false,
-    tags: []
-},
-
-},
-  Arith: {
-    Add: {
-    numInArgs: 2,
-    numOutArgs: 1,
-    inputStreaming: false,
-    outputStreaming: false,
-    tags: []
-},
-    DivMod: {
-    numInArgs: 2,
-    numOutArgs: 2,
-    inputStreaming: false,
-    outputStreaming: false,
-    tags: []
-},
-    Sub: {
-    numInArgs: 1,
-    numOutArgs: 1,
-    inputStreaming: false,
-    outputStreaming: false,
-    tags: []
-},
-    Mul: {
-    numInArgs: 1,
-    numOutArgs: 1,
-    inputStreaming: false,
-    outputStreaming: false,
-    tags: []
-},
-    GenError: {
-    numInArgs: 0,
-    numOutArgs: 0,
-    inputStreaming: false,
-    outputStreaming: false,
-    tags: [new (Registry.lookupOrCreateConstructor(Types.STRING))("foo"), new (Registry.lookupOrCreateConstructor(Types.STRING))("barz"), new (Registry.lookupOrCreateConstructor(Types.STRING))("hello"), new (Registry.lookupOrCreateConstructor(Types.INT32))(129), new (Registry.lookupOrCreateConstructor(Types.UINT64))(new BigInt(1, new Uint8Array([0x24]))), ]
-},
-    Count: {
-    numInArgs: 1,
-    numOutArgs: 0,
-    inputStreaming: false,
-    outputStreaming: true,
-    tags: []
-},
-    StreamingAdd: {
-    numInArgs: 0,
-    numOutArgs: 1,
-    inputStreaming: true,
-    outputStreaming: true,
-    tags: []
-},
-    QuoteAny: {
-    numInArgs: 1,
-    numOutArgs: 1,
-    inputStreaming: false,
-    outputStreaming: false,
-    tags: []
-},
-
-},
-  Calculator: {
-    On: {
-    numInArgs: 0,
-    numOutArgs: 0,
-    inputStreaming: false,
-    outputStreaming: false,
-    tags: []
-},
-    Off: {
-    numInArgs: 0,
-    numOutArgs: 0,
-    inputStreaming: false,
-    outputStreaming: false,
-    tags: [new (Registry.lookupOrCreateConstructor(Types.STRING))("offtag"), ]
-},
-    Add: {
-    numInArgs: 2,
-    numOutArgs: 1,
-    inputStreaming: false,
-    outputStreaming: false,
-    tags: []
-},
-    DivMod: {
-    numInArgs: 2,
-    numOutArgs: 2,
-    inputStreaming: false,
-    outputStreaming: false,
-    tags: []
-},
-    Sub: {
-    numInArgs: 1,
-    numOutArgs: 1,
-    inputStreaming: false,
-    outputStreaming: false,
-    tags: []
-},
-    Mul: {
-    numInArgs: 1,
-    numOutArgs: 1,
-    inputStreaming: false,
-    outputStreaming: false,
-    tags: []
-},
-    GenError: {
-    numInArgs: 0,
-    numOutArgs: 0,
-    inputStreaming: false,
-    outputStreaming: false,
-    tags: [new (Registry.lookupOrCreateConstructor(Types.STRING))("foo"), new (Registry.lookupOrCreateConstructor(Types.STRING))("barz"), new (Registry.lookupOrCreateConstructor(Types.STRING))("hello"), new (Registry.lookupOrCreateConstructor(Types.INT32))(129), new (Registry.lookupOrCreateConstructor(Types.UINT64))(new BigInt(1, new Uint8Array([0x24]))), ]
-},
-    Count: {
-    numInArgs: 1,
-    numOutArgs: 0,
-    inputStreaming: false,
-    outputStreaming: true,
-    tags: []
-},
-    StreamingAdd: {
-    numInArgs: 0,
-    numOutArgs: 1,
-    inputStreaming: true,
-    outputStreaming: true,
-    tags: []
-},
-    QuoteAny: {
-    numInArgs: 1,
-    numOutArgs: 1,
-    inputStreaming: false,
-    outputStreaming: false,
-    tags: []
-},
-    Sine: {
-    numInArgs: 1,
-    numOutArgs: 1,
-    inputStreaming: false,
-    outputStreaming: false,
-    tags: []
-},
-    Cosine: {
-    numInArgs: 1,
-    numOutArgs: 1,
-    inputStreaming: false,
-    outputStreaming: false,
-    tags: []
-},
-    Exp: {
-    numInArgs: 1,
-    numOutArgs: 1,
-    inputStreaming: false,
-    outputStreaming: false,
-    tags: []
-},
-
-},
-
-};
-
-
-var serviceDefs = {
-  package: 'v.io/core/veyron2/vdl/testdata/arith',
-
-  
-  Trigonometry: Trigonometry,
-  
-  AdvancedMath: AdvancedMath,
-  
-
-  
-  Arith: Arith,
-  
-  Calculator: Calculator,
-  
-
-};
-
-
 
   
     
 function Trigonometry(){}
+module.exports.Trigonometry = Trigonometry
+
     
       
 Trigonometry.prototype.Sine = NotImplementedMethod;
     
       
 Trigonometry.prototype.Cosine = NotImplementedMethod;
-    
+     
+
     
 Trigonometry.prototype._serviceDescription = {
   name: 'Trigonometry',
@@ -341,12 +138,15 @@ Trigonometry.prototype._serviceDescription = {
     outStream: null,
     tags: []
   },
-    
+     
   ]
 };
+
   
     
 function AdvancedMath(){}
+module.exports.AdvancedMath = AdvancedMath
+
     
       
 AdvancedMath.prototype.Sine = NotImplementedMethod;
@@ -356,7 +156,8 @@ AdvancedMath.prototype.Cosine = NotImplementedMethod;
     
       
 AdvancedMath.prototype.Exp = NotImplementedMethod;
-    
+     
+
     
 AdvancedMath.prototype._serviceDescription = {
   name: 'AdvancedMath',
@@ -452,14 +253,17 @@ AdvancedMath.prototype._serviceDescription = {
     outStream: null,
     tags: []
   },
-    
+     
   ]
 };
-  
+
+   
 
   
     
 function Arith(){}
+module.exports.Arith = Arith
+
     
       
 Arith.prototype.Add = NotImplementedMethod;
@@ -484,7 +288,8 @@ Arith.prototype.StreamingAdd = NotImplementedMethod;
     
       
 Arith.prototype.QuoteAny = NotImplementedMethod;
-    
+     
+
     
 Arith.prototype._serviceDescription = {
   name: 'Arith',
@@ -707,12 +512,15 @@ Arith.prototype._serviceDescription = {
     outStream: null,
     tags: []
   },
-    
+     
   ]
 };
+
   
     
 function Calculator(){}
+module.exports.Calculator = Calculator
+
     
       
 Calculator.prototype.On = NotImplementedMethod;
@@ -752,7 +560,8 @@ Calculator.prototype.Cosine = NotImplementedMethod;
     
       
 Calculator.prototype.Exp = NotImplementedMethod;
-    
+     
+
     
 Calculator.prototype._serviceDescription = {
   name: 'Calculator',
@@ -1095,15 +904,11 @@ Calculator.prototype._serviceDescription = {
     outStream: null,
     tags: []
   },
-    
+     
   ]
 };
-  
+
+   
+ 
 
 
-module.exports = {
-  types: types,
-  serviceDefs: serviceDefs,
-  services: services,
-  consts: consts,
-};
