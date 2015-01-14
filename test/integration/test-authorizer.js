@@ -1,6 +1,5 @@
 var test = require('prova');
-var veyron = require('../../');
-var config = require('./default-config');
+var serve = require('./serve');
 var Invoker = require('../../src/invocation/invoker');
 var Deferred = require('../../src/lib/deferred');
 var context = require('../../src/runtime/context');
@@ -35,241 +34,104 @@ function createDispatcher(authorizer, tags) {
   };
 }
 
-function teardown(getRuntime, assert) {
-  return function(err) {
-    var rt = getRuntime();
-    assert.error(err);
-    if (rt) {
-      rt.close(assert.end);
+function testErrorCase(assert, authorizer) {
+  var ctx = context.Context();
+  serve(ctx, {
+    name: 'authorizer',
+    autoBind: false,
+    dispatcher: createDispatcher(authorizer)
+  }, function(err, res) {
+    if (err) {
+      return assert.end(err);
     }
-  };
+    res.runtime.bindTo(ctx, 'authorizer/auth').then(function(service) {
+      service.call(ctx, 'foo').then(function(value) {
+        assert.error(new Error('call should not have succeeded' + value));
+        res.end(assert);
+      }).catch(function(err) {
+        // We expect to get to the error case.
+        assert.ok(err);
+        res.end(assert);
+      });
+    }, function(err) {
+      assert.error(err);
+      res.end(assert);
+    });
+  });
 }
 
 test('Test errors are properly returned - synchronous', function(assert) {
-  var rt;
-  var end = teardown(function() { return rt; }, assert);
-
-  veyron
-  .init(config)
-  .then(serve)
-  .then(bindTo)
-  .catch(end)
-  .then(call);
-
-  function authorizer(ctx) {
+  testErrorCase(assert, function (ctx) {
     return new Error('unauthorized');
-  }
-
-  function serve(runtime) {
-    rt = runtime;
-    var dispatcher = createDispatcher(authorizer);
-    return runtime.serveDispatcher('authorizer', dispatcher).then(function() {
-      return runtime;
-    });
-  }
-
-  var ctx = context.Context();
-
-  function bindTo(runtime) {
-    return runtime.bindTo(ctx, 'authorizer/auth');
-  }
-
-  function call(service) {
-    return service.call(ctx, 'foo').then(function(value) {
-      end(new Error('call should not have succeeded' + value));
-    }).catch(function(err) {
-      // We expect to get to the error case.
-      assert.ok(err);
-      end();
-    });
-  }
+  });
 });
 
 test('Test errors are properly returned - authorizer(ctx, cb)',
 function(assert) {
-  var rt;
-  var end = teardown(function() { return rt; }, assert);
-
-  veyron
-  .init(config)
-  .then(serve)
-  .then(bindTo)
-  .catch(end)
-  .then(call);
-
-  function authorizer(ctx, cb) {
+  testErrorCase(assert, function(ctx, cb) {
     function reject() {
       cb(new Error('unauthorized'));
     }
     setTimeout(reject, 0);
-  }
-
-  function serve(runtime) {
-    rt = runtime;
-    var dispatcher = createDispatcher(authorizer);
-    return runtime.serveDispatcher('authorizer', dispatcher).then(function() {
-      return runtime;
-    });
-  }
-
-  var ctx = context.Context();
-
-  function bindTo(runtime) {
-    return runtime.bindTo(ctx, 'authorizer/auth');
-  }
-
-  function call(service) {
-    return service.call(ctx, 'foo').then(function(value) {
-      end(new Error('call should not have succeeded' + value));
-    }).catch(function(err) {
-      // we expect to get to the error case.
-      assert.ok(err);
-      end();
-    });
-  }
+  });
 });
 
 test('Test errors are properly returned - var promise = authorizer(ctx)',
 function(assert) {
-  var rt;
-  var end = teardown(function() { return rt; }, assert);
-
-  veyron
-  .init(config)
-  .then(serve)
-  .then(bindTo)
-  .catch(end)
-  .then(call);
-
-  function authorizer(ctx) {
+  testErrorCase(assert, function (ctx) {
     var def = new Deferred();
     function reject() {
       def.reject(new Error('unauthorized'));
     }
     setTimeout(reject, 0);
     return def.promise;
-  }
-
-  function serve(runtime) {
-    rt = runtime;
-    var dispatcher = createDispatcher(authorizer);
-    return runtime.serveDispatcher('authorizer', dispatcher).then(function() {
-      return runtime;
-    });
-  }
-
-  var ctx = context.Context();
-
-  function bindTo(runtime) {
-    return runtime.bindTo(ctx, 'authorizer/auth');
-  }
-
-  function call(service) {
-    return service.call(ctx, 'foo').then(function() {
-      end(new Error('call should not have succeeded'));
-    }).catch(function(err) {
-      // we expect to get to the error case.
-      assert.ok(err);
-      end();
-    });
-  }
+  });
 });
 
-test('Test successes are handled - authorizer(ctx, cb)', function(assert) {
-  var rt;
-  var end = teardown(function() { return rt; }, assert);
-
-  veyron
-  .init(config)
-  .then(serve)
-  .then(bindTo)
-  .then(call)
-  .catch(end);
-
-  function authorizer(ctx, cb) {
-    function resolve() {
-      cb();
-    }
-    setTimeout(resolve, 0);
-  }
-
-  function serve(runtime) {
-    rt = runtime;
-    var dispatcher = createDispatcher(authorizer);
-    return runtime.serveDispatcher('authorizer', dispatcher).then(function() {
-      return runtime;
-    });
-  }
-
+function testSuccessCase(assert, authorizer, tags) {
   var ctx = context.Context();
-
-  function bindTo(runtime) {
-    return runtime.bindTo(ctx, 'authorizer/auth');
-  }
-
-  function call(service) {
-    return service.call(ctx, 'foo').then(function() {
-      end();
+  serve(ctx, {
+    name: 'authorizer',
+    autoBind: false,
+    dispatcher: createDispatcher(authorizer, tags)
+  }, function(err, res) {
+    if (err) {
+      return assert.end(err);
+    }
+    res.runtime.bindTo(ctx, 'authorizer/auth').then(function(service) {
+      return service.call(ctx, 'foo');
+    }).then(function() {
+      res.end(assert);
+    }).catch(function(err) {
+      assert.error(err);
+      res.end(assert);
     });
-  }
+  });
+}
+
+
+test('Test successes are handled - authorizer(ctx, cb)', function(assert) {
+  testSuccessCase(assert, function (ctx, cb) {
+    process.nextTick(cb.bind(null, null));
+  });
 });
 
 test('Test successes are handled - ' +
   'var promise = authorizer(ctx)', function(assert) {
-  var rt;
-  var end = teardown(function() { return rt; }, assert);
-
-  veyron
-  .init(config)
-  .then(serve)
-  .then(bindTo)
-  .then(call)
-  .catch(end);
-
-  function authorizer(ctx) {
+  testSuccessCase(assert, function (ctx) {
     var def = new Deferred();
     function resolve() {
       def.resolve();
     }
     setTimeout(resolve, 0);
     return def.promise;
-  }
-
-  function serve(runtime) {
-    rt = runtime;
-    var dispatcher = createDispatcher(authorizer);
-    return runtime.serveDispatcher('authorizer', dispatcher).then(function() {
-      return runtime;
-    });
-  }
-
-  var ctx = context.Context();
-
-  function bindTo(runtime) {
-    return runtime.bindTo(ctx, 'authorizer/auth');
-  }
-
-  function call(service) {
-    return service.call(ctx, 'foo').then(function() {
-      end();
-    });
-  }
+  });
 });
 
 test('Test proper context is passed to authorizer', function(assert) {
-  var rt;
-  var end = teardown(function() { return rt; }, assert);
-
-  veyron
-  .init(config)
-  .then(serve)
-  .then(bindTo)
-  .then(call)
-  .catch(end);
-
   var defaultBlessingName = require('./default-blessing-name');
 
-  function authorizer(ctx) {
+  testSuccessCase(assert, function (ctx) {
     if (ctx.remoteBlessingStrings[0].indexOf(defaultBlessingName) < 0) {
       return new Error('unknown blessings ' + ctx.remoteBlessingStrings);
     } else if (ctx.localBlessingStrings[0].indexOf(defaultBlessingName) < 0) {
@@ -291,66 +153,14 @@ test('Test proper context is passed to authorizer', function(assert) {
     // }
 
     return null;
-  }
-
-  function serve(runtime) {
-    rt = runtime;
-    var dispatcher = createDispatcher(authorizer);
-    return runtime.serveDispatcher('authorizer', dispatcher).then(function() {
-      return runtime;
-    });
-  }
-
-  var ctx = context.Context();
-
-  function bindTo(runtime) {
-    return runtime.bindTo(ctx, 'authorizer/auth');
-  }
-
-  function call(service) {
-    return service.call(ctx, 'foo').then(function(value) {
-      assert.equal(value, 1, 'unexpected return value');
-      end();
-    });
-  }
+  });
 });
 
 test('Test passing in labels', function(assert) {
-  var rt;
-  var end = teardown(function() { return rt; }, assert);
-
-  veyron
-  .init(config)
-  .then(serve)
-  .then(bindTo)
-  .then(call)
-  .catch(end);
-
-  function authorizer(ctx) {
+  testSuccessCase(assert, function(ctx) {
     if (ctx.methodTags[0] !== 'foo') {
       return new Error('wrong label ' + ctx.label);
     }
     return null;
-  }
-
-  function serve(runtime) {
-    rt = runtime;
-    var dispatcher = createDispatcher(authorizer, ['foo']);
-    return runtime.serveDispatcher('authorizer', dispatcher).then(function() {
-      return runtime;
-    });
-  }
-
-  var ctx = context.Context();
-
-  function bindTo(runtime) {
-    return runtime.bindTo(ctx, 'authorizer/auth');
-  }
-
-  function call(service) {
-    return service.call(ctx, 'foo').then(function(value) {
-      assert.equal(value, 1, 'unexpected return value');
-      end();
-    });
-  }
+  }, ['foo']);
 });
