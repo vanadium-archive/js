@@ -109,10 +109,14 @@ Runner.prototype._setup = function(cb) {
       ._add('servicerunner')
       .on('vars', function(vars) {
         runner.env = extend(runner.env, {
+          IDENTITYD: vars.TEST_IDENTITYD_NAME + '/google',
+          IDENTITYD_BLESSING_URL:
+              vars.TEST_IDENTITYD_HTTP_ADDR + '/blessing-root',
           NAMESPACE_ROOT: vars.MT_NAME,
           PROXY_ADDR: vars.PROXY_ADDR,
           WSPR_ADDR: vars.WSPR_ADDR
         });
+        console.log('Tests running with environment: ', runner.env);
       })
       .on('ready', function() {
         debug('core services running');

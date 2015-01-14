@@ -49,6 +49,11 @@ BackgroundPage.prototype.handleMessageFromNacl = function(msg) {
 
 // Handle messages coming from a content script.
 BackgroundPage.prototype.handleMessageFromContentScript = function(port, msg) {
+  if (!this.naclPluginIsActive()) {
+    // Start the plugin if it is not started.
+    this.startNaclPlugin();
+  }
+
   // Wrap in process.nextTick so chrome stack traces can use sourceMap.
   var bp = this;
   process.nextTick(function() {
@@ -142,11 +147,6 @@ BackgroundPage.prototype.handleBrowsprCleanup = function(port, msg) {
 
 // Handle messages that will be sent to Nacl.
 BackgroundPage.prototype.handleBrowsprMessage = function(port, msg) {
-  if (!this.naclPluginIsActive()) {
-    // Start the plugin if it is not started.
-    this.startNaclPlugin();
-  }
-
   var body = msg.body;
   if (!body) {
     return console.error('Got message with no body: ', msg);

@@ -62,8 +62,8 @@ backgroundPort.onMessage.addListener(function(msg) {
     // TODO(bprosnitz) We may want to send the event to the page, or even
     // find a way to restart the libraries automatically. Hopefully this
     // doesn't happen frequently enough to make it worthwhile to do this.
-    pageEventProxy.send('error', 'Vanadium plug-in crashed. ' +
-      'It is be necessary to reload this page for Vanadium to continue ' +
+    pageEventProxy.send('crash', 'Vanadium plug-in crashed. ' +
+      'It is necessary to reload this page for Vanadium to continue ' +
       'to fully function.');
 
     return;

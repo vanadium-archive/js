@@ -89,6 +89,12 @@ build-test/js/options.js: lib/background/options.js $(JS_FILES) node_modules
 build-test/js/addcaveats.js: lib/background/addcaveats.js $(JS_FILES) node_modules
 	$(call BROWSERIFY-TEST,$<,$@)
 
+# The EXTENSION_SETTINGS env variable is used by the extension to set the default settings variables.
+build-test/js: export EXTENSION_SETTINGS := {"namespaceRoot": "$(NAMESPACE_ROOT)", "proxy": "test/proxy", "identityd": "$(IDENTITYD)", "identitydBlessingUrl": "$(IDENTITYD_BLESSING_URL)"}
+# The TEST_ACCESS_TOKEN and TEST_CAVEATS env variables allow the tests to run without user input.
+build-test/js: export TEST_ACCESS_TOKEN := test-access-token
+build-test/js: export TEST_CAVEATS := 24h
+# The ALLOW_INTENTIONAL_CRASH env variable is used to test that the extension can restart after a crash.
 build-test/js: export ALLOW_INTENTIONAL_CRASH := true
 build-test/js: build-test/js/background.js build-test/js/content.js build-test/js/options.js build-test/js/addcaveats.js
 

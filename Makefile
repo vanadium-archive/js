@@ -134,11 +134,8 @@ test-integration-browser: test-precheck go/bin
 	node test/integration/runner.js --services=$(COMMON_SERVICES) -- \
 	make test-integration-browser-runner
 
-# The EXTENSION_SETTINGS env variable is used by the extension to set the
-# default settings variables.
-test-integration-browser-runner: export EXTENSION_SETTINGS := {"namespaceRoot": "$(NAMESPACE_ROOT)", "proxy": "test/proxy"}
 test-integration-browser-runner: export VANADIUM_EXTENSION_ID := geagjbjjbbamldjlcbpabgdpeopikgne
-test-integration-browser-runner: BROWSER_OPTS := --options="--load-extension=$(PWD)/extension/build-test/,--enable-logging=stderr" $(BROWSER_OPTS)
+test-integration-browser-runner: BROWSER_OPTS := --options="--load-extension=$(PWD)/extension/build-test/,--ignore-certificate-errors,--enable-logging=stderr" $(BROWSER_OPTS)
 test-integration-browser-runner:
 	@$(RM) -fr extension/build-test
 	$(MAKE) -C extension build-test

@@ -3,11 +3,21 @@ var url = require('url');
 
 var params = url.parse(document.URL, true).query;
 
+// TODO(nlacasse, suharshs): Bring this page up-to-date with the functionality
+// of the add-caveats page on the identity server.  At the very least, we need
+// to not allow users to submit the form without entering a caveat.
+
 domready(function() {
   document.getElementById('submit-caveats').addEventListener('click',
     sendCaveats);
   document.getElementById('header').innerText =
     'Select caveat on the blessing for webapp: ' + params.origin;
+
+  if (process.env.TEST_CAVEATS) {
+    // Set the value of the exipry caveat and submit the form.
+    document.getElementById('ExpiryCaveat').value = process.env.TEST_CAVEATS;
+    sendCaveats();
+  }
 });
 
 var caveatNames = ['ExpiryCaveat', 'MethodCaveat'];

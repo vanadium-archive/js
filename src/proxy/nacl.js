@@ -59,6 +59,6 @@ ProxyConnection.prototype.close = function(cb) {
     instanceId: this.instanceId
   });
   if (cb) {
-    process.nextTick(cb.bind(null, null));
+    extensionEventProxy.once('browsprCleanupFinished', cb.bind(null, null));
   }
 };

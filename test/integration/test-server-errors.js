@@ -115,7 +115,7 @@ function testNonStandardErrors() {
       method + '()', function(assert) {
 
       var ctx = context.Context();
-      serve(ctx, 'js/thrower', dispatcher, function(err, res) {
+      serve(ctx, 'js/thrower/' + method, dispatcher, function(err, res) {
         if (err) {
           return assert.end(err);
         }

@@ -24,6 +24,10 @@ function AuthHandler(channel) {
 // Get an access token from the chrome.identity API.
 // See https://developer.chrome.com/apps/app_identity
 AuthHandler.prototype.getAccessToken = function(cb) {
+  if (process.env.TEST_ACCESS_TOKEN) {
+    return process.nextTick(cb.bind(null, null, process.env.TEST_ACCESS_TOKEN));
+  }
+
   // This will return an access token for the profile that the user is
   // signed in to chrome as.  If the user is not signed in to chrome, an
   // OAuth window will pop up and ask them to sign in.
@@ -80,10 +84,21 @@ AuthHandler.prototype.getCaveats = function(port) {
 
   port.authState = random.hex();
 
-  chrome.tabs.create({
-    url: chrome.extension.getURL('html/addcaveats.html') + '?webappId=' +
-      port.sender.tab.id + '&origin=' + encodeURIComponent(origin) +
-      '&authState=' + port.authState
+  // Get  currently active tab in the window.
+  var windowId = port.sender.tab.windowId;
+  chrome.tabs.query({active: true, windowId: windowId}, function(tabs) {
+    // Store the current tab id so we can switch back to it after the addcaveats
+    // tab is removed.  Note that the currently active tab might not be the same
+    // as the tab that is requesting authentication.
+    if (tabs && tabs[0] && tabs[0].id) {
+      port.currentTabId = tabs[0].id;
+    }
+
+    chrome.tabs.create({
+      url: chrome.extension.getURL('html/addcaveats.html') + '?webappId=' +
+        port.sender.tab.id + '&origin=' + encodeURIComponent(origin) +
+        '&authState=' + port.authState
+    });
   });
 };
 
@@ -123,6 +138,11 @@ AuthHandler.prototype.handleFinishAuth = function(caveatsPort, msg) {
 
   if (!webappPort || msg.authState !== webappPort.authState) {
     return console.error('port not authorized');
+  }
+
+  // Switch back to the last active tab.
+  if (webappPort.currentTabId) {
+    chrome.tabs.update(webappPort.currentTabId, {active: true});
   }
 
   if (!msg.caveats || msg.caveats.length === 0) {

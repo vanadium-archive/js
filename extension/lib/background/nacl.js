@@ -84,7 +84,7 @@ Nacl.prototype._start = function() {
   this.getBlessingRoot(settings.identitydBlessingUrl.value,
     function(err, identityBlessingRoot) {
       if (err) {
-        console.error(err);
+        return console.error(err);
       }
 
       var body = {
@@ -118,34 +118,39 @@ Nacl.prototype._sendQueuedMessages = function() {
 Nacl.prototype.getBlessingRoot = function(url, cb) {
   // TODO(nlacasse): Currently the identity server has a self-signed cert, so we
   // can't make an XHR to it to request the identity root.  Hence, I've just
-  // hard-coded the root value.  Once we have a real cert for the identity
-  // server, this should go away, and the superagent code below should be
-  // enabled.
-  var veyronTestRoot = {
-    names: ['veyron-test'],
-    publicKey: 'MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAERbKmIZ238zO5JL4cTwNlcLP' +
-        'a-lmJv2qJyOUGXGhDhFalljmt4SaFR6PRETzOH1lB_FvZhEMJi-CShgQhnzFZGw=='
-  };
+  // hard-coded the root value for hostnames that match "v.io".  Once we have a
+  // real cert for the identity server, this should go away, and the superagent
+  // code below should be used for every url.
+  var hostname = require('url').parse(url).hostname;
+  if ((/v\.io$/).test(hostname)) {
+    console.log('Using hard-coded blessing root to connect to ' + url);
+    var veyronTestRoot = {
+      names: ['veyron-test'],
+      publicKey: 'MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAERbKmIZ238zO5JL4cTwNlcLP' +
+          'a-lmJv2qJyOUGXGhDhFalljmt4SaFR6PRETzOH1lB_FvZhEMJi-CShgQhnzFZGw=='
+    };
 
-  return process.nextTick(cb.bind(null, null, veyronTestRoot));
+    return process.nextTick(cb.bind(null, null, veyronTestRoot));
+  }
 
-//  var request = require('superagent');
-//  request
-//      .get(url)
-//      .accept('application/json')
-//      end(function(err, res) {
-//        if (err) {
-//          cb(err);
-//        } else if (res.error) {
-//          cb(new Error('' + res.status ': ' + res.message));
-//        } else {
-//          cb(res.body);
-//        }
-//      })
+  console.log('Requesting blessing root from ' + url);
+  var request = require('superagent');
+  request
+      .get(url)
+      .accept('application/json')
+      .end(function(err, res) {
+        if (err) {
+          cb(err);
+        } else if (res.error) {
+          cb(new Error('' + res.status + ': ' + res.message));
+        } else {
+          cb(null, res.body);
+        }
+      });
 };
 
 Nacl.prototype.cleanupInstance = function(instanceId, cb) {
-  this._directChannel.performRpc('cleanup', {
+  this.channel.performRpc('cleanup', {
     instanceId: instanceId
   }, cb);
 };

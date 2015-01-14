@@ -45,7 +45,7 @@ test('Test recovery from nacl plugin crash', function(t) {
     }
 
     // Handle the crash.
-    eventProxy.once('error', vanadiumCrashEvent);
+    eventProxy.once('crash', vanadiumCrashEvent);
 
     var receivedError = false;
 
