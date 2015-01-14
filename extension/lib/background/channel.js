@@ -5,7 +5,6 @@
 var vom = require('vom');
 var channelVdl =
   require('../../vdl/v.io/wspr/veyron/services/wsprd/channel/channel');
-var types = channelVdl.types;
 
 module.exports = RpcChannel;
 
@@ -34,12 +33,12 @@ RpcChannel.prototype.performRpc = function(type, val, callback) {
   callback = callback || function(){};
   var seq = ++this.lastSeq;
   this.pendingCallbacks[seq] = callback;
-  var request = new types.Request({
+  var request = new channelVdl.Request({
     type: type,
     seq: seq,
     body: val
   });
-  this._sendVomEncodedMessage(new types.Message({
+  this._sendVomEncodedMessage(new channelVdl.Message({
     request: request
   }));
 };
@@ -68,12 +67,12 @@ RpcChannel.prototype._handleRequest = function(req) {
     // Remove this when it is implemented.
     result = 'ResultMessageToBeRemovedWhenVOM2IsComplete';
   }
-  var response = new types.Response({
+  var response = new channelVdl.Response({
     reqSeq: req.Seq,
     err: err || '',
     body: result
   });
-  this._sendVomEncodedMessage(new types.Message({
+  this._sendVomEncodedMessage(new channelVdl.Message({
     response: response
   }));
 };
@@ -99,7 +98,7 @@ RpcChannel.prototype.handleMessage = function(msg) {
   var reader = new vom.ByteArrayMessageReader(msgBytes);
   var dec = new vom.Decoder(reader);
   var jsMsg = dec.decode();
-  if (jsMsg._type.name === types.Message.name) {
+  if (jsMsg._type.name === channelVdl.Message.name) {
     throw new Error('Message does not have correct Message type: ' +
       JSON.stringify(jsMsg));
   } else if (jsMsg.request) {

@@ -102,8 +102,18 @@ BackgroundPage.prototype.handleNewContentScriptConnection = function(port) {
 
 // Clean up an instance, and tell Nacl to clean it up as well.
 BackgroundPage.prototype.handleBrowsprCleanup = function(port, msg) {
+  function sendCleanupFinishedMessage() {
+    try {
+      port.postMessage({type: 'browsprCleanupFinished'});
+    } catch (e) {
+      // This will error if the port has been closed, usually due to the tab
+      // being closed or navigating to a new page.  Safe to ignore.
+    }
+  }
+
   if (!this.naclPluginIsActive()) {
     // If the plugin isn't started, no need to clean it up.
+    sendCleanupFinishedMessage()
     return;
   }
 
@@ -124,7 +134,10 @@ BackgroundPage.prototype.handleBrowsprCleanup = function(port, msg) {
   this.instanceIds[pId] = _.remove(this.instanceIds[pId], [instanceId]);
   delete this.ports[instanceId];
 
-  this.nacl.cleanupInstance(instanceId);
+  this.nacl.cleanupInstance(instanceId, function() {
+    console.log('Cleaned up instance: ' + instanceId);
+    sendCleanupFinishedMessage();
+  });
 };
 
 // Handle messages that will be sent to Nacl.

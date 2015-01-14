@@ -13,8 +13,11 @@ var Registry = vom.Registry;
 
 
 
+module.exports = {};
 
-var types = {};
+
+
+// Types:
 var _type1 = new Type();
 var _typeMountFlag = new Type();
 var _typeVDLMountEntry = new Type();
@@ -30,16 +33,20 @@ _typeVDLMountEntry.fields = [{name: "Name", type: Types.STRING}, {name: "Servers
 _typeVDLMountedServer.kind = Kind.STRUCT;
 _typeVDLMountedServer.name = "v.io/core/veyron2/naming.VDLMountedServer";
 _typeVDLMountedServer.fields = [{name: "Server", type: Types.STRING}, {name: "TTL", type: Types.UINT32}];
-types.MountFlag = Registry.lookupOrCreateConstructor(_typeMountFlag, "MountFlag");
-types.VDLMountEntry = Registry.lookupOrCreateConstructor(_typeVDLMountEntry, "VDLMountEntry");
-types.VDLMountedServer = Registry.lookupOrCreateConstructor(_typeVDLMountedServer, "VDLMountedServer");
+module.exports.MountFlag = Registry.lookupOrCreateConstructor(_typeMountFlag, "MountFlag");
+module.exports.VDLMountEntry = Registry.lookupOrCreateConstructor(_typeVDLMountEntry, "VDLMountEntry");
+module.exports.VDLMountedServer = Registry.lookupOrCreateConstructor(_typeVDLMountedServer, "VDLMountedServer");
 
 
 
-var consts = { 
-  Replace: new (Registry.lookupOrCreateConstructor(_typeMountFlag))(1),
-  MT: new (Registry.lookupOrCreateConstructor(_typeMountFlag))(2),
-};
+
+// Consts:
+
+  module.exports.Replace = new (Registry.lookupOrCreateConstructor(_typeMountFlag))(1);
+
+  module.exports.MT = new (Registry.lookupOrCreateConstructor(_typeMountFlag))(2);
+
+
 
 
 function NotImplementedMethod(name) {
@@ -47,27 +54,9 @@ function NotImplementedMethod(name) {
 }
 
 
-var services = {
-package: 'v.io/core/veyron2/naming',
+// Services:
 
-};
-
-
-var serviceDefs = {
-  package: 'v.io/core/veyron2/naming',
-
-  
-
-};
+   
+ 
 
 
-
-  
-
-
-module.exports = {
-  types: types,
-  serviceDefs: serviceDefs,
-  services: services,
-  consts: consts,
-};

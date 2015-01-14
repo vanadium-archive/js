@@ -338,7 +338,7 @@ Router.prototype.handleGlobRequest = function(messageId, name, server, glob,
   } else if (invoker.hasMethod('__globChildren')) {
     if (glob.length() === 0) {
       // This means we match the current object.
-      this._streamMap[messageId].write(new naming.types.VDLMountEntry({
+      this._streamMap[messageId].write(new naming.VDLMountEntry({
         name: name}));
     }
 
@@ -393,7 +393,7 @@ Router.prototype.handleGlobRequest = function(messageId, name, server, glob,
   } else {
     // This is a leaf of the globChildren call so we return this as
     // a result.
-    this._streamMap[messageId].write(new naming.types.VDLMountEntry({
+    this._streamMap[messageId].write(new naming.VDLMountEntry({
       name: name}));
 
     this.decrementOutstandingRequestForId(messageId, cb);

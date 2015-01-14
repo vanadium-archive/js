@@ -204,7 +204,7 @@ function FullGlobber() {
 }
 
 FullGlobber.prototype.__glob = function(ctx, glob, $stream) {
-    $stream.write(new naming.types.VDLMountEntry({
+    $stream.write(new naming.VDLMountEntry({
       name: namespaceUtil.join(ctx.suffix, glob),
     }));
 };

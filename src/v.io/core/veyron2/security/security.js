@@ -25,16 +25,11 @@ var _type4 = new Type();
 var _type5 = new Type();
 var _type6 = new Type();
 var _type7 = new Type();
-var _type8 = new Type();
-var _type9 = new Type();
 var _typeBlessingPattern = new Type();
 var _typeCaveat = new Type();
 var _typeCertificate = new Type();
-var _typeDeprecatedACL = new Type();
 var _typeDischargeImpetus = new Type();
 var _typeHash = new Type();
-var _typeLabel = new Type();
-var _typeLabelSet = new Type();
 var _typeSignature = new Type();
 var _typeThirdPartyRequirements = new Type();
 var _typeWireBlessings = new Type();
@@ -53,26 +48,18 @@ _type2.elem = _typeCaveat;
 _type3.kind = Kind.LIST;
 _type3.name = "";
 _type3.elem = Types.BYTE;
-_type4.kind = Kind.MAP;
+_type4.kind = Kind.LIST;
 _type4.name = "";
-_type4.elem = _typeLabelSet;
-_type4.key = _typeBlessingPattern;
-_type5.kind = Kind.MAP;
+_type4.elem = _typeBlessingPattern;
+_type5.kind = Kind.LIST;
 _type5.name = "";
-_type5.elem = _typeLabelSet;
-_type5.key = Types.STRING;
+_type5.elem = Types.ANY;
 _type6.kind = Kind.LIST;
 _type6.name = "";
-_type6.elem = _typeBlessingPattern;
+_type6.elem = _type7;
 _type7.kind = Kind.LIST;
 _type7.name = "";
-_type7.elem = Types.ANY;
-_type8.kind = Kind.LIST;
-_type8.name = "";
-_type8.elem = _type9;
-_type9.kind = Kind.LIST;
-_type9.name = "";
-_type9.elem = _typeCertificate;
+_type7.elem = _typeCertificate;
 _typeBlessingPattern.kind = Kind.STRING;
 _typeBlessingPattern.name = "v.io/core/veyron2/security.BlessingPattern";
 _typeCaveat.kind = Kind.STRUCT;
@@ -81,18 +68,11 @@ _typeCaveat.fields = [{name: "ValidatorVOM", type: _type3}];
 _typeCertificate.kind = Kind.STRUCT;
 _typeCertificate.name = "v.io/core/veyron2/security.Certificate";
 _typeCertificate.fields = [{name: "Extension", type: Types.STRING}, {name: "PublicKey", type: _type3}, {name: "Caveats", type: _type2}, {name: "Signature", type: _typeSignature}];
-_typeDeprecatedACL.kind = Kind.STRUCT;
-_typeDeprecatedACL.name = "v.io/core/veyron2/security.DeprecatedACL";
-_typeDeprecatedACL.fields = [{name: "In", type: _type4}, {name: "NotIn", type: _type5}];
 _typeDischargeImpetus.kind = Kind.STRUCT;
 _typeDischargeImpetus.name = "v.io/core/veyron2/security.DischargeImpetus";
-_typeDischargeImpetus.fields = [{name: "Server", type: _type6}, {name: "Method", type: Types.STRING}, {name: "Arguments", type: _type7}];
+_typeDischargeImpetus.fields = [{name: "Server", type: _type4}, {name: "Method", type: Types.STRING}, {name: "Arguments", type: _type5}];
 _typeHash.kind = Kind.STRING;
 _typeHash.name = "v.io/core/veyron2/security.Hash";
-_typeLabel.kind = Kind.UINT32;
-_typeLabel.name = "v.io/core/veyron2/security.Label";
-_typeLabelSet.kind = Kind.UINT32;
-_typeLabelSet.name = "v.io/core/veyron2/security.LabelSet";
 _typeSignature.kind = Kind.STRUCT;
 _typeSignature.name = "v.io/core/veyron2/security.Signature";
 _typeSignature.fields = [{name: "Purpose", type: _type3}, {name: "Hash", type: _typeHash}, {name: "R", type: _type3}, {name: "S", type: _type3}];
@@ -101,7 +81,7 @@ _typeThirdPartyRequirements.name = "v.io/core/veyron2/security.ThirdPartyRequire
 _typeThirdPartyRequirements.fields = [{name: "ReportServer", type: Types.BOOL}, {name: "ReportMethod", type: Types.BOOL}, {name: "ReportArguments", type: Types.BOOL}];
 _typeWireBlessings.kind = Kind.STRUCT;
 _typeWireBlessings.name = "v.io/core/veyron2/security.WireBlessings";
-_typeWireBlessings.fields = [{name: "CertificateChains", type: _type8}];
+_typeWireBlessings.fields = [{name: "CertificateChains", type: _type6}];
 _typemethodCaveat.kind = Kind.LIST;
 _typemethodCaveat.name = "v.io/core/veyron2/security.methodCaveat";
 _typemethodCaveat.elem = Types.STRING;
@@ -119,11 +99,8 @@ _typeunixTimeExpiryCaveat.name = "v.io/core/veyron2/security.unixTimeExpiryCavea
 module.exports.BlessingPattern = Registry.lookupOrCreateConstructor(_typeBlessingPattern, "BlessingPattern");
 module.exports.Caveat = Registry.lookupOrCreateConstructor(_typeCaveat, "Caveat");
 module.exports.Certificate = Registry.lookupOrCreateConstructor(_typeCertificate, "Certificate");
-module.exports.DeprecatedACL = Registry.lookupOrCreateConstructor(_typeDeprecatedACL, "DeprecatedACL");
 module.exports.DischargeImpetus = Registry.lookupOrCreateConstructor(_typeDischargeImpetus, "DischargeImpetus");
 module.exports.Hash = Registry.lookupOrCreateConstructor(_typeHash, "Hash");
-module.exports.Label = Registry.lookupOrCreateConstructor(_typeLabel, "Label");
-module.exports.LabelSet = Registry.lookupOrCreateConstructor(_typeLabelSet, "LabelSet");
 module.exports.Signature = Registry.lookupOrCreateConstructor(_typeSignature, "Signature");
 module.exports.ThirdPartyRequirements = Registry.lookupOrCreateConstructor(_typeThirdPartyRequirements, "ThirdPartyRequirements");
 module.exports.WireBlessings = Registry.lookupOrCreateConstructor(_typeWireBlessings, "WireBlessings");
@@ -141,18 +118,6 @@ module.exports.unixTimeExpiryCaveat = Registry.lookupOrCreateConstructor(_typeun
   module.exports.AllPrincipals = new (Registry.lookupOrCreateConstructor(_typeBlessingPattern))("...");
 
   module.exports.ChainSeparator = new (Registry.lookupOrCreateConstructor(Types.STRING))("/");
-
-  module.exports.ResolveLabel = new (Registry.lookupOrCreateConstructor(_typeLabel))(1);
-
-  module.exports.ReadLabel = new (Registry.lookupOrCreateConstructor(_typeLabel))(2);
-
-  module.exports.WriteLabel = new (Registry.lookupOrCreateConstructor(_typeLabel))(4);
-
-  module.exports.AdminLabel = new (Registry.lookupOrCreateConstructor(_typeLabel))(8);
-
-  module.exports.DebugLabel = new (Registry.lookupOrCreateConstructor(_typeLabel))(16);
-
-  module.exports.MonitoringLabel = new (Registry.lookupOrCreateConstructor(_typeLabel))(32);
 
   module.exports.SHA1Hash = new (Registry.lookupOrCreateConstructor(_typeHash))("SHA1");
 
@@ -176,6 +141,7 @@ function NotImplementedMethod(name) {
 }
 
 
+// Services:
 
    
 

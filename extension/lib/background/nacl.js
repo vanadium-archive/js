@@ -144,12 +144,10 @@ Nacl.prototype.getBlessingRoot = function(url, cb) {
 //      })
 };
 
-Nacl.prototype.cleanupInstance = function(instanceId) {
+Nacl.prototype.cleanupInstance = function(instanceId, cb) {
   this._directChannel.performRpc('cleanup', {
     instanceId: instanceId
-  }, function (){
-    console.log('Cleaned up instance: ' + instanceId);
-  });
+  }, cb);
 };
 
 // Destroy state associated with this Nacl instance.
