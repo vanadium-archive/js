@@ -47,7 +47,7 @@ function testStandardErrors() {
       method + '(callback)', function(assert) {
 
       var ctx = context.Context();
-      serve(ctx, 'js/errorThrower', dispatcher, function(err, res) {
+      serve(ctx, 'js/errorThrower/' + method, dispatcher, function(err, res) {
         if (err) {
           return assert.end(err);
         }
