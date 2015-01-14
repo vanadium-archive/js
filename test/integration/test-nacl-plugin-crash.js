@@ -62,7 +62,7 @@ test('Test recovery from nacl plugin crash', function(t) {
         validateCommunication(t, 'test/name2', function(err, close2) {
           if (err) {
             t.error(err);
-            return close1(t.end());
+            return close1(t.end);
           }
 
           close1(function(err1) {
