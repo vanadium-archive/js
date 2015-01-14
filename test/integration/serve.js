@@ -63,30 +63,57 @@ function serve(ctx, name, dispatcher, callback) {
         return callback(err);
       }
 
-      var res = {
-        runtime: runtime,
-        config: config,
-        end: end
-      };
+      waitUntilResolve();
 
-      if (options.autoBind === false) {
-        return callback(err, res, end);
+      // The server is not gauranteed to be mounted by the time the serve
+      // call finishes.  We should wait until the name resolves before calling
+      // the callback.  As a side a benefit, this also speeds up the browser
+      // tests, because browspr is quicker than wspr and so it is more likely
+      // to return before the server is mounted.  The normal backoff for bindTo
+      // starts at 100ms, but this code only waits a few milliseconds.
+      function waitUntilResolve() {
+        var ns = runtime.namespace();
+        var count = 0;
+        runResolve();
+        function runResolve() {
+          ns.resolve(name, function(err, s) {
+            if (err || s.length === 0) {
+              count++;
+              if (count === 10) {
+                return callback(err);
+              }
+              return setTimeout(runResolve, 10);
+            }
+            completeServe();
+          });
+        }
       }
+      function completeServe() {
+        var res = {
+          runtime: runtime,
+          config: config,
+          end: end
+        };
 
-      function onBind(err, service) {
-        if (err) {
-          return callback(err);
+        if (options.autoBind === false) {
+          return callback(err, res, end);
         }
 
-        res.service = service;
+        function onBind(err, service) {
+          if (err) {
+            return callback(err);
+          }
 
-        callback(err, res, end);
-      }
+          res.service = service;
 
-      if (ctx) {
-        runtime.bindTo(ctx, name, onBind);
-      } else {
-        runtime.bindTo(name, onBind);
+          callback(err, res, end);
+        }
+
+        if (ctx) {
+          runtime.bindTo(ctx, name, onBind);
+        } else {
+          runtime.bindTo(name, onBind);
+        }
       }
     });
 
