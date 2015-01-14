@@ -113,7 +113,7 @@ BackgroundPage.prototype.handleBrowsprCleanup = function(port, msg) {
 
   if (!this.naclPluginIsActive()) {
     // If the plugin isn't started, no need to clean it up.
-    sendCleanupFinishedMessage()
+    sendCleanupFinishedMessage();
     return;
   }
 
