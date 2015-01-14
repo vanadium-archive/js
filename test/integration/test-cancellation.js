@@ -46,7 +46,7 @@ function run(ctx, err, collector, end, assert, id) {
 function newDispatcher() {
   return leafDispatcher({
     callInfo: {},
-    processWaiters: function(ctx, key) {
+    _processWaiters: function(key) {
       var info = this.callInfo[key];
       if (!info || !info.waiters) {
         return;
@@ -65,7 +65,7 @@ function newDispatcher() {
     _onCancel: function(key, err) {
       var info = this.callInfo[key];
       info.status = 'cancelled';
-      this.processWaiters(key);
+      this._processWaiters(key);
       info.cb(err);
     },
     neverReturn: function(context, key, cb) {
@@ -81,7 +81,7 @@ function newDispatcher() {
         info.timeout = deadline - Date.now();
       }
       info.cb = cb;
-      this.processWaiters(key);
+      this._processWaiters(key);
 
 
       context.waitUntilDone().catch(this._onCancel.bind(this, key));
