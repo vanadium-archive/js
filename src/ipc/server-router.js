@@ -313,8 +313,6 @@ Router.prototype.invokeMethod = function(invoker, options) {
   return def.promise;
 };
 
-/**
- */
 Router.prototype.handleGlobRequest = function(messageId, name, server, glob,
                                               context, invoker, cb) {
   var self = this;
