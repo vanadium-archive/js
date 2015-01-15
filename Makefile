@@ -31,9 +31,6 @@ endif
 
 ifndef NOTAP
 	TAP := --tap
-	ifndef NOCOLOR
-		COLORIZE_TRANSFORM := | tap-colorize
-	endif
 endif
 
 ifndef NOQUIT
@@ -51,8 +48,6 @@ ifdef NODE_OUTPUT
 		NODE_OUTPUT_LOCAL := >($(OUTPUT_TRANSFORM) --package=javascript.node > $(NODE_OUTPUT_LOCAL))
 	endif
 	NODE_OUTPUT_LOCAL := | tee $(NODE_OUTPUT_LOCAL)
-else
-	NODE_OUTPUT_LOCAL := $(COLORIZE_TRANSFORM)
 endif
 
 ifdef BROWSER_OUTPUT
@@ -61,8 +56,6 @@ ifdef BROWSER_OUTPUT
 		BROWSER_OUTPUT_LOCAL := >($(OUTPUT_TRANSFORM) --package=javascript.browser > $(BROWSER_OUTPUT_LOCAL))
 	endif
 	BROWSER_OUTPUT_LOCAL := | tee $(BROWSER_OUTPUT_LOCAL)
-else
-	BROWSER_OUTPUT_LOCAL := $(COLORIZE_TRANSFORM)
 endif
 
 PROVA_OPTS := --includeFilenameAsPackage $(TAP) $(QUIT) $(STOPONFAIL)
