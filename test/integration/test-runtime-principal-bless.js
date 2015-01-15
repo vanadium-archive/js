@@ -11,7 +11,7 @@ test('Test blessing bob without caveats - ' +
 
     var extension = 'bob';
     var duration = 1000;
-    var caveats = null;
+    var caveats = [];
 
     runtime
     .principal
@@ -30,7 +30,7 @@ test('Test blessing bob without caveats - ' +
 
     var extension = 'bob';
     var duration = 1000;
-    var caveats = null;
+    var caveats = [];
 
     runtime
     .principal
