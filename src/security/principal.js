@@ -7,6 +7,7 @@ var Deferred = require('../lib/deferred');
 var SimpleHandler = require('../proxy/simple-handler');
 var Blessings = require('./blessings');
 var MessageType = require('../proxy/message-type');
+var EncodeUtil = require('../lib/encode-util');
 
 /**
  * Principal represents an entity capable of making or receiving RPCs.
@@ -33,7 +34,7 @@ Principal.prototype.bless = function(blessee, extension, duration, caveats,
     return def.promise;
   }
 
-  var message = JSON.stringify({
+  var message = EncodeUtil.encode({
     handle: blessee._id,
     extension: extension,
     durationMs: duration,
