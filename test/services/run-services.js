@@ -113,7 +113,7 @@ Runner.prototype._setup = function(cb) {
           IDENTITYD_BLESSING_URL:
               vars.TEST_IDENTITYD_HTTP_ADDR + '/blessing-root',
           NAMESPACE_ROOT: vars.MT_NAME,
-          PROXY_ADDR: vars.PROXY_ADDR,
+          PROXY_ADDR: vars.PROXY_NAME,
           WSPR_ADDR: vars.WSPR_ADDR
         });
         console.log('Tests running with environment: ', runner.env);
