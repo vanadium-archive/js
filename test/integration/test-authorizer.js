@@ -129,12 +129,12 @@ test('Test successes are handled - ' +
 });
 
 test('Test proper context is passed to authorizer', function(assert) {
-  var defaultBlessingName = require('./default-blessing-name');
+  var defaultBlessingRegex = require('./default-blessing-regex');
 
   testSuccessCase(assert, function (ctx) {
-    if (ctx.remoteBlessingStrings[0].indexOf(defaultBlessingName) < 0) {
+    if (!defaultBlessingRegex.test(ctx.remoteBlessingStrings[0])) {
       return new Error('unknown blessings ' + ctx.remoteBlessingStrings);
-    } else if (ctx.localBlessingStrings[0].indexOf(defaultBlessingName) < 0) {
+    } else if (!defaultBlessingRegex.test(ctx.localBlessingStrings[0])) {
       return new Error('unknown blessings ' + ctx.localBlessingStrings);
     } else if (ctx.method !== 'call') {
       return new Error('wrong method ' + ctx.method);

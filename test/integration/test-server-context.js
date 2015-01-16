@@ -41,15 +41,13 @@ function contains(actual, expected, assert) {
   }
 }
 
-var defaultBlessingName = require('./default-blessing-name');
+var defaultBlessingRegex = require('./default-blessing-regex');
 
-// TODO(nlacasse): Clean this up once all tests require real authentication.
-function blessingStringsContain(strings, name, assert) {
-  assert.ok(strings.length > 0,
-      'Context has strings');
+function blessingStringsMatch(strings, regex, assert) {
+  assert.ok(strings.length > 0, 'Context has strings');
 
   for (var i = 0; i < strings.length; i++) {
-    assert.ok(strings[i].indexOf(name) >= 0,
+    assert.ok(regex.test(strings[i]),
         'string[' + i + '] matches expected name');
   }
 }
@@ -61,9 +59,9 @@ function validateEndpoint(ep, assert) {
 }
 
 function validateContext(ctx, assert) {
-  blessingStringsContain(ctx.localBlessingStrings, defaultBlessingName,
+  blessingStringsMatch(ctx.localBlessingStrings, defaultBlessingRegex,
                          assert);
-  blessingStringsContain(ctx.remoteBlessingStrings, defaultBlessingName,
+  blessingStringsMatch(ctx.remoteBlessingStrings, defaultBlessingRegex,
                          assert);
   validateEndpoint(ctx.localEndpoint, assert);
   validateEndpoint(ctx.remoteEndpoint, assert);
