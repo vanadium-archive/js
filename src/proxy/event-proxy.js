@@ -5,6 +5,8 @@ var types = require('./event-proxy-message-types');
 
 var defaultTimeout = 5000; // ms
 
+var publishedExtensionID = 'jcaelnibllfoobpedofhlaobfcoknpap';
+
 // ExtensionEventProxy sends messages to the extension, and listens for messages
 // coming from the extension.
 function ExtensionEventProxy(timeout){
@@ -37,8 +39,7 @@ function ExtensionEventProxy(timeout){
       var error = new Error(
         'Error connecting to the Vanadium Chrome Extension.  Please make ' +
         'sure the extension is installed and enabled.  Download it here: ' +
-        'https://github.com/veyron/release/javascript/core/raw/master/' +
-        'extension/veyron.crx'
+        'https://chrome.google.com/webstore/detail/' + publishedExtensionID
       );
       proxy.emit('error', error);
       return;
@@ -123,7 +124,6 @@ ExtensionEventProxy.prototype.waitForExtension = function(timeout) {
 // Check if the extension is installed by making a request to a web accessible
 // image.  See http://stackoverflow.com/questions/8042548
 ExtensionEventProxy.prototype.isExtensionInstalled = function(cb) {
-  var publishedExtensionID = 'jcaelnibllfoobpedofhlaobfcoknpap';
   var extensionId = publishedExtensionID;
   if (process.env.VANADIUM_EXTENSION_ID) {
     // Optionally use a different extension ID for testing.
