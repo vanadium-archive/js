@@ -10,9 +10,9 @@ var createMockProxy = require('./mock-proxy');
 var MessageType = require('../../src/proxy/message-type');
 var Client = require('../../src/ipc/client.js');
 
-var freshSig = { foo: 'fresh signature' };
-var cachedSig = { foo: 'cached signature'};
-var staleSig = { foo: 'bad signature' };
+var freshSig = [ { foo: 'fresh signature' } ];
+var cachedSig = [ { foo: 'cached signature'} ];
+var staleSig = [ { foo: 'bad signature' } ];
 var name = 'service_name';
 var ctx = context.Context();
 
@@ -20,8 +20,9 @@ var CACHE_TTL = 100; // we set the signature cache TTL to 100ms for tests.
 function createProxy() {
   return createMockProxy(function(message, type) {
     if (type === MessageType.SIGNATURE) {
-      return freshSig;
+      return [ freshSig ];
     }
+    throw new Error('Unexpected message type');
   }, CACHE_TTL);
 }
 

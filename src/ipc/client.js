@@ -38,7 +38,47 @@ var OutstandingRPC = function(ctx, options, cb) {
 
 OutstandingRPC.prototype.start = function() {
   this._id = this._proxy.nextId();
-  var def = new Deferred(this._cb);
+
+  var cb;
+  if (this._cb) {
+    // Wrap the callback to call with multiple arguments cb(err, a, b, c)
+    // rather than cb(err, [a, b, c]).
+    var origCb = this._cb;
+    cb = function convertToMultiArgs(err, results) { // jshint ignore:line
+      results = results || []; // If called from a deferred, args is undefined
+      var resultsCopy = results.slice();
+      resultsCopy.unshift(err);
+      origCb.apply(null, resultsCopy);
+    };
+  }
+
+  var def = new Deferred(cb);
+
+  if (!this._cb) {
+    // If we are using a promise, strip single args out of the arg array.
+    // e.g. [ arg1 ] -> arg1
+    def.promise = def.promise.then(function(args) {
+      if (!Array.isArray(args)) {
+        throw new verror.InternalError(
+          'Internal error: incorrectly formatted out args in client');
+      }
+      // We expect:
+      // 0 args - return; // NOT return [];
+      // 1 args - return a; // NOT return [a];
+      // 2 args - return [a, b] ;
+      //
+      // Convert the results from array style to the expected return style.
+      // undefined, a, [a, b], [a, b, c] etc
+      switch(args.length) {
+        case 0:
+          return undefined;
+        case 1:
+          return args[0];
+        default:
+          return args;
+      }
+    });
+  }
 
   var streamingDeferred = null;
   if (this._isStreaming) {
@@ -91,9 +131,6 @@ OutstandingRPC.prototype.handleCompletion = function(data) {
     this.handleError(
       new verror.InternalError('Failed to decode result: ' + e));
       return;
-  }
-  if (data.length === 1) {
-    data = data[0];
   }
   this._def.resolve(data);
   if (this._def.stream) {
@@ -345,17 +382,17 @@ Client.prototype.signature = function(ctx, name, cb) {
   }
 
   var requestDef = new Deferred();
-  requestDef.promise.then(function(signature) {
+  requestDef.promise.then(function(args) {
     // If the signature came off the wire, we need to vom decode the bytes.
-    if (typeof signature === 'string') {
+    if (typeof args === 'string') {
       try {
-        return DecodeUtil.decode(signature);
+        return DecodeUtil.decode(args);
       } catch (e) {
         return Promise.reject(
           new verror.InternalError('Failed to decode result: ' + e));
       }
     } else {
-      return signature;
+      return args[0];
     }
   }).then(function(signature) {
     proxy.signatureCache.set(name, signature);

@@ -50,12 +50,12 @@ Stream.prototype.clientClose = function() {
   Duplex.prototype.write.call(this, object);
 };
 
-Stream.prototype.serverClose = function(value, err) {
+Stream.prototype.serverClose = function(results, err) {
   var object = {
     id: this.flowId,
     type: MessageType.RESPONSE,
     data: EncodeUtil.encode({
-      results: [value || null],
+      results: results,
       err: err || null
     })
   };

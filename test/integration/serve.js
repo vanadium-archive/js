@@ -105,15 +105,10 @@ function serve(ctx, name, dispatcher, callback) {
           }
 
           res.service = service;
-
           callback(err, res, end);
         }
 
-        if (ctx) {
-          runtime.bindTo(ctx, name, onBind);
-        } else {
-          runtime.bindTo(name, onBind);
-        }
+        runtime.bindTo(ctx, name, onBind);
       }
     });
 

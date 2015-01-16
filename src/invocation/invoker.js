@@ -12,6 +12,21 @@ var vom = require('vom');
 var format = require('util').format;
 var ArgInspector = require('../lib/arg-inspector');
 
+// Method signatures for internal methods that are not present in actual
+// signatures.
+// These signatures are meant to simplify the implementation of invoke
+// and may be partial.
+var internalMethodSignatures = {
+  __glob: {
+    name: '__glob',
+    outArgs: []
+  },
+  __globChildren: {
+    name: '__globChildren',
+    outArgs: []
+  }
+};
+
 /**
   * Create an invoker.
   * @param {Service} service Service object.
@@ -85,6 +100,28 @@ Invoker.prototype.hasGlobber = function() {
 };
 
 /**
+ * Find a method signature corresponding to the named method.
+ *
+ * @param {String} methodName - The name of the method
+ * @return {MethodSignature} The signature of the named method, or null.
+ * @private
+ */
+Invoker.prototype._findMethodSignature = function(methodName) {
+  for (var i = 0; i < this._signature.length; i++) {
+    var sig = this._signature[i];
+    if (sig.methods) {
+      for (var m = 0; m < sig.methods.length; m++) {
+        var method = sig.methods[m];
+        if (method.name === methodName) {
+          return method;
+        }
+      }
+    }
+  }
+  return null;
+};
+
+/**
  * Invoker.prototype.invoke - Invoke a method
  *
  * @param  {String} name - The upper camel case name of the method to invoke.
@@ -98,22 +135,27 @@ Invoker.prototype.hasGlobber = function() {
 Invoker.prototype.invoke = function(name, args, injections, cb) {
   // TODO(jasoncampbell): Maybe throw if there are unkown injections
 
+  var message;
+  var err;
+
   var invoker = this;
   var service = invoker._service;
   var method = invoker._methods[name];
-  var message;
-  var err;
+  if (!method) {
+    message = format('Method "%s" does not exist.', name);
+    err = verror.NoExistError(message);
+    cb(err);
+    return;
+  }
+  var methodSig = this._findMethodSignature(name) ||
+    internalMethodSignatures[name];
+  if (!methodSig) {
+    cb(verror.InternalError('Missing method signature for method ' + name));
+  }
 
   if (!injections.context) {
     message = 'Can not call invoker.invoke(...) without a context injection';
     err = verror.InternalError(message);
-    cb(err);
-    return;
-  }
-
-  if (!method) {
-    message = format('Method "%s" does not exist.', name);
-    err = verror.NoExistError(message);
     cb(err);
     return;
   }
@@ -131,26 +173,43 @@ Invoker.prototype.invoke = function(name, args, injections, cb) {
   }
 
   // Clone the array so we can simply manipulate and apply later
-  var clone = args.slice(0);
+  var clonedArgs = args.slice(0);
 
   // context goes in front
-  clone.unshift(injections.context);
+  clonedArgs.unshift(injections.context);
 
-  // callback in the back
-  clone.push(cb);
+  // injectedCb converts from a call of form:
+  //    injectedCb(err, a, b, c)
+  // to
+  //    cb(err, [a, b, c])
+  //
+  // The call to cb() is always has the correct number of elements
+  // in the results array. If too few args are provided, the array
+  // is padded with undefined values. If too many args are provided,
+  // they are thrown out.
+  function injectedCb(err /*, args */) {
+    var res = Array.prototype.slice.call(arguments, 1,
+      methodSig.outArgs.length);
+    var numOutArgsIgnoringError = methodSig.outArgs.length - 1;
+    var paddingNeeded = numOutArgsIgnoringError - res.length;
+    var paddedRes = res.concat(new Array(paddingNeeded));
+    cb(err, paddedRes);
+  }
+  // callback at the end of the arg list
+  clonedArgs.push(injectedCb);
 
   // splice in stream
   if (injections.stream) {
     var start = method.args.position('$stream');
     var deleteCount = 0;
 
-    clone.splice(start, deleteCount, injections.stream);
+    clonedArgs.splice(start, deleteCount, injections.stream);
   }
 
   var results;
 
   try {
-    results = method.fn.apply(service, clone);
+    results = method.fn.apply(service, clonedArgs);
   } catch (e) {
     // This might be a good place to throw if there was a developer error
     // service side...
@@ -170,7 +229,38 @@ Invoker.prototype.invoke = function(name, args, injections, cb) {
   Promise
   .resolve(results)
   .then(function (res) {
-    cb(null, res);
+    // We expect:
+    // 0 args - return; // NOT return [];
+    // 1 args - return a; // NOT return [a];
+    // 2 args - return [a, b] ;
+    //
+    // Convert the results to always be in array style:
+    // [], [a], [a, b], etc
+    var resAsArray;
+    switch (methodSig.outArgs.length) {
+      case 0:
+        throw new Error('0 out args unexpected (includes error)');
+      case 1:
+        resAsArray = [];
+        break;
+      case 2:
+        resAsArray = [res];
+        break;
+      default:
+        if (!Array.isArray(res)) {
+          throw new verror.InternalError('Expected multiple out arguments ' +
+            'to be returned in an array.');
+        }
+        resAsArray = res;
+        break;
+    }
+    if (resAsArray.length !== methodSig.outArgs.length - 1) {
+      // -1 on outArgs.length ignores error
+      throw new verror.InternalError('Expected ' +
+        (methodSig.outArgs.length - 1) + ' results, but got ' +
+        resAsArray.length);
+    }
+    cb(null, resAsArray);
   })
   .catch(function error(err) {
     cb(wrapError(err));

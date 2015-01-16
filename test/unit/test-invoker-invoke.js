@@ -3,7 +3,38 @@ var verror = require('../../').errors;
 var Invoker = require('../../src/invocation/invoker.js');
 var Context = require('../../src/runtime/context').Context;
 var Promise = require('../../src/lib/promise');
+var vom = require('vom');
 var extend = require('xtend');
+
+var _fiveOutArgSig = [
+  {
+    methods: [
+      {
+        'name': 'FiveOutArgMethod',
+        'outArgs': [
+          {
+            type: vom.Types.ANY
+          },
+          {
+            type: vom.Types.ANY
+          },
+          {
+            type: vom.Types.ANY
+          },
+          {
+            type: vom.Types.ANY
+          },
+          {
+            type: vom.Types.ANY
+          },
+          {
+            type: vom.Types.ERROR
+          }
+        ]
+      }
+    ]
+  }
+];
 
 test('invoker.invoke(...) - cb', function(t) {
   var context = new Context();
@@ -17,16 +48,40 @@ test('invoker.invoke(...) - cb', function(t) {
     }
   }, function cb(err, results) {
     t.error(err, 'should not error');
-    t.deepEqual(results, [ context, 'a', 'b', 'c', 'd', cb ]);
+    t.deepEqual(results, [ 'result' ],
+      'callback args match');
     t.end();
   });
 
   // Hoisted into the service object above.
   function callbackMethod(context, a, b, c, d, callback) {
-    var args = slice(arguments);
-
     process.nextTick(function() {
-      callback(null, args);
+      callback(null, 'result');
+    });
+  }
+});
+
+test('invoker.invoke(...) - cb single value', function(t) {
+  var context = new Context();
+
+  invoke({
+    service: { callbackMethod: callbackMethod },
+    name: 'CallbackMethod',
+    args: [ ],
+    injections: {
+      context: context
+    }
+  }, function cb(err, results) {
+    t.error(err, 'should not error');
+    t.deepEqual(results, [ 'ret' ],
+      'callback args match');
+    t.end();
+  });
+
+  // Hoisted into the service object above.
+  function callbackMethod(context, callback) {
+    process.nextTick(function() {
+      callback(null, 'ret');
     });
   }
 });
@@ -43,13 +98,61 @@ test('invoker.invoke(...) - return value', function(t) {
     }
   }, function cb(err, results) {
     t.error(err, 'should not error');
-    t.deepEqual(results, [ context, 'a', 'b', 'c', 'd', cb ]);
+    t.deepEqual(results,
+      [ [ context, 'a', 'b', 'c', 'd' ] ]);
     t.end();
   });
 
   // Hoisted into the service object above.
   function returnMethod(context, a, b, c, d) {
-    return slice(arguments);
+    return [ context, a, b, c, d ];
+  }
+});
+
+test('invoker.invoke(...) - return value w/ 5 out args', function(t) {
+  var context = new Context();
+
+  invoke({
+    service: {
+      fiveOutArgMethod: returnMethod,
+      _serviceDescription: _fiveOutArgSig
+    },
+    name: 'FiveOutArgMethod',
+    args: [ 'a', 'b', 'c', 'd' ],
+    injections: {
+      context: context
+    }
+  }, function cb(err, results) {
+    t.error(err, 'should not error');
+    t.deepEqual(results, [ context, 'a', 'b', 'c', 'd' ]);
+    t.end();
+  });
+
+  // Hoisted into the service object above.
+  function returnMethod(context, a, b, c, d) {
+    return [ context, a, b, c, d ];
+  }
+});
+
+test('invoker.invoke(...) - return single value', function(t) {
+  var context = new Context();
+
+  invoke({
+    service: { returnMethod: returnMethod },
+    name: 'ReturnMethod',
+    args: [ ],
+    injections: {
+      context: context
+    }
+  }, function cb(err, results) {
+    t.error(err, 'should not error');
+    t.deepEqual(results, [ 'ret' ]);
+    t.end();
+  });
+
+  // Hoisted into the service object above.
+  function returnMethod(context) {
+    return 'ret';
   }
 });
 
@@ -65,13 +168,46 @@ test('invoker.invoke(...) - promise', function(t) {
     }
   }, function cb(err, results) {
     t.error(err, 'should not error');
-    t.deepEqual(results, [ context, 'a', 'b', 'c', 'd', cb ]);
+    t.deepEqual(results, [ [ context, 'a', 'b', 'c', 'd' ] ]);
     t.end();
   });
 
   // Hoisted into the service object above.
   function promiseMethod(context, a, b, c, d) {
-    var args = slice(arguments);
+    var args = [ context, a, b, c, d ];
+
+    var promise = new Promise(function(resolve, reject) {
+      process.nextTick(function() {
+        resolve(args);
+      });
+    });
+
+    return promise;
+  }
+});
+
+test('invoker.invoke(...) - promise w/ 5 out args', function(t) {
+  var context = new Context();
+
+invoke({
+    service: {
+      fiveOutArgMethod: promiseMethod,
+      _serviceDescription: _fiveOutArgSig
+    },
+    name: 'FiveOutArgMethod',
+    args: [ 'a', 'b', 'c', 'd' ],
+    injections: {
+      context: context
+    }
+  }, function cb(err, results) {
+    t.error(err, 'should not error');
+    t.deepEqual(results, [ context, 'a', 'b', 'c', 'd' ]);
+    t.end();
+  });
+
+  // Hoisted into the service object above.
+  function promiseMethod(context, a, b, c, d) {
+    var args = [ context, a, b, c, d ];
 
     var promise = new Promise(function(resolve, reject) {
       process.nextTick(function() {
@@ -93,12 +229,12 @@ test('invoker.invoke(...) - cb - shortnames (ctx/cb)', function(t) {
     injections: { context: context }
   }, function cb(err, results) {
     t.error(err);
-    t.deepEqual(results, [ context, cb]);
+    t.deepEqual(results, [ 'shortNameResult' ]);
     t.end();
   });
 
   function callbackShortNames(ctx, cb) {
-    cb(null, slice(arguments));
+    cb(null, 'shortNameResult');
   }
 });
 
@@ -112,15 +248,13 @@ test('invoker.invoke(...) - promise - shortnames', function(t) {
     injections: { context: context }
   }, function cb(err, results) {
     t.error(err);
-    t.deepEqual(results, [ context, cb]);
+    t.deepEqual(results, [ 'shortNameResult' ]);
     t.end();
   });
 
   function promiseShortNames(ctx, cb) {
-    var args = slice(arguments);
-
     var promise = new Promise(function(resolve, reject) {
-      resolve(args);
+      resolve('shortNameResult');
     });
 
     return promise;
@@ -141,13 +275,13 @@ test('invoker.invoke(...) - cb - $stream injection', function(t) {
     }
   }, function cb(err, results) {
     t.error(err, 'should not error');
-    t.deepEqual(results, [ context, 'a', 'b', stream, 'c', 'd', cb ]);
+    t.deepEqual(results, [ [ context, 'a', 'b', stream, 'c', 'd' ] ]);
     t.end();
   });
 
   // Hoisted into the service object above.
   function callbackStreamMethod(context, a, b, $stream, c, d, callback) {
-    var args = slice(arguments);
+    var args = slice(arguments, 0, 6);
 
     process.nextTick(function() {
       callback(null, args);
@@ -169,13 +303,13 @@ test('invoker.invoke(...) - return value - $stream injection', function(t) {
     }
   }, function cb(err, results) {
     t.error(err, 'should not error');
-    t.deepEqual(results, [ context, 'a', 'b', stream, 'c', 'd', cb ]);
+    t.deepEqual(results, [ [ context, 'a', 'b', stream, 'c', 'd' ] ]);
     t.end();
   });
 
   // Hoisted into the service object above.
   function returnStreamMethod(context, a, b, $stream, c, d) {
-    return slice(arguments);
+    return slice(arguments, 0, 6);
   }
 });
 
@@ -193,13 +327,13 @@ test('invoker.invoke(...) - promise - $stream injection', function(t) {
     }
   }, function cb(err, results) {
     t.error(err, 'should not error');
-    t.deepEqual(results, [ context, 'a', 'b', stream, 'c', 'd', cb ]);
+    t.deepEqual(results, [ [ context, 'a', 'b', stream, 'c', 'd' ] ]);
     t.end();
   });
 
   // Hoisted into the service object above.
   function promiseStreamMethod(context, a, b, $stream, c, d) {
-    var args = slice(arguments);
+    var args = slice(arguments, 0, 6);
 
     var promise = new Promise(function(resolve, reject) {
       process.nextTick(function() {
@@ -230,7 +364,7 @@ test('invoker.invoke(...) - where service is constructed', function(t) {
     args: [ 'foo' ]
   }, function(err, result) {
     t.error(err, 'should not error');
-    t.equal(result, 'bar');
+    t.deepEqual(result, [ 'bar' ]);
     t.end();
   });
 });
@@ -247,15 +381,13 @@ test('invoker.invoke(...) - cb - no arg method', function(t) {
     }
   }, function cb(err, results) {
     t.error(err, 'should not error');
-    t.deepEqual(results, [ context, cb ]);
+    t.deepEqual(results, [ context ]);
     t.end();
   });
 
   function callbackNoArgMethod(context, callback) {
-    var args = slice(arguments);
-
     process.nextTick(function() {
-      callback(null, args);
+      callback(null, context);
     });
   }
 });
@@ -272,12 +404,12 @@ test('invoker.invoke(...) - return value - no arg method', function(t) {
     }
   }, function cb(err, results) {
     t.error(err, 'should not error');
-    t.deepEqual(results, [ context, cb ]);
+    t.deepEqual(results, [ context ]);
     t.end();
   });
 
   function returnNoArgMethod(context, callback) {
-    return slice(arguments);
+    return context;
   }
 });
 
@@ -293,16 +425,14 @@ test('invoker.invoke(...) - promise - no arg method', function(t) {
     }
   }, function cb(err, results) {
     t.error(err, 'should not error');
-    t.deepEqual(results, [ context, cb ]);
+    t.deepEqual(results, [ context ]);
     t.end();
   });
 
   function promiseNoArgMethod(context, callback) {
-    var args = slice(arguments);
-
     var promise = new Promise(function(resolve, reject) {
       process.nextTick(function() {
-        resolve(args);
+        resolve(context);
       });
     });
 
@@ -395,7 +525,9 @@ test('invoker.invoke(...) - Error: Private method', function(t) {
     service: service,
     name: '_privateMethod',
   }, function(err, results) {
-    t.ok(err instanceof verror.NoExistError, 'should error');
+    t.ok(err, 'should error');
+    t.ok(err instanceof verror.NoExistError,
+      'error should be verror.NoExistError');
     t.equal(err.message, 'Method "_privateMethod" does not exist.');
     t.end();
   });
@@ -489,6 +621,6 @@ function invoke(options, cb) {
 
 function noop() {}
 
-function slice(args) {
-  return Array.prototype.slice.call(args, 0);
+function slice(args, index1, index2) {
+  return Array.prototype.slice.call(args, index1, index2);
 }

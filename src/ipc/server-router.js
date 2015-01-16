@@ -215,7 +215,7 @@ Router.prototype.handleRPCRequest = function(messageId, vomRequest) {
   function completion() {
     // There is no results to a glob method.  Everything is sent back
     // through the stream.
-    self.sendResult(messageId, methodName, [], undefined, 1);
+    self.sendResult(messageId, methodName, null, undefined, 1);
   }
 
   // Find the method signature.
@@ -252,29 +252,21 @@ Router.prototype.handleRPCRequest = function(messageId, vomRequest) {
   }
 
   // Invoke the method;
-  this.invokeMethod(invoker, options).then(function(result) {
-    self.sendResult(messageId, methodName, result, undefined,
+  this.invokeMethod(invoker, options, function(err, results) {
+    if (err) {
+      var stackTrace;
+      if (err instanceof Error && err.stack !== undefined) {
+        stackTrace = err.stack;
+      }
+      vLog.debug('Requested method ' + methodName +
+          ' threw an exception on invoke: ', err, stackTrace);
+      self.sendResult(messageId, methodName, results, err,
+          methodSig.outArgs.length);
+      return;
+    }
+
+    self.sendResult(messageId, methodName, results, undefined,
                     methodSig.outArgs.length);
-  }, function(e) {
-    var stackTrace;
-    if (e instanceof Error && e.stack !== undefined) {
-      stackTrace = e.stack;
-    }
-    vLog.debug('Requested method ' + methodName +
-        ' threw an exception on invoke: ', e, stackTrace);
-    var result;
-    var numOutArgs = methodSig.outArgs.length;
-    switch (numOutArgs) {
-      case 0:
-        break;
-      case 1:
-        result = null;
-        break;
-      default:
-        result = new Array(numOutArgs);
-    }
-    self.sendResult(messageId, methodName, result, e,
-        numOutArgs);
   });
 };
 
@@ -287,7 +279,7 @@ function methodIsStreaming(methodSig) {
 /**
  * Invokes a method with a methodSig
  */
-Router.prototype.invokeMethod = function(invoker, options) {
+Router.prototype.invokeMethod = function(invoker, options, cb) {
   var methodName = options.methodName;
   var args = options.args;
   var ctx = options.ctx;
@@ -297,20 +289,12 @@ Router.prototype.invokeMethod = function(invoker, options) {
     stream: options.stream
   };
 
-  var def = new Deferred();
-
-  function InvocationFinishedCallback(err, result) {
+  function InvocationFinishedCallback(err, results) {
     ctx.remoteBlessings.release();
-
-    if (err) {
-      def.reject(err);
-      return;
-    }
-    def.resolve(result);
+    cb(err, results);
   }
 
   invoker.invoke(methodName, args, injections, InvocationFinishedCallback);
-  return def.promise;
 };
 
 Router.prototype.handleGlobRequest = function(messageId, name, server, glob,
@@ -327,10 +311,10 @@ Router.prototype.handleGlobRequest = function(messageId, name, server, glob,
       // results directly out to the rpc stream.
       stream: this._streamMap[messageId]
     };
-    this.invokeMethod(invoker, options).then(function() {
-      self.decrementOutstandingRequestForId(messageId, cb);
-    }, function(err) {
-      vLog.info(name + '.__glob(' + glob + ') failed with ' + err);
+    this.invokeMethod(invoker, options, function(err, results) {
+      if (err) {
+        vLog.info(name + '.__glob(' + glob + ') failed with ' + err);
+      }
       self.decrementOutstandingRequestForId(messageId, cb);
     });
   } else if (invoker.hasMethod('__globChildren')) {
@@ -382,10 +366,10 @@ Router.prototype.handleGlobRequest = function(messageId, name, server, glob,
       });
     });
 
-    this.invokeMethod(invoker, options).then(function() {
-      self.decrementOutstandingRequestForId(messageId, cb);
-    }, function(err) {
-      vLog.info('ipc Glob: ' + name + '.__globChildren failed with ' + err);
+    this.invokeMethod(invoker, options, function(err, results) {
+      if (err) {
+        vLog.info('ipc Glob: ' + name + '.__globChildren failed with ' + err);
+      }
       self.decrementOutstandingRequestForId(messageId, cb);
     });
   } else {
@@ -415,41 +399,13 @@ Router.prototype.decrementOutstandingRequestForId = function(id, cb) {
  * @private
  * @param {string} messageId Message id of the original invocation request
  * @param {string} name Name of method
- * @param {Object} value Result of the call
+ * @param {Object} results Result of the call
  * @param {Object} err Error from the call
  */
-Router.prototype.sendResult = function(messageId, name, value, err,
+Router.prototype.sendResult = function(messageId, name, results, err,
   numOutArgs) {
-  var results = [];
-  if (numOutArgs !== undefined) {
-    // The err outArg is handled separately from value outArgs.
-    var numArgsWithoutErr = numOutArgs - 1;
-    switch (numArgsWithoutErr) {
-      case 0:
-        if (value !== undefined) {
-          vLog.error('Unexpected return value from ' + name + ': ' + value);
-        }
-        results = [];
-        break;
-      case 1:
-        results = [value];
-        break;
-      default:
-        if (Array.isArray(value)) {
-          if (value.length !== numArgsWithoutErr) {
-            vLog.error('Wrong number of arguments returned by ' + name +
-                '. expected: ' + numArgsWithoutErr + ', got:' +
-                value.length);
-          }
-          results = value;
-        } else {
-          vLog.error('Wrong number of arguments returned by ' + name +
-              '. expected: ' + numArgsWithoutErr+ ', got: 1');
-          results = [value];
-        }
-    }
-  } else {
-    results = [value];
+  if (!results) {
+    results = new Array(numOutArgs - 1);
   }
 
   var errorStruct = null;
@@ -476,7 +432,7 @@ Router.prototype.sendResult = function(messageId, name, value, err,
     // We should probably remove the stream from the dictionary, but it's
     // not clear if there is still a reference being held elsewhere.  If there
     // isn't, then GC might prevent this final message from being sent out.
-    stream.serverClose(value, errorStruct);
+    stream.serverClose(results, errorStruct);
     this._proxy.dequeue(messageId);
   } else {
     var responseData = {

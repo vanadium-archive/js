@@ -4,6 +4,8 @@ var context = require('../../src/runtime/context');
 var createSignatures = require('../../src/vdl/create-signatures');
 var MessageType = require('../../src/proxy/message-type');
 var createMockProxy = require('./mock-proxy');
+var DecodeUtil = require('../../src/lib/decode-util');
+var EncodeUtil = require('../../src/lib/encode-util');
 
 var mockService = {
   tripleArgMethod: function(ctx, a, b, c) {},
@@ -14,9 +16,11 @@ var mockSignature = createSignatures(mockService);
 
 var mockProxy = createMockProxy(function(data, type) {
   if (type === MessageType.SIGNATURE) {
-    return mockSignature;
+    return [mockSignature];
   } else {
-    return data;
+    // Take the first arg and return it in a result list.
+    var decodedData = DecodeUtil.decode(data);
+    return EncodeUtil.encode([decodedData]);
   }
 });
 
