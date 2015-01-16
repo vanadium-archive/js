@@ -16,7 +16,7 @@ module.exports = create;
 module.exports.render = render;
 
 var defaults = {
-  identityd: 'identity/veyron-test/google',
+  identityd: 'identity/dev.v.io/google',
   identitydBlessingUrl: 'https://auth.dev.v.io:8125/blessing-root',
   namespaceRoot: '/ns.dev.v.io:8111',
   proxy: '/ns.dev.v.io:8111/proxy'

@@ -72,7 +72,7 @@ BROWSERIFY_OPTS := --debug --standalone veyron
 
 all: gen-vdl lint build
 
-build: dist/veyron.js dist/veyron.min.js extension/veyron.crx
+build: dist/veyron.js dist/veyron.min.js extension/veyron.zip
 
 dist/veyron.js: src/veyron.js $(JS_SRC_FILES) $(NODE_MODULES_JS_FILES) | node_modules
 	mkdir -p dist
@@ -82,8 +82,8 @@ dist/veyron.min.js: src/veyron.js $(JS_SRC_FILES) $(NODE_MODULES_JS_FILES) | nod
 	mkdir -p dist
 	browserify $< $(BROWSERIFY_OPTS) --plugin [ minifyify --map dist/veyron.js.map --output $@.map ] --outfile $@
 
-extension/veyron.crx:
-	$(MAKE) -C extension veyron.crx
+extension/veyron.zip:
+	$(MAKE) -C extension veyron.zip
 
 test-precheck: gen-vdl node_modules lint dependency-check
 

@@ -5,7 +5,7 @@ extension/build
 extension/build-test
 extension/example/*bundle*
 extension/vdl
-extension/veyron.crx
+extension/veyron.zip
 node_modules
 npm-debug.log
 go/pkg

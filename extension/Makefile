@@ -22,7 +22,7 @@ define COMPILE-NACL-PLUGIN
 	v23 xgo --target_go=$(VANADIUM_ROOT)/environment/go_ppapi/bin/go amd64p32-nacl build -o $2 $1
 endef
 
-all: veyron.crx
+all: veyron.zip
 
 build/html: html/*
 	mkdir -p build
@@ -61,8 +61,8 @@ build/nacl: build/nacl/main.nmf build/nacl/main-64.nexe
 
 build: build/html build/images build/manifest.json build/js build/nacl
 
-veyron.crx: build
-	./bin/crxmake.sh ./build ./dev-cert.pem veyron
+veyron.zip: build
+	zip -r $@ ./build/*
 
 build-test/html: html/*
 	mkdir -p build-test
@@ -117,7 +117,7 @@ example-server: example/index.bundle.js
 	static "example" -H '{"Cache-Control": "no-cache, must-revalidate"}'
 
 example/index.bundle.js: example/index.js node_modules
-	browserify $< --transform brfs --debug --outfile $@
+	browserify $< --transform brfs --global-transform envify --debug --outfile $@
 
 lint: node_modules
 	jshint lib/ example/index.js

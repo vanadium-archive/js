@@ -125,9 +125,9 @@ Nacl.prototype.getBlessingRoot = function(url, cb) {
   if ((/v\.io$/).test(hostname)) {
     console.log('Using hard-coded blessing root to connect to ' + url);
     var veyronTestRoot = {
-      names: ['veyron-test'],
-      publicKey: 'MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAERbKmIZ238zO5JL4cTwNlcLP' +
-          'a-lmJv2qJyOUGXGhDhFalljmt4SaFR6PRETzOH1lB_FvZhEMJi-CShgQhnzFZGw=='
+      names: ['dev.v.io'],
+      publicKey: 'MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEjSehIL3JhB38DDql5lIey' +
+          'MaeTc0Mg1RYTGFf3XeLGZaDu4_mM5IDm72wKB2LjkHsPWFicBBJJuB_rTYGSKclwg=='
     };
 
     return process.nextTick(cb.bind(null, null, veyronTestRoot));
