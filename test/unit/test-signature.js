@@ -52,9 +52,6 @@ test('signature', function(t) {
                         'outArgs': [
                           {
                             'type': vom.Types.ANY
-                          },
-                          {
-                            'type': vom.Types.ERROR
                           }
                         ],
                         'inStream': {
@@ -70,9 +67,6 @@ test('signature', function(t) {
                         'outArgs': [
                             {
                                 'type': vom.Types.ANY
-                            },
-                            {
-                                'type': vom.Types.ERROR
                             }
                         ]
                     },
@@ -92,9 +86,6 @@ test('signature', function(t) {
                         'outArgs': [
                           {
                             'type': vom.Types.ANY
-                          },
-                          {
-                            'type': vom.Types.ERROR
                           }
                         ]
                     },
@@ -226,9 +217,6 @@ test('signature', function(t) {
                         'outArgs': [
                           {
                             'type': vom.Types.ANY
-                          },
-                          {
-                            'type': vom.Types.ERROR
                           }
                         ],
                         'inStream': {
@@ -288,9 +276,6 @@ test('signature', function(t) {
                         'outArgs': [
                           {
                             'type': vom.Types.ANY
-                          },
-                          {
-                            'type': vom.Types.ERROR
                           }
                         ]
                     },
@@ -354,9 +339,6 @@ test('signature', function(t) {
                         'outArgs': [
                             {
                                 'type': vom.Types.ANY
-                            },
-                            {
-                                'type': vom.Types.ERROR
                             }
                         ],
                         'inStream': {
@@ -382,9 +364,6 @@ test('signature', function(t) {
                         'outArgs': [
                             {
                                 'type': vom.Types.ANY
-                            },
-                            {
-                                'type': vom.Types.ERROR
                             }
                         ]
                     }

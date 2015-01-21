@@ -85,7 +85,7 @@ dist/veyron.min.js: src/veyron.js $(JS_SRC_FILES) $(NODE_MODULES_JS_FILES) | nod
 extension/veyron.zip:
 	$(MAKE) -C extension veyron.zip
 
-test-precheck: gen-vdl node_modules lint dependency-check
+test-precheck: gen-vdl-test node_modules lint dependency-check
 
 test: test-unit test-integration test-vdl
 
@@ -93,20 +93,31 @@ test-vdl: test-vdl-node test-vdl-browser
 
 # This generates the output of the vdl files in src/v.io/<package-path>
 # The command will generate all the dependent files as well.
-gen-vdl:
+gen-vdl: JS_VDL_DIR := "$(VANADIUM_ROOT)/release/javascript/core/src"
+gen-vdl: gen-vdl-impl
+
+# This generates the output of the vdl files in test/vdl-out/v.io/<package-path>
+# The command will generate all the dependent files as well.
+gen-vdl-test: JS_VDL_DIR := "$(VANADIUM_ROOT)/release/javascript/core/test/vdl-out"
+gen-vdl-test: clean-test-vdl gen-vdl-impl
+
+clean-test-vdl:
+	rm -rf $(JS_VDL_DIR)
+
+gen-vdl-impl:
 ifndef NOVDLGEN
 	v23 go run $(VANADIUM_ROOT)/release/go/src/v.io/core/veyron2/vdl/vdl/main.go generate -lang=javascript \
-		-js_out_dir="$(VANADIUM_ROOT)/release/javascript/core/src" vdltool signature \
+		-js_out_dir=$(JS_VDL_DIR) vdltool signature \
 		v.io/core/veyron2/vdl/testdata/... \
 		v.io/core/veyron2/ipc/... \
 		v.io/core/veyron2/vdl/vdlroot/src/...\
 	 	v.io/core/veyron2/naming/...
 endif
 
-test-vdl-node: gen-vdl test-precheck
+test-vdl-node: test-precheck
 	prova test/vdl/test-*.js $(PROVA_OPTS) $(NODE_OUTPUT_LOCAL)
 
-test-vdl-browser: gen-vdl test-precheck
+test-vdl-browser: test-precheck
 	prova test/vdl/test-*.js $(PROVA_OPTS) $(BROWSER_OPTS) $(BROWSER_OUTPUT_LOCAL)
 
 test-unit: test-unit-node test-unit-browser
@@ -182,7 +193,7 @@ check-that-npm-is-in-path:
 .PHONY: test-integration test-integration-node test-integration-browser
 .PHONY: test-unit test-unit-node test-unit-browser
 .PHONY: check-that-npm-is-in-path
-.PHONY: gen-vdl
+.PHONY: gen-vdl gen-vdl-test gen-vdl-impl
 
 # Prevent the tests from running in parallel, which causes problems because it
 # starts multiple instances of the services at once, and also because it

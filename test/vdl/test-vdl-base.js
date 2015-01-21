@@ -1,6 +1,6 @@
 var test = require('prova');
 var base = require(
-  '../../src/v.io/core/veyron2/vdl/testdata/base/base');
+  '../vdl-out/v.io/core/veyron2/vdl/testdata/base/base');
 var Kind = require('vom').Kind;
 var Types = require('vom').Types;
 var BigInt = require('vom').BigInt;

@@ -195,7 +195,8 @@ OutstandingRPC.prototype.constructMessage = function() {
     name: this._name,
     method: this._methodName,
     inArgs: this._args,
-    numOutArgs: this._numOutParams || 1,
+    // TODO(bprosnitz) Is || 0 needed?
+    numOutArgs: this._numOutParams || 0,
     isStreaming: this._isStreaming,
     timeout: timeout
   };

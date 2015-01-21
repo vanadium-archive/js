@@ -20,23 +20,6 @@ module.exports = {};
 
 
 // Types:
-var _type1 = new Type();
-var _type2 = new Type();
-var _type3 = new Type();
-var _typeerror = new Type();
-_type1.kind = Kind.NILABLE;
-_type1.name = "";
-_type1.elem = _typeerror;
-_type2.kind = Kind.STRUCT;
-_type2.name = "";
-_type2.fields = [{name: "ID", type: Types.STRING}, {name: "Action", type: Types.UINT32}];
-_type3.kind = Kind.LIST;
-_type3.name = "";
-_type3.elem = Types.ANY;
-_typeerror.kind = Kind.STRUCT;
-_typeerror.name = "error";
-_typeerror.fields = [{name: "IDAction", type: _type2}, {name: "Msg", type: Types.STRING}, {name: "ParamList", type: _type3}];
-module.exports.error = Registry.lookupOrCreateConstructor(_typeerror, "error");
 
 
 
@@ -103,11 +86,6 @@ Trigonometry.prototype._serviceDescription = {
       doc: "",
       type: Types.FLOAT64
     },
-    {
-      name: '',
-      doc: "",
-      type: _type1
-    },
     ],
     inStream: null,
     outStream: null,
@@ -128,11 +106,6 @@ Trigonometry.prototype._serviceDescription = {
       name: '',
       doc: "",
       type: Types.FLOAT64
-    },
-    {
-      name: '',
-      doc: "",
-      type: _type1
     },
     ],
     inStream: null,
@@ -192,11 +165,6 @@ AdvancedMath.prototype._serviceDescription = {
       doc: "",
       type: Types.FLOAT64
     },
-    {
-      name: '',
-      doc: "",
-      type: _type1
-    },
     ],
     inStream: null,
     outStream: null,
@@ -218,11 +186,6 @@ AdvancedMath.prototype._serviceDescription = {
       doc: "",
       type: Types.FLOAT64
     },
-    {
-      name: '',
-      doc: "",
-      type: _type1
-    },
     ],
     inStream: null,
     outStream: null,
@@ -243,11 +206,6 @@ AdvancedMath.prototype._serviceDescription = {
       name: '',
       doc: "",
       type: Types.FLOAT64
-    },
-    {
-      name: '',
-      doc: "",
-      type: _type1
     },
     ],
     inStream: null,
@@ -319,11 +277,6 @@ Arith.prototype._serviceDescription = {
       doc: "",
       type: Types.INT32
     },
-    {
-      name: '',
-      doc: "",
-      type: _type1
-    },
     ],
     inStream: null,
     outStream: null,
@@ -355,11 +308,6 @@ Arith.prototype._serviceDescription = {
       doc: "",
       type: Types.INT32
     },
-    {
-      name: 'err',
-      doc: "",
-      type: _type1
-    },
     ],
     inStream: null,
     outStream: null,
@@ -380,11 +328,6 @@ Arith.prototype._serviceDescription = {
       name: '',
       doc: "",
       type: Types.INT32
-    },
-    {
-      name: '',
-      doc: "",
-      type: _type1
     },
     ],
     inStream: null,
@@ -407,11 +350,6 @@ Arith.prototype._serviceDescription = {
       doc: "",
       type: Types.INT32
     },
-    {
-      name: '',
-      doc: "",
-      type: _type1
-    },
     ],
     inStream: null,
     outStream: null,
@@ -423,12 +361,7 @@ Arith.prototype._serviceDescription = {
     name: 'GenError',
     doc: "// GenError shows that it's fine to have no in args, and no out args other\n// than \"error\".  In addition GenError shows the usage of tags.  Tags are a\n// sequence of constants.  There's no requirement on uniqueness of types or\n// values, and regular const expressions may also be used.",
     inArgs: [],
-    outArgs: [{
-      name: '',
-      doc: "",
-      type: _type1
-    },
-    ],
+    outArgs: [],
     inStream: null,
     outStream: null,
     tags: [new (Registry.lookupOrCreateConstructor(Types.STRING))("foo"), new (Registry.lookupOrCreateConstructor(Types.STRING))("barz"), new (Registry.lookupOrCreateConstructor(Types.STRING))("hello"), new (Registry.lookupOrCreateConstructor(Types.INT32))(129), new (Registry.lookupOrCreateConstructor(Types.UINT64))(new BigInt(1, new Uint8Array([0x24]))), ]
@@ -444,12 +377,7 @@ Arith.prototype._serviceDescription = {
       type: Types.INT32
     },
     ],
-    outArgs: [{
-      name: '',
-      doc: "",
-      type: _type1
-    },
-    ],
+    outArgs: [],
     inStream: null,
     outStream: {
       name: '',
@@ -468,11 +396,6 @@ Arith.prototype._serviceDescription = {
       name: 'total',
       doc: "",
       type: Types.INT32
-    },
-    {
-      name: 'err',
-      doc: "",
-      type: _type1
     },
     ],
     inStream: {
@@ -502,11 +425,6 @@ Arith.prototype._serviceDescription = {
       name: '',
       doc: "",
       type: Types.ANY
-    },
-    {
-      name: '',
-      doc: "",
-      type: _type1
     },
     ],
     inStream: null,
@@ -586,12 +504,7 @@ Calculator.prototype._serviceDescription = {
     name: 'On',
     doc: "",
     inArgs: [],
-    outArgs: [{
-      name: '',
-      doc: "",
-      type: _type1
-    },
-    ],
+    outArgs: [],
     inStream: null,
     outStream: null,
     tags: []
@@ -602,12 +515,7 @@ Calculator.prototype._serviceDescription = {
     name: 'Off',
     doc: "",
     inArgs: [],
-    outArgs: [{
-      name: '',
-      doc: "",
-      type: _type1
-    },
-    ],
+    outArgs: [],
     inStream: null,
     outStream: null,
     tags: [new (Registry.lookupOrCreateConstructor(Types.STRING))("offtag"), ]
@@ -632,11 +540,6 @@ Calculator.prototype._serviceDescription = {
       name: '',
       doc: "",
       type: Types.INT32
-    },
-    {
-      name: '',
-      doc: "",
-      type: _type1
     },
     ],
     inStream: null,
@@ -669,11 +572,6 @@ Calculator.prototype._serviceDescription = {
       doc: "",
       type: Types.INT32
     },
-    {
-      name: 'err',
-      doc: "",
-      type: _type1
-    },
     ],
     inStream: null,
     outStream: null,
@@ -694,11 +592,6 @@ Calculator.prototype._serviceDescription = {
       name: '',
       doc: "",
       type: Types.INT32
-    },
-    {
-      name: '',
-      doc: "",
-      type: _type1
     },
     ],
     inStream: null,
@@ -721,11 +614,6 @@ Calculator.prototype._serviceDescription = {
       doc: "",
       type: Types.INT32
     },
-    {
-      name: '',
-      doc: "",
-      type: _type1
-    },
     ],
     inStream: null,
     outStream: null,
@@ -737,12 +625,7 @@ Calculator.prototype._serviceDescription = {
     name: 'GenError',
     doc: "// GenError shows that it's fine to have no in args, and no out args other\n// than \"error\".  In addition GenError shows the usage of tags.  Tags are a\n// sequence of constants.  There's no requirement on uniqueness of types or\n// values, and regular const expressions may also be used.",
     inArgs: [],
-    outArgs: [{
-      name: '',
-      doc: "",
-      type: _type1
-    },
-    ],
+    outArgs: [],
     inStream: null,
     outStream: null,
     tags: [new (Registry.lookupOrCreateConstructor(Types.STRING))("foo"), new (Registry.lookupOrCreateConstructor(Types.STRING))("barz"), new (Registry.lookupOrCreateConstructor(Types.STRING))("hello"), new (Registry.lookupOrCreateConstructor(Types.INT32))(129), new (Registry.lookupOrCreateConstructor(Types.UINT64))(new BigInt(1, new Uint8Array([0x24]))), ]
@@ -758,12 +641,7 @@ Calculator.prototype._serviceDescription = {
       type: Types.INT32
     },
     ],
-    outArgs: [{
-      name: '',
-      doc: "",
-      type: _type1
-    },
-    ],
+    outArgs: [],
     inStream: null,
     outStream: {
       name: '',
@@ -782,11 +660,6 @@ Calculator.prototype._serviceDescription = {
       name: 'total',
       doc: "",
       type: Types.INT32
-    },
-    {
-      name: 'err',
-      doc: "",
-      type: _type1
     },
     ],
     inStream: {
@@ -817,11 +690,6 @@ Calculator.prototype._serviceDescription = {
       doc: "",
       type: Types.ANY
     },
-    {
-      name: '',
-      doc: "",
-      type: _type1
-    },
     ],
     inStream: null,
     outStream: null,
@@ -842,11 +710,6 @@ Calculator.prototype._serviceDescription = {
       name: '',
       doc: "",
       type: Types.FLOAT64
-    },
-    {
-      name: '',
-      doc: "",
-      type: _type1
     },
     ],
     inStream: null,
@@ -869,11 +732,6 @@ Calculator.prototype._serviceDescription = {
       doc: "",
       type: Types.FLOAT64
     },
-    {
-      name: '',
-      doc: "",
-      type: _type1
-    },
     ],
     inStream: null,
     outStream: null,
@@ -894,11 +752,6 @@ Calculator.prototype._serviceDescription = {
       name: '',
       doc: "",
       type: Types.FLOAT64
-    },
-    {
-      name: '',
-      doc: "",
-      type: _type1
     },
     ],
     inStream: null,

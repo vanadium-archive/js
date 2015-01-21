@@ -10,7 +10,7 @@ var Invoker = require('../../src/invocation/invoker.js');
 var Context = require('../../src/runtime/context').Context;
 var vom = require('vom');
 var base =
-    require('../../src/v.io/core/veyron2/vdl/testdata/base/base');
+    require('../vdl-out/v.io/core/veyron2/vdl/testdata/base/base');
 
 function BasePartialImpl() {
 }
@@ -71,11 +71,6 @@ test('Invoker and signature for vdl-generated base.js',
                             'name': 's',
                             'doc': '',
                             'type': vom.Types.STRING
-                        },
-                        {
-                            'name': 'err',
-                            'doc': '',
-                            'type': vom.Types.ERROR
                         }
                     ],
                     'inStream': null,
@@ -103,13 +98,7 @@ test('Invoker and signature for vdl-generated base.js',
                             'type': vom.Types.INT32
                         }
                     ],
-                    'outArgs': [
-                        {
-                            'name': '',
-                            'doc': '',
-                            'type': vom.Types.ERROR
-                        }
-                    ],
+                    'outArgs': [],
                     'inStream': {
                         'name': '',
                         'doc': '',
@@ -142,11 +131,6 @@ test('Invoker and signature for vdl-generated base.js',
                             'name': 'c',
                             'doc': '',
                             'type': compCompType
-                        },
-                        {
-                            'name': 'err',
-                            'doc': '',
-                            'type': vom.Types.ERROR
                         }
                     ],
                     'tags': []

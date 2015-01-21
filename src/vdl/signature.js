@@ -16,9 +16,6 @@ var vlog = require('../lib/vlog');
 var defaultOutArgs = [
   {
     type: vom.Types.ANY
-  },
-  {
-    type: vom.Types.ERROR
   }
 ];
 

@@ -1,7 +1,6 @@
 var test = require('prova');
 var serve = require('./serve');
 var leafDispatcher = require('../../src/ipc/leaf-dispatcher');
-//var Promise = require('../../src/lib/promise');
 var Deferred = require('../../src/lib/deferred');
 var vom = require('vom');
 var veyron = require('../../');

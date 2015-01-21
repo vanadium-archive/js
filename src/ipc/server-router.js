@@ -405,7 +405,7 @@ Router.prototype.decrementOutstandingRequestForId = function(id, cb) {
 Router.prototype.sendResult = function(messageId, name, results, err,
   numOutArgs) {
   if (!results) {
-    results = new Array(numOutArgs - 1);
+    results = new Array(numOutArgs);
   }
 
   var errorStruct = null;

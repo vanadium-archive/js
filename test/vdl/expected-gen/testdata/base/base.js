@@ -289,12 +289,7 @@ ServiceA.prototype._serviceDescription = {
     name: 'MethodA1',
     doc: "",
     inArgs: [],
-    outArgs: [{
-      name: '',
-      doc: "",
-      type: _type1
-    },
-    ],
+    outArgs: [],
     inStream: null,
     outStream: null,
     tags: []
@@ -320,11 +315,6 @@ ServiceA.prototype._serviceDescription = {
       doc: "",
       type: Types.STRING
     },
-    {
-      name: 'err',
-      doc: "",
-      type: _type1
-    },
     ],
     inStream: null,
     outStream: null,
@@ -346,11 +336,6 @@ ServiceA.prototype._serviceDescription = {
       doc: "",
       type: Types.STRING
     },
-    {
-      name: 'err',
-      doc: "",
-      type: _type1
-    },
     ],
     inStream: null,
     outStream: {
@@ -371,12 +356,7 @@ ServiceA.prototype._serviceDescription = {
       type: Types.INT32
     },
     ],
-    outArgs: [{
-      name: '',
-      doc: "",
-      type: _type1
-    },
-    ],
+    outArgs: [],
     inStream: {
       name: '',
       doc: '',
@@ -448,11 +428,6 @@ ServiceB.prototype._serviceDescription = {
       doc: "",
       type: _typeCompComp
     },
-    {
-      name: 'err',
-      doc: "",
-      type: _type1
-    },
     ],
     inStream: null,
     outStream: null,
@@ -464,12 +439,7 @@ ServiceB.prototype._serviceDescription = {
     name: 'MethodA1',
     doc: "",
     inArgs: [],
-    outArgs: [{
-      name: '',
-      doc: "",
-      type: _type1
-    },
-    ],
+    outArgs: [],
     inStream: null,
     outStream: null,
     tags: []
@@ -495,11 +465,6 @@ ServiceB.prototype._serviceDescription = {
       doc: "",
       type: Types.STRING
     },
-    {
-      name: 'err',
-      doc: "",
-      type: _type1
-    },
     ],
     inStream: null,
     outStream: null,
@@ -521,11 +486,6 @@ ServiceB.prototype._serviceDescription = {
       doc: "",
       type: Types.STRING
     },
-    {
-      name: 'err',
-      doc: "",
-      type: _type1
-    },
     ],
     inStream: null,
     outStream: {
@@ -546,12 +506,7 @@ ServiceB.prototype._serviceDescription = {
       type: Types.INT32
     },
     ],
-    outArgs: [{
-      name: '',
-      doc: "",
-      type: _type1
-    },
-    ],
+    outArgs: [],
     inStream: {
       name: '',
       doc: '',

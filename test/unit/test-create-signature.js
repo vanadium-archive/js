@@ -24,8 +24,6 @@ test('create signatures with no description', function(t) {
       inArgs: [],
       outArgs: [{
         'type': vom.Types.ANY
-      }, {
-        'type': vom.Types.ERROR
       }]
     }, {
       name: 'NamedFunction',
@@ -38,16 +36,12 @@ test('create signatures with no description', function(t) {
       }],
       outArgs: [{
         'type': vom.Types.ANY
-      }, {
-        'type': vom.Types.ERROR
       }]
     },{
       name: 'StreamingFunction',
       inArgs: [],
       outArgs: [{
         'type': vom.Types.ANY
-      }, {
-        'type': vom.Types.ERROR
       }],
       inStream: {
         type: vom.Types.ANY,
@@ -159,11 +153,7 @@ test('create signatures with one description but extra methods', function(t) {
       name: 'StreamingFunction',
       doc: 'StreamingFunctionDoc',
       inArgs: [],
-      outArgs: [{
-        name: 'err',
-        doc: 'errDoc',
-        type: vom.Types.ERROR
-      }],
+      outArgs: [],
       inStream: {
         type: vom.Types.UINT32
       },
@@ -184,8 +174,6 @@ test('create signatures with one description but extra methods', function(t) {
       inArgs: [],
       outArgs: [{
         'type': vom.Types.ANY
-      }, {
-        'type': vom.Types.ERROR
       }]
     }]
   };
@@ -233,10 +221,6 @@ test('create signatures with full description across multiple descs',
         name: 'a',
         doc: 'aDoc',
         type: vom.Types.STRING
-      }, {
-        name: 'err',
-        doc: 'errDoc',
-        type: vom.Types.ERROR
       }]
     }]
   }, {
@@ -247,11 +231,7 @@ test('create signatures with full description across multiple descs',
       name: 'StreamingFunction',
       doc: 'StreamingFunctionDoc',
       inArgs: [],
-      outArgs: [{
-        name: 'err',
-        doc: 'errDoc',
-        type: vom.Types.ERROR
-      }],
+      outArgs: [],
       inStream: {
         type: vom.Types.UINT32
       },
@@ -295,10 +275,6 @@ test('create signatures with multiple descs and missing methods',
         name: 'a',
         doc: 'aDoc',
         type: vom.Types.STRING
-      }, {
-        name: 'err',
-        doc: 'errDoc',
-        type: vom.Types.ERROR
       }]
     }]
   }, {
@@ -309,11 +285,7 @@ test('create signatures with multiple descs and missing methods',
       name: 'StreamingFunction',
       doc: 'StreamingFunctionDoc',
       inArgs: [],
-      outArgs: [{
-        name: 'err',
-        doc: 'errDoc',
-        type: vom.Types.ERROR
-      }],
+      outArgs: [],
       inStream: {
         type: vom.Types.UINT32
       },
@@ -330,8 +302,6 @@ test('create signatures with multiple descs and missing methods',
       inArgs: [],
       outArgs: [{
         'type': vom.Types.ANY
-      }, {
-        'type': vom.Types.ERROR
       }]
     }]
   }]);
@@ -378,10 +348,6 @@ test('create signatures with full description across multiple descs with ' +
         name: 'a',
         doc: 'aDoc',
         type: vom.Types.STRING
-      }, {
-        name: 'err',
-        doc: 'errDoc',
-        type: vom.Types.ERROR
       }]
     }]
   }, {
@@ -408,20 +374,12 @@ test('create signatures with full description across multiple descs with ' +
         name: 'a',
         doc: 'aDoc',
         type: vom.Types.STRING
-      }, {
-        name: 'err',
-        doc: 'errDoc',
-        type: vom.Types.ERROR
       }]
     }, {
       name: 'StreamingFunction',
       doc: 'StreamingFunctionDoc',
       inArgs: [],
-      outArgs: [{
-        name: 'err',
-        doc: 'errDoc',
-        type: vom.Types.ERROR
-      }],
+      outArgs: [],
       inStream: {
         type: vom.Types.UINT32
       },
@@ -475,10 +433,6 @@ test('create signatures with full description across multiple descs with ' +
         name: 'a',
         doc: 'aDoc',
         type: vom.Types.STRING
-      }, {
-        name: 'err',
-        doc: 'errDoc',
-        type: vom.Types.ERROR
       }]
     }]
   }, {
@@ -489,11 +443,7 @@ test('create signatures with full description across multiple descs with ' +
       name: 'StreamingFunction',
       doc: 'StreamingFunctionDoc',
       inArgs: [],
-      outArgs: [{
-        name: 'err',
-        doc: 'errDoc',
-        type: vom.Types.ERROR
-      }],
+      outArgs: [],
       inStream: {
         type: vom.Types.UINT32
       },
@@ -520,10 +470,6 @@ test('create signatures with full description across multiple descs with ' +
         name: 'a',
         doc: 'aDoc',
         type: vom.Types.STRING
-      }, {
-        name: 'err',
-        doc: 'errDoc',
-        type: vom.Types.ERROR
       }]
     }]
   }];

@@ -189,9 +189,8 @@ Invoker.prototype.invoke = function(name, args, injections, cb) {
   // they are thrown out.
   function injectedCb(err /*, args */) {
     var res = Array.prototype.slice.call(arguments, 1,
-      methodSig.outArgs.length);
-    var numOutArgsIgnoringError = methodSig.outArgs.length - 1;
-    var paddingNeeded = numOutArgsIgnoringError - res.length;
+      1 + methodSig.outArgs.length);
+    var paddingNeeded = methodSig.outArgs.length - res.length;
     var paddedRes = res.concat(new Array(paddingNeeded));
     cb(err, paddedRes);
   }
@@ -239,11 +238,9 @@ Invoker.prototype.invoke = function(name, args, injections, cb) {
     var resAsArray;
     switch (methodSig.outArgs.length) {
       case 0:
-        throw new Error('0 out args unexpected (includes error)');
-      case 1:
         resAsArray = [];
         break;
-      case 2:
+      case 1:
         resAsArray = [res];
         break;
       default:
@@ -254,10 +251,10 @@ Invoker.prototype.invoke = function(name, args, injections, cb) {
         resAsArray = res;
         break;
     }
-    if (resAsArray.length !== methodSig.outArgs.length - 1) {
+    if (resAsArray.length !== methodSig.outArgs.length) {
       // -1 on outArgs.length ignores error
       throw new verror.InternalError('Expected ' +
-        (methodSig.outArgs.length - 1) + ' results, but got ' +
+        (methodSig.outArgs.length) + ' results, but got ' +
         resAsArray.length);
     }
     cb(null, resAsArray);

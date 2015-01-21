@@ -26,9 +26,6 @@ var _fiveOutArgSig = [
           },
           {
             type: vom.Types.ANY
-          },
-          {
-            type: vom.Types.ERROR
           }
         ]
       }

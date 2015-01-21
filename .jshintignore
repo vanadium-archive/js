@@ -5,3 +5,5 @@ extension
 src/v.io
 src/time
 nacl/out
+test/vdl/expected-gen
+test/vdl-out

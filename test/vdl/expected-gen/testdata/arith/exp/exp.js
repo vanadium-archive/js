@@ -18,23 +18,6 @@ module.exports = {};
 
 
 // Types:
-var _type1 = new Type();
-var _type2 = new Type();
-var _type3 = new Type();
-var _typeerror = new Type();
-_type1.kind = Kind.NILABLE;
-_type1.name = "";
-_type1.elem = _typeerror;
-_type2.kind = Kind.STRUCT;
-_type2.name = "";
-_type2.fields = [{name: "ID", type: Types.STRING}, {name: "Action", type: Types.UINT32}];
-_type3.kind = Kind.LIST;
-_type3.name = "";
-_type3.elem = Types.ANY;
-_typeerror.kind = Kind.STRUCT;
-_typeerror.name = "error";
-_typeerror.fields = [{name: "IDAction", type: _type2}, {name: "Msg", type: Types.STRING}, {name: "ParamList", type: _type3}];
-module.exports.error = Registry.lookupOrCreateConstructor(_typeerror, "error");
 
 
 
@@ -83,11 +66,6 @@ Exp.prototype._serviceDescription = {
       name: '',
       doc: "",
       type: Types.FLOAT64
-    },
-    {
-      name: '',
-      doc: "",
-      type: _type1
     },
     ],
     inStream: null,

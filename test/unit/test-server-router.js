@@ -44,11 +44,6 @@ test('Server Router Signature Lookup', function(t) {
             doc: '',
             type: vom.Types.ANY
           },
-          {
-            name: '',
-            doc: '',
-            type: vom.Types.ERROR
-          }
         ],
         inStream: {
           name: '',
