@@ -11,13 +11,7 @@ import (
 	__ipc "v.io/core/veyron2/ipc"
 	__vdl "v.io/core/veyron2/vdl"
 	__vdlutil "v.io/core/veyron2/vdl/vdlutil"
-	__wiretype "v.io/core/veyron2/wiretype"
 )
-
-// TODO(toddw): Remove this line once the new signature support is done.
-// It corrects a bug where __wiretype is unused in VDL pacakges where only
-// bootstrap types are used on interfaces.
-const _ = __wiretype.TypeIDInvalid
 
 // KeyValuePair is a representation of a cached key and value pair.
 type KeyValuePair struct {
@@ -306,17 +300,6 @@ func (c implCacheClientStub) MultiGet(ctx *__context.T, opts ...__ipc.CallOpt) (
 	return
 }
 
-func (c implCacheClientStub) Signature(ctx *__context.T, opts ...__ipc.CallOpt) (o0 __ipc.ServiceSignature, err error) {
-	var call __ipc.Call
-	if call, err = c.c(ctx).StartCall(ctx, c.name, "Signature", nil, opts...); err != nil {
-		return
-	}
-	if ierr := call.Finish(&o0, &err); ierr != nil {
-		err = ierr
-	}
-	return
-}
-
 // CacheMultiGetClientStream is the client stream for Cache.MultiGet.
 type CacheMultiGetClientStream interface {
 	// RecvStream returns the receiver side of the Cache.MultiGet client stream.
@@ -521,8 +504,6 @@ type CacheServerStub interface {
 	CacheServerStubMethods
 	// Describe the Cache interfaces.
 	Describe__() []__ipc.InterfaceDesc
-	// Signature will be replaced with Describe__.
-	Signature(ctx __ipc.ServerContext) (__ipc.ServiceSignature, error)
 }
 
 // CacheServer returns a server stub for Cache.
@@ -820,176 +801,6 @@ var descCache = __ipc.InterfaceDesc{
 			},
 		},
 	},
-}
-
-func (s implCacheServerStub) Signature(ctx __ipc.ServerContext) (__ipc.ServiceSignature, error) {
-	// TODO(toddw): Replace with new Describe__ implementation.
-	result := __ipc.ServiceSignature{Methods: make(map[string]__ipc.MethodSignature)}
-	result.Methods["AsMap"] = __ipc.MethodSignature{
-		InArgs: []__ipc.MethodArgument{},
-		OutArgs: []__ipc.MethodArgument{
-			{Name: "", Type: 68},
-			{Name: "", Type: 66},
-		},
-	}
-	result.Methods["Get"] = __ipc.MethodSignature{
-		InArgs: []__ipc.MethodArgument{
-			{Name: "key", Type: 3},
-		},
-		OutArgs: []__ipc.MethodArgument{
-			{Name: "", Type: 65},
-			{Name: "", Type: 66},
-		},
-	}
-	result.Methods["GetAsBool"] = __ipc.MethodSignature{
-		InArgs: []__ipc.MethodArgument{
-			{Name: "key", Type: 3},
-		},
-		OutArgs: []__ipc.MethodArgument{
-			{Name: "", Type: 2},
-			{Name: "", Type: 66},
-		},
-	}
-	result.Methods["GetAsByte"] = __ipc.MethodSignature{
-		InArgs: []__ipc.MethodArgument{
-			{Name: "key", Type: 3},
-		},
-		OutArgs: []__ipc.MethodArgument{
-			{Name: "", Type: 67},
-			{Name: "", Type: 66},
-		},
-	}
-	result.Methods["GetAsError"] = __ipc.MethodSignature{
-		InArgs: []__ipc.MethodArgument{
-			{Name: "key", Type: 3},
-		},
-		OutArgs: []__ipc.MethodArgument{
-			{Name: "", Type: 66},
-			{Name: "", Type: 66},
-		},
-	}
-	result.Methods["GetAsFloat32"] = __ipc.MethodSignature{
-		InArgs: []__ipc.MethodArgument{
-			{Name: "key", Type: 3},
-		},
-		OutArgs: []__ipc.MethodArgument{
-			{Name: "", Type: 25},
-			{Name: "", Type: 66},
-		},
-	}
-	result.Methods["GetAsFloat64"] = __ipc.MethodSignature{
-		InArgs: []__ipc.MethodArgument{
-			{Name: "key", Type: 3},
-		},
-		OutArgs: []__ipc.MethodArgument{
-			{Name: "", Type: 26},
-			{Name: "", Type: 66},
-		},
-	}
-	result.Methods["GetAsInt32"] = __ipc.MethodSignature{
-		InArgs: []__ipc.MethodArgument{
-			{Name: "key", Type: 3},
-		},
-		OutArgs: []__ipc.MethodArgument{
-			{Name: "", Type: 36},
-			{Name: "", Type: 66},
-		},
-	}
-	result.Methods["GetAsInt64"] = __ipc.MethodSignature{
-		InArgs: []__ipc.MethodArgument{
-			{Name: "key", Type: 3},
-		},
-		OutArgs: []__ipc.MethodArgument{
-			{Name: "", Type: 37},
-			{Name: "", Type: 66},
-		},
-	}
-	result.Methods["GetAsString"] = __ipc.MethodSignature{
-		InArgs: []__ipc.MethodArgument{
-			{Name: "key", Type: 3},
-		},
-		OutArgs: []__ipc.MethodArgument{
-			{Name: "", Type: 3},
-			{Name: "", Type: 66},
-		},
-	}
-	result.Methods["GetAsUint32"] = __ipc.MethodSignature{
-		InArgs: []__ipc.MethodArgument{
-			{Name: "key", Type: 3},
-		},
-		OutArgs: []__ipc.MethodArgument{
-			{Name: "", Type: 52},
-			{Name: "", Type: 66},
-		},
-	}
-	result.Methods["GetAsUint64"] = __ipc.MethodSignature{
-		InArgs: []__ipc.MethodArgument{
-			{Name: "key", Type: 3},
-		},
-		OutArgs: []__ipc.MethodArgument{
-			{Name: "", Type: 53},
-			{Name: "", Type: 66},
-		},
-	}
-	result.Methods["KeyPage"] = __ipc.MethodSignature{
-		InArgs: []__ipc.MethodArgument{
-			{Name: "index", Type: 37},
-		},
-		OutArgs: []__ipc.MethodArgument{
-			{Name: "", Type: 71},
-			{Name: "", Type: 66},
-		},
-	}
-	result.Methods["KeyValuePairs"] = __ipc.MethodSignature{
-		InArgs: []__ipc.MethodArgument{},
-		OutArgs: []__ipc.MethodArgument{
-			{Name: "", Type: 70},
-			{Name: "", Type: 66},
-		},
-	}
-	result.Methods["MostRecentSet"] = __ipc.MethodSignature{
-		InArgs: []__ipc.MethodArgument{},
-		OutArgs: []__ipc.MethodArgument{
-			{Name: "value", Type: 69},
-			{Name: "time", Type: 37},
-			{Name: "err", Type: 66},
-		},
-	}
-	result.Methods["MultiGet"] = __ipc.MethodSignature{
-		InArgs: []__ipc.MethodArgument{},
-		OutArgs: []__ipc.MethodArgument{
-			{Name: "", Type: 66},
-		},
-		InStream:  3,
-		OutStream: 65,
-	}
-	result.Methods["Set"] = __ipc.MethodSignature{
-		InArgs: []__ipc.MethodArgument{
-			{Name: "key", Type: 3},
-			{Name: "value", Type: 65},
-		},
-		OutArgs: []__ipc.MethodArgument{
-			{Name: "", Type: 66},
-		},
-	}
-	result.Methods["Size"] = __ipc.MethodSignature{
-		InArgs: []__ipc.MethodArgument{},
-		OutArgs: []__ipc.MethodArgument{
-			{Name: "", Type: 37},
-			{Name: "", Type: 66},
-		},
-	}
-
-	result.TypeDefs = []__vdlutil.Any{
-		__wiretype.NamedPrimitiveType{Type: 0x1, Name: "anydata", Tags: []string(nil)}, __wiretype.NamedPrimitiveType{Type: 0x1, Name: "error", Tags: []string(nil)}, __wiretype.NamedPrimitiveType{Type: 0x32, Name: "byte", Tags: []string(nil)}, __wiretype.MapType{Key: 0x3, Elem: 0x41, Name: "", Tags: []string(nil)}, __wiretype.StructType{
-			[]__wiretype.FieldType{
-				__wiretype.FieldType{Type: 0x3, Name: "Key"},
-				__wiretype.FieldType{Type: 0x41, Name: "Value"},
-			},
-			"test_service.KeyValuePair", []string(nil)},
-		__wiretype.SliceType{Elem: 0x45, Name: "", Tags: []string(nil)}, __wiretype.ArrayType{Elem: 0x3, Len: 0xa, Name: "", Tags: []string(nil)}}
-
-	return result, nil
 }
 
 // CacheMultiGetServerStream is the server stream for Cache.MultiGet.
