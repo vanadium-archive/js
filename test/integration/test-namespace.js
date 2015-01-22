@@ -386,10 +386,7 @@ test('Test getting roots - roots()', function(assert) {
     return namespace.roots();
   }).then(function validate(roots) {
     assert.equals(roots.length, 1);
-    // The mounttable name we get from NaCl wspr has network set to "ws" instead
-    // of "tcp", so we must change it back to tcp.
-    var wsRoot = roots[0].replace('@ws@', '@tcp@');
-    assert.ok(wsRoot.indexOf(namespaceRoot === 0));
+    assert.ok(roots.indexOf(namespaceRoot === 0));
     end();
   }).catch(end);
 
