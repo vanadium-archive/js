@@ -10,13 +10,12 @@ import (
 	__context "v.io/core/veyron2/context"
 	__ipc "v.io/core/veyron2/ipc"
 	__vdl "v.io/core/veyron2/vdl"
-	__vdlutil "v.io/core/veyron2/vdl/vdlutil"
 )
 
 // KeyValuePair is a representation of a cached key and value pair.
 type KeyValuePair struct {
 	Key   string
-	Value __vdlutil.Any
+	Value __vdl.AnyRep
 }
 
 func (KeyValuePair) __VDLReflect(struct {
@@ -34,10 +33,10 @@ func init() {
 // A Cache service mimics the memcache interface.
 type CacheClientMethods interface {
 	// Set sets a value for a key.
-	Set(ctx *__context.T, key string, value __vdlutil.Any, opts ...__ipc.CallOpt) error
+	Set(ctx *__context.T, key string, value __vdl.AnyRep, opts ...__ipc.CallOpt) error
 	// Get returns the value for a key.  If the value is not found, returns
 	// a not found error.
-	Get(ctx *__context.T, key string, opts ...__ipc.CallOpt) (__vdlutil.Any, error)
+	Get(ctx *__context.T, key string, opts ...__ipc.CallOpt) (__vdl.AnyRep, error)
 	// Same as Get, but casts the return argument to an byte.
 	GetAsByte(ctx *__context.T, key string, opts ...__ipc.CallOpt) (byte, error)
 	// Same as Get, but casts the return argument to an int32.
@@ -59,7 +58,7 @@ type CacheClientMethods interface {
 	// Same as Get, but casts the return argument to an error.
 	GetAsError(ctx *__context.T, key string, opts ...__ipc.CallOpt) (error, error)
 	// AsMap returns the full contents of the cache as a map.
-	AsMap(*__context.T, ...__ipc.CallOpt) (map[string]__vdlutil.Any, error)
+	AsMap(*__context.T, ...__ipc.CallOpt) (map[string]__vdl.AnyRep, error)
 	// KeyValuePairs returns the full contents of the cache as a slice of pairs.
 	KeyValuePairs(*__context.T, ...__ipc.CallOpt) ([]KeyValuePair, error)
 	// MostRecentSet returns the key and value and the timestamp for the most
@@ -104,7 +103,7 @@ func (c implCacheClientStub) c(ctx *__context.T) __ipc.Client {
 	return __veyron2.GetClient(ctx)
 }
 
-func (c implCacheClientStub) Set(ctx *__context.T, i0 string, i1 __vdlutil.Any, opts ...__ipc.CallOpt) (err error) {
+func (c implCacheClientStub) Set(ctx *__context.T, i0 string, i1 __vdl.AnyRep, opts ...__ipc.CallOpt) (err error) {
 	var call __ipc.Call
 	if call, err = c.c(ctx).StartCall(ctx, c.name, "Set", []interface{}{i0, i1}, opts...); err != nil {
 		return
@@ -115,7 +114,7 @@ func (c implCacheClientStub) Set(ctx *__context.T, i0 string, i1 __vdlutil.Any, 
 	return
 }
 
-func (c implCacheClientStub) Get(ctx *__context.T, i0 string, opts ...__ipc.CallOpt) (o0 __vdlutil.Any, err error) {
+func (c implCacheClientStub) Get(ctx *__context.T, i0 string, opts ...__ipc.CallOpt) (o0 __vdl.AnyRep, err error) {
 	var call __ipc.Call
 	if call, err = c.c(ctx).StartCall(ctx, c.name, "Get", []interface{}{i0}, opts...); err != nil {
 		return
@@ -236,7 +235,7 @@ func (c implCacheClientStub) GetAsError(ctx *__context.T, i0 string, opts ...__i
 	return
 }
 
-func (c implCacheClientStub) AsMap(ctx *__context.T, opts ...__ipc.CallOpt) (o0 map[string]__vdlutil.Any, err error) {
+func (c implCacheClientStub) AsMap(ctx *__context.T, opts ...__ipc.CallOpt) (o0 map[string]__vdl.AnyRep, err error) {
 	var call __ipc.Call
 	if call, err = c.c(ctx).StartCall(ctx, c.name, "AsMap", nil, opts...); err != nil {
 		return
@@ -310,7 +309,7 @@ type CacheMultiGetClientStream interface {
 		Advance() bool
 		// Value returns the item that was staged by Advance.  May panic if Advance
 		// returned false or was not called.  Never blocks.
-		Value() __vdlutil.Any
+		Value() __vdl.AnyRep
 		// Err returns any error encountered by Advance.  Never blocks.
 		Err() error
 	}
@@ -351,13 +350,13 @@ type CacheMultiGetCall interface {
 
 type implCacheMultiGetCall struct {
 	__ipc.Call
-	valRecv __vdlutil.Any
+	valRecv __vdl.AnyRep
 	errRecv error
 }
 
 func (c *implCacheMultiGetCall) RecvStream() interface {
 	Advance() bool
-	Value() __vdlutil.Any
+	Value() __vdl.AnyRep
 	Err() error
 } {
 	return implCacheMultiGetCallRecv{c}
@@ -372,7 +371,7 @@ func (c implCacheMultiGetCallRecv) Advance() bool {
 	c.c.errRecv = c.c.Recv(&c.c.valRecv)
 	return c.c.errRecv == nil
 }
-func (c implCacheMultiGetCallRecv) Value() __vdlutil.Any {
+func (c implCacheMultiGetCallRecv) Value() __vdl.AnyRep {
 	return c.c.valRecv
 }
 func (c implCacheMultiGetCallRecv) Err() error {
@@ -411,10 +410,10 @@ func (c *implCacheMultiGetCall) Finish() (err error) {
 // A Cache service mimics the memcache interface.
 type CacheServerMethods interface {
 	// Set sets a value for a key.
-	Set(ctx __ipc.ServerContext, key string, value __vdlutil.Any) error
+	Set(ctx __ipc.ServerContext, key string, value __vdl.AnyRep) error
 	// Get returns the value for a key.  If the value is not found, returns
 	// a not found error.
-	Get(ctx __ipc.ServerContext, key string) (__vdlutil.Any, error)
+	Get(ctx __ipc.ServerContext, key string) (__vdl.AnyRep, error)
 	// Same as Get, but casts the return argument to an byte.
 	GetAsByte(ctx __ipc.ServerContext, key string) (byte, error)
 	// Same as Get, but casts the return argument to an int32.
@@ -436,7 +435,7 @@ type CacheServerMethods interface {
 	// Same as Get, but casts the return argument to an error.
 	GetAsError(ctx __ipc.ServerContext, key string) (error, error)
 	// AsMap returns the full contents of the cache as a map.
-	AsMap(__ipc.ServerContext) (map[string]__vdlutil.Any, error)
+	AsMap(__ipc.ServerContext) (map[string]__vdl.AnyRep, error)
 	// KeyValuePairs returns the full contents of the cache as a slice of pairs.
 	KeyValuePairs(__ipc.ServerContext) ([]KeyValuePair, error)
 	// MostRecentSet returns the key and value and the timestamp for the most
@@ -458,10 +457,10 @@ type CacheServerMethods interface {
 // is the streaming methods.
 type CacheServerStubMethods interface {
 	// Set sets a value for a key.
-	Set(ctx __ipc.ServerContext, key string, value __vdlutil.Any) error
+	Set(ctx __ipc.ServerContext, key string, value __vdl.AnyRep) error
 	// Get returns the value for a key.  If the value is not found, returns
 	// a not found error.
-	Get(ctx __ipc.ServerContext, key string) (__vdlutil.Any, error)
+	Get(ctx __ipc.ServerContext, key string) (__vdl.AnyRep, error)
 	// Same as Get, but casts the return argument to an byte.
 	GetAsByte(ctx __ipc.ServerContext, key string) (byte, error)
 	// Same as Get, but casts the return argument to an int32.
@@ -483,7 +482,7 @@ type CacheServerStubMethods interface {
 	// Same as Get, but casts the return argument to an error.
 	GetAsError(ctx __ipc.ServerContext, key string) (error, error)
 	// AsMap returns the full contents of the cache as a map.
-	AsMap(__ipc.ServerContext) (map[string]__vdlutil.Any, error)
+	AsMap(__ipc.ServerContext) (map[string]__vdl.AnyRep, error)
 	// KeyValuePairs returns the full contents of the cache as a slice of pairs.
 	KeyValuePairs(__ipc.ServerContext) ([]KeyValuePair, error)
 	// MostRecentSet returns the key and value and the timestamp for the most
@@ -528,11 +527,11 @@ type implCacheServerStub struct {
 	gs   *__ipc.GlobState
 }
 
-func (s implCacheServerStub) Set(ctx __ipc.ServerContext, i0 string, i1 __vdlutil.Any) error {
+func (s implCacheServerStub) Set(ctx __ipc.ServerContext, i0 string, i1 __vdl.AnyRep) error {
 	return s.impl.Set(ctx, i0, i1)
 }
 
-func (s implCacheServerStub) Get(ctx __ipc.ServerContext, i0 string) (__vdlutil.Any, error) {
+func (s implCacheServerStub) Get(ctx __ipc.ServerContext, i0 string) (__vdl.AnyRep, error) {
 	return s.impl.Get(ctx, i0)
 }
 
@@ -576,7 +575,7 @@ func (s implCacheServerStub) GetAsError(ctx __ipc.ServerContext, i0 string) (err
 	return s.impl.GetAsError(ctx, i0)
 }
 
-func (s implCacheServerStub) AsMap(ctx __ipc.ServerContext) (map[string]__vdlutil.Any, error) {
+func (s implCacheServerStub) AsMap(ctx __ipc.ServerContext) (map[string]__vdl.AnyRep, error) {
 	return s.impl.AsMap(ctx)
 }
 
@@ -622,7 +621,7 @@ var descCache = __ipc.InterfaceDesc{
 			Doc:  "// Set sets a value for a key.",
 			InArgs: []__ipc.ArgDesc{
 				{"key", ``},   // string
-				{"value", ``}, // __vdlutil.Any
+				{"value", ``}, // __vdl.AnyRep
 			},
 			OutArgs: []__ipc.ArgDesc{
 				{"", ``}, // error
@@ -635,7 +634,7 @@ var descCache = __ipc.InterfaceDesc{
 				{"key", ``}, // string
 			},
 			OutArgs: []__ipc.ArgDesc{
-				{"", ``}, // __vdlutil.Any
+				{"", ``}, // __vdl.AnyRep
 				{"", ``}, // error
 			},
 		},
@@ -753,7 +752,7 @@ var descCache = __ipc.InterfaceDesc{
 			Name: "AsMap",
 			Doc:  "// AsMap returns the full contents of the cache as a map.",
 			OutArgs: []__ipc.ArgDesc{
-				{"", ``}, // map[string]__vdlutil.Any
+				{"", ``}, // map[string]__vdl.AnyRep
 				{"", ``}, // error
 			},
 		},
@@ -822,7 +821,7 @@ type CacheMultiGetServerStream interface {
 		// Send places the item onto the output stream.  Returns errors encountered
 		// while sending.  Blocks if there is no buffer space; will unblock when
 		// buffer space is available.
-		Send(item __vdlutil.Any) error
+		Send(item __vdl.AnyRep) error
 	}
 }
 
@@ -874,7 +873,7 @@ func (s implCacheMultiGetContextRecv) Err() error {
 
 // SendStream returns the send side of the Cache.MultiGet server stream.
 func (s *CacheMultiGetContextStub) SendStream() interface {
-	Send(item __vdlutil.Any) error
+	Send(item __vdl.AnyRep) error
 } {
 	return implCacheMultiGetContextSend{s}
 }
@@ -883,6 +882,6 @@ type implCacheMultiGetContextSend struct {
 	s *CacheMultiGetContextStub
 }
 
-func (s implCacheMultiGetContextSend) Send(item __vdlutil.Any) error {
+func (s implCacheMultiGetContextSend) Send(item __vdl.AnyRep) error {
 	return s.s.Send(item)
 }
