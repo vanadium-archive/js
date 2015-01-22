@@ -26,7 +26,6 @@ module.exports = {
   logLevels: require('./lib/vlog').levels,
   namespaceUtil: require('./namespace/util'),
   Promise: require('./lib/promise'),
-  createLeafDispatcher: require('./ipc/leaf-dispatcher'),
   caveats: require('./security/caveat'),
   aclAuthorizer: require('./security/acl-authorizer'),
   context: require('./runtime/context'),

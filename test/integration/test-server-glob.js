@@ -1,7 +1,6 @@
 var test = require('prova');
 var serve = require('./serve');
 var context = require('../../src/runtime/context');
-var Invoker = require('../../src/invocation/invoker');
 var Promise = require('../../src/lib/promise');
 var naming = require('../../src/v.io/core/veyron2/naming/naming');
 var namespaceUtil = require('../../src/namespace/util');
@@ -76,7 +75,7 @@ function createDispatcher(root, disallowed) {
     }
     if (suffix === '') {
       return {
-        invoker: new Invoker(root),
+        service: root,
         authorizer: auth
       };
     }
@@ -89,7 +88,7 @@ function createDispatcher(root, disallowed) {
       }
     }
     return Promise.resolve({
-      invoker: new Invoker(current),
+      service: current,
       authorizer: auth
     });
   };
@@ -216,7 +215,7 @@ test('... glob full globber', function(assert) {
   ];
   function dispatcher(suffix) {
     return {
-      invoker: new Invoker(new FullGlobber()),
+      service: new FullGlobber(),
     };
   }
   runGlobTest('testGlob/...', expectedResults, dispatcher, assert);
@@ -228,7 +227,7 @@ test('bar/... glob full globber', function(assert) {
   ];
   function dispatcher(suffix) {
     return {
-      invoker: new Invoker(new FullGlobber()),
+      service: new FullGlobber(),
     };
   }
   runGlobTest('testGlob/bar/...', expectedResults, dispatcher, assert);
@@ -259,7 +258,7 @@ test('foo/bar/baz glob children globber + full globber', function(assert) {
       service = new ChildGlobber([]);
     }
     return {
-      invoker: new Invoker(service),
+      service: service,
     };
   }
   runGlobTest('testGlob/foo/bar/baz', expectedResults, dispatcher, assert);

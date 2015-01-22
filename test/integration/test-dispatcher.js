@@ -1,6 +1,5 @@
 var test = require('prova');
 var serve = require('./serve');
-var Invoker = require('../../src/invocation/invoker');
 var Promise = require('../../src/lib/promise');
 var context = require('../../src/runtime/context');
 
@@ -224,12 +223,12 @@ function promiseDispatcher(suffix) {
   // dispatcher/echo/:string
   if (suffix.indexOf('echo/') === 0) {
     return {
-      invoker: new Invoker(new Echoer(suffix.substr(5)))
+      service: new Echoer(suffix.substr(5))
     };
   // dispatcher/count/:string
   } else if (suffix.indexOf('count/') === 0) {
     return {
-      invoker: new Invoker(new Counter(suffix.substr(6)))
+      service: new Counter(suffix.substr(6))
     };
   // dispatcher/promise/fail
   } else if (suffix.indexOf('promise/fail') === 0) {
@@ -237,7 +236,7 @@ function promiseDispatcher(suffix) {
   // dispatcher/promise/:string
   } else if (suffix.indexOf('promise') === 0) {
     return Promise.resolve({
-      invoker: new Invoker(new Echoer(suffix))
+      service: new Echoer(suffix)
     });
   }
 
@@ -248,13 +247,13 @@ function callbackDispatcher(suffix, cb) {
   // dispatcher/echo/:string
   if (suffix.indexOf('echo/') === 0) {
     cb(null, {
-      invoker: new Invoker(new Echoer(suffix.substr(5)))
+      service: new Echoer(suffix.substr(5))
     });
     return;
   // dispatcher/count/:string
   } else if (suffix.indexOf('count/') === 0) {
     cb(null, {
-      invoker: new Invoker(new Counter(suffix.substr(6)))
+      service: new Counter(suffix.substr(6))
     });
     return;
   // dispatcher/callback/fail
@@ -263,7 +262,7 @@ function callbackDispatcher(suffix, cb) {
     return;
   // dispatcher/callback/:string
   } else if (suffix.indexOf('callback') === 0) {
-    cb(null, { invoker: new Invoker(new Echoer(suffix))});
+    cb(null, { service: new Echoer(suffix)});
     return;
   }
 

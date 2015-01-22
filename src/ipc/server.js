@@ -107,7 +107,7 @@ Server.prototype.serve = function(name, serviceObject, options, cb) {
 /**
  * @typedef DispatcherResponse
  * @type {Object}
- * @property {Invoker} service The Invoker that will handle
+ * @property {object} service The Invoker that will handle
  * method call.
  * @property {Authorize} authorizer An Authorizer that will handle the
  * authorization for the method call.  If null, then the default strict
@@ -130,7 +130,7 @@ Server.prototype.serve = function(name, serviceObject, options, cb) {
  * Callback passed into Dispatcher
  * @callback Dispatcher-callback
  * @param {Error} err An error if one occurred
- * @param {Invoker} object The object that will handle the method call
+ * @param {object} object The object that will handle the method call
  */
 
 /**
@@ -288,15 +288,15 @@ Server.prototype.handleAuthorization = function(handle, request) {
  * @private
  */
 Server.prototype._handleLookupResult = function(object) {
-  if (!object.hasOwnProperty('invoker') ||
-    !(object.invoker instanceof Invoker)) {
-    throw new verror.VeyronError('Invoke called on non-invoker object',
+  if (!object.hasOwnProperty('service')) {
+    throw new verror.VeyronError('No service object returned',
       {
         id: 'v.io/core/javascript.InvokeOnNonInvoker',
         action: verror.Actions.NoRetry
       });
   }
   object._handle = this._handle;
+  object.invoker = new Invoker(object.service);
   this.serviceObjectHandles[object._handle] = object;
   this._handle++;
   return null;

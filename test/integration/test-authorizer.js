@@ -1,6 +1,5 @@
 var test = require('prova');
 var serve = require('./serve');
-var Invoker = require('../../src/invocation/invoker');
 var Deferred = require('../../src/lib/deferred');
 var context = require('../../src/runtime/context');
 
@@ -28,7 +27,7 @@ function createDispatcher(authorizer, tags) {
   service._serviceDescription = desc;
   return function authDispatcher(suffix) {
     return {
-      invoker: new Invoker(service),
+      service: service,
       authorizer: auth,
     };
   };
