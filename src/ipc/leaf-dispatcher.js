@@ -3,8 +3,6 @@
  * all suffixes
  */
 
-var Invoker = require('./../invocation/invoker');
-
 /**
  * Returns a dispatcher function that will reuse the same service object
  * for all suffixes
@@ -14,11 +12,9 @@ var Invoker = require('./../invocation/invoker');
  * object.
  */
 function createLeafDispatcher(service, authorizer) {
-  var invoker = new Invoker(service);
-
   return function() {
     return {
-      invoker: invoker,
+      service: service,
       authorizer: authorizer,
     };
   };
