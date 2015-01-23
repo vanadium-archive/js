@@ -7,19 +7,12 @@ import (
 
 	"v.io/core/veyron/lib/signals"
 	_ "v.io/core/veyron/profiles"
-	"v.io/core/veyron2/rt"
-	"v.io/core/veyron2/vlog"
+	"v.io/core/veyron2"
 )
 
 func main() {
-	// Create the runtime
-	r, err := rt.New()
-	if err != nil {
-		vlog.Fatalf("Could not initialize runtime: %s", err)
-	}
-	defer r.Cleanup()
-
-	ctx := r.NewContext()
+	ctx, shutdown := veyron2.Init()
+	defer shutdown()
 
 	s, endpoint, err := StartServer(ctx)
 	if err != nil {
