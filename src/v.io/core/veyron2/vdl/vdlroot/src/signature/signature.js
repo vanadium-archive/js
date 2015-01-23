@@ -54,10 +54,10 @@ _typeInterface.fields = [{name: "Name", type: Types.STRING}, {name: "PkgPath", t
 _typeMethod.kind = Kind.STRUCT;
 _typeMethod.name = "signature.Method";
 _typeMethod.fields = [{name: "Name", type: Types.STRING}, {name: "Doc", type: Types.STRING}, {name: "InArgs", type: _type3}, {name: "OutArgs", type: _type3}, {name: "InStream", type: _type4}, {name: "OutStream", type: _type4}, {name: "Tags", type: _type5}];
-module.exports.Arg = Registry.lookupOrCreateConstructor(_typeArg, "Arg");
-module.exports.Embed = Registry.lookupOrCreateConstructor(_typeEmbed, "Embed");
-module.exports.Interface = Registry.lookupOrCreateConstructor(_typeInterface, "Interface");
-module.exports.Method = Registry.lookupOrCreateConstructor(_typeMethod, "Method");
+module.exports.Arg = (Registry.lookupOrCreateConstructor(_typeArg));
+module.exports.Embed = (Registry.lookupOrCreateConstructor(_typeEmbed));
+module.exports.Interface = (Registry.lookupOrCreateConstructor(_typeInterface));
+module.exports.Method = (Registry.lookupOrCreateConstructor(_typeMethod));
 
 
 

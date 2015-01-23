@@ -38,24 +38,24 @@ _typeAnnotation.name = "v.io/core/veyron2/vtrace.Annotation";
 _typeAnnotation.fields = [{name: "When", type: Types.INT64}, {name: "Message", type: Types.STRING}];
 _typeRequest.kind = Kind.STRUCT;
 _typeRequest.name = "v.io/core/veyron2/vtrace.Request";
-_typeRequest.fields = [{name: "SpanID", type: uniqueid.ID}, {name: "TraceID", type: uniqueid.ID}, {name: "Method", type: _typeTraceMethod}];
+_typeRequest.fields = [{name: "SpanID", type: new uniqueid.ID()._type}, {name: "TraceID", type: new uniqueid.ID()._type}, {name: "Method", type: _typeTraceMethod}];
 _typeResponse.kind = Kind.STRUCT;
 _typeResponse.name = "v.io/core/veyron2/vtrace.Response";
 _typeResponse.fields = [{name: "Method", type: _typeTraceMethod}, {name: "Trace", type: _typeTraceRecord}];
 _typeSpanRecord.kind = Kind.STRUCT;
 _typeSpanRecord.name = "v.io/core/veyron2/vtrace.SpanRecord";
-_typeSpanRecord.fields = [{name: "ID", type: uniqueid.ID}, {name: "Parent", type: uniqueid.ID}, {name: "Name", type: Types.STRING}, {name: "Start", type: Types.INT64}, {name: "End", type: Types.INT64}, {name: "Annotations", type: _type2}];
+_typeSpanRecord.fields = [{name: "ID", type: new uniqueid.ID()._type}, {name: "Parent", type: new uniqueid.ID()._type}, {name: "Name", type: Types.STRING}, {name: "Start", type: Types.INT64}, {name: "End", type: Types.INT64}, {name: "Annotations", type: _type2}];
 _typeTraceMethod.kind = Kind.INT32;
 _typeTraceMethod.name = "v.io/core/veyron2/vtrace.TraceMethod";
 _typeTraceRecord.kind = Kind.STRUCT;
 _typeTraceRecord.name = "v.io/core/veyron2/vtrace.TraceRecord";
-_typeTraceRecord.fields = [{name: "ID", type: uniqueid.ID}, {name: "Spans", type: _type1}];
-module.exports.Annotation = Registry.lookupOrCreateConstructor(_typeAnnotation, "Annotation");
-module.exports.Request = Registry.lookupOrCreateConstructor(_typeRequest, "Request");
-module.exports.Response = Registry.lookupOrCreateConstructor(_typeResponse, "Response");
-module.exports.SpanRecord = Registry.lookupOrCreateConstructor(_typeSpanRecord, "SpanRecord");
-module.exports.TraceMethod = Registry.lookupOrCreateConstructor(_typeTraceMethod, "TraceMethod");
-module.exports.TraceRecord = Registry.lookupOrCreateConstructor(_typeTraceRecord, "TraceRecord");
+_typeTraceRecord.fields = [{name: "ID", type: new uniqueid.ID()._type}, {name: "Spans", type: _type1}];
+module.exports.Annotation = (Registry.lookupOrCreateConstructor(_typeAnnotation));
+module.exports.Request = (Registry.lookupOrCreateConstructor(_typeRequest));
+module.exports.Response = (Registry.lookupOrCreateConstructor(_typeResponse));
+module.exports.SpanRecord = (Registry.lookupOrCreateConstructor(_typeSpanRecord));
+module.exports.TraceMethod = (Registry.lookupOrCreateConstructor(_typeTraceMethod));
+module.exports.TraceRecord = (Registry.lookupOrCreateConstructor(_typeTraceRecord));
 
 
 

@@ -14,7 +14,6 @@ var Registry = vom.Registry;
 
 var security = require('./../security/security');
 var vtrace = require('./../vtrace/vtrace');
-var wiretype = require('./../wiretype/wiretype');
 
 module.exports = {};
 
@@ -23,8 +22,6 @@ module.exports = {};
 // Types:
 var _type1 = new Type();
 var _type10 = new Type();
-var _type11 = new Type();
-var _type12 = new Type();
 var _type2 = new Type();
 var _type3 = new Type();
 var _type4 = new Type();
@@ -34,37 +31,27 @@ var _type7 = new Type();
 var _type8 = new Type();
 var _type9 = new Type();
 var _typeBlessingsRequest = new Type();
-var _typeMethodArgument = new Type();
-var _typeMethodSignature = new Type();
 var _typeRequest = new Type();
 var _typeResponse = new Type();
-var _typeServiceSignature = new Type();
 var _typeerror = new Type();
 _type1.kind = Kind.LIST;
 _type1.name = "";
 _type1.elem = _type2;
 _type10.kind = Kind.LIST;
 _type10.name = "";
-_type10.elem = vtrace.Annotation;
-_type11.kind = Kind.MAP;
-_type11.name = "";
-_type11.elem = _typeMethodSignature;
-_type11.key = Types.STRING;
-_type12.kind = Kind.LIST;
-_type12.name = "";
-_type12.elem = _typeMethodArgument;
+_type10.elem = new vtrace.Annotation()._type;
 _type2.kind = Kind.LIST;
 _type2.name = "";
-_type2.elem = security.Certificate;
+_type2.elem = new security.Certificate()._type;
 _type3.kind = Kind.LIST;
 _type3.name = "";
 _type3.elem = Types.BYTE;
 _type4.kind = Kind.LIST;
 _type4.name = "";
-_type4.elem = security.Caveat;
+_type4.elem = new security.Caveat()._type;
 _type5.kind = Kind.NILABLE;
 _type5.name = "";
-_type5.elem = security.WireBlessings;
+_type5.elem = new security.WireBlessings()._type;
 _type6.kind = Kind.LIST;
 _type6.name = "";
 _type6.elem = Types.ANY;
@@ -76,35 +63,23 @@ _type8.name = "";
 _type8.fields = [{name: "ID", type: Types.STRING}, {name: "Action", type: Types.UINT32}];
 _type9.kind = Kind.LIST;
 _type9.name = "";
-_type9.elem = vtrace.SpanRecord;
+_type9.elem = new vtrace.SpanRecord()._type;
 _typeBlessingsRequest.kind = Kind.STRUCT;
 _typeBlessingsRequest.name = "v.io/core/veyron2/ipc.BlessingsRequest";
 _typeBlessingsRequest.fields = [{name: "Key", type: Types.UINT64}, {name: "Blessings", type: _type5}];
-_typeMethodArgument.kind = Kind.STRUCT;
-_typeMethodArgument.name = "v.io/core/veyron2/ipc.MethodArgument";
-_typeMethodArgument.fields = [{name: "Name", type: Types.STRING}, {name: "Type", type: wiretype.TypeID}];
-_typeMethodSignature.kind = Kind.STRUCT;
-_typeMethodSignature.name = "v.io/core/veyron2/ipc.MethodSignature";
-_typeMethodSignature.fields = [{name: "InArgs", type: _type12}, {name: "OutArgs", type: _type12}, {name: "InStream", type: wiretype.TypeID}, {name: "OutStream", type: wiretype.TypeID}];
 _typeRequest.kind = Kind.STRUCT;
 _typeRequest.name = "v.io/core/veyron2/ipc.Request";
-_typeRequest.fields = [{name: "Suffix", type: Types.STRING}, {name: "Method", type: Types.STRING}, {name: "NumPosArgs", type: Types.UINT64}, {name: "EndStreamArgs", type: Types.BOOL}, {name: "Timeout", type: Types.INT64}, {name: "GrantedBlessings", type: security.WireBlessings}, {name: "Blessings", type: _typeBlessingsRequest}, {name: "Discharges", type: _type6}, {name: "TraceRequest", type: vtrace.Request}];
+_typeRequest.fields = [{name: "Suffix", type: Types.STRING}, {name: "Method", type: Types.STRING}, {name: "NumPosArgs", type: Types.UINT64}, {name: "EndStreamArgs", type: Types.BOOL}, {name: "Timeout", type: Types.INT64}, {name: "GrantedBlessings", type: new security.WireBlessings()._type}, {name: "Blessings", type: _typeBlessingsRequest}, {name: "Discharges", type: _type6}, {name: "TraceRequest", type: new vtrace.Request()._type}];
 _typeResponse.kind = Kind.STRUCT;
 _typeResponse.name = "v.io/core/veyron2/ipc.Response";
-_typeResponse.fields = [{name: "Error", type: _type7}, {name: "EndStreamResults", type: Types.BOOL}, {name: "NumPosResults", type: Types.UINT64}, {name: "TraceResponse", type: vtrace.Response}, {name: "AckBlessings", type: Types.BOOL}];
-_typeServiceSignature.kind = Kind.STRUCT;
-_typeServiceSignature.name = "v.io/core/veyron2/ipc.ServiceSignature";
-_typeServiceSignature.fields = [{name: "TypeDefs", type: _type6}, {name: "Methods", type: _type11}];
+_typeResponse.fields = [{name: "Error", type: _type7}, {name: "EndStreamResults", type: Types.BOOL}, {name: "NumPosResults", type: Types.UINT64}, {name: "TraceResponse", type: new vtrace.Response()._type}, {name: "AckBlessings", type: Types.BOOL}];
 _typeerror.kind = Kind.STRUCT;
 _typeerror.name = "error";
 _typeerror.fields = [{name: "IDAction", type: _type8}, {name: "Msg", type: Types.STRING}, {name: "ParamList", type: _type6}];
-module.exports.BlessingsRequest = Registry.lookupOrCreateConstructor(_typeBlessingsRequest, "BlessingsRequest");
-module.exports.MethodArgument = Registry.lookupOrCreateConstructor(_typeMethodArgument, "MethodArgument");
-module.exports.MethodSignature = Registry.lookupOrCreateConstructor(_typeMethodSignature, "MethodSignature");
-module.exports.Request = Registry.lookupOrCreateConstructor(_typeRequest, "Request");
-module.exports.Response = Registry.lookupOrCreateConstructor(_typeResponse, "Response");
-module.exports.ServiceSignature = Registry.lookupOrCreateConstructor(_typeServiceSignature, "ServiceSignature");
-module.exports.error = Registry.lookupOrCreateConstructor(_typeerror, "error");
+module.exports.BlessingsRequest = (Registry.lookupOrCreateConstructor(_typeBlessingsRequest));
+module.exports.Request = (Registry.lookupOrCreateConstructor(_typeRequest));
+module.exports.Response = (Registry.lookupOrCreateConstructor(_typeResponse));
+module.exports.error = (Registry.lookupOrCreateConstructor(_typeerror));
 
 
 
@@ -128,8 +103,6 @@ function NotImplementedMethod(name) {
 
 
 // Services:
-
-   
 
    
  

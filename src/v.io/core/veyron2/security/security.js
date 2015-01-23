@@ -27,6 +27,8 @@ var _type6 = new Type();
 var _type7 = new Type();
 var _typeBlessingPattern = new Type();
 var _typeCaveat = new Type();
+var _typeCaveatDescription = new Type();
+var _typeCaveatUuid = new Type();
 var _typeCertificate = new Type();
 var _typeDischargeImpetus = new Type();
 var _typeHash = new Type();
@@ -64,7 +66,14 @@ _typeBlessingPattern.kind = Kind.STRING;
 _typeBlessingPattern.name = "v.io/core/veyron2/security.BlessingPattern";
 _typeCaveat.kind = Kind.STRUCT;
 _typeCaveat.name = "v.io/core/veyron2/security.Caveat";
-_typeCaveat.fields = [{name: "ValidatorVOM", type: _type3}];
+_typeCaveat.fields = [{name: "ValidatorVOM", type: _type3}, {name: "Id", type: _typeCaveatUuid}, {name: "Data", type: Types.ANY}];
+_typeCaveatDescription.kind = Kind.STRUCT;
+_typeCaveatDescription.name = "v.io/core/veyron2/security.CaveatDescription";
+_typeCaveatDescription.fields = [{name: "Id", type: _typeCaveatUuid}, {name: "DataType", type: Types.TYPEOBJECT}, {name: "Doc", type: Types.STRING}];
+_typeCaveatUuid.kind = Kind.ARRAY;
+_typeCaveatUuid.name = "v.io/core/veyron2/security.CaveatUuid";
+_typeCaveatUuid.len = 16;
+_typeCaveatUuid.elem = Types.BYTE;
 _typeCertificate.kind = Kind.STRUCT;
 _typeCertificate.name = "v.io/core/veyron2/security.Certificate";
 _typeCertificate.fields = [{name: "Extension", type: Types.STRING}, {name: "PublicKey", type: _type3}, {name: "Caveats", type: _type2}, {name: "Signature", type: _typeSignature}];
@@ -96,24 +105,28 @@ _typepublicKeyThirdPartyCaveat.name = "v.io/core/veyron2/security.publicKeyThird
 _typepublicKeyThirdPartyCaveat.fields = [{name: "Nonce", type: _type1}, {name: "Caveats", type: _type2}, {name: "DischargerKey", type: _type3}, {name: "DischargerLocation", type: Types.STRING}, {name: "DischargerRequirements", type: _typeThirdPartyRequirements}];
 _typeunixTimeExpiryCaveat.kind = Kind.INT64;
 _typeunixTimeExpiryCaveat.name = "v.io/core/veyron2/security.unixTimeExpiryCaveat";
-module.exports.BlessingPattern = Registry.lookupOrCreateConstructor(_typeBlessingPattern, "BlessingPattern");
-module.exports.Caveat = Registry.lookupOrCreateConstructor(_typeCaveat, "Caveat");
-module.exports.Certificate = Registry.lookupOrCreateConstructor(_typeCertificate, "Certificate");
-module.exports.DischargeImpetus = Registry.lookupOrCreateConstructor(_typeDischargeImpetus, "DischargeImpetus");
-module.exports.Hash = Registry.lookupOrCreateConstructor(_typeHash, "Hash");
-module.exports.Signature = Registry.lookupOrCreateConstructor(_typeSignature, "Signature");
-module.exports.ThirdPartyRequirements = Registry.lookupOrCreateConstructor(_typeThirdPartyRequirements, "ThirdPartyRequirements");
-module.exports.WireBlessings = Registry.lookupOrCreateConstructor(_typeWireBlessings, "WireBlessings");
-module.exports.methodCaveat = Registry.lookupOrCreateConstructor(_typemethodCaveat, "methodCaveat");
-module.exports.peerBlessingsCaveat = Registry.lookupOrCreateConstructor(_typepeerBlessingsCaveat, "peerBlessingsCaveat");
-module.exports.publicKeyDischarge = Registry.lookupOrCreateConstructor(_typepublicKeyDischarge, "publicKeyDischarge");
-module.exports.publicKeyThirdPartyCaveat = Registry.lookupOrCreateConstructor(_typepublicKeyThirdPartyCaveat, "publicKeyThirdPartyCaveat");
-module.exports.unixTimeExpiryCaveat = Registry.lookupOrCreateConstructor(_typeunixTimeExpiryCaveat, "unixTimeExpiryCaveat");
+module.exports.BlessingPattern = (Registry.lookupOrCreateConstructor(_typeBlessingPattern));
+module.exports.Caveat = (Registry.lookupOrCreateConstructor(_typeCaveat));
+module.exports.CaveatDescription = (Registry.lookupOrCreateConstructor(_typeCaveatDescription));
+module.exports.CaveatUuid = (Registry.lookupOrCreateConstructor(_typeCaveatUuid));
+module.exports.Certificate = (Registry.lookupOrCreateConstructor(_typeCertificate));
+module.exports.DischargeImpetus = (Registry.lookupOrCreateConstructor(_typeDischargeImpetus));
+module.exports.Hash = (Registry.lookupOrCreateConstructor(_typeHash));
+module.exports.Signature = (Registry.lookupOrCreateConstructor(_typeSignature));
+module.exports.ThirdPartyRequirements = (Registry.lookupOrCreateConstructor(_typeThirdPartyRequirements));
+module.exports.WireBlessings = (Registry.lookupOrCreateConstructor(_typeWireBlessings));
+module.exports.methodCaveat = (Registry.lookupOrCreateConstructor(_typemethodCaveat));
+module.exports.peerBlessingsCaveat = (Registry.lookupOrCreateConstructor(_typepeerBlessingsCaveat));
+module.exports.publicKeyDischarge = (Registry.lookupOrCreateConstructor(_typepublicKeyDischarge));
+module.exports.publicKeyThirdPartyCaveat = (Registry.lookupOrCreateConstructor(_typepublicKeyThirdPartyCaveat));
+module.exports.unixTimeExpiryCaveat = (Registry.lookupOrCreateConstructor(_typeunixTimeExpiryCaveat));
 
 
 
 
 // Consts:
+
+  module.exports.NoExtension = new (Registry.lookupOrCreateConstructor(Types.STRING))("$");
 
   module.exports.AllPrincipals = new (Registry.lookupOrCreateConstructor(_typeBlessingPattern))("...");
 

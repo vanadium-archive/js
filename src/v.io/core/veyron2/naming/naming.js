@@ -33,9 +33,9 @@ _typeVDLMountEntry.fields = [{name: "Name", type: Types.STRING}, {name: "Servers
 _typeVDLMountedServer.kind = Kind.STRUCT;
 _typeVDLMountedServer.name = "v.io/core/veyron2/naming.VDLMountedServer";
 _typeVDLMountedServer.fields = [{name: "Server", type: Types.STRING}, {name: "TTL", type: Types.UINT32}];
-module.exports.MountFlag = Registry.lookupOrCreateConstructor(_typeMountFlag, "MountFlag");
-module.exports.VDLMountEntry = Registry.lookupOrCreateConstructor(_typeVDLMountEntry, "VDLMountEntry");
-module.exports.VDLMountedServer = Registry.lookupOrCreateConstructor(_typeVDLMountedServer, "VDLMountedServer");
+module.exports.MountFlag = (Registry.lookupOrCreateConstructor(_typeMountFlag));
+module.exports.VDLMountEntry = (Registry.lookupOrCreateConstructor(_typeVDLMountEntry));
+module.exports.VDLMountedServer = (Registry.lookupOrCreateConstructor(_typeVDLMountedServer));
 
 
 

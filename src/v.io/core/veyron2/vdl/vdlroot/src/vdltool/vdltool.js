@@ -54,12 +54,12 @@ _typeJavaConfig.fields = [];
 _typeJavascriptConfig.kind = Kind.STRUCT;
 _typeJavascriptConfig.name = "vdltool.JavascriptConfig";
 _typeJavascriptConfig.fields = [];
-module.exports.Config = Registry.lookupOrCreateConstructor(_typeConfig, "Config");
-module.exports.GenLanguage = Registry.lookupOrCreateConstructor(_typeGenLanguage, "GenLanguage");
-module.exports.GoConfig = Registry.lookupOrCreateConstructor(_typeGoConfig, "GoConfig");
-module.exports.GoNativeType = Registry.lookupOrCreateConstructor(_typeGoNativeType, "GoNativeType");
-module.exports.JavaConfig = Registry.lookupOrCreateConstructor(_typeJavaConfig, "JavaConfig");
-module.exports.JavascriptConfig = Registry.lookupOrCreateConstructor(_typeJavascriptConfig, "JavascriptConfig");
+module.exports.Config = (Registry.lookupOrCreateConstructor(_typeConfig));
+module.exports.GenLanguage = (Registry.lookupOrCreateConstructor(_typeGenLanguage));
+module.exports.GoConfig = (Registry.lookupOrCreateConstructor(_typeGoConfig));
+module.exports.GoNativeType = (Registry.lookupOrCreateConstructor(_typeGoNativeType));
+module.exports.JavaConfig = (Registry.lookupOrCreateConstructor(_typeJavaConfig));
+module.exports.JavascriptConfig = (Registry.lookupOrCreateConstructor(_typeJavascriptConfig));
 
 
 

@@ -23,7 +23,7 @@ _typeID.kind = Kind.ARRAY;
 _typeID.name = "v.io/core/veyron2/uniqueid.ID";
 _typeID.len = 16;
 _typeID.elem = Types.BYTE;
-module.exports.ID = Registry.lookupOrCreateConstructor(_typeID, "ID");
+module.exports.ID = (Registry.lookupOrCreateConstructor(_typeID));
 
 
 
