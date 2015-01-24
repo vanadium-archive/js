@@ -28,6 +28,14 @@ function render(settings) {
 
   return h('div', [
     h('form.settings', _.map(settings, setting.render)),
+    h('br'),
+    h('br'),
+    h('a', {
+      href: '#',
+      'ev-click': mercury.clickEvent(reloadExtension)
+    }, 'Reload extension'),
+    h('br'),
+    h('br'),
     'Manage your identities here: chrome://identity-internals/'
   ]);
 }
@@ -96,5 +104,13 @@ function sendToStorage(state) {
     if (err) {
       return console.error(err);
     }
+  });
+}
+
+// Reload the extension.
+function reloadExtension() {
+  chrome.runtime.getBackgroundPage(function(bpWindow) {
+    // bpWindow is the 'window' object of the background page.
+    bpWindow.bp.restartNaclPlugin();
   });
 }

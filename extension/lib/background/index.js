@@ -6,11 +6,15 @@ var getOrigin = require('./util').getOrigin;
 var Nacl = require('./nacl');
 var AuthHandler = require('./auth-handler');
 
+
 domready(function() {
   // Start!
   var bp = new BackgroundPage();
   chrome.runtime.onConnect.addListener(
     bp.handleNewContentScriptConnection.bind(bp));
+
+  // Set bp on the window so it will be accessable from options page.
+  window.bp = bp;
 });
 
 function BackgroundPage() {
@@ -189,6 +193,10 @@ BackgroundPage.prototype.naclPluginIsActive = function() {
 
 // Start the nacl plug-in -- add it to the page and register handlers.
 BackgroundPage.prototype.startNaclPlugin = function() {
+  if (this.naclPluginIsActive()) {
+    return;
+  }
+
   var bp = this;
   bp.nacl = new Nacl();
   bp.registerNaclListeners();
@@ -197,9 +205,19 @@ BackgroundPage.prototype.startNaclPlugin = function() {
 
 // Stop the nacl plug-in - remove it from the page and clean up state.
 BackgroundPage.prototype.stopNaclPlugin = function() {
+  if (!this.naclPluginIsActive()) {
+    return;
+  }
+
   // TODO(bprosnitz) Should we call nacl.cleanupInstance()?
   this.nacl.destroy();
   delete this.nacl;
+};
+
+// Stop and start the nacl plug-in
+BackgroundPage.prototype.restartNaclPlugin = function() {
+  this.stopNaclPlugin();
+  this.startNaclPlugin();
 };
 
 // Restart nacl when it crashes.
