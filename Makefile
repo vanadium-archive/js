@@ -138,7 +138,6 @@ test-integration-browser: test-precheck go/bin
 	node test/integration/runner.js --services=$(COMMON_SERVICES) -- \
 	make test-integration-browser-runner
 
-test-integration-browser-runner: export VANADIUM_EXTENSION_ID := geagjbjjbbamldjlcbpabgdpeopikgne
 test-integration-browser-runner: BROWSER_OPTS := --options="--load-extension=$(PWD)/extension/build-test/,--ignore-certificate-errors,--enable-logging=stderr" $(BROWSER_OPTS)
 test-integration-browser-runner:
 	@$(RM) -fr extension/build-test
