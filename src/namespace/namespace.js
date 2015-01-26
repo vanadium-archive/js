@@ -2,6 +2,7 @@ var Deferred = require('../lib/deferred');
 var MessageType = require('../proxy/message-type');
 var Stream = require('../proxy/stream');
 var SimpleHandler = require('../proxy/simple-handler');
+var Context = require('../runtime/context').Context;
 
 module.exports = Namespace;
 
@@ -29,20 +30,22 @@ var NamespaceMethods = {
 /**
  * Glob streams all names matching pattern. If recursive is true, it also
  * returns all names below the matching ones.
+ * @param {Context} ctx The rpc context.
  * @param {string} pattern Glob pattern to match
  * @param {function} cb(err, stream) Optional callback
  * @return {Promise} A promise with an stream object hanging from it.
  */
-Namespace.prototype.glob = function(pattern, cb) {
+Namespace.prototype.glob = function(ctx, pattern, cb) {
   var args = {
     pattern: pattern
   };
 
-  return this._sendRequest(NamespaceMethods.GLOB, args, cb, true);
+  return this._sendRequest(ctx, NamespaceMethods.GLOB, args, cb, true);
 };
 
-/*
+/**
  * Mount the server object address under the object name, expiring after
+ * @param {Context} ctx The rpc context.
  * @param {string} name Object name
  * @param {string} server Server object address
  * @param {integer} ttl Expiry time for the mount in milliseconds. ttl of zero
@@ -53,7 +56,8 @@ Namespace.prototype.glob = function(pattern, cb) {
  * @return {Promise} A promise to be resolved when mount is complete or rejected
  * when there is an error
  */
-Namespace.prototype.mount = function(name, server, ttl, replaceMount, cb) {
+Namespace.prototype.mount = function(ctx, name, server, ttl, replaceMount,
+                                     cb) {
   ttl = ttl || 0; // Default is 0
   replaceMount = !!replaceMount; // Cast to bool
   var args = {
@@ -63,57 +67,60 @@ Namespace.prototype.mount = function(name, server, ttl, replaceMount, cb) {
     replaceMount: replaceMount
   };
 
-  return this._sendRequest(NamespaceMethods.MOUNT, args, cb);
+  return this._sendRequest(ctx, NamespaceMethods.MOUNT, args, cb);
 };
 
-/*
+/**
  * Unmount the server object address from the object name, or if server is empty
  * unmount all server object address from the object name.
+ * @param {Context} ctx The rpc context.
  * @param {string} name Object name
  * @param {string} server Server object address
  * @param {function} cb(err) Optional callback
  * @return {Promise} A promise to be resolved when unmount is complete or
  * rejected when there is an error
  */
-Namespace.prototype.unmount = function(name, server, cb) {
+Namespace.prototype.unmount = function(ctx, name, server, cb) {
   server = server || '';
   var args = {
     name: name,
     server: server
   };
 
-  return this._sendRequest(NamespaceMethods.UNMOUNT, args, cb);
+  return this._sendRequest(ctx, NamespaceMethods.UNMOUNT, args, cb);
 };
 
-/*
+/**
  * Resolve the object name into its mounted servers.
+ * @param {Context} ctx The rpc context
  * @param {string} name Object name
  * @param {function} cb(err, servers[]) Optional callback
  * @return {Promise} A promise to be resolved a string array of server object
  * addresses or rejected when there is an error
  */
-Namespace.prototype.resolve = function(name, cb) {
+Namespace.prototype.resolve = function(ctx, name, cb) {
   var args = {
     name: name
   };
 
-  return this._sendRequest(NamespaceMethods.RESOLVE, args, cb);
+  return this._sendRequest(ctx, NamespaceMethods.RESOLVE, args, cb);
 };
 
-/*
+/**
  * ResolveToMountTable resolves the object name into the mounttables
  * directly responsible for the name.
+ * @param {Context} ctx The rpc context.
  * @param {string} name Object name
  * @param {function} cb(err, mounttables[]) Optional callback
  * @return {Promise} A promise to be resolved a string array of mounttable
  * object addresses or rejected when there is an error
  */
-Namespace.prototype.resolveToMounttable = function(name, cb) {
+Namespace.prototype.resolveToMounttable = function(ctx, name, cb) {
   var args = {
     name: name
   };
 
-  return this._sendRequest(NamespaceMethods.RESOLVETOMT, args, cb);
+  return this._sendRequest(ctx, NamespaceMethods.RESOLVETOMT, args, cb);
 };
 
 /*
@@ -128,7 +135,8 @@ Namespace.prototype.flushCacheEntry = function(name, cb) {
     name: name
   };
 
-  return this._sendRequest(NamespaceMethods.FLUSHCACHEENTRY, args, cb);
+  return this._sendRequest(new Context(),
+                           NamespaceMethods.FLUSHCACHEENTRY, args, cb);
 };
 
 /*
@@ -144,7 +152,8 @@ Namespace.prototype.disableCache = function(disable, cb) {
     disable: disable
   };
 
-  return this._sendRequest(NamespaceMethods.DISABLECACHE, args, cb);
+  return this._sendRequest(new Context(),
+                           NamespaceMethods.DISABLECACHE, args, cb);
 };
 
 /**
@@ -155,7 +164,7 @@ Namespace.prototype.disableCache = function(disable, cb) {
  * when getRoots is complete or rejected when there is an error
  */
 Namespace.prototype.roots = function(cb) {
-  return this._sendRequest(NamespaceMethods.ROOTS, null, cb);
+  return this._sendRequest(new Context(), NamespaceMethods.ROOTS, null, cb);
 };
 
 /**
@@ -182,19 +191,27 @@ Namespace.prototype.setRoots = function(roots, cb) {
     roots: roots
   };
 
-  return this._sendRequest(NamespaceMethods.SETROOTS, args, cb);
+  return this._sendRequest(new Context(), NamespaceMethods.SETROOTS, args, cb);
 };
 
 //TODO(aghassemi) Implement Unresolve after Go library makes its changes.
 
-Namespace.prototype._sendRequest = function(method, args, cb, isStreaming) {
+Namespace.prototype._sendRequest = function(ctx, method, args, cb,
+                                            isStreaming) {
   var def = new Deferred(cb);
+
+  if (!(ctx instanceof Context)) {
+    var err = new Error('First argument must be a Context object.');
+    def.reject(err);
+    return def.promise;
+  }
+
   var id = this._proxy.nextId();
   if( isStreaming) {
     def.stream = new Stream(id, this._proxy.senderPromise, true);
     def.promise.stream = def.stream;
   }
-  var handler = new SimpleHandler(def, this._proxy, id);
+  var handler = new SimpleHandler(ctx, def, this._proxy, id);
   var message = this._createMessage(method, args);
   this._proxy.sendRequest(message, MessageType.NAMESPACE_REQUEST, handler, id);
   return def.promise;

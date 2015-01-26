@@ -113,7 +113,7 @@ function runGlobTest(pattern, expectedResults, dispatcher, assert) {
     }
 
     var namespace = res.runtime.namespace();
-    var globRPC = namespace.glob(pattern);
+    var globRPC = namespace.glob(ctx, pattern);
     var stream = globRPC.stream;
     var globResults = [];
     stream.on('data', function(mountPoint) {

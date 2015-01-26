@@ -2,7 +2,6 @@ var IncomingPayloadType = require('./incoming-payload-type');
 var ErrorConversion = require('./error-conversion');
 var DecodeUtil = require('../lib/decode-util');
 var vError = require('../errors/verror');
-var context = require('../runtime/context');
 
 module.exports = Handler;
 
@@ -12,7 +11,8 @@ module.exports = Handler;
  * @param {Stream} Stream instance
  * @constructor
  */
-function Handler(stream) {
+function Handler(ctx, stream) {
+  this._ctx = ctx;
   this._stream = stream;
 }
 
@@ -22,9 +22,8 @@ Handler.prototype.handleResponse = function(type, data) {
       try {
         data = DecodeUtil.decode(data);
       } catch (e) {
-        // TODO(bjornick): Pass in the right context.
-        this._stream.emit(
-          new vError.InternalError(new context.Context(),
+        this._stream.emit('error',
+          new vError.InternalError(this._ctx,
                                    ['Failed to decode result: ', e]));
         return true;
       }
@@ -35,8 +34,7 @@ Handler.prototype.handleResponse = function(type, data) {
       this._stream._queueRead(null);
       return true;
     case IncomingPayloadType.ERROR_RESPONSE:
-      // TODO(bjornick): Pass in context.
-      this._stream.emit('error', ErrorConversion.toJSerror(data));
+      this._stream.emit('error', ErrorConversion.toJSerror(data, this._ctx));
       return true;
   }
 

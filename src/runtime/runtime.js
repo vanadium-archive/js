@@ -14,6 +14,7 @@ var Blessings = require('../security/blessings');
 var Deferred = require('../lib/deferred');
 var SimpleHandler = require('../proxy/simple-handler');
 var vlog = require('../lib/vlog');
+var context = require('./context');
 
 module.exports = Runtime;
 
@@ -212,7 +213,7 @@ Runtime.prototype.newBlessings = function(extension, cb) {
   var messageDef = new Deferred();
   var proxy = this._getProxyConnection();
   var id = proxy.nextId();
-  var handler = new SimpleHandler(messageDef, proxy, id);
+  var handler = new SimpleHandler(context.Context(), messageDef, proxy, id);
 
   proxy.sendRequest(JSON.stringify(extension), MessageType.NEW_BLESSINGS,
                     handler, id);

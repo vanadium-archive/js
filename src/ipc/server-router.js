@@ -251,7 +251,7 @@ Router.prototype.handleRPCRequest = function(messageId, vomRequest) {
   if (methodIsStreaming(methodSig)) {
     stream = new Stream(messageId, this._proxy.senderPromise, false);
     this._streamMap[messageId] = stream;
-    var rpc = new StreamHandler(stream);
+    var rpc = new StreamHandler(options.ctx, stream);
     this._proxy.addIncomingStreamHandler(messageId, rpc);
     options.stream = stream;
   }
@@ -474,7 +474,7 @@ Router.prototype.serve = function(name, server, cb) {
 
   var def = new Deferred(cb);
   var message = JSON.stringify(messageJSON);
-  this._sendRequest(message, MessageType.SERVE, def);
+  this._sendRequest(context.Context(), message, MessageType.SERVE, def);
 
   return def.promise;
 };
@@ -495,7 +495,7 @@ Router.prototype.addName = function(name, server, cb) {
 
   var def = new Deferred(cb);
   var message = JSON.stringify(messageJSON);
-  this._sendRequest(message, MessageType.ADD_NAME, def);
+  this._sendRequest(context.Context(), message, MessageType.ADD_NAME, def);
 
   return def.promise;
 };
@@ -519,7 +519,7 @@ Router.prototype.removeName = function(name, server, cb) {
 
   var def = new Deferred(cb);
   var message = JSON.stringify(messageJSON);
-  this._sendRequest(message, MessageType.REMOVE_NAME, def);
+  this._sendRequest(context.Context(), message, MessageType.REMOVE_NAME, def);
 
   return def.promise;
 };
@@ -536,7 +536,8 @@ Router.prototype.stopServer = function(server, cb) {
   var self = this;
 
   var def = new Deferred(cb);
-  this._sendRequest(server.id.toString(), MessageType.STOP, def);
+  this._sendRequest(context.Context(), server.id.toString(),
+                    MessageType.STOP, def);
 
   return def.promise.then(function(result) {
     delete self._servers[server.id];
@@ -547,13 +548,14 @@ Router.prototype.stopServer = function(server, cb) {
 /**
  * Sends a request to jspr.
  * @private
+ * @param {Context} ctx The context for this message.
  * @param {object} message Message to send.
  * @param {MessageType} type Type of message
  * @param {Deffered} def Deferred object
  */
-Router.prototype._sendRequest = function(message, type, def) {
+Router.prototype._sendRequest = function(ctx, message, type, def) {
   var id = this._proxy.nextId();
-  var handler = new SimpleHandler(def, this._proxy, id);
+  var handler = new SimpleHandler(ctx, def, this._proxy, id);
   this._proxy.sendRequest(message, type, handler, id);
 };
 

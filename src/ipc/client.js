@@ -408,7 +408,7 @@ Client.prototype.signature = function(ctx, name, cb) {
   var message = JSON.stringify(messageJSON);
 
   var id = proxy.nextId();
-  var handler = new SimpleHandler(requestDef, proxy, id);
+  var handler = new SimpleHandler(ctx, requestDef, proxy, id);
   proxy.cancelFromContext(ctx, id);
   proxy.sendRequest(message, MessageType.SIGNATURE, handler, id);
 

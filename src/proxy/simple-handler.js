@@ -7,23 +7,24 @@ var IncomingPayloadType = require('./incoming-payload-type');
 var ErrorConversion = require('./error-conversion');
 var StreamHandler = require('./stream-handler');
 var vError = require('./../errors/verror');
-var context = require('./../runtime/context');
 
 /**
  * An object that rejects/resolves a promise based on a response
  * from the proxy.
  * @constructor
  * @private
- * @param def the promise to resolve/reject
- * @param proxy the proxy from which to dequeue the handler
- * @param id the flow id of the message
+ * @param {Context} cxt
+ * @param {Deferred} def the promise to resolve/reject
+ * @param {ProxyConnection} proxy the proxy from which to dequeue the handler
+ * @param {number} id the flow id of the message
  */
-var Handler = function(def, proxy, id) {
+var Handler = function(ctx, def, proxy, id) {
+  this._ctx = ctx;
   this._proxy = proxy;
   this._def = def;
   this._id = id;
   if (def.stream) {
-    this._streamHandler = new StreamHandler(def.stream);
+    this._streamHandler = new StreamHandler(ctx, def.stream);
   }
 
 };
@@ -42,15 +43,13 @@ Handler.prototype.handleResponse = function(type, message) {
     case IncomingPayloadType.ERROR_RESPONSE:
       var err = message;
       if (!(err instanceof Error)) {
-        // TODO(bjornick): Pass in context here.
-        err = ErrorConversion.toJSerror(message);
+        err = ErrorConversion.toJSerror(message, this._ctx);
       }
       this._def.reject(err);
       break;
     default:
-      // TODO(bjornick): Pass in the right context
       this._def.reject(
-        new vError.InternalError(new context.Context(),
+        new vError.InternalError(this._ctx,
                                  ['unknown response type ' + type]));
   }
   this._proxy.dequeue(this._id);

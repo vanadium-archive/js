@@ -76,7 +76,7 @@ function serve(ctx, name, dispatcher, callback) {
         var count = 0;
         runResolve();
         function runResolve() {
-          ns.resolve(name, function(err, s) {
+          ns.resolve(ctx, name, function(err, s) {
             if (err || s.length === 0) {
               count++;
               if (count === 10) {

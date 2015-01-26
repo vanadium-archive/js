@@ -8,6 +8,7 @@ var SimpleHandler = require('../proxy/simple-handler');
 var Blessings = require('./blessings');
 var MessageType = require('../proxy/message-type');
 var EncodeUtil = require('../lib/encode-util');
+var Context = require('../runtime/context').Context;
 
 /**
  * Principal represents an entity capable of making or receiving RPCs.
@@ -41,7 +42,7 @@ Principal.prototype.bless = function(blessee, extension, duration, caveats,
     caveats: caveats
   });
   var id = this._proxy.nextId();
-  var handler = new SimpleHandler(def, this._proxy, id);
+  var handler = new SimpleHandler(new Context(), def, this._proxy, id);
   this._proxy.sendRequest(message, MessageType.BLESS_PUBLICKEY, handler, id);
   var self = this._proxy;
   return def.promise.then(function(message) {

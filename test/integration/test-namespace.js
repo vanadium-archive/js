@@ -6,14 +6,16 @@ var config = require('./default-config');
 var timeouts = require('./timeouts');
 var namespaceRoot = process.env.NAMESPACE_ROOT;
 var PREFIX = 'namespace-testing/';
+var Context = veyron.context.Context;
 
 test('Test globbing children - glob(' + PREFIX + '*)', function(assert) {
   var runtime;
 
+  var ctx = new Context();
   init(config).then(function glob(rt) {
     runtime = rt;
     var namespace = rt.namespace();
-    var rpc = namespace.glob(PREFIX + '*');
+    var rpc = namespace.glob(ctx, PREFIX + '*');
     rpc.catch(end);
     return readAllNames(rpc.stream);
   }).then(function validate(actual) {
@@ -36,10 +38,11 @@ test('Test globbing nested levels - glob(' + PREFIX + 'cottage/*/*/*)',
   function(assert) {
   var runtime;
 
+  var ctx = new Context();
   init(config).then(function glob(rt) {
     runtime = rt;
     var namespace = rt.namespace();
-    var rpc = namespace.glob(PREFIX + 'cottage/*/*/*');
+    var rpc = namespace.glob(ctx, PREFIX + 'cottage/*/*/*');
     rpc.catch(end);
     return readAllNames(rpc.stream);
   }).then(function validate(actual) {
@@ -65,10 +68,11 @@ test('Test globbing non-existing name - glob(' + PREFIX + 'does/not/exist)',
   function(assert) {
   var runtime;
 
+  var ctx = new Context();
   init(config).then(function glob(rt) {
     runtime = rt;
     var namespace = rt.namespace();
-    var rpc = namespace.glob(PREFIX + 'does/not/exist');
+    var rpc = namespace.glob(ctx, PREFIX + 'does/not/exist');
     rpc.catch(end);
     return readAllNames(rpc.stream);
   }).then(function validate(actual) {
@@ -91,10 +95,11 @@ test('Test glob\'s promise is resolved when glob finishes.' +
   '- var promise = glob(' + PREFIX + '*)', function(assert) {
   var runtime;
 
+  var ctx = new Context();
   init(config).then(function glob(rt) {
     runtime = rt;
     var namespace = rt.namespace();
-    return namespace.glob(PREFIX + '*');
+    return namespace.glob(ctx, PREFIX + '*');
   }).then(function(finalResult) {
     assert.notOk(finalResult, 'there is no final result for glob');
     assert.pass('Promise resolved when glob finished.');
@@ -115,10 +120,11 @@ test('Test glob\'s callback is called when glob finishes.' +
   '- glob(' + PREFIX + '*, cb)', function(assert) {
   var runtime;
 
+  var ctx = new Context();
   init(config).then(function glob(rt) {
     runtime = rt;
     var namespace = rt.namespace();
-    namespace.glob(PREFIX + '*', function(err, finalResult) {
+    namespace.glob(ctx, PREFIX + '*', function(err, finalResult) {
       assert.error(err);
 
       assert.notOk(finalResult, 'there is no final result for glob');
@@ -150,7 +156,7 @@ test.skip('Test globbing non-existing rooted name - ' +
   init(config).then(function glob(rt) {
     runtime = rt;
     var namespace = rt.namespace();
-    var rpc = namespace.glob('/RootedBadName.Google.tld:1234/*');
+    var rpc = namespace.glob(new Context(), '/RootedBadName.Google.tld:1234/*');
 
     // We expect no actual result items but one stream error result item
     rpc.stream.on('data', function(item) {
@@ -191,27 +197,29 @@ test('Test mounting and unmounting - ' +
   var initialName = PREFIX + 'first/name';
   var secondaryName = PREFIX + 'new/name';
 
+  var ctx = new Context();
   veyron.init(config).then(function createServer(rt) {
     runtime = rt;
     namespace = rt.namespace();
     return rt.serve(initialName, {});
   }).then(wait(1000))
   .then(function resolve() {
-    return namespace.resolve(initialName);
+    return namespace.resolve(ctx, initialName);
   }).then(function mount(endpoints) {
     expectedServerAddress = endpoints[0];
-    return namespace.mount(secondaryName, expectedServerAddress, MINUTE);
+    return namespace.mount(ctx, secondaryName, expectedServerAddress,
+                           MINUTE);
   }).then(wait(1000))
   .then(function resolve() {
-    return namespace.resolve(secondaryName);
+    return namespace.resolve(ctx, secondaryName);
   }).then(function validate(resolveResult) {
     assert.equals(resolveResult.length, 1);
     assert.equals(resolveResult[0], expectedServerAddress);
   }).then(function unmount() {
-    return namespace.unmount(secondaryName);
+    return namespace.unmount(ctx, secondaryName);
   }).then(wait(1000))
   .then(function resolve() {
-    namespace.resolve(secondaryName, function cb(err) {
+    namespace.resolve(ctx, secondaryName, function cb(err) {
       assert.ok(err, 'no resolving after unmount()');
       end();
     });
@@ -231,10 +239,11 @@ test('Test resolving to mounttable - ' +
   'resolveToMountTable(' + PREFIX + 'cottage)', function(assert) {
   var runtime;
 
+  var ctx = new Context();
   init(config).then(function resolveToMountTable(rt) {
     runtime = rt;
     var namespace = rt.namespace();
-    return namespace.resolveToMounttable(PREFIX + 'cottage');
+    return namespace.resolveToMounttable(ctx, PREFIX + 'cottage');
   }).then(function validate(mounttableNames) {
     assert.equals(mounttableNames.length, 1);
     var mounttableName = mounttableNames[0];
@@ -287,12 +296,13 @@ test('Test disabling cache - disableCache(true)', function(assert) {
   var namespace;
   var name = PREFIX + 'house/alarm';
 
+  var ctx = new Context();
   init(config).then(function disableCache(rt) {
     runtime = rt;
     namespace = rt.namespace();
     return namespace.disableCache(true);
   }).then(function resolveButItShouldNotGetCached(rt) {
-    return namespace.resolve(name);
+    return namespace.resolve(ctx, name);
   }).then(function tryFlushCacheEntry() {
     return namespace.flushCacheEntry(name);
   }).then(function validate(flushed) {
@@ -315,13 +325,15 @@ test('Test setting roots to valid endpoints - ' +
   var runtime;
   var namespace;
 
+  var ctx = new Context();
+
   init(config).then(function setRoots(rt) {
     runtime = rt;
     namespace = rt.namespace();
     // Set the roots to a valid root, we expect normal glob results.
     return namespace.setRoots(namespaceRoot);
   }).then(function glob() {
-    var rpc = namespace.glob(PREFIX + '*');
+    var rpc = namespace.glob(ctx, PREFIX + '*');
     rpc.catch(end);
     return readAllNames(rpc.stream);
   }).then(function validate(actual) {
@@ -348,7 +360,7 @@ test('Test setting roots to invalid endpoint - ' +
 
   var runtime;
   var namespace;
-
+  var ctx = new Context();
   init(config).then(function setRoots(rt) {
     runtime = rt;
     namespace = rt.namespace();
@@ -357,7 +369,7 @@ test('Test setting roots to invalid endpoint - ' +
   }).then(function bind() {
     // Since setRoots changes runtimes Namespace roots, binding to any name
     // should now fail
-    return runtime.bindTo(PREFIX + 'house/kitchen/lights')
+    return runtime.bindTo(ctx, PREFIX + 'house/kitchen/lights')
       .then(function() {
         assert.fail('Should not have been able to bind with invalid roots');
       }, function(err) {
