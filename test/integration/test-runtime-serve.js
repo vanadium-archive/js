@@ -163,26 +163,3 @@ test('Test adding additional names before serving a JS service should fail - ' +
   });
 });
 
-test('Test removing names before serving a JS service should fail - ' +
-  'runtime.removeName(name, cb) - before runtime.serve()', function(assert) {
-  veyron.init(config, function(err, runtime) {
-    assert.error(err);
-
-    runtime.removeName('bedroom/tv', function(err) {
-      assert.ok(err instanceof Error, 'should fail');
-      runtime.close(assert.end);
-    });
-  });
-});
-
-test('Test removing a non-existing name should fail - ' +
-  'runtime.removeName(name, cb)', function(assert) {
-  veyron.init(config, function(err, runtime) {
-    assert.error(err);
-
-    runtime.removeName('does/not/exists', function(err) {
-      assert.ok(err instanceof Error, 'should fail');
-      runtime.close(assert.end);
-    });
-  });
-});
