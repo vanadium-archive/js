@@ -8,6 +8,7 @@ var ServerRouter = require('../ipc/server-router');
 var Client = require('../ipc/client');
 var MessageType = require('../proxy/message-type');
 var Namespace = require('../namespace/namespace');
+var CaveatValidatorRegistry = require('../security/caveat-validator-registry');
 var Principal = require('../security/principal');
 var Blessings = require('../security/blessings');
 var Deferred = require('../lib/deferred');
@@ -25,6 +26,7 @@ function Runtime(options) {
   this._wspr = options.wspr;
   this.principal = new Principal(this._getProxyConnection());
   this._name = options.appName;
+  this.caveatRegistry = new CaveatValidatorRegistry();
 }
 
 /**
