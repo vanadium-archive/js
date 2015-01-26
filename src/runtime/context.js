@@ -5,60 +5,26 @@
 
 var Deferred = require('../lib/deferred');
 var Promise = require('../lib/promise');
-var vError = require('../lib/verror');
+var makeError = require('../errors/make-errors');
 var inherits = require('util').inherits;
+var vError = require('../errors/verror');
+var actions = require('../errors/actions');
+var ContextKey = require('./context-key');
 
 module.exports = {
   Context: Context,
   CancelContext: CancelContext,
   ContextKey: ContextKey,
-  DeadlineExceededError: DeadlineExceededError,
-  CancelledError: CancelledError
 };
-
-/**
- * Creates an Error object indicating that the context was cancelled
- * due to an expired deadline.
- * @constructor
- * @param {string} message message
- */
-function DeadlineExceededError() {
-  if (!(this instanceof DeadlineExceededError)) {
-    return new DeadlineExceededError();
-  }
-  vError.AbortedError.call(this, 'deadline exceeded');
-}
-inherits(DeadlineExceededError, vError.AbortedError);
 
 /**
  * Creates an Error object indicating that the context was manually
  * cancelled.
  * @constructor
  */
-function CancelledError() {
-  if (!(this instanceof CancelledError)) {
-    return new CancelledError();
-  }
-  vError.AbortedError.call(this, 'cancelled');
-}
-inherits(CancelledError, vError.AbortedError);
-
-/**
- * Creates an object than can be used as a key in the value and
- * withValue methods of a context.  Modules that want to attach data
- * to the context should first construct a key, then use that key
- * whenever they want store or retrieve their data from the context.
- * @constructor
- */
-function ContextKey() {
-  if (!(this instanceof ContextKey)) {
-    return new ContextKey();
-  }
-  this._key = ContextKey._nextKey;
-  ContextKey._nextKey++;
-}
-
-ContextKey._nextKey = 0;
+module.exports.CancelledError = makeError('CancelError', actions.NO_RETRY,
+                                          '{1:} {2:} Canceled{:_}');
+var CancelledError = module.exports.CancelledError;
 
 /**
  * Creates a new root context.  This should be used to generate a
@@ -192,6 +158,7 @@ ChildContext.prototype.value = function(key) {
 function ValueContext(parent, key, value) {
   if (!(key instanceof ContextKey)) {
     throw new vError.BadArgError(
+      this,
       'Attempting to set a value on a context, ' +
       'but the key is not of type ContextKey.');
   }
@@ -205,8 +172,9 @@ inherits(ValueContext, ChildContext);
 ValueContext.prototype.value = function(key) {
   if (!(key instanceof ContextKey)) {
     throw new vError.BadArgError(
-      'Attempting to look up a value on a context, ' +
-      'but the key is not of type ContextKey.');
+      this,
+      ['Attempting to look up a value on a context, ' +
+      'but the key is not of type ContextKey.']);
   }
   if (key._key === this._key._key) {
     return this._value;
@@ -267,7 +235,7 @@ CancelContext.prototype.cancel = function() {
   if (ca) {
     delete ca._children[this._id];
   }
-  this._cancel(new CancelledError());
+  this._cancel(new CancelledError(this));
 };
 
 CancelContext.prototype.waitUntilDone = function(callback) {
@@ -294,5 +262,5 @@ DeadlineContext.prototype._cancel = function(error) {
 };
 
 DeadlineContext.prototype._expire = function(error) {
-  this._cancel(new DeadlineExceededError());
+  this._cancel(new vError.TimeoutError(this));
 };

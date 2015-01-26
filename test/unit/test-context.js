@@ -4,6 +4,7 @@
 
 var test = require('prova');
 var context = require('../../src/runtime/context');
+var verror = require('../../src/errors/verror');
 
 var ctx = context.Context();
 
@@ -84,7 +85,7 @@ test('DeadlineContext', function(assert) {
   dctx.waitUntilDone().catch(onerror);
 
   function onerror(error) {
-    assert.ok(error instanceof context.DeadlineExceededError);
+    assert.ok(error instanceof verror.TimeoutError);
     assert.equal(dctx.done(), true);
   }
 });
@@ -115,6 +116,6 @@ test('DeadlineContext (child cancellation)', function(assert) {
   dctx.waitUntilDone().catch(onerror);
 
   function onerror(error) {
-    assert.ok(error instanceof context.DeadlineExceededError);
+    assert.ok(error instanceof verror.TimeoutError);
   }
 });

@@ -12,7 +12,7 @@ var Deferred = require('./../lib/deferred');
 var vLog = require('./../lib/vlog');
 var SimpleHandler = require('../proxy/simple-handler');
 var StreamHandler = require('../proxy/stream-handler');
-var verror = require('../lib/verror');
+var verror = require('../errors/verror');
 var SecurityContext = require('../security/context');
 var ServerContext = require('./server-context');
 var DecodeUtil = require('../lib/decode-util');
@@ -22,6 +22,7 @@ var namespaceUtil = require('../namespace/util');
 var naming = require('../v.io/core/veyron2/naming/naming');
 var Glob = require('./glob');
 var GlobStream = require('./glob-stream');
+var context = require('../runtime/context');
 
 /**
  * A router that handles routing incoming requests to the right
@@ -66,7 +67,9 @@ Router.prototype.handleAuthorizationRequest = function(messageId, request) {
    request = DecodeUtil.decode(request);
   } catch (e) {
     JSON.stringify({
-      err: new verror.InternalError('Failed to decode ' + e)
+      // TODO(bjornick): Use the real context
+      err: new verror.InternalError(new context.Context(),
+                                    ['Failed to decode ', e])
     });
     this._proxy.sendRequest(data, MessageType.AUTHORIZATION_RESPONSE,
         null, messageId);
@@ -74,7 +77,8 @@ Router.prototype.handleAuthorizationRequest = function(messageId, request) {
   var server = this._servers[request.serverID];
   if (!server) {
     var data = JSON.stringify({
-      err: new verror.ExistsError('unknown server')
+      // TODO(bjornick): Use the real context
+      err: new verror.ExistsError(new context.Context(), ['unknown server'])
     });
     this._proxy.sendRequest(data, MessageType.AUTHORIZATION_RESPONSE,
         null, messageId);
@@ -98,8 +102,10 @@ Router.prototype.handleAuthorizationRequest = function(messageId, request) {
 Router.prototype.handleLookupRequest = function(messageId, request) {
   var server = this._servers[request.serverID];
   if (!server) {
+    // TODO(bjornick): Pass in context here so we can generate useful error
+    // messages.
     var data = JSON.stringify({
-      err: new verror.ExistsError('unknown server')
+      err: new verror.ExistsError(new context.Context(), ['unknown server'])
     });
     this._proxy.sendRequest(data, MessageType.LOOKUP_RESPONSE,
         null, messageId);
@@ -108,7 +114,6 @@ Router.prototype.handleLookupRequest = function(messageId, request) {
 
   var self = this;
   return server._handleLookup(request.suffix).then(function(value) {
-    // TODO(bprosnitz) Support multiple signatures.
     var signatureList = value.invoker.signature();
     var res;
     try {
@@ -194,6 +199,7 @@ Router.prototype.handleRPCRequest = function(messageId, vomRequest) {
 
   var self = this;
   var stream;
+  var ctx = new ServerContext(request, this._proxy);
   if (request.method === 'Glob__') {
     if (!invoker.hasGlobber()) {
       err = new Error('Glob is not implemented');
@@ -202,7 +208,6 @@ Router.prototype.handleRPCRequest = function(messageId, vomRequest) {
     }
     stream = new Stream(messageId, this._proxy.senderPromise, false);
     this._streamMap[messageId] = stream;
-    var ctx = new ServerContext(request, this._proxy);
     this._contextMap[messageId] = ctx;
     this._outstandingRequestForId[messageId] = 0;
     this.incrementOutstandingRequestForId(messageId);
@@ -229,8 +234,8 @@ Router.prototype.handleRPCRequest = function(messageId, vomRequest) {
     });
   });
   if (methodSig === undefined) {
-    err = new verror.NoExistError('Requested method ' + methodName +
-        ' not found on');
+    err = new verror.NoExistError(
+      ctx, ['Requested method', methodName, 'not found on']);
     this.sendResult(messageId, methodName, null, err);
     return;
   }
@@ -239,7 +244,7 @@ Router.prototype.handleRPCRequest = function(messageId, vomRequest) {
     methodName: methodName,
     args: request.args,
     methodSig: methodSig,
-    ctx: new ServerContext(request, this._proxy)
+    ctx: ctx,
   };
 
   this._contextMap[messageId] = options.ctx;

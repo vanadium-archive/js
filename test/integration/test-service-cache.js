@@ -1,8 +1,8 @@
 var test = require('prova');
 var veyron = require('../../');
+var NoExistError = veyron.errors.NoExistError;
 var config = require('./default-config');
 var service = require('./get-service');
-var VeyronError = veyron.errors.VeyronError;
 var Promise = require('bluebird');
 var context = require('../../src/runtime/context');
 
@@ -97,7 +97,7 @@ test('Test get() with invalid key of Go sample cache service - ' +
     }
 
     cache.get(ctx, 'is not a thing', function(err, value) {
-      assert.ok(err instanceof VeyronError, 'should error');
+      assert.ok(err instanceof NoExistError, 'should error');
       end(assert);
     });
   });
@@ -119,7 +119,7 @@ test('Test get() with invalid key of Go sample cache service - ' +
       end(assert);
     })
     .catch(function(err) {
-      assert.ok(err instanceof VeyronError, 'should error');
+      assert.ok(err instanceof NoExistError, 'should error');
       end(assert);
     });
   });

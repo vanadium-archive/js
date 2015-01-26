@@ -3,7 +3,13 @@
  * @private
  */
 
-var vError = require('./../lib/verror');
+var actions = require('./../errors/actions');
+var errorMap = require('./../runtime/error-map');
+var DefaultError = require('./../errors/default-error');
+var defaultLanguage = require('./../runtime/default-language');
+var defaultCatalog = require('./../runtime/default-catalog');
+var context = require('./../runtime/context');
+var verror = require('./../errors/verror');
 
 module.exports = {
   toStandardErrorStruct: toStandardErrorStruct,
@@ -32,7 +38,10 @@ var _standard = function(idAction, message, paramList) {
  * @return {_standard} verror standard struct
  */
 function toStandardErrorStruct(err, appName, operation) {
-  var idAction = vError.IdActions.Unknown;
+  var idAction = {
+    id: 'v.io/core/veyron2/verror.Unknown',
+    action: actions.NO_RETRY
+  };
   var message = '';
   var paramList = [];
 
@@ -44,8 +53,8 @@ function toStandardErrorStruct(err, appName, operation) {
     }
     paramList = err.paramList || [];
   } else if (err !== undefined && err !== null) {
-    // coerce to string
-    message = err + '';
+    paramList = [appName, operation, err + ''];
+    message = defaultCatalog.format(defaultLanguage, idAction.id, paramList);
   }
 
   if (!paramList[0] && appName) {
@@ -58,17 +67,6 @@ function toStandardErrorStruct(err, appName, operation) {
   return new _standard(idAction, message, paramList);
 }
 
-// TODO(jasoncampbell): Change this so that the error map is easier to
-// lookup constructors etc.
-var errors = {};
-
-Object.keys(vError.IdActions).forEach(function(key) {
-  var value = vError.IdActions[key];
-  var ctor = vError[key + 'Error'];
-
-  errors[value.id] = ctor;
-});
-
 /**
  * Converts from a verror standard struct which comes from wspr to JavaScript
  * Error object ensuring message and name are set properly
@@ -76,22 +74,35 @@ Object.keys(vError.IdActions).forEach(function(key) {
  * @param {_standard} verr verror standard struct
  * @return {Error} JavaScript error object
  */
-function toJSerror(verr) {
+function toJSerror(verr, ctx) {
   var err;
 
   // iDAction from GO, idAction from JS
   var idAction = verr.iDAction || verr.idAction;
-  var id = idAction.iD || idAction.id;
-  var msg = verr.msg || (id + ': ' + verr.paramList.join(' '));
+  var id = idAction.iD || idAction.id || '';
+  var msg = verr.msg;
 
-  var Ctor = errors[id];
+  var Ctor = errorMap[id];
 
-  if (Ctor) {
-    err = new Ctor(msg);
-  } else {
-    err = new vError.VeyronError(msg, idAction);
+  if (id === '' && !Ctor) {
+    Ctor = verror.UnknownError;
   }
-  err.paramList = verr.paramList || [];
+
+
+  if (!ctx) {
+    // TODO(bjornick): Remove this after context is everywhere.
+    ctx = new context.Context();
+  }
+  if (Ctor) {
+    err = new Ctor(ctx, verr.paramList, true);
+  } else {
+    err = new DefaultError(id, idAction.action || 0, ctx, verr.paramList,
+                           true);
+  }
+
+  if (msg !== '') {
+    err.message = msg;
+  }
 
   return err;
 }

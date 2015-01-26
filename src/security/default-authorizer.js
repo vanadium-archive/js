@@ -1,6 +1,6 @@
 var blessingMatches = require('./blessing-matching');
-var vError = require('./../lib/verror');
-var errNoAuth = new vError.NoAccessError('authorization failed');
+var vError = require('./../errors/verror');
+var context = require('./../runtime/context');
 
 module.exports = authorizer;
 
@@ -21,5 +21,6 @@ function authorizer(ctx) {
   if (matchesRemote) {
     return null;
   }
-  return errNoAuth;
+  return new vError.NoAccessError(new context.Context(),
+                                  ['authorization failed']);
 }

@@ -52,7 +52,7 @@ test('Test binding to a non-existing name - ' +
     runtime.bindTo(ctx, 'does-not/exist', function(err, service) {
       assert.ok(err instanceof Error);
 
-      assert.deepEqual(err.idAction, veyron.errors.IdActions.NoServers);
+      assert.ok(err instanceof veyron.errors.NoServersError);
       runtime.close(assert.end);
     });
   });
@@ -74,7 +74,7 @@ test('Test binding to a non-existing name - ' +
     rt.close(assert.end);
   }, function(err) {
     assert.ok(err instanceof Error);
-    assert.deepEqual(err.idAction, veyron.errors.IdActions.NoServers);
+    assert.ok(err instanceof veyron.errors.NoServersError);
     rt.close(assert.end);
   })
   .catch(function(err) {

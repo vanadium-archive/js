@@ -6,7 +6,8 @@
 var IncomingPayloadType = require('./incoming-payload-type');
 var ErrorConversion = require('./error-conversion');
 var StreamHandler = require('./stream-handler');
-var vError = require('./../lib/verror');
+var vError = require('./../errors/verror');
+var context = require('./../runtime/context');
 
 /**
  * An object that rejects/resolves a promise based on a response
@@ -41,13 +42,16 @@ Handler.prototype.handleResponse = function(type, message) {
     case IncomingPayloadType.ERROR_RESPONSE:
       var err = message;
       if (!(err instanceof Error)) {
+        // TODO(bjornick): Pass in context here.
         err = ErrorConversion.toJSerror(message);
       }
       this._def.reject(err);
       break;
     default:
+      // TODO(bjornick): Pass in the right context
       this._def.reject(
-        new vError.InternalError('unknown response type ' + type));
+        new vError.InternalError(new context.Context(),
+                                 ['unknown response type ' + type]));
   }
   this._proxy.dequeue(this._id);
 };

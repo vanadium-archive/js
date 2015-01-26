@@ -20,8 +20,10 @@ var leafDispatcher = require('./leaf-dispatcher');
 var vLog = require('./../lib/vlog');
 var inspector = require('./../lib/arg-inspector');
 var Invoker = require('./../invocation/invoker');
-var verror = require('./../lib/verror');
 var defaultAuthorizer = require('../security/default-authorizer');
+var actions = require('./../errors/actions');
+var makeError = require('../errors/make-errors');
+var context = require('../runtime/context');
 
 var nextServerID = 1; // The ID for the next server.
 
@@ -283,17 +285,17 @@ Server.prototype.handleAuthorization = function(handle, request) {
   return Promise.reject(result);
 };
 
+var InvokeOnNonInvoker = makeError(
+  'v.io/core/javascript.InvokeOnNonInvoker', actions.NO_RETRY,
+  '{1:}{2:} trying to invoke on a non-invoker{:_}');
 /**
  * Handles the result of lookup and returns an error if there was any.
  * @private
  */
 Server.prototype._handleLookupResult = function(object) {
   if (!object.hasOwnProperty('service')) {
-    throw new verror.VeyronError('No service object returned',
-      {
-        id: 'v.io/core/javascript.InvokeOnNonInvoker',
-        action: verror.Actions.NoRetry
-      });
+    // TODO(bjornick): Use the correct context here.
+    throw new InvokeOnNonInvoker(new context.Context());
   }
   object._handle = this._handle;
   object.invoker = new Invoker(object.service);

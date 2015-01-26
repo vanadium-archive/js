@@ -7,9 +7,10 @@ module.exports = Invoker;
 
 var createSignatures = require('../vdl/create-signatures');
 var isPublicMethod = require('../lib/service-reflection').isPublicMethod;
-var verror = require('../lib/verror');
+var verror = require('../errors/verror');
 var vom = require('vom');
 var format = require('util').format;
+var context = require('../runtime/context');
 var ArgInspector = require('../lib/arg-inspector');
 
 // Method signatures for internal methods that are not present in actual
@@ -141,21 +142,24 @@ Invoker.prototype.invoke = function(name, args, injections, cb) {
   var invoker = this;
   var service = invoker._service;
   var method = invoker._methods[name];
+  var errorContext = injections.context || new context.Context();
   if (!method) {
-    message = format('Method "%s" does not exist.', name);
-    err = verror.NoExistError(message);
+    message = format('Method "%s"', name);
+    err = new verror.NoExistError(errorContext, [message]);
+
     cb(err);
     return;
   }
   var methodSig = this._findMethodSignature(name) ||
     internalMethodSignatures[name];
   if (!methodSig) {
-    cb(verror.InternalError('Missing method signature for method ' + name));
+    cb(verror.InternalError(errorContext,
+                            ['Missing method signature for method ' + name]));
   }
 
   if (!injections.context) {
     message = 'Can not call invoker.invoke(...) without a context injection';
-    err = verror.InternalError(message);
+    err = verror.InternalError(errorContext, [message]);
     cb(err);
     return;
   }
@@ -167,7 +171,7 @@ Invoker.prototype.invoke = function(name, args, injections, cb) {
     var template = 'Expected %d arguments but got "%s"';
 
     message = format(template, arity, args.join(', '));
-    err = verror.BadArgError(message);
+    err = new verror.BadArgError(errorContext, [message]);
     cb(err);
     return;
   }
@@ -245,17 +249,21 @@ Invoker.prototype.invoke = function(name, args, injections, cb) {
         break;
       default:
         if (!Array.isArray(res)) {
-          throw new verror.InternalError('Expected multiple out arguments ' +
-            'to be returned in an array.');
+          throw new verror.InternalError(
+            errorContext,
+            ['Expected multiple out arguments to be returned in an array.']);
         }
         resAsArray = res;
         break;
     }
     if (resAsArray.length !== methodSig.outArgs.length) {
       // -1 on outArgs.length ignores error
-      throw new verror.InternalError('Expected ' +
-        (methodSig.outArgs.length) + ' results, but got ' +
-        resAsArray.length);
+      // TODO(bjornick): Generate a real verror for this so it can
+      // internationalized.
+      throw new verror.InternalError(
+        errorContext,
+        ['Expected', methodSig.outArgs.length, 'results, but got',
+        resAsArray.length]);
     }
     cb(null, resAsArray);
   })

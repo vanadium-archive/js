@@ -3,11 +3,10 @@
  * @private
  */
 var blessingMatches = require('./blessing-matching');
-var vError = require('./../lib/verror');
+var vError = require('./../errors/verror');
+var context = require('../runtime/context');
 
 module.exports = authorizer;
-
-var errACL = new vError.NoAccessError('acl authorization failed');
 
 /**
  * An access control list.
@@ -48,7 +47,8 @@ function authorizer(acl) {
         return null;
       }
     }
-    return errACL;
+    // TODO(bjornick): find the right context.
+    return new vError.NoAccessError(new context.Context());
   };
 }
 

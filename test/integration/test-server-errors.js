@@ -130,10 +130,8 @@ function testNonStandardErrors() {
           // assert.equal(err.message, 'Unknown exception.');
           // TODO(bprosnitz) Change back to
           // assert.deepEquals(err.idAction, veyron.errors.IdActions);
-          assert.equal(err.idAction.id, veyron.errors.IdActions.Unknown.id,
+          assert.ok(err instanceof veyron.errors.UnknownError,
             'error ids match');
-          assert.equal(err.idAction.action,
-            veyron.errors.IdActions.Unknown.action, 'error actions match');
           assert.ok(err.stack, 'error has a stack');
           res.end(assert);
         });

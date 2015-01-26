@@ -107,7 +107,7 @@ function newDispatcher() {
 }
 
 test('Test cancellation from JS client to Go server', function(assert) {
-  var ctx = new context.CancelContext();
+  var ctx = new context.CancelContext(new context.Context());
   service(ctx, 'test_service/serviceToCancel', function(err, collector, end) {
     run(ctx, err, collector, end, assert, 1);
   });

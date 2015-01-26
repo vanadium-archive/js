@@ -523,9 +523,8 @@ test('invoker.invoke(...) - Error: Private method', function(t) {
     name: '_privateMethod',
   }, function(err, results) {
     t.ok(err, 'should error');
-    t.ok(err instanceof verror.NoExistError,
-      'error should be verror.NoExistError');
-    t.equal(err.message, 'Method "_privateMethod" does not exist.');
+    t.ok(err instanceof verror.NoExistError, 'should error');
+    t.equal(err.message, 'app:op: Does not exist: Method "_privateMethod"');
     t.end();
   });
 });
@@ -543,7 +542,8 @@ test('invoker.invoke(...) - Error: Bad arguments', function(t) {
     args: [ 'a', 'b', 'c' ]
   }, function(err, results) {
     t.ok(err instanceof verror.BadArgError, 'should error');
-    t.equal(err.message, 'Expected 2 arguments but got "a, b, c"');
+    t.equal(err.message,
+            'app:op: Bad argument: Expected 2 arguments but got "a, b, c"');
     t.end();
   });
 });
@@ -555,7 +555,7 @@ test('invoker.invoke(...) - Error: Undefined method', function(t) {
     args: [ 'a', 'b', 'c' ]
   }, function(err, res) {
     t.ok(err instanceof verror.NoExistError, 'should error');
-    t.equal(err.message, 'Method "UndefinedMethod" does not exist.');
+    t.equal(err.message, 'app:op: Does not exist: Method "UndefinedMethod"');
     t.end();
   });
 });
@@ -576,6 +576,7 @@ test('invoker.invoke(...) - Error: Internal error', function(t) {
   }, function(err, res) {
     t.ok(err instanceof verror.InternalError, 'should error');
     t.equal(err.message,
+      'app:op: Internal error: ' +
       'Can not call invoker.invoke(...) without a context injection');
     t.end();
   });
@@ -588,7 +589,8 @@ test('invoker.invoke(...) - Error: Empty args expected', function(t) {
     args: [ 'a', 'b', 'c' ]
   }, function(err, res) {
     t.ok(err instanceof verror.BadArgError, 'should error');
-    t.equal(err.message, 'Expected 0 arguments but got "a, b, c"');
+    t.equal(err.message,
+            'app:op: Bad argument: Expected 0 arguments but got "a, b, c"');
     t.end();
   });
 

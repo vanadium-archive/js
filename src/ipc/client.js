@@ -13,7 +13,7 @@ var Deferred = require('../lib/deferred');
 var vLog = require('../lib/vlog');
 var ErrorConversion = require('../proxy/error-conversion');
 var Stream = require('../proxy/stream');
-var verror = require('../lib/verror');
+var verror = require('../errors/verror');
 var MessageType = require('../proxy/message-type');
 var IncomingPayloadType = require('../proxy/incoming-payload-type');
 var context = require('../runtime/context');
@@ -22,6 +22,8 @@ var DecodeUtil = require('../lib/decode-util');
 var SimpleHandler = require('../proxy/simple-handler');
 var vom = require('vom');
 var EncodeUtil = require('../lib/encode-util');
+var makeError = require('../errors/make-errors');
+var actions = require('../errors/actions');
 
 var OutstandingRPC = function(ctx, options, cb) {
   this._ctx = ctx;
@@ -119,7 +121,8 @@ OutstandingRPC.prototype.handleResponse = function(type, data) {
       break;
     default:
       this.handleError(
-          new verror.InternalError('Recieved unknown response type from wspr'));
+          new verror.InternalError(
+            this._ctx, ['Recieved unknown response type from wspr']));
       break;
   }
 };
@@ -129,7 +132,8 @@ OutstandingRPC.prototype.handleCompletion = function(data) {
     data = DecodeUtil.decode(data);
   } catch (e) {
     this.handleError(
-      new verror.InternalError('Failed to decode result: ' + e));
+      new verror.InternalError(
+        this._ctx, ['Failed to decode result: ', e]));
       return;
   }
   this._def.resolve(data);
@@ -145,7 +149,8 @@ OutstandingRPC.prototype.handleStreamData = function(data) {
       data = DecodeUtil.decode(data);
     } catch (e) {
       this.handleError(
-        new verror.InternalError('Failed to decode result: ' + e));
+        new verror.InternalError(this._ctx,
+                                 ['Failed to decode result: ', e]));
         return;
     }
 
@@ -167,7 +172,7 @@ OutstandingRPC.prototype.handleError = function(data) {
   if (data instanceof Error) {
     err = data;
   } else {
-    err = ErrorConversion.toJSerror(data);
+    err = ErrorConversion.toJSerror(data, this._ctx);
   }
 
   if (this._def.stream) {
@@ -215,7 +220,12 @@ function Client(proxyConnection) {
 
   this._proxyConnection = proxyConnection;
 }
-
+// TODO(bprosnitz) v.io/core/javascript.IncorrectArgCount.
+var IncorrectArgCount = makeError(
+  'v.io/core/javascript.IncorrectArgCount',
+  actions.NO_RETRY,
+  '{1:}{2:} Client RPC call {3}({4}) had an incorrect number of ' +
+  'arguments. Expected format: {5}({6})');
 /**
  * Performs client side binding of a remote service to a native javascript
  * stub object.
@@ -293,19 +303,11 @@ Client.prototype.bindTo = function(ctx, name, cb) {
           //       console.error('invalid number of arguments')
           //     })
           //
-          var message = 'Client RPC call  ' + methodSig.name +
-            '(' + Array.prototype.slice.call(arguments, 1) + ') ' +
-            'had an incorrect number of arguments. '+
-            'Expected format: ' + methodSig.name +
-            '(' + expectedArgs + ')';
-
-          // TODO(bprosnitz) v.io/core/javascript.IncorrectArgCount.
-          err = new verror.VeyronError(message,
-            {
-              id: 'v.io/core/javascript.IncorrectArgCount',
-              action: verror.Actions.NoRetry,
-            });
-
+          var errArgs = [ methodSig.name,
+                          Array.prototype.slice.call(arguments, 1),
+                          methodSig.name,
+                          expectedArgs ];
+          err = new IncorrectArgCount(ctx, errArgs);
           if (callback) {
             return callback(err);
           } else {
@@ -390,7 +392,7 @@ Client.prototype.signature = function(ctx, name, cb) {
         return DecodeUtil.decode(args);
       } catch (e) {
         return Promise.reject(
-          new verror.InternalError('Failed to decode result: ' + e));
+          new verror.InternalError(ctx, ['Failed to decode result: ', e]));
       }
     } else {
       return args[0];

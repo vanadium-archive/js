@@ -21,7 +21,7 @@ var defaults = {
  * Exports
  */
 module.exports = {
-  errors: require('./lib/verror'),
+  errors: require('./errors/verror'),
   init: init,
   logLevels: require('./lib/vlog').levels,
   namespaceUtil: require('./namespace/util'),
