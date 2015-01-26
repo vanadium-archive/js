@@ -99,6 +99,8 @@ gen-vdl: gen-vdl-impl
 # This generates the output of the vdl files in test/vdl-out/v.io/<package-path>
 # The command will generate all the dependent files as well.
 gen-vdl-test: JS_VDL_DIR := "$(VANADIUM_ROOT)/release/javascript/core/test/vdl-out"
+gen-vdl-test: EXTRA_VDL_PATHS := "javascript-test/..."
+gen-vdl-test: VDLPATH := "$(VANADIUM_ROOT)/release/javascript/core/test/vdl-in"
 gen-vdl-test: clean-test-vdl gen-vdl-impl
 
 clean-test-vdl:
@@ -106,12 +108,13 @@ clean-test-vdl:
 
 gen-vdl-impl:
 ifndef NOVDLGEN
-	v23 go run $(VANADIUM_ROOT)/release/go/src/v.io/core/veyron2/vdl/vdl/main.go generate -lang=javascript \
+	VDLPATH=$(VDLPATH) v23 go run $(VANADIUM_ROOT)/release/go/src/v.io/core/veyron2/vdl/vdl/main.go -v generate -lang=javascript \
 		-js_out_dir=$(JS_VDL_DIR) vdltool signature \
 		v.io/core/veyron2/vdl/testdata/... \
 		v.io/core/veyron2/ipc/... \
 		v.io/core/veyron2/vdl/vdlroot/src/...\
-	 	v.io/core/veyron2/naming/...
+	 	v.io/core/veyron2/naming/... \
+	 	$(EXTRA_VDL_PATHS)
 endif
 
 test-vdl-node: test-precheck

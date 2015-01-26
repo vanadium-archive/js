@@ -1,8 +1,19 @@
 var test = require('prova');
 var veyron = require('../../');
-var caveat = require('../../src/security/caveat');
-var MethodCaveat = caveat.MethodCaveat;
 var config = require('./default-config');
+
+// TODO(bprosnitz) Remove MethodCaveat after WSPR is updated to use the new
+// format caveats.
+function MethodCaveat(methods) {
+  this._methods = methods;
+}
+MethodCaveat.prototype.toJSON = function() {
+  return {
+    _type: 'MethodCaveat',
+    data: this._methods
+ };
+};
+
 
 test('Test blessing bob without caveats - ' +
   'i.bless(..., callback)', function(assert) {
