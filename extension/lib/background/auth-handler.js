@@ -16,9 +16,6 @@ function AuthHandler(channel) {
 
   // Map for tabIds to ports.
   this._ports = {};
-
-  // Root account in browspr, from which all webapp accounts are blessed.
-  this._rootAccount = null;
 }
 
 // Get an access token from the chrome.identity API.
@@ -51,6 +48,14 @@ AuthHandler.prototype.getAccessToken = function(cb) {
   });
 };
 
+// Get the name of all accounts from wspr.  Will be empty if no root account
+// exists.
+AuthHandler.prototype.getAccounts = function(cb) {
+  this._channel.performRpc('auth:get-accounts', {}, cb);
+};
+
+// Get an access token from the user and use it to create the root account on
+// wspr.
 AuthHandler.prototype.createAccount = function(cb) {
   var ah = this;
   this.getAccessToken(function(err, token) {
@@ -62,26 +67,25 @@ AuthHandler.prototype.createAccount = function(cb) {
   });
 };
 
-AuthHandler.prototype.associateAccount = function(origin, caveats, cb) {
-  if (!this._rootAccount) {
-    return cb(new Error('No root account, cannot associate origin.'));
-  }
-
-  this._channel.performRpc('auth:associate-account', {
-    account: this._rootAccount,
-    origin: origin,
-    caveats: caveats
-  }, cb);
+// Check if an origin is already associated with an account on wspr.
+AuthHandler.prototype.originHasAccount = function(origin, cb) {
+  this._channel.performRpc('auth:origin-has-account', {origin: origin}, cb);
 };
 
-AuthHandler.prototype.getCaveats = function(port) {
-  var origin;
-  try {
-    origin = getOrigin(port.sender.url);
-  } catch (err) {
-    return sendErrorToContentScript('auth', port, err);
-  }
+// Associate the account with the origin on wspr.
+AuthHandler.prototype.associateAccount =
+  function(account, origin, caveats, cb) {
+    this._channel.performRpc('auth:associate-account', {
+      account: account,
+      origin: origin,
+      caveats: caveats
+    }, cb);
+};
 
+// Pop up a new tab asking the user to chose their caveats.
+AuthHandler.prototype.getCaveats = function(account, origin, port) {
+  // Store the account name and a random salt on the port.
+  port.account = account;
   port.authState = random.hex();
 
   // Get  currently active tab in the window.
@@ -102,6 +106,7 @@ AuthHandler.prototype.getCaveats = function(port) {
   });
 };
 
+// Handle incoming 'auth' message.
 AuthHandler.prototype.handleAuthMessage = function(port) {
   port.postMessage({
     type: 'auth:received'
@@ -109,18 +114,52 @@ AuthHandler.prototype.handleAuthMessage = function(port) {
 
   this._ports[port.sender.tab.id] = port;
 
-  if (this._rootAccount) {
-    this.getCaveats(port);
-  } else {
-    var ah = this;
-    this.createAccount(function(err, account) {
-      if (err) {
-        return sendErrorToContentScript('auth', port, err);
-      }
-      ah._rootAccount = account;
-      ah.getCaveats(port);
-    });
+  var origin;
+  try {
+    origin = getOrigin(port.sender.url);
+  } catch (err) {
+    return sendErrorToContentScript('auth', port, err);
   }
+
+  var ah = this;
+
+  this.getAccounts(function(err, accounts) {
+    if (err) {
+      return sendErrorToContentScript('auth', port, err);
+    }
+
+    if (!accounts || accounts.length === 0) {
+      // No account exists.  Create one and then call getCaveats.
+      ah.createAccount(function(err, createdAccount) {
+        if (err) {
+          return sendErrorToContentScript('auth', port, err);
+        }
+
+        ah.getCaveats(createdAccount, origin, port);
+      });
+    } else {
+      // At least one account already exists. Use the first one.
+      var account = accounts[0];
+
+      // Check if origin is associated.
+      ah.originHasAccount(origin, function(err, hasAccount) {
+        if (err) {
+          return sendErrorToContentScript('auth', port, err);
+        }
+
+        if (hasAccount) {
+          // Origin already associated.  Return success.
+          port.postMessage({
+            type: 'auth:success',
+            account: account
+          });
+        } else {
+          // No origin associated.  Get caveats and then associate.
+          ah.getCaveats(account, origin, port);
+        }
+      });
+    }
+  });
 };
 
 AuthHandler.prototype.handleFinishAuth = function(caveatsPort, msg) {
@@ -137,7 +176,12 @@ AuthHandler.prototype.handleFinishAuth = function(caveatsPort, msg) {
   delete this._ports[msg.webappId];
 
   if (!webappPort || msg.authState !== webappPort.authState) {
-    return console.error('port not authorized');
+    return console.error('Port not authorized.');
+  }
+
+  if (!webappPort.account) {
+    return sendErrorToContentScript('auth', webappPort,
+        new Error('No port.account.'));
   }
 
   // Switch back to the last active tab.
@@ -146,19 +190,20 @@ AuthHandler.prototype.handleFinishAuth = function(caveatsPort, msg) {
   }
 
   if (!msg.caveats || msg.caveats.length === 0) {
-    return console.error('no caveats selected: ', msg );
+    return sendErrorToContentScript('auth', webappPort,
+        new Error('No caveats selected'));
   }
 
-  var ah = this;
-  this.associateAccount(msg.origin, msg.caveats, function(err) {
-    if (err) {
-      return sendErrorToContentScript('auth', webappPort, err);
-    }
-    webappPort.postMessage({
-      type: 'auth:success',
-      account: ah._rootAccount
+  this.associateAccount(webappPort.account, msg.origin, msg.caveats,
+    function(err) {
+      if (err) {
+        return sendErrorToContentScript('auth', webappPort, err);
+      }
+      webappPort.postMessage({
+        type: 'auth:success',
+        account: webappPort.account
+      });
     });
-  });
 };
 
 // Convert an Error object into a bare Object with the same properties.  We do
