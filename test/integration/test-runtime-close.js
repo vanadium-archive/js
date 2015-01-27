@@ -5,15 +5,18 @@ var config = require('./default-config');
 test('Test closing runtime - runtime.close(cb)', function(assert) {
   veyron.init(config, oninit);
 
+  var rt;
   function oninit(err, runtime) {
+    rt = runtime;
     var ctx = runtime.getContext();
     assert.error(err);
-    runtime.bindTo(ctx, 'test_service/cache', onbind);
+    var client = runtime.newClient();
+    client.bindTo(ctx, 'test_service/cache', onbind);
   }
 
   function onbind(err, service) {
     assert.error(err);
-    this.close(assert.end);
+    rt.close(assert.end);
   }
 });
 
@@ -29,8 +32,9 @@ test('Test closing runtime - var promise = runtime.close()', function(assert) {
 
   function bindTo(runtime) {
     rt = runtime;
+    var client = runtime.newClient();
     var ctx = runtime.getContext();
-    return runtime.bindTo(ctx, 'test_service/cache');
+    return client.bindTo(ctx, 'test_service/cache');
   }
 
   function close(service) {

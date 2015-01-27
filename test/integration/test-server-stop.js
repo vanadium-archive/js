@@ -9,11 +9,11 @@ var dispatcher = leafDispatcher({
 var name = 'my-test/service';
 
 test('Test stopping a JS service - ' +
-  'runtime.stop(callback)', function(assert) {
+  'server.stop(callback)', function(assert) {
   serve(name, dispatcher, function(err, res) {
     assert.error(err);
 
-    res.runtime.stop(function(err) {
+    res.server.stop(function(err) {
       assert.error(err);
 
       res.service.foo(res.runtime.getContext(), function(err, result) {
@@ -26,11 +26,12 @@ test('Test stopping a JS service - ' +
 
 
 test('Test stopping a JS service - ' +
-  'var promise = runtime.stop()', function(assert) {
+  'var promise = server.stop()', function(assert) {
   serve(name, dispatcher, function(err, res) {
     assert.error(err);
+
     var ctx = res.runtime.getContext();
-    res.runtime.stop()
+    res.server.stop()
     .then(function() {
       return res.service.foo(ctx);
     })
@@ -57,14 +58,16 @@ test.skip('Test re-serving a stopped JS service - ' +
   serve(name, dispatcher, function(err, res) {
     assert.error(err);
 
+    var server = res.server;
+    var client = res.runtime.newClient();
     var ctx = res.runtime.getContext();
-    res.runtime.stop(function(err) {
+    server.stop(function(err) {
       assert.error(err);
 
-      res.runtime.serveDispatcher(name, dispatcher, function(err) {
+      server.serveDispatcher(name, dispatcher, function(err) {
         assert.error(err);
 
-        res.runtime.bindTo(ctx, name, function(err, service) {
+        client.bindTo(ctx, name, function(err, service) {
           assert.error(err);
 
           service.foo(ctx, function(err, result) {
@@ -80,17 +83,19 @@ test.skip('Test re-serving a stopped JS service - ' +
 });
 
 test('Test re-serving a stopped JS service - ' +
-  'var promise = runtime.stop(), runtime.serve()', function(assert) {
+  'var promise = server.stop(), runtime.serve()', function(assert) {
   serve(name, dispatcher, function(err, res) {
     assert.error(err);
 
+    var server = res.server;
+    var client = res.runtime.newClient();
     var ctx = res.runtime.getContext();
-    res.runtime.stop()
+    server.stop()
     .then(function() {
-      return res.runtime.serveDispatcher(name, dispatcher);
+      return server.serveDispatcher(name, dispatcher);
     })
     .then(function() {
-      return res.runtime.bindTo(ctx, name);
+      return client.bindTo(ctx, name);
     })
     .then(function(service) {
       return service.foo(ctx);
@@ -107,14 +112,14 @@ test('Test re-serving a stopped JS service - ' +
 });
 
 test('Test stopping a JS service twice - ' +
-  'runtime.stop(callback)', function(assert) {
+  'server.stop(callback)', function(assert) {
   serve(name, dispatcher, function(err, res) {
     assert.error(err);
 
-    res.runtime.stop(function(err) {
+    res.server.stop(function(err) {
       assert.error(err);
 
-      res.runtime.stop(function(err) {
+      res.server.stop(function(err) {
         assert.error(err);
         res.end(assert);
       });

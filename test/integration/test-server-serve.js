@@ -8,11 +8,12 @@ var service = {
 };
 
 test('Test serving a JS service named livingroom/tv - ' +
-  'runtime.serve(name, service, callback)', function(assert) {
+  'server.serve(name, service, callback)', function(assert) {
   veyron.init(config, function(err, runtime) {
     assert.error(err);
 
-    runtime.serve('livingroom/tv', service, function(err) {
+    var server = runtime.newServer();
+    server.serve('livingroom/tv', service, function(err) {
       assert.error(err);
       runtime.close(assert.end);
     });
@@ -20,11 +21,12 @@ test('Test serving a JS service named livingroom/tv - ' +
 });
 
 test('Test serving a JS service named livingroom/tv - ' +
-  'var promise = runtime.serve(name, service)', function(assert) {
+  'var promise = server.serve(name, service)', function(assert) {
   veyron.init(config, function(err, runtime) {
     assert.error(err);
 
-    runtime
+    var server = runtime.newServer();
+    server
     .serve('livingroom/tv', service)
     .then(function() {
       runtime.close(assert.end);
@@ -37,11 +39,12 @@ test('Test serving a JS service named livingroom/tv - ' +
 });
 
 test('Test serving a JS service when proxy Url is invalid - '+
-  'runtime.serve(name, service, callback)', function(assert) {
+  'server.serve(name, service, callback)', function(assert) {
   veyron.init({ wspr: 'http://bad-address.tld' }, function(err, runtime) {
     assert.error(err);
 
-    runtime.serve('livingroom/tv', service, function(err) {
+    var server = runtime.newServer();
+    server.serve('livingroom/tv', service, function(err) {
       assert.ok(err instanceof Error, 'should fail');
       runtime.close(assert.end);
     });
@@ -49,11 +52,12 @@ test('Test serving a JS service when proxy Url is invalid - '+
 });
 
 test('Test serving a JS service when proxy Url is invalid - '+
-  'var promise = runtime.serve(name, service)', function(assert) {
+  'var promise = server.serve(name, service)', function(assert) {
   veyron.init({ wspr: 'http://bad-address.tld' }, function(err, runtime) {
     assert.error(err);
 
-    runtime
+    var server = runtime.newServer();
+    server
     .serve('livingroom/tv', service)
     .then(function() {
       assert.fail('should have errored');
@@ -69,7 +73,7 @@ test('Test serving a JS service when proxy Url is invalid - '+
 });
 
 test('Test serving a JS service multiple times should fail - ' +
-  'runtime.serve(name, service)', function(assert) {
+  'server.serve(name, service)', function(assert) {
   veyron.init(config, function(err, runtime) {
     assert.error(err);
 
@@ -78,10 +82,11 @@ test('Test serving a JS service multiple times should fail - ' +
       return;
     }
 
-    runtime.serve('livingroom/tv', service, function(err, firstEndpoint) {
+    var server = runtime.newServer();
+    server.serve('livingroom/tv', service, function(err, firstEndpoint) {
       assert.error(err);
 
-      runtime.serve('bedroom/tv', service, function(err) {
+      server.serve('bedroom/tv', service, function(err) {
         assert.ok(err instanceof Error, 'should not be able to serve twice');
         runtime.close(assert.end);
       });
@@ -90,14 +95,15 @@ test('Test serving a JS service multiple times should fail - ' +
 });
 
 test('Test serving a JS service multiple times should fail - ' +
-  'var promise = runtime.serve(name, service)', function(assert) {
+  'var promise = server.serve(name, service)', function(assert) {
   veyron.init(config, function(err, runtime) {
     assert.error(err);
 
-    runtime
+    var server = runtime.newServer();
+    server
     .serve('livingroom/tv', service)
     .then(function() {
-      return runtime.serve('bedroom/tv', service).then(function() {
+      return server.serve('bedroom/tv', service).then(function() {
         assert.fail('should not be able to serve twice');
         runtime.close(assert.end);
       }, function(err) {
@@ -118,23 +124,26 @@ test('Test serving a JS service under multiple names - ' +
 
   veyron.init(config, function(err, runtime) {
     assert.error(err);
+
+    var server = runtime.newServer();
+    var client = runtime.newClient();
     ctx = runtime.getContext();
-    runtime
+    server
     .serve('livingroom/tv', service)
     .then(function addSecondName() {
-      return runtime.addName('bedroom/tv');
+      return server.addName('bedroom/tv');
     })
     .then(function bindToSecondName() {
-      return runtime.bindTo(ctx, 'bedroom/tv');
+      return client.bindTo(ctx, 'bedroom/tv');
     })
     .then(function verifySecondName(newObject){
       assert.ok(newObject && newObject.changeChannel, 'new name works');
     })
     .then(function removeSecondName() {
-      return runtime.removeName('bedroom/tv');
+      return server.removeName('bedroom/tv');
     })
     .then(function bindToRemovedSecondName() {
-      return runtime.bindTo(ctx, 'bedroom/tv')
+      return client.bindTo(ctx, 'bedroom/tv')
       .then(function verifyRemovedSecondName(a) {
         assert.fail('should not be able to bind to a removed name');
         runtime.close(assert.end);
@@ -151,11 +160,12 @@ test('Test serving a JS service under multiple names - ' +
 });
 
 test('Test adding additional names before serving a JS service should fail - ' +
-  'runtime.addName(name, cb) - before runtime.serve()', function(assert) {
+  'runtime.addName(name, cb) - before server.serve()', function(assert) {
   veyron.init(config, function(err, runtime) {
     assert.error(err);
 
-    runtime.addName('bedroom/tv', function(err) {
+    var server = runtime.newServer();
+    server.addName('bedroom/tv', function(err) {
       assert.ok(err instanceof Error, 'should fail');
       runtime.close(assert.end);
     });

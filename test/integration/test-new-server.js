@@ -31,6 +31,7 @@ test.skip('Test running several JS servers concurrently and under multiple ' +
   var barServer;
   var fooStub;
   var barStub;
+  var client;
 
   // big test, give it more time to finish
   assert.timeout(timeouts.long);
@@ -38,6 +39,7 @@ test.skip('Test running several JS servers concurrently and under multiple ' +
   return veyron.init(config)
   .then(function createTwoServers(rt) {
     runtime = rt;
+    client = rt.newClient();
     ctx = rt.getContext();
     fooServer = rt.newServer();
     barServer = rt.newServer();
@@ -57,8 +59,8 @@ test.skip('Test running several JS servers concurrently and under multiple ' +
   .then(function bindToFoo() {
     // BindTo foo or foo-fighter which ever comes back first
     return Promise.race([
-      runtime.bindTo(NAME_PREFIX + 'foo'),
-      runtime.bindTo(NAME_PREFIX + 'foo-fighter')
+      client.bindTo(NAME_PREFIX + 'foo'),
+      client.bindTo(NAME_PREFIX + 'foo-fighter')
     ]);
   })
   .then(function validateFooStub(foo) {
@@ -83,8 +85,8 @@ test.skip('Test running several JS servers concurrently and under multiple ' +
   .then(function bindToBar() {
     // BindTo bar or bar-fighter which ever comes back first
     return Promise.race([
-      runtime.bindTo(NAME_PREFIX + 'bar'),
-      runtime.bindTo(NAME_PREFIX + 'bar-fighter')
+      client.bindTo(NAME_PREFIX + 'bar'),
+      client.bindTo(NAME_PREFIX + 'bar-fighter')
     ]);
   })
   .then(function validateBarStub(bar) {

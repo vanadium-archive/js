@@ -32,60 +32,6 @@ function Runtime(options) {
   this.caveatRegistry = new CaveatValidatorRegistry();
 }
 
-/**
- * Performs client side binding of a remote service to a native javascript
- * stub object.
- *
- * Usage:
- * runtime.bindTo(context, 'Service/Name').then(function(service) {
- *    service.fooMethod(fooArgs).then(function(methodCallResult) {
- *      // Do stuff with results.
- *    }).catch(function(err) {
-        // Calling fooMethod failed.
-      });
- * }).catch(function(err) {
-      // Binding to Service/Name failed.
- * });
- *
- *
- * @param {Context} A context.
- * @param {string} name the veyron name of the service to bind to.
- * @param {function} [cb] if given, this function will be called on
- * completion of the bind.  The first argument will be an error if there is
- * one, and the second argument is an object with methods that perform rpcs to
- * service
- * methods.
- * @return {Promise} An object with methods that perform rpcs to service methods
- *
- */
-Runtime.prototype.bindTo = function(ctx, name, cb) {
-  var runtime = this;
-  var client = this._getClient();
-  var last = arguments.length - 1;
-
-  // If there is a callback bind it to the runtime (helps with tests)
-  if (typeof arguments[last] === 'function') {
-    cb = arguments[last].bind(runtime);
-  }
-
-  return client.bindTo(ctx, name, cb);
-};
-
-/**
- * Returns the object signatures for a given object name.
- * @param {Context} A context.
- * @param {string} name the veyron name of the service to bind to.
- * @param {function} [cb] if given, this function will be called on
- * completion. The first argument will be an error if there is
- * one, and the second argument is the signature.
- * methods.
- * @return {Promise} Promise that will be resolved with the signatures or
- * rejected with an error if there is one.
- */
-Runtime.prototype.signature = function(ctx, name, cb) {
-  var client = this._getClient();
-  return client.signature(ctx, name, cb);
-};
 
 /**
  * Closes the underlying websocket connection.
@@ -109,49 +55,6 @@ Runtime.prototype.close = function(cb) {
   return runtime
   ._getProxyConnection()
   .close(cb);
-};
-
-/**
- * Calls serve on the default server instance.
- * @see Server#serve
- */
-Runtime.prototype.serve = function(name, serviceObject, options, cb) {
-  var server = this._getServer();
-  return server.serve(name, serviceObject, options, cb);
-};
-
-
-/**
- * Calls serveDispatcher on the default server instance.
- * @see Server#serveDispatcher
- */
-Runtime.prototype.serveDispatcher = function(name, dispatcher, cb) {
-  var server = this._getServer();
-  return server.serveDispatcher(name, dispatcher, cb);
-};
-
-/**
- * Calls addName on the default server instance.
- * @see Server#addName
- */
-Runtime.prototype.addName = function(name, cb) {
-  return this._getServer().addName(name, cb);
-};
-
-/**
- * Calls removeName on the default server instance.
- * @see Server#removeName
- */
-Runtime.prototype.removeName = function(name, cb) {
-  return this._getServer().removeName(name, cb);
-};
-
-/**
- * Calls stop on the default server instance.
- * @see Server#stop
- */
-Runtime.prototype.stop = function(cb) {
-  return this._getServer().stop(cb);
 };
 
 /**
@@ -270,22 +173,4 @@ Runtime.prototype._getRouter = function() {
         this._name, this.getContext());
   }
   return this._router;
-};
-
-/**
- * Get or creates a client
- * @return {Client} A client
- */
-Runtime.prototype._getClient = function() {
-  this._client = this._client || new Client(this._getProxyConnection());
-  return this._client;
-};
-
-/**
- * Get or creates a server
- * @return {Server} A server
- */
-Runtime.prototype._getServer = function() {
-  this._server = this._server || new Server(this._getRouter());
-  return this._server;
 };

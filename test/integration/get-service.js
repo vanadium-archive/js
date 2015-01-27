@@ -27,7 +27,7 @@ function service(name, callback) {
     }
 
     var ctx = runtime.getContext();
-    runtime.bindTo(ctx, name, function(err, service) {
+    runtime.newClient().bindTo(ctx, name, function(err, service) {
       callback(err, ctx, service, end, runtime);
     });
 

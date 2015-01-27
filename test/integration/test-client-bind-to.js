@@ -3,7 +3,7 @@ var veyron = require('../../');
 var config = require('./default-config');
 
 test('Test binding to a Go service named test_service/cache - ' +
-  'runtime.bindTo(name, callback)', function(assert) {
+  'client.bindTo(name, callback)', function(assert) {
   var rt;
 
   veyron.init(config, oninit);
@@ -12,8 +12,9 @@ test('Test binding to a Go service named test_service/cache - ' +
     assert.error(err);
 
     rt = runtime;
+    var client = rt.newClient();
     var ctx = rt.getContext();
-    runtime.bindTo(ctx, 'test_service/cache', onbind);
+    client.bindTo(ctx, 'test_service/cache', onbind);
   }
 
   function onbind(err, service) {
@@ -25,7 +26,7 @@ test('Test binding to a Go service named test_service/cache - ' +
 });
 
 test('Test binding to a Go service named test_service/cache - ' +
-  'var promise = runtime.bindTo(name)', function(assert) {
+  'var promise = client.bindTo(name)', function(assert) {
   veyron
   .init(config)
   .then(bindTo)
@@ -33,7 +34,7 @@ test('Test binding to a Go service named test_service/cache - ' +
 
   function bindTo(runtime) {
     var ctx = runtime.getContext();
-    return runtime
+    return runtime.newClient()
     .bindTo(ctx, 'test_service/cache')
     .then(function(service) {
       assert.ok(service);
@@ -43,12 +44,13 @@ test('Test binding to a Go service named test_service/cache - ' +
 });
 
 test('Test binding to a non-existing name - ' +
-  'runtime.bindTo(badName, callback)', function(assert) {
+  'client.bindTo(badName, callback)', function(assert) {
   veyron.init(config, function(err, runtime) {
     assert.error(err);
 
+    var client = runtime.newClient();
     var ctx = runtime.getContext();
-    runtime.bindTo(ctx, 'does-not/exist', function(err, service) {
+    client.bindTo(ctx, 'does-not/exist', function(err, service) {
       assert.ok(err instanceof Error);
 
       assert.ok(err instanceof veyron.errors.NoServersError);
@@ -58,15 +60,16 @@ test('Test binding to a non-existing name - ' +
 });
 
 test('Test binding to a non-existing name - ' +
-  'var promise = runtime.bindTo(badName) ', function(assert) {
+  'var promise = client.bindTo(badName) ', function(assert) {
   var rt;
 
   veyron
   .init(config)
   .then(function(runtime) {
     rt = runtime;
+    var client = rt.newClient();
     var ctx = rt.getContext();
-    return runtime.bindTo(ctx, 'does-not/exist');
+    return client.bindTo(ctx, 'does-not/exist');
   })
   .then(function(service) {
     assert.fail('should not succeed');
@@ -83,14 +86,15 @@ test('Test binding to a non-existing name - ' +
 });
 
 test('Test binding when proxy Url is invalid - ' +
-  'runtime.bindTo(name, callback)', function(assert) {
+  'client.bindTo(name, callback)', function(assert) {
 
   veyron.init({ wspr: 'http://bad-address.tld' }, onruntime);
 
   function onruntime(err, runtime) {
     assert.error(err);
+    var client = runtime.newClient();
     var ctx = runtime.getContext();
-    runtime.bindTo(ctx, 'test_service/cache', onservice);
+    client.bindTo(ctx, 'test_service/cache', onservice);
   }
 
   function onservice(err, service) {
@@ -100,7 +104,7 @@ test('Test binding when proxy Url is invalid - ' +
 });
 
 test('Test binding when wspr Url is invalid - ' +
-  'var promise = runtime.bindTo(name) ', function(assert) {
+  'var promise = client.bindTo(name) ', function(assert) {
 
   veyron
   .init({ wspr: 'http://bad-address.tld' })
@@ -110,7 +114,7 @@ test('Test binding when wspr Url is invalid - ' +
 
   function bindTo(runtime) {
     var ctx = runtime.getContext();
-    return runtime
+    return runtime.newClient()
     .bindTo(ctx, 'test_service/cache')
     .then(noop, function(err) {
       assert.ok(err instanceof Error);

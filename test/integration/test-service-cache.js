@@ -210,7 +210,8 @@ test('Test getting signature of Go sample cache service - ' +
   veyron.init(config)
   .then(function(runtime) {
     var ctx = runtime.getContext();
-    runtime.signature(ctx, 'test_service/cache')
+    var client = runtime.newClient();
+    client.signature(ctx, 'test_service/cache')
     .then(function(sigs) {
       assert.ok(sigs);
       assert.ok(Array.isArray(sigs));
@@ -230,7 +231,8 @@ test('Test getting signature of Go sample cache service - ' +
     }
 
     var ctx = runtime.getContext();
-    runtime.signature(ctx, 'test_service/cache', function(err, sigs) {
+    var client = runtime.newClient();
+    client.signature(ctx, 'test_service/cache', function(err, sigs) {
       assert.error(err);
       assert.ok(sigs);
       assert.ok(Array.isArray(sigs));

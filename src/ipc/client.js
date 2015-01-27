@@ -229,6 +229,18 @@ var IncorrectArgCount = makeError(
 /**
  * Performs client side binding of a remote service to a native javascript
  * stub object.
+ *
+ * Usage:
+ * runtime.bindTo(context, 'Service/Name').then(function(service) {
+ *    service.fooMethod(fooArgs).then(function(methodCallResult) {
+ *      // Do stuff with results.
+ *    }).catch(function(err) {
+ *       // Calling fooMethod failed.
+ *     });
+ * }).catch(function(err) {
+ *     // Binding to Service/Name failed.
+ * });
+ *
  * @param {Context} A context.
  * @param {string} name the veyron name of the service to bind to.
  * @param {function} [cb] if given, this function will be called on

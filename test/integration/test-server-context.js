@@ -69,8 +69,9 @@ function validateContext(ctx, assert) {
 test('Test non-empty suffix is available in context', function(assert) {
   serve('a/b', dispatcher, function(err, res, end) {
     assert.error(err, 'should not error on serve(...)');
+    var client = res.runtime.newClient();
     var ctx = res.runtime.getContext();
-    res.runtime.bindTo(ctx, 'a/b/foo', function(err, service) {
+    client.bindTo(ctx, 'a/b/foo', function(err, service) {
       assert.error(err, 'should not error on runtime.bindTo(...)');
 
       service.getSuffix(ctx, function(err, suffix) {
@@ -85,8 +86,10 @@ test('Test non-empty suffix is available in context', function(assert) {
 test('Test empty suffix is available in context - ', function(assert) {
   serve('a/b', dispatcher, function(err, res, end) {
     assert.error(err, 'should not error on serve(...)');
+
+    var client = res.runtime.newClient();
     var ctx = res.runtime.getContext();
-    res.runtime.bindTo(ctx, 'a/b', function(err, service) {
+    client.bindTo(ctx, 'a/b', function(err, service) {
       assert.error(err, 'should not error on runtime.bindTo(...)');
 
       service.getSuffix(ctx, function(err, suffix) {
@@ -101,8 +104,9 @@ test('Test empty suffix is available in context - ', function(assert) {
 test('Test nested suffix /parent/suffix ', function(assert) {
   serve('a/b', dispatcher, function(err, res, end) {
     assert.error(err, 'should not error on serve(...)');
+    var client = res.runtime.newClient();
     var ctx = res.runtime.getContext();
-    res.runtime.bindTo(ctx, 'a/b/parent/suf', function(err, service) {
+    client.bindTo(ctx, 'a/b/parent/suf', function(err, service) {
       assert.error(err, 'should not error on runtime.bindTo(...)');
 
       service.getSuffix(ctx, function(err, suffix) {
@@ -118,8 +122,9 @@ test('Test name is available in context', function(assert) {
   serve('a/b', dispatcher, function(err, res, end) {
     assert.error(err, 'should not error on serve(...)');
 
+    var client = res.runtime.newClient();
     var ctx = res.runtime.getContext();
-    res.runtime.bindTo(ctx, 'a/b/suf', function(err, service) {
+    client.bindTo(ctx, 'a/b/suf', function(err, service) {
       assert.error(err, 'should not error on runtime.bindTo(...)');
 
       service.getName(ctx, function(err, name) {
@@ -135,8 +140,9 @@ test('Test context object', function(assert) {
   serve('a/b', dispatcher, function(err, res, end) {
     assert.error(err, 'should not error on serve(...)');
 
+    var client = res.runtime.newClient();
     var ctx = res.runtime.getContext();
-    res.runtime.bindTo(ctx, 'a/b/suf', function(err, service) {
+    client.bindTo(ctx, 'a/b/suf', function(err, service) {
       assert.error(err, 'should not error on runtime.bindTo(...)');
 
       service.getContext(ctx, function(err, context) {
@@ -153,8 +159,9 @@ test('Test context object and injected stream', function(assert) {
   serve('a/b', dispatcher, function(err, res, end) {
     assert.error(err, 'should not error on serve(...)');
 
+    var client = res.runtime.newClient();
     var ctx = res.runtime.getContext();
-    res.runtime.bindTo(ctx, 'a/b/suf', function(err, service) {
+    client.bindTo(ctx, 'a/b/suf', function(err, service) {
       assert.error(err, 'should not error on runtime.bindTo(...)');
 
       service.getArgs(ctx, '-a-','-b-','-c-', function(err, results) {

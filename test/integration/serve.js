@@ -57,7 +57,8 @@ function serve(name, dispatcher, callback) {
       return callback(err);
     }
 
-    runtime.serveDispatcher(name, dispatcher, function(err) {
+    var server = runtime.newServer();
+    server.serveDispatcher(name, dispatcher, function(err) {
       if (err) {
         return callback(err);
       }
@@ -93,7 +94,8 @@ function serve(name, dispatcher, callback) {
         var res = {
           runtime: runtime,
           config: config,
-          end: end
+          end: end,
+          server: server
         };
 
         if (options.autoBind === false) {
@@ -108,8 +110,8 @@ function serve(name, dispatcher, callback) {
           res.service = service;
           callback(err, res, end);
         }
-
-        runtime.bindTo(ctx, name, onBind);
+        var client = runtime.newClient();
+        client.bindTo(ctx, name, onBind);
       }
     });
 

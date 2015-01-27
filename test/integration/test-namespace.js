@@ -198,11 +198,13 @@ test('Test mounting and unmounting - ' +
   var secondaryName = PREFIX + 'new/name';
 
   var ctx;
+  var server;
   veyron.init(config).then(function createServer(rt) {
     runtime = rt;
     namespace = rt.namespace();
     ctx = rt.getContext();
-    return rt.serve(initialName, {});
+    server = rt.newServer();
+    return server.serve(initialName, {});
   }).then(wait(1000))
   .then(function resolve() {
     return namespace.resolve(ctx, initialName);
@@ -373,7 +375,8 @@ test('Test setting roots to invalid endpoint - ' +
   }).then(function bind() {
     // Since setRoots changes runtimes Namespace roots, binding to any name
     // should now fail
-    return runtime.bindTo(ctx, PREFIX + 'house/kitchen/lights')
+    var client = runtime.newClient();
+    return client.bindTo(ctx, PREFIX + 'house/kitchen/lights')
       .then(function() {
         assert.fail('Should not have been able to bind with invalid roots');
       }, function(err) {
@@ -478,14 +481,16 @@ var SAMPLE_NAMESPACE = [
 
 function init(config) {
   var runtime;
+  var server;
   return veyron.init(config)
     .then(function serveEmptyService(rt) {
       runtime = rt;
-      return runtime.serve('', {});
+      server = rt.newServer();
+      return server.serve('', {});
     })
     .then(function publishUnderMultipleNames() {
       var addNamesRequests = SAMPLE_NAMESPACE.map(function(name) {
-        return runtime.addName(PREFIX + name);
+        return server.addName(PREFIX + name);
       });
       return Promise.all(addNamesRequests);
     })
