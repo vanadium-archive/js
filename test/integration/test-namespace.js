@@ -486,7 +486,9 @@ function init(config) {
       return Promise.all(addNamesRequests);
     })
     // Wait a second for the services to be published.
-    .then(wait(1000))
+    // TODO(aghassemi): This wait is racey.  We should wait until the services
+    // are actually mounted in the mounttable.  Similar to what serve.js does.
+    .then(wait(2000))
     .then(function ready() {
       return runtime;
     });
