@@ -1,7 +1,6 @@
 var test = require('prova');
 var veyron = require('../../');
 var Promise = require('../../src/lib/promise');
-var context = require('../../src/runtime/context');
 var config = require('./default-config');
 var timeouts = require('./timeouts');
 
@@ -25,7 +24,7 @@ var barService = {
 // Re-enable it after fixing the races.
 test.skip('Test running several JS servers concurrently and under multiple ' +
   'names', function(assert) {
-  var ctx = new context.Context();
+  var ctx;
 
   var runtime;
   var fooServer;
@@ -39,6 +38,7 @@ test.skip('Test running several JS servers concurrently and under multiple ' +
   return veyron.init(config)
   .then(function createTwoServers(rt) {
     runtime = rt;
+    ctx = rt.getContext();
     fooServer = rt.newServer();
     barServer = rt.newServer();
   })

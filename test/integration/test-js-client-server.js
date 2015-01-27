@@ -4,8 +4,6 @@ var leafDispatcher = require('../../src/ipc/leaf-dispatcher');
 var Deferred = require('../../src/lib/deferred');
 var vom = require('vom');
 
-var context = require('../../src/runtime/context');
-
 // TODO(bprosnitz) Combine CacheService and CacheServicePromises so there
 // isn't as much duplicated code.
 
@@ -154,11 +152,10 @@ run({
 
 // options: testName, definition, name
 function run(options) {
-  var ctx = context.Context();
   var namePrefix = 'Test JS client/server ipc ' + options.testName + ' - ';
 
   test(namePrefix + 'cache.set(key, string) -> cache.get(key)', function(t) {
-    setup(options, function(err, cache, end) {
+    setup(options, function(err, ctx, cache, end) {
       t.error(err, 'should not error on setup');
 
       cache.set(ctx, 'foo', 'bar', function(err, res) {
@@ -175,7 +172,7 @@ function run(options) {
   });
 
   test(namePrefix + 'cache.set(key, object, callback)', function(t) {
-    setup(options, function(err, cache, end) {
+    setup(options, function(err, ctx, cache, end) {
       t.error(err, 'should not error on setup');
 
       // TODO(bprosnitz) Remove the type here.
@@ -207,7 +204,7 @@ function run(options) {
 
   test(namePrefix + 'cache.get("bad-key", callback) - failure',
             function(t) {
-    setup(options, function(err, cache, end) {
+    setup(options, function(err, ctx, cache, end) {
       t.error(err, 'should not error on setup');
 
       cache.get(ctx, 'bad-key', function(err, res) {
@@ -220,7 +217,7 @@ function run(options) {
   });
 
   test(namePrefix + 'cache.badMethod() - failure', function(t) {
-    setup(options, function(err, cache, end) {
+    setup(options, function(err, ctx, cache, end) {
       t.error(err, 'should not error on setup');
 
       t.throws(function() {
@@ -242,7 +239,7 @@ function run(options) {
     // 2. Add a listener or create a stream reader to recieve the values
     // 3. Assert the values are correct
     // 4. End the stream.
-    setup(options, function(err, cache, end){
+    setup(options, function(err, ctx, cache, end){
       // 1. Prime the cache by setting a bunch of key/values
 
       // Build a map of items
@@ -312,11 +309,10 @@ function run(options) {
   });
 
   function setup(options, cb) {
-    var serveCtx = context.Context();
     var dispatcher = leafDispatcher(options.definition);
 
-    serve(serveCtx, 'testing/cache', dispatcher, function(err, res) {
-      cb(err, res.service, res.end);
+    serve('testing/cache', dispatcher, function(err, res) {
+      cb(err, res.runtime.getContext(), res.service, res.end);
     });
   }
 }

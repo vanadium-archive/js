@@ -1,7 +1,6 @@
 var test = require('prova');
 var serve = require('./serve');
 var Deferred = require('../../src/lib/deferred');
-var context = require('../../src/runtime/context');
 
 var service = {
   call: function(ctx, arg) {
@@ -34,8 +33,7 @@ function createDispatcher(authorizer, tags) {
 }
 
 function testErrorCase(assert, authorizer) {
-  var ctx = context.Context();
-  serve(ctx, {
+  serve({
     name: 'authorizer',
     autoBind: false,
     dispatcher: createDispatcher(authorizer)
@@ -43,6 +41,7 @@ function testErrorCase(assert, authorizer) {
     if (err) {
       return assert.end(err);
     }
+    var ctx = res.runtime.getContext();
     res.runtime.bindTo(ctx, 'authorizer/auth').then(function(service) {
       service.call(ctx, 'foo').then(function(value) {
         assert.error(new Error('call should not have succeeded' + value));
@@ -88,8 +87,7 @@ function(assert) {
 });
 
 function testSuccessCase(assert, authorizer, tags) {
-  var ctx = context.Context();
-  serve(ctx, {
+  serve({
     name: 'authorizer',
     autoBind: false,
     dispatcher: createDispatcher(authorizer, tags)
@@ -97,6 +95,7 @@ function testSuccessCase(assert, authorizer, tags) {
     if (err) {
       return assert.end(err);
     }
+    var ctx = res.runtime.getContext();
     res.runtime.bindTo(ctx, 'authorizer/auth').then(function(service) {
       return service.call(ctx, 'foo');
     }).then(function() {

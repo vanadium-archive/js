@@ -1,7 +1,6 @@
 var test = require('prova');
 var serve = require('./serve');
 var leafDispatcher = require('../../src/ipc/leaf-dispatcher');
-var context = require('../../src/runtime/context');
 var dispatcher = leafDispatcher({
   foo: function(ctx) {
     return 'bar';
@@ -11,14 +10,13 @@ var name = 'my-test/service';
 
 test('Test stopping a JS service - ' +
   'runtime.stop(callback)', function(assert) {
-  var ctx = context.Context();
-  serve(ctx, name, dispatcher, function(err, res) {
+  serve(name, dispatcher, function(err, res) {
     assert.error(err);
 
     res.runtime.stop(function(err) {
       assert.error(err);
 
-      res.service.foo(ctx, function(err, result) {
+      res.service.foo(res.runtime.getContext(), function(err, result) {
         assert.ok(err, 'should fail');
         res.end(assert);
       });
@@ -29,10 +27,9 @@ test('Test stopping a JS service - ' +
 
 test('Test stopping a JS service - ' +
   'var promise = runtime.stop()', function(assert) {
-  var ctx = context.Context();
-  serve(ctx, name, dispatcher, function(err, res) {
+  serve(name, dispatcher, function(err, res) {
     assert.error(err);
-
+    var ctx = res.runtime.getContext();
     res.runtime.stop()
     .then(function() {
       return res.service.foo(ctx);
@@ -57,10 +54,10 @@ test('Test stopping a JS service - ' +
 // TODO(aghassemi) Look into this.
 test.skip('Test re-serving a stopped JS service - ' +
   'server.stop(callback), runtime.serve(callback)', function(assert) {
-  var ctx = context.Context();
-  serve(ctx, name, dispatcher, function(err, res) {
+  serve(name, dispatcher, function(err, res) {
     assert.error(err);
 
+    var ctx = res.runtime.getContext();
     res.runtime.stop(function(err) {
       assert.error(err);
 
@@ -84,10 +81,10 @@ test.skip('Test re-serving a stopped JS service - ' +
 
 test('Test re-serving a stopped JS service - ' +
   'var promise = runtime.stop(), runtime.serve()', function(assert) {
-  var ctx = context.Context();
-  serve(ctx, name, dispatcher, function(err, res) {
+  serve(name, dispatcher, function(err, res) {
     assert.error(err);
 
+    var ctx = res.runtime.getContext();
     res.runtime.stop()
     .then(function() {
       return res.runtime.serveDispatcher(name, dispatcher);
@@ -111,8 +108,7 @@ test('Test re-serving a stopped JS service - ' +
 
 test('Test stopping a JS service twice - ' +
   'runtime.stop(callback)', function(assert) {
-  var ctx = context.Context();
-  serve(ctx, name, dispatcher, function(err, res) {
+  serve(name, dispatcher, function(err, res) {
     assert.error(err);
 
     res.runtime.stop(function(err) {

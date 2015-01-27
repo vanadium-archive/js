@@ -1,13 +1,12 @@
 var test = require('prova');
 var veyron = require('../../');
-var context = require('../../src/runtime/context');
 var config = require('./default-config');
 
 test('Test closing runtime - runtime.close(cb)', function(assert) {
-  var ctx = context.Context();
   veyron.init(config, oninit);
 
   function oninit(err, runtime) {
+    var ctx = runtime.getContext();
     assert.error(err);
     runtime.bindTo(ctx, 'test_service/cache', onbind);
   }
@@ -27,10 +26,10 @@ test('Test closing runtime - var promise = runtime.close()', function(assert) {
   .catch(assert.end);
 
   var rt;
-  var ctx = context.Context();
 
   function bindTo(runtime) {
     rt = runtime;
+    var ctx = runtime.getContext();
     return runtime.bindTo(ctx, 'test_service/cache');
   }
 

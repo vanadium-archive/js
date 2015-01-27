@@ -1,7 +1,6 @@
 var test = require('prova');
 
 var leafDispatcher = require('../../src/ipc/leaf-dispatcher');
-var context = require('../../src/runtime/context');
 var serve = require('./serve');
 
 // Test serving and making an RPC call.
@@ -9,19 +8,18 @@ var serve = require('./serve');
 function validateCommunication(t, name, cb) {
   var response = 5;
 
-  var serveCtx = context.Context();
   var dispatcher = leafDispatcher({
     anRpc: function(context, cb) {
       cb(null, response);
     }
   });
 
-  serve(serveCtx, name, dispatcher, function(err, res) {
+  serve(name, dispatcher, function(err, res) {
     if (err) {
       return cb(err);
     }
 
-    res.service.anRpc(context.Context(), function(err, result) {
+    res.service.anRpc(res.runtime.getContext(), function(err, result) {
       t.error(err, 'Err expected to be null');
       t.equal(result, response, 'Expected different response from anRpc()');
       cb(null, res.end);

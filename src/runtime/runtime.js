@@ -15,6 +15,7 @@ var Deferred = require('../lib/deferred');
 var SimpleHandler = require('../proxy/simple-handler');
 var vlog = require('../lib/vlog');
 var context = require('./context');
+var SharedContextKeys = require('./shared-context-keys');
 
 module.exports = Runtime;
 
@@ -27,6 +28,7 @@ function Runtime(options) {
   this._wspr = options.wspr;
   this.principal = new Principal(this._getProxyConnection());
   this._name = options.appName;
+  this._language = options.language;
   this.caveatRegistry = new CaveatValidatorRegistry();
 }
 
@@ -179,14 +181,21 @@ Runtime.prototype.newClient = function() {
 };
 
 /**
- * Adds an IDL file to the set of definitions known by the server.
- * Services defined in IDL files passed into this method can be used to
- * describe the interface exported by a serviceObject passed into register.
- * @param {object} updates the output of the vdl tool on an idl.
+ * Returns the root runtime context
+ * @see Context
+ * @return {Context} The root runtime context.
  */
-Runtime.prototype.addIDL = function(updates) {
-  var server = this._getServer();
-  return server.addIDL(updates);
+Runtime.prototype.getContext = function() {
+  if (this._rootCtx) {
+    return this._rootCtx;
+  }
+  var ctx = new context.Context();
+  ctx = ctx.withValue(SharedContextKeys.COMPONENT_NAME, this._name);
+  if (this._language) {
+    ctx = ctx.withValue(SharedContextKeys.LANG_KEY, this._language);
+  }
+  this._rootCtx = ctx;
+  return ctx;
 };
 
 /**
@@ -195,7 +204,8 @@ Runtime.prototype.addIDL = function(updates) {
  * @return {Namespace} A namespace client instance.
  */
 Runtime.prototype.namespace = function() {
-  this._ns = this._ns || new Namespace(this._getProxyConnection());
+  this._ns = this._ns || new Namespace(this._getProxyConnection(),
+                                       this.getContext());
   return this._ns;
 };
 
@@ -213,7 +223,7 @@ Runtime.prototype.newBlessings = function(extension, cb) {
   var messageDef = new Deferred();
   var proxy = this._getProxyConnection();
   var id = proxy.nextId();
-  var handler = new SimpleHandler(context.Context(), messageDef, proxy, id);
+  var handler = new SimpleHandler(this.getContext(), messageDef, proxy, id);
 
   proxy.sendRequest(JSON.stringify(extension), MessageType.NEW_BLESSINGS,
                     handler, id);
@@ -257,7 +267,7 @@ Runtime.prototype._getRouter = function() {
   if (!this._router) {
     this._router = new ServerRouter(
         this._getProxyConnection(),
-        this._name);
+        this._name, this.getContext());
   }
   return this._router;
 };

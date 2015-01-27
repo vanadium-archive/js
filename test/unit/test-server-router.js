@@ -8,6 +8,7 @@ var Server = require('../../src/ipc/server');
 var MessageType = require('../../src/proxy/message-type');
 var vom = require('vom');
 var DecodeUtil = require('../../src/lib/decode-util');
+var context = require('../../src/runtime/context');
 
 test('Server Router Signature Lookup', function(t) {
   var inputName = 'aName';
@@ -73,7 +74,12 @@ test('Server Router Signature Lookup', function(t) {
     nextId: function() { return inputMessageId; }
   };
 
-  var router = new Router(mockProxy, 'TestAppName');
+  var mockRuntime = {
+    newContext: function() {
+      return new context.Context();
+    }
+  };
+  var router = new Router(mockProxy, 'TestAppName', mockRuntime);
   var server = new Server(router);
   var options = {
     authorizer: function(){}

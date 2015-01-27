@@ -1,7 +1,6 @@
 var test = require('prova');
 var serve = require('./serve');
 var leafDispatcher = require('../../src/ipc/leaf-dispatcher');
-var context = require('../../src/runtime/context');
 
 // Services that handles anything in a/b/* where b is the service name
 var dispatcher = leafDispatcher({
@@ -68,11 +67,9 @@ function validateContext(ctx, assert) {
 }
 
 test('Test non-empty suffix is available in context', function(assert) {
-  var ctx = context.Context();
-
-  serve(ctx, 'a/b', dispatcher, function(err, res, end) {
+  serve('a/b', dispatcher, function(err, res, end) {
     assert.error(err, 'should not error on serve(...)');
-
+    var ctx = res.runtime.getContext();
     res.runtime.bindTo(ctx, 'a/b/foo', function(err, service) {
       assert.error(err, 'should not error on runtime.bindTo(...)');
 
@@ -86,11 +83,9 @@ test('Test non-empty suffix is available in context', function(assert) {
 });
 
 test('Test empty suffix is available in context - ', function(assert) {
-  var ctx = context.Context();
-
-  serve(ctx, 'a/b', dispatcher, function(err, res, end) {
+  serve('a/b', dispatcher, function(err, res, end) {
     assert.error(err, 'should not error on serve(...)');
-
+    var ctx = res.runtime.getContext();
     res.runtime.bindTo(ctx, 'a/b', function(err, service) {
       assert.error(err, 'should not error on runtime.bindTo(...)');
 
@@ -104,11 +99,9 @@ test('Test empty suffix is available in context - ', function(assert) {
 });
 
 test('Test nested suffix /parent/suffix ', function(assert) {
-  var ctx = context.Context();
-
-  serve(ctx, 'a/b', dispatcher, function(err, res, end) {
+  serve('a/b', dispatcher, function(err, res, end) {
     assert.error(err, 'should not error on serve(...)');
-
+    var ctx = res.runtime.getContext();
     res.runtime.bindTo(ctx, 'a/b/parent/suf', function(err, service) {
       assert.error(err, 'should not error on runtime.bindTo(...)');
 
@@ -122,11 +115,10 @@ test('Test nested suffix /parent/suffix ', function(assert) {
 });
 
 test('Test name is available in context', function(assert) {
-  var ctx = context.Context();
-
-  serve(ctx, 'a/b', dispatcher, function(err, res, end) {
+  serve('a/b', dispatcher, function(err, res, end) {
     assert.error(err, 'should not error on serve(...)');
 
+    var ctx = res.runtime.getContext();
     res.runtime.bindTo(ctx, 'a/b/suf', function(err, service) {
       assert.error(err, 'should not error on runtime.bindTo(...)');
 
@@ -140,11 +132,10 @@ test('Test name is available in context', function(assert) {
 });
 
 test('Test context object', function(assert) {
-  var ctx = context.Context();
-
-  serve(ctx, 'a/b', dispatcher, function(err, res, end) {
+  serve('a/b', dispatcher, function(err, res, end) {
     assert.error(err, 'should not error on serve(...)');
 
+    var ctx = res.runtime.getContext();
     res.runtime.bindTo(ctx, 'a/b/suf', function(err, service) {
       assert.error(err, 'should not error on runtime.bindTo(...)');
 
@@ -159,11 +150,10 @@ test('Test context object', function(assert) {
 });
 
 test('Test context object and injected stream', function(assert) {
-  var ctx = context.Context();
-
-  serve(ctx, 'a/b', dispatcher, function(err, res, end) {
+  serve('a/b', dispatcher, function(err, res, end) {
     assert.error(err, 'should not error on serve(...)');
 
+    var ctx = res.runtime.getContext();
     res.runtime.bindTo(ctx, 'a/b/suf', function(err, service) {
       assert.error(err, 'should not error on runtime.bindTo(...)');
 

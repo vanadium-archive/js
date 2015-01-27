@@ -4,7 +4,6 @@ var Deferred = require('../../src/lib/deferred');
 var serve = require('./serve');
 var leafDispatcher = require('../../src/ipc/leaf-dispatcher');
 var message = 'failure';
-var context = require('../../src/runtime/context');
 
 testStandardErrors();
 testNonStandardErrors();
@@ -46,12 +45,12 @@ function testStandardErrors() {
     test('Test returning errors of type error() - ' +
       method + '(callback)', function(assert) {
 
-      var ctx = context.Context();
-      serve(ctx, 'js/errorThrower/' + method, dispatcher, function(err, res) {
+      serve('js/errorThrower/' + method, dispatcher, function(err, res) {
         if (err) {
           return assert.end(err);
         }
 
+        var ctx = res.runtime.getContext();
         res.service[method](ctx, function(err) {
           assert.ok(err, 'should error');
           assert.ok(err instanceof Error, 'should be Error');
@@ -114,12 +113,12 @@ function testNonStandardErrors() {
     test('Test returning errors that are not of standard type error() - ' +
       method + '()', function(assert) {
 
-      var ctx = context.Context();
-      serve(ctx, 'js/thrower/' + method, dispatcher, function(err, res) {
+      serve('js/thrower/' + method, dispatcher, function(err, res) {
         if (err) {
           return assert.end(err);
         }
 
+        var ctx = res.runtime.getContext();
         res.service[method](ctx, function(err) {
           assert.ok(err, 'should error');
           assert.ok(err instanceof Error, 'should be Error');

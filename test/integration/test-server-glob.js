@@ -1,6 +1,5 @@
 var test = require('prova');
 var serve = require('./serve');
-var context = require('../../src/runtime/context');
 var Promise = require('../../src/lib/promise');
 var naming = require('../../src/v.io/core/veyron2/naming/naming');
 var namespaceUtil = require('../../src/namespace/util');
@@ -102,8 +101,7 @@ function runChildrenGlobTest(pattern, expectedResults, disallowed, assert) {
 }
 
 function runGlobTest(pattern, expectedResults, dispatcher, assert) {
-  var ctx = context.Context();
-  serve(ctx, {
+  serve({
     name: 'testGlob',
     autoBind: false,
     dispatcher: dispatcher
@@ -113,6 +111,7 @@ function runGlobTest(pattern, expectedResults, dispatcher, assert) {
     }
 
     var namespace = res.runtime.namespace();
+    var ctx = res.runtime.getContext();
     var globRPC = namespace.glob(ctx, pattern);
     var stream = globRPC.stream;
     var globResults = [];

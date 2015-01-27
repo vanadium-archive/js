@@ -22,7 +22,6 @@ var namespaceUtil = require('../namespace/util');
 var naming = require('../v.io/core/veyron2/naming/naming');
 var Glob = require('./glob');
 var GlobStream = require('./glob-stream');
-var context = require('../runtime/context');
 
 /**
  * A router that handles routing incoming requests to the right
@@ -30,12 +29,13 @@ var context = require('../runtime/context');
  * @constructor
  * @private
  */
-var Router = function(proxy, appName) {
+var Router = function(proxy, appName, rootCtx) {
   this._servers = {};
   this._proxy = proxy;
   this._streamMap = {};
   this._contextMap = {};
   this._appName = appName;
+  this._rootCtx = rootCtx;
   this._outstandingRequestForId = {};
   proxy.addIncomingHandler(IncomingPayloadType.INVOKE_REQUEST, this);
   proxy.addIncomingHandler(IncomingPayloadType.LOOKUP_REQUEST, this);
@@ -68,7 +68,7 @@ Router.prototype.handleAuthorizationRequest = function(messageId, request) {
   } catch (e) {
     JSON.stringify({
       // TODO(bjornick): Use the real context
-      err: new verror.InternalError(new context.Context(),
+      err: new verror.InternalError(this._rootCtx,
                                     ['Failed to decode ', e])
     });
     this._proxy.sendRequest(data, MessageType.AUTHORIZATION_RESPONSE,
@@ -78,7 +78,7 @@ Router.prototype.handleAuthorizationRequest = function(messageId, request) {
   if (!server) {
     var data = JSON.stringify({
       // TODO(bjornick): Use the real context
-      err: new verror.ExistsError(new context.Context(), ['unknown server'])
+      err: new verror.ExistsError(this._rootCtx, ['unknown server'])
     });
     this._proxy.sendRequest(data, MessageType.AUTHORIZATION_RESPONSE,
         null, messageId);
@@ -105,7 +105,7 @@ Router.prototype.handleLookupRequest = function(messageId, request) {
     // TODO(bjornick): Pass in context here so we can generate useful error
     // messages.
     var data = JSON.stringify({
-      err: new verror.ExistsError(new context.Context(), ['unknown server'])
+      err: new verror.ExistsError(this._rootCtx, ['unknown server'])
     });
     this._proxy.sendRequest(data, MessageType.LOOKUP_RESPONSE,
         null, messageId);
@@ -474,7 +474,7 @@ Router.prototype.serve = function(name, server, cb) {
 
   var def = new Deferred(cb);
   var message = JSON.stringify(messageJSON);
-  this._sendRequest(context.Context(), message, MessageType.SERVE, def);
+  this._sendRequest(this._rootCtx, message, MessageType.SERVE, def);
 
   return def.promise;
 };
@@ -495,7 +495,7 @@ Router.prototype.addName = function(name, server, cb) {
 
   var def = new Deferred(cb);
   var message = JSON.stringify(messageJSON);
-  this._sendRequest(context.Context(), message, MessageType.ADD_NAME, def);
+  this._sendRequest(this._rootCtx, message, MessageType.ADD_NAME, def);
 
   return def.promise;
 };
@@ -519,7 +519,8 @@ Router.prototype.removeName = function(name, server, cb) {
 
   var def = new Deferred(cb);
   var message = JSON.stringify(messageJSON);
-  this._sendRequest(context.Context(), message, MessageType.REMOVE_NAME, def);
+  this._sendRequest(this._rootCtx, message, MessageType.REMOVE_NAME,
+                    def);
 
   return def.promise;
 };
@@ -536,7 +537,7 @@ Router.prototype.stopServer = function(server, cb) {
   var self = this;
 
   var def = new Deferred(cb);
-  this._sendRequest(context.Context(), server.id.toString(),
+  this._sendRequest(this._rootCtx, server.id.toString(),
                     MessageType.STOP, def);
 
   return def.promise.then(function(result) {

@@ -2,12 +2,10 @@ var test = require('prova');
 var service = require('./get-service');
 var verror = require('../../src/errors/verror');
 var DefaultError = require('../../src/errors/default-error');
-var context = require('../../src/runtime/context');
 
 test('Test Go service returning Aborted error - ' +
   'errorThrower.method(callback)', function(assert) {
-  var ctx = context.Context();
-  service(ctx, 'test_service/errorThrower', function(err, errorThrower, end) {
+  service('test_service/errorThrower', function(err, ctx, errorThrower, end) {
     assert.error(err);
 
     errorThrower.throwAborted(ctx, function(err) {
@@ -21,8 +19,7 @@ test('Test Go service returning Aborted error - ' +
 
 test('Test Go service returning BadArg error - ' +
   'errorThrower.method(callback)', function(assert) {
-  var ctx = context.Context();
-  service(ctx, 'test_service/errorThrower', function(err, errorThrower, end) {
+  service('test_service/errorThrower', function(err, ctx, errorThrower, end) {
     assert.error(err);
 
     errorThrower.throwBadArg(ctx, function(err) {
@@ -36,8 +33,7 @@ test('Test Go service returning BadArg error - ' +
 
 test('Test Go service returning BadProtocol error - ' +
   'errorThrower.method(callback)', function(assert) {
-  var ctx = context.Context();
-  service(ctx, 'test_service/errorThrower', function(err, errorThrower, end) {
+  service('test_service/errorThrower', function(err, ctx, errorThrower, end) {
     assert.error(err);
 
     errorThrower.throwBadProtocol(ctx, function(err) {
@@ -52,8 +48,7 @@ test('Test Go service returning BadProtocol error - ' +
 
 test('Test Go service returning Internal error - ' +
   'errorThrower.method(callback)', function(assert) {
-  var ctx = context.Context();
-  service(ctx, 'test_service/errorThrower', function(err, errorThrower, end) {
+  service('test_service/errorThrower', function(err, ctx, errorThrower, end) {
     assert.error(err);
 
     errorThrower.throwInternal(ctx, function(err) {
@@ -68,8 +63,7 @@ test('Test Go service returning Internal error - ' +
 
 test('Test Go service returning NoAccess error - ' +
   'errorThrower.method(callback)', function(assert) {
-  var ctx = context.Context();
-  service(ctx, 'test_service/errorThrower', function(err, errorThrower, end) {
+  service('test_service/errorThrower', function(err, ctx, errorThrower, end) {
     assert.error(err);
 
     errorThrower.throwNoAccess(ctx, function(err) {
@@ -84,8 +78,7 @@ test('Test Go service returning NoAccess error - ' +
 
 test('Test Go service returning NoExist error - ' +
   'errorThrower.method(callback)', function(assert) {
-  var ctx = context.Context();
-  service(ctx, 'test_service/errorThrower', function(err, errorThrower, end) {
+  service('test_service/errorThrower', function(err, ctx, errorThrower, end) {
     assert.error(err);
 
     errorThrower.throwNoExist(ctx, function(err) {
@@ -99,8 +92,7 @@ test('Test Go service returning NoExist error - ' +
 
 test('Test Go service returning NoExistOrNoAccess error - ' +
   'errorThrower.method(callback)', function(assert) {
-  var ctx = context.Context();
-  service(ctx, 'test_service/errorThrower', function(err, errorThrower, end) {
+  service('test_service/errorThrower', function(err, ctx, errorThrower, end) {
     assert.error(err);
 
     errorThrower.throwNoExistOrNoAccess(ctx, function(err) {
@@ -115,8 +107,7 @@ test('Test Go service returning NoExistOrNoAccess error - ' +
 
 test('Test Go service returning Unknown error - ' +
   'errorThrower.method(callback)', function(assert) {
-  var ctx = context.Context();
-  service(ctx, 'test_service/errorThrower', function(err, errorThrower, end) {
+  service('test_service/errorThrower', function(err, ctx, errorThrower, end) {
     assert.error(err);
 
     errorThrower.throwUnknown(ctx, function(err) {
@@ -130,8 +121,7 @@ test('Test Go service returning Unknown error - ' +
 
 test('Test Go service returning GoError error - ' +
   'errorThrower.method(callback)', function(assert) {
-  var ctx = context.Context();
-  service(ctx, 'test_service/errorThrower', function(err, errorThrower, end) {
+  service('test_service/errorThrower', function(err, ctx, errorThrower, end) {
     assert.error(err);
 
     errorThrower.throwGoError(ctx, function(err) {
@@ -145,8 +135,7 @@ test('Test Go service returning GoError error - ' +
 
 test('Test Go service returning CustomStandard error - ' +
   'errorThrower.method(callback)', function(assert) {
-  var ctx = context.Context();
-  service(ctx, 'test_service/errorThrower', function(err, errorThrower, end) {
+  service('test_service/errorThrower', function(err, ctx, errorThrower, end) {
     assert.error(err);
 
     errorThrower.throwCustomStandardError(ctx, function(err) {

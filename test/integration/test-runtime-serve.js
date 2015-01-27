@@ -1,7 +1,6 @@
 var test = require('prova');
 var veyron = require('../../');
 var config = require('./default-config');
-var context = require('../../src/runtime/context');
 var service = {
   changeChannel: function(ctx) {
     throw new Error('NotImplemented');
@@ -115,11 +114,11 @@ test('Test serving a JS service multiple times should fail - ' +
 
 test('Test serving a JS service under multiple names - ' +
   'runtime.addName(name), runtime.removeName(name)', function(assert) {
-  var ctx = context.Context();
+  var ctx;
 
   veyron.init(config, function(err, runtime) {
     assert.error(err);
-
+    ctx = runtime.getContext();
     runtime
     .serve('livingroom/tv', service)
     .then(function addSecondName() {

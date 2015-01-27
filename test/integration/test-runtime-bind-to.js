@@ -1,12 +1,10 @@
 var test = require('prova');
 var veyron = require('../../');
-var context = require('../../src/runtime/context');
 var config = require('./default-config');
 
 test('Test binding to a Go service named test_service/cache - ' +
   'runtime.bindTo(name, callback)', function(assert) {
   var rt;
-  var ctx = context.Context();
 
   veyron.init(config, oninit);
 
@@ -14,6 +12,7 @@ test('Test binding to a Go service named test_service/cache - ' +
     assert.error(err);
 
     rt = runtime;
+    var ctx = rt.getContext();
     runtime.bindTo(ctx, 'test_service/cache', onbind);
   }
 
@@ -27,13 +26,13 @@ test('Test binding to a Go service named test_service/cache - ' +
 
 test('Test binding to a Go service named test_service/cache - ' +
   'var promise = runtime.bindTo(name)', function(assert) {
-  var ctx = context.Context();
   veyron
   .init(config)
   .then(bindTo)
   .catch(assert.end);
 
   function bindTo(runtime) {
+    var ctx = runtime.getContext();
     return runtime
     .bindTo(ctx, 'test_service/cache')
     .then(function(service) {
@@ -48,7 +47,7 @@ test('Test binding to a non-existing name - ' +
   veyron.init(config, function(err, runtime) {
     assert.error(err);
 
-    var ctx = context.Context();
+    var ctx = runtime.getContext();
     runtime.bindTo(ctx, 'does-not/exist', function(err, service) {
       assert.ok(err instanceof Error);
 
@@ -61,12 +60,12 @@ test('Test binding to a non-existing name - ' +
 test('Test binding to a non-existing name - ' +
   'var promise = runtime.bindTo(badName) ', function(assert) {
   var rt;
-  var ctx = context.Context();
 
   veyron
   .init(config)
   .then(function(runtime) {
     rt = runtime;
+    var ctx = rt.getContext();
     return runtime.bindTo(ctx, 'does-not/exist');
   })
   .then(function(service) {
@@ -87,10 +86,10 @@ test('Test binding when proxy Url is invalid - ' +
   'runtime.bindTo(name, callback)', function(assert) {
 
   veyron.init({ wspr: 'http://bad-address.tld' }, onruntime);
-  var ctx = context.Context();
 
   function onruntime(err, runtime) {
     assert.error(err);
+    var ctx = runtime.getContext();
     runtime.bindTo(ctx, 'test_service/cache', onservice);
   }
 
@@ -108,9 +107,9 @@ test('Test binding when wspr Url is invalid - ' +
   .then(bindTo)
   .catch(assert.end);
 
-  var ctx = context.Context();
 
   function bindTo(runtime) {
+    var ctx = runtime.getContext();
     return runtime
     .bindTo(ctx, 'test_service/cache')
     .then(noop, function(err) {

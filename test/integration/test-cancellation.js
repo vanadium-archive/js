@@ -1,12 +1,11 @@
 var test = require('prova');
-var context = require('../../src/runtime/context');
 var service = require('./get-service');
 var serve = require('./serve');
 var leafDispatcher = require('../../src/ipc/leaf-dispatcher');
 var NO_TIMEOUT = require('../../src/ipc/constants').NO_TIMEOUT;
 
 
-function run(ctx, err, collector, end, assert, id) {
+function run(ctx, err, collector, end, assert, id, runtime) {
   if (err) {
     return assert.end(err);
   }
@@ -15,12 +14,12 @@ function run(ctx, err, collector, end, assert, id) {
   ctx = ctx.withTimeout(timeout);
 
   collector.neverReturn(ctx, id).catch(function(err) {
-    if (!(err instanceof context.CancelledError)) {
+    if (!err.idAction || err.idAction.id !== 'CancelError') {
       assert.fail(err);
     }
   });
 
-  var dctx = new context.Context().withTimeout(60000);
+  var dctx = runtime.getContext().withTimeout(60000);
   collector.waitForStatus(dctx, id, 'running')
     .then(function(serverTimeout) {
       // Ensure that the server got the timeout we set.  We allow up to 10s
@@ -107,20 +106,21 @@ function newDispatcher() {
 }
 
 test('Test cancellation from JS client to Go server', function(assert) {
-  var ctx = new context.CancelContext(new context.Context());
-  service(ctx, 'test_service/serviceToCancel', function(err, collector, end) {
-    run(ctx, err, collector, end, assert, 1);
+  service('test_service/serviceToCancel', function(err, ctx, collector, end,
+                                                   runtime) {
+    ctx = ctx.withCancel();
+    run(ctx, err, collector, end, assert, 1, runtime);
   });
 });
 
 test('Test cancellation from JS client to JS server', function(assert) {
-  var ctx = context.Context();
-  serve(ctx, 'testing/serviceToCancel', newDispatcher(), function(err, res) {
+  serve('testing/serviceToCancel', newDispatcher(), function(err, res) {
     if (err) {
       assert.error(err);
       assert.end();
       return;
     }
-    run(ctx, err, res.service, res.end, assert, 2);
+    var ctx = res.runtime.getContext();
+    run(ctx, err, res.service, res.end, assert, 2, res.runtime);
   });
 });

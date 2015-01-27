@@ -23,7 +23,6 @@ var Invoker = require('./../invocation/invoker');
 var defaultAuthorizer = require('../security/default-authorizer');
 var actions = require('./../errors/actions');
 var makeError = require('../errors/make-errors');
-var context = require('../runtime/context');
 
 var nextServerID = 1; // The ID for the next server.
 
@@ -40,6 +39,7 @@ function Server(router) {
   }
 
   this._router = router;
+  this._rootCtx = router._rootCtx;
   this._handle = 0;
   this.id = nextServerID++;
   this.dispatcher = null;
@@ -295,7 +295,7 @@ var InvokeOnNonInvoker = makeError(
 Server.prototype._handleLookupResult = function(object) {
   if (!object.hasOwnProperty('service')) {
     // TODO(bjornick): Use the correct context here.
-    throw new InvokeOnNonInvoker(new context.Context());
+    throw new InvokeOnNonInvoker(this._rootCtx);
   }
   object._handle = this._handle;
   object.invoker = new Invoker(object.service);

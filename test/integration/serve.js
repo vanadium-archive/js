@@ -7,7 +7,7 @@ var defaults = {
 
 module.exports = serve;
 
-// # serve(ctx, name, dispatcher, callback)
+// # serve(name, dispatcher, callback)
 //
 // DRYs up test code by wrapping the default success case for:
 //
@@ -20,8 +20,7 @@ module.exports = serve;
 // To make a connection to the default integration test wspr instance and
 // bind to a service use:
 //
-//     var ctx = context.Context()
-//     serve(ctx, 'test/service', dispatcher, function(err, res) {
+//     serve('test/service', dispatcher, function(err, res) {
 //       res.service.returnBuiltInError(function(err) {
 //         assert.error(err)
 //
@@ -42,7 +41,7 @@ module.exports = serve;
 //       })
 //     })
 //
-function serve(ctx, name, dispatcher, callback) {
+function serve(name, dispatcher, callback) {
   var options = defaults;
 
   // alternate: serve(options, callback)
@@ -62,6 +61,8 @@ function serve(ctx, name, dispatcher, callback) {
       if (err) {
         return callback(err);
       }
+
+      var ctx = runtime.getContext();
 
       waitUntilResolve();
 

@@ -10,7 +10,7 @@ module.exports = service;
 // To make a connection to the default integration test wspr instance and
 // bind to a service use:
 //
-//     service('test_service/cache', function(err, cache, end) {
+//     service('test_service/cache', function(err, ctx, cache, end, runtime) {
 //       assert.error(err)
 //
 //       // your assertions here...
@@ -20,14 +20,15 @@ module.exports = service;
 //       end(assert)
 //     })
 //
-function service(ctx, name, callback) {
+function service(name, callback) {
   veyron.init(config, function(err, runtime) {
     if (err) {
       return callback(err);
     }
 
+    var ctx = runtime.getContext();
     runtime.bindTo(ctx, name, function(err, service) {
-      callback(err, service, end, runtime);
+      callback(err, ctx, service, end, runtime);
     });
 
     // hoisted and passed as the last argument to the callback argument.

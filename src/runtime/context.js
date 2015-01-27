@@ -150,7 +150,7 @@ ChildContext.prototype.waitUntilDone = function(callback) {
   return this._parent.waitUntilDone(callback);
 };
 ChildContext.prototype.value = function(key) {
-  return this._parent.value();
+  return this._parent.value(key);
 };
 
 // ValueContext is a context that associates a single key with a

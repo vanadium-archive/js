@@ -11,8 +11,9 @@ module.exports = Namespace;
  * @param {Proxy} Proxy instance.
  * @constructor
  */
-function Namespace(proxy) {
+function Namespace(proxy, rootCtx) {
   this._proxy = proxy;
+  this._rootCtx = rootCtx;
 }
 
 var NamespaceMethods = {
@@ -135,7 +136,7 @@ Namespace.prototype.flushCacheEntry = function(name, cb) {
     name: name
   };
 
-  return this._sendRequest(new Context(),
+  return this._sendRequest(this._rootCtx,
                            NamespaceMethods.FLUSHCACHEENTRY, args, cb);
 };
 
@@ -152,7 +153,7 @@ Namespace.prototype.disableCache = function(disable, cb) {
     disable: disable
   };
 
-  return this._sendRequest(new Context(),
+  return this._sendRequest(this._rootCtx,
                            NamespaceMethods.DISABLECACHE, args, cb);
 };
 
@@ -164,7 +165,8 @@ Namespace.prototype.disableCache = function(disable, cb) {
  * when getRoots is complete or rejected when there is an error
  */
 Namespace.prototype.roots = function(cb) {
-  return this._sendRequest(new Context(), NamespaceMethods.ROOTS, null, cb);
+  return this._sendRequest(this._rootCtx, NamespaceMethods.ROOTS, null,
+                           cb);
 };
 
 /**
@@ -191,7 +193,8 @@ Namespace.prototype.setRoots = function(roots, cb) {
     roots: roots
   };
 
-  return this._sendRequest(new Context(), NamespaceMethods.SETROOTS, args, cb);
+  return this._sendRequest(this._rootCtx,
+                           NamespaceMethods.SETROOTS, args, cb);
 };
 
 //TODO(aghassemi) Implement Unresolve after Go library makes its changes.

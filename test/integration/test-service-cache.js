@@ -4,12 +4,10 @@ var NoExistError = veyron.errors.NoExistError;
 var config = require('./default-config');
 var service = require('./get-service');
 var Promise = require('bluebird');
-var context = require('../../src/runtime/context');
 
 test('Test set() of Go sample cache service - ' +
   'cache.set(key, value, callback)', function(assert) {
-  var ctx = context.Context();
-  service(ctx, 'test_service/cache', function(err, cache, end) {
+  service('test_service/cache', function(err, ctx, cache, end) {
     assert.error(err);
     if (err) {
       return end(assert);
@@ -24,8 +22,7 @@ test('Test set() of Go sample cache service - ' +
 
 test('Test set() of Go sample cache service - ' +
   'var promise = cache.set(key, value)', function(assert) {
-  var ctx = context.Context();
-  service(ctx, 'test_service/cache', function(err, cache, end) {
+  service('test_service/cache', function(err, ctx, cache, end) {
     assert.error(err);
     if (err) {
       return end(assert);
@@ -43,8 +40,7 @@ test('Test set() of Go sample cache service - ' +
 
 test('Test get() of Go sample cache service - ' +
   'cache.get(key, value, callback)', function(assert) {
-  var ctx = context.Context();
-  service(ctx, 'test_service/cache', function(err, cache, end) {
+  service('test_service/cache', function(err, ctx, cache, end) {
     assert.error(err);
     if (err) {
       return end(assert);
@@ -64,8 +60,7 @@ test('Test get() of Go sample cache service - ' +
 
 test('Test get() of Go sample cache service - ' +
   'var promise = cache.get(key, value)', function(assert) {
-  var ctx = context.Context();
-  service(ctx, 'test_service/cache', function(err, cache, end) {
+  service('test_service/cache', function(err, ctx, cache, end) {
     assert.error(err);
     if (err) {
       return end(assert);
@@ -89,8 +84,7 @@ test('Test get() of Go sample cache service - ' +
 
 test('Test get() with invalid key of Go sample cache service - ' +
   'cache.get(key, value, callback)', function(assert) {
-  var ctx = context.Context();
-  service(ctx, 'test_service/cache', function(err, cache, end) {
+  service('test_service/cache', function(err, ctx, cache, end) {
     assert.error(err);
     if (err) {
       return end(assert);
@@ -105,8 +99,7 @@ test('Test get() with invalid key of Go sample cache service - ' +
 
 test('Test get() with invalid key of Go sample cache service - ' +
   'var promise = cache.get(key, value) - failure', function(assert) {
-  var ctx = context.Context();
-  service(ctx, 'test_service/cache', function(err, cache, end) {
+  service('test_service/cache', function(err, ctx, cache, end) {
     assert.error(err);
     if (err) {
       return end(assert);
@@ -127,8 +120,7 @@ test('Test get() with invalid key of Go sample cache service - ' +
 
 test('Test calling a non-existing method of Go sample cache service - ' +
   'cache.badMethod()', function(assert) {
-  var ctx = context.Context();
-  service(ctx, 'test_service/cache', function(err, cache, end) {
+  service('test_service/cache', function(err, ctx, cache, end) {
     assert.error(err);
     if (err) {
       return end(assert);
@@ -144,8 +136,7 @@ test('Test calling a non-existing method of Go sample cache service - ' +
 
 test('Test multiGet() streaming method of Go sample cache service - ' +
   'var stream = cache.multiGet().stream', function(assert) {
-  var ctx = context.Context();
-  service(ctx, 'test_service/cache', function(err, cache, end) {
+  service('test_service/cache', function(err, ctx, cache, end) {
     assert.error(err);
     if (err) {
       return end(assert);
@@ -216,9 +207,9 @@ test('Test multiGet() streaming method of Go sample cache service - ' +
 
 test('Test getting signature of Go sample cache service - ' +
   'var promise = client.signature(ctx, test_service/cache)', function(assert) {
-  var ctx = context.Context();
   veyron.init(config)
   .then(function(runtime) {
+    var ctx = runtime.getContext();
     runtime.signature(ctx, 'test_service/cache')
     .then(function(sigs) {
       assert.ok(sigs);
@@ -233,12 +224,12 @@ test('Test getting signature of Go sample cache service - ' +
 
 test('Test getting signature of Go sample cache service - ' +
   'client.signature(ctx, test_service/cache, callback)', function(assert) {
-  var ctx = context.Context();
   veyron.init(config, function(err, runtime) {
     if(err) {
       assert.end(err);
     }
 
+    var ctx = runtime.getContext();
     runtime.signature(ctx, 'test_service/cache', function(err, sigs) {
       assert.error(err);
       assert.ok(sigs);
