@@ -19,7 +19,9 @@ var defaults = {
   identityd: 'identity/dev.v.io/google',
   identitydBlessingUrl: 'https://auth.dev.v.io:8125/blessing-root',
   namespaceRoot: '/ns.dev.v.io:8101',
-  proxy: 'proxy'
+  proxy: 'proxy',
+  logLevel: '0',
+  logModule: ''
 };
 
 function render(settings) {
