@@ -114,6 +114,7 @@ ifndef NOVDLGEN
 		v.io/core/veyron2/ipc/... \
 		v.io/core/veyron2/vdl/vdlroot/src/...\
 	 	v.io/core/veyron2/naming/... \
+	 	v.io/wspr/veyron/services/wsprd/... \
 	 	$(EXTRA_VDL_PATHS)
 endif
 

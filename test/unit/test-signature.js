@@ -44,21 +44,23 @@ test('signature', function(t) {
                         'inArgs': [
                             {
                                 'name': 'a',
+                                'type': vom.Types.JSVALUE
                             },
                             {
                                 'name': 'b',
+                                'type': vom.Types.JSVALUE
                             }
                         ],
                         'outArgs': [
                           {
-                            'type': vom.Types.ANY
+                            'type': vom.Types.JSVALUE
                           }
                         ],
                         'inStream': {
-                            'type': vom.Types.ANY
+                            'type': vom.Types.JSVALUE
                         },
                         'outStream': {
-                            'type': vom.Types.ANY
+                            'type': vom.Types.JSVALUE
                         },
                     },
                     {
@@ -66,7 +68,7 @@ test('signature', function(t) {
                         'inArgs': [],
                         'outArgs': [
                             {
-                                'type': vom.Types.ANY
+                                'type': vom.Types.JSVALUE
                             }
                         ]
                     },
@@ -75,17 +77,20 @@ test('signature', function(t) {
                         'inArgs': [
                             {
                                 'name': 'x',
+                                'type': vom.Types.JSVALUE
                             },
                             {
                                 'name': 'y',
+                                'type': vom.Types.JSVALUE
                             },
                             {
                                 'name': 'z',
+                                'type': vom.Types.JSVALUE
                             }
                         ],
                         'outArgs': [
                           {
-                            'type': vom.Types.ANY
+                            'type': vom.Types.JSVALUE
                           }
                         ]
                     },
@@ -216,7 +221,7 @@ test('signature', function(t) {
                         ],
                         'outArgs': [
                           {
-                            'type': vom.Types.ANY
+                            'type': vom.Types.JSVALUE
                           }
                         ],
                         'inStream': {
@@ -275,7 +280,7 @@ test('signature', function(t) {
                         ],
                         'outArgs': [
                           {
-                            'type': vom.Types.ANY
+                            'type': vom.Types.JSVALUE
                           }
                         ]
                     },
@@ -330,40 +335,45 @@ test('signature', function(t) {
                         'name': 'NonPrototypeFunction',
                         'inArgs': [
                             {
-                                'name': 'a'
+                                'name': 'a',
+                                'type': vom.Types.JSVALUE
                             },
                             {
-                                'name': 'b'
+                                'name': 'b',
+                                'type': vom.Types.JSVALUE
                             }
                         ],
                         'outArgs': [
                             {
-                                'type': vom.Types.ANY
+                                'type': vom.Types.JSVALUE
                             }
                         ],
                         'inStream': {
-                            'type': vom.Types.ANY
+                            'type': vom.Types.JSVALUE
                         },
                         'outStream': {
-                            'type': vom.Types.ANY
+                            'type': vom.Types.JSVALUE
                         }
                     },
                     {
                         'name': 'NamedFunction',
                         'inArgs': [
                             {
-                                'name': 'x'
+                                'name': 'x',
+                                'type': vom.Types.JSVALUE
                             },
                             {
-                                'name': 'y'
+                                'name': 'y',
+                                'type': vom.Types.JSVALUE
                             },
                             {
-                                'name': 'z'
+                                'name': 'z',
+                                'type': vom.Types.JSVALUE
                             }
                         ],
                         'outArgs': [
                             {
-                                'type': vom.Types.ANY
+                                'type': vom.Types.JSVALUE
                             }
                         ]
                     }

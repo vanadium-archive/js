@@ -9,6 +9,7 @@ var MessageType = require('./message-type');
 var IncomingPayloadType = require('./incoming-payload-type');
 var vLog = require('./../lib/vlog');
 var DecodeUtil = require('../lib/decode-util');
+var vom = require('vom');
 
 // Cache the service signatures for one hour.
 var SIGNATURE_CACHE_TTL = 3600 * 1000;
@@ -48,6 +49,7 @@ Proxy.prototype.process = function(message) {
   var payload;
   try {
     payload = DecodeUtil.decode(message.data);
+    payload.message = vom.TypeUtil.unwrap(payload.message);
   } catch (e) {
     if (!isServerOriginatedMessage) {
       handler.handleResponse(IncomingPayloadType.ERROR_RESPONSE, message.data);

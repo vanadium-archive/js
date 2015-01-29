@@ -213,8 +213,8 @@ test('Test getting signature of Go sample cache service - ' +
     var client = runtime.newClient();
     client.signature(ctx, 'test_service/cache')
     .then(function(sigs) {
-      assert.ok(sigs);
-      assert.ok(Array.isArray(sigs));
+      assert.ok(sigs, 'received something');
+      assert.ok(Array.isArray(sigs), 'receives a signature array');
       runtime.close(assert.end);
     }).catch(function(err) {
       assert.error(err);
@@ -234,8 +234,8 @@ test('Test getting signature of Go sample cache service - ' +
     var client = runtime.newClient();
     client.signature(ctx, 'test_service/cache', function(err, sigs) {
       assert.error(err);
-      assert.ok(sigs);
-      assert.ok(Array.isArray(sigs));
+      assert.ok(sigs, 'received something');
+      assert.ok(Array.isArray(sigs), 'receives a signature array');
       runtime.close(assert.end);
     });
   });

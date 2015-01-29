@@ -24,6 +24,8 @@ var vom = require('vom');
 var EncodeUtil = require('../lib/encode-util');
 var makeError = require('../errors/make-errors');
 var actions = require('../errors/actions');
+var VeyronRPC =
+  require('../v.io/wspr/veyron/services/wsprd/app/app').VeyronRPC;
 
 var OutstandingRPC = function(ctx, options, cb) {
   this._ctx = ctx;
@@ -32,8 +34,10 @@ var OutstandingRPC = function(ctx, options, cb) {
   this._name = options.name;
   this._methodName = options.methodName,
   this._args = options.args;
+  this._outArgTypes = options.outArgTypes;
   this._numOutParams = options.numOutParams;
   this._isStreaming = options.isStreaming || false;
+  this._inStreamingType = options.inStreamingType;
   this._cb = cb;
   this._def = null;
 };
@@ -42,12 +46,22 @@ OutstandingRPC.prototype.start = function() {
   this._id = this._proxy.nextId();
 
   var cb;
+  var outArgTypes = this._outArgTypes;
   if (this._cb) {
     // Wrap the callback to call with multiple arguments cb(err, a, b, c)
     // rather than cb(err, [a, b, c]).
     var origCb = this._cb;
     cb = function convertToMultiArgs(err, results) { // jshint ignore:line
-      results = results || []; // If called from a deferred, args is undefined
+      // If called from a deferred, the results are undefined.
+
+      // Each out argument should also be unwrapped. (results was []any)
+      results = results ? results.map(function(res, i) {
+        // If the out argument was specifically of type any, do not unwrap.
+        if (outArgTypes[i].kind === vom.Kind.ANY) {
+          return res;
+        }
+        return vom.TypeUtil.unwrap(res);
+      }) : [];
       var resultsCopy = results.slice();
       resultsCopy.unshift(err);
       origCb.apply(null, resultsCopy);
@@ -64,6 +78,16 @@ OutstandingRPC.prototype.start = function() {
         throw new verror.InternalError(
           'Internal error: incorrectly formatted out args in client');
       }
+
+      // Each out argument should also be unwrapped. (args was []any)
+      var unwrappedArgs = args.map(function(outArg, i) {
+        // If the out argument was specifically of type any, do not unwrap.
+        if (outArgTypes[i].kind === vom.Kind.ANY) {
+          return outArg;
+        }
+        return vom.TypeUtil.unwrap(outArg);
+      });
+
       // We expect:
       // 0 args - return; // NOT return [];
       // 1 args - return a; // NOT return [a];
@@ -71,13 +95,13 @@ OutstandingRPC.prototype.start = function() {
       //
       // Convert the results from array style to the expected return style.
       // undefined, a, [a, b], [a, b, c] etc
-      switch(args.length) {
+      switch(unwrappedArgs.length) {
         case 0:
           return undefined;
         case 1:
-          return args[0];
+          return unwrappedArgs[0];
         default:
-          return args;
+          return unwrappedArgs;
       }
     });
   }
@@ -85,7 +109,8 @@ OutstandingRPC.prototype.start = function() {
   var streamingDeferred = null;
   if (this._isStreaming) {
     streamingDeferred = new Deferred();
-    def.stream = new Stream(this._id, streamingDeferred.promise, true);
+    def.stream = new Stream(this._id, streamingDeferred.promise, true,
+      this._inStreamingType);
     def.promise.stream = def.stream;
   }
 
@@ -205,7 +230,8 @@ OutstandingRPC.prototype.constructMessage = function() {
     isStreaming: this._isStreaming,
     timeout: timeout
   };
-  return EncodeUtil.encode(jsonMessage);
+  var canonJSONMessage = new VeyronRPC(jsonMessage);
+  return EncodeUtil.encode(canonJSONMessage);
 };
 
 /**
@@ -305,7 +331,7 @@ Client.prototype.bindTo = function(ctx, name, cb) {
             return arg.name;
           });
 
-          // TODO(jasoncampbell): Create an constrcutor for this error so it
+          // TODO(jasoncampbell): Create an constructor for this error so it
           // can be created with less ceremony and checked in a
           // programatic way:
           //
@@ -327,25 +353,50 @@ Client.prototype.bindTo = function(ctx, name, cb) {
           }
         }
 
+        // The inArgs need to be converted to the signature's inArg types.
+        var canonArgs = new Array(args.length);
+        try {
+          for (var i = 0; i < args.length; i++) {
+            canonArgs[i] = vom.Canonicalize.fill(args[i],
+              methodSig.inArgs[i].type);
+          }
+        } catch(err) {
+          if (callback) {
+            return callback(err);
+          } else {
+            return Promise.reject(err);
+          }
+        }
 
-        var isStreaming = (typeof methodSig.inStream === 'object'  &&
-          methodSig.inStream !== null) ||
-          (typeof methodSig.outStream === 'object' &&
+        // The OutstandingRPC needs to know streaming information.
+        var inStreaming = (typeof methodSig.inStream === 'object'  &&
+          methodSig.inStream !== null);
+        var outStreaming = (typeof methodSig.outStream === 'object' &&
           methodSig.outStream !== null);
+        var isStreaming = inStreaming || outStreaming;
+
+        // The OutstandingRPC needs to know the out arg types.
+        var outArgTypes = methodSig.outArgs.map(function(outArg) {
+          return outArg.type;
+        });
 
         var rpc = new OutstandingRPC(ctx, {
-           proxy: client._proxyConnection,
-           name: name,
-           methodName: methodSig.name,
-           args: args,
-           numOutParams: methodSig.outArgs.length,
-           isStreaming: isStreaming
+          proxy: client._proxyConnection,
+          name: name,
+          methodName: methodSig.name,
+          args: canonArgs,
+          outArgTypes: outArgTypes,
+          numOutParams: methodSig.outArgs.length,
+          isStreaming: isStreaming,
+          inStreamingType: inStreaming ? methodSig.inStream.type :
+            vom.Types.JSVALUE
         }, callback);
 
         return rpc.start();
       };
     }
 
+    // Setup the bindings to every method in the service signature list.
     serviceSignature.forEach(function(sig) {
       sig.methods.forEach(function(meth) {
         bindMethod(meth);

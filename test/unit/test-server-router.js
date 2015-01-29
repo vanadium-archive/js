@@ -31,30 +31,30 @@ test('Server Router Signature Lookup', function(t) {
           {
             name: 'x',
             doc: '',
-            type: vom.Types.ANY
+            type: vom.Types.JSVALUE
           },
           {
             name: 'y',
             doc: '',
-            type: vom.Types.ANY
+            type: vom.Types.JSVALUE
           }
         ],
         outArgs: [
           {
             name: '',
             doc: '',
-            type: vom.Types.ANY
+            type: vom.Types.JSVALUE
           },
         ],
         inStream: {
           name: '',
           doc: '',
-          type: vom.Types.ANY
+          type: vom.Types.JSVALUE
         },
         outStream: {
           name: '',
           doc: '',
-          type: vom.Types.ANY
+          type: vom.Types.JSVALUE
         },
         tags: []
       }

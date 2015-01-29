@@ -9,6 +9,8 @@ var Blessings = require('./blessings');
 var MessageType = require('../proxy/message-type');
 var EncodeUtil = require('../lib/encode-util');
 var Context = require('../runtime/context').Context;
+var BlessingRequest =
+  require('../v.io/wspr/veyron/services/wsprd/app/app').BlessingRequest;
 
 /**
  * Principal represents an entity capable of making or receiving RPCs.
@@ -35,12 +37,19 @@ Principal.prototype.bless = function(blessee, extension, duration, caveats,
     return def.promise;
   }
 
-  var message = EncodeUtil.encode({
-    handle: blessee._id,
-    extension: extension,
-    durationMs: duration,
-    caveats: caveats
-  });
+  var message;
+  try {
+    message = EncodeUtil.encode(new BlessingRequest({
+      handle: blessee._id,
+      extension: extension,
+      durationMs: duration,
+      caveats: caveats
+    }));
+  } catch(e) {
+    def.reject(e);
+    return def.promise;
+  }
+
   var id = this._proxy.nextId();
   var handler = new SimpleHandler(new Context(), def, this._proxy, id);
   this._proxy.sendRequest(message, MessageType.BLESS_PUBLICKEY, handler, id);

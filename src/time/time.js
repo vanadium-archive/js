@@ -26,8 +26,8 @@ _typeDuration.fields = [{name: "Seconds", type: Types.INT64}, {name: "Nano", typ
 _typeTime.kind = Kind.STRUCT;
 _typeTime.name = "time.Time";
 _typeTime.fields = [{name: "Seconds", type: Types.INT64}, {name: "Nano", type: Types.INT32}];
-module.exports.Duration = Registry.lookupOrCreateConstructor(_typeDuration, "Duration");
-module.exports.Time = Registry.lookupOrCreateConstructor(_typeTime, "Time");
+module.exports.Duration = (Registry.lookupOrCreateConstructor(_typeDuration));
+module.exports.Time = (Registry.lookupOrCreateConstructor(_typeTime));
 
 
 

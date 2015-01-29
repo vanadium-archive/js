@@ -5,6 +5,8 @@
 var vom = require('vom');
 var channelVdl =
   require('../../vdl/v.io/wspr/veyron/services/wsprd/channel/channel');
+var browsprVdl =
+  require('../../vdl/v.io/wspr/veyron/services/wsprd/browspr/browspr');
 
 module.exports = RpcChannel;
 
@@ -30,13 +32,38 @@ RpcChannel.prototype.performRpc = function(type, val, callback) {
   if (typeof val !== 'object') {
     throw new Error('val must be of type object, was ' + (typeof val));
   }
+
+  var BrowsprMessage;
+  switch(type) {
+    case 'start':
+      BrowsprMessage = browsprVdl.StartMessage;
+      break;
+    case 'auth:get-accounts':
+      BrowsprMessage = browsprVdl.GetAccountsMessage;
+      break;
+    case 'auth:create-account':
+      BrowsprMessage = browsprVdl.CreateAccountMessage;
+      break;
+    case 'auth:origin-has-account':
+      BrowsprMessage = browsprVdl.OriginHasAccountMessage;
+      break;
+    case 'auth:associate-account':
+      BrowsprMessage = browsprVdl.AssociateAccountMessage;
+      break;
+    case 'cleanup':
+      BrowsprMessage = browsprVdl.CleanupMessage;
+      break;
+    default:
+      throw new Error('Unknown RPC type', type);
+  }
+
   callback = callback || function(){};
   var seq = ++this.lastSeq;
   this.pendingCallbacks[seq] = callback;
   var request = new channelVdl.Request({
     type: type,
     seq: seq,
-    body: val
+    body: new BrowsprMessage(val)
   });
   this._sendVomEncodedMessage(new channelVdl.Message({
     request: request

@@ -211,7 +211,9 @@ Namespace.prototype._sendRequest = function(ctx, method, args, cb,
 
   var id = this._proxy.nextId();
   if( isStreaming) {
-    def.stream = new Stream(id, this._proxy.senderPromise, true);
+    // TODO(alexfandrianto): I don't think this client stream sends anything.
+    // What type do we want to give it? For now, I chose undefined.
+    def.stream = new Stream(id, this._proxy.senderPromise, true, undefined);
     def.promise.stream = def.stream;
   }
   var handler = new SimpleHandler(ctx, def, this._proxy, id);

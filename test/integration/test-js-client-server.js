@@ -10,21 +10,6 @@ var vom = require('vom');
 var CacheService = {
   cacheMap: {},
   set: function(context, key, value, cb) {
-    if (value instanceof Map) {
-      // TODO(bprosnitz) Remove the type here.
-      // This is temporary because we currently guess map[any]any
-      // which is illegal.
-      var mapType = {
-        kind: vom.Kind.MAP,
-        key: vom.Types.STRING,
-        elem: vom.Types.ANY
-      };
-
-      Object.defineProperty(value, '_type', {
-        value: mapType
-      });
-    }
-
     this.cacheMap[key] = value;
 
     process.nextTick(function() {
@@ -78,20 +63,6 @@ var CacheService = {
 var CacheServicePromises = {
   cacheMap: {},
   set: function(context, key, value) {
-    if (value instanceof Map) {
-      // TODO(bprosnitz) Remove the type here.
-      // This is temporary because we currently guess map[any]any
-      // which is illegal.
-      var mapType = {
-          kind: vom.Kind.MAP,
-          key: vom.Types.STRING,
-          elem: vom.Types.ANY
-        };
-      Object.defineProperty(value, '_type', {
-        value: mapType
-      });
-    }
-
     this.cacheMap[key] = value;
   },
   get: function(context, key) {
@@ -138,20 +109,20 @@ var CacheServicePromises = {
 // TODO(bprosnitz) After we make it simpler to provide VDL type information,
 // add more test cases with types.
 
-run({
+runCache({
   testName: 'without VDL using callbacks',
   definition: CacheService,
   name: 'foo.Cache'
 });
 
-run({
+runCache({
   testName: 'without VDL using promises',
   definition: CacheServicePromises,
   name: 'foo.Cache'
 });
 
 // options: testName, definition, name
-function run(options) {
+function runCache(options) {
   var namePrefix = 'Test JS client/server ipc ' + options.testName + ' - ';
 
   test(namePrefix + 'cache.set(key, string) -> cache.get(key)', function(t) {
@@ -175,19 +146,8 @@ function run(options) {
     setup(options, function(err, ctx, cache, end) {
       t.error(err, 'should not error on setup');
 
-      // TODO(bprosnitz) Remove the type here.
-      // This is temporary because we currently guess map[any]any
-      // which is illegal.
+      // Expect a map as the JSValue.
       var expected = new Map([['a', 'foo'], ['b', 2]]);
-      var mapType = {
-        kind: vom.Kind.MAP,
-        key: vom.Types.STRING,
-        elem: vom.Types.ANY
-      };
-
-      Object.defineProperty(expected, '_type', {
-        value: mapType
-      });
 
       cache.set(ctx, 'myObject', expected, function(err, res) {
         t.error(err, 'should not error on set(...)');
@@ -195,7 +155,7 @@ function run(options) {
 
         cache.get(ctx, 'myObject', function(err, res) {
           t.error(err, 'should not error on get(...)');
-          t.deepEqual(res, expected);
+          t.deepEqual(res, expected, 'should match object');
           end(t);
         });
       });
@@ -312,6 +272,236 @@ function run(options) {
     var dispatcher = leafDispatcher(options.definition);
 
     serve('testing/cache', dispatcher, function(err, res) {
+      cb(err, res.runtime.getContext(), res.service, res.end);
+    });
+  }
+}
+
+var TypeService = {
+  isTyped: function(context, any) {
+    // We expect to receive the internally typed value of the any.
+    // However, clients who send JSValue will not produce a typed value here.
+    return vom.TypeUtil.isTyped(any);
+  },
+  isString: function(context, str) {
+    // We expect to receive a native string, if the client sent us one.
+    return (typeof str === 'string');
+  },
+  isStruct: function(context, struct) {
+    // A struct should always be typed.
+    if (vom.TypeUtil.isTyped(struct)) {
+      return;
+    }
+    // If it was untyped (a JSValue object), then the code is incorrect.
+
+    throw new Error('did not receive a typed struct' + vom.Stringify(struct));
+  },
+  swap: function(context, a, b) {
+    return [b, a];
+  },
+  _serviceDescription: {
+    methods: [
+      {
+        name: 'IsTyped',
+        inArgs: [
+          {
+            name: 'any',
+            doc: 'The value can be anything.',
+            type: vom.Types.ANY
+          }
+        ],
+        outArgs: [
+          {
+            type: vom.Types.BOOL
+          }
+        ]
+      },
+      {
+        name: 'IsString',
+        inArgs: [
+          {
+            name: 'str',
+            doc: 'The value should be a string.',
+            type: vom.Types.STRING
+          }
+        ],
+        outArgs: [
+          {
+            type: vom.Types.BOOL
+          }
+        ]
+      },
+      {
+        name: 'IsStruct',
+        inArgs: [
+          {
+            name: 'struct',
+            doc: 'The value should be a struct.',
+            type: {
+              kind: vom.Kind.STRUCT,
+              fields: []
+            }
+          }
+        ],
+        outArgs: []
+      },
+      {
+        name: 'Swap',
+        inArgs: [
+          {
+            name: 'a',
+            doc: 'The first value',
+            type: vom.Types.ANY
+          },
+          {
+            name: 'b',
+            doc: 'The second value',
+            type: vom.Types.ANY
+          }
+        ],
+        outArgs: [
+          {
+            doc: 'The second value is returned first',
+            type: vom.Types.ANY
+          },
+          {
+            doc: 'The first value is returned second',
+            type: vom.Types.ANY
+          }
+        ]
+      }
+    ]
+  }
+};
+
+runTypeService({
+  testName: 'typed, non-async',
+  definition: TypeService,
+  name: 'foo.TypeService'
+});
+
+// options: testName, definition, name
+function runTypeService(options) {
+  var namePrefix = 'Test JS client/server ipc ' + options.testName + ' - ';
+  // This test ensures that typed values are sent between JS server and client.
+  // The server expects an input of the ANY type, which means that it ought to
+  // receive a typed value, if we send a typed value.
+  // If we send a JSValue, then it will not end up being wrapped.
+  test(namePrefix + 'typeService.isTyped(...)', function(t) {
+    setup(options, function(err, ctx, typeService, end) {
+      t.error(err, 'should not error on setup');
+
+      typeService.isTyped(ctx, 'foo', function(err, res) {
+        t.error(err, 'should not error on isTyped(...)');
+        // Use equal instead of notOk to ensure that res is not wrapped.
+        t.equal(res, false, '\'foo\' is an untyped string');
+
+
+        var VomStr = vom.Registry.lookupOrCreateConstructor(vom.Types.STRING);
+        var typedString = new VomStr('food');
+        typeService.isTyped(ctx, typedString, function(err, res) {
+          t.error(err, 'should not error on isTyped(...)');
+          // Use equal instead of ok to ensure that res is not wrapped.
+          t.equal(res, true, 'VomStr(\'food\') is a typed string');
+          end(t);
+        });
+      });
+    });
+  });
+
+  // This test ensures that typed values sent between JS server and client are
+  // unwrapped when being processed. Further, the client disallows sending the
+  // wrong type to the server.
+  test(namePrefix + 'typeService.isString(str)', function(t) {
+    setup(options, function(err, ctx, typeService, end) {
+      t.error(err, 'should not error on setup');
+
+      typeService.isString(ctx, 'foo', function(err, res) {
+        t.error(err, 'should not error on isString(<a string>)');
+        // Use equal instead of ok to ensure that res is not wrapped.
+        t.equal(res, true, '\'foo\' is a string');
+
+        typeService.isString(ctx, 0, function(err, res) {
+          t.ok(err, 'should error on isString(<not a string>)');
+          end(t);
+        });
+      });
+    });
+  });
+
+  // This test ensures that a typed struct has its type on the other side.
+  // That would prove that it was not decoded as a JSValue.
+  test(namePrefix + 'typeService.isStruct(struct)', function(t) {
+    setup(options, function(err, ctx, typeService, end) {
+      t.error(err, 'should not error on setup');
+
+      typeService.isStruct(ctx, {}, function(err, res) {
+        t.error(err, 'should not error on isStruct(...)');
+        end(t);
+      });
+    });
+  });
+
+  // This test ensures that multiple typed I/O arguments are possible in JS.
+  test(namePrefix + 'typeService.swap(a, b)', function(t) {
+    setup(options, function(err, ctx, typeService, end) {
+      t.error(err, 'should not error on setup');
+
+      // Start by swapping JSValue. There are no types attached when returned.
+      var a = '33';
+      var b = 33;
+      typeService.swap(ctx, a, b, function(err, res1, res2) {
+        t.error(err, 'should not error on swap(...)');
+        t.deepEqual([res1, res2], [b, a], 'correctly swapped the 2 inputs');
+
+        // Now, swap a typed value (aa) with a wrapped and typed value (bb).
+        var simpleType = {
+          name: 'SimpleStruct',
+          kind: vom.Kind.STRUCT,
+          fields: [
+            {
+              name: 'Foo',
+              type: vom.Types.INT32
+            },
+            {
+              name: 'Bar',
+              type: vom.Types.BOOL
+            }
+          ]
+        };
+        var SimpleStruct = vom.Registry.lookupOrCreateConstructor(simpleType);
+        var aa = new SimpleStruct({
+          foo: 10,
+          bar: true
+        });
+        var simpleTypeB = vom.Types.INT32;
+        var SimpleInt32 = vom.Registry.lookupOrCreateConstructor(simpleTypeB);
+        var bb = new SimpleInt32(-32);
+        typeService.swap(ctx, aa, bb, function(err, res1, res2) {
+          t.error(err, 'should not error on swap(...)');
+          t.deepEqual([res1, res2], [bb, aa], 'correctly swapped the 2 inputs');
+
+          // Verify that res2 (the original aa) still has the right type.
+          t.ok(vom.TypeUtil.isTyped(res2), 'aa is still typed');
+          t.deepEqual(res2._type, simpleType, 'aa has the correct type');
+
+          // Verify that res1 (the original bb) still has the right type.
+          t.ok(vom.TypeUtil.isTyped(res1), 'bb is still typed');
+          t.deepEqual(res1._type, simpleTypeB, 'bb has the correct type');
+
+          end(t);
+        });
+      });
+    });
+  });
+
+  // TODO(alexfandrianto): This test ensures that we can send a typed stream in
+  // JS.
+
+  function setup(options, cb) {
+    var dispatcher = leafDispatcher(options.definition);
+
+    serve('testing/typeService', dispatcher, function(err, res) {
       cb(err, res.runtime.getContext(), res.service, res.end);
     });
   }

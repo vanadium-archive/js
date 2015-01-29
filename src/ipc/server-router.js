@@ -18,10 +18,15 @@ var ServerContext = require('./server-context');
 var DecodeUtil = require('../lib/decode-util');
 var EncodeUtil = require('../lib/encode-util');
 var vom = require('vom');
+var vdlsig =
+    require('../v.io/core/veyron2/vdl/vdlroot/src/signature/signature');
 var namespaceUtil = require('../namespace/util');
 var naming = require('../v.io/core/veyron2/naming/naming');
 var Glob = require('./glob');
 var GlobStream = require('./glob-stream');
+var VDLMountEntry = require('../v.io/core/veyron2/naming/naming').VDLMountEntry;
+var ServerRPCReply =
+  require('../v.io/wspr/veyron/services/wsprd/lib/lib').ServerRPCReply;
 
 /**
  * A router that handles routing incoming requests to the right
@@ -117,7 +122,15 @@ Router.prototype.handleLookupRequest = function(messageId, request) {
     var signatureList = value.invoker.signature();
     var res;
     try {
-      res = EncodeUtil.encode(signatureList);
+      // TODO(alexfandrianto): Define []signature.Interface in VDL.
+      // See dispatcher.go lookupReply's signature field.
+      // Also see dispatcher.go lookupIntermediateReply's signature field.
+      // We have to pre-encode the signature list into a string.
+      var canonicalSignatureList = vom.Canonicalize.fill(signatureList, {
+        kind: vom.Kind.LIST,
+        elem: vdlsig.Interface.prototype._type
+      });
+      res = EncodeUtil.encode(canonicalSignatureList);
     } catch (e) {
       return Promise.reject(e);
     }
@@ -165,6 +178,7 @@ Router.prototype.handleCancel = function(messageId) {
  *   serverId: number // the server id
  *   method: string // Name of the method on the service to call
  *   args: [] // Array of positional arguments to be passed into the method
+ *            // Note: This array contains wrapped arguments!
  * }
  */
 Router.prototype.handleRPCRequest = function(messageId, vomRequest) {
@@ -206,13 +220,15 @@ Router.prototype.handleRPCRequest = function(messageId, vomRequest) {
       self.sendResult(messageId, 'Glob__', null, err);
       return;
     }
-    stream = new Stream(messageId, this._proxy.senderPromise, false);
+    stream = new Stream(messageId, this._proxy.senderPromise, false,
+      VDLMountEntry.prototype._type);
     this._streamMap[messageId] = stream;
     this._contextMap[messageId] = ctx;
     this._outstandingRequestForId[messageId] = 0;
     this.incrementOutstandingRequestForId(messageId);
+    var globPattern = vom.TypeUtil.unwrap(request.args[0]);
     this.handleGlobRequest(messageId, ctx.suffix,
-                           server, new Glob(request.args[0]),  ctx, invoker,
+                           server, new Glob(globPattern),  ctx, invoker,
                            completion);
     return;
   }
@@ -240,16 +256,25 @@ Router.prototype.handleRPCRequest = function(messageId, vomRequest) {
     return;
   }
 
+  // Unwrap the RPC arguments sent to the JS server.
+  var unwrappedArgs = request.args.map(function(arg, i) {
+    // If an any type was expected, unwrapping is not needed.
+    if (methodSig.inArgs[i].type.kind === vom.Kind.ANY) {
+      return arg;
+    }
+    return vom.TypeUtil.unwrap(arg);
+  });
   var options = {
     methodName: methodName,
-    args: request.args,
+    args: unwrappedArgs,
     methodSig: methodSig,
     ctx: ctx,
   };
 
   this._contextMap[messageId] = options.ctx;
   if (methodIsStreaming(methodSig)) {
-    stream = new Stream(messageId, this._proxy.senderPromise, false);
+    stream = new Stream(messageId, this._proxy.senderPromise, false,
+      methodSig.outStream.type);
     this._streamMap[messageId] = stream;
     var rpc = new StreamHandler(options.ctx, stream);
     this._proxy.addIncomingStreamHandler(messageId, rpc);
@@ -265,12 +290,18 @@ Router.prototype.handleRPCRequest = function(messageId, vomRequest) {
       }
       vLog.debug('Requested method ' + methodName +
           ' threw an exception on invoke: ', err, stackTrace);
-      self.sendResult(messageId, methodName, results, err,
+
+      // The error case has no results; only send the error.
+      self.sendResult(messageId, methodName, undefined, err,
           methodSig.outArgs.length);
       return;
     }
 
-    self.sendResult(messageId, methodName, results, undefined,
+    // Has results; associate the types of the outArgs.
+    var canonResults = results.map(function(result, i) {
+      return vom.Canonicalize.fill(result, methodSig.outArgs[i].type);
+    });
+    self.sendResult(messageId, methodName, canonResults, undefined,
                     methodSig.outArgs.length);
   });
 };
@@ -440,11 +471,10 @@ Router.prototype.sendResult = function(messageId, name, results, err,
     stream.serverClose(results, errorStruct);
     this._proxy.dequeue(messageId);
   } else {
-    var responseData = {
+    var responseData = new ServerRPCReply({
       results: results,
       err: errorStruct
-    };
-
+    });
     var responseDataVOM = EncodeUtil.encode(responseData);
     this._proxy.sendRequest(responseDataVOM, MessageType.RESPONSE, null,
         messageId);

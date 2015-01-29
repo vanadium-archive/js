@@ -7,6 +7,9 @@ var MessageType = require('./message-type');
 var Duplex = require('stream').Duplex;
 var inherits = require('util').inherits;
 var EncodeUtil = require('../lib/encode-util');
+var vom = require('vom');
+var ServerRPCReply =
+  require('../v.io/wspr/veyron/services/wsprd/lib/lib').ServerRPCReply;
 
 /**
  * A stream that allows sending and receiving data for a streaming rpc.  If
@@ -20,11 +23,13 @@ var EncodeUtil = require('../lib/encode-util');
  * @param {Promise} webSocketPromise Promise of a websocket connection when
  * it's established
  * @param {boolean} isClient if set, then this is the client stream.
+ * @param {vom.TypeObject} streamType Adds type info to data sent by the stream.
  */
-var Stream = function(flowId, webSocketPromise, isClient) {
+var Stream = function(flowId, webSocketPromise, isClient, streamType) {
   Duplex.call(this, { objectMode: true });
   this.flowId = flowId;
   this.isClient = isClient;
+  this.streamType = streamType;
   this.webSocketPromise = webSocketPromise;
   this.onmessage = null;
 
@@ -54,10 +59,10 @@ Stream.prototype.serverClose = function(results, err) {
   var object = {
     id: this.flowId,
     type: MessageType.RESPONSE,
-    data: EncodeUtil.encode({
+    data: EncodeUtil.encode(new ServerRPCReply({
       results: results,
       err: err || null
-    })
+    }))
   };
   Duplex.prototype.write.call(this, object);
 };
@@ -107,9 +112,10 @@ Stream.prototype._queueRead = function(object) {
  * @return {boolean} Returns false if the write buffer is full.
  */
 Stream.prototype.write = function(chunk, encoding, cb) {
+  var canonChunk = vom.Canonicalize.fill(chunk, this.streamType);
   var object = {
     id: this.flowId,
-    data: EncodeUtil.encode(chunk),
+    data: EncodeUtil.encode(canonChunk),
     type: MessageType.STREAM_VALUE
   };
   return Duplex.prototype.write.call(this, object, encoding, cb);

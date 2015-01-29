@@ -3,11 +3,17 @@ module.exports = {
   decode: decode,
 };
 
-function decode(hex) {
+// TODO(alexfandrianto): To receive deeply wrapped types, use true below.
+// We may need to plumb it through elsewhere in the system, but this is one
+// entry point. Currently, no callers use deepWrap === true.
+function decode(hex, deepWrap) {
+  deepWrap = deepWrap || false;
+
   var reader = new vom.ByteArrayMessageReader(vom.Util.hex2Bytes(hex));
-  var decoder = new vom.Decoder(reader);
+  var decoder = new vom.Decoder(reader, deepWrap);
   var decoded = decoder.decode();
-  // TODO(bprosnitz) Remove unwrapping.
-  var unwrapped = vom.TypeUtil.recursiveUnwrap(decoded);
-  return unwrapped;
+  if (deepWrap) {
+    return decoded;
+  }
+  return vom.TypeUtil.unwrap(decoded); // drop top-level type information
 }

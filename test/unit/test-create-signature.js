@@ -23,31 +23,34 @@ test('create signatures with no description', function(t) {
       name: 'NoArgsFunction',
       inArgs: [],
       outArgs: [{
-        'type': vom.Types.ANY
+        'type': vom.Types.JSVALUE
       }]
     }, {
       name: 'NamedFunction',
       inArgs: [{
         name: 'x',
+        type: vom.Types.JSVALUE
       }, {
-        name: 'y'
+        name: 'y',
+        type: vom.Types.JSVALUE
       }, {
-        name: 'z'
+        name: 'z',
+        type: vom.Types.JSVALUE
       }],
       outArgs: [{
-        'type': vom.Types.ANY
+        'type': vom.Types.JSVALUE
       }]
     },{
       name: 'StreamingFunction',
       inArgs: [],
       outArgs: [{
-        'type': vom.Types.ANY
+        'type': vom.Types.JSVALUE
       }],
       inStream: {
-        type: vom.Types.ANY,
+        type: vom.Types.JSVALUE,
       },
       outStream: {
-        type: vom.Types.ANY,
+        type: vom.Types.JSVALUE,
       }
     }]
   };
@@ -173,7 +176,7 @@ test('create signatures with one description but extra methods', function(t) {
       name: 'NoArgsFunction',
       inArgs: [],
       outArgs: [{
-        'type': vom.Types.ANY
+        'type': vom.Types.JSVALUE
       }]
     }]
   };
@@ -301,7 +304,7 @@ test('create signatures with multiple descs and missing methods',
       name: 'NoArgsFunction',
       inArgs: [],
       outArgs: [{
-        'type': vom.Types.ANY
+        'type': vom.Types.JSVALUE
       }]
     }]
   }]);

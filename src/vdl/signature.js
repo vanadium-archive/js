@@ -13,14 +13,20 @@ var vdlsig =
 var ReflectSignature = require('./reflect-signature');
 var vlog = require('../lib/vlog');
 
+// Each argument type is JSValue.
+// This can be overriden by specifying types in the description.
+var defaultArgType = vom.Types.JSVALUE;
+
+// Default to returning a single out arg.
 var defaultOutArgs = [
   {
-    type: vom.Types.ANY
+    type: defaultArgType
   }
 ];
 
+// Streaming default arg description.
 var defaultStreamingArg = {
-    type: vom.Types.ANY
+    type: defaultArgType
 };
 
 function Signature(service, desc) {
@@ -43,6 +49,15 @@ function Signature(service, desc) {
       inArgs: reflectMethod.inArgs,
       outArgs: defaultOutArgs
     };
+
+    // Assign default arg type to each inArg.
+    if (reflectMethod.inArgs) {
+      thisMethod.inArgs.forEach(function(inArg) {
+        inArg.type = defaultArgType;
+      });
+    }
+
+    // Assign default streaming args.
     if (reflectMethod.streaming) {
       thisMethod.inStream = defaultStreamingArg;
       thisMethod.outStream = defaultStreamingArg;
