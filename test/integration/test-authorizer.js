@@ -138,8 +138,6 @@ test('Test proper context is passed to authorizer', function(assert) {
       return new Error('unknown blessings ' + ctx.localBlessingStrings);
     } else if (ctx.method !== 'call') {
       return new Error('wrong method ' + ctx.method);
-    } else if (ctx.name !== 'auth') {
-      return new Error('wrong name ' + ctx.name);
     } else if (ctx.suffix !== 'auth') {
       return new Error('wrong suffix ' + ctx.suffix);
     }

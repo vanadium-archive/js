@@ -7,7 +7,6 @@ module.exports = Context;
 
 function Context(ctx, proxy) {
   this.method = ctx.method;
-  this.name = ctx.name;
   this.suffix = ctx.suffix;
   // TODO(bjornick): Use the enums.
   this.methodTags = ctx.methodTags;

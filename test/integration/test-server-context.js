@@ -7,9 +7,6 @@ var dispatcher = leafDispatcher({
   getSuffix: function(ctx) {
     return ctx.suffix;
   },
-  getName: function(ctx) {
-    return ctx.name;
-  },
   getContext: function(ctx, callback) {
     return ctx;
   },
@@ -26,8 +23,7 @@ var dispatcher = leafDispatcher({
 });
 
 var expectedContext = {
-  name: 'suf',
-  suffix : 'suf',
+  suffix: 'suf',
   remoteBlessings: {}
 };
 
@@ -112,24 +108,6 @@ test('Test nested suffix /parent/suffix ', function(assert) {
       service.getSuffix(ctx, function(err, suffix) {
         assert.error(err, 'should not error on getSuffix(...)');
         assert.equal(suffix, 'parent/suf');
-        end(assert);
-      });
-    });
-  });
-});
-
-test('Test name is available in context', function(assert) {
-  serve('a/b', dispatcher, function(err, res, end) {
-    assert.error(err, 'should not error on serve(...)');
-
-    var client = res.runtime.newClient();
-    var ctx = res.runtime.getContext();
-    client.bindTo(ctx, 'a/b/suf', function(err, service) {
-      assert.error(err, 'should not error on runtime.bindTo(...)');
-
-      service.getName(ctx, function(err, name) {
-        assert.error(err, 'should not error on getName(...)');
-        assert.equal(name, 'suf');
         end(assert);
       });
     });
