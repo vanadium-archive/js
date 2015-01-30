@@ -138,6 +138,9 @@ module.exports.unixTimeExpiryCaveat = (Registry.lookupOrCreateConstructor(_typeu
 
 
 
+// Errors:
+
+
 
 function NotImplementedMethod(name) {
   throw new Error('Method ' + name + ' not implemented');

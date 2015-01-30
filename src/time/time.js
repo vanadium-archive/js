@@ -36,6 +36,9 @@ module.exports.Time = (Registry.lookupOrCreateConstructor(_typeTime));
 
 
 
+// Errors:
+
+
 
 function NotImplementedMethod(name) {
   throw new Error('Method ' + name + ' not implemented');

@@ -68,6 +68,9 @@ module.exports.JavascriptConfig = (Registry.lookupOrCreateConstructor(_typeJavas
 
 
 
+// Errors:
+
+
 
 function NotImplementedMethod(name) {
   throw new Error('Method ' + name + ' not implemented');

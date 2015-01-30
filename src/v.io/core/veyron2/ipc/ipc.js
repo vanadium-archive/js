@@ -96,6 +96,9 @@ module.exports.error = (Registry.lookupOrCreateConstructor(_typeerror));
 
 
 
+// Errors:
+
+
 
 function NotImplementedMethod(name) {
   throw new Error('Method ' + name + ' not implemented');

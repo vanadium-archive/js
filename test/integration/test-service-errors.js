@@ -1,7 +1,7 @@
 var test = require('prova');
 var service = require('./get-service');
 var verror = require('../../src/errors/verror');
-var DefaultError = require('../../src/errors/default-error');
+var VanadiumError = require('../../src/errors/vanadium-error');
 
 test('Test Go service returning Aborted error - ' +
   'errorThrower.method(callback)', function(assert) {
@@ -113,7 +113,7 @@ test('Test Go service returning Unknown error - ' +
     errorThrower.throwUnknown(ctx, function(err) {
       assert.ok(err, 'should error');
       assert.ok(err.message.indexOf('Error') !== -1);
-      assert.ok(err instanceof DefaultError, 'should be DefaultError');
+      assert.ok(err instanceof VanadiumError, 'should be VanadiumError');
       end(assert);
     });
   });
@@ -127,7 +127,7 @@ test('Test Go service returning GoError error - ' +
     errorThrower.throwGoError(ctx, function(err) {
       assert.ok(err, 'should error');
       assert.ok(err.message.indexOf('GoError!') !== -1);
-      assert.ok(err instanceof DefaultError, 'should be DefaultError');
+      assert.ok(err instanceof VanadiumError, 'should be VanadiumError');
       end(assert);
     });
   });
@@ -141,7 +141,7 @@ test('Test Go service returning CustomStandard error - ' +
     errorThrower.throwCustomStandardError(ctx, function(err) {
       assert.ok(err, 'should error');
       assert.ok(err.message.indexOf('CustomStandard!') !== -1);
-      assert.ok(err instanceof DefaultError, 'should be DefaultError');
+      assert.ok(err instanceof VanadiumError, 'should be VanadiumError');
       end(assert);
     });
   });

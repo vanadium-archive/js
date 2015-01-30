@@ -20,7 +20,7 @@ test('var struct = ec.toStandardErrorStruct(err)', function(assert) {
 
 // TODO: this should loop.
 test('var struct = ec.toStandardErrorStruct(verr)', function(assert) {
-  var err = verror.NoAccessError(new Context(), ['app', 'call']);
+  var err = verror.NoAccessError(new Context(), 'app', 'call');
   var struct = ec.toStandardErrorStruct(err);
 
   assert.deepEqual(struct, {
