@@ -4,6 +4,7 @@
  */
 
 var vom = require('vom');
+var DecodeUtil = require('../lib/decode-util');
 
 module.exports = CaveatValidatorRegistry;
 
@@ -31,16 +32,16 @@ CaveatValidatorRegistry.prototype._makeKey = function(bytes) {
 /**
  * @callback ValidationFunction
  * @param {Context}The context.
- * @param {*} data Validation-function specific data.
+ * @param {*} params Validation-function specific parameters.
  * @throws Upon failure to validate, does not throw if successful.
  */
 
 /**
  * Register a caveat validation function
- * @param {CaveatDescription} cavDesc The caveat description.
+ * @param {CaveatDescriptor} cavDesc The caveat description.
  * See security/types.vdl
  * @param {ValidationFunction} validateFn The validation function.
- * e.g. function validateCaveatA(data) { ...
+ * e.g. function validateCaveatA(params) { ...
  */
 CaveatValidatorRegistry.prototype.register = function(cavDesc, validateFn) {
   this.validators.set(
@@ -63,7 +64,7 @@ CaveatValidatorRegistry.prototype.validate = function(ctx, caveat) {
     // This is dependent on having vdl-generated error id code for javascript.
     throw new Error('Unknown caveat id: ' + this._makeKey(caveat.id));
   }
-  validator.validate(ctx, caveat.data);
+  validator.validate(ctx, DecodeUtil.decode(caveat.paramsVom));
 };
 
 
@@ -77,11 +78,11 @@ function CaveatValidator(cavDesc, validateFn) {
   this.validateFn = validateFn;
 }
 
-CaveatValidator.prototype.validate = function(ctx, dataForValidator) {
-  var dataType = this.cavDesc.dataType;
+CaveatValidator.prototype.validate = function(ctx, paramsForValidator) {
+  var paramsType = this.cavDesc.paramsType;
   // TODO(bprosnitz) This should really be type conversion rather than
   // canonicalization. The behavior is slightly different.
-  var canonData = vom.Canonicalize.reduce(dataForValidator, dataType);
+  var canonData = vom.Canonicalize.reduce(paramsForValidator, paramsType);
 
   this.validateFn(ctx, canonData);
 };

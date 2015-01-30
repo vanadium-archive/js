@@ -12,6 +12,7 @@ var Registry = vom.Registry;
 
 
 
+var uniqueid = require('./../uniqueid/uniqueid');
 
 module.exports = {};
 
@@ -27,8 +28,7 @@ var _type6 = new Type();
 var _type7 = new Type();
 var _typeBlessingPattern = new Type();
 var _typeCaveat = new Type();
-var _typeCaveatDescription = new Type();
-var _typeCaveatUuid = new Type();
+var _typeCaveatDescriptor = new Type();
 var _typeCertificate = new Type();
 var _typeDischargeImpetus = new Type();
 var _typeHash = new Type();
@@ -36,7 +36,6 @@ var _typeSignature = new Type();
 var _typeThirdPartyRequirements = new Type();
 var _typeWireBlessings = new Type();
 var _typemethodCaveat = new Type();
-var _typepeerBlessingsCaveat = new Type();
 var _typepublicKeyDischarge = new Type();
 var _typepublicKeyThirdPartyCaveat = new Type();
 var _typeunixTimeExpiryCaveat = new Type();
@@ -66,14 +65,10 @@ _typeBlessingPattern.kind = Kind.STRING;
 _typeBlessingPattern.name = "v.io/core/veyron2/security.BlessingPattern";
 _typeCaveat.kind = Kind.STRUCT;
 _typeCaveat.name = "v.io/core/veyron2/security.Caveat";
-_typeCaveat.fields = [{name: "ValidatorVOM", type: _type3}, {name: "Id", type: _typeCaveatUuid}, {name: "Data", type: Types.ANY}];
-_typeCaveatDescription.kind = Kind.STRUCT;
-_typeCaveatDescription.name = "v.io/core/veyron2/security.CaveatDescription";
-_typeCaveatDescription.fields = [{name: "Id", type: _typeCaveatUuid}, {name: "DataType", type: Types.TYPEOBJECT}, {name: "Doc", type: Types.STRING}];
-_typeCaveatUuid.kind = Kind.ARRAY;
-_typeCaveatUuid.name = "v.io/core/veyron2/security.CaveatUuid";
-_typeCaveatUuid.len = 16;
-_typeCaveatUuid.elem = Types.BYTE;
+_typeCaveat.fields = [{name: "ValidatorVOM", type: _type3}, {name: "Id", type: new uniqueid.ID()._type}, {name: "ParamsVom", type: _type3}];
+_typeCaveatDescriptor.kind = Kind.STRUCT;
+_typeCaveatDescriptor.name = "v.io/core/veyron2/security.CaveatDescriptor";
+_typeCaveatDescriptor.fields = [{name: "Id", type: new uniqueid.ID()._type}, {name: "ParamsType", type: Types.TYPEOBJECT}];
 _typeCertificate.kind = Kind.STRUCT;
 _typeCertificate.name = "v.io/core/veyron2/security.Certificate";
 _typeCertificate.fields = [{name: "Extension", type: Types.STRING}, {name: "PublicKey", type: _type3}, {name: "Caveats", type: _type2}, {name: "Signature", type: _typeSignature}];
@@ -94,9 +89,6 @@ _typeWireBlessings.fields = [{name: "CertificateChains", type: _type6}];
 _typemethodCaveat.kind = Kind.LIST;
 _typemethodCaveat.name = "v.io/core/veyron2/security.methodCaveat";
 _typemethodCaveat.elem = Types.STRING;
-_typepeerBlessingsCaveat.kind = Kind.LIST;
-_typepeerBlessingsCaveat.name = "v.io/core/veyron2/security.peerBlessingsCaveat";
-_typepeerBlessingsCaveat.elem = _typeBlessingPattern;
 _typepublicKeyDischarge.kind = Kind.STRUCT;
 _typepublicKeyDischarge.name = "v.io/core/veyron2/security.publicKeyDischarge";
 _typepublicKeyDischarge.fields = [{name: "ThirdPartyCaveatID", type: Types.STRING}, {name: "Caveats", type: _type2}, {name: "Signature", type: _typeSignature}];
@@ -107,8 +99,7 @@ _typeunixTimeExpiryCaveat.kind = Kind.INT64;
 _typeunixTimeExpiryCaveat.name = "v.io/core/veyron2/security.unixTimeExpiryCaveat";
 module.exports.BlessingPattern = (Registry.lookupOrCreateConstructor(_typeBlessingPattern));
 module.exports.Caveat = (Registry.lookupOrCreateConstructor(_typeCaveat));
-module.exports.CaveatDescription = (Registry.lookupOrCreateConstructor(_typeCaveatDescription));
-module.exports.CaveatUuid = (Registry.lookupOrCreateConstructor(_typeCaveatUuid));
+module.exports.CaveatDescriptor = (Registry.lookupOrCreateConstructor(_typeCaveatDescriptor));
 module.exports.Certificate = (Registry.lookupOrCreateConstructor(_typeCertificate));
 module.exports.DischargeImpetus = (Registry.lookupOrCreateConstructor(_typeDischargeImpetus));
 module.exports.Hash = (Registry.lookupOrCreateConstructor(_typeHash));
@@ -116,7 +107,6 @@ module.exports.Signature = (Registry.lookupOrCreateConstructor(_typeSignature));
 module.exports.ThirdPartyRequirements = (Registry.lookupOrCreateConstructor(_typeThirdPartyRequirements));
 module.exports.WireBlessings = (Registry.lookupOrCreateConstructor(_typeWireBlessings));
 module.exports.methodCaveat = (Registry.lookupOrCreateConstructor(_typemethodCaveat));
-module.exports.peerBlessingsCaveat = (Registry.lookupOrCreateConstructor(_typepeerBlessingsCaveat));
 module.exports.publicKeyDischarge = (Registry.lookupOrCreateConstructor(_typepublicKeyDischarge));
 module.exports.publicKeyThirdPartyCaveat = (Registry.lookupOrCreateConstructor(_typepublicKeyThirdPartyCaveat));
 module.exports.unixTimeExpiryCaveat = (Registry.lookupOrCreateConstructor(_typeunixTimeExpiryCaveat));
@@ -126,7 +116,7 @@ module.exports.unixTimeExpiryCaveat = (Registry.lookupOrCreateConstructor(_typeu
 
 // Consts:
 
-  module.exports.NoExtension = new (Registry.lookupOrCreateConstructor(Types.STRING))("$");
+  module.exports.NoExtension = new (Registry.lookupOrCreateConstructor(_typeBlessingPattern))("$");
 
   module.exports.AllPrincipals = new (Registry.lookupOrCreateConstructor(_typeBlessingPattern))("...");
 

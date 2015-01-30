@@ -1,6 +1,9 @@
 package caveat
 
-import "v.io/core/veyron2/security"
+import (
+    "v.io/core/veyron2/uniqueid"
+    "v.io/core/veyron2/security"
+)
 
 type CaveatThatValidatesData struct {
     A int64
@@ -8,22 +11,19 @@ type CaveatThatValidatesData struct {
 }
 
 const (
-    CaveatThatValidates = security.CaveatDescription{
-        Id: security.CaveatUuid{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16},
-        DataType: typeobject(CaveatThatValidatesData),
-        Doc: "DocA",
+    CaveatThatValidates = security.CaveatDescriptor{
+        Id: uniqueid.ID{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16},
+        ParamsType: typeobject(CaveatThatValidatesData),
     }
 
-    CaveatDoesntValidate = security.CaveatDescription{
-        Id: security.CaveatUuid{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-        DataType: typeobject(int32),
-        Doc: "DocB",
+    CaveatDoesntValidate = security.CaveatDescriptor{
+        Id: uniqueid.ID{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+        ParamsType: typeobject(int32),
     }
 
-    CaveatWithCollision = security.CaveatDescription{
-        Id: security.CaveatUuid{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16},
-        DataType: typeobject(float64),
-        Doc: "",
+    CaveatWithCollision = security.CaveatDescriptor{
+        Id: uniqueid.ID{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16},
+        ParamsType: typeobject(float64),
     }
 )
 

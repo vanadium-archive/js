@@ -2,7 +2,23 @@ var test = require('prova');
 var CaveatValidatorRegistry =
   require('../../src/security/caveat-validator-registry');
 var context = require('../../src/runtime/context');
+var EncodeUtil = require('../../src/lib/encode-util');
 var testCaveats = require('../vdl-out/javascript-test/security/caveat/caveat');
+
+/**
+ * Create a Caveat object (See security/types.vdl).
+ * @param {CaveatDescriptor} descriptor The descriptor of the caveat identifier
+ * and its parameters.
+ * @param {any} params The parameters (of type descriptor.ParamsType) to use
+ * when validating.
+ * @throws Upon failure to encode the parameters, does not throw if successful.
+ */
+function makeCaveat(descriptor, params) {
+  return {
+    id: descriptor.id,
+    paramsVom: EncodeUtil.encode(params)
+  };
+}
 
 test('Validating caveats', function(t) {
   var registry = new CaveatValidatorRegistry();
@@ -12,22 +28,22 @@ test('Validating caveats', function(t) {
   var seenCalls = [];
 
   // Register caveat validators.
-  registry.register(testCaveats.CaveatThatValidates, function(fnCtx, data) {
+  registry.register(testCaveats.CaveatThatValidates, function(fnCtx, params) {
     t.equal(fnCtx, ctx, 'Contexts should match');
-    t.equal(data._type, (new testCaveats.CaveatThatValidatesData())._type,
-      'Validation data has the correct type (CaveatThatValidates)');
-    t.deepEqual(data, testCaveats.CaveatThatValidatesExpectedData,
-      'Validation data matches expectation (CaveatThatValidates)');
+    t.equal(params._type, (new testCaveats.CaveatThatValidatesData())._type,
+      'Validation params has the correct type (CaveatThatValidates)');
+    t.deepEqual(params, testCaveats.CaveatThatValidatesExpectedData,
+      'Validation params matches expectation (CaveatThatValidates)');
 
     seenCalls.push('validate');
 
     return false; // This should be ignored, but make sure it isn't treated
     // as a failed validation.
   });
-  registry.register(testCaveats.CaveatDoesntValidate, function(fnCtx, data) {
+  registry.register(testCaveats.CaveatDoesntValidate, function(fnCtx, params) {
     t.equal(fnCtx, ctx, 'Contexts should match');
-    t.deepEqual(data, testCaveats.CaveatDoesntValidateExpectedData,
-      'Validation data matches expectation (CaveatDoesntValidate)');
+    t.deepEqual(params, testCaveats.CaveatDoesntValidateExpectedData,
+      'Validation params matches expectation (CaveatDoesntValidate)');
 
     seenCalls.push('not validate');
 
@@ -36,17 +52,17 @@ test('Validating caveats', function(t) {
 
   // Make calls to validate(), providing caveats.
   t.doesNotThrow(function() {
-      registry.validate(ctx, {
-        id: testCaveats.CaveatThatValidates.id,
-        data: testCaveats.CaveatThatValidatesExpectedData
-      });
+      registry.validate(
+	      ctx,
+              makeCaveat(testCaveats.CaveatThatValidates,
+                         testCaveats.CaveatThatValidatesExpectedData));
     },
     'Should validate');
   t.throws(function() {
-      registry.validate(ctx, {
-        id: testCaveats.CaveatDoesntValidate.id,
-        data: testCaveats.CaveatDoesntValidateExpectedData
-      });
+      registry.validate(
+              ctx,
+              makeCaveat(testCaveats.CaveatDoesntValidate,
+                         testCaveats.CaveatDoesntValidateExpectedData));
     },
     'Validation should fail',
     'Shouldn\'t validate');
@@ -54,10 +70,10 @@ test('Validating caveats', function(t) {
 
   // Test re-registering on the same UUID. This should replace the validation
   // function.
-  registry.register(testCaveats.CaveatWithCollision, function(fnCtx, data) {
+  registry.register(testCaveats.CaveatWithCollision, function(fnCtx, params) {
     t.equal(fnCtx, ctx, 'Contexts should match');
-    t.deepEqual(data, testCaveats.CaveatWithCollisionExpectedData,
-      'Validation data matches expectation (CaveatWithCollision)');
+    t.deepEqual(params, testCaveats.CaveatWithCollisionExpectedData,
+      'Validation params matches expectation (CaveatWithCollision)');
 
     seenCalls.push('collision');
 
@@ -65,10 +81,10 @@ test('Validating caveats', function(t) {
   });
 
   t.throws(function() {
-      registry.validate(ctx, {
-        id: testCaveats.CaveatWithCollision.id,
-        data: testCaveats.CaveatWithCollisionExpectedData
-      });
+      registry.validate(
+	      ctx,
+              makeCaveat(testCaveats.CaveatWithCollision,
+                         testCaveats.CaveatWithCollisionExpectedData));
     },
     'Validation should fail',
     'Shouldn\'t validate after validation function is changed');
@@ -86,7 +102,7 @@ test('Unknown caveat id', function(t) {
   t.throws(function() {
     registry.validate(ctx, {
       id: 99,
-      data: null
+      paramsVom: null
     });
   },
   'Unknown caveat id',
