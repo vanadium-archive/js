@@ -1,6 +1,10 @@
 var test = require('prova');
 var base = require(
   '../vdl-out/v.io/core/veyron2/vdl/testdata/base/base');
+var context = require('../../src/runtime/context');
+var SharedContextKeys = require('../../src/runtime/shared-context-keys');
+var actions = require('../../src/errors/actions');
+
 var Kind = require('vom').Kind;
 var Types = require('vom').Types;
 var BigInt = require('vom').BigInt;
@@ -133,4 +137,20 @@ test('struct constructor', function(assert) {
   assert.equal(res.b, '');
   assert.equal(res.c, 0);
   assert.end();
+});
+
+test('errors', function(assert) {
+  var rootContext = new context.Context();
+  var enContext = rootContext.withValue(SharedContextKeys.LANG_KEY, 'en');
+  var e = new base.ErrWithParams2(enContext, 1, 2);
+  assert.equal(e._argTypes.length, 2);
+  assert.equal(e.message, 'app:op: en x=1 y=2');
+  var frContext = rootContext.withValue(SharedContextKeys.LANG_KEY, 'fr');
+  e = new base.ErrWithParams2(frContext, 1, 2);
+  assert.equal(e._argTypes.length, 2);
+  assert.equal(e.message, 'app:op: fr y=2 x=1');
+  assert.end();
+
+  e = new base.ErrNoParams2(rootContext);
+  assert.equal(e.idAction.action, actions.RETRY_REFETCH);
 });

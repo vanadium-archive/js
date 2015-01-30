@@ -94,6 +94,7 @@ test-vdl: test-vdl-node test-vdl-browser
 # This generates the output of the vdl files in src/v.io/<package-path>
 # The command will generate all the dependent files as well.
 gen-vdl: JS_VDL_DIR := "$(VANADIUM_ROOT)/release/javascript/core/src"
+gen-vdl: JS_VDL_PATH_TO_CORE := "./"
 gen-vdl: gen-vdl-impl
 
 # This generates the output of the vdl files in test/vdl-out/v.io/<package-path>
@@ -101,6 +102,7 @@ gen-vdl: gen-vdl-impl
 gen-vdl-test: JS_VDL_DIR := "$(VANADIUM_ROOT)/release/javascript/core/test/vdl-out"
 gen-vdl-test: EXTRA_VDL_PATHS := "javascript-test/..."
 gen-vdl-test: VDLPATH := "$(VANADIUM_ROOT)/release/javascript/core/test/vdl-in"
+gen-vdl-test: JS_VDL_PATH_TO_CORE := "../../src"
 gen-vdl-test: clean-test-vdl gen-vdl-impl
 
 clean-test-vdl:
@@ -109,6 +111,7 @@ clean-test-vdl:
 gen-vdl-impl:
 ifndef NOVDLGEN
 	VDLPATH=$(VDLPATH) v23 go run $(VANADIUM_ROOT)/release/go/src/v.io/core/veyron2/vdl/vdl/main.go -v generate -lang=javascript \
+		-js_relative_path_to_core=$(JS_VDL_PATH_TO_CORE) \
 		-js_out_dir=$(JS_VDL_DIR) vdltool signature \
 		v.io/core/veyron2/vdl/testdata/... \
 		v.io/core/veyron2/ipc/... \

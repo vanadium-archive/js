@@ -68,6 +68,9 @@ module.exports.TraceRecord = (Registry.lookupOrCreateConstructor(_typeTraceRecor
 
 
 
+// Errors:
+
+
 
 function NotImplementedMethod(name) {
   throw new Error('Method ' + name + ' not implemented');

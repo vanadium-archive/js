@@ -5,7 +5,7 @@
 
 var actions = require('./../errors/actions');
 var errorMap = require('./../runtime/error-map');
-var DefaultError = require('./../errors/default-error');
+var VanadiumError = require('./../errors/vanadium-error');
 var defaultLanguage = require('./../runtime/default-language');
 var defaultCatalog = require('./../runtime/default-catalog');
 var context = require('./../runtime/context');
@@ -81,6 +81,7 @@ function toJSerror(verr, ctx) {
   var idAction = verr.iDAction || verr.idAction;
   var id = idAction.iD || idAction.id || '';
   var msg = verr.msg;
+  verr.paramList = verr.paramList || [];
 
   var Ctor = errorMap[id];
 
@@ -94,12 +95,14 @@ function toJSerror(verr, ctx) {
     ctx = new context.Context();
   }
   if (Ctor) {
-    err = new Ctor(ctx, verr.paramList, true);
+    err = new Ctor([ctx].concat(verr.paramList));
   } else {
-    err = new DefaultError(id, idAction.action || 0, ctx, verr.paramList,
-                           true);
+    var args = [id, idAction.action || actions.NO_RETRY, ctx].concat(
+      verr.paramList);
+    err = new VanadiumError(args);
   }
 
+  err.resetArgs.apply(err, verr.paramList);
   if (msg !== '') {
     err.message = msg;
   }
