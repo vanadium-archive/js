@@ -1,81 +1,48 @@
 /**
  * @fileoverview Helpers for manipulating veyron names.
+ * See vanadium/release/go/src/v.io/core/veyron2/naming/parse.go for the
+ * corresponding operations in golang.
  * @private
  */
 
-var _numInitialSlashes = function(s) {
-  for (var i = 0; i < s.length; i++) {
-    if (s.charAt(i) !== '/') {
-      return i;
-    }
-  }
-  return s.length;
-};
-var _numTailSlashes = function(s) {
-  for (var i = s.length - 1; i >= 0; i--) {
-    if (s.charAt(i) !== '/') {
-      return s.length - 1 - i;
-    }
-  }
-  return s.length;
+// Replace every group of slashes in the string with a single slash.
+var _squashMultipleSlashes = function(s) {
+  return s.replace(/\/{2,}/g, '/');
 };
 
-
-var _removeInitialSlashes = function(s) {
-  return s.replace(/^\/*/g, '');
-};
-var _removeTailSlashes = function(s) {
-  return s.replace(/\/*$/g, '');
-};
-
-var _joinNamePartsOnArray = function(parts) {
-  if (parts.length === 0) {
-    return '';
-  }
-
-  if (parts[0] === '') {
-    parts = parts.slice(1);
-  }
-
-  var name = parts[0];
-  for (var i = 1; i < parts.length; i++) {
-    var addedPart = parts[i];
-
-    var numNameSlashes = _numTailSlashes(name);
-    var numAddedPartSlashes = _numInitialSlashes(addedPart);
-
-    if (numNameSlashes === 0 && numAddedPartSlashes === 0) {
-      name += '/' + addedPart;
-      continue;
-    }
-
-    if (numAddedPartSlashes > numNameSlashes) {
-      name = _removeTailSlashes(name);
-      name += addedPart;
-    } else {
-      name += _removeInitialSlashes(addedPart);
-    }
-  }
-
-  return name;
+// Remove the last slash in the string, if any.
+var _removeTailSlash = function(s) {
+  return s.replace(/\/$/g, '');
 };
 
 /**
- * Joins parts of a name into a whole.
- * It preserves the rootedness and terminality of the name components.
+  * Normalizes a name by collapsing multiple slashes and removing any
+  * trailing slashes.
+  */
+var clean = function(name) {
+  return _removeTailSlash(_squashMultipleSlashes(name));
+};
+
+/**
+ * Joins parts of a name into a whole. The joined name will be cleaned; it only
+ * preserved the rootedness of the name components.
  * Examples:
  * join(['a, b']) -> 'a/b'
- * join('/a/b/', '//d') -> '/a/b//d'
- * join('//a/b', 'c/') -> '//a/b/c/'
+ * join('/a/b/', '//d') -> '/a/b/d'
+ * join('//a/b', 'c/') -> '/a/b/c'
  * @param {array | varargs} Either a single array that contains the strings
  * to join or a variable number of string arguments that will be joined.
  * @return {string} A joined string
  */
 var join = function(parts) {
   if (Array.isArray(parts)) {
-    return _joinNamePartsOnArray(parts);
+    while (parts.length > 0 && parts[0] === '') {
+      parts.splice(0, 1); // Remove empty strings; they add nothing to the join.
+    }
+    var joined = parts.join('/');
+    return clean(joined);
   }
-  return _joinNamePartsOnArray(Array.prototype.slice.call(arguments));
+  return join(Array.prototype.slice.call(arguments));
 };
 
 /**
@@ -84,16 +51,17 @@ var join = function(parts) {
   * @return {boolean} True if the name is rooted, false otherwise.
   */
 var isRooted = function(name) {
-  return _numInitialSlashes(name) === 1;
+  return name[0] === '/';
 };
 
 /**
-  * Strips the basename off the rest of the given veyron name.
+  * Retrieves the parent of the given name.
   * @param {string} The veyron name.
-  * @return {string} The string prefixing the given name's basename.
+  * @return {string | null} The parent's name or null, if there isn't one.
   */
 var stripBasename = function(name) {
-  return name.substring(0, name.lastIndexOf('/') + 1);
+  var normal = clean(name);
+  return normal.substring(0, normal.lastIndexOf('/'));
 };
 
 /**
@@ -102,10 +70,12 @@ var stripBasename = function(name) {
   * @return {string} The basename of the given name
   */
 var basename = function(name) {
-  return name.substring(name.lastIndexOf('/') + 1);
+  var normal = clean(name);
+  return normal.substring(normal.lastIndexOf('/') + 1);
 };
 
 module.exports = {
+  clean: clean,
   join: join,
   isRooted: isRooted,
   stripBasename: stripBasename,
