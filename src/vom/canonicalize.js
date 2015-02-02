@@ -79,7 +79,7 @@ function canonicalizeExternal(inValue, t, deepWrap) {
  * @param {any} v The value to be canonicalized
  * @param {Type} t The target type
  * @param {boolean} deepWrap Whether or not to deeply wrap the contents.
- * @param {map[oldRef](map[stringifiedType]newRef)} seen A cache from old to new
+ * @param {object} seen A cache from old to new
  * references that based on type.
  * @param {boolean} isTopLevelValue If true, then the return value is wrapped
  * @return {any} The canonicalized value (May potentially refer to v)
@@ -642,7 +642,7 @@ function getObjectWithType(t) {
 
 /**
  * insertIntoSeenCache adds the new reference into the cache.
- * @param {map[oldRef]map[type][newRef]} seen Cache of old to new refs by type.
+ * @param {object} seen Cache of old to new refs by type.
  * @param {object} oldRef The old reference
  * @param {Type} type The type the new reference is being cached under.
  * @param {object} newRef The new reference
@@ -657,7 +657,7 @@ function insertIntoSeenCache(seen, oldRef, type, newRef) {
 /**
  * getFromSeenCache returns a cached value from the seen cache.
  * If there is no such value, the function returns undefined.
- * @param {map[oldRef]map[type][newRef]} seen Cache of old to new refs by type.
+ * @param {object} seen Cache of old to new refs by type.
  * @param {object} oldRef The old reference
  * @param {Type} type The type the new reference is being cached under.
  * @return {object | undefined} The cached value or undefined, if not present.

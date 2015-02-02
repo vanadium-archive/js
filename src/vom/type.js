@@ -61,7 +61,7 @@ Type.prototype.toString = function() {
  * Compute a unique type string that breaks cycles.
  * Note: This logic replicates that of uniqueTypeStr in type_builder.go
  * @param {Type} t The type whose unique type string is needed
- * @param {Array[Type]} seen A list of seen type references
+ * @param {Array} seen A list of seen type references
  * @return {string} The string representation of the given type
  */
 function uniqueTypeStr(t, seen) {
