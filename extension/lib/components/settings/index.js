@@ -29,13 +29,22 @@ function render(settings) {
   insert(css);
 
   return h('div', [
+    h('h3', 'Vanadium NaCl Plugin Options'),
+    'These settings are used to configure the Vanadium NaCl plugin.',
+    'You should use the defaults unless you know what you are doing.',
+    h('br'),
+    h('br'),
+    'NOTE: You must reload the plugin (see button below) ' +
+    'for any changes to take effect.',
+    h('br'),
+    h('br'),
     h('form.settings', _.map(settings, setting.render)),
     h('br'),
     h('br'),
     h('a', {
       href: '#',
       'ev-click': mercury.clickEvent(reloadExtension)
-    }, 'Reload extension'),
+    }, 'Reload plugin'),
     h('br'),
     h('br'),
     'Manage your identities here: chrome://identity-internals/'
