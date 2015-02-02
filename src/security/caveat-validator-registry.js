@@ -3,7 +3,7 @@
  * UUIDs and validations methods.
  */
 
-var vom = require('vom');
+var vom = require('../vom/vom');
 var DecodeUtil = require('../lib/decode-util');
 
 module.exports = CaveatValidatorRegistry;

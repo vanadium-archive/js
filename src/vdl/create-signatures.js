@@ -5,7 +5,7 @@
  */
 module.exports = createSignatures;
 
-var vom = require('vom');
+var vom = require('../vom/vom');
 var Signature = require('./signature');
 function sigsHaveMethod(sigs, method) {
   return sigs.some(function(sig) {

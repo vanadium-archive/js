@@ -11,7 +11,7 @@ var MessageType = require('./message-type');
 var IncomingPayloadType = require('./incoming-payload-type');
 var vLog = require('./../lib/vlog');
 var DecodeUtil = require('../lib/decode-util');
-var vom = require('vom');
+var vom = require('../vom/vom');
 
 // Cache the service signatures for one hour.
 var SIGNATURE_CACHE_TTL = 3600 * 1000;

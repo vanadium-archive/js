@@ -12,7 +12,8 @@
     "vom": "0.0.0",
     "eventemitter2": "~0.4.14",
     "lru-cache": "~2.5.0",
-    "minimatch": "~1.0.0"
+    "minimatch": "~1.0.0",
+    "es6-shim": "^0.20.2"
   },
   "devDependencies": {
     "browserify": "~6.3.3",

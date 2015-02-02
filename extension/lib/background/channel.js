@@ -2,7 +2,7 @@
  * @fileoverview Channel RPCs to Nacl plugin.
  */
 
-var vom = require('vom');
+var vom = require('../../../src/vom/vom');
 var channelVdl =
   require('../../vdl/v.io/wspr/veyron/services/wsprd/channel/channel');
 var browsprVdl =

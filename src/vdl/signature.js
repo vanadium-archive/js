@@ -7,7 +7,7 @@
 
 module.exports = Signature;
 
-var vom = require('vom');
+var vom = require('../vom/vom');
 var vdlsig =
     require('../v.io/core/veyron2/vdl/vdlroot/src/signature/signature');
 var ReflectSignature = require('./reflect-signature');

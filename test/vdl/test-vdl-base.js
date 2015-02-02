@@ -5,9 +5,9 @@ var context = require('../../src/runtime/context');
 var SharedContextKeys = require('../../src/runtime/shared-context-keys');
 var actions = require('../../src/errors/actions');
 
-var Kind = require('vom').Kind;
-var Types = require('vom').Types;
-var BigInt = require('vom').BigInt;
+var Kind = require('../../src/vom/vom').Kind;
+var Types = require('../../src/vom/vom').Types;
+var BigInt = require('../../src/vom/vom').BigInt;
 
 test('named primitive types', function(assert) {
   var res = new base.NamedBool(false);

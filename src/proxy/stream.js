@@ -7,7 +7,7 @@ var MessageType = require('./message-type');
 var Duplex = require('stream').Duplex;
 var inherits = require('util').inherits;
 var EncodeUtil = require('../lib/encode-util');
-var vom = require('vom');
+var vom = require('../vom/vom');
 var ServerRPCReply =
   require('../v.io/wspr/veyron/services/wsprd/lib/lib').ServerRPCReply;
 

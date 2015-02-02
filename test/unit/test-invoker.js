@@ -8,7 +8,7 @@
 var test = require('prova');
 var Invoker = require('../../src/invocation/invoker.js');
 var Context = require('../../src/runtime/context').Context;
-var vom = require('vom');
+var vom = require('../../src/vom/vom');
 var base =
     require('../vdl-out/v.io/core/veyron2/vdl/testdata/base/base');
 

@@ -2,7 +2,7 @@ var test = require('prova');
 var serve = require('./serve');
 var leafDispatcher = require('../../src/ipc/leaf-dispatcher');
 var Deferred = require('../../src/lib/deferred');
-var vom = require('vom');
+var vom = require('../../src/vom/vom');
 
 // TODO(bprosnitz) Combine CacheService and CacheServicePromises so there
 // isn't as much duplicated code.

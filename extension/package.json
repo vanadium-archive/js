@@ -16,7 +16,7 @@
     "mercury": "^11.0.0",
     "xtend": "^3.0.0",
     "eventemitter2": "~0.4.14",
-    "vom": "0.0.0",
+    "es6-shim": "^0.20.2",
     "superagent": "~0.21.0"
   },
   "devDependencies": {

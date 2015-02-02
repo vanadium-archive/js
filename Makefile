@@ -82,19 +82,21 @@ dist/veyron.min.js: src/veyron.js $(JS_SRC_FILES) $(NODE_MODULES_JS_FILES) | nod
 	mkdir -p dist
 	browserify $< $(BROWSERIFY_OPTS) --plugin [ minifyify --map dist/veyron.js.map --output $@.map ] --outfile $@
 
-extension/veyron.zip:
+extension/veyron.zip: node_modules
 	$(MAKE) -C extension veyron.zip
 
 test-precheck: gen-vdl-test node_modules lint dependency-check
 
-test: test-unit test-integration test-vdl
+test: test-unit test-integration test-vdl test-vom
 
 test-vdl: test-vdl-node test-vdl-browser
+
+test-vom: test-vom-node test-vom-browser
 
 # This generates the output of the vdl files in src/v.io/<package-path>
 # The command will generate all the dependent files as well.
 gen-vdl: JS_VDL_DIR := "$(VANADIUM_ROOT)/release/javascript/core/src"
-gen-vdl: JS_VDL_PATH_TO_CORE := "./"
+gen-vdl: JS_VDL_PATH_TO_CORE := "."
 gen-vdl: gen-vdl-impl
 
 # This generates the output of the vdl files in test/vdl-out/v.io/<package-path>
@@ -112,13 +114,21 @@ gen-vdl-impl:
 ifndef NOVDLGEN
 	VDLPATH=$(VDLPATH) v23 go run $(VANADIUM_ROOT)/release/go/src/v.io/core/veyron2/vdl/vdl/main.go -v generate -lang=javascript \
 		-js_relative_path_to_core=$(JS_VDL_PATH_TO_CORE) \
-		-js_out_dir=$(JS_VDL_DIR) vdltool signature \
+		-js_out_dir=$(JS_VDL_DIR) \
 		v.io/core/veyron2/vdl/testdata/... \
 		v.io/core/veyron2/ipc/... \
-		v.io/core/veyron2/vdl/vdlroot/src/...\
 	 	v.io/core/veyron2/naming/... \
 	 	v.io/wspr/veyron/services/wsprd/... \
+		v.io/core/veyron2/vom/... \
 	 	$(EXTRA_VDL_PATHS)
+  # We build the vdlroot stuff with a different set of command line options because the package path does
+	# not equal the directory path of the source file.  This is not ideal, but bjornick and toddw will discuss
+	# how to fix this later.
+	VDLPATH=$(VDLPATH) v23 go run $(VANADIUM_ROOT)/release/go/src/v.io/core/veyron2/vdl/vdl/main.go -v generate -lang=javascript \
+					-js_relative_path_to_core=$(JS_VDL_PATH_TO_CORE)/../../../../../.. \
+					-js_out_dir=$(JS_VDL_DIR) \
+					v.io/core/veyron2/vdl/vdlroot/src/...
+
 endif
 
 test-vdl-node: test-precheck
@@ -126,6 +136,12 @@ test-vdl-node: test-precheck
 
 test-vdl-browser: test-precheck
 	prova test/vdl/test-*.js $(PROVA_OPTS) $(BROWSER_OPTS) $(BROWSER_OUTPUT_LOCAL)
+
+test-vom-node: test-precheck
+	prova test/vom/test-*.js $(PROVA_OPTS) $(NODE_OUTPUT_LOCAL)
+
+test-vom-browser: test-precheck
+	prova test/vom/test-*.js $(PROVA_OPTS) $(BROWSER_OPTS) $(BROWSER_OUTPUT_LOCAL)
 
 test-unit: test-unit-node test-unit-browser
 
@@ -179,17 +195,11 @@ clean:
 docs: $(JS_SRC_FILES) | node_modules
 	jsdoc $^ --template node_modules/ink-docstrap/template --destination $@
 
-node_modules: package.json  check-that-npm-is-in-path | node_modules/vom/lib/index.js
+node_modules: package.json  check-that-npm-is-in-path
 ifndef NONPMUPDATE
 	@npm prune
 	@npm install --quiet
 	@touch node_modules
-endif
-
-node_modules/vom/lib/index.js:
-ifndef NONPMUPDATE
-	cd "$(VANADIUM_ROOT)/release/javascript/vom" && npm link
-	:;npm link vom
 endif
 
 check-that-npm-is-in-path:

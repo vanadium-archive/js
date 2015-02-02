@@ -1,5 +1,5 @@
 var test = require('prova');
-var vom = require('vom');
+var vom = require('../../src/vom/vom');
 var ifaceSigType = require(
   '../../src/v.io/core/veyron2/vdl/vdlroot/src/signature/signature'
 ).Interface;

@@ -17,7 +17,7 @@ var SecurityContext = require('../security/context');
 var ServerContext = require('./server-context');
 var DecodeUtil = require('../lib/decode-util');
 var EncodeUtil = require('../lib/encode-util');
-var vom = require('vom');
+var vom = require('../vom/vom');
 var vdlsig =
     require('../v.io/core/veyron2/vdl/vdlroot/src/signature/signature');
 var namespaceUtil = require('../namespace/util');

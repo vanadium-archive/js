@@ -1,4 +1,4 @@
-var vom = require('vom');
+var vom = require('../vom/vom');
 module.exports = {
   encode: encode,
 };

@@ -7,7 +7,7 @@ module.exports = ReflectSignature;
 
 var ArgInspector = require('../lib/arg-inspector');
 var isPublicMethod = require('../lib/service-reflection').isPublicMethod;
-var vom = require('vom');
+var vom = require('../vom/vom');
 var format = require('util').format;
 
 /**

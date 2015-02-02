@@ -117,7 +117,7 @@ build-test: build-test/html build-test/images build-test/manifest.json build-tes
 
 gen-vdl: $(WSPRD_PATH)/channel/channel.vdl $(WSPRD_PATH)/browspr/browspr.vdl $(WSPRD_PATH)/account/account.vdl
 	v23 go run $(VANADIUM_ROOT)/release/go/src/v.io/core/veyron2/vdl/vdl/main.go \
-	generate -lang=javascript -js_out_dir="$(VANADIUM_ROOT)/release/javascript/core/extension/vdl" $(dir $^)
+	generate -lang=javascript -js_out_dir="$(VANADIUM_ROOT)/release/javascript/core/extension/vdl" -js_relative_path_to_core=../../src $(dir $^) 
 
 example-server: example/index.bundle.js
 	static "example" -H '{"Cache-Control": "no-cache, must-revalidate"}'
@@ -135,13 +135,9 @@ clean:
 	@$(RM) -fr node_modules npm-debug.log
 	@$(RM) -fr veyron.zip build build-test
 
-node_modules: package.json | check-that-npm-is-in-path node_modules/vom/lib/index.js
+node_modules: package.json | check-that-npm-is-in-path
 	@npm prune
 	@npm install --quiet
-
-node_modules/vom/lib/index.js:
-	cd "$(VANADIUM_ROOT)/release/javascript/vom" && npm link
-	:;npm link vom
 
 check-that-npm-is-in-path:
 	@which npm > /dev/null || { echo "npm is not in the path. Did you remember to run 'v23 profile setup web'?"; exit 1; }
