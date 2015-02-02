@@ -22,7 +22,7 @@ function validateCommunication(t, name, cb) {
     res.service.anRpc(res.runtime.getContext(), function(err, result) {
       t.error(err, 'Err expected to be null');
       t.equal(result, response, 'Expected different response from anRpc()');
-      cb(null, res.end);
+      cb(null, res.end, res.runtime);
     });
   });
 }
@@ -36,14 +36,14 @@ test('Test recovery from nacl plugin crash', function(t) {
 
   // validate comunication first, partially because this initializes the
   // nacl plugin.
-  validateCommunication(t, 'test/name1', function(err, close1) {
+  validateCommunication(t, 'test/name1', function(err, close1, runtime) {
     if (err) {
       t.error(err);
       return t.end();
     }
 
     // Handle the crash.
-    eventProxy.once('crash', vanadiumCrashEvent);
+    runtime.once('crash', vanadiumCrashEvent);
 
     var receivedError = false;
 
@@ -51,9 +51,9 @@ test('Test recovery from nacl plugin crash', function(t) {
       if (!receivedError) {
         receivedError = true; // Assumes crash is first error.
 
-        t.equal(typeof err, 'string',
-          'Receive a string arg during the crash event');
-        t.equal(err.indexOf('Vanadium plug-in crashed'), 0,
+        t.ok(err instanceof Error,
+          'Receive an error object during the crash event');
+        t.equal(err.message.indexOf('Vanadium plug-in crashed'), 0,
           'Received crash message');
 
         // Perform another communication validation.

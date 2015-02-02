@@ -2,7 +2,8 @@
  * @fileoverview Veyron Runtime
  * @private
  */
-
+var EE = require('eventemitter2').EventEmitter2;
+var inherits = require('util').inherits;
 var Server = require('../ipc/server');
 var ServerRouter = require('../ipc/server-router');
 var Client = require('../ipc/client');
@@ -19,10 +20,22 @@ var SharedContextKeys = require('./shared-context-keys');
 
 module.exports = Runtime;
 
+/*
+ * Vanadium runtime.
+ * Runtime exposes entry points to create servers, client, blessing and other
+ * parts of the Vanadium functionality.
+ *
+ * Runtime is also an EventEmitter:
+ *    Event: 'crash'
+ *    Emitted when the runtime crashes in an unexpected way. Recovery from
+ *    crash event requires restarting the application.
+ */
 function Runtime(options) {
   if (!(this instanceof Runtime)) {
     return new Runtime(options);
   }
+
+  EE.call(this);
 
   this.accountName = options.accountName;
   this._wspr = options.wspr;
@@ -32,6 +45,7 @@ function Runtime(options) {
   this.caveatRegistry = new CaveatValidatorRegistry();
 }
 
+inherits(Runtime, EE);
 
 /**
  * Closes the underlying websocket connection.
@@ -53,8 +67,8 @@ Runtime.prototype.close = function(cb) {
   var runtime = this;
 
   return runtime
-  ._getProxyConnection()
-  .close(cb);
+    ._getProxyConnection()
+    .close(cb);
 };
 
 /**
@@ -108,7 +122,7 @@ Runtime.prototype.getContext = function() {
  */
 Runtime.prototype.namespace = function() {
   this._ns = this._ns || new Namespace(this._getProxyConnection(),
-                                       this.getContext());
+    this.getContext());
   return this._ns;
 };
 
@@ -129,7 +143,7 @@ Runtime.prototype.newBlessings = function(extension, cb) {
   var handler = new SimpleHandler(this.getContext(), messageDef, proxy, id);
 
   proxy.sendRequest(JSON.stringify(extension), MessageType.NEW_BLESSINGS,
-                    handler, id);
+    handler, id);
 
   messageDef.promise.then(function(message) {
     var id = new Blessings(message.handle, message.publicKey, proxy);
@@ -159,6 +173,9 @@ Runtime.prototype._getProxyConnection = function() {
     this._proxyConnection = new ProxyConnection();
   }
 
+  // relay crash event from proxy
+  this._proxyConnection.on('crash', this.emit.bind(this, 'crash'));
+
   return this._proxyConnection;
 };
 
@@ -169,8 +186,8 @@ Runtime.prototype._getProxyConnection = function() {
 Runtime.prototype._getRouter = function() {
   if (!this._router) {
     this._router = new ServerRouter(
-        this._getProxyConnection(),
-        this._name, this.getContext());
+      this._getProxyConnection(),
+      this._name, this.getContext());
   }
   return this._router;
 };

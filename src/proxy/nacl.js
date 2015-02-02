@@ -37,6 +37,12 @@ function ProxyConnection() {
     }
   });
 
+  // rethrow crash error when proxy fails.
+  extensionEventProxy.on('crash', function(message) {
+    var crashError = new Error(message);
+    self.emit('crash', crashError);
+  });
+
   var def = new Deferred();
   Proxy.call(this, def.promise);
   def.resolve(this);

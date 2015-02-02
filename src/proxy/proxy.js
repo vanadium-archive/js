@@ -4,6 +4,8 @@
  * messages from the native veyron implementation.
  */
 
+var EE = require('eventemitter2').EventEmitter2;
+var inherits = require('util').inherits;
 var LRU = require('lru-cache');
 var MessageType = require('./message-type');
 var IncomingPayloadType = require('./incoming-payload-type');
@@ -33,7 +35,9 @@ function Proxy(senderPromise) {
   });
   this.senderPromise = senderPromise;
   this.incomingRequestHandlers = {};
+  EE.call(this);
 }
+inherits(Proxy, EE);
 
 /**
  * Handles a message from native veyron implementation.

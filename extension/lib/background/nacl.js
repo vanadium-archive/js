@@ -93,7 +93,7 @@ Nacl.prototype._start = function() {
         namespaceRoot: settings.namespaceRoot.value,
         proxy: settings.proxy.value,
         logLevel: parseInt(settings.logLevel.value) || 0,
-        logModule: settings.logModule.value
+        logModule: settings.logModule.value || ''
       };
 
       nacl._directChannel.performRpc('start', body, function(err) {
