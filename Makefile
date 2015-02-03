@@ -112,7 +112,7 @@ clean-test-vdl:
 
 gen-vdl-impl:
 ifndef NOVDLGEN
-	VDLPATH=$(VDLPATH) v23 go run $(VANADIUM_ROOT)/release/go/src/v.io/core/veyron2/vdl/vdl/main.go -v generate -lang=javascript \
+	VDLPATH=$(VDLPATH) v23 go run $(VANADIUM_ROOT)/release/go/src/v.io/core/veyron2/vdl/vdl/main.go generate -lang=javascript \
 		-js_relative_path_to_core=$(JS_VDL_PATH_TO_CORE) \
 		-js_out_dir=$(JS_VDL_DIR) \
 		v.io/core/veyron2/vdl/testdata/... \
@@ -124,7 +124,7 @@ ifndef NOVDLGEN
   # We build the vdlroot stuff with a different set of command line options because the package path does
 	# not equal the directory path of the source file.  This is not ideal, but bjornick and toddw will discuss
 	# how to fix this later.
-	VDLPATH=$(VDLPATH) v23 go run $(VANADIUM_ROOT)/release/go/src/v.io/core/veyron2/vdl/vdl/main.go -v generate -lang=javascript \
+	VDLPATH=$(VDLPATH) v23 go run $(VANADIUM_ROOT)/release/go/src/v.io/core/veyron2/vdl/vdl/main.go generate -lang=javascript \
 					-js_relative_path_to_core=$(JS_VDL_PATH_TO_CORE)/../../../../../.. \
 					-js_out_dir=$(JS_VDL_DIR) \
 					$(VANADIUM_ROOT)/release/go/src/v.io/core/veyron2/vdl/vdlroot/src/...
