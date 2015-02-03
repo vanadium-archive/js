@@ -871,6 +871,28 @@ test('canonicalize deep to shallow - basic functionality', function(t) {
       }
     },
     {
+      name: 'wrapped big int',
+      input: {
+        val: new BigInt(1, new Uint8Array([0x10, 0xff])),
+        _wrappedType: true, // pretend that this is on the prototype
+        _type: Types.INT64  // pretend that this is on the prototype
+      },
+      expected: {
+        val: new BigInt(1, new Uint8Array([0x10, 0xff]))
+      }
+    },
+    {
+      name: 'wrapped complex',
+      input: {
+        val: new Complex(4, 5),
+        _wrappedType: true, // pretend that this is on the prototype
+        _type: Types.COMPLEX64  // pretend that this is on the prototype
+      },
+      expected: {
+        val: new Complex(4, 5)
+      }
+    },
+    {
       name: 'map',
       input: {
         val: new Map([

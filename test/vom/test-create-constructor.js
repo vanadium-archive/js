@@ -8,6 +8,7 @@ var BigInt = require('./../../src/vom/big-int.js');
 var createConstructor = require('./../../src/vom/create-constructor.js');
 var Kind = require('./../../src/vom/kind.js');
 var Types = require('./../../src/vom/types.js');
+var Complex = require('./../../src/vom/complex.js');
 
 test('create constructor', function(assert) {
   var tests = [
@@ -19,6 +20,100 @@ test('create constructor', function(assert) {
       },
       expectedValueDeep: {
         val: 23
+      }
+    },
+    {
+      type: Types.UINT32,
+      value: {
+        val: 24,
+        _type: Types.UINT32,
+        _wrappedType: true
+      },
+      expectedValue: {
+        val: 24
+      },
+      expectedValueDeep: {
+        val: 24
+      }
+    },
+    { // Ensure that we can pass constructed values as arguments
+      type: Types.UINT32,
+      value:  new (createConstructor(Types.UINT32))(25),
+      expectedValue: {
+        val: 25
+      },
+      expectedValueDeep: {
+        val: 25
+      }
+    },
+    {
+      type: Types.UINT64,
+      value: {
+        val: new BigInt(1, new Uint8Array([4, 3])),
+        _type: Types.UINT64,
+        _wrappedType: true
+      },
+      expectedValue: {
+        val: new BigInt(1, new Uint8Array([4, 3])),
+      },
+      expectedValueDeep: {
+        val: new BigInt(1, new Uint8Array([4, 3])),
+      }
+    },
+    {
+      type: Types.UINT64,
+      value: {
+        val: new BigInt(1, new Uint8Array([4, 3])),
+        _type: {
+          name: 'NamedBigInt',
+          kind: Kind.UINT64
+        },
+        _wrappedType: true
+      },
+      expectedValue: {
+        val: new BigInt(1, new Uint8Array([4, 3])),
+      },
+      expectedValueDeep: {
+        val: new BigInt(1, new Uint8Array([4, 3])),
+      }
+    },
+    { // Ensure that we can pass constructed values as arguments
+      type: Types.UINT64,
+      value:  new (createConstructor(Types.UINT64))(
+        new BigInt(1, new Uint8Array([1, 2]))),
+      expectedValue: {
+        val: new BigInt(1, new Uint8Array([1, 2]))
+      },
+      expectedValueDeep: {
+        val: new BigInt(1, new Uint8Array([1, 2]))
+      }
+    },
+    {
+      type: Types.COMPLEX64,
+      value: {
+        val: new Complex(2, 3),
+        _type: Types.COMPLEX64,
+        _wrappedType: true
+      },
+      expectedValue: {
+        val: new Complex(2, 3)
+      },
+      expectedValueDeep: {
+        val: new Complex(2, 3)
+      }
+    },
+    {
+      type: Types.STRING,
+      value: {
+        val: 'testString',
+        _type: Types.STRING,
+        _wrappedType: true
+      },
+      expectedValue: {
+        val: 'testString'
+      },
+      expectedValueDeep: {
+        val: 'testString'
       }
     },
     {
