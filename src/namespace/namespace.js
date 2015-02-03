@@ -209,6 +209,11 @@ Namespace.prototype._sendRequest = function(ctx, method, args, cb,
     return def.promise;
   }
 
+  // Add an empty callback to the context.  This prevents "Possibly unhandled
+  // errors" when the context is cancelled or times out.
+  // TODO(mattr): Come up with a better solution than this hack.
+  ctx.waitUntilDone(function(){});
+
   var id = this._proxy.nextId();
   if( isStreaming) {
     // TODO(alexfandrianto): I don't think this client stream sends anything.
