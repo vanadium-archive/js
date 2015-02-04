@@ -378,11 +378,11 @@ TypeDecoder.prototype._readPartialType = function(messageBytes) {
       }
       break;
     case BootstrapTypes.definitions.WIRESTRUCT.id:
-    case BootstrapTypes.definitions.WIREONEOF.id:
+    case BootstrapTypes.definitions.WIREUNION.id:
       if (wiretypeId === BootstrapTypes.definitions.WIRESTRUCT.id) {
         partialType.kind = Kind.STRUCT;
       } else {
-        partialType.kind = Kind.ONEOF;
+        partialType.kind = Kind.UNION;
       }
       endDef7:
       while (true) {
@@ -419,8 +419,8 @@ TypeDecoder.prototype._readPartialType = function(messageBytes) {
           }
       }
       break;
-    case BootstrapTypes.definitions.WIRENILABLE.id:
-      partialType.kind = Kind.NILABLE;
+    case BootstrapTypes.definitions.WIREOPTIONAL.id:
+      partialType.kind = Kind.OPTIONAL;
       endDef9:
       while (true) {
         nextIndex = reader.readUint();
@@ -434,7 +434,7 @@ TypeDecoder.prototype._readPartialType = function(messageBytes) {
             partialType.elemTypeId = reader.readUint();
             break;
           default:
-            throw new Error('Unexpected index for WireNilable: ' + nextIndex);
+            throw new Error('Unexpected index for WireOptional: ' + nextIndex);
           }
       }
       break;

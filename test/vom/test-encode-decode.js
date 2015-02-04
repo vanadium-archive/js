@@ -35,7 +35,7 @@ test('encode and decode', function(t) {
     ]
   };
   linkedListNodeType.fields[1].type = {
-    kind: Kind.NILABLE,
+    kind: Kind.OPTIONAL,
     elem: linkedListNodeType
   };
 
@@ -56,7 +56,7 @@ test('encode and decode', function(t) {
     ]
   });
   var nextTreeNodeType = new Type({
-    kind: Kind.NILABLE,
+    kind: Kind.OPTIONAL,
     elem: treeNodeType
   });
   treeNodeType.fields[1].type = nextTreeNodeType;
@@ -345,24 +345,24 @@ test('encode and decode', function(t) {
       }
     },
     {
-      n: 'Decode(Encode(Nilable String w/ value))',
-      v: 'nilableString',
+      n: 'Decode(Encode(Optional String w/ value))',
+      v: 'optionalString',
       expectedOutput: {
-        val: 'nilableString'
+        val: 'optionalString'
       },
       t: {
-        kind: Kind.NILABLE,
+        kind: Kind.OPTIONAL,
         elem: Types.STRING
       }
     },
     {
-      n: 'Decode(Encode(Nilable String w/ null))',
+      n: 'Decode(Encode(Optional String w/ null))',
       v: null,
       expectedOutput: {
         val: null
       },
       t: {
-        kind: Kind.NILABLE,
+        kind: Kind.OPTIONAL,
         elem: Types.STRING
       }
     },
@@ -440,13 +440,13 @@ test('encode and decode', function(t) {
       }
     },
     {
-      n: 'Decode(Encode(OneOf<String, Uint16> w/ Uint16))',
+      n: 'Decode(Encode(Union<String, Uint16> w/ Uint16))',
       v: {
         'uInt': 5
       },
       t: {
-        kind: Kind.ONEOF,
-        name: 'oneOfName',
+        kind: Kind.UNION,
+        name: 'unionName',
         fields: [
           {
             name: 'StringInt',
@@ -460,13 +460,13 @@ test('encode and decode', function(t) {
       }
     },
     {
-      n: 'Decode(Encode(OneOf<String, Bool> w/ String))',
+      n: 'Decode(Encode(Union<String, Bool> w/ String))',
       v: {
         'stringBool': 'str'
       },
       t: {
-        kind: Kind.ONEOF,
-        name: 'oneOfName',
+        kind: Kind.UNION,
+        name: 'unionName',
         fields: [
           {
             name: 'StringBool',
@@ -480,13 +480,13 @@ test('encode and decode', function(t) {
       }
     },
     {
-      n: 'Decode(Encode(OneOf<String, Bool> w/ Bool))',
+      n: 'Decode(Encode(Union<String, Bool> w/ Bool))',
       v: {
         'boolean': true
       },
       t: {
-        kind: Kind.ONEOF,
-        name: 'OneOfName',
+        kind: Kind.UNION,
+        name: 'UnionName',
         fields: [
           {
             name: 'StringBool',
@@ -500,13 +500,13 @@ test('encode and decode', function(t) {
       }
     },
     {
-      n: 'Decode(Encode(OneOf<Map[Uint16]Uint32, List<Float64>> w/ List))',
+      n: 'Decode(Encode(Union<Map[Uint16]Uint32, List<Float64>> w/ List))',
       v: {
         'list': [4,3,5]
       },
       t: {
-        kind: Kind.ONEOF,
-        name: 'OneOfName',
+        kind: Kind.UNION,
+        name: 'UnionName',
         fields: [
           {
             name: 'Map',
@@ -527,7 +527,7 @@ test('encode and decode', function(t) {
       }
     },
     {
-      n: 'Decode(Encode(OneOf<Map[Uint16]Uint32, List<Float64>> w/ Map))',
+      n: 'Decode(Encode(Union<Map[Uint16]Uint32, List<Float64>> w/ Map))',
       v: {
         'map': {
           'a': 9,
@@ -540,8 +540,8 @@ test('encode and decode', function(t) {
         }
       },
       t: {
-        kind: Kind.ONEOF,
-        name: 'OneOfName',
+        kind: Kind.UNION,
+        name: 'UnionName',
         fields: [
           {
             name: 'Map',
@@ -664,11 +664,11 @@ test('encode and decode', function(t) {
       t: Types.ANY
     },
     {
-      n: 'Decode(Encode(Any)) - Nilable wrap',
+      n: 'Decode(Encode(Any)) - Optional wrap',
       v: {
         val: 'not null',
         _type: {              // pretend this is on the prototype
-          kind: Kind.NILABLE,
+          kind: Kind.OPTIONAL,
           elem: Types.STRING
         },
         _wrappedType: true    // pretend this is on the prototype
@@ -761,7 +761,7 @@ test('encode and decode', function(t) {
       t: Types.ANY
     },
     {
-      n: 'Decode(Encode(Any w/ null)) - NILABLE wrap',
+      n: 'Decode(Encode(Any w/ null)) - OPTIONAL wrap',
       expectedOutput: {
         val: {
           val: null
@@ -770,7 +770,7 @@ test('encode and decode', function(t) {
       v: {
         val: null,
         _type: {              // pretend this is on the prototype
-          kind: Kind.NILABLE,
+          kind: Kind.OPTIONAL,
           elem: Types.STRING
         },
         _wrappedType: true    // pretend this is on the prototype
@@ -1007,7 +1007,7 @@ test('encode and decode', function(t) {
 test('encode error cases', function(t) {
   var tests = [
     {
-      n: 'converting null to non-nilable type',
+      n: 'converting null to non-optional type',
       v: null,
       t: Kind.UINT64
     },
@@ -1107,13 +1107,13 @@ test('encode error cases', function(t) {
       }
     },
     {
-      n: 'OneOf is not TwoOrMoreOf',
+      n: 'Union is not TwoOrMoreOf',
       v: {
         a: 3,
         c: 'asf'
       },
       t: {
-        kind: Kind.ONEOF,
+        kind: Kind.UNION,
         fields: [
           {
             name: 'A',
@@ -1131,10 +1131,10 @@ test('encode error cases', function(t) {
       }
     },
     {
-      n: 'OneOf is not NoneOf',
+      n: 'Union is not Nunion',
       v: {},
       t: {
-        kind: Kind.ONEOF,
+        kind: Kind.UNION,
         fields: [
           {
             name: 'A',

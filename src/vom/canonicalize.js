@@ -181,8 +181,8 @@ function canonicalizeInternal(deepWrap, v, t, seen, outValue) {
     // Otherwise, canonicalize but remove the top-level wrapping.
     // The top-level will be reapplied by this function's caller.
     return TypeUtil.unwrap(canonicalize(zero, t, true, seen, false));
-  } else if (v === null && (t.kind !== Kind.ANY && t.kind !== Kind.NILABLE)) {
-    throw makeError(v, t, 'value is null for non-nilable type');
+  } else if (v === null && (t.kind !== Kind.ANY && t.kind !== Kind.OPTIONAL)) {
+    throw makeError(v, t, 'value is null for non-optional type');
   }
 
   var key;
@@ -193,8 +193,8 @@ function canonicalizeInternal(deepWrap, v, t, seen, outValue) {
       // Any values are canonicalized with their internal value instead.
       throw new Error('Unreachable; Any values are always extracted and then ' +
         'canonicalized.');
-    case Kind.NILABLE:
-      // Verify the value is null or the correct Nilable element.
+    case Kind.OPTIONAL:
+      // Verify the value is null or the correct Optional element.
       if (v === null) {
         return null;
       }
@@ -366,13 +366,13 @@ function canonicalizeInternal(deepWrap, v, t, seen, outValue) {
       });
 
       return outValue;
-    case Kind.ONEOF:
-      // Verify that the OneOf contains 1 field, 0-filling if there are none.
+    case Kind.UNION:
+      // Verify that the Union contains 1 field, 0-filling if there are none.
       if (typeof v !== 'object' || Array.isArray(v)) {
         throw makeError(v, t, 'value is not an object');
       }
 
-      // TODO(bprosnitz): Ignores properties not defined by the OneOf type.
+      // TODO(bprosnitz): Ignores properties not defined by the Union type.
       // If we want to throw in such cases, _type would have to be whitelisted.
       var isSet = false;
       for (i = 0; i < t.fields.length; i++) {
@@ -381,7 +381,7 @@ function canonicalizeInternal(deepWrap, v, t, seen, outValue) {
         if (v.hasOwnProperty(lowerKey) && v[lowerKey] !== undefined) {
           // Increment count and canonicalize the internal value.
           if (isSet) {
-            throw makeError(v, t, '>1 OneOf fields are set');
+            throw makeError(v, t, '>1 Union fields are set');
           } else {
             outValue[lowerKey] = canonicalize(v[lowerKey], t.fields[i].type,
               deepWrap, seen, false);
@@ -390,9 +390,9 @@ function canonicalizeInternal(deepWrap, v, t, seen, outValue) {
         }
       }
 
-      // If none of the fields were set, then the OneOf is not valid.
+      // If none of the fields were set, then the Union is not valid.
       if (!isSet) {
-        throw makeError(v, t, 'none of the OneOf fields are set');
+        throw makeError(v, t, 'none of the Union fields are set');
       }
 
       // Copy over any private properties without canonicalization.
@@ -454,7 +454,7 @@ function canonicalizeInternal(deepWrap, v, t, seen, outValue) {
 function zeroValue(t) {
   switch(t.kind) {
     case Kind.ANY:
-    case Kind.NILABLE:
+    case Kind.OPTIONAL:
       return null;
     case Kind.BOOL:
       return false;
@@ -493,11 +493,11 @@ function zeroValue(t) {
       return new Set();
     case Kind.MAP:
       return new Map();
-    case Kind.ONEOF:
-      var zeroOneOf = {};
+    case Kind.UNION:
+      var zeroUnion = {};
       var name = util.uncapitalize(t.fields[0].name);
-      zeroOneOf[name] = zeroValue(t.fields[0].type);
-      return zeroOneOf;
+      zeroUnion[name] = zeroValue(t.fields[0].type);
+      return zeroUnion;
     case Kind.STRUCT:
       return t.fields.reduce(function(obj, curr) {
         var name = util.uncapitalize(curr.name);
@@ -587,7 +587,7 @@ function canonicalizeType(type, seen) {
   }
 
   // Union needs at least 1 field.
-  if (type.kind === Kind.ONEOF && canonType.fields.length <= 0) {
+  if (type.kind === Kind.UNION && canonType.fields.length <= 0) {
     throw makeError(canonType, typeOfType, 'union needs >=1 field');
   }
 
@@ -596,7 +596,7 @@ function canonicalizeType(type, seen) {
 
 // Copy the unexported struct fields from the value to the copy.
 // Do not copy _type and _wrappedType since they would block the prototype.
-// TODO(alexfandrianto): Only used in Struct and OneOf. Do we need it elsewhere?
+// TODO(alexfandrianto): Only used in Struct and Union. Do we need it elsewhere?
 function copyUnexported(value, copy) {
   Object.keys(value).filter(function(key) {
     return !util.isExportedStructField(key) && key !== '_type' &&

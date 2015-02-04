@@ -10,12 +10,12 @@ module.exports = {};
 
 
 // Types:
-var _typeID = new vom.Type();
-_typeID.kind = vom.Kind.ARRAY;
-_typeID.name = "v.io/core/veyron2/uniqueid.ID";
-_typeID.len = 16;
-_typeID.elem = vom.Types.BYTE;
-module.exports.ID = (vom.Registry.lookupOrCreateConstructor(_typeID));
+var _typeId = new vom.Type();
+_typeId.kind = vom.Kind.ARRAY;
+_typeId.name = "v.io/core/veyron2/uniqueid.Id";
+_typeId.len = 16;
+_typeId.elem = vom.Types.BYTE;
+module.exports.Id = (vom.Registry.lookupOrCreateConstructor(_typeId));
 
 
 

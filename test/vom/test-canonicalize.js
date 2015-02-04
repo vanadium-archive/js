@@ -389,9 +389,9 @@ test('canonicalize struct - basic functionality', function(t) {
           }
         },
         {
-          name: 'Nilable',
+          name: 'Optional',
           type: {
-            kind: Kind.NILABLE,
+            kind: Kind.OPTIONAL,
             elem: Types.STRING
           }
         },
@@ -436,7 +436,7 @@ test('canonicalize struct - basic functionality', function(t) {
       ],
       outputObject: {
         'enum': 'Sunday',
-        'nilable': null,
+        'optional': null,
         'string': '',
         'array': [false, false, false],
         'list': [],
@@ -446,7 +446,7 @@ test('canonicalize struct - basic functionality', function(t) {
       },
       outputObjectDeep: {
         'enum': { val: 'Sunday' },
-        'nilable': { val: null },
+        'optional': { val: null },
         'string': { val: '' },
         'array': {
           val: [
@@ -511,7 +511,7 @@ test('canonicalize struct - basic functionality', function(t) {
       }
     },
     {
-      name: 'recursive canonicalize - struct, oneof',
+      name: 'recursive canonicalize - struct, union',
       inputObject: {},
       inputFields: [
         {
@@ -531,9 +531,9 @@ test('canonicalize struct - basic functionality', function(t) {
           }
         },
         {
-          name: 'OneOf',
+          name: 'Union',
           type: {
-            kind: Kind.ONEOF,
+            kind: Kind.UNION,
             fields: [
               {
                 name: 'A',
@@ -552,7 +552,7 @@ test('canonicalize struct - basic functionality', function(t) {
           a: false,
           b: new BigInt(0, new Uint8Array())
         },
-        'oneOf': {
+        'union': {
           a: false
         }
       },
@@ -561,7 +561,7 @@ test('canonicalize struct - basic functionality', function(t) {
           a: { val: false },
           b: { val: new BigInt(0, new Uint8Array()) }
         },
-        'oneOf': {
+        'union': {
           a: { val: false }
         }
       }
@@ -569,7 +569,7 @@ test('canonicalize struct - basic functionality', function(t) {
   ];
 
   for (var i = 0; i < tests.length; i++) {
-    // TODO(alexfandrianto): This test logic matches the OneOf test logic.
+    // TODO(alexfandrianto): This test logic matches the Union test logic.
     // It would be nice to move to its own function.
     var name = tests[i].name;
     var input = tests[i].inputObject;
@@ -608,10 +608,10 @@ test('canonicalize struct - basic functionality', function(t) {
   t.end();
 });
 
-test('canonicalize oneOf - basic functionality', function(t) {
+test('canonicalize union - basic functionality', function(t) {
   var tests = [
     {
-      name: 'filled oneOf A, some fields',
+      name: 'filled union A, some fields',
       inputObject: {
         a: 4
       },
@@ -639,7 +639,7 @@ test('canonicalize oneOf - basic functionality', function(t) {
       }
     },
     {
-      name: 'filled oneOf E, some fields',
+      name: 'filled union E, some fields',
       inputObject: {
         e: [4, 'asdf']
       },
@@ -686,7 +686,7 @@ test('canonicalize oneOf - basic functionality', function(t) {
       }
     },
     {
-      name: 'filled oneOf with explicitly undefined fields',
+      name: 'filled union with explicitly undefined fields',
       inputObject: {
         a: undefined,
         b: 'and',
@@ -714,7 +714,7 @@ test('canonicalize oneOf - basic functionality', function(t) {
       }
     },
     {
-      name: 'oneOf with private properties',
+      name: 'union with private properties',
       inputObject: {
         a: undefined,
         b: 'foo',
@@ -755,7 +755,7 @@ test('canonicalize oneOf - basic functionality', function(t) {
     var expected = tests[i].outputObject;
     var expectedDeep = tests[i].outputObjectDeep;
     var type = {
-      kind: Kind.ONEOF,
+      kind: Kind.UNION,
       fields: fields
     };
 
@@ -964,7 +964,7 @@ test('canonicalize deep to shallow - basic functionality', function(t) {
       }
     },
     {
-      name: 'oneof',
+      name: 'union',
       input: {
         b: {
           val: 'abc',
@@ -972,7 +972,7 @@ test('canonicalize deep to shallow - basic functionality', function(t) {
           _type: Types.STRING // pretend that this is on the prototype
         },
         _type: {              // pretend that this is on the prototype
-          kind: Kind.ONEOF,
+          kind: Kind.UNION,
           fields: [
             {
               name: 'A',
@@ -1064,8 +1064,8 @@ test('canonicalize deep to shallow - basic functionality', function(t) {
 });
 
 // TODO(alexfandrianto): DeepWrapToUnwrap can be expanded to test more, just
-// like the canonicalize struct and oneof tests. In fact, this tests basic
-// canonicalization, since it includes more types than just struct/oneof.
+// like the canonicalize struct and union tests. In fact, this tests basic
+// canonicalization, since it includes more types than just struct/union.
 // So the TODO is to convert this into a basic canonicalization test.
 function testDeepWrapToUnwrap(t, test) {
   var name = test.name;

@@ -5,10 +5,9 @@
 var kindCount = 0;
 
 var kind = {
-  // Variant kinds TODO(alexfandrianto): ONEOF and NILABLE are not Variant kind?
+  // Nullable kinds
   ANY: kindCount++,
-  ONEOF: kindCount++, // TODO(alexfandrianto): Is UNION and is last Kind.
-  NILABLE: kindCount++,
+  OPTIONAL: kindCount++,
   // Scalar kinds
   BOOL: kindCount++,
   BYTE: kindCount++,
@@ -30,7 +29,9 @@ var kind = {
   LIST: kindCount++,
   SET: kindCount++,
   MAP: kindCount++,
-  STRUCT: kindCount++
+  STRUCT: kindCount++,
+  // Union is like struct, but with only 1 field filled in.
+  UNION: kindCount++,
 };
 
 kind.kindStr = function(k) {

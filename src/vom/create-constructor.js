@@ -14,7 +14,7 @@ var canonicalize = require('./canonicalize.js');
 module.exports = function createConstructor(type) {
   var constructor;
   switch (type.kind) {
-    case Kind.NILABLE:
+    case Kind.OPTIONAL:
     case Kind.ANY:
     case Kind.BOOL:
     case Kind.BYTE:
@@ -38,7 +38,7 @@ module.exports = function createConstructor(type) {
     case Kind.LIST:
       constructor = createWrappedConstructor();
       break;
-    case Kind.ONEOF:
+    case Kind.UNION:
     case Kind.STRUCT:
       constructor = createStructConstructor();
       break;
@@ -61,7 +61,7 @@ module.exports = function createConstructor(type) {
 
 function createStructConstructor() {
   /**
-   * StructConstructor constructs struct-like values like OneOf and Struct.
+   * StructConstructor constructs struct-like values like Union and Struct.
    * Any data given to this constructor will be canonicalized.
    * Note: If val is omitted, then the 'zero-value' will be generated.
    * @param{object=} val The value whose fields will be copied into this object.

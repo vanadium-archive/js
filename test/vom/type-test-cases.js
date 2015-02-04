@@ -166,8 +166,8 @@ var tests = [
   },
   {
     type: {
-      kind: Kind.ONEOF,
-      name: 'oneOfName',
+      kind: Kind.UNION,
+      name: 'unionName',
       fields: [
         {
           name: 'A',
@@ -183,12 +183,12 @@ var tests = [
         }
       ]
     },
-    toString: 'oneOfName union{A int16;B innerSet set[bool]}'
+    toString: 'unionName union{A int16;B innerSet set[bool]}'
   },
   {
     type: {
-      name: 'shouldNotBeNamed', // NOTE: Nilable should normally not be named.
-      kind: Kind.NILABLE,
+      name: 'shouldNotBeNamed', // NOTE: Optional should normally not be named.
+      kind: Kind.OPTIONAL,
       elem: Types.UINT64
     },
     toString: 'shouldNotBeNamed ?uint64'
