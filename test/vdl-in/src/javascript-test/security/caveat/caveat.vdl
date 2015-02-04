@@ -13,17 +13,17 @@ type CaveatThatValidatesData struct {
 const (
     CaveatThatValidates = security.CaveatDescriptor{
         Id: uniqueid.Id{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16},
-        ParamsType: typeobject(CaveatThatValidatesData),
+        ParamType: typeobject(CaveatThatValidatesData),
     }
 
     CaveatDoesntValidate = security.CaveatDescriptor{
         Id: uniqueid.Id{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-        ParamsType: typeobject(int32),
+        ParamType: typeobject(int32),
     }
 
     CaveatWithCollision = security.CaveatDescriptor{
         Id: uniqueid.Id{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16},
-        ParamsType: typeobject(float64),
+        ParamType: typeobject(float64),
     }
 )
 

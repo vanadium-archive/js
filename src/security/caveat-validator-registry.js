@@ -32,7 +32,7 @@ CaveatValidatorRegistry.prototype._makeKey = function(bytes) {
 /**
  * @callback ValidationFunction
  * @param {Context}The context.
- * @param {*} params Validation-function specific parameters.
+ * @param {*} param Validation-function specific parameter.
  * @throws Upon failure to validate, does not throw if successful.
  */
 
@@ -41,7 +41,7 @@ CaveatValidatorRegistry.prototype._makeKey = function(bytes) {
  * @param {CaveatDescriptor} cavDesc The caveat description.
  * See security/types.vdl
  * @param {ValidationFunction} validateFn The validation function.
- * e.g. function validateCaveatA(params) { ...
+ * e.g. function validateCaveatA(param) { ...
  */
 CaveatValidatorRegistry.prototype.register = function(cavDesc, validateFn) {
   this.validators.set(
@@ -64,7 +64,7 @@ CaveatValidatorRegistry.prototype.validate = function(ctx, caveat) {
     // This is dependent on having vdl-generated error id code for javascript.
     throw new Error('Unknown caveat id: ' + this._makeKey(caveat.id));
   }
-  validator.validate(ctx, DecodeUtil.decode(caveat.paramsVom));
+  validator.validate(ctx, DecodeUtil.decode(caveat.paramVom));
 };
 
 
@@ -78,11 +78,13 @@ function CaveatValidator(cavDesc, validateFn) {
   this.validateFn = validateFn;
 }
 
-CaveatValidator.prototype.validate = function(ctx, paramsForValidator) {
-  var paramsType = this.cavDesc.paramsType;
+CaveatValidator.prototype.validate = function(ctx, paramForValidator) {
+  var paramType = this.cavDesc.paramType;
   // TODO(bprosnitz) This should really be type conversion rather than
   // canonicalization. The behavior is slightly different.
-  var canonData = vom.Canonicalize.reduce(paramsForValidator, paramsType);
+  var canonData = vom.Canonicalize.reduce(paramForValidator, paramType);
 
+  // TODO(bproznitz): we should be throwing security.ErrCaveatValidation.
+  // This is dependent on having vdl-generated error id code for javascript.
   this.validateFn(ctx, canonData);
 };

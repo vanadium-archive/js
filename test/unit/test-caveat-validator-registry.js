@@ -8,15 +8,15 @@ var testCaveats = require('../vdl-out/javascript-test/security/caveat/caveat');
 /**
  * Create a Caveat object (See security/types.vdl).
  * @param {CaveatDescriptor} descriptor The descriptor of the caveat identifier
- * and its parameters.
- * @param {any} params The parameters (of type descriptor.ParamsType) to use
+ * and its parameter.
+ * @param {any} param The parameter (of type descriptor.ParamType) to use
  * when validating.
- * @throws Upon failure to encode the parameters, does not throw if successful.
+ * @throws Upon failure to encode the parameter, does not throw if successful.
  */
-function makeCaveat(descriptor, params) {
+function makeCaveat(descriptor, param) {
   return {
     id: descriptor.id,
-    paramsVom: EncodeUtil.encode(params)
+    paramVom: EncodeUtil.encode(param)
   };
 }
 
@@ -28,22 +28,22 @@ test('Validating caveats', function(t) {
   var seenCalls = [];
 
   // Register caveat validators.
-  registry.register(testCaveats.CaveatThatValidates, function(fnCtx, params) {
+  registry.register(testCaveats.CaveatThatValidates, function(fnCtx, param) {
     t.equal(fnCtx, ctx, 'Contexts should match');
-    t.equal(params._type, (new testCaveats.CaveatThatValidatesData())._type,
-      'Validation params has the correct type (CaveatThatValidates)');
-    t.deepEqual(params, testCaveats.CaveatThatValidatesExpectedData,
-      'Validation params matches expectation (CaveatThatValidates)');
+    t.equal(param._type, (new testCaveats.CaveatThatValidatesData())._type,
+      'Validation param has the correct type (CaveatThatValidates)');
+    t.deepEqual(param, testCaveats.CaveatThatValidatesExpectedData,
+      'Validation param matches expectation (CaveatThatValidates)');
 
     seenCalls.push('validate');
 
     return false; // This should be ignored, but make sure it isn't treated
     // as a failed validation.
   });
-  registry.register(testCaveats.CaveatDoesntValidate, function(fnCtx, params) {
+  registry.register(testCaveats.CaveatDoesntValidate, function(fnCtx, param) {
     t.equal(fnCtx, ctx, 'Contexts should match');
-    t.deepEqual(params, testCaveats.CaveatDoesntValidateExpectedData,
-      'Validation params matches expectation (CaveatDoesntValidate)');
+    t.deepEqual(param, testCaveats.CaveatDoesntValidateExpectedData,
+      'Validation param matches expectation (CaveatDoesntValidate)');
 
     seenCalls.push('not validate');
 
@@ -70,10 +70,10 @@ test('Validating caveats', function(t) {
 
   // Test re-registering on the same UUID. This should replace the validation
   // function.
-  registry.register(testCaveats.CaveatWithCollision, function(fnCtx, params) {
+  registry.register(testCaveats.CaveatWithCollision, function(fnCtx, param) {
     t.equal(fnCtx, ctx, 'Contexts should match');
-    t.deepEqual(params, testCaveats.CaveatWithCollisionExpectedData,
-      'Validation params matches expectation (CaveatWithCollision)');
+    t.deepEqual(param, testCaveats.CaveatWithCollisionExpectedData,
+      'Validation param matches expectation (CaveatWithCollision)');
 
     seenCalls.push('collision');
 
@@ -102,7 +102,7 @@ test('Unknown caveat id', function(t) {
   t.throws(function() {
     registry.validate(ctx, {
       id: 99,
-      paramsVom: null
+      paramVom: null
     });
   },
   'Unknown caveat id',
