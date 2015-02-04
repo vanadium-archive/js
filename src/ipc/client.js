@@ -24,6 +24,8 @@ var vom = require('../vom/vom');
 var EncodeUtil = require('../lib/encode-util');
 var makeError = require('../errors/make-errors');
 var actions = require('../errors/actions');
+var ReservedSignature =
+  require('../v.io/core/veyron2/ipc/ipc').ReservedSignature.val;
 var VeyronRPC =
   require('../v.io/wspr/veyron/services/wsprd/app/app').VeyronRPC;
 
@@ -246,12 +248,14 @@ function Client(proxyConnection) {
 
   this._proxyConnection = proxyConnection;
 }
+
 // TODO(bprosnitz) v.io/core/javascript.IncorrectArgCount.
 var IncorrectArgCount = makeError(
   'v.io/core/javascript.IncorrectArgCount',
   actions.NO_RETRY,
   '{1:}{2:} Client RPC call {3}({4}) had an incorrect number of ' +
   'arguments. Expected format: {5}({6})');
+
 /**
  * Performs client side binding of a remote service to a native javascript
  * stub object.
@@ -432,13 +436,6 @@ Client.prototype.signature = function(ctx, name, cb) {
 
   var deferred = new Deferred(cb);
 
-  // Require first arg to be a Context
-  if (! (ctx instanceof context.Context)) {
-    var err = new Error('First argument must be a Context object.');
-    deferred.reject(err);
-    return deferred.promise;
-  }
-
   var proxy = this._proxyConnection;
 
   var cacheEntry = proxy.signatureCache.get(name);
@@ -447,33 +444,98 @@ Client.prototype.signature = function(ctx, name, cb) {
     return deferred.promise;
   }
 
-  var requestDef = new Deferred();
-  requestDef.promise.then(function(args) {
-    // If the signature came off the wire, we need to vom decode the bytes.
-    if (typeof args === 'string') {
-      try {
-        return DecodeUtil.decode(args);
-      } catch (e) {
-        return Promise.reject(
-          new verror.InternalError(ctx, ['Failed to decode result: ', e]));
-      }
-    } else {
-      return args[0];
-    }
-  }).then(function(signature) {
+  this._sendRequest(ctx, {
+    name: name
+  }, MessageType.SIGNATURE).then(function(signature){
     proxy.signatureCache.set(name, signature);
     deferred.resolve(signature);
   }).catch(function(err) {
     deferred.reject(err);
   });
 
-  var messageJSON = { name: name };
-  var message = JSON.stringify(messageJSON);
+  return deferred.promise;
+};
+
+/*
+ * Returns the remote blessings of a server at the given name.
+ * @param {Context} A context.
+ * @param {string} name the veyron name of the service to get the remote
+ * blessings of.
+ * @param {string} [method] the name of the rpc method that will be started in
+ * order to read the blessings.  Defaults to 'Signature'.  This only matters in
+ * the case when a server responds to different method calls with different
+ * blessings.
+ * @param {function} [cb] if given, this function will be called on
+ * completion. The first argument will be an error if there is
+ * one, and the second argument is an array of blessing names.
+ * @return {Promise} Promise that will be resolved with the blessing names or
+ * rejected with an error if there is one.
+ */
+Client.prototype.remoteBlessings = function(ctx, name, method, cb) {
+  var last = arguments.length - 1;
+
+  // grab the callback
+  if (typeof arguments[last] === 'function') {
+    cb = arguments[last];
+  }
+
+  // method defaults to Signature.
+  if (typeof method !== 'string') {
+    method = ReservedSignature;
+  }
+
+  return this._sendRequest(ctx, {
+    name: name,
+    method: method
+  }, MessageType.REMOTE_BLESSINGS, cb);
+};
+
+/*
+ * Helper method to make a request through the proxy and decode the response.
+ * @param {Context} A context.
+ * @param {object} message message to send to proxy.
+ * @param {string} type type of message to send to proxy.
+ * @param {function} [cb] if given, this function will be called on
+ * completion. The first argument will be an error if there is
+ * one, and the second argument will be the vom-decoded proxy response.
+ * @return {Promise} Promise that will be resolved with the vom-decoded proxy
+ * response or rejected with an error if there is one.
+ */
+Client.prototype._sendRequest = function(ctx, message, type, cb) {
+  var proxy = this._proxyConnection;
+
+  var deferred = new Deferred(cb);
+
+  // Require first arg to be a Context
+  if (! (ctx instanceof context.Context)) {
+    var err = new Error('First argument must be a Context object.');
+    deferred.reject(err);
+    return deferred.promise;
+  }
+
+  var reqDef = new Deferred();
+  reqDef.promise.then(function(args) {
+    // If the response came off the wire, we need to vom decode the bytes.
+    if (typeof args === 'string') {
+      try {
+        deferred.resolve(DecodeUtil.decode(args));
+      } catch (e) {
+        deferred.reject(
+          new verror.InternalError(ctx, ['Failed to decode result: ', e]));
+      }
+    } else {
+      deferred.resolve(args[0]);
+    }
+  }).catch(function(err) {
+    deferred.reject(err);
+  });
 
   var id = proxy.nextId();
-  var handler = new SimpleHandler(ctx, requestDef, proxy, id);
+  var handler = new SimpleHandler(ctx, reqDef, proxy, id);
+  var messageJSON = JSON.stringify(message);
+
   proxy.cancelFromContext(ctx, id);
-  proxy.sendRequest(message, MessageType.SIGNATURE, handler, id);
+  proxy.sendRequest(messageJSON, type, handler, id);
 
   return deferred.promise;
 };
