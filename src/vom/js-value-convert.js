@@ -120,7 +120,7 @@ function convertToNative(jsval) {
     return null;
   }
 
-  // jsval is in the OneOf format. Extract its value, ignoring keys associated
+  // jsval is in the Union format. Extract its value, ignoring keys associated
   // with undefined values.
   var jsvalKey = util.getFirstDefinedPropertyKey(jsval);
   if (jsvalKey === undefined) {

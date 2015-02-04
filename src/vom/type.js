@@ -74,7 +74,7 @@ function uniqueTypeStr(t, seen) {
     s += ' ';
   }
   switch (t.kind) {
-    case Kind.NILABLE:
+    case Kind.OPTIONAL:
       return s + '?' + uniqueTypeStr(t.elem, seen);
     case Kind.ENUM:
       return s + 'enum{' + t.labels.join(';') + '}';
@@ -88,7 +88,7 @@ function uniqueTypeStr(t, seen) {
       return s + 'map[' + uniqueTypeStr(t.key, seen) + ']' +
         uniqueTypeStr(t.elem, seen);
     case Kind.STRUCT:
-    case Kind.ONEOF:
+    case Kind.UNION:
       if (t.kind === Kind.STRUCT) {
         s += 'struct{';
       } else {

@@ -99,14 +99,14 @@ Encoder.prototype._encodeValue = function(v, t, writer) {
     case Kind.STRUCT:
       this._encodeStruct(v, t, writer);
       break;
-    case Kind.ONEOF:
-      this._encodeOneOf(v, t, writer);
+    case Kind.UNION:
+      this._encodeUnion(v, t, writer);
       break;
     case Kind.ANY:
       this._encodeAny(v, writer);
       break;
-    case Kind.NILABLE:
-      this._encodeNilable(v, t, writer);
+    case Kind.OPTIONAL:
+      this._encodeOptional(v, t, writer);
       break;
     case Kind.TYPEOBJECT:
       var typeId = this._typeEncoder.encodeType(this._messageWriter, v);
@@ -170,7 +170,7 @@ Encoder.prototype._writeSequence = function(v, t, writer) {
   }
 };
 
-Encoder.prototype._encodeNilable = function(v, t, writer) {
+Encoder.prototype._encodeOptional = function(v, t, writer) {
   if (v === null || v === undefined) {
     writer.writeUint(0);
     return;
@@ -190,7 +190,7 @@ Encoder.prototype._encodeAny = function(v, writer) {
   this._encodeValue(v, t, writer);
 };
 
-Encoder.prototype._encodeOneOf = function(v, t, writer) {
+Encoder.prototype._encodeUnion = function(v, t, writer) {
   for (var i = 0; i < t.fields.length; i++) {
     var key = t.fields[i].name;
     var lowerKey = util.uncapitalize(key);
@@ -200,5 +200,5 @@ Encoder.prototype._encodeOneOf = function(v, t, writer) {
       return; // Stop after writing a single field.
     }
   }
-  throw new Error('OneOf did not encode properly. Received: ' + stringify(v));
+  throw new Error('Union did not encode properly. Received: ' + stringify(v));
 };

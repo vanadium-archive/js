@@ -25,12 +25,12 @@ var Types = {
   STRING: primitiveType(Kind.STRING),
   TYPEOBJECT: Type.prototype._type // So that === works for Types.TypeObject
 };
-Types['ERROR'] = defineNilableErrorType();
+Types['ERROR'] = defineOptionalErrorType();
 Types['JSVALUE'] = defineJSValueType();
 
 module.exports = Types;
 
-function defineNilableErrorType() {
+function defineOptionalErrorType() {
   var nilErrorType = new Type();
 
   // TODO(bprosnitz) Should we add an error constructor so error objects have
@@ -72,7 +72,7 @@ function defineNilableErrorType() {
     }
   ];
   nilErrorType.name = '';
-  nilErrorType.kind = Kind.NILABLE;
+  nilErrorType.kind = Kind.OPTIONAL;
   nilErrorType.elem = errorType;
 
   return nilErrorType;
@@ -99,7 +99,7 @@ function defineJSValueType() {
 
   // Fill JSValue
   JSValueType.name = 'JSValue';
-  JSValueType.kind = Kind.ONEOF;
+  JSValueType.kind = Kind.UNION;
   JSValueType.fields = [
     {
       name: 'Null',

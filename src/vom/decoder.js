@@ -96,12 +96,12 @@ Decoder.prototype._decodeUnwrappedValue = function(t, reader) {
       return this._decodeMap(t, reader);
     case Kind.STRUCT:
       return this._decodeStruct(t, reader);
-    case Kind.ONEOF:
-      return this._decodeOneOf(t, reader);
+    case Kind.UNION:
+      return this._decodeUnion(t, reader);
     case Kind.ANY:
       return this._decodeAny(reader);
-    case Kind.NILABLE:
-      return this._decodeNilable(t, reader);
+    case Kind.OPTIONAL:
+      return this._decodeOptional(t, reader);
     case Kind.TYPEOBJECT:
       var typeId = reader.readUint();
       var type = this._typeDecoder.lookupType(typeId);
@@ -188,7 +188,7 @@ Decoder.prototype._decodeStruct = function(t, reader) {
   return obj;
 };
 
-Decoder.prototype._decodeNilable = function(t, reader) {
+Decoder.prototype._decodeOptional = function(t, reader) {
   var isNil = reader.readUint();
   if (isNil === 0) {
     return null;
@@ -209,16 +209,16 @@ Decoder.prototype._decodeAny = function(reader) {
   return this._decodeValue(type, reader, true);
 };
 
-Decoder.prototype._decodeOneOf = function(t, reader) {
-  // Find the OneOf field that was set and decode its value.
+Decoder.prototype._decodeUnion = function(t, reader) {
+  // Find the Union field that was set and decode its value.
   var fieldIndex = reader.readUint() - 1; // Encoded index is 1-indexed.
   if (fieldIndex < 0 || t.fields.length <= fieldIndex) {
-    throw new Error('Oneof index ' + fieldIndex + ' out of bounds');
+    throw new Error('Union index ' + fieldIndex + ' out of bounds');
   }
   var field = t.fields[fieldIndex];
   var val = this._decodeValue(field.type, reader, false);
 
-  // Return the OneOf with a single field set to its decoded value.
+  // Return the Union with a single field set to its decoded value.
   var Ctor = Registry.lookupOrCreateConstructor(t);
   var obj = Object.create(Ctor.prototype);
   obj[util.uncapitalize(field.name)] = val;

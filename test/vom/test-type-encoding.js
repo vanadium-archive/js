@@ -65,12 +65,12 @@ test('type encoding encode and decode (optional fields omitted)',
   var tests = [
     {
       test: {
-        kind: Kind.NILABLE,
+        kind: Kind.OPTIONAL,
         elem: Types.UINT64
       },
       expected: {
         name: '',
-        kind: Kind.NILABLE,
+        kind: Kind.OPTIONAL,
         elem: Types.UINT64
       },
     },
@@ -93,8 +93,8 @@ test('type encoding encode and decode (optional fields omitted)',
     },
     {
       test: {
-        kind: Kind.ONEOF,
-        name: 'oneOfName',
+        kind: Kind.UNION,
+        name: 'unionName',
         fields: [
           {
             name: 'A',
@@ -110,8 +110,8 @@ test('type encoding encode and decode (optional fields omitted)',
         ]
       },
       expected: {
-        kind: Kind.ONEOF,
-        name: 'oneOfName',
+        kind: Kind.UNION,
+        name: 'unionName',
         fields: [
           {
             name: 'A',
@@ -223,8 +223,8 @@ test('type encoding encode errors', function(t) {
       kind: Kind.ENUM,
       labels: ['do not', 'put a number in', 'the enum labels', 3]
     },
-    'oneof w/ field w/ too many keys': {
-      kind: Kind.ONEOF,
+    'union w/ field w/ too many keys': {
+      kind: Kind.UNION,
       fields: [
         {
           name: 'FirstField',
@@ -240,8 +240,8 @@ test('type encoding encode errors', function(t) {
         }
       ]
     },
-    'oneof w/o fields': {
-      kind: Kind.ONEOF,
+    'union w/o fields': {
+      kind: Kind.UNION,
       fields: []
     }
   };

@@ -216,11 +216,11 @@ var bootstrapTypes = {
   WIREFIELDLIST: {
     id: 24, type: wireFieldList
   },
-  WIREONEOF: {
+  WIREUNION: {
     id: 25,
     type: {
       kind: Kind.STRUCT,
-      name: 'WireOneOf',
+      name: 'WireUnion',
       fields: [
         {
           name: 'name',
@@ -247,12 +247,12 @@ var bootstrapTypes = {
     type: stringList
   },
 
-  // TODO(bprosnitz) Nilable format not finished
-  WIRENILABLE: {
+  // TODO(bprosnitz) Optional format not finished
+  WIREOPTIONAL: {
     id: 29,
     type: {
       kind: Kind.STRUCT,
-      name: 'WireNilable',
+      name: 'WireOptional',
       fields: [
         {
           name: 'elem',

@@ -241,7 +241,7 @@ function typeObjectFromKind(k) {
     case Kind.ANY:
     case Kind.TYPEOBJECT:
       return _primitiveTypeObject;
-    case Kind.NILABLE:
+    case Kind.OPTIONAL:
       return _optionalTypeObject;
     case Kind.ENUM:
       return _enumTypeObject;
@@ -255,7 +255,7 @@ function typeObjectFromKind(k) {
       return _mapTypeObject;
     case Kind.STRUCT:
       return _structTypeObject;
-    case Kind.ONEOF:
+    case Kind.UNION:
       return _unionTypeObject;
     default:
       throw new TypeError('Unknown kind ' + k);

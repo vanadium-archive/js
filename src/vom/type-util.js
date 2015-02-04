@@ -32,8 +32,8 @@ function shouldSendLength(type) {
     case Kind.MAP:
     case Kind.STRUCT:
     case Kind.ANY:
-    case Kind.ONEOF:
-    case Kind.NILABLE:
+    case Kind.UNION:
+    case Kind.OPTIONAL:
       return true;
     default:
       return false;

@@ -126,9 +126,9 @@ TypeEncoder.prototype._encodeWireType = function(messageWriter, type, typeId) {
       rawWriter.writeUint(kindToBootstrapType(type.kind).id);
       rawWriter.writeUint(0);
       break;
-    case Kind.NILABLE:
+    case Kind.OPTIONAL:
       elemId = this.encodeType(messageWriter, type.elem);
-      rawWriter.writeUint(BootstrapTypes.definitions.WIRENILABLE.id);
+      rawWriter.writeUint(BootstrapTypes.definitions.WIREOPTIONAL.id);
       rawWriter.writeUint(1);
       rawWriter.writeString(type.name);
       rawWriter.writeUint(2);
@@ -188,7 +188,7 @@ TypeEncoder.prototype._encodeWireType = function(messageWriter, type, typeId) {
       rawWriter.writeUint(0);
       break;
     case Kind.STRUCT:
-    case Kind.ONEOF:
+    case Kind.UNION:
       var fieldInfo = [];
       for (i = 0; i < type.fields.length; i++) {
         fieldInfo.push({
@@ -199,7 +199,7 @@ TypeEncoder.prototype._encodeWireType = function(messageWriter, type, typeId) {
       if (type.kind === Kind.STRUCT) {
         rawWriter.writeUint(BootstrapTypes.definitions.WIRESTRUCT.id);
       } else {
-        rawWriter.writeUint(BootstrapTypes.definitions.WIREONEOF.id);
+        rawWriter.writeUint(BootstrapTypes.definitions.WIREUNION.id);
       }
       rawWriter.writeUint(1);
       rawWriter.writeString(type.name);
