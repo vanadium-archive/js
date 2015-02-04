@@ -151,8 +151,8 @@ func (c *cacheImpl) MostRecentSet(ctx ipc.ServerContext) (test_service.KeyValueP
 
 // KeyPage indexes into the keys (in alphanumerically sorted order) and
 // returns the indexth page of 10 keys.
-func (c *cacheImpl) KeyPage(ctx ipc.ServerContext, index int64) ([10]string, error) {
-	results := [10]string{}
+func (c *cacheImpl) KeyPage(ctx ipc.ServerContext, index int64) (test_service.KeyPageResult, error) {
+	results := test_service.KeyPageResult{}
 
 	keys := sort.StringSlice{}
 	for key, _ := range c.cache {

@@ -1,5 +1,8 @@
 package test_service
 
+// KeyPageResult is a page of 10 keys.
+type KeyPageResult [10]string
+
 // A Cache service mimics the memcache interface.
 type Cache interface {
     // Set sets a value for a key.
@@ -43,7 +46,7 @@ type Cache interface {
 
     // KeyPage indexes into the keys (in alphanumerically sorted order) and
     // returns the indexth page of 10 keys.
-    KeyPage(index int64) ([10]string | error)
+    KeyPage(index int64) (KeyPageResult | error)
 
     // Size returns the total number of entries in the cache.
     Size() (int64 | error)

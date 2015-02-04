@@ -12,6 +12,14 @@ import (
 	__vdl "v.io/core/veyron2/vdl"
 )
 
+// KeyPageResult is a page of 10 keys.
+type KeyPageResult [10]string
+
+func (KeyPageResult) __VDLReflect(struct {
+	Name string "test_service.KeyPageResult"
+}) {
+}
+
 // KeyValuePair is a representation of a cached key and value pair.
 type KeyValuePair struct {
 	Key   string
@@ -24,6 +32,7 @@ func (KeyValuePair) __VDLReflect(struct {
 }
 
 func init() {
+	__vdl.Register(KeyPageResult{})
 	__vdl.Register(KeyValuePair{})
 }
 
@@ -67,7 +76,7 @@ type CacheClientMethods interface {
 	MostRecentSet(*__context.T, ...__ipc.CallOpt) (value KeyValuePair, time int64, err error)
 	// KeyPage indexes into the keys (in alphanumerically sorted order) and
 	// returns the indexth page of 10 keys.
-	KeyPage(ctx *__context.T, index int64, opts ...__ipc.CallOpt) ([10]string, error)
+	KeyPage(ctx *__context.T, index int64, opts ...__ipc.CallOpt) (KeyPageResult, error)
 	// Size returns the total number of entries in the cache.
 	Size(*__context.T, ...__ipc.CallOpt) (int64, error)
 	// MultiGet sets up a stream that allows fetching multiple keys.
@@ -268,7 +277,7 @@ func (c implCacheClientStub) MostRecentSet(ctx *__context.T, opts ...__ipc.CallO
 	return
 }
 
-func (c implCacheClientStub) KeyPage(ctx *__context.T, i0 int64, opts ...__ipc.CallOpt) (o0 [10]string, err error) {
+func (c implCacheClientStub) KeyPage(ctx *__context.T, i0 int64, opts ...__ipc.CallOpt) (o0 KeyPageResult, err error) {
 	var call __ipc.Call
 	if call, err = c.c(ctx).StartCall(ctx, c.name, "KeyPage", []interface{}{i0}, opts...); err != nil {
 		return
@@ -444,7 +453,7 @@ type CacheServerMethods interface {
 	MostRecentSet(__ipc.ServerContext) (value KeyValuePair, time int64, err error)
 	// KeyPage indexes into the keys (in alphanumerically sorted order) and
 	// returns the indexth page of 10 keys.
-	KeyPage(ctx __ipc.ServerContext, index int64) ([10]string, error)
+	KeyPage(ctx __ipc.ServerContext, index int64) (KeyPageResult, error)
 	// Size returns the total number of entries in the cache.
 	Size(__ipc.ServerContext) (int64, error)
 	// MultiGet sets up a stream that allows fetching multiple keys.
@@ -491,7 +500,7 @@ type CacheServerStubMethods interface {
 	MostRecentSet(__ipc.ServerContext) (value KeyValuePair, time int64, err error)
 	// KeyPage indexes into the keys (in alphanumerically sorted order) and
 	// returns the indexth page of 10 keys.
-	KeyPage(ctx __ipc.ServerContext, index int64) ([10]string, error)
+	KeyPage(ctx __ipc.ServerContext, index int64) (KeyPageResult, error)
 	// Size returns the total number of entries in the cache.
 	Size(__ipc.ServerContext) (int64, error)
 	// MultiGet sets up a stream that allows fetching multiple keys.
@@ -587,7 +596,7 @@ func (s implCacheServerStub) MostRecentSet(ctx __ipc.ServerContext) (KeyValuePai
 	return s.impl.MostRecentSet(ctx)
 }
 
-func (s implCacheServerStub) KeyPage(ctx __ipc.ServerContext, i0 int64) ([10]string, error) {
+func (s implCacheServerStub) KeyPage(ctx __ipc.ServerContext, i0 int64) (KeyPageResult, error) {
 	return s.impl.KeyPage(ctx, i0)
 }
 
@@ -780,7 +789,7 @@ var descCache = __ipc.InterfaceDesc{
 				{"index", ``}, // int64
 			},
 			OutArgs: []__ipc.ArgDesc{
-				{"", ``}, // [10]string
+				{"", ``}, // KeyPageResult
 				{"", ``}, // error
 			},
 		},
