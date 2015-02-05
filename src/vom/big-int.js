@@ -443,6 +443,23 @@ BigInt.prototype.toNativeNumber = function() {
     throw new Error('BigInt \'' + ByteUtil.bytes2Hex(this) +
       '\' out of range of native javascript numbers');
   }
+  return this._convertToNative();
+};
+
+/**
+ * Approximate the native javascript float64 representation.
+ * Caution: The conversion is not accurate when the BigInt is larger than the
+ * maximum lossless integer.
+ * @return {number} a native javascript float64 representation of the BigInt.
+ */
+BigInt.prototype.toNativeNumberApprox = function() {
+  return this._convertToNative();
+};
+
+/**
+ * @return {number} a native javascript float64 representation of the BigInt.
+ */
+BigInt.prototype._convertToNative = function() {
   var arr = new Uint8Array(4);
   var copySrcIndex = this._bytes.length - Math.min(this._bytes.length, 4);
   var copyDstIndex = Math.max(4 - this._bytes.length, 0);
@@ -460,34 +477,6 @@ BigInt.prototype.toNativeNumber = function() {
   var upperVal = view.getUint32(0, false);
   var combinedVal = upperVal * 0x100000000 + lowerVal;
   return this._sign * combinedVal;
-};
-
-/**
- * When using BigInt like a normal number, use the native number format.
- * TODO(alexfandrianto): This completely fails for very big ints (2^52).
- * This is mainly used so that BigInt's math operations match JS number's.
- * @return {number} The number representation.
- */
-BigInt.prototype.valueOf = function() {
-  try {
-    return this.toNativeNumber();
-  } catch(e) {
-    return this.toString();
-  }
-};
-
-/**
- * During a JSON stringify, BigInt will use its native number output.
- * TODO(alexfandrianto): This completely fails for very big ints (2^52).
- * This is mainly used so that we can still JSON stringify the BigInts.
- * @return {number} The number representation.
- */
-BigInt.prototype.toJSON = function() {
-  try {
-    return this.toNativeNumber();
-  } catch(e) {
-    return this.toString();
-  }
 };
 
 /**

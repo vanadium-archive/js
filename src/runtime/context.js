@@ -10,6 +10,7 @@ var inherits = require('util').inherits;
 var vError = require('../errors/verror');
 var actions = require('../errors/actions');
 var ContextKey = require('./context-key');
+var BigInt = require('../vom/big-int');
 
 module.exports = {
   Context: Context,
@@ -128,7 +129,11 @@ Context.prototype.withDeadline = function(deadline) {
  * @return {Context} A new derived cancellable context.
  */
 Context.prototype.withTimeout = function(timeout) {
-  return new DeadlineContext(this, Date.now() + timeout);
+  var msTimeout = timeout;
+  if (timeout instanceof BigInt) {
+    msTimeout = timeout.toNativeNumberApprox();
+  }
+  return new DeadlineContext(this, Date.now() + msTimeout);
 };
 
 
@@ -246,7 +251,15 @@ CancelContext.prototype.waitUntilDone = function(callback) {
 // A DeadlineContext cancels itself when its deadline is met.
 function DeadlineContext(parent, deadline) {
   this._deadline = deadline;
-  this._timerID = setTimeout(this._expire.bind(this), deadline - Date.now());
+
+  // deadline could be a BigInt. In order to use this timeout, it must be
+  // converted to a native number.
+  if (deadline instanceof BigInt) {
+    this._deadline = deadline.toNativeNumberApprox();
+  }
+
+  this._timerID = setTimeout(this._expire.bind(this),
+    this._deadline - Date.now());
 
   CancelContext.call(this, parent);
 }

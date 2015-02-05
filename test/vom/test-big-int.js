@@ -470,47 +470,69 @@ test('toNativeNumber', function(t) {
   var tests = [
     {
       input: new BigInt(0, new Uint8Array([])),
-      expectedOutput: 0
+      expectedOutput: 0,
+      expectedOutputApprox: 0
     },
     {
       input: new BigInt(0, new Uint8Array([0x00])),
-      expectedOutput: 0
+      expectedOutput: 0,
+      expectedOutputApprox: 0
     },
     {
       input: new BigInt(1, new Uint8Array([0x01])),
-      expectedOutput: 1
+      expectedOutput: 1,
+      expectedOutputApprox: 1
     },
     {
       input: new BigInt(-1, new Uint8Array([0x01])),
-      expectedOutput: -1
+      expectedOutput: -1,
+      expectedOutputApprox: -1
     },
     {
       input: new BigInt(1, new Uint8Array([0x87, 0xf0])),
-      expectedOutput: 0x87f0
+      expectedOutput: 0x87f0,
+      expectedOutputApprox: 0x87f0
     },
     {
       input: new BigInt(-1, new Uint8Array([0x87, 0xf0])),
-      expectedOutput: -0x87f0
+      expectedOutput: -0x87f0,
+      expectedOutputApprox: -0x87f0
     },
     {
       input: new BigInt(1,
         new Uint8Array([0x20, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00])),
-      expectedOutput: 0x20000000000000
+      expectedOutput: 0x20000000000000,
+      expectedOutputApprox: 0x20000000000000
     },
     {
       input: new BigInt(-1,
         new Uint8Array([0x20, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00])),
-      expectedOutput: -0x20000000000000
+      expectedOutput: -0x20000000000000,
+      expectedOutputApprox: -0x20000000000000
     },
     {
       input: new BigInt(1,
         new Uint8Array([0x20, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01])),
-      expectedFailure: true
+      expectedFailure: true,
+      expectedOutputApprox: 0x20000000000001
     },
     {
       input: new BigInt(-1,
         new Uint8Array([0x20, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01])),
-      expectedFailure: true
+      expectedFailure: true,
+      expectedOutputApprox: -0x20000000000001
+    },
+    {
+      input: new BigInt(1,
+        new Uint8Array([0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff])),
+      expectedFailure: true,
+      expectedOutputApprox: 0xffffffffffffffff
+    },
+    {
+      input: new BigInt(-1,
+        new Uint8Array([0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff])),
+      expectedFailure: true,
+      expectedOutputApprox: -0xffffffffffffffff
     },
   ];
   var generator = function(test) {
@@ -524,11 +546,16 @@ test('toNativeNumber', function(t) {
     if (test.hasOwnProperty('expectedFailure')) {
       t.throws(generator(test), undefined,
           'test: ' + test.input + ' should fail');
+      t.equals(test.input.toNativeNumberApprox(), test.expectedOutputApprox,
+        'test: ' + test.input + ' approximation matches');
     } else {
       var result = test.input.toNativeNumber();
       t.equals(result, test.expectedOutput, 'test: ' +
-        test.input.toString(16) + ' got ' + result + ' but expected ' +
+        test.input.toString(16) + ' got ' + result + ' and expected ' +
         test.expectedOutput);
+      var resultApprox = test.input.toNativeNumberApprox();
+      t.equals(resultApprox, test.expectedOutputApprox,
+        'test: ' + test.input.toString(16) + ' approximation matches');
     }
   }
   t.end();
