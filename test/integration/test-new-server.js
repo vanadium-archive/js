@@ -7,13 +7,13 @@ var timeouts = require('./timeouts');
 var NAME_PREFIX = 'new-server-testing/';
 
 var fooService = {
-  foo: function() {
+  foo: function(ctx) {
     return 'foo result';
   }
 };
 
 var barService = {
-  bar: function() {
+  bar: function(ctx) {
     return 'bar result';
   }
 };
@@ -22,7 +22,7 @@ var barService = {
 // If I set breakpoints and walk through slowly, I can sometimes get to the
 // end, but it is unpredictable.
 // Re-enable it after fixing the races.
-test.skip('Test running several JS servers concurrently and under multiple ' +
+test('Test running several JS servers concurrently and under multiple ' +
   'names', function(assert) {
   var ctx;
 
@@ -59,8 +59,8 @@ test.skip('Test running several JS servers concurrently and under multiple ' +
   .then(function bindToFoo() {
     // BindTo foo or foo-fighter which ever comes back first
     return Promise.race([
-      client.bindTo(NAME_PREFIX + 'foo'),
-      client.bindTo(NAME_PREFIX + 'foo-fighter')
+      client.bindTo(ctx, NAME_PREFIX + 'foo'),
+      client.bindTo(ctx, NAME_PREFIX + 'foo-fighter')
     ]);
   })
   .then(function validateFooStub(foo) {
@@ -85,8 +85,8 @@ test.skip('Test running several JS servers concurrently and under multiple ' +
   .then(function bindToBar() {
     // BindTo bar or bar-fighter which ever comes back first
     return Promise.race([
-      client.bindTo(NAME_PREFIX + 'bar'),
-      client.bindTo(NAME_PREFIX + 'bar-fighter')
+      client.bindTo(ctx, NAME_PREFIX + 'bar'),
+      client.bindTo(ctx, NAME_PREFIX + 'bar-fighter')
     ]);
   })
   .then(function validateBarStub(bar) {

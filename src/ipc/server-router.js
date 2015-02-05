@@ -110,7 +110,7 @@ Router.prototype.handleLookupRequest = function(messageId, request) {
     // TODO(bjornick): Pass in context here so we can generate useful error
     // messages.
     var data = JSON.stringify({
-      err: new verror.ExistsError(this._rootCtx, ['unknown server'])
+      err: new verror.NoExistError(this._rootCtx, ['unknown server'])
     });
     this._proxy.sendRequest(data, MessageType.LOOKUP_RESPONSE,
         null, messageId);
@@ -566,13 +566,24 @@ Router.prototype.removeName = function(name, server, cb) {
 Router.prototype.stopServer = function(server, cb) {
   var self = this;
 
-  var def = new Deferred(cb);
+  // We don't pass the callback into deferred here, because that would result
+  // in the callback being called before we can remove the entry from the
+  // server map.  Instead we call the cb in the then of the promise.
+  var def = new Deferred();
   this._sendRequest(this._rootCtx, server.id.toString(),
                     MessageType.STOP, def);
 
   return def.promise.then(function(result) {
     delete self._servers[server.id];
+    if (cb) {
+      cb(null, result);
+    }
     return result;
+  }, function(err) {
+    if (cb) {
+      cb(err);
+    }
+    return Promise.reject(err);
   });
 };
 

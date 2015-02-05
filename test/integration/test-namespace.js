@@ -142,10 +142,7 @@ test('Test glob\'s callback is called when glob finishes.' +
   }
 });
 
-// TODO(aghassemi) This test take arbitrarily long since it needs to timeout
-// on invalid name. Find a better way to do this.
-// Maybe namespace take context and timeout as well?
-test.skip('Test globbing non-existing rooted name - ' +
+test('Test globbing non-existing rooted name - ' +
   'glob(/RootedBadName.Google.tld:1234/*)', function(assert) {
 
   // increase timeout for this test as it retries bad-url until timeout.
@@ -155,7 +152,7 @@ test.skip('Test globbing non-existing rooted name - ' +
   init(config).then(function glob(rt) {
     runtime = rt;
     var namespace = rt.namespace();
-    var rpc = namespace.glob(rt.getContext(),
+    var rpc = namespace.glob(rt.getContext().withDeadline(1000),
                              '/RootedBadName.Google.tld:1234/*');
 
     // We expect no actual result items but one stream error result item

@@ -53,7 +53,7 @@ test('Test stopping a JS service - ' +
 // triggered some hard to trackdown error cases, come back and fix it after
 // the tests get ported: https://paste.googleplex.com/5916393484582912
 // TODO(aghassemi) Look into this.
-test.skip('Test re-serving a stopped JS service - ' +
+test('Test re-serving a stopped JS service - ' +
   'server.stop(callback), runtime.serve(callback)', function(assert) {
   serve(name, dispatcher, function(err, res) {
     assert.error(err);
