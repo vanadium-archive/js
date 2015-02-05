@@ -62,6 +62,9 @@ build/nacl: build/nacl/main.nmf build/nacl/main-64.nexe
 
 build: build/html build/images build/manifest.json build/js build/nacl
 
+build-dev: build
+	patch build/manifest.json < manifest-test.json.patch # Adds "key" as first line.
+
 veyron.zip: build
 	zip -r $@ ./build/*
 
@@ -142,7 +145,7 @@ node_modules: package.json | check-that-npm-is-in-path
 check-that-npm-is-in-path:
 	@which npm > /dev/null || { echo "npm is not in the path. Did you remember to run 'v23 profile setup web'?"; exit 1; }
 
-.PHONY: all build clean dependency-check gen-vdl lint
+.PHONY: all build build-dev clean dependency-check gen-vdl lint
 
 # Always rebuild the plugin.
 .PHONY: nacl/main-64.nexe
