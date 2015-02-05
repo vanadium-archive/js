@@ -4,10 +4,10 @@
 package test_service
 
 import (
-	// The non-user imports are prefixed with "__" to prevent collisions.
-	__veyron2 "v.io/core/veyron2"
-	__context "v.io/core/veyron2/context"
-	__ipc "v.io/core/veyron2/ipc"
+	// VDL system imports
+	"v.io/core/veyron2"
+	"v.io/core/veyron2/context"
+	"v.io/core/veyron2/ipc"
 )
 
 // CancelCollectorClientMethods is the client interface
@@ -16,24 +16,24 @@ import (
 // CancelCollector is a test interface for use in testing cancellation and deadlines.
 type CancelCollectorClientMethods interface {
 	// A function that never returns, but records the status of the given key.
-	NeverReturn(ctx *__context.T, key int64, opts ...__ipc.CallOpt) error
+	NeverReturn(ctx *context.T, key int64, opts ...ipc.CallOpt) error
 	// Wait for the call with the given key to have the given status.  Possible statuses are:
 	// "running", and, "cancelled".  Returns the number of nanoseconds left on
 	// the deadline of the specified call when the call first began.
-	WaitForStatus(ctx *__context.T, key int64, status string, opts ...__ipc.CallOpt) (timeout int64, err error)
+	WaitForStatus(ctx *context.T, key int64, status string, opts ...ipc.CallOpt) (timeout int64, err error)
 }
 
 // CancelCollectorClientStub adds universal methods to CancelCollectorClientMethods.
 type CancelCollectorClientStub interface {
 	CancelCollectorClientMethods
-	__ipc.UniversalServiceMethods
+	ipc.UniversalServiceMethods
 }
 
 // CancelCollectorClient returns a client stub for CancelCollector.
-func CancelCollectorClient(name string, opts ...__ipc.BindOpt) CancelCollectorClientStub {
-	var client __ipc.Client
+func CancelCollectorClient(name string, opts ...ipc.BindOpt) CancelCollectorClientStub {
+	var client ipc.Client
 	for _, opt := range opts {
-		if clientOpt, ok := opt.(__ipc.Client); ok {
+		if clientOpt, ok := opt.(ipc.Client); ok {
 			client = clientOpt
 		}
 	}
@@ -42,18 +42,18 @@ func CancelCollectorClient(name string, opts ...__ipc.BindOpt) CancelCollectorCl
 
 type implCancelCollectorClientStub struct {
 	name   string
-	client __ipc.Client
+	client ipc.Client
 }
 
-func (c implCancelCollectorClientStub) c(ctx *__context.T) __ipc.Client {
+func (c implCancelCollectorClientStub) c(ctx *context.T) ipc.Client {
 	if c.client != nil {
 		return c.client
 	}
-	return __veyron2.GetClient(ctx)
+	return veyron2.GetClient(ctx)
 }
 
-func (c implCancelCollectorClientStub) NeverReturn(ctx *__context.T, i0 int64, opts ...__ipc.CallOpt) (err error) {
-	var call __ipc.Call
+func (c implCancelCollectorClientStub) NeverReturn(ctx *context.T, i0 int64, opts ...ipc.CallOpt) (err error) {
+	var call ipc.Call
 	if call, err = c.c(ctx).StartCall(ctx, c.name, "NeverReturn", []interface{}{i0}, opts...); err != nil {
 		return
 	}
@@ -63,8 +63,8 @@ func (c implCancelCollectorClientStub) NeverReturn(ctx *__context.T, i0 int64, o
 	return
 }
 
-func (c implCancelCollectorClientStub) WaitForStatus(ctx *__context.T, i0 int64, i1 string, opts ...__ipc.CallOpt) (o0 int64, err error) {
-	var call __ipc.Call
+func (c implCancelCollectorClientStub) WaitForStatus(ctx *context.T, i0 int64, i1 string, opts ...ipc.CallOpt) (o0 int64, err error) {
+	var call ipc.Call
 	if call, err = c.c(ctx).StartCall(ctx, c.name, "WaitForStatus", []interface{}{i0, i1}, opts...); err != nil {
 		return
 	}
@@ -80,11 +80,11 @@ func (c implCancelCollectorClientStub) WaitForStatus(ctx *__context.T, i0 int64,
 // CancelCollector is a test interface for use in testing cancellation and deadlines.
 type CancelCollectorServerMethods interface {
 	// A function that never returns, but records the status of the given key.
-	NeverReturn(ctx __ipc.ServerContext, key int64) error
+	NeverReturn(ctx ipc.ServerContext, key int64) error
 	// Wait for the call with the given key to have the given status.  Possible statuses are:
 	// "running", and, "cancelled".  Returns the number of nanoseconds left on
 	// the deadline of the specified call when the call first began.
-	WaitForStatus(ctx __ipc.ServerContext, key int64, status string) (timeout int64, err error)
+	WaitForStatus(ctx ipc.ServerContext, key int64, status string) (timeout int64, err error)
 }
 
 // CancelCollectorServerStubMethods is the server interface containing
@@ -97,7 +97,7 @@ type CancelCollectorServerStubMethods CancelCollectorServerMethods
 type CancelCollectorServerStub interface {
 	CancelCollectorServerStubMethods
 	// Describe the CancelCollector interfaces.
-	Describe__() []__ipc.InterfaceDesc
+	Describe__() []ipc.InterfaceDesc
 }
 
 // CancelCollectorServer returns a server stub for CancelCollector.
@@ -109,9 +109,9 @@ func CancelCollectorServer(impl CancelCollectorServerMethods) CancelCollectorSer
 	}
 	// Initialize GlobState; always check the stub itself first, to handle the
 	// case where the user has the Glob method defined in their VDL source.
-	if gs := __ipc.NewGlobState(stub); gs != nil {
+	if gs := ipc.NewGlobState(stub); gs != nil {
 		stub.gs = gs
-	} else if gs := __ipc.NewGlobState(impl); gs != nil {
+	} else if gs := ipc.NewGlobState(impl); gs != nil {
 		stub.gs = gs
 	}
 	return stub
@@ -119,52 +119,52 @@ func CancelCollectorServer(impl CancelCollectorServerMethods) CancelCollectorSer
 
 type implCancelCollectorServerStub struct {
 	impl CancelCollectorServerMethods
-	gs   *__ipc.GlobState
+	gs   *ipc.GlobState
 }
 
-func (s implCancelCollectorServerStub) NeverReturn(ctx __ipc.ServerContext, i0 int64) error {
+func (s implCancelCollectorServerStub) NeverReturn(ctx ipc.ServerContext, i0 int64) error {
 	return s.impl.NeverReturn(ctx, i0)
 }
 
-func (s implCancelCollectorServerStub) WaitForStatus(ctx __ipc.ServerContext, i0 int64, i1 string) (int64, error) {
+func (s implCancelCollectorServerStub) WaitForStatus(ctx ipc.ServerContext, i0 int64, i1 string) (int64, error) {
 	return s.impl.WaitForStatus(ctx, i0, i1)
 }
 
-func (s implCancelCollectorServerStub) Globber() *__ipc.GlobState {
+func (s implCancelCollectorServerStub) Globber() *ipc.GlobState {
 	return s.gs
 }
 
-func (s implCancelCollectorServerStub) Describe__() []__ipc.InterfaceDesc {
-	return []__ipc.InterfaceDesc{CancelCollectorDesc}
+func (s implCancelCollectorServerStub) Describe__() []ipc.InterfaceDesc {
+	return []ipc.InterfaceDesc{CancelCollectorDesc}
 }
 
 // CancelCollectorDesc describes the CancelCollector interface.
-var CancelCollectorDesc __ipc.InterfaceDesc = descCancelCollector
+var CancelCollectorDesc ipc.InterfaceDesc = descCancelCollector
 
 // descCancelCollector hides the desc to keep godoc clean.
-var descCancelCollector = __ipc.InterfaceDesc{
+var descCancelCollector = ipc.InterfaceDesc{
 	Name:    "CancelCollector",
 	PkgPath: "test_service",
 	Doc:     "// CancelCollector is a test interface for use in testing cancellation and deadlines.",
-	Methods: []__ipc.MethodDesc{
+	Methods: []ipc.MethodDesc{
 		{
 			Name: "NeverReturn",
 			Doc:  "// A function that never returns, but records the status of the given key.",
-			InArgs: []__ipc.ArgDesc{
+			InArgs: []ipc.ArgDesc{
 				{"key", ``}, // int64
 			},
-			OutArgs: []__ipc.ArgDesc{
+			OutArgs: []ipc.ArgDesc{
 				{"", ``}, // error
 			},
 		},
 		{
 			Name: "WaitForStatus",
 			Doc:  "// Wait for the call with the given key to have the given status.  Possible statuses are:\n// \"running\", and, \"cancelled\".  Returns the number of nanoseconds left on\n// the deadline of the specified call when the call first began.",
-			InArgs: []__ipc.ArgDesc{
+			InArgs: []ipc.ArgDesc{
 				{"key", ``},    // int64
 				{"status", ``}, // string
 			},
-			OutArgs: []__ipc.ArgDesc{
+			OutArgs: []ipc.ArgDesc{
 				{"timeout", ``}, // int64
 				{"err", ``},     // error
 			},

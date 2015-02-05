@@ -4,10 +4,10 @@
 package test_service
 
 import (
-	// The non-user imports are prefixed with "__" to prevent collisions.
-	__veyron2 "v.io/core/veyron2"
-	__context "v.io/core/veyron2/context"
-	__ipc "v.io/core/veyron2/ipc"
+	// VDL system imports
+	"v.io/core/veyron2"
+	"v.io/core/veyron2/context"
+	"v.io/core/veyron2/ipc"
 )
 
 // ErrorThrowerClientMethods is the client interface
@@ -16,40 +16,40 @@ import (
 // A testing interface with methods that throw various types of errors
 type ErrorThrowerClientMethods interface {
 	// Throws veyron2/vError.Aborted error
-	ThrowAborted(*__context.T, ...__ipc.CallOpt) error
+	ThrowAborted(*context.T, ...ipc.CallOpt) error
 	// Throws veyron2/vError.BadArg error
-	ThrowBadArg(*__context.T, ...__ipc.CallOpt) error
+	ThrowBadArg(*context.T, ...ipc.CallOpt) error
 	// Throws veyron2/vError.BadProtocol error
-	ThrowBadProtocol(*__context.T, ...__ipc.CallOpt) error
+	ThrowBadProtocol(*context.T, ...ipc.CallOpt) error
 	// Throws veyron2/vError.Internal error
-	ThrowInternal(*__context.T, ...__ipc.CallOpt) error
+	ThrowInternal(*context.T, ...ipc.CallOpt) error
 	// Throws veyron2/vError.NoAccess error
-	ThrowNoAccess(*__context.T, ...__ipc.CallOpt) error
+	ThrowNoAccess(*context.T, ...ipc.CallOpt) error
 	// Throws veyron2/vError.NoExist error
-	ThrowNoExist(*__context.T, ...__ipc.CallOpt) error
+	ThrowNoExist(*context.T, ...ipc.CallOpt) error
 	// Throws veyron2/vError.NoExistOrNoAccess error
-	ThrowNoExistOrNoAccess(*__context.T, ...__ipc.CallOpt) error
+	ThrowNoExistOrNoAccess(*context.T, ...ipc.CallOpt) error
 	// Throws veyron2/vError.Unknown error
-	ThrowUnknown(*__context.T, ...__ipc.CallOpt) error
+	ThrowUnknown(*context.T, ...ipc.CallOpt) error
 	// Throws normal Go error
-	ThrowGoError(*__context.T, ...__ipc.CallOpt) error
+	ThrowGoError(*context.T, ...ipc.CallOpt) error
 	// Throws custom error created by using Standard
-	ThrowCustomStandardError(*__context.T, ...__ipc.CallOpt) error
+	ThrowCustomStandardError(*context.T, ...ipc.CallOpt) error
 	// Lists all errors Ids available in veyron2/verror
-	ListAllBuiltInErrorIDs(*__context.T, ...__ipc.CallOpt) ([]string, error)
+	ListAllBuiltInErrorIDs(*context.T, ...ipc.CallOpt) ([]string, error)
 }
 
 // ErrorThrowerClientStub adds universal methods to ErrorThrowerClientMethods.
 type ErrorThrowerClientStub interface {
 	ErrorThrowerClientMethods
-	__ipc.UniversalServiceMethods
+	ipc.UniversalServiceMethods
 }
 
 // ErrorThrowerClient returns a client stub for ErrorThrower.
-func ErrorThrowerClient(name string, opts ...__ipc.BindOpt) ErrorThrowerClientStub {
-	var client __ipc.Client
+func ErrorThrowerClient(name string, opts ...ipc.BindOpt) ErrorThrowerClientStub {
+	var client ipc.Client
 	for _, opt := range opts {
-		if clientOpt, ok := opt.(__ipc.Client); ok {
+		if clientOpt, ok := opt.(ipc.Client); ok {
 			client = clientOpt
 		}
 	}
@@ -58,18 +58,18 @@ func ErrorThrowerClient(name string, opts ...__ipc.BindOpt) ErrorThrowerClientSt
 
 type implErrorThrowerClientStub struct {
 	name   string
-	client __ipc.Client
+	client ipc.Client
 }
 
-func (c implErrorThrowerClientStub) c(ctx *__context.T) __ipc.Client {
+func (c implErrorThrowerClientStub) c(ctx *context.T) ipc.Client {
 	if c.client != nil {
 		return c.client
 	}
-	return __veyron2.GetClient(ctx)
+	return veyron2.GetClient(ctx)
 }
 
-func (c implErrorThrowerClientStub) ThrowAborted(ctx *__context.T, opts ...__ipc.CallOpt) (err error) {
-	var call __ipc.Call
+func (c implErrorThrowerClientStub) ThrowAborted(ctx *context.T, opts ...ipc.CallOpt) (err error) {
+	var call ipc.Call
 	if call, err = c.c(ctx).StartCall(ctx, c.name, "ThrowAborted", nil, opts...); err != nil {
 		return
 	}
@@ -79,8 +79,8 @@ func (c implErrorThrowerClientStub) ThrowAborted(ctx *__context.T, opts ...__ipc
 	return
 }
 
-func (c implErrorThrowerClientStub) ThrowBadArg(ctx *__context.T, opts ...__ipc.CallOpt) (err error) {
-	var call __ipc.Call
+func (c implErrorThrowerClientStub) ThrowBadArg(ctx *context.T, opts ...ipc.CallOpt) (err error) {
+	var call ipc.Call
 	if call, err = c.c(ctx).StartCall(ctx, c.name, "ThrowBadArg", nil, opts...); err != nil {
 		return
 	}
@@ -90,8 +90,8 @@ func (c implErrorThrowerClientStub) ThrowBadArg(ctx *__context.T, opts ...__ipc.
 	return
 }
 
-func (c implErrorThrowerClientStub) ThrowBadProtocol(ctx *__context.T, opts ...__ipc.CallOpt) (err error) {
-	var call __ipc.Call
+func (c implErrorThrowerClientStub) ThrowBadProtocol(ctx *context.T, opts ...ipc.CallOpt) (err error) {
+	var call ipc.Call
 	if call, err = c.c(ctx).StartCall(ctx, c.name, "ThrowBadProtocol", nil, opts...); err != nil {
 		return
 	}
@@ -101,8 +101,8 @@ func (c implErrorThrowerClientStub) ThrowBadProtocol(ctx *__context.T, opts ..._
 	return
 }
 
-func (c implErrorThrowerClientStub) ThrowInternal(ctx *__context.T, opts ...__ipc.CallOpt) (err error) {
-	var call __ipc.Call
+func (c implErrorThrowerClientStub) ThrowInternal(ctx *context.T, opts ...ipc.CallOpt) (err error) {
+	var call ipc.Call
 	if call, err = c.c(ctx).StartCall(ctx, c.name, "ThrowInternal", nil, opts...); err != nil {
 		return
 	}
@@ -112,8 +112,8 @@ func (c implErrorThrowerClientStub) ThrowInternal(ctx *__context.T, opts ...__ip
 	return
 }
 
-func (c implErrorThrowerClientStub) ThrowNoAccess(ctx *__context.T, opts ...__ipc.CallOpt) (err error) {
-	var call __ipc.Call
+func (c implErrorThrowerClientStub) ThrowNoAccess(ctx *context.T, opts ...ipc.CallOpt) (err error) {
+	var call ipc.Call
 	if call, err = c.c(ctx).StartCall(ctx, c.name, "ThrowNoAccess", nil, opts...); err != nil {
 		return
 	}
@@ -123,8 +123,8 @@ func (c implErrorThrowerClientStub) ThrowNoAccess(ctx *__context.T, opts ...__ip
 	return
 }
 
-func (c implErrorThrowerClientStub) ThrowNoExist(ctx *__context.T, opts ...__ipc.CallOpt) (err error) {
-	var call __ipc.Call
+func (c implErrorThrowerClientStub) ThrowNoExist(ctx *context.T, opts ...ipc.CallOpt) (err error) {
+	var call ipc.Call
 	if call, err = c.c(ctx).StartCall(ctx, c.name, "ThrowNoExist", nil, opts...); err != nil {
 		return
 	}
@@ -134,8 +134,8 @@ func (c implErrorThrowerClientStub) ThrowNoExist(ctx *__context.T, opts ...__ipc
 	return
 }
 
-func (c implErrorThrowerClientStub) ThrowNoExistOrNoAccess(ctx *__context.T, opts ...__ipc.CallOpt) (err error) {
-	var call __ipc.Call
+func (c implErrorThrowerClientStub) ThrowNoExistOrNoAccess(ctx *context.T, opts ...ipc.CallOpt) (err error) {
+	var call ipc.Call
 	if call, err = c.c(ctx).StartCall(ctx, c.name, "ThrowNoExistOrNoAccess", nil, opts...); err != nil {
 		return
 	}
@@ -145,8 +145,8 @@ func (c implErrorThrowerClientStub) ThrowNoExistOrNoAccess(ctx *__context.T, opt
 	return
 }
 
-func (c implErrorThrowerClientStub) ThrowUnknown(ctx *__context.T, opts ...__ipc.CallOpt) (err error) {
-	var call __ipc.Call
+func (c implErrorThrowerClientStub) ThrowUnknown(ctx *context.T, opts ...ipc.CallOpt) (err error) {
+	var call ipc.Call
 	if call, err = c.c(ctx).StartCall(ctx, c.name, "ThrowUnknown", nil, opts...); err != nil {
 		return
 	}
@@ -156,8 +156,8 @@ func (c implErrorThrowerClientStub) ThrowUnknown(ctx *__context.T, opts ...__ipc
 	return
 }
 
-func (c implErrorThrowerClientStub) ThrowGoError(ctx *__context.T, opts ...__ipc.CallOpt) (err error) {
-	var call __ipc.Call
+func (c implErrorThrowerClientStub) ThrowGoError(ctx *context.T, opts ...ipc.CallOpt) (err error) {
+	var call ipc.Call
 	if call, err = c.c(ctx).StartCall(ctx, c.name, "ThrowGoError", nil, opts...); err != nil {
 		return
 	}
@@ -167,8 +167,8 @@ func (c implErrorThrowerClientStub) ThrowGoError(ctx *__context.T, opts ...__ipc
 	return
 }
 
-func (c implErrorThrowerClientStub) ThrowCustomStandardError(ctx *__context.T, opts ...__ipc.CallOpt) (err error) {
-	var call __ipc.Call
+func (c implErrorThrowerClientStub) ThrowCustomStandardError(ctx *context.T, opts ...ipc.CallOpt) (err error) {
+	var call ipc.Call
 	if call, err = c.c(ctx).StartCall(ctx, c.name, "ThrowCustomStandardError", nil, opts...); err != nil {
 		return
 	}
@@ -178,8 +178,8 @@ func (c implErrorThrowerClientStub) ThrowCustomStandardError(ctx *__context.T, o
 	return
 }
 
-func (c implErrorThrowerClientStub) ListAllBuiltInErrorIDs(ctx *__context.T, opts ...__ipc.CallOpt) (o0 []string, err error) {
-	var call __ipc.Call
+func (c implErrorThrowerClientStub) ListAllBuiltInErrorIDs(ctx *context.T, opts ...ipc.CallOpt) (o0 []string, err error) {
+	var call ipc.Call
 	if call, err = c.c(ctx).StartCall(ctx, c.name, "ListAllBuiltInErrorIDs", nil, opts...); err != nil {
 		return
 	}
@@ -195,27 +195,27 @@ func (c implErrorThrowerClientStub) ListAllBuiltInErrorIDs(ctx *__context.T, opt
 // A testing interface with methods that throw various types of errors
 type ErrorThrowerServerMethods interface {
 	// Throws veyron2/vError.Aborted error
-	ThrowAborted(__ipc.ServerContext) error
+	ThrowAborted(ipc.ServerContext) error
 	// Throws veyron2/vError.BadArg error
-	ThrowBadArg(__ipc.ServerContext) error
+	ThrowBadArg(ipc.ServerContext) error
 	// Throws veyron2/vError.BadProtocol error
-	ThrowBadProtocol(__ipc.ServerContext) error
+	ThrowBadProtocol(ipc.ServerContext) error
 	// Throws veyron2/vError.Internal error
-	ThrowInternal(__ipc.ServerContext) error
+	ThrowInternal(ipc.ServerContext) error
 	// Throws veyron2/vError.NoAccess error
-	ThrowNoAccess(__ipc.ServerContext) error
+	ThrowNoAccess(ipc.ServerContext) error
 	// Throws veyron2/vError.NoExist error
-	ThrowNoExist(__ipc.ServerContext) error
+	ThrowNoExist(ipc.ServerContext) error
 	// Throws veyron2/vError.NoExistOrNoAccess error
-	ThrowNoExistOrNoAccess(__ipc.ServerContext) error
+	ThrowNoExistOrNoAccess(ipc.ServerContext) error
 	// Throws veyron2/vError.Unknown error
-	ThrowUnknown(__ipc.ServerContext) error
+	ThrowUnknown(ipc.ServerContext) error
 	// Throws normal Go error
-	ThrowGoError(__ipc.ServerContext) error
+	ThrowGoError(ipc.ServerContext) error
 	// Throws custom error created by using Standard
-	ThrowCustomStandardError(__ipc.ServerContext) error
+	ThrowCustomStandardError(ipc.ServerContext) error
 	// Lists all errors Ids available in veyron2/verror
-	ListAllBuiltInErrorIDs(__ipc.ServerContext) ([]string, error)
+	ListAllBuiltInErrorIDs(ipc.ServerContext) ([]string, error)
 }
 
 // ErrorThrowerServerStubMethods is the server interface containing
@@ -228,7 +228,7 @@ type ErrorThrowerServerStubMethods ErrorThrowerServerMethods
 type ErrorThrowerServerStub interface {
 	ErrorThrowerServerStubMethods
 	// Describe the ErrorThrower interfaces.
-	Describe__() []__ipc.InterfaceDesc
+	Describe__() []ipc.InterfaceDesc
 }
 
 // ErrorThrowerServer returns a server stub for ErrorThrower.
@@ -240,9 +240,9 @@ func ErrorThrowerServer(impl ErrorThrowerServerMethods) ErrorThrowerServerStub {
 	}
 	// Initialize GlobState; always check the stub itself first, to handle the
 	// case where the user has the Glob method defined in their VDL source.
-	if gs := __ipc.NewGlobState(stub); gs != nil {
+	if gs := ipc.NewGlobState(stub); gs != nil {
 		stub.gs = gs
-	} else if gs := __ipc.NewGlobState(impl); gs != nil {
+	} else if gs := ipc.NewGlobState(impl); gs != nil {
 		stub.gs = gs
 	}
 	return stub
@@ -250,144 +250,144 @@ func ErrorThrowerServer(impl ErrorThrowerServerMethods) ErrorThrowerServerStub {
 
 type implErrorThrowerServerStub struct {
 	impl ErrorThrowerServerMethods
-	gs   *__ipc.GlobState
+	gs   *ipc.GlobState
 }
 
-func (s implErrorThrowerServerStub) ThrowAborted(ctx __ipc.ServerContext) error {
+func (s implErrorThrowerServerStub) ThrowAborted(ctx ipc.ServerContext) error {
 	return s.impl.ThrowAborted(ctx)
 }
 
-func (s implErrorThrowerServerStub) ThrowBadArg(ctx __ipc.ServerContext) error {
+func (s implErrorThrowerServerStub) ThrowBadArg(ctx ipc.ServerContext) error {
 	return s.impl.ThrowBadArg(ctx)
 }
 
-func (s implErrorThrowerServerStub) ThrowBadProtocol(ctx __ipc.ServerContext) error {
+func (s implErrorThrowerServerStub) ThrowBadProtocol(ctx ipc.ServerContext) error {
 	return s.impl.ThrowBadProtocol(ctx)
 }
 
-func (s implErrorThrowerServerStub) ThrowInternal(ctx __ipc.ServerContext) error {
+func (s implErrorThrowerServerStub) ThrowInternal(ctx ipc.ServerContext) error {
 	return s.impl.ThrowInternal(ctx)
 }
 
-func (s implErrorThrowerServerStub) ThrowNoAccess(ctx __ipc.ServerContext) error {
+func (s implErrorThrowerServerStub) ThrowNoAccess(ctx ipc.ServerContext) error {
 	return s.impl.ThrowNoAccess(ctx)
 }
 
-func (s implErrorThrowerServerStub) ThrowNoExist(ctx __ipc.ServerContext) error {
+func (s implErrorThrowerServerStub) ThrowNoExist(ctx ipc.ServerContext) error {
 	return s.impl.ThrowNoExist(ctx)
 }
 
-func (s implErrorThrowerServerStub) ThrowNoExistOrNoAccess(ctx __ipc.ServerContext) error {
+func (s implErrorThrowerServerStub) ThrowNoExistOrNoAccess(ctx ipc.ServerContext) error {
 	return s.impl.ThrowNoExistOrNoAccess(ctx)
 }
 
-func (s implErrorThrowerServerStub) ThrowUnknown(ctx __ipc.ServerContext) error {
+func (s implErrorThrowerServerStub) ThrowUnknown(ctx ipc.ServerContext) error {
 	return s.impl.ThrowUnknown(ctx)
 }
 
-func (s implErrorThrowerServerStub) ThrowGoError(ctx __ipc.ServerContext) error {
+func (s implErrorThrowerServerStub) ThrowGoError(ctx ipc.ServerContext) error {
 	return s.impl.ThrowGoError(ctx)
 }
 
-func (s implErrorThrowerServerStub) ThrowCustomStandardError(ctx __ipc.ServerContext) error {
+func (s implErrorThrowerServerStub) ThrowCustomStandardError(ctx ipc.ServerContext) error {
 	return s.impl.ThrowCustomStandardError(ctx)
 }
 
-func (s implErrorThrowerServerStub) ListAllBuiltInErrorIDs(ctx __ipc.ServerContext) ([]string, error) {
+func (s implErrorThrowerServerStub) ListAllBuiltInErrorIDs(ctx ipc.ServerContext) ([]string, error) {
 	return s.impl.ListAllBuiltInErrorIDs(ctx)
 }
 
-func (s implErrorThrowerServerStub) Globber() *__ipc.GlobState {
+func (s implErrorThrowerServerStub) Globber() *ipc.GlobState {
 	return s.gs
 }
 
-func (s implErrorThrowerServerStub) Describe__() []__ipc.InterfaceDesc {
-	return []__ipc.InterfaceDesc{ErrorThrowerDesc}
+func (s implErrorThrowerServerStub) Describe__() []ipc.InterfaceDesc {
+	return []ipc.InterfaceDesc{ErrorThrowerDesc}
 }
 
 // ErrorThrowerDesc describes the ErrorThrower interface.
-var ErrorThrowerDesc __ipc.InterfaceDesc = descErrorThrower
+var ErrorThrowerDesc ipc.InterfaceDesc = descErrorThrower
 
 // descErrorThrower hides the desc to keep godoc clean.
-var descErrorThrower = __ipc.InterfaceDesc{
+var descErrorThrower = ipc.InterfaceDesc{
 	Name:    "ErrorThrower",
 	PkgPath: "test_service",
 	Doc:     "// A testing interface with methods that throw various types of errors",
-	Methods: []__ipc.MethodDesc{
+	Methods: []ipc.MethodDesc{
 		{
 			Name: "ThrowAborted",
 			Doc:  "// Throws veyron2/vError.Aborted error",
-			OutArgs: []__ipc.ArgDesc{
+			OutArgs: []ipc.ArgDesc{
 				{"", ``}, // error
 			},
 		},
 		{
 			Name: "ThrowBadArg",
 			Doc:  "// Throws veyron2/vError.BadArg error",
-			OutArgs: []__ipc.ArgDesc{
+			OutArgs: []ipc.ArgDesc{
 				{"", ``}, // error
 			},
 		},
 		{
 			Name: "ThrowBadProtocol",
 			Doc:  "// Throws veyron2/vError.BadProtocol error",
-			OutArgs: []__ipc.ArgDesc{
+			OutArgs: []ipc.ArgDesc{
 				{"", ``}, // error
 			},
 		},
 		{
 			Name: "ThrowInternal",
 			Doc:  "// Throws veyron2/vError.Internal error",
-			OutArgs: []__ipc.ArgDesc{
+			OutArgs: []ipc.ArgDesc{
 				{"", ``}, // error
 			},
 		},
 		{
 			Name: "ThrowNoAccess",
 			Doc:  "// Throws veyron2/vError.NoAccess error",
-			OutArgs: []__ipc.ArgDesc{
+			OutArgs: []ipc.ArgDesc{
 				{"", ``}, // error
 			},
 		},
 		{
 			Name: "ThrowNoExist",
 			Doc:  "// Throws veyron2/vError.NoExist error",
-			OutArgs: []__ipc.ArgDesc{
+			OutArgs: []ipc.ArgDesc{
 				{"", ``}, // error
 			},
 		},
 		{
 			Name: "ThrowNoExistOrNoAccess",
 			Doc:  "// Throws veyron2/vError.NoExistOrNoAccess error",
-			OutArgs: []__ipc.ArgDesc{
+			OutArgs: []ipc.ArgDesc{
 				{"", ``}, // error
 			},
 		},
 		{
 			Name: "ThrowUnknown",
 			Doc:  "// Throws veyron2/vError.Unknown error",
-			OutArgs: []__ipc.ArgDesc{
+			OutArgs: []ipc.ArgDesc{
 				{"", ``}, // error
 			},
 		},
 		{
 			Name: "ThrowGoError",
 			Doc:  "// Throws normal Go error",
-			OutArgs: []__ipc.ArgDesc{
+			OutArgs: []ipc.ArgDesc{
 				{"", ``}, // error
 			},
 		},
 		{
 			Name: "ThrowCustomStandardError",
 			Doc:  "// Throws custom error created by using Standard",
-			OutArgs: []__ipc.ArgDesc{
+			OutArgs: []ipc.ArgDesc{
 				{"", ``}, // error
 			},
 		},
 		{
 			Name: "ListAllBuiltInErrorIDs",
 			Doc:  "// Lists all errors Ids available in veyron2/verror",
-			OutArgs: []__ipc.ArgDesc{
+			OutArgs: []ipc.ArgDesc{
 				{"", ``}, // []string
 				{"", ``}, // error
 			},
