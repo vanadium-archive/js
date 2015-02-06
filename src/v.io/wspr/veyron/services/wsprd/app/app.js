@@ -4,6 +4,7 @@ var vom = require('../../../../../.././vom/vom');
 
 
 
+
 var security = require('./../../../../../core/veyron2/security/security');
 
 module.exports = {};
@@ -43,11 +44,6 @@ module.exports.VeyronRPC = (vom.Registry.lookupOrCreateConstructor(_typeVeyronRP
 
 // Errors:
 
-
-
-function NotImplementedMethod(name) {
-  throw new Error('Method ' + name + ' not implemented');
-}
 
 
 // Services:

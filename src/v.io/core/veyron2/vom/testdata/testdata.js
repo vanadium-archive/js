@@ -5,6 +5,7 @@ var vom = require('../../../../.././vom/vom');
 
 
 
+
 module.exports = {};
 
 
@@ -16,8 +17,6 @@ var _type3 = new vom.Type();
 var _type4 = new vom.Type();
 var _type5 = new vom.Type();
 var _type6 = new vom.Type();
-var _type7 = new vom.Type();
-var _type8 = new vom.Type();
 var _typeMBool = new vom.Type();
 var _typeMList = new vom.Type();
 var _typeMMap = new vom.Type();
@@ -54,27 +53,19 @@ _type1.elem = _typeTestCase;
 _type2.kind = vom.Kind.LIST;
 _type2.name = "";
 _type2.elem = vom.Types.BYTE;
-_type3.kind = vom.Kind.ARRAY;
+_type3.kind = vom.Kind.LIST;
 _type3.name = "";
-_type3.len = 4;
-_type3.elem = vom.Types.BYTE;
-_type4.kind = vom.Kind.ARRAY;
+_type3.elem = vom.Types.UINT64;
+_type4.kind = vom.Kind.SET;
 _type4.name = "";
-_type4.len = 2;
-_type4.elem = vom.Types.UINT64;
-_type5.kind = vom.Kind.LIST;
+_type4.key = vom.Types.UINT64;
+_type5.kind = vom.Kind.MAP;
 _type5.name = "";
-_type5.elem = vom.Types.UINT64;
-_type6.kind = vom.Kind.SET;
+_type5.elem = vom.Types.STRING;
+_type5.key = vom.Types.UINT64;
+_type6.kind = vom.Kind.OPTIONAL;
 _type6.name = "";
-_type6.key = vom.Types.UINT64;
-_type7.kind = vom.Kind.MAP;
-_type7.name = "";
-_type7.elem = vom.Types.STRING;
-_type7.key = vom.Types.UINT64;
-_type8.kind = vom.Kind.OPTIONAL;
-_type8.name = "";
-_type8.elem = _typeNStruct;
+_type6.elem = _typeNStruct;
 _typeMBool.kind = vom.Kind.BOOL;
 _typeMBool.name = "v.io/core/veyron2/vom/testdata.MBool";
 _typeMList.kind = vom.Kind.LIST;
@@ -86,7 +77,7 @@ _typeMMap.elem = _typeNListUint64;
 _typeMMap.key = _typeNFloat32;
 _typeMStruct.kind = vom.Kind.STRUCT;
 _typeMStruct.name = "v.io/core/veyron2/vom/testdata.MStruct";
-_typeMStruct.fields = [{name: "A", type: vom.Types.BOOL}, {name: "B", type: _typeNBool}, {name: "C", type: _typeMBool}, {name: "D", type: _type8}, {name: "E", type: vom.Types.TYPEOBJECT}, {name: "F", type: vom.Types.ANY}];
+_typeMStruct.fields = [{name: "A", type: vom.Types.BOOL}, {name: "B", type: _typeNBool}, {name: "C", type: _typeMBool}, {name: "D", type: _type6}, {name: "E", type: vom.Types.TYPEOBJECT}, {name: "F", type: vom.Types.ANY}];
 _typeNArray2Uint64.kind = vom.Kind.ARRAY;
 _typeNArray2Uint64.name = "v.io/core/veyron2/vom/testdata.NArray2Uint64";
 _typeNArray2Uint64.len = 2;
@@ -224,13 +215,13 @@ module.exports.TestCase = (vom.Registry.lookupOrCreateConstructor(_typeTestCase)
   'typeString': "[]byte",
 },
 {
-  'name': "[]byte(\"\\x00\\x00\\x00\")",
+  'name': "[]byte(\"\\x01\\x02\\x03\")",
   'value': new (vom.Registry.lookupOrCreateConstructor(_type2))(new Uint8Array([
-0,
-0,
-0,
+1,
+2,
+3,
 ])),
-  'hex': "803403000000",
+  'hex': "803403010203",
   'typeString': "[]byte",
 },
 {
@@ -243,28 +234,6 @@ module.exports.TestCase = (vom.Registry.lookupOrCreateConstructor(_typeTestCase)
 ])),
   'hex': "80340461646566",
   'typeString': "[]byte",
-},
-{
-  'name': "[4]byte(\"\\x00\\x00\\x00\\x00\")",
-  'value': new (vom.Registry.lookupOrCreateConstructor(_type3))(new Uint8Array([
-0,
-0,
-0,
-0,
-])),
-  'hex': "80ff81081201000205030400ff8200000000",
-  'typeString': "[4]byte",
-},
-{
-  'name': "[4]byte(\"abcd\")",
-  'value': new (vom.Registry.lookupOrCreateConstructor(_type3))(new Uint8Array([
-97,
-98,
-99,
-100,
-])),
-  'hex': "80ff81081201000205030400ff8261626364",
-  'typeString': "[4]byte",
 },
 {
   'name': "byte(0)",
@@ -1024,13 +993,13 @@ module.exports.TestCase = (vom.Registry.lookupOrCreateConstructor(_typeTestCase)
   'typeString': "v.io/core/veyron2/vom/testdata.NByteSlice []byte",
 },
 {
-  'name': "NByteSlice(\"\\x00\\x00\\x00\")",
+  'name': "NByteSlice(\"\\x01\\x02\\x03\")",
   'value': new (vom.Registry.lookupOrCreateConstructor(_typeNByteSlice))(new Uint8Array([
-0,
-0,
-0,
+1,
+2,
+3,
 ])),
-  'hex': "80ff812f130129762e696f2f636f72652f766579726f6e322f766f6d2f74657374646174612e4e42797465536c696365020500ff8203000000",
+  'hex': "80ff812f130129762e696f2f636f72652f766579726f6e322f766f6d2f74657374646174612e4e42797465536c696365020500ff8203010203",
   'typeString': "v.io/core/veyron2/vom/testdata.NByteSlice []byte",
 },
 {
@@ -1055,14 +1024,14 @@ module.exports.TestCase = (vom.Registry.lookupOrCreateConstructor(_typeTestCase)
   'typeString': "v.io/core/veyron2/vom/testdata.NByteArray [4]byte",
 },
 {
-  'name': "NByteArray(\"\\x00\\x00\\x00\\x00\")",
+  'name': "NByteArray(\"\\x01\\x02\\x03\\x00\")",
   'value': new (vom.Registry.lookupOrCreateConstructor(_typeNByteArray))(new Uint8Array([
-0,
-0,
-0,
+1,
+2,
+3,
 0,
 ])),
-  'hex': "80ff8131120129762e696f2f636f72652f766579726f6e322f766f6d2f74657374646174612e4e4279746541727261790205030400ff8200000000",
+  'hex': "80ff8131120129762e696f2f636f72652f766579726f6e322f766f6d2f74657374646174612e4e4279746541727261790205030400ff8201020300",
   'typeString': "v.io/core/veyron2/vom/testdata.NByteArray [4]byte",
 },
 {
@@ -1257,15 +1226,6 @@ module.exports.TestCase = (vom.Registry.lookupOrCreateConstructor(_typeTestCase)
   'typeString': "v.io/core/veyron2/vom/testdata.NComplex128 complex128",
 },
 {
-  'name': "[2]uint64{1, 2}",
-  'value': new (vom.Registry.lookupOrCreateConstructor(_type4))([
-new vom.BigInt(1, new Uint8Array([0x1])),
-new vom.BigInt(1, new Uint8Array([0x2])),
-]),
-  'hex': "80ff81081201000208030200ff82020102",
-  'typeString': "[2]uint64",
-},
-{
   'name': "NArray2Uint64{1, 2}",
   'value': new (vom.Registry.lookupOrCreateConstructor(_typeNArray2Uint64))([
 new vom.BigInt(1, new Uint8Array([0x1])),
@@ -1276,7 +1236,7 @@ new vom.BigInt(1, new Uint8Array([0x2])),
 },
 {
   'name': "[]uint64{1, 2}",
-  'value': new (vom.Registry.lookupOrCreateConstructor(_type5))([
+  'value': new (vom.Registry.lookupOrCreateConstructor(_type3))([
 new vom.BigInt(1, new Uint8Array([0x1])),
 new vom.BigInt(1, new Uint8Array([0x2])),
 ]),
@@ -1294,7 +1254,7 @@ new vom.BigInt(1, new Uint8Array([0x2])),
 },
 {
   'name': "set[uint64]{1}",
-  'value': new (vom.Registry.lookupOrCreateConstructor(_type6))(new Set([
+  'value': new (vom.Registry.lookupOrCreateConstructor(_type4))(new Set([
   new vom.BigInt(1, new Uint8Array([0x1])), ])),
   'hex': "80ff8106140100020800ff82020101",
   'typeString': "set[uint64]",
@@ -1308,7 +1268,7 @@ new vom.BigInt(1, new Uint8Array([0x2])),
 },
 {
   'name': "map[uint64]string{1: \"abc\"}",
-  'value': new (vom.Registry.lookupOrCreateConstructor(_type7))(new Map([
+  'value': new (vom.Registry.lookupOrCreateConstructor(_type5))(new Map([
   [new vom.BigInt(1, new Uint8Array([0x1])), "abc"]])),
   'hex': "80ff81081501000208030400ff8206010103616263",
   'typeString': "map[uint64]string",
@@ -1332,13 +1292,13 @@ new vom.BigInt(1, new Uint8Array([0x2])),
 },
 {
   'name': "?NStruct(nil)",
-  'value': new (vom.Registry.lookupOrCreateConstructor(_type8))(null),
+  'value': new (vom.Registry.lookupOrCreateConstructor(_type6))(null),
   'hex': "80ff833e160126762e696f2f636f72652f766579726f6e322f766f6d2f74657374646174612e4e5374727563740203010141020300010142020400010143020b0000ff81061d0100024200ff820100",
   'typeString': "?v.io/core/veyron2/vom/testdata.NStruct struct{A bool;B string;C int64}",
 },
 {
   'name': "?NStruct{}",
-  'value': new (vom.Registry.lookupOrCreateConstructor(_type8))({
+  'value': new (vom.Registry.lookupOrCreateConstructor(_type6))({
   'a': false,
   'b': "",
   'c': new vom.BigInt(0, new Uint8Array([])),
@@ -1348,7 +1308,7 @@ new vom.BigInt(1, new Uint8Array([0x2])),
 },
 {
   'name': "?NStruct{A: true, B: \"abc\", C: 123}",
-  'value': new (vom.Registry.lookupOrCreateConstructor(_type8))({
+  'value': new (vom.Registry.lookupOrCreateConstructor(_type6))({
   'a': true,
   'b': "abc",
   'c': new vom.BigInt(1, new Uint8Array([0x7b])),
@@ -1522,7 +1482,7 @@ new vom.BigInt(1, new Uint8Array([0x2])),
   'c': false,
   'd': null,
   'e': vom.Types.ANY,
-  'f': new (vom.Registry.lookupOrCreateConstructor(_type8))({
+  'f': new (vom.Registry.lookupOrCreateConstructor(_type6))({
   'a': false,
   'b': "abc",
   'c': new vom.BigInt(0, new Uint8Array([])),
@@ -1742,12 +1702,6 @@ new vom.BigInt(1, new Uint8Array([0x3])),
   'typeString': "typeobject",
 },
 {
-  'name': "typeobject([2]uint64)",
-  'value': _type4,
-  'hex': "80ff810812010002080302000441",
-  'typeString': "typeobject",
-},
-{
   'name': "typeobject(NArray2Uint64)",
   'value': _typeNArray2Uint64,
   'hex': "80ff813412012c762e696f2f636f72652f766579726f6e322f766f6d2f74657374646174612e4e41727261793255696e74363402080302000441",
@@ -1755,7 +1709,7 @@ new vom.BigInt(1, new Uint8Array([0x3])),
 },
 {
   'name': "typeobject([]uint64)",
-  'value': _type5,
+  'value': _type3,
   'hex': "80ff81061301000208000441",
   'typeString': "typeobject",
 },
@@ -1767,7 +1721,7 @@ new vom.BigInt(1, new Uint8Array([0x3])),
 },
 {
   'name': "typeobject(set[uint64])",
-  'value': _type6,
+  'value': _type4,
   'hex': "80ff81061401000208000441",
   'typeString': "typeobject",
 },
@@ -1779,7 +1733,7 @@ new vom.BigInt(1, new Uint8Array([0x3])),
 },
 {
   'name': "typeobject(map[uint64]string)",
-  'value': _type7,
+  'value': _type5,
   'hex': "80ff810815010002080304000441",
   'typeString': "typeobject",
 },
@@ -1813,11 +1767,6 @@ new vom.BigInt(1, new Uint8Array([0x3])),
 
 // Errors:
 
-
-
-function NotImplementedMethod(name) {
-  throw new Error('Method ' + name + ' not implemented');
-}
 
 
 // Services:

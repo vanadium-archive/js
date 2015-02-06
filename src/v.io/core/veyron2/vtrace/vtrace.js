@@ -4,6 +4,7 @@ var vom = require('../../../.././vom/vom');
 
 
 
+
 var uniqueid = require('./../uniqueid/uniqueid');
 
 module.exports = {};
@@ -62,11 +63,6 @@ module.exports.TraceRecord = (vom.Registry.lookupOrCreateConstructor(_typeTraceR
 
 // Errors:
 
-
-
-function NotImplementedMethod(name) {
-  throw new Error('Method ' + name + ' not implemented');
-}
 
 
 // Services:

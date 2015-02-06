@@ -4,6 +4,7 @@ var vom = require('../../../../../.././vom/vom');
 
 
 
+
 var exp = require('./exp/exp');
 var base = require('./../base/base');
 
@@ -38,11 +39,6 @@ module.exports = {};
 
 
 
-function NotImplementedMethod(name) {
-  throw new Error('Method ' + name + ' not implemented');
-}
-
-
 // Services:
 
   
@@ -52,10 +48,14 @@ module.exports.Trigonometry = Trigonometry
 
     
       
-Trigonometry.prototype.Sine = NotImplementedMethod;
+Trigonometry.prototype.Sine = function(ctx, angle) {
+  throw new Error('Method Sine not implemented');
+};
     
       
-Trigonometry.prototype.Cosine = NotImplementedMethod;
+Trigonometry.prototype.Cosine = function(ctx, angle) {
+  throw new Error('Method Cosine not implemented');
+};
      
 
     
@@ -118,13 +118,19 @@ module.exports.AdvancedMath = AdvancedMath
 
     
       
-AdvancedMath.prototype.Sine = NotImplementedMethod;
+AdvancedMath.prototype.Sine = function(ctx, angle) {
+  throw new Error('Method Sine not implemented');
+};
     
       
-AdvancedMath.prototype.Cosine = NotImplementedMethod;
+AdvancedMath.prototype.Cosine = function(ctx, angle) {
+  throw new Error('Method Cosine not implemented');
+};
     
       
-AdvancedMath.prototype.Exp = NotImplementedMethod;
+AdvancedMath.prototype.Exp = function(ctx, x) {
+  throw new Error('Method Exp not implemented');
+};
      
 
     
@@ -220,28 +226,44 @@ module.exports.Arith = Arith
 
     
       
-Arith.prototype.Add = NotImplementedMethod;
+Arith.prototype.Add = function(ctx, a, b) {
+  throw new Error('Method Add not implemented');
+};
     
       
-Arith.prototype.DivMod = NotImplementedMethod;
+Arith.prototype.DivMod = function(ctx, a, b) {
+  throw new Error('Method DivMod not implemented');
+};
     
       
-Arith.prototype.Sub = NotImplementedMethod;
+Arith.prototype.Sub = function(ctx, args) {
+  throw new Error('Method Sub not implemented');
+};
     
       
-Arith.prototype.Mul = NotImplementedMethod;
+Arith.prototype.Mul = function(ctx, nested) {
+  throw new Error('Method Mul not implemented');
+};
     
       
-Arith.prototype.GenError = NotImplementedMethod;
+Arith.prototype.GenError = function(ctx) {
+  throw new Error('Method GenError not implemented');
+};
     
       
-Arith.prototype.Count = NotImplementedMethod;
+Arith.prototype.Count = function(ctx, start) {
+  throw new Error('Method Count not implemented');
+};
     
       
-Arith.prototype.StreamingAdd = NotImplementedMethod;
+Arith.prototype.StreamingAdd = function(ctx) {
+  throw new Error('Method StreamingAdd not implemented');
+};
     
       
-Arith.prototype.QuoteAny = NotImplementedMethod;
+Arith.prototype.QuoteAny = function(ctx, a) {
+  throw new Error('Method QuoteAny not implemented');
+};
      
 
     
@@ -437,43 +459,69 @@ module.exports.Calculator = Calculator
 
     
       
-Calculator.prototype.On = NotImplementedMethod;
+Calculator.prototype.On = function(ctx) {
+  throw new Error('Method On not implemented');
+};
     
       
-Calculator.prototype.Off = NotImplementedMethod;
+Calculator.prototype.Off = function(ctx) {
+  throw new Error('Method Off not implemented');
+};
     
       
-Calculator.prototype.Add = NotImplementedMethod;
+Calculator.prototype.Add = function(ctx, a, b) {
+  throw new Error('Method Add not implemented');
+};
     
       
-Calculator.prototype.DivMod = NotImplementedMethod;
+Calculator.prototype.DivMod = function(ctx, a, b) {
+  throw new Error('Method DivMod not implemented');
+};
     
       
-Calculator.prototype.Sub = NotImplementedMethod;
+Calculator.prototype.Sub = function(ctx, args) {
+  throw new Error('Method Sub not implemented');
+};
     
       
-Calculator.prototype.Mul = NotImplementedMethod;
+Calculator.prototype.Mul = function(ctx, nested) {
+  throw new Error('Method Mul not implemented');
+};
     
       
-Calculator.prototype.GenError = NotImplementedMethod;
+Calculator.prototype.GenError = function(ctx) {
+  throw new Error('Method GenError not implemented');
+};
     
       
-Calculator.prototype.Count = NotImplementedMethod;
+Calculator.prototype.Count = function(ctx, start) {
+  throw new Error('Method Count not implemented');
+};
     
       
-Calculator.prototype.StreamingAdd = NotImplementedMethod;
+Calculator.prototype.StreamingAdd = function(ctx) {
+  throw new Error('Method StreamingAdd not implemented');
+};
     
       
-Calculator.prototype.QuoteAny = NotImplementedMethod;
+Calculator.prototype.QuoteAny = function(ctx, a) {
+  throw new Error('Method QuoteAny not implemented');
+};
     
       
-Calculator.prototype.Sine = NotImplementedMethod;
+Calculator.prototype.Sine = function(ctx, angle) {
+  throw new Error('Method Sine not implemented');
+};
     
       
-Calculator.prototype.Cosine = NotImplementedMethod;
+Calculator.prototype.Cosine = function(ctx, angle) {
+  throw new Error('Method Cosine not implemented');
+};
     
       
-Calculator.prototype.Exp = NotImplementedMethod;
+Calculator.prototype.Exp = function(ctx, x) {
+  throw new Error('Method Exp not implemented');
+};
      
 
     

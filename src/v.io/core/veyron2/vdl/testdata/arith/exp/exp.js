@@ -5,6 +5,7 @@ var vom = require('../../../../../../.././vom/vom');
 
 
 
+
 module.exports = {};
 
 
@@ -22,11 +23,6 @@ module.exports = {};
 
 
 
-function NotImplementedMethod(name) {
-  throw new Error('Method ' + name + ' not implemented');
-}
-
-
 // Services:
 
   
@@ -36,7 +32,9 @@ module.exports.Exp = Exp
 
     
       
-Exp.prototype.Exp = NotImplementedMethod;
+Exp.prototype.Exp = function(ctx, x) {
+  throw new Error('Method Exp not implemented');
+};
      
 
     

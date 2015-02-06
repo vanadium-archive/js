@@ -5,26 +5,31 @@ var vom = require('../../../.././vom/vom');
 
 
 
+
 module.exports = {};
 
 
 
 // Types:
 var _type1 = new vom.Type();
+var _type2 = new vom.Type();
 var _typeMountFlag = new vom.Type();
 var _typeVDLMountEntry = new vom.Type();
 var _typeVDLMountedServer = new vom.Type();
 _type1.kind = vom.Kind.LIST;
 _type1.name = "";
-_type1.elem = _typeVDLMountedServer;
+_type1.elem = vom.Types.STRING;
+_type2.kind = vom.Kind.LIST;
+_type2.name = "";
+_type2.elem = _typeVDLMountedServer;
 _typeMountFlag.kind = vom.Kind.UINT32;
 _typeMountFlag.name = "v.io/core/veyron2/naming.MountFlag";
 _typeVDLMountEntry.kind = vom.Kind.STRUCT;
 _typeVDLMountEntry.name = "v.io/core/veyron2/naming.VDLMountEntry";
-_typeVDLMountEntry.fields = [{name: "Name", type: vom.Types.STRING}, {name: "Servers", type: _type1}, {name: "MT", type: vom.Types.BOOL}];
+_typeVDLMountEntry.fields = [{name: "Name", type: vom.Types.STRING}, {name: "Servers", type: _type2}, {name: "MT", type: vom.Types.BOOL}];
 _typeVDLMountedServer.kind = vom.Kind.STRUCT;
 _typeVDLMountedServer.name = "v.io/core/veyron2/naming.VDLMountedServer";
-_typeVDLMountedServer.fields = [{name: "Server", type: vom.Types.STRING}, {name: "TTL", type: vom.Types.UINT32}];
+_typeVDLMountedServer.fields = [{name: "Server", type: vom.Types.STRING}, {name: "BlessingPatterns", type: _type1}, {name: "TTL", type: vom.Types.UINT32}];
 module.exports.MountFlag = (vom.Registry.lookupOrCreateConstructor(_typeMountFlag));
 module.exports.VDLMountEntry = (vom.Registry.lookupOrCreateConstructor(_typeVDLMountEntry));
 module.exports.VDLMountedServer = (vom.Registry.lookupOrCreateConstructor(_typeVDLMountedServer));
@@ -42,11 +47,6 @@ module.exports.VDLMountedServer = (vom.Registry.lookupOrCreateConstructor(_typeV
 
 // Errors:
 
-
-
-function NotImplementedMethod(name) {
-  throw new Error('Method ' + name + ' not implemented');
-}
 
 
 // Services:

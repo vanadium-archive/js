@@ -4,6 +4,7 @@ var vom = require('../../../.././vom/vom');
 
 
 
+
 var security = require('./../security/security');
 var vtrace = require('./../vtrace/vtrace');
 
@@ -90,11 +91,6 @@ module.exports.error = (vom.Registry.lookupOrCreateConstructor(_typeerror));
 
 // Errors:
 
-
-
-function NotImplementedMethod(name) {
-  throw new Error('Method ' + name + ' not implemented');
-}
 
 
 // Services:

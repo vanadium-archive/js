@@ -5,6 +5,7 @@ var vom = require('.././../../../../../../vom/vom');
 
 
 
+
 module.exports = {};
 
 
@@ -30,11 +31,6 @@ module.exports.Time = (vom.Registry.lookupOrCreateConstructor(_typeTime));
 
 // Errors:
 
-
-
-function NotImplementedMethod(name) {
-  throw new Error('Method ' + name + ' not implemented');
-}
 
 
 // Services:

@@ -5,6 +5,7 @@ var vom = require('../../../.././vom/vom');
 
 
 
+
 module.exports = {};
 
 
@@ -26,11 +27,6 @@ module.exports.Id = (vom.Registry.lookupOrCreateConstructor(_typeId));
 
 // Errors:
 
-
-
-function NotImplementedMethod(name) {
-  throw new Error('Method ' + name + ' not implemented');
-}
 
 
 // Services:

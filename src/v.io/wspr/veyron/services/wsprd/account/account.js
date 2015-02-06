@@ -5,6 +5,7 @@ var vom = require('../../../../../.././vom/vom');
 
 
 
+
 module.exports = {};
 
 
@@ -25,11 +26,6 @@ module.exports.Caveat = (vom.Registry.lookupOrCreateConstructor(_typeCaveat));
 
 // Errors:
 
-
-
-function NotImplementedMethod(name) {
-  throw new Error('Method ' + name + ' not implemented');
-}
 
 
 // Services:

@@ -5,6 +5,7 @@ var vom = require('.././../../../../../../vom/vom');
 
 
 
+
 module.exports = {};
 
 
@@ -62,11 +63,6 @@ module.exports.JavascriptConfig = (vom.Registry.lookupOrCreateConstructor(_typeJ
 
 // Errors:
 
-
-
-function NotImplementedMethod(name) {
-  throw new Error('Method ' + name + ' not implemented');
-}
 
 
 // Services:

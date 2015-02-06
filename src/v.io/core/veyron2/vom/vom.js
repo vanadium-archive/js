@@ -5,6 +5,7 @@ var vom = require('../../../.././vom/vom');
 
 
 
+
 module.exports = {};
 
 
@@ -161,11 +162,6 @@ module.exports.WireUnion = (vom.Registry.lookupOrCreateConstructor(_typeWireUnio
 
 // Errors:
 
-
-
-function NotImplementedMethod(name) {
-  throw new Error('Method ' + name + ' not implemented');
-}
 
 
 // Services:

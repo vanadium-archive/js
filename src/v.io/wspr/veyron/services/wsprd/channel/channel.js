@@ -5,6 +5,7 @@ var vom = require('../../../../../.././vom/vom');
 
 
 
+
 module.exports = {};
 
 
@@ -35,11 +36,6 @@ module.exports.Response = (vom.Registry.lookupOrCreateConstructor(_typeResponse)
 
 // Errors:
 
-
-
-function NotImplementedMethod(name) {
-  throw new Error('Method ' + name + ' not implemented');
-}
 
 
 // Services:

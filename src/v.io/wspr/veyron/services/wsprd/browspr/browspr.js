@@ -4,6 +4,7 @@ var vom = require('../../../../../.././vom/vom');
 
 
 
+
 var account = require('./../account/account');
 
 module.exports = {};
@@ -64,11 +65,6 @@ module.exports.blessingRoot = (vom.Registry.lookupOrCreateConstructor(_typebless
 
 // Errors:
 
-
-
-function NotImplementedMethod(name) {
-  throw new Error('Method ' + name + ' not implemented');
-}
 
 
 // Services:
