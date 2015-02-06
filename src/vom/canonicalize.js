@@ -228,13 +228,7 @@ function canonicalizeInternal(deepWrap, v, t, seen, outValue) {
           outValue = BigInt.fromNativeNumber(v);
           return outValue;
         } catch(e) {
-          // TODO(alexfandrianto): You can write 0x7bd008637bd05c00 in JS.
-          // This number can't be converted to BigInt with fromNativeNumber.
-          // This catch case must be removed after we isolate the problem.
-          // For now, I decided to return the number, as-is.
-          // I need to replace such uses in veyron.js with BigInt. Then we can
-          // always throw here.
-          return v;
+          throw makeError(v, t, e);
         }
       } else if (v instanceof BigInt) {
         // BigInt is not mutable, so we don't need to send a copy to the cache.
