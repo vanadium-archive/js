@@ -16,19 +16,16 @@ function stableCircularStringifyInternal(val, seen) {
   }
 
   var i;
-  for (i = 0; i < seen.length; i++) {
-    if (val === seen[i].input) {
-      if (seen[i].hasOwnProperty('output')) {
-        // If the value has been outputted already, return the cached output
-        // rather than an id.
-        // (without this, repeated objects generate ids)
-        return seen[i].output;
-      }
-      return 'ID[' + i + ']';
+  if (seen.has(val)) {
+    var ret = seen.get(val);
+    if (ret.hasOwnProperty('output')) {
+      return ret.output;
+    } else {
+      return 'ID[' + ret.id + ']';
     }
   }
-  var seenObj = {input: val};
-  seen.push(seenObj);
+  var seenObj = { id: seen.size };
+  seen.set(val, seenObj);
 
   if (Array.isArray(val)) {
     var arrStr = '[';
@@ -92,5 +89,5 @@ function stableCircularStringifyInternal(val, seen) {
  * @return {string} The key.
  */
 function stableCircularStringify(val) {
-  return stableCircularStringifyInternal(val, []);
+  return stableCircularStringifyInternal(val, new Map());
 }

@@ -41,6 +41,13 @@ function Type(o, skipValidation) {
 
 Type.prototype._type = new Type();
 Type.prototype._type.kind = Kind.TYPEOBJECT;
+Type.prototype.equals = function(other) {
+  if (this === other) {
+    return true;
+  }
+  return this.name === other.name && (other instanceof Type) &&
+    this.toString() === other.toString();
+};
 
 /**
  * @return {string} The human-readable string for this type

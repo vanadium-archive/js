@@ -4,11 +4,10 @@
 
 module.exports = Decoder;
 
-var canonicalize =require('./canonicalize.js');
+var canonicalize = require('./canonicalize.js');
 var TypeDecoder = require('./type-decoder.js');
 var Kind = require('./kind.js');
 var Registry = require('./registry.js');
-var stringify =require('./stringify.js');
 var Types = require('./types.js');
 var util = require('./util.js');
 
@@ -45,7 +44,7 @@ Decoder.prototype._decodeValue = function(t, reader, shouldWrap) {
   var value = this._decodeUnwrappedValue(t, reader);
 
   // Special: JSValue should be reduced and returned as a native value.
-  if (stringify(t) === stringify(Types.JSVALUE)) {
+  if (Types.JSVALUE.equals(t)) {
     return canonicalize.reduce(value, Types.JSVALUE);
   }
 

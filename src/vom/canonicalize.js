@@ -94,7 +94,7 @@ function canonicalize(inValue, t, deepWrap, seen, isTopLevelValue) {
   }
 
   // Special case JSValue. Convert the inValue to JSValue form.
-  var isJSValue = stringify(t) === stringify(Types.JSVALUE);
+  var isJSValue = Types.JSVALUE.equals(t);
   if (isJSValue) {
     inValue = jsValueConvert.fromNative(inValue);
   }
