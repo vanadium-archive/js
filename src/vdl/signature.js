@@ -98,24 +98,10 @@ function Signature(service, desc) {
           return; // Skip this method because args don't match.
         }
 
-        // Check that arg names match.
-        var skip = false;
-        for (var argix = 0; argix < thisArgs.length; argix++) {
-          if (thisArgs[argix].name !== descArgs[argix].name) {
-            skip = true;
-            break;
-          }
-        }
-        if (skip) {
-          vlog.warn('Args of method ' + thisMethod.name + ' don\'t ' +
-                    'match descriptor');
-          return;
-        }
-
         // Copy arg details.
-        for (argix = 0; argix < thisArgs.length; argix++) {
+        for (var argix = 0; argix < thisArgs.length; argix++) {
           copyIfSet(thisArgs[argix], descArgs[argix],
-                    ['doc', 'type']);
+                    ['doc', 'type', 'name']);
         }
       }
 
