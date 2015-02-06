@@ -206,14 +206,14 @@ module.exports.unixTimeExpiryCaveat = (vom.Registry.lookupOrCreateConstructor(_t
 
 // Errors:
 
-module.exports.ErrCaveatNotRegistered = makeError('v.io/core/veyron2/security.ErrCaveatNotRegistered', actions.NO_RETRY, {
+module.exports.ErrCaveatNotRegisteredError = makeError('v.io/core/veyron2/security.ErrCaveatNotRegistered', actions.NO_RETRY, {
   'en': '{1:}{2:} no validation function registered for caveat id {3}',
 }, [
   new uniqueid.Id()._type,
 ]);
 
 
-module.exports.ErrCaveatParamTypeMismatch = makeError('v.io/core/veyron2/security.ErrCaveatParamTypeMismatch', actions.NO_RETRY, {
+module.exports.ErrCaveatParamTypeMismatchError = makeError('v.io/core/veyron2/security.ErrCaveatParamTypeMismatch', actions.NO_RETRY, {
   'en': '{1:}{2:} bad param type: caveat {3} got {4}, want {5}',
 }, [
   new uniqueid.Id()._type,
@@ -222,7 +222,7 @@ module.exports.ErrCaveatParamTypeMismatch = makeError('v.io/core/veyron2/securit
 ]);
 
 
-module.exports.ErrCaveatParamCoding = makeError('v.io/core/veyron2/security.ErrCaveatParamCoding', actions.NO_RETRY, {
+module.exports.ErrCaveatParamCodingError = makeError('v.io/core/veyron2/security.ErrCaveatParamCoding', actions.NO_RETRY, {
   'en': '{1:}{2:} unable to encode/decode caveat param(type={4}) for caveat {3}: {5}',
 }, [
   new uniqueid.Id()._type,
@@ -231,7 +231,7 @@ module.exports.ErrCaveatParamCoding = makeError('v.io/core/veyron2/security.ErrC
 ]);
 
 
-module.exports.ErrCaveatValidation = makeError('v.io/core/veyron2/security.ErrCaveatValidation', actions.NO_RETRY, {
+module.exports.ErrCaveatValidationError = makeError('v.io/core/veyron2/security.ErrCaveatValidation', actions.NO_RETRY, {
   'en': '{1:}{2:} caveat validation failed: {3}',
 }, [
   vom.Types.ANY,

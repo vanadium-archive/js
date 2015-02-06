@@ -1,5 +1,5 @@
 var test = require('prova');
-var verror = require('../../src/errors/verror.js');
+var verror = require('../../src/v.io/core/veyron2/verror2/verror2');
 var Context = require('../../src/runtime/context').Context;
 var VanadiumError = require('../../src/errors/vanadium-error');
 var errors = Object.keys(verror);

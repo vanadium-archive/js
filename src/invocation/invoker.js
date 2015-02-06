@@ -7,7 +7,7 @@ module.exports = Invoker;
 
 var createSignatures = require('../vdl/create-signatures');
 var isPublicMethod = require('../lib/service-reflection').isPublicMethod;
-var verror = require('../errors/verror');
+var verror = require('../v.io/core/veyron2/verror2/verror2');
 var vom = require('../vom/vom');
 var format = require('util').format;
 var context = require('../runtime/context');

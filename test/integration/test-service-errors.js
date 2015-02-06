@@ -1,6 +1,6 @@
 var test = require('prova');
 var service = require('./get-service');
-var verror = require('../../src/errors/verror');
+var verror = require('../../src/v.io/core/veyron2/verror2/verror2');
 var VanadiumError = require('../../src/errors/vanadium-error');
 
 test('Test Go service returning Aborted error - ' +

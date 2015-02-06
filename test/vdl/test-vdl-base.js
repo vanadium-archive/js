@@ -142,15 +142,15 @@ test('struct constructor', function(assert) {
 test('errors', function(assert) {
   var rootContext = new context.Context();
   var enContext = rootContext.withValue(SharedContextKeys.LANG_KEY, 'en');
-  var e = new base.ErrWithParams2(enContext, 1, 2);
+  var e = new base.WithParams2Error(enContext, 1, 2);
   assert.equal(e._argTypes.length, 2);
   assert.equal(e.message, 'app:op: en x=1 y=2');
   var frContext = rootContext.withValue(SharedContextKeys.LANG_KEY, 'fr');
-  e = new base.ErrWithParams2(frContext, 1, 2);
+  e = new base.WithParams2Error(frContext, 1, 2);
   assert.equal(e._argTypes.length, 2);
   assert.equal(e.message, 'app:op: fr y=2 x=1');
   assert.end();
 
-  e = new base.ErrNoParams2(rootContext);
+  e = new base.NoParams2Error(rootContext);
   assert.equal(e.idAction.action, actions.RETRY_REFETCH);
 });

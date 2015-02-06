@@ -9,7 +9,7 @@ var VanadiumError = require('./../errors/vanadium-error');
 var defaultLanguage = require('./../runtime/default-language');
 var defaultCatalog = require('./../runtime/default-catalog');
 var context = require('./../runtime/context');
-var verror = require('./../errors/verror');
+var verror = require('../v.io/core/veyron2/verror2/verror2');
 
 module.exports = {
   toStandardErrorStruct: toStandardErrorStruct,

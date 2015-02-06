@@ -348,20 +348,20 @@ false,
 
 // Errors:
 
-module.exports.ErrNoParams1 = makeError('v.io/core/veyron2/vdl/testdata/base.ErrNoParams1', actions.NO_RETRY, {
+module.exports.ErrNoParams1Error = makeError('v.io/core/veyron2/vdl/testdata/base.ErrNoParams1', actions.NO_RETRY, {
   'en': '{1:}{2:} en msg',
 }, [
 ]);
 
 
-module.exports.ErrNoParams2 = makeError('v.io/core/veyron2/vdl/testdata/base.ErrNoParams2', actions.RETRY_REFETCH, {
+module.exports.ErrNoParams2Error = makeError('v.io/core/veyron2/vdl/testdata/base.ErrNoParams2', actions.RETRY_REFETCH, {
   'en': '{1:}{2:} en msg',
   'fr': '{1:}{2:} fr msg',
 }, [
 ]);
 
 
-module.exports.ErrWithParams1 = makeError('v.io/core/veyron2/vdl/testdata/base.ErrWithParams1', actions.NO_RETRY, {
+module.exports.ErrWithParams1Error = makeError('v.io/core/veyron2/vdl/testdata/base.ErrWithParams1', actions.NO_RETRY, {
   'en': '{1:}{2:} en x={3} y={4}',
 }, [
   vom.Types.STRING,
@@ -369,7 +369,7 @@ module.exports.ErrWithParams1 = makeError('v.io/core/veyron2/vdl/testdata/base.E
 ]);
 
 
-module.exports.ErrWithParams2 = makeError('v.io/core/veyron2/vdl/testdata/base.ErrWithParams2', actions.RETRY_REFETCH, {
+module.exports.ErrWithParams2Error = makeError('v.io/core/veyron2/vdl/testdata/base.ErrWithParams2', actions.RETRY_REFETCH, {
   'en': '{1:}{2:} en x={3} y={4}',
   'fr': '{1:}{2:} fr y={4} x={3}',
 }, [

@@ -120,6 +120,7 @@ ifndef NOVDLGEN
 	 	v.io/core/veyron2/naming/... \
 	 	v.io/wspr/veyron/services/wsprd/... \
 		v.io/core/veyron2/vom/... \
+		v.io/core/veyron2/verror2/... \
 	 	$(EXTRA_VDL_PATHS)
   # We build the vdlroot stuff with a different set of command line options because the package path does
 	# not equal the directory path of the source file.  This is not ideal, but bjornick and toddw will discuss
