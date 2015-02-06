@@ -312,7 +312,7 @@ test('signature', function(t) {
                                 'type': vom.Types.INT16
                             },
                             {
-                                'name': 'WRONGNAME',
+                                'name': 'SIGNATURENAME',
                                 'type': vom.Types.INT16
                             },
                             {
@@ -360,22 +360,22 @@ test('signature', function(t) {
                         'inArgs': [
                             {
                                 'name': 'x',
-                                'type': vom.Types.JSVALUE
+                                'type': vom.Types.INT16
                             },
                             {
-                                'name': 'y',
-                                'type': vom.Types.JSVALUE
+                                'name': 'SIGNATURENAME',
+                                'type': vom.Types.INT16
                             },
                             {
                                 'name': 'z',
-                                'type': vom.Types.JSVALUE
+                                'type': vom.Types.INT16
                             }
                         ],
                         'outArgs': [
-                            {
-                                'type': vom.Types.JSVALUE
-                            }
-                        ]
+                          {
+                            'type': vom.Types.JSVALUE
+                          }
+                        ],
                     }
                 ]
             }
