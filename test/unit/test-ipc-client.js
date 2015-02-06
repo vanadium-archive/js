@@ -69,6 +69,8 @@ function validateBoundService(assert, boundService) {
       assert.ok(typeof boundService[key] === 'function',
         'non-function key on bound service ' + key);
     }
+
+    assert.ok(boundService.__signature);
 }
 
 test('Test that correct bindTo call succeeds - using callbacks',

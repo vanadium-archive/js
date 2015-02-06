@@ -407,6 +407,10 @@ Client.prototype.bindTo = function(ctx, name, cb) {
       });
     });
 
+    Object.defineProperty(boundObject, '__signature', {
+      value: serviceSignature,
+      writable: false,
+    });
     def.resolve(boundObject);
   }).catch(function(err) {
     def.reject(err);
