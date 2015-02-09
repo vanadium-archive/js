@@ -15,6 +15,9 @@ domready(function() {
 
   // Set bp on the window so it will be accessable from options page.
   window.bp = bp;
+  // Expose the state object so options page and background can share it and
+  // stay in sync.
+  bp.state = require('../state');
 });
 
 function BackgroundPage() {
