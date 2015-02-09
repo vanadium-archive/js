@@ -32,8 +32,8 @@ func (KeyValuePair) __VDLReflect(struct {
 }
 
 func init() {
-	vdl.Register(KeyPageResult{})
-	vdl.Register(KeyValuePair{})
+	vdl.Register((*KeyPageResult)(nil))
+	vdl.Register((*KeyValuePair)(nil))
 }
 
 // CacheClientMethods is the client interface
