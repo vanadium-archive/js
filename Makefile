@@ -25,6 +25,11 @@ ifndef NOHEADLESS
 	endif
 endif
 
+ifeq ($(USER),veyron)
+	STOPONFAIL := --stopOnFirstFailure
+	SAVE_CHROME_LOGS := || (cp tmp/chrome.log /tmp/chrome.log$(BUILD_NUMBER) && exit 1)
+endif
+
 ifdef STOPONFAIL
 	STOPONFAIL := --stopOnFirstFailure
 endif
@@ -166,7 +171,7 @@ test-integration-browser-runner: BROWSER_OPTS := --options="--load-extension=$(P
 test-integration-browser-runner:
 	@$(RM) -fr extension/build-test
 	$(MAKE) -C extension build-test
-	prova test/integration/test-*.js --log=./tmp/chrome.log $(PROVA_OPTS) $(BROWSER_OPTS) $(BROWSER_OUTPUT_LOCAL)
+	prova test/integration/test-*.js --log=./tmp/chrome.log $(PROVA_OPTS) $(BROWSER_OPTS) $(BROWSER_OUTPUT_LOCAL) $(SAVE_CHROME_LOGS)
 
 go/bin: $(GO_FILES)
 	@$(VGO) build -o $(GOBIN)/principal v.io/core/veyron/tools/principal
