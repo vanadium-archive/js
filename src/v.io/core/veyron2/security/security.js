@@ -21,20 +21,23 @@ var _type4 = new vom.Type();
 var _type5 = new vom.Type();
 var _type6 = new vom.Type();
 var _type7 = new vom.Type();
+var _type8 = new vom.Type();
+var _type9 = new vom.Type();
 var _typeBlessingPattern = new vom.Type();
 var _typeCaveat = new vom.Type();
 var _typeCaveatDescriptor = new vom.Type();
 var _typeCertificate = new vom.Type();
 var _typeDischargeImpetus = new vom.Type();
 var _typeHash = new vom.Type();
+var _typeRejectedBlessing = new vom.Type();
 var _typeSignature = new vom.Type();
 var _typeThirdPartyRequirements = new vom.Type();
 var _typeWireBlessings = new vom.Type();
-var _typemethodCaveat = new vom.Type();
+var _typeWireDischarge = new vom.Type();
+var _typeerror = new vom.Type();
 var _typenonce = new vom.Type();
 var _typepublicKeyDischarge = new vom.Type();
 var _typepublicKeyThirdPartyCaveat = new vom.Type();
-var _typeunixTimeExpiryCaveat = new vom.Type();
 _type1.kind = vom.Kind.LIST;
 _type1.name = "";
 _type1.elem = _typeCaveat;
@@ -56,11 +59,17 @@ _type6.elem = _type7;
 _type7.kind = vom.Kind.LIST;
 _type7.name = "";
 _type7.elem = _typeCertificate;
+_type8.kind = vom.Kind.OPTIONAL;
+_type8.name = "";
+_type8.elem = _typeerror;
+_type9.kind = vom.Kind.STRUCT;
+_type9.name = "";
+_type9.fields = [{name: "ID", type: vom.Types.STRING}, {name: "Action", type: vom.Types.UINT32}];
 _typeBlessingPattern.kind = vom.Kind.STRING;
 _typeBlessingPattern.name = "v.io/core/veyron2/security.BlessingPattern";
 _typeCaveat.kind = vom.Kind.STRUCT;
 _typeCaveat.name = "v.io/core/veyron2/security.Caveat";
-_typeCaveat.fields = [{name: "ValidatorVOM", type: _type2}, {name: "Id", type: new uniqueid.Id()._type}, {name: "ParamVom", type: _type2}];
+_typeCaveat.fields = [{name: "Id", type: new uniqueid.Id()._type}, {name: "ParamVom", type: _type2}];
 _typeCaveatDescriptor.kind = vom.Kind.STRUCT;
 _typeCaveatDescriptor.name = "v.io/core/veyron2/security.CaveatDescriptor";
 _typeCaveatDescriptor.fields = [{name: "Id", type: new uniqueid.Id()._type}, {name: "ParamType", type: vom.Types.TYPEOBJECT}];
@@ -72,6 +81,9 @@ _typeDischargeImpetus.name = "v.io/core/veyron2/security.DischargeImpetus";
 _typeDischargeImpetus.fields = [{name: "Server", type: _type4}, {name: "Method", type: vom.Types.STRING}, {name: "Arguments", type: _type5}];
 _typeHash.kind = vom.Kind.STRING;
 _typeHash.name = "v.io/core/veyron2/security.Hash";
+_typeRejectedBlessing.kind = vom.Kind.STRUCT;
+_typeRejectedBlessing.name = "v.io/core/veyron2/security.RejectedBlessing";
+_typeRejectedBlessing.fields = [{name: "Blessing", type: vom.Types.STRING}, {name: "Err", type: _type8}];
 _typeSignature.kind = vom.Kind.STRUCT;
 _typeSignature.name = "v.io/core/veyron2/security.Signature";
 _typeSignature.fields = [{name: "Purpose", type: _type2}, {name: "Hash", type: _typeHash}, {name: "R", type: _type2}, {name: "S", type: _type2}];
@@ -81,9 +93,12 @@ _typeThirdPartyRequirements.fields = [{name: "ReportServer", type: vom.Types.BOO
 _typeWireBlessings.kind = vom.Kind.STRUCT;
 _typeWireBlessings.name = "v.io/core/veyron2/security.WireBlessings";
 _typeWireBlessings.fields = [{name: "CertificateChains", type: _type6}];
-_typemethodCaveat.kind = vom.Kind.LIST;
-_typemethodCaveat.name = "v.io/core/veyron2/security.methodCaveat";
-_typemethodCaveat.elem = vom.Types.STRING;
+_typeWireDischarge.kind = vom.Kind.UNION;
+_typeWireDischarge.name = "v.io/core/veyron2/security.WireDischarge";
+_typeWireDischarge.fields = [{name: "PublicKey", type: _typepublicKeyDischarge}];
+_typeerror.kind = vom.Kind.STRUCT;
+_typeerror.name = "error";
+_typeerror.fields = [{name: "IDAction", type: _type9}, {name: "Msg", type: vom.Types.STRING}, {name: "ParamList", type: _type5}];
 _typenonce.kind = vom.Kind.ARRAY;
 _typenonce.name = "v.io/core/veyron2/security.nonce";
 _typenonce.len = 16;
@@ -94,22 +109,21 @@ _typepublicKeyDischarge.fields = [{name: "ThirdPartyCaveatID", type: vom.Types.S
 _typepublicKeyThirdPartyCaveat.kind = vom.Kind.STRUCT;
 _typepublicKeyThirdPartyCaveat.name = "v.io/core/veyron2/security.publicKeyThirdPartyCaveat";
 _typepublicKeyThirdPartyCaveat.fields = [{name: "Nonce", type: _typenonce}, {name: "Caveats", type: _type1}, {name: "DischargerKey", type: _type2}, {name: "DischargerLocation", type: vom.Types.STRING}, {name: "DischargerRequirements", type: _typeThirdPartyRequirements}];
-_typeunixTimeExpiryCaveat.kind = vom.Kind.INT64;
-_typeunixTimeExpiryCaveat.name = "v.io/core/veyron2/security.unixTimeExpiryCaveat";
 module.exports.BlessingPattern = (vom.Registry.lookupOrCreateConstructor(_typeBlessingPattern));
 module.exports.Caveat = (vom.Registry.lookupOrCreateConstructor(_typeCaveat));
 module.exports.CaveatDescriptor = (vom.Registry.lookupOrCreateConstructor(_typeCaveatDescriptor));
 module.exports.Certificate = (vom.Registry.lookupOrCreateConstructor(_typeCertificate));
 module.exports.DischargeImpetus = (vom.Registry.lookupOrCreateConstructor(_typeDischargeImpetus));
 module.exports.Hash = (vom.Registry.lookupOrCreateConstructor(_typeHash));
+module.exports.RejectedBlessing = (vom.Registry.lookupOrCreateConstructor(_typeRejectedBlessing));
 module.exports.Signature = (vom.Registry.lookupOrCreateConstructor(_typeSignature));
 module.exports.ThirdPartyRequirements = (vom.Registry.lookupOrCreateConstructor(_typeThirdPartyRequirements));
 module.exports.WireBlessings = (vom.Registry.lookupOrCreateConstructor(_typeWireBlessings));
-module.exports.methodCaveat = (vom.Registry.lookupOrCreateConstructor(_typemethodCaveat));
+module.exports.WireDischarge = (vom.Registry.lookupOrCreateConstructor(_typeWireDischarge));
+module.exports.error = (vom.Registry.lookupOrCreateConstructor(_typeerror));
 module.exports.nonce = (vom.Registry.lookupOrCreateConstructor(_typenonce));
 module.exports.publicKeyDischarge = (vom.Registry.lookupOrCreateConstructor(_typepublicKeyDischarge));
 module.exports.publicKeyThirdPartyCaveat = (vom.Registry.lookupOrCreateConstructor(_typepublicKeyThirdPartyCaveat));
-module.exports.unixTimeExpiryCaveat = (vom.Registry.lookupOrCreateConstructor(_typeunixTimeExpiryCaveat));
 
 
 
@@ -235,6 +249,13 @@ module.exports.ErrCaveatValidationError = makeError('v.io/core/veyron2/security.
   'en': '{1:}{2:} caveat validation failed: {3}',
 }, [
   vom.Types.ANY,
+]);
+
+
+module.exports.UntrustedRootError = makeError('v.io/core/veyron2/security.UntrustedRoot', actions.NO_RETRY, {
+  'en': '{1:}{2:} {3}: root not trusted',
+}, [
+  vom.Types.STRING,
 ]);
 
 
