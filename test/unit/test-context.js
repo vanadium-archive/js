@@ -4,7 +4,7 @@
 
 var test = require('prova');
 var context = require('../../src/runtime/context');
-var verror = require('../../src/v.io/core/veyron2/verror2/verror2');
+var verror = require('../../src/v.io/core/veyron2/verror/verror');
 
 var ctx = context.Context();
 

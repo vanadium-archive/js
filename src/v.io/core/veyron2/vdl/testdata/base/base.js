@@ -288,10 +288,14 @@ false,
 ]);
 
   module.exports.Cset = new (vom.Registry.lookupOrCreateConstructor(_type15))(new Set([
-  1, ]));
+  1, 
+  2, 
+  3, ]));
 
-  module.exports.Cmap = new (vom.Registry.lookupOrCreateConstructor(_type16))(new Map([
-  [1, "A"]]));
+  module.exports.cmap = new (vom.Registry.lookupOrCreateConstructor(_type16))(new Map([
+  [1, "A"],
+  [2, "B"],
+  [3, "C"]]));
 
   module.exports.Cargs = new (vom.Registry.lookupOrCreateConstructor(_typeArgs))({
   'a': 1,
@@ -348,20 +352,20 @@ false,
 
 // Errors:
 
-module.exports.ErrNoParams1Error = makeError('v.io/core/veyron2/vdl/testdata/base.ErrNoParams1', actions.NO_RETRY, {
+module.exports.NoParams1Error = makeError('v.io/core/veyron2/vdl/testdata/base.NoParams1', actions.NO_RETRY, {
   'en': '{1:}{2:} en msg',
 }, [
 ]);
 
 
-module.exports.ErrNoParams2Error = makeError('v.io/core/veyron2/vdl/testdata/base.ErrNoParams2', actions.RETRY_REFETCH, {
+module.exports.NoParams2Error = makeError('v.io/core/veyron2/vdl/testdata/base.NoParams2', actions.RETRY_REFETCH, {
   'en': '{1:}{2:} en msg',
   'fr': '{1:}{2:} fr msg',
 }, [
 ]);
 
 
-module.exports.ErrWithParams1Error = makeError('v.io/core/veyron2/vdl/testdata/base.ErrWithParams1', actions.NO_RETRY, {
+module.exports.WithParams1Error = makeError('v.io/core/veyron2/vdl/testdata/base.WithParams1', actions.NO_RETRY, {
   'en': '{1:}{2:} en x={3} y={4}',
 }, [
   vom.Types.STRING,
@@ -369,9 +373,17 @@ module.exports.ErrWithParams1Error = makeError('v.io/core/veyron2/vdl/testdata/b
 ]);
 
 
-module.exports.ErrWithParams2Error = makeError('v.io/core/veyron2/vdl/testdata/base.ErrWithParams2', actions.RETRY_REFETCH, {
+module.exports.WithParams2Error = makeError('v.io/core/veyron2/vdl/testdata/base.WithParams2', actions.RETRY_REFETCH, {
   'en': '{1:}{2:} en x={3} y={4}',
   'fr': '{1:}{2:} fr y={4} x={3}',
+}, [
+  vom.Types.STRING,
+  vom.Types.INT32,
+]);
+
+
+module.exports.notExportedError = makeError('v.io/core/veyron2/vdl/testdata/base.notExported', actions.NO_RETRY, {
+  'en': '{1:}{2:} en x={3} y={4}',
 }, [
   vom.Types.STRING,
   vom.Types.INT32,

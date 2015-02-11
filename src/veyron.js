@@ -21,7 +21,7 @@ var defaults = {
  * Exports
  */
 module.exports = {
-  errors: require('./v.io/core/veyron2/verror2/verror2'),
+  errors: require('./v.io/core/veyron2/verror/verror'),
   makeError:  require('./errors/make-errors'),
   errorActions: require('./errors/actions'),
   init: init,

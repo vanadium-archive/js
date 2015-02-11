@@ -4,7 +4,7 @@ import (
 	"errors"
 
 	"v.io/core/veyron2/ipc"
-	verror "v.io/core/veyron2/verror2"
+	"v.io/core/veyron2/verror"
 
 	"test_service"
 )
@@ -17,35 +17,35 @@ func NewErrorThrower() test_service.ErrorThrowerServerMethods {
 type errorThrowerImpl struct{}
 
 func (e *errorThrowerImpl) ThrowAborted(ctx ipc.ServerContext) error {
-	return verror.Make(verror.Aborted, ctx.Context())
+	return verror.New(verror.Aborted, ctx.Context())
 }
 
 func (e *errorThrowerImpl) ThrowBadArg(ctx ipc.ServerContext) error {
-	return verror.Make(verror.BadArg, ctx.Context())
+	return verror.New(verror.BadArg, ctx.Context())
 }
 
 func (e *errorThrowerImpl) ThrowBadProtocol(ctx ipc.ServerContext) error {
-	return verror.Make(verror.BadProtocol, ctx.Context())
+	return verror.New(verror.BadProtocol, ctx.Context())
 }
 
 func (e *errorThrowerImpl) ThrowInternal(ctx ipc.ServerContext) error {
-	return verror.Make(verror.Internal, ctx.Context())
+	return verror.New(verror.Internal, ctx.Context())
 }
 
 func (e *errorThrowerImpl) ThrowNoAccess(ctx ipc.ServerContext) error {
-	return verror.Make(verror.NoAccess, ctx.Context())
+	return verror.New(verror.NoAccess, ctx.Context())
 }
 
 func (e *errorThrowerImpl) ThrowNoExist(ctx ipc.ServerContext) error {
-	return verror.Make(verror.NoExist, ctx.Context())
+	return verror.New(verror.NoExist, ctx.Context())
 }
 
 func (e *errorThrowerImpl) ThrowNoExistOrNoAccess(ctx ipc.ServerContext) error {
-	return verror.Make(verror.NoExistOrNoAccess, ctx.Context())
+	return verror.New(verror.NoExistOrNoAccess, ctx.Context())
 }
 
 func (e *errorThrowerImpl) ThrowUnknown(ctx ipc.ServerContext) error {
-	return verror.Make(verror.Unknown, ctx.Context())
+	return verror.New(verror.Unknown, ctx.Context())
 }
 
 func (e *errorThrowerImpl) ThrowGoError(ctx ipc.ServerContext) error {
@@ -55,7 +55,7 @@ func (e *errorThrowerImpl) ThrowGoError(ctx ipc.ServerContext) error {
 var customError = verror.Register(pkgPath+".customError", verror.NoRetry, "{1:}{2:} CustomStandard!{:_}")
 
 func (e *errorThrowerImpl) ThrowCustomStandardError(ctx ipc.ServerContext) error {
-	return verror.Make(customError, ctx.Context())
+	return verror.New(customError, ctx.Context())
 }
 
 func (e *errorThrowerImpl) ListAllBuiltInErrorIDs(_ ipc.ServerContext) ([]string, error) {

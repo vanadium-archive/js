@@ -8,7 +8,7 @@ import (
 
 	"v.io/core/veyron2/ipc"
 	"v.io/core/veyron2/vdl"
-	verror "v.io/core/veyron2/verror2"
+	"v.io/core/veyron2/verror"
 
 	"test_service"
 )
@@ -46,7 +46,7 @@ func (c *cacheImpl) Get(ctx ipc.ServerContext, key string) (vdl.AnyRep, error) {
 		return value, nil
 	}
 
-	return typedNil, verror.Make(verror.NoExist, ctx.Context(), key)
+	return typedNil, verror.New(verror.NoExist, ctx.Context(), key)
 }
 
 // getWithTypeCheck gets the key and tests if its type matches the given time, erroring if it does
@@ -144,7 +144,7 @@ func (c *cacheImpl) KeyValuePairs(ipc.ServerContext) ([]test_service.KeyValuePai
 func (c *cacheImpl) MostRecentSet(ctx ipc.ServerContext) (test_service.KeyValuePair, int64, error) {
 	var err error
 	if c.lastUpdateTime.IsZero() {
-		err = verror.Make(verror.NoExist, ctx.Context())
+		err = verror.New(verror.NoExist, ctx.Context())
 	}
 	return c.mostRecent, c.lastUpdateTime.Unix(), err
 }
@@ -162,7 +162,7 @@ func (c *cacheImpl) KeyPage(ctx ipc.ServerContext, index int64) (test_service.Ke
 
 	lowIndex := int(index) * 10
 	if index < 0 || len(keys) <= lowIndex {
-		return results, verror.Make(errIndexOutOfBounds, ctx.Context(), index)
+		return results, verror.New(errIndexOutOfBounds, ctx.Context(), index)
 	}
 	highIndex := lowIndex + 9
 	if highIndex > len(keys)-1 {
@@ -189,7 +189,7 @@ func (c *cacheImpl) MultiGet(ctx test_service.CacheMultiGetContext) error {
 		key := ctx.RecvStream().Value()
 		value, ok := c.cache[key]
 		if !ok {
-			return verror.Make(verror.NoExist, ctx.Context(), key)
+			return verror.New(verror.NoExist, ctx.Context(), key)
 		}
 		ctx.SendStream().Send(value)
 	}
