@@ -38,7 +38,11 @@ test('Test closing runtime - var promise = runtime.close()', function(assert) {
   }
 
   function close(service) {
-    return rt.close();
+    return rt.close().then(function() {
+      assert.pass('Runtime closed successfully');
+    }).catch(function(err) {
+      assert.fail(err);
+    });
   }
 
   function end() {

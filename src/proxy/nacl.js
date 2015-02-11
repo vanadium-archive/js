@@ -61,10 +61,28 @@ ProxyConnection.prototype.send = function(msg) {
 };
 
 ProxyConnection.prototype.close = function(cb) {
+  var defaultTimeout = 5000;
+  var deferred = new Deferred(cb);
+
   extensionEventProxy.send('browsprCleanup', {
     instanceId: this.instanceId
   });
-  if (cb) {
-    extensionEventProxy.once('browsprCleanupFinished', cb.bind(null, null));
-  }
+
+  var timedout = false;
+  var timeout = setTimeout(function reject() {
+    timedout = true;
+    var err = new Error('Timeout: Failed to close the runtime in ' +
+      defaultTimeout + ' ms');
+
+    deferred.reject(err);
+  }, defaultTimeout);
+
+  extensionEventProxy.once('browsprCleanupFinished', function() {
+    clearTimeout(timeout);
+    if(!timedout) {
+      deferred.resolve();
+    }
+  });
+
+  return deferred.promise;
 };
