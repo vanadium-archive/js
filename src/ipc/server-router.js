@@ -27,6 +27,8 @@ var GlobStream = require('./glob-stream');
 var VDLMountEntry = require('../v.io/core/veyron2/naming/naming').VDLMountEntry;
 var ServerRPCReply =
   require('../v.io/wspr/veyron/services/wsprd/lib/lib').ServerRPCReply;
+var Controller =
+  require('../v.io/wspr/veyron/services/wsprd/app/app').Controller;
 
 /**
  * A router that handles routing incoming requests to the right
@@ -34,7 +36,7 @@ var ServerRPCReply =
  * @constructor
  * @private
  */
-var Router = function(proxy, appName, rootCtx) {
+var Router = function(proxy, appName, rootCtx, client) {
   this._servers = {};
   this._proxy = proxy;
   this._streamMap = {};
@@ -42,6 +44,10 @@ var Router = function(proxy, appName, rootCtx) {
   this._appName = appName;
   this._rootCtx = rootCtx;
   this._outstandingRequestForId = {};
+
+  this._controller = client.bindWithSignature(
+    'controller', [Controller.prototype._serviceDescription]);
+
   proxy.addIncomingHandler(IncomingPayloadType.INVOKE_REQUEST, this);
   proxy.addIncomingHandler(IncomingPayloadType.LOOKUP_REQUEST, this);
   proxy.addIncomingHandler(IncomingPayloadType.AUTHORIZATION_REQUEST, this);
@@ -495,17 +501,9 @@ Router.prototype.sendResult = function(messageId, name, results, err,
 Router.prototype.serve = function(name, server, cb) {
   vLog.info('Serving under the name: ', name);
 
-  var messageJSON = {
-    name: name,
-    serverId: server.id,
-  };
-
-  this._servers[server.id] = server;
-
   var def = new Deferred(cb);
-  var message = JSON.stringify(messageJSON);
-  this._sendRequest(this._rootCtx, message, MessageType.SERVE, def);
-
+  def.resolve(this._controller.serve(this._rootCtx, name, server.id));
+  this._servers[server.id] = server;
   return def.promise;
 };
 
