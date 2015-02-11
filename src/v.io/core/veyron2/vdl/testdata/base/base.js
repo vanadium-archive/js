@@ -401,22 +401,22 @@ module.exports.ServiceA = ServiceA
 
     
       
-ServiceA.prototype.MethodA1 = function(ctx) {
+ServiceA.prototype.methodA1 = function(ctx) {
   throw new Error('Method MethodA1 not implemented');
 };
     
       
-ServiceA.prototype.MethodA2 = function(ctx, a, b) {
+ServiceA.prototype.methodA2 = function(ctx, a, b) {
   throw new Error('Method MethodA2 not implemented');
 };
     
       
-ServiceA.prototype.MethodA3 = function(ctx, a) {
+ServiceA.prototype.methodA3 = function(ctx, a) {
   throw new Error('Method MethodA3 not implemented');
 };
     
       
-ServiceA.prototype.MethodA4 = function(ctx, a) {
+ServiceA.prototype.methodA4 = function(ctx, a) {
   throw new Error('Method MethodA4 not implemented');
 };
      
@@ -525,27 +525,27 @@ module.exports.ServiceB = ServiceB
 
     
       
-ServiceB.prototype.MethodB1 = function(ctx, a, b) {
+ServiceB.prototype.methodB1 = function(ctx, a, b) {
   throw new Error('Method MethodB1 not implemented');
 };
     
       
-ServiceB.prototype.MethodA1 = function(ctx) {
+ServiceB.prototype.methodA1 = function(ctx) {
   throw new Error('Method MethodA1 not implemented');
 };
     
       
-ServiceB.prototype.MethodA2 = function(ctx, a, b) {
+ServiceB.prototype.methodA2 = function(ctx, a, b) {
   throw new Error('Method MethodA2 not implemented');
 };
     
       
-ServiceB.prototype.MethodA3 = function(ctx, a) {
+ServiceB.prototype.methodA3 = function(ctx, a) {
   throw new Error('Method MethodA3 not implemented');
 };
     
       
-ServiceB.prototype.MethodA4 = function(ctx, a) {
+ServiceB.prototype.methodA4 = function(ctx, a) {
   throw new Error('Method MethodA4 not implemented');
 };
      

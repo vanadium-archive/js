@@ -51,6 +51,10 @@ function Invoker(service) {
       continue;
     }
 
+    if (vom.MiscUtil.isCapitalized(key)) {
+      throw new Error('Can\'t export capitalized method ' + key);
+    }
+
     var capitalizedMethodName = vom.MiscUtil.capitalize(key);
     var method = service[key];
 
