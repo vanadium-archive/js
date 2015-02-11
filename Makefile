@@ -201,6 +201,28 @@ clean:
 docs: $(JS_SRC_FILES) | node_modules
 	jsdoc $^ --template node_modules/ink-docstrap/template --destination $@
 
+# staging-docs
+#
+# Builds the jsdoc and then deploys it to https://staging.jsdoc.v.io
+#
+# If you do not have access to the vanadium-staging GCE account ping
+# jasoncampbell@. Once you have access you will need to login to the account
+# via the command line with:
+#
+#     gcloud auth login
+#
+# To deploy the docs use this make target:
+#
+#     make staging-docs
+#
+# This will sync the docs directory to the private Google Storage bucket
+# gs://staging.jsdoc.v.io which gets automatically updated to the nginx
+# front-end servers. Currently all static content is protected by OAuth.
+.PHONY: staging-docs
+staging-docs: docs
+	gcloud config set project vanadium-staging
+	gsutil -m rsync -d -r ./docs gs://staging.jsdoc.v.io
+
 node_modules: package.json  check-that-npm-is-in-path
 ifndef NONPMUPDATE
 	@npm prune
