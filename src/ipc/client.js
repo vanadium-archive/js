@@ -21,7 +21,6 @@ var constants = require('./constants');
 var DecodeUtil = require('../lib/decode-util');
 var SimpleHandler = require('../proxy/simple-handler');
 var vom = require('../vom/vom');
-var EncodeUtil = require('../lib/encode-util');
 var makeError = require('../errors/make-errors');
 var actions = require('../errors/actions');
 var ReservedSignature =
@@ -226,14 +225,22 @@ OutstandingRPC.prototype.constructMessage = function() {
   var jsonMessage = {
     name: this._name,
     method: this._methodName,
-    inArgs: this._args,
+    numInArgs: this._args.length,
     // TODO(bprosnitz) Is || 0 needed?
     numOutArgs: this._numOutParams || 0,
     isStreaming: this._isStreaming,
     timeout: timeout
   };
-  var canonJSONMessage = new VeyronRPC(jsonMessage);
-  return EncodeUtil.encode(canonJSONMessage);
+
+  var header = new VeyronRPC(jsonMessage);
+
+  var writer = new vom.ByteArrayMessageWriter();
+  var encoder = new vom.Encoder(writer);
+  encoder.encode(header);
+  for (var i = 0; i < this._args.length; i++) {
+    encoder.encode(this._args[i]);
+  }
+  return vom.Util.bytes2Hex(writer.getBytes());
 };
 
 /**
@@ -302,121 +309,143 @@ Client.prototype.bindTo = function(ctx, name, cb) {
 
   client.signature(ctx, name).then(function(serviceSignature) {
     vLog.debug('Received signature for:', name, serviceSignature);
-    var boundObject = {};
-
-    function bindMethod(methodSig) {
-      var method = vom.MiscUtil.uncapitalize(methodSig.name);
-
-      boundObject[method] = function(ctx /*, arg1, arg2, ..., callback*/) {
-        var args = Array.prototype.slice.call(arguments, 0);
-        var callback;
-        var err;
-
-        // Callback is the last function argument, pull it out of the args
-        if (typeof args[args.length - 1] === 'function') {
-          callback = args.pop();
-       }
-
-        // Require first arg to be a Context
-        if (args[0] instanceof context.Context) {
-          ctx = args.shift();
-        } else {
-          err = new Error('First argument must be a Context object.');
-
-          if (callback) {
-            return callback(err);
-          } else {
-            return Promise.reject(err);
-          }
-        }
-
-        if (args.length !== methodSig.inArgs.length) {
-          var expectedArgs = methodSig.inArgs.map(function(arg) {
-            return arg.name;
-          });
-
-          // TODO(jasoncampbell): Create an constructor for this error so it
-          // can be created with less ceremony and checked in a
-          // programatic way:
-          //
-          //     service
-          //     .foo('bar')
-          //     .catch(ArgumentsArityError, function(err) {
-          //       console.error('invalid number of arguments')
-          //     })
-          //
-          var errArgs = [ methodSig.name,
-                          Array.prototype.slice.call(arguments, 1),
-                          methodSig.name,
-                          expectedArgs ];
-          err = new IncorrectArgCount(ctx, errArgs);
-          if (callback) {
-            return callback(err);
-          } else {
-            return Promise.reject(err);
-          }
-        }
-
-        // The inArgs need to be converted to the signature's inArg types.
-        var canonArgs = new Array(args.length);
-        try {
-          for (var i = 0; i < args.length; i++) {
-            canonArgs[i] = vom.Canonicalize.fill(args[i],
-              methodSig.inArgs[i].type);
-          }
-        } catch(err) {
-          if (callback) {
-            return callback(err);
-          } else {
-            return Promise.reject(err);
-          }
-        }
-
-        // The OutstandingRPC needs to know streaming information.
-        var inStreaming = (typeof methodSig.inStream === 'object'  &&
-          methodSig.inStream !== null);
-        var outStreaming = (typeof methodSig.outStream === 'object' &&
-          methodSig.outStream !== null);
-        var isStreaming = inStreaming || outStreaming;
-
-        // The OutstandingRPC needs to know the out arg types.
-        var outArgTypes = methodSig.outArgs.map(function(outArg) {
-          return outArg.type;
-        });
-
-        var rpc = new OutstandingRPC(ctx, {
-          proxy: client._proxyConnection,
-          name: name,
-          methodName: methodSig.name,
-          args: canonArgs,
-          outArgTypes: outArgTypes,
-          numOutParams: methodSig.outArgs.length,
-          isStreaming: isStreaming,
-          inStreamingType: inStreaming ? methodSig.inStream.type :
-            vom.Types.JSVALUE
-        }, callback);
-
-        return rpc.start();
-      };
-    }
-
-    // Setup the bindings to every method in the service signature list.
-    serviceSignature.forEach(function(sig) {
-      sig.methods.forEach(function(meth) {
-        bindMethod(meth);
-      });
-    });
-
-    Object.defineProperty(boundObject, '__signature', {
-      value: serviceSignature,
-      writable: false,
-    });
-    def.resolve(boundObject);
+    def.resolve(client.bindWithSignature(name, serviceSignature));
   }).catch(function(err) {
     def.reject(err);
   });
 
   return def.promise;
+};
+
+/**
+ * Performs client side binding of a remote service to a native javascript
+ * stub object when you already have the service signature.
+ *
+ * Usage:
+ * var service = runtime.bindWithSignature('Service/Name', signature);
+ * service.fooMethod(fooArgs).then(function(methodCallResult) {
+ *   // Do stuff with results.
+ * }).catch(function(err) {
+ *   // Calling fooMethod failed.
+ * });
+ *
+ * @param {string} name the veyron name of the service to bind to.
+ * @param {Object} signature the service signature of a veryon service.
+ * @return {Object} An object with methods that perform rpcs to service methods
+ */
+Client.prototype.bindWithSignature = function(name, signature) {
+  var client = this;
+  var boundObject = {};
+
+  function bindMethod(methodSig) {
+    var method = vom.MiscUtil.uncapitalize(methodSig.name);
+
+    boundObject[method] = function(ctx /*, arg1, arg2, ..., callback*/) {
+      var args = Array.prototype.slice.call(arguments, 0);
+      var callback;
+      var err;
+
+      // Callback is the last function argument, pull it out of the args
+      if (typeof args[args.length - 1] === 'function') {
+        callback = args.pop();
+      }
+
+      // Require first arg to be a Context
+      if (args[0] instanceof context.Context) {
+        ctx = args.shift();
+      } else {
+        err = new Error('First argument must be a Context object.');
+
+        if (callback) {
+          return callback(err);
+        } else {
+          return Promise.reject(err);
+        }
+      }
+
+      if (args.length !== methodSig.inArgs.length) {
+        var expectedArgs = methodSig.inArgs.map(function(arg) {
+          return arg.name;
+        });
+
+        // TODO(jasoncampbell): Create an constructor for this error so it
+        // can be created with less ceremony and checked in a
+        // programatic way:
+        //
+        //     service
+        //     .foo('bar')
+        //     .catch(ArgumentsArityError, function(err) {
+        //       console.error('invalid number of arguments')
+        //     })
+        //
+        var errArgs = [ methodSig.name,
+                        Array.prototype.slice.call(arguments, 1),
+                        methodSig.name,
+                        expectedArgs ];
+        err = new IncorrectArgCount(ctx, errArgs);
+        if (callback) {
+          return callback(err);
+        } else {
+          return Promise.reject(err);
+        }
+      }
+
+      // The inArgs need to be converted to the signature's inArg types.
+      var canonArgs = new Array(args.length);
+      try {
+        for (var i = 0; i < args.length; i++) {
+          canonArgs[i] = vom.Canonicalize.fill(args[i],
+                                               methodSig.inArgs[i].type);
+        }
+      } catch(err) {
+        if (callback) {
+          return callback(err);
+        } else {
+          return Promise.reject(err);
+        }
+      }
+
+      // The OutstandingRPC needs to know streaming information.
+      var inStreaming = (typeof methodSig.inStream === 'object'  &&
+                         methodSig.inStream !== null);
+      var outStreaming = (typeof methodSig.outStream === 'object' &&
+                          methodSig.outStream !== null);
+      var isStreaming = inStreaming || outStreaming;
+
+      // The OutstandingRPC needs to know the out arg types.
+      var outArgTypes = methodSig.outArgs.map(function(outArg) {
+        return outArg.type;
+      });
+
+      var rpc = new OutstandingRPC(ctx, {
+        proxy: client._proxyConnection,
+        name: name,
+        methodName: methodSig.name,
+        args: canonArgs,
+        outArgTypes: outArgTypes,
+        numOutParams: methodSig.outArgs.length,
+        isStreaming: isStreaming,
+        inStreamingType: inStreaming ? methodSig.inStream.type :
+          vom.Types.JSVALUE
+      }, callback);
+
+      return rpc.start();
+    };
+  }
+
+  // Setup the bindings to every method in the service signature list.
+  signature.forEach(function(sig) {
+    sig.methods.forEach(function(meth) {
+      bindMethod(meth);
+    });
+  });
+
+  Object.defineProperty(boundObject, '__signature', {
+    value: signature,
+    writable: false,
+  });
+
+  return boundObject;
 };
 
 /**

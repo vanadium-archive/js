@@ -117,7 +117,7 @@ test('Test that service.method() returns the correct result - using callbacks',
   function onmethod(err, result) {
     assert.error(err);
     assert.equal(result.method, 'TripleArgMethod');
-    assert.deepEqual(result.inArgs, [3, 'X', null]);
+    assert.equal(result.numInArgs, 3);
     assert.end();
   }
 });
@@ -134,7 +134,7 @@ test('Test that service.method() returns the correct result - using promises',
     })
     .then(function(result) {
       assert.equal(result.method, 'SingleArgMethod');
-      assert.deepEqual(result.inArgs, [1]);
+      assert.equal(result.numInArgs, 1);
       assert.end();
     })
     .catch(assert.end);

@@ -14,24 +14,20 @@ module.exports = {};
 // Types:
 var _type1 = new vom.Type();
 var _type2 = new vom.Type();
-var _type3 = new vom.Type();
 var _typeBlessingRequest = new vom.Type();
 var _typeVeyronRPC = new vom.Type();
 _type1.kind = vom.Kind.LIST;
 _type1.name = "";
-_type1.elem = vom.Types.ANY;
+_type1.elem = new security.Caveat()._type;
 _type2.kind = vom.Kind.LIST;
 _type2.name = "";
-_type2.elem = new security.Caveat()._type;
-_type3.kind = vom.Kind.LIST;
-_type3.name = "";
-_type3.elem = vom.Types.BYTE;
+_type2.elem = vom.Types.BYTE;
 _typeBlessingRequest.kind = vom.Kind.STRUCT;
 _typeBlessingRequest.name = "v.io/wspr/veyron/services/wsprd/app.BlessingRequest";
-_typeBlessingRequest.fields = [{name: "Handle", type: vom.Types.INT32}, {name: "Caveats", type: _type2}, {name: "DurationMs", type: vom.Types.INT32}, {name: "Extension", type: vom.Types.STRING}];
+_typeBlessingRequest.fields = [{name: "Handle", type: vom.Types.INT32}, {name: "Caveats", type: _type1}, {name: "DurationMs", type: vom.Types.INT32}, {name: "Extension", type: vom.Types.STRING}];
 _typeVeyronRPC.kind = vom.Kind.STRUCT;
 _typeVeyronRPC.name = "v.io/wspr/veyron/services/wsprd/app.VeyronRPC";
-_typeVeyronRPC.fields = [{name: "Name", type: vom.Types.STRING}, {name: "Method", type: vom.Types.STRING}, {name: "InArgs", type: _type1}, {name: "NumOutArgs", type: vom.Types.INT32}, {name: "IsStreaming", type: vom.Types.BOOL}, {name: "Timeout", type: vom.Types.INT64}];
+_typeVeyronRPC.fields = [{name: "Name", type: vom.Types.STRING}, {name: "Method", type: vom.Types.STRING}, {name: "NumInArgs", type: vom.Types.INT32}, {name: "NumOutArgs", type: vom.Types.INT32}, {name: "IsStreaming", type: vom.Types.BOOL}, {name: "Timeout", type: vom.Types.INT64}];
 module.exports.BlessingRequest = (vom.Registry.lookupOrCreateConstructor(_typeBlessingRequest));
 module.exports.VeyronRPC = (vom.Registry.lookupOrCreateConstructor(_typeVeyronRPC));
 
@@ -47,6 +43,52 @@ module.exports.VeyronRPC = (vom.Registry.lookupOrCreateConstructor(_typeVeyronRP
 
 
 // Services:
+
+   
+
+  
+    
+function Controller(){}
+module.exports.Controller = Controller
+
+    
+      
+Controller.prototype.Serve = function(ctx, name, serverId) {
+  throw new Error('Method Serve not implemented');
+};
+     
+
+    
+Controller.prototype._serviceDescription = {
+  name: 'Controller',
+  pkgPath: 'v.io/wspr/veyron/services/wsprd/app',
+  doc: "",
+  embeds: [],
+  methods: [
+    
+      
+    {
+    name: 'Serve',
+    doc: "",
+    inArgs: [{
+      name: 'name',
+      doc: "",
+      type: vom.Types.STRING
+    },
+    {
+      name: 'serverId',
+      doc: "",
+      type: vom.Types.UINT32
+    },
+    ],
+    outArgs: [],
+    inStream: null,
+    outStream: null,
+    tags: []
+  },
+     
+  ]
+};
 
    
  

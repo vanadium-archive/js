@@ -73,13 +73,18 @@ test('Server Router Signature Lookup', function(t) {
     addIncomingHandler: function(){},
     nextId: function() { return inputMessageId; }
   };
-
+  var mockController = {
+    serve: function(){}
+  };
+  var mockClient = {
+    bindWithSignature: function(){return mockController;}
+  };
   var mockRuntime = {
     newContext: function() {
       return new context.Context();
     }
   };
-  var router = new Router(mockProxy, 'TestAppName', mockRuntime);
+  var router = new Router(mockProxy, 'TestAppName', mockRuntime, mockClient);
   var server = new Server(router);
   var options = {
     authorizer: function(){}
