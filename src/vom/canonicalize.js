@@ -308,7 +308,8 @@ function canonicalizeInternal(deepWrap, v, t, seen, outValue) {
         }
         // Make a copy of only the relevant Uint8Array bytes. Excess buffer
         // bytes are not copied over.
-        outValue = new Uint8Array(neededLen);
+        outValue = new Uint8Array(v);
+        return outValue;
       } else {
         if (!Array.isArray(v)) {
           throw makeError(v, t, 'value is not an Array');
