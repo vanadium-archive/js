@@ -8,6 +8,7 @@
 module.exports = Type;
 
 var Kind = require('./kind');
+var canonicalize; // Must be lazily-required to avoid circular dependency.
 
 /**
  * Creates a new Type.
@@ -26,7 +27,7 @@ function Type(o, skipValidation) {
     o = {};
   } else if (!skipValidation) {
     // Canonicalize the given type object.
-    var canonicalize = require('./canonicalize');
+    canonicalize = canonicalize || require('./canonicalize');
     o = canonicalize.type(o);
   }
   this.name = '';

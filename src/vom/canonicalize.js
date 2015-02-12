@@ -8,6 +8,7 @@
 var BigInt = require('./big-int.js');
 var Complex = require('./complex.js');
 var Kind = require('./kind.js');
+var Registry; // Must be lazily required to avoid circular dependency.
 var Types = require('./types.js');
 var TypeUtil = require('./type-util.js');
 var guessType = require('./guess-type.js');
@@ -164,6 +165,20 @@ function canonicalize(inValue, t, deepWrap, seen, isTopLevelValue) {
 }
 
 /**
+ * Helper function to decode a native number from a BigInt.
+ *
+ * Since this contains a try/catch, it cannot be optimized and thus should not
+ * be in-lined in a larger function.
+ */
+function decodeNativeNumber(v, t) {
+  try {
+    return BigInt.fromNativeNumber(v);
+  } catch(e) {
+    throw makeError(v, t, e);
+  }
+}
+
+/**
  * Helper function for canonicalize, which canonicalizes and validates on an
  * unwrapped value.
  */
@@ -224,12 +239,7 @@ function canonicalizeInternal(deepWrap, v, t, seen, outValue) {
     case Kind.UINT64:
     case Kind.INT64:
       if (typeof v === 'number') {
-        try {
-          outValue = BigInt.fromNativeNumber(v);
-          return outValue;
-        } catch(e) {
-          throw makeError(v, t, e);
-        }
+        return decodeNativeNumber(v, t);
       } else if (v instanceof BigInt) {
         // BigInt is not mutable, so we don't need to send a copy to the cache.
         return v;
@@ -625,7 +635,7 @@ function objectToMap(o) {
  */
 function getObjectWithType(t) {
   // Get the proper constructor from the Registry.
-  var Registry = require('./registry.js');
+  Registry = Registry || require('./registry.js');
   var Constructor = Registry.lookupOrCreateConstructor(t);
 
   // Then make an empty object with that constructor.
