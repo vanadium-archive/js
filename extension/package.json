@@ -9,21 +9,21 @@
   "author": "veyron",
   "license": "MIT",
   "dependencies": {
-    "debug": "^1.0.4",
+    "debug": "^2.1.1",
     "domready": "~1.0.7",
     "insert-css": "^0.2.0",
-    "lodash": "^2.4.1",
-    "mercury": "^11.0.0",
-    "xtend": "^3.0.0",
+    "lodash": "^3.0.0",
+    "mercury": "^12.0.0",
+    "xtend": "^4.0.0",
     "eventemitter2": "~0.4.14",
     "es6-shim": "^0.20.2",
     "superagent": "~0.21.0"
   },
   "devDependencies": {
     "brfs": "^1.2.0",
-    "browserify": "~6.3.3",
+    "browserify": "^8.1.1",
     "dependency-check": "^1.1.5",
-    "jshint": "^2.5.2",
+    "jshint": "^2.6.0",
     "node-static": "^0.7.4",
     "envify": "~3.2.0",
     "esprima": "~1.2.2"
