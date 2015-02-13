@@ -7,6 +7,7 @@ var extend = require('xtend');
 var isBrowser = require('is-browser');
 
 var Deferred = require('./lib/deferred');
+var extnUtils = require('./lib/extension-utils');
 var Runtime = require('./runtime/runtime');
 var vlog = require('./lib/vlog');
 
@@ -32,6 +33,15 @@ module.exports = {
   context: require('./runtime/context'),
   vom: require('./vom/vom'),
 };
+
+if (isBrowser) {
+  // Add ExtensionNotInstalledError and isExtensionInstalled to exports if we
+  // are in a browser.
+  module.exports = extend(module.exports, {
+    ExtensionNotInstalledError: extnUtils.ExtensionNotInstalledError,
+    isExtensionInstalled: extnUtils.isExtensionInstalled
+  });
+}
 
 /**
  * Creates a Veyron runtime.

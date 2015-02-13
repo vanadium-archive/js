@@ -2,10 +2,9 @@ var EE = require('eventemitter2').EventEmitter2;
 var inherits = require('util').inherits;
 
 var types = require('./event-proxy-message-types');
+var extnUtils = require('../lib/extension-utils');
 
 var defaultTimeout = 5000; // ms
-
-var publishedExtensionID = 'jcaelnibllfoobpedofhlaobfcoknpap';
 
 // ExtensionEventProxy sends messages to the extension, and listens for messages
 // coming from the extension.
@@ -31,17 +30,14 @@ function ExtensionEventProxy(timeout){
   this.queuedMessages = [];
 
   // Check to see if the extension is installed.
-  this.isExtensionInstalled(function(isInstalled) {
-    // If not installed, emit an error.
+  extnUtils.isExtensionInstalled(function(err, isInstalled) {
+    if (err) {
+      proxy.emit('error', err);
+    }
+
+    // If not installed, emit ExtensionNotInstalledError.
     if (!isInstalled) {
-      // TODO(nlacasse): Fix this URL once the extension is hosted in the play
-      // store.
-      var error = new Error(
-        'Error connecting to the Vanadium Chrome Extension.  Please make ' +
-        'sure the extension is installed and enabled.  Download it here: ' +
-        'https://chrome.google.com/webstore/detail/' + publishedExtensionID
-      );
-      proxy.emit('error', error);
+      proxy.emit('error', new extnUtils.ExtensionNotInstalledError());
       return;
     }
 
@@ -119,18 +115,6 @@ ExtensionEventProxy.prototype.waitForExtension = function(timeout) {
 
     proxy.emit('connected');
   });
-};
-
-// Check if the extension is installed by making a request to a web accessible
-// image.  See http://stackoverflow.com/questions/8042548
-ExtensionEventProxy.prototype.isExtensionInstalled = function(cb) {
-  var imgUrl = 'chrome-extension://' + publishedExtensionID + '/images/1x1.png';
-
-  var img = window.document.createElement('img');
-  img.setAttribute('src', imgUrl);
-
-  img.addEventListener('load', cb.bind(null, true), true);
-  img.addEventListener('error', cb.bind(null, false), true);
 };
 
 module.exports = new ExtensionEventProxy();
