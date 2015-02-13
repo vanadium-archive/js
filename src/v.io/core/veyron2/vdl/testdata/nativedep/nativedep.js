@@ -5,7 +5,7 @@ var vom = require('../../../../../.././vom/vom');
 
 
 
-var native = require('./../native/native');
+var nativetest = require('./../nativetest/nativetest');
 
 module.exports = {};
 
@@ -15,7 +15,7 @@ module.exports = {};
 var _typeAll = new vom.Type();
 _typeAll.kind = vom.Kind.STRUCT;
 _typeAll.name = "v.io/core/veyron2/vdl/testdata/nativedep.All";
-_typeAll.fields = [{name: "A", type: new native.WireString()._type}, {name: "B", type: new native.WireMapStringInt()._type}, {name: "C", type: new native.WireTime()._type}, {name: "D", type: new native.WireSamePkg()._type}, {name: "E", type: new native.WireMultiImport()._type}];
+_typeAll.fields = [{name: "A", type: new nativetest.WireString()._type}, {name: "B", type: new nativetest.WireMapStringInt()._type}, {name: "C", type: new nativetest.WireTime()._type}, {name: "D", type: new nativetest.WireSamePkg()._type}, {name: "E", type: new nativetest.WireMultiImport()._type}];
 module.exports.All = (vom.Registry.lookupOrCreateConstructor(_typeAll));
 
 

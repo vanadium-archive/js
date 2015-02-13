@@ -6,6 +6,9 @@ var MessageType = require('../../src/proxy/message-type');
 var createMockProxy = require('./mock-proxy');
 var DecodeUtil = require('../../src/lib/decode-util');
 var EncodeUtil = require('../../src/lib/encode-util');
+var vtrace = require('../../src/lib/vtrace');
+var VeyronRPCResponse = require(
+  '../../src/v.io/wspr/veyron/services/wsprd/app/app').VeyronRPCResponse;
 
 var mockService = {
   tripleArgMethod: function(ctx, a, b, c) {},
@@ -14,13 +17,22 @@ var mockService = {
 
 var mockSignature = createSignatures(mockService);
 
+function testContext() {
+  var ctx = new context.Context();
+  ctx = vtrace.withNewStore(ctx);
+  ctx = vtrace.withNewTrace(ctx);
+  return ctx;
+}
+
 var mockProxy = createMockProxy(function(data, type) {
   if (type === MessageType.SIGNATURE) {
     return [mockSignature];
   } else {
     // Take the first arg and return it in a result list.
     var decodedData = DecodeUtil.decode(data);
-    return EncodeUtil.encode([decodedData]);
+    var response = new VeyronRPCResponse();
+    response.outArgs = [decodedData];
+    return EncodeUtil.encode(response);
   }
 });
 
@@ -76,7 +88,7 @@ function validateBoundService(assert, boundService) {
 test('Test that correct bindTo call succeeds - using callbacks',
   function(assert) {
   var client = new Client(mockProxy);
-  var ctx = new context.Context();
+  var ctx = testContext();
 
   client.bindTo(ctx, 'service-name', function(err, boundService) {
     assert.notOk(err, 'no error expected');
@@ -88,7 +100,7 @@ test('Test that correct bindTo call succeeds - using callbacks',
 test('Test that correct bindTo call succeeds - using promises',
   function(assert) {
   var client = new Client(mockProxy);
-  var ctx = new context.Context();
+  var ctx = testContext();
 
   client.bindTo(ctx, 'service-name')
     .then(function(boundService) {
@@ -104,7 +116,7 @@ test('Test that correct bindTo call succeeds - using promises',
 test('Test that service.method() returns the correct result - using callbacks',
   function(assert) {
   var client = new Client(mockProxy);
-  var ctx = new context.Context();
+  var ctx = testContext();
 
   client.bindTo(ctx, 'service-name', onservice);
 
@@ -125,7 +137,7 @@ test('Test that service.method() returns the correct result - using callbacks',
 test('Test that service.method() returns the correct result - using promises',
   function(assert) {
   var client = new Client(mockProxy);
-  var ctx = new context.Context();
+  var ctx = testContext();
 
   client
     .bindTo(ctx, 'service-name')
@@ -143,7 +155,7 @@ test('Test that service.method() returns the correct result - using promises',
 test('Test that service.method() fails without a context - using callbacks',
   function(assert) {
   var client = new Client(mockProxy);
-  var ctx = new context.Context();
+  var ctx = testContext();
 
   client.bindTo(ctx, 'service-name', function(err, service) {
     assert.error(err);
@@ -159,7 +171,7 @@ test('Test that service.method() fails without a context - using callbacks',
 test('Test that service.method() fails without a context - using promises',
   function(assert) {
   var client = new Client(mockProxy);
-  var ctx = new context.Context();
+  var ctx = testContext();
 
   client.bindTo(ctx, 'service-name', function(err, service) {
     assert.error(err);
@@ -179,7 +191,7 @@ test('Test that service.method() fails without a context - using promises',
 
 test('service.method() - callback error', function(assert) {
   var client = new Client(mockProxy);
-  var ctx = new context.Context();
+  var ctx = testContext();
 
   client.bindTo(ctx, 'service-name', onservice);
 
@@ -198,7 +210,7 @@ test('service.method() - callback error', function(assert) {
 
 test('service.method() - promise error', function(assert) {
   var client = new Client(mockProxy);
-  var ctx = new context.Context();
+  var ctx = testContext();
 
   client
     .bindTo(ctx, 'service-name')
@@ -219,7 +231,7 @@ test('service.method() - promise error', function(assert) {
 
 test('var promise = client.signature(ctx, name) - promise', function(assert) {
   var client = new Client(mockProxy);
-  var ctx = new context.Context();
+  var ctx = testContext();
 
   client.signature(ctx, 'service-name')
   .then(function(sigs) {
@@ -233,7 +245,7 @@ test('var promise = client.signature(ctx, name) - promise', function(assert) {
 
 test('client.signature(ctx, name, callback) - callback', function(assert) {
   var client = new Client(mockProxy);
-  var ctx = new context.Context();
+  var ctx = testContext();
 
   client.signature(ctx, 'service-name', function(err, sigs) {
     assert.error(err);

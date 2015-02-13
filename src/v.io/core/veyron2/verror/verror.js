@@ -35,6 +35,12 @@ module.exports.InternalError = makeError('v.io/core/veyron2/verror.Internal', ac
 ]);
 
 
+module.exports.NotImplementedError = makeError('v.io/core/veyron2/verror.NotImplemented', actions.NO_RETRY, {
+  'en': '{1:}{2:} Not implemented{:_}',
+}, [
+]);
+
+
 module.exports.EOFError = makeError('v.io/core/veyron2/verror.EOF', actions.NO_RETRY, {
   'en': '{1:}{2:} EOF{:_}',
 }, [

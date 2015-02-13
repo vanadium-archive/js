@@ -6,6 +6,7 @@ var vom = require('../../../../../.././vom/vom');
 
 
 var security = require('./../../../../../core/veyron2/security/security');
+var vtrace = require('./../../../../../core/veyron2/vtrace/vtrace');
 
 module.exports = {};
 
@@ -14,22 +15,39 @@ module.exports = {};
 // Types:
 var _type1 = new vom.Type();
 var _type2 = new vom.Type();
+var _type3 = new vom.Type();
+var _type4 = new vom.Type();
+var _type5 = new vom.Type();
 var _typeBlessingRequest = new vom.Type();
-var _typeVeyronRPC = new vom.Type();
+var _typeVeyronRPCRequest = new vom.Type();
+var _typeVeyronRPCResponse = new vom.Type();
 _type1.kind = vom.Kind.LIST;
 _type1.name = "";
-_type1.elem = new security.Caveat()._type;
+_type1.elem = vom.Types.ANY;
 _type2.kind = vom.Kind.LIST;
 _type2.name = "";
-_type2.elem = vom.Types.BYTE;
+_type2.elem = new vtrace.SpanRecord()._type;
+_type3.kind = vom.Kind.LIST;
+_type3.name = "";
+_type3.elem = new vtrace.Annotation()._type;
+_type4.kind = vom.Kind.LIST;
+_type4.name = "";
+_type4.elem = new security.Caveat()._type;
+_type5.kind = vom.Kind.LIST;
+_type5.name = "";
+_type5.elem = vom.Types.BYTE;
 _typeBlessingRequest.kind = vom.Kind.STRUCT;
 _typeBlessingRequest.name = "v.io/wspr/veyron/services/wsprd/app.BlessingRequest";
-_typeBlessingRequest.fields = [{name: "Handle", type: vom.Types.INT32}, {name: "Caveats", type: _type1}, {name: "DurationMs", type: vom.Types.INT32}, {name: "Extension", type: vom.Types.STRING}];
-_typeVeyronRPC.kind = vom.Kind.STRUCT;
-_typeVeyronRPC.name = "v.io/wspr/veyron/services/wsprd/app.VeyronRPC";
-_typeVeyronRPC.fields = [{name: "Name", type: vom.Types.STRING}, {name: "Method", type: vom.Types.STRING}, {name: "NumInArgs", type: vom.Types.INT32}, {name: "NumOutArgs", type: vom.Types.INT32}, {name: "IsStreaming", type: vom.Types.BOOL}, {name: "Timeout", type: vom.Types.INT64}];
+_typeBlessingRequest.fields = [{name: "Handle", type: vom.Types.INT32}, {name: "Caveats", type: _type4}, {name: "DurationMs", type: vom.Types.INT32}, {name: "Extension", type: vom.Types.STRING}];
+_typeVeyronRPCRequest.kind = vom.Kind.STRUCT;
+_typeVeyronRPCRequest.name = "v.io/wspr/veyron/services/wsprd/app.VeyronRPCRequest";
+_typeVeyronRPCRequest.fields = [{name: "Name", type: vom.Types.STRING}, {name: "Method", type: vom.Types.STRING}, {name: "NumInArgs", type: vom.Types.INT32}, {name: "NumOutArgs", type: vom.Types.INT32}, {name: "IsStreaming", type: vom.Types.BOOL}, {name: "Timeout", type: vom.Types.INT64}, {name: "TraceRequest", type: new vtrace.Request()._type}];
+_typeVeyronRPCResponse.kind = vom.Kind.STRUCT;
+_typeVeyronRPCResponse.name = "v.io/wspr/veyron/services/wsprd/app.VeyronRPCResponse";
+_typeVeyronRPCResponse.fields = [{name: "OutArgs", type: _type1}, {name: "TraceResponse", type: new vtrace.Response()._type}];
 module.exports.BlessingRequest = (vom.Registry.lookupOrCreateConstructor(_typeBlessingRequest));
-module.exports.VeyronRPC = (vom.Registry.lookupOrCreateConstructor(_typeVeyronRPC));
+module.exports.VeyronRPCRequest = (vom.Registry.lookupOrCreateConstructor(_typeVeyronRPCRequest));
+module.exports.VeyronRPCResponse = (vom.Registry.lookupOrCreateConstructor(_typeVeyronRPCResponse));
 
 
 
@@ -53,7 +71,7 @@ module.exports.Controller = Controller
 
     
       
-Controller.prototype.Serve = function(ctx, name, serverId) {
+Controller.prototype.serve = function(ctx, name, serverId) {
   throw new Error('Method Serve not implemented');
 };
      

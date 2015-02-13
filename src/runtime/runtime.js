@@ -17,6 +17,7 @@ var SimpleHandler = require('../proxy/simple-handler');
 var vlog = require('../lib/vlog');
 var context = require('./context');
 var SharedContextKeys = require('./shared-context-keys');
+var vtrace = require('../lib/vtrace');
 
 module.exports = Runtime;
 
@@ -111,6 +112,8 @@ Runtime.prototype.getContext = function() {
   if (this._language) {
     ctx = ctx.withValue(SharedContextKeys.LANG_KEY, this._language);
   }
+  ctx = vtrace.withNewStore(ctx);
+  ctx = vtrace.withNewTrace(ctx);
   this._rootCtx = ctx;
   return ctx;
 };

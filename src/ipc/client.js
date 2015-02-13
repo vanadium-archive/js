@@ -23,10 +23,11 @@ var SimpleHandler = require('../proxy/simple-handler');
 var vom = require('../vom/vom');
 var makeError = require('../errors/make-errors');
 var actions = require('../errors/actions');
+var VeyronRPCRequest =
+  require('../v.io/wspr/veyron/services/wsprd/app/app').VeyronRPCRequest;
+var vtrace = require('../lib/vtrace');
 var ReservedSignature =
   require('../v.io/core/veyron2/ipc/ipc').ReservedSignature.val;
-var VeyronRPC =
-  require('../v.io/wspr/veyron/services/wsprd/app/app').VeyronRPC;
 
 var OutstandingRPC = function(ctx, options, cb) {
   this._ctx = ctx;
@@ -154,15 +155,19 @@ OutstandingRPC.prototype.handleResponse = function(type, data) {
 };
 
 OutstandingRPC.prototype.handleCompletion = function(data) {
+  var response;
   try {
-    data = DecodeUtil.decode(data);
+    response = DecodeUtil.decode(data);
   } catch (e) {
     this.handleError(
       new verror.InternalError(
         this._ctx, ['Failed to decode result: ', e]));
       return;
   }
-  this._def.resolve(data);
+  
+  vtrace.getStore(this._ctx).merge(response.traceResponse);
+
+  this._def.resolve(response.outArgs);
   if (this._def.stream) {
     this._def.stream._queueRead(null);
   }
@@ -222,6 +227,8 @@ OutstandingRPC.prototype.constructMessage = function() {
     timeout = deadline - Date.now();
   }
 
+  var span = vtrace.getSpan(this._ctx);
+
   var jsonMessage = {
     name: this._name,
     method: this._methodName,
@@ -229,10 +236,15 @@ OutstandingRPC.prototype.constructMessage = function() {
     // TODO(bprosnitz) Is || 0 needed?
     numOutArgs: this._numOutParams || 0,
     isStreaming: this._isStreaming,
-    timeout: timeout
+    timeout: timeout,
+    traceRequest: {
+      spanID: span.id,
+      traceID: span.trace,
+      method: 1,
+    }
   };
 
-  var header = new VeyronRPC(jsonMessage);
+  var header = new VeyronRPCRequest(jsonMessage);
 
   var writer = new vom.ByteArrayMessageWriter();
   var encoder = new vom.Encoder(writer);
@@ -363,11 +375,13 @@ Client.prototype.bindWithSignature = function(name, signature) {
         }
       }
 
+      ctx = vtrace.withNewSpan(ctx, '<jsclient>"'+name+'".'+method);
+
       if (args.length !== methodSig.inArgs.length) {
         var expectedArgs = methodSig.inArgs.map(function(arg) {
           return arg.name;
         });
-
+        
         // TODO(jasoncampbell): Create an constructor for this error so it
         // can be created with less ceremony and checked in a
         // programatic way:
