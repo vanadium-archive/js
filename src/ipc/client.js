@@ -26,6 +26,8 @@ var actions = require('../errors/actions');
 var VeyronRPCRequest =
   require('../v.io/wspr/veyron/services/wsprd/app/app').VeyronRPCRequest;
 var vtrace = require('../lib/vtrace');
+var CollectInMemory =
+  require('../v.io/core/veyron2/vtrace/vtrace').CollectInMemory;
 var ReservedSignature =
   require('../v.io/core/veyron2/ipc/ipc').ReservedSignature.val;
 
@@ -240,7 +242,7 @@ OutstandingRPC.prototype.constructMessage = function() {
     traceRequest: {
       spanID: span.id,
       traceID: span.trace,
-      method: 1,
+      flags: CollectInMemory,
     }
   };
 

@@ -7,11 +7,10 @@
 var uniqueid = require('./uniqueid');
 var context = require('../runtime/context');
 var vdl = require('../v.io/core/veyron2/vtrace/vtrace');
-var BigInt = require('../vom/big-int');
+var time = require('../v.io/core/veyron2/vdl/vdlroot/src/time/time');
 
 var spanKey = context.ContextKey();
 var storeKey = context.ContextKey();
-var msToNS = BigInt.fromNativeNumber(1000000);
 
 /**
  * Create a map key from a uniqueid.Id.
@@ -21,6 +20,19 @@ var msToNS = BigInt.fromNativeNumber(1000000);
  */
 function key(id) {
   return uniqueid.toHexString(id);
+}
+
+var secondsPerDay = 86400;
+var unixEpoch = (1969*365 + 1969/4 - 1969/100 + 1969/400) * secondsPerDay;
+
+function toVDLTime(date) {
+  var ms = date.getTime();
+  var seconds = Math.floor(ms / 1000);
+  var nano = (ms % 1000) * 1000000;
+  return time.Time({
+    seconds: seconds + unixEpoch,
+    nano: nano
+  });
 }
 
 /**
@@ -167,21 +179,18 @@ Store.prototype._getOrCreateSpan = function(span) {
 
 Store.prototype._start = function(span) {
   var record = this._getOrCreateSpan(span);
-  var now = new Date();
-  record.start = BigInt.fromNativeNumber(now.getTime()).multiply(msToNS);
+  record.start = toVDLTime(new Date());
 };
 
 Store.prototype._finish = function(span) {
   var record = this._getOrCreateSpan(span);
-  var now = new Date();
-  record.end = BigInt.fromNativeNumber(now.getTime()).multiply(msToNS);
+  record.end = toVDLTime(new Date());
 };
 
 Store.prototype._annotate = function(span, msg) {
   var record = this._getOrCreateSpan(span);
   var annotation = new vdl.Annotation();
-  var now = new Date();
-  annotation.when = BigInt.fromNativeNumber(now.getTime()).multiply(msToNS);
+  annotation.when = toVDLTime(new Date());
   annotation.message = msg;
   record.annotations.push(annotation);
 };
