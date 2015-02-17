@@ -1,1 +1,1 @@
-module.exports = new RegExp('^test-shell-.*/child.*');
+module.exports = new RegExp('^test/child.*');
