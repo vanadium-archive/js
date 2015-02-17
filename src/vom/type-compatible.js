@@ -1,6 +1,6 @@
 /**
  * @fileoverview Defines the function that checks for type compatibility.
- * This logic duplicates that of veyron2/vdl/valconv/compatible.go
+ * This logic duplicates that of veyron2/vdl/compatible.go
  * Compatible: Two types can potentially convert to each other.
  * Convertible: A value with one type can be converted to a second type.
  * See canonicalize.js for the function that converts a value to a given type.
