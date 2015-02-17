@@ -46,7 +46,7 @@ func (c *cacheImpl) Get(ctx ipc.ServerContext, key string) (vdl.AnyRep, error) {
 		return value, nil
 	}
 
-	return typedNil, verror.New(verror.NoExist, ctx.Context(), key)
+	return typedNil, verror.New(verror.ErrNoExist, ctx.Context(), key)
 }
 
 // getWithTypeCheck gets the key and tests if its type matches the given time, erroring if it does
@@ -144,7 +144,7 @@ func (c *cacheImpl) KeyValuePairs(ipc.ServerContext) ([]test_service.KeyValuePai
 func (c *cacheImpl) MostRecentSet(ctx ipc.ServerContext) (test_service.KeyValuePair, int64, error) {
 	var err error
 	if c.lastUpdateTime.IsZero() {
-		err = verror.New(verror.NoExist, ctx.Context())
+		err = verror.New(verror.ErrNoExist, ctx.Context())
 	}
 	return c.mostRecent, c.lastUpdateTime.Unix(), err
 }
@@ -189,7 +189,7 @@ func (c *cacheImpl) MultiGet(ctx test_service.CacheMultiGetContext) error {
 		key := ctx.RecvStream().Value()
 		value, ok := c.cache[key]
 		if !ok {
-			return verror.New(verror.NoExist, ctx.Context(), key)
+			return verror.New(verror.ErrNoExist, ctx.Context(), key)
 		}
 		ctx.SendStream().Send(value)
 	}
