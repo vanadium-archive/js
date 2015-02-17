@@ -17,35 +17,35 @@ func NewErrorThrower() test_service.ErrorThrowerServerMethods {
 type errorThrowerImpl struct{}
 
 func (e *errorThrowerImpl) ThrowAborted(ctx ipc.ServerContext) error {
-	return verror.New(verror.Aborted, ctx.Context())
+	return verror.New(verror.ErrAborted, ctx.Context())
 }
 
 func (e *errorThrowerImpl) ThrowBadArg(ctx ipc.ServerContext) error {
-	return verror.New(verror.BadArg, ctx.Context())
+	return verror.New(verror.ErrBadArg, ctx.Context())
 }
 
 func (e *errorThrowerImpl) ThrowBadProtocol(ctx ipc.ServerContext) error {
-	return verror.New(verror.BadProtocol, ctx.Context())
+	return verror.New(verror.ErrBadProtocol, ctx.Context())
 }
 
 func (e *errorThrowerImpl) ThrowInternal(ctx ipc.ServerContext) error {
-	return verror.New(verror.Internal, ctx.Context())
+	return verror.New(verror.ErrInternal, ctx.Context())
 }
 
 func (e *errorThrowerImpl) ThrowNoAccess(ctx ipc.ServerContext) error {
-	return verror.New(verror.NoAccess, ctx.Context())
+	return verror.New(verror.ErrNoAccess, ctx.Context())
 }
 
 func (e *errorThrowerImpl) ThrowNoExist(ctx ipc.ServerContext) error {
-	return verror.New(verror.NoExist, ctx.Context())
+	return verror.New(verror.ErrNoExist, ctx.Context())
 }
 
 func (e *errorThrowerImpl) ThrowNoExistOrNoAccess(ctx ipc.ServerContext) error {
-	return verror.New(verror.NoExistOrNoAccess, ctx.Context())
+	return verror.New(verror.ErrNoExistOrNoAccess, ctx.Context())
 }
 
 func (e *errorThrowerImpl) ThrowUnknown(ctx ipc.ServerContext) error {
-	return verror.New(verror.Unknown, ctx.Context())
+	return verror.New(verror.ErrUnknown, ctx.Context())
 }
 
 func (e *errorThrowerImpl) ThrowGoError(ctx ipc.ServerContext) error {
