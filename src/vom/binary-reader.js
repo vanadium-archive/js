@@ -23,7 +23,19 @@ BinaryReader.prototype.readByte = function() {
   var val = this.buf[this.pos];
   this.pos++;
   if (val === undefined) {
-  	throw new Error();
+  	throw new Error('Failed to read byte, reached end of buffer');
+  }
+  return val;
+};
+
+/**
+ * Returns the next byte from the buffer without advancing the reader
+ * @return {number} The byte value. EOF is represented by null.
+ */
+BinaryReader.prototype.peekByte = function() {
+  var val = this.buf[this.pos];
+  if (val === undefined) {
+  	throw new Error('Failed to read byte, reached end of buffer');
   }
   return val;
 };

@@ -12,6 +12,9 @@ var Kind = require('./kind.js');
 var canonicalize = require('./canonicalize.js');
 var stringify = require('./stringify.js');
 var guessType = require('./guess-type.js');
+var binaryUtil = require('./binary-util');
+var BigInt = require('./big-int');
+var BootstrapTypes = require('./bootstrap-types');
 require('./es6-shim');
 
 /**
@@ -39,121 +42,177 @@ Encoder.prototype.encode = function(val, type) {
 
   var typeId = this._typeEncoder.encodeType(this._messageWriter, type);
   var writer = new RawVomWriter();
-  this._encodeValue(val, type, writer);
+  this._encodeValue(val, type, writer, false);
   this._messageWriter.writeValueMessage(typeId,
     TypeUtil.shouldSendLength(type), writer.getBytes());
 };
 
-Encoder.prototype._encodeValue = function(v, t, writer) {
+Encoder.prototype._encodeValue = function(v, t, writer, omitEmpty) {
   v = TypeUtil.unwrap(v);
 
   switch (t.kind) {
     case Kind.BOOL:
+      if (!v && omitEmpty) {
+        return false;
+      }
       writer.writeBool(v);
-      break;
+      return true;
     case Kind.BYTE:
+      if (!v && omitEmpty) {
+        return false;
+      }
       writer.writeByte(v);
-      break;
+      return true;
     case Kind.UINT16:
     case Kind.UINT32:
     case Kind.UINT64:
+      if (!v && omitEmpty) {
+        return false;
+      }
+      if ((v instanceof BigInt) && omitEmpty && v._sign === 0) {
+        return false;
+      }
       writer.writeUint(v);
-      break;
+      return true;
     case Kind.INT16:
     case Kind.INT32:
     case Kind.INT64:
+      if (!v && omitEmpty) {
+        return false;
+      }
+      if ((v instanceof BigInt) && omitEmpty && v._sign === 0) {
+        return false;
+      }
       writer.writeInt(v);
-      break;
+      return true;
     case Kind.FLOAT32:
     case Kind.FLOAT64:
+      if (!v && omitEmpty) {
+        return false;
+      }
       writer.writeFloat(v);
-      break;
+      return true;
     case Kind.COMPLEX64:
     case Kind.COMPLEX128:
       if (typeof v === 'object') {
+        if (v.real === 0 && v.imag === 0 && omitEmpty) {
+          return false;
+        }
         writer.writeFloat(v.real);
         writer.writeFloat(v.imag);
-      } else if (typeof v === 'number') {
+        return true;
+      } else if (typeof v === 'number' && omitEmpty) {
+        if (v === 0) {
+          return false;
+        }
         writer.writeFloat(v);
         writer.writeFloat(0);
+        return true;
       }
-      break;
+      return false;
     case Kind.STRING:
+      if (v === '' && omitEmpty) {
+        return false;
+      }
       writer.writeString(v);
-      break;
+      return true;
     case Kind.ENUM:
-      this._encodeEnum(v, t, writer);
-      break;
+      return this._encodeEnum(v, t, writer, omitEmpty);
     case Kind.LIST:
-      this._encodeList(v, t, writer);
-      break;
+      return this._encodeList(v, t, writer, omitEmpty);
     case Kind.ARRAY:
-      this._encodeArray(v, t, writer);
-      break;
+      return this._encodeArray(v, t, writer, omitEmpty);
     case Kind.SET:
-      this._encodeSet(v, t, writer);
-      break;
+      return this._encodeSet(v, t, writer, omitEmpty);
     case Kind.MAP:
-      this._encodeMap(v, t, writer);
-      break;
+      return this._encodeMap(v, t, writer, omitEmpty);
     case Kind.STRUCT:
-      this._encodeStruct(v, t, writer);
-      break;
+      return this._encodeStruct(v, t, writer, omitEmpty);
     case Kind.UNION:
-      this._encodeUnion(v, t, writer);
-      break;
+      return this._encodeUnion(v, t, writer, omitEmpty);
     case Kind.ANY:
-      this._encodeAny(v, writer);
-      break;
+      return this._encodeAny(v, writer, omitEmpty);
     case Kind.OPTIONAL:
-      this._encodeOptional(v, t, writer);
-      break;
+      return this._encodeOptional(v, t, writer, omitEmpty);
     case Kind.TYPEOBJECT:
       var typeId = this._typeEncoder.encodeType(this._messageWriter, v);
+      if (typeId === BootstrapTypes.definitions.ANY.id && omitEmpty) {
+        return false;
+      }
       writer.writeUint(typeId);
-      break;
+      return true;
     default:
       throw new Error('Unknown kind ' + t.kind);
   }
 };
 
-Encoder.prototype._encodeEnum = function(v, t, writer) {
+Encoder.prototype._encodeEnum = function(v, t, writer, omitEmpty) {
   var labelIndex = t.labels.indexOf(v);
+  if (omitEmpty && labelIndex === 0) {
+    return false;
+  }
   writer.writeUint(labelIndex);
+  return true;
 };
 
-Encoder.prototype._encodeList = function(v, t, writer) {
+Encoder.prototype._encodeList = function(v, t, writer, omitEmpty) {
+  if (v.length === 0 && omitEmpty) {
+    return false;
+  }
   writer.writeUint(v.length);
   this._writeSequence(v, t, writer);
+  return true;
 };
 
 Encoder.prototype._encodeArray = function(v, t, writer) {
+  writer.writeUint(0);
   this._writeSequence(v, t, writer);
+  return true;
 };
 
-Encoder.prototype._encodeSet = function(v, t, writer) {
+Encoder.prototype._encodeSet = function(v, t, writer, omitEmpty) {
+  if (v.size === 0 && omitEmpty) {
+    return false;
+  }
   writer.writeUint(v.size);
   v.forEach(function(value, key) {
     this._encodeValue(key, t.key, writer);
   }, this);
+  return true;
 };
 
-Encoder.prototype._encodeMap = function(v, t, writer) {
+Encoder.prototype._encodeMap = function(v, t, writer, omitEmpty) {
+  if (v.size === 0 && omitEmpty) {
+    return false;
+  }
   writer.writeUint(v.size);
   v.forEach(function(value, key) {
     this._encodeValue(key, t.key, writer);
     this._encodeValue(value, t.elem, writer);
   }, this);
+  return true;
 };
 
-Encoder.prototype._encodeStruct = function(v, t, writer) {
+Encoder.prototype._encodeStruct = function(v, t, writer, omitEmpty) {
   // Encode the fields.
+  var hasWrittenFields = false;
   t.fields.forEach(function(fieldDesc, fieldIndex) {
-    writer.writeUint(fieldIndex + 1);
+    var pos = writer.getPos();
+    writer.writeUint(fieldIndex);
     var fieldVal = v[util.uncapitalize(fieldDesc.name)];
-    this._encodeValue(fieldVal, fieldDesc.type, writer);
+    var valueWritten = this._encodeValue(fieldVal, fieldDesc.type, writer,
+                                         true);
+    if (!valueWritten) {
+      writer.seekBack(pos);
+    } else {
+      hasWrittenFields = true;
+    }
   }, this);
-  writer.writeUint(0);
+  if (omitEmpty && !hasWrittenFields) {
+    return false;
+  }
+  writer.writeByte(binaryUtil.EOF_BYTE);
+  return true;
 };
 
 Encoder.prototype._writeSequence = function(v, t, writer) {
@@ -170,34 +229,52 @@ Encoder.prototype._writeSequence = function(v, t, writer) {
   }
 };
 
-Encoder.prototype._encodeOptional = function(v, t, writer) {
+Encoder.prototype._encodeOptional = function(v, t, writer, omitEmpty) {
   if (v === null || v === undefined) {
-    writer.writeUint(0);
-    return;
+    if (omitEmpty) {
+      return false;
+    }
+    writer.writeByte(binaryUtil.NIL_BYTE);
+    return true;
   }
-  writer.writeUint(1);
-  this._encodeValue(v, t.elem, writer);
+  this._encodeValue(v, t.elem, writer, false);
+  return true;
 };
 
-Encoder.prototype._encodeAny = function(v, writer) {
+Encoder.prototype._encodeAny = function(v, writer, omitEmpty) {
   if (v === null || v === undefined) {
-    writer.writeUint(0);
-    return;
+    if (omitEmpty) {
+      return false;
+    }
+    writer.writeByte(binaryUtil.NIL_BYTE);
+    return true;
   }
   var t = guessType(v);
   var typeId = this._typeEncoder.encodeType(this._messageWriter, t);
   writer.writeUint(typeId);
-  this._encodeValue(v, t, writer);
+  this._encodeValue(v, t, writer, false);
+  return true;
 };
 
-Encoder.prototype._encodeUnion = function(v, t, writer) {
+Encoder.prototype._encodeUnion = function(v, t, writer, omitEmpty) {
   for (var i = 0; i < t.fields.length; i++) {
     var key = t.fields[i].name;
     var lowerKey = util.uncapitalize(key);
     if (v.hasOwnProperty(lowerKey) && v[lowerKey] !== undefined) {
-      writer.writeUint(i + 1); // Encoded index is 1-index.
-      this._encodeValue(v[lowerKey], t.fields[i].type, writer);
-      return; // Stop after writing a single field.
+      var pos = writer.getPos();
+      writer.writeUint(i);
+      // We can only omit empty values if it is the first field in the
+      // union.  If it is the second or later field, it always has to
+      // be emitted.
+      omitEmpty = omitEmpty && i === 0;
+      var encoded = this._encodeValue(v[lowerKey], t.fields[i].type, writer,
+                                      omitEmpty);
+
+      if (!encoded) {
+        writer.seekBack(pos);
+        return false;
+      }
+      return true;
     }
   }
   throw new Error('Union did not encode properly. Received: ' + stringify(v));

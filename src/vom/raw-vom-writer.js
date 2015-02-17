@@ -142,3 +142,20 @@ RawVomWriter.prototype._writeRawBytes = function(bytes) {
 RawVomWriter.prototype.getBytes = function() {
   return new Uint8Array(this._writer.getBytes());
 };
+
+/**
+ * Gets position of underlying buffer
+ * @return {number} position of buffer
+ */
+RawVomWriter.prototype.getPos = function() {
+  return this._writer.getPos();
+};
+
+
+/**
+ * Seeks back to a previous position
+ * @param {number} pos the new position.
+ */
+RawVomWriter.prototype.seekBack = function(pos) {
+  return this._writer.seekBack(pos);
+};

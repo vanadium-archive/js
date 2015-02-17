@@ -11,6 +11,7 @@ var canonicalize = require('./canonicalize.js');
 var util = require('./util.js');
 var BootstrapTypes = require('./bootstrap-types.js');
 var RawVomWriter = require('./raw-vom-writer.js');
+var binaryUtil = require('./binary-util');
 
 /**
  * Create a type encoder to help encode types and associate already sent types
@@ -19,7 +20,9 @@ var RawVomWriter = require('./raw-vom-writer.js');
  */
 function TypeEncoder() {
   this._typeIds = {};
-  this._nextId = 65;
+  // TODO(bjornick): Use the vdl output after we fix:
+  // https://github.com/veyron/release-issues/issues/1109
+  this._nextId = 41;
 }
 
 /**
@@ -119,73 +122,87 @@ TypeEncoder.prototype._encodeWireType = function(messageWriter, type, typeId) {
     case Kind.COMPLEX128:
     case Kind.STRING:
     case Kind.TYPEOBJECT:
-      rawWriter.writeUint(BootstrapTypes.definitions.WIRENAMED.id);
+      rawWriter.writeUint(BootstrapTypes.unionIds.NAMED_TYPE);
+      if (type.name !== '') {
+        rawWriter.writeUint(0);
+        rawWriter.writeString(type.name);
+      }
       rawWriter.writeUint(1);
-      rawWriter.writeString(type.name);
-      rawWriter.writeUint(2);
       rawWriter.writeUint(kindToBootstrapType(type.kind).id);
-      rawWriter.writeUint(0);
+      rawWriter.writeByte(binaryUtil.EOF_BYTE);
       break;
     case Kind.OPTIONAL:
       elemId = this.encodeType(messageWriter, type.elem);
-      rawWriter.writeUint(BootstrapTypes.definitions.WIREOPTIONAL.id);
+      rawWriter.writeUint(BootstrapTypes.unionIds.OPTIONAL_TYPE);
+      if (type.name !== '') {
+        rawWriter.writeUint(0);
+        rawWriter.writeString(type.name);
+      }
       rawWriter.writeUint(1);
-      rawWriter.writeString(type.name);
-      rawWriter.writeUint(2);
       rawWriter.writeUint(elemId);
-      rawWriter.writeUint(0);
+      rawWriter.writeByte(binaryUtil.EOF_BYTE);
       break;
     case Kind.ENUM:
-      rawWriter.writeUint(BootstrapTypes.definitions.WIREENUM.id);
+      rawWriter.writeUint(BootstrapTypes.unionIds.ENUM_TYPE);
+      if (type.name !== '') {
+        rawWriter.writeUint(0);
+        rawWriter.writeString(type.name);
+      }
       rawWriter.writeUint(1);
-      rawWriter.writeString(type.name);
-      rawWriter.writeUint(2);
       rawWriter.writeUint(type.labels.length);
       for (i = 0; i < type.labels.length; i++) {
         rawWriter.writeString(type.labels[i]);
       }
-      rawWriter.writeUint(0);
+      rawWriter.writeByte(binaryUtil.EOF_BYTE);
       break;
     case Kind.ARRAY:
       elemId = this.encodeType(messageWriter, type.elem);
-      rawWriter.writeUint(BootstrapTypes.definitions.WIREARRAY.id);
+      rawWriter.writeUint(BootstrapTypes.unionIds.ARRAY_TYPE);
+      if (type.name !== '') {
+        rawWriter.writeUint(0);
+        rawWriter.writeString(type.name);
+      }
       rawWriter.writeUint(1);
-      rawWriter.writeString(type.name);
-      rawWriter.writeUint(2);
       rawWriter.writeUint(elemId);
-      rawWriter.writeUint(3);
+      rawWriter.writeUint(2);
       rawWriter.writeUint(type.len);
-      rawWriter.writeUint(0);
+      rawWriter.writeByte(binaryUtil.EOF_BYTE);
       break;
     case Kind.LIST:
       elemId = this.encodeType(messageWriter, type.elem);
-      rawWriter.writeUint(BootstrapTypes.definitions.WIRELIST.id);
+      rawWriter.writeUint(BootstrapTypes.unionIds.LIST_TYPE);
+      if (type.name !== '') {
+        rawWriter.writeUint(0);
+        rawWriter.writeString(type.name);
+      }
       rawWriter.writeUint(1);
-      rawWriter.writeString(type.name);
-      rawWriter.writeUint(2);
       rawWriter.writeUint(elemId);
-      rawWriter.writeUint(0);
+      rawWriter.writeByte(binaryUtil.EOF_BYTE);
       break;
     case Kind.SET:
       keyId = this.encodeType(messageWriter, type.key);
-      rawWriter.writeUint(BootstrapTypes.definitions.WIRESET.id);
+      rawWriter.writeUint(BootstrapTypes.unionIds.SET_TYPE);
+      if (type.name !== '') {
+        rawWriter.writeUint(0);
+        rawWriter.writeString(type.name);
+      }
       rawWriter.writeUint(1);
-      rawWriter.writeString(type.name);
-      rawWriter.writeUint(2);
       rawWriter.writeUint(keyId);
-      rawWriter.writeUint(0);
+      rawWriter.writeByte(binaryUtil.EOF_BYTE);
       break;
     case Kind.MAP:
       keyId = this.encodeType(messageWriter, type.key);
       elemId = this.encodeType(messageWriter, type.elem);
-      rawWriter.writeUint(BootstrapTypes.definitions.WIREMAP.id);
+      rawWriter.writeUint(BootstrapTypes.unionIds.MAP_TYPE);
+      if (type.name !== '') {
+        rawWriter.writeUint(0);
+        rawWriter.writeString(type.name);
+      }
       rawWriter.writeUint(1);
-      rawWriter.writeString(type.name);
-      rawWriter.writeUint(2);
       rawWriter.writeUint(keyId);
-      rawWriter.writeUint(3);
+      rawWriter.writeUint(2);
       rawWriter.writeUint(elemId);
-      rawWriter.writeUint(0);
+      rawWriter.writeByte(binaryUtil.EOF_BYTE);
       break;
     case Kind.STRUCT:
     case Kind.UNION:
@@ -197,23 +214,26 @@ TypeEncoder.prototype._encodeWireType = function(messageWriter, type, typeId) {
         });
       }
       if (type.kind === Kind.STRUCT) {
-        rawWriter.writeUint(BootstrapTypes.definitions.WIRESTRUCT.id);
+        rawWriter.writeUint(BootstrapTypes.unionIds.STRUCT_TYPE);
       } else {
-        rawWriter.writeUint(BootstrapTypes.definitions.WIREUNION.id);
+        rawWriter.writeUint(BootstrapTypes.unionIds.UNION_TYPE);
       }
+      if (type.name !== '') {
+        rawWriter.writeUint(0);
+        rawWriter.writeString(type.name);
+      }
+
       rawWriter.writeUint(1);
-      rawWriter.writeString(type.name);
-      rawWriter.writeUint(2);
       rawWriter.writeUint(fieldInfo.length);
       for (i = 0; i < fieldInfo.length; i++) {
         var field = fieldInfo[i];
-        rawWriter.writeUint(1);
-        rawWriter.writeString(field.name);
-        rawWriter.writeUint(2);
-        rawWriter.writeUint(field.id);
         rawWriter.writeUint(0);
+        rawWriter.writeString(field.name);
+        rawWriter.writeUint(1);
+        rawWriter.writeUint(field.id);
+        rawWriter.writeByte(binaryUtil.EOF_BYTE);
       }
-      rawWriter.writeUint(0);
+      rawWriter.writeByte(binaryUtil.EOF_BYTE);
       break;
     default:
       throw new Error('encodeWireType with unknown kind: ' + type.kind);

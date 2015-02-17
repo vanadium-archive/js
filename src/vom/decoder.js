@@ -10,6 +10,7 @@ var Kind = require('./kind.js');
 var Registry = require('./registry.js');
 var Types = require('./types.js');
 var util = require('./util.js');
+var binaryUtil = require('./binary-util');
 
 /**
  * Create a decoder to read objects from the provided message reader.
@@ -128,6 +129,11 @@ Decoder.prototype._decodeList = function(t, reader) {
 };
 
 Decoder.prototype._decodeArray = function(t, reader) {
+  // Consume the zero byte at the beginning of the array.
+  var b = reader.readByte();
+  if (b !== 0) {
+    throw new Error('Unexpected length ' + b);
+  }
   return this._readSequence(t, t.len, reader);
 };
 
@@ -173,10 +179,16 @@ Decoder.prototype._decodeStruct = function(t, reader) {
   var Ctor = Registry.lookupOrCreateConstructor(t);
   var obj = Object.create(Ctor.prototype);
   while (true) {
-    var nextIndex = reader.readUint() - 1;
-    if (nextIndex === -1) {
+    var ctrl = reader.tryReadControlByte();
+    if (ctrl === binaryUtil.EOF_BYTE) {
       break;
     }
+
+    if (ctrl) {
+      throw new Error('Unexpected control byte ' + ctrl);
+    }
+
+    var nextIndex = reader.readUint();
     if (t.fields.length <= nextIndex) {
       throw new Error('Struct index ' + nextIndex + ' out of bounds');
     }
@@ -188,19 +200,24 @@ Decoder.prototype._decodeStruct = function(t, reader) {
 };
 
 Decoder.prototype._decodeOptional = function(t, reader) {
-  var isNil = reader.readUint();
-  if (isNil === 0) {
+  var isNil = reader.peekByte();
+  if (isNil === binaryUtil.NIL_BYTE) {
+    reader.readByte();
     return null;
   }
   return this._decodeValue(t.elem, reader, false);
 };
 
 Decoder.prototype._decodeAny = function(reader) {
-  var typeId = reader.readUint();
-  // A typeid of 0 corresponds to an untyped nil.
-  if (typeId === 0) {
+  var ctrl = reader.tryReadControlByte();
+  if (ctrl === binaryUtil.NIL_BYTE) {
     return null;
   }
+
+  if (ctrl) {
+    throw new Error('Unexpected control byte ' + ctrl);
+  }
+  var typeId = reader.readUint();
   var type = this._typeDecoder.lookupType(typeId);
   if (type === undefined) {
     throw new Error('Undefined typeid ' + typeId);
@@ -210,8 +227,8 @@ Decoder.prototype._decodeAny = function(reader) {
 
 Decoder.prototype._decodeUnion = function(t, reader) {
   // Find the Union field that was set and decode its value.
-  var fieldIndex = reader.readUint() - 1; // Encoded index is 1-indexed.
-  if (fieldIndex < 0 || t.fields.length <= fieldIndex) {
+  var fieldIndex = reader.readUint();
+  if (t.fields.length <= fieldIndex) {
     throw new Error('Union index ' + fieldIndex + ' out of bounds');
   }
   var field = t.fields[fieldIndex];

@@ -32,6 +32,7 @@ var Kind = require('./kind.js');
 var Type = require('./type.js');
 var BootstrapTypes = require('./bootstrap-types.js');
 var RawVomReader = require('./raw-vom-reader.js');
+var binaryUtil = require('./binary-util');
 
 /**
  * Looks up a type in the decoded types cache by id.
@@ -250,22 +251,23 @@ TypeDecoder.prototype._tryBuildPartialType = function(typeId) {
  */
 TypeDecoder.prototype._readPartialType = function(messageBytes) {
   var reader = new RawVomReader(messageBytes);
-  var wiretypeId = reader.readUint();
+  var unionId = reader.readUint();
   var partialType = {};
   var nextIndex;
   var i;
-  switch (wiretypeId) {
-    case BootstrapTypes.definitions.WIRENAMED.id:
+  switch (unionId) {
+    case BootstrapTypes.unionIds.NAMED_TYPE:
       endDef:
       while (true) {
+        if (reader.tryReadControlByte() === binaryUtil.EOF_BYTE) {
+          break endDef;
+        }
         nextIndex = reader.readUint();
         switch(nextIndex) {
           case 0:
-            break endDef;
-          case 1:
             partialType.name = reader.readString();
             break;
-          case 2:
+          case 1:
             partialType.namedTypeId = reader.readUint();
             break;
           default:
@@ -273,18 +275,20 @@ TypeDecoder.prototype._readPartialType = function(messageBytes) {
           }
       }
       break;
-    case BootstrapTypes.definitions.WIREENUM.id:
+    case BootstrapTypes.unionIds.ENUM_TYPE:
       partialType.kind = Kind.ENUM;
       endDef2:
       while (true) {
+        if (reader.tryReadControlByte() === binaryUtil.EOF_BYTE) {
+          break endDef2;
+        }
+
         nextIndex = reader.readUint();
         switch(nextIndex) {
           case 0:
-            break endDef2;
-          case 1:
             partialType.name = reader.readString();
             break;
-          case 2:
+          case 1:
             partialType.labels = new Array(reader.readUint());
             for (i = 0; i < partialType.labels.length; i++) {
               partialType.labels[i] = reader.readString();
@@ -295,21 +299,22 @@ TypeDecoder.prototype._readPartialType = function(messageBytes) {
           }
       }
       break;
-    case BootstrapTypes.definitions.WIREARRAY.id:
+    case BootstrapTypes.unionIds.ARRAY_TYPE:
       partialType.kind = Kind.ARRAY;
       endDef3:
       while (true) {
+        if (reader.tryReadControlByte() === binaryUtil.EOF_BYTE) {
+          break endDef3;
+        }
         nextIndex = reader.readUint();
         switch(nextIndex) {
           case 0:
-            break endDef3;
-          case 1:
             partialType.name = reader.readString();
             break;
-          case 2:
+          case 1:
             partialType.elemTypeId = reader.readUint();
             break;
-          case 3:
+          case 2:
             partialType.len = reader.readUint();
             break;
           default:
@@ -317,18 +322,19 @@ TypeDecoder.prototype._readPartialType = function(messageBytes) {
           }
       }
       break;
-    case BootstrapTypes.definitions.WIRELIST.id:
+    case BootstrapTypes.unionIds.LIST_TYPE:
       partialType.kind = Kind.LIST;
       endDef4:
       while (true) {
+        if (reader.tryReadControlByte() === binaryUtil.EOF_BYTE) {
+          break endDef4;
+        }
         nextIndex = reader.readUint();
         switch(nextIndex) {
           case 0:
-            break endDef4;
-          case 1:
             partialType.name = reader.readString();
             break;
-          case 2:
+          case 1:
             partialType.elemTypeId = reader.readUint();
             break;
           default:
@@ -336,18 +342,19 @@ TypeDecoder.prototype._readPartialType = function(messageBytes) {
           }
       }
       break;
-    case BootstrapTypes.definitions.WIRESET.id:
+    case BootstrapTypes.unionIds.SET_TYPE:
       partialType.kind = Kind.SET;
       endDef5:
       while (true) {
+        if (reader.tryReadControlByte() === binaryUtil.EOF_BYTE) {
+          break endDef5;
+        }
         nextIndex = reader.readUint();
         switch(nextIndex) {
           case 0:
-            break endDef5;
-          case 1:
             partialType.name = reader.readString();
             break;
-          case 2:
+          case 1:
             partialType.keyTypeId = reader.readUint();
             break;
           default:
@@ -355,21 +362,22 @@ TypeDecoder.prototype._readPartialType = function(messageBytes) {
           }
       }
       break;
-    case BootstrapTypes.definitions.WIREMAP.id:
+    case BootstrapTypes.unionIds.MAP_TYPE:
       partialType.kind = Kind.MAP;
       endDef6:
       while (true) {
+        if (reader.tryReadControlByte() === binaryUtil.EOF_BYTE) {
+          break endDef6;
+        }
         nextIndex = reader.readUint();
         switch(nextIndex) {
           case 0:
-            break endDef6;
-          case 1:
             partialType.name = reader.readString();
             break;
-          case 2:
+          case 1:
             partialType.keyTypeId = reader.readUint();
             break;
-          case 3:
+          case 2:
             partialType.elemTypeId = reader.readUint();
             break;
           default:
@@ -377,37 +385,39 @@ TypeDecoder.prototype._readPartialType = function(messageBytes) {
           }
       }
       break;
-    case BootstrapTypes.definitions.WIRESTRUCT.id:
-    case BootstrapTypes.definitions.WIREUNION.id:
-      if (wiretypeId === BootstrapTypes.definitions.WIRESTRUCT.id) {
+    case BootstrapTypes.unionIds.STRUCT_TYPE:
+    case BootstrapTypes.unionIds.UNION_TYPE:
+      if (unionId === BootstrapTypes.unionIds.STRUCT_TYPE) {
         partialType.kind = Kind.STRUCT;
       } else {
         partialType.kind = Kind.UNION;
       }
       endDef7:
       while (true) {
+        if (reader.tryReadControlByte() === binaryUtil.EOF_BYTE) {
+          break endDef7;
+        }
         nextIndex = reader.readUint();
         switch(nextIndex) {
           case 0:
-            break endDef7;
-          case 1:
             partialType.name = reader.readString();
             break;
-          case 2:
+          case 1:
             partialType.fields = new Array(reader.readUint());
             for (i = 0; i < partialType.fields.length; i++) {
               partialType.fields[i] = {};
               sfEndDef:
               while(true) {
+                if (reader.tryReadControlByte() === binaryUtil.EOF_BYTE) {
+                  break sfEndDef;
+                }
                 var sfNextIndex = reader.readUint();
                 switch(sfNextIndex) {
                   case 0:
-                    break sfEndDef;
-                  case 1:
                     var s = reader.readString();
                     partialType.fields[i].name = s;
                     break;
-                  case 2:
+                  case 1:
                     partialType.fields[i].typeId = reader.readUint();
                     break;
                 }
@@ -418,19 +428,24 @@ TypeDecoder.prototype._readPartialType = function(messageBytes) {
             throw new Error('Unexpected index for WireStruct: ' + nextIndex);
           }
       }
+      // We allow struct{} definitions.
+      if (partialType.kind === Kind.STRUCT) {
+        partialType.fields = partialType.fields || [];
+      }
       break;
-    case BootstrapTypes.definitions.WIREOPTIONAL.id:
+    case BootstrapTypes.unionIds.OPTIONAL_TYPE:
       partialType.kind = Kind.OPTIONAL;
       endDef9:
       while (true) {
+        if (reader.tryReadControlByte() === binaryUtil.EOF_BYTE) {
+          break endDef9;
+        }
         nextIndex = reader.readUint();
         switch(nextIndex) {
           case 0:
-            break endDef9;
-          case 1:
             partialType.name = reader.readString();
             break;
-          case 2:
+          case 1:
             partialType.elemTypeId = reader.readUint();
             break;
           default:
@@ -439,7 +454,8 @@ TypeDecoder.prototype._readPartialType = function(messageBytes) {
       }
       break;
     default:
-      throw new Error('Unknown wire type id ' + wiretypeId);
+      throw new Error('Unknown wire type id ' + unionId);
   }
+  partialType.name = partialType.name || '';
   return partialType;
 };

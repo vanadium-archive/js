@@ -42,6 +42,23 @@ RawVomReader.prototype.readBigUint = function() {
 };
 
 /**
+ * Returns a control byte if the next byte is a control byte.
+ * @returns {Number} a control byte if there is one, null if there is no
+ * control byte
+ */
+RawVomReader.prototype.tryReadControlByte = function() {
+  var firstByte = this.peekByte();
+  if (firstByte === null) {
+    return null;
+  }
+
+  if (firstByte > 0x7f && firstByte <= 0xef) {
+    return this.readByte();
+  }
+  return null;
+};
+
+/**
  * Reads a BigInt.
  * @return {BigInt} The BigInt that was read.
  */
@@ -125,6 +142,14 @@ RawVomReader.prototype.readBool = function() {
  */
 RawVomReader.prototype.readByte = function() {
   return this._reader.readByte();
+};
+
+/**
+ * Reads a single VOM byte without advancing the reader
+ * @return {byte} The byte that was read.
+ */
+RawVomReader.prototype.peekByte = function() {
+  return this._reader.peekByte();
 };
 
 /**

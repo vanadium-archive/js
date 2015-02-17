@@ -200,9 +200,6 @@ test('type encoding encode errors', function(t) {
     'unknown kind': {
       kind: -1
     },
-    'struct w/o fields': {
-      kind: Kind.STRUCT
-    },
     'list w/ bad elem': {
       kind: Kind.LIST,
       name: 'testList',

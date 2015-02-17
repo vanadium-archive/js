@@ -69,6 +69,27 @@ BinaryWriter.prototype.getBytes = function() {
 };
 
 /**
+ * Gets position of buffer
+ * @return {number} position of buffer
+ */
+BinaryWriter.prototype.getPos = function() {
+  return this.pos;
+};
+
+/**
+ * Seeks back to a previous position
+ * @param {number} pos the new position.
+ */
+BinaryWriter.prototype.seekBack = function(pos) {
+  if (pos > this.pos) {
+    throw new Error('Cant seek forward');
+  }
+  this.pos = pos;
+};
+
+
+
+/**
  * Computes the smallest power of 2 to make current exceed target.
  * @param {number} current, must be positive
  * @param {number} target

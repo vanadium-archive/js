@@ -567,16 +567,6 @@ function canonicalizeType(type, seen) {
   // Verify deeply that the given type is in the correct form.
   var typeOfType = typeObjectFromKind(type.kind);
 
-  // Check that the type has all of the required fields.
-  // 'name' is the only optional field, so it is not checked.
-  typeOfType.fields.forEach(function(field) {
-    var fieldName = util.uncapitalize(field.name);
-    if (fieldName !== 'name' && !type.hasOwnProperty(fieldName)) {
-      throw new TypeError('Type' + stringify(type) +
-        ' missing required field \'' + fieldName + '\'');
-    }
-  });
-
   // Call canonicalize with this typeOfType. Even though typeOfType is a Struct,
   // behind the scenes, canonType will be a TypeObject.
   var canonType = canonicalize(type, typeOfType, false, seen, false);
