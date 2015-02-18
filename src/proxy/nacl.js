@@ -4,6 +4,7 @@
  */
 
 var extensionEventProxy = require('./event-proxy');
+var extnUtils = require('../lib/extension-utils');
 var Deferred = require('./../lib/deferred');
 var Proxy = require('./proxy');
 var random = require('../lib/random');
@@ -23,7 +24,7 @@ function ProxyConnection() {
 
   this.instanceId = random.hex();
 
-  extensionEventProxy.on('browsprMsg', function(msg) {
+  this.onBrowsprMsg = function(msg) {
     var body;
     try {
       body = DecodeUtil.decode(msg.body);
@@ -35,13 +36,16 @@ function ProxyConnection() {
     if (msg.instanceId === self.instanceId) {
       self.process(body);
     }
-  });
+  };
+
+  extensionEventProxy.on('browsprMsg', this.onBrowsprMsg);
 
   // rethrow crash error when proxy fails.
-  extensionEventProxy.on('crash', function(message) {
-    var crashError = new Error(message);
-    self.emit('crash', crashError);
-  });
+  this.onCrash = function() {
+    self.emit('crash', new extnUtils.ExtensionCrashError());
+  };
+
+  extensionEventProxy.on('crash', this.onCrash);
 
   var def = new Deferred();
   Proxy.call(this, def.promise);
@@ -63,6 +67,9 @@ ProxyConnection.prototype.send = function(msg) {
 ProxyConnection.prototype.close = function(cb) {
   var defaultTimeout = 5000;
   var deferred = new Deferred(cb);
+
+  extensionEventProxy.removeListener('browsprMsg', this.onBrowsprMsg);
+  extensionEventProxy.removeListener('crash', this.onCrash);
 
   extensionEventProxy.send('browsprCleanup', {
     instanceId: this.instanceId

@@ -19,9 +19,10 @@ function ExtensionEventProxy(timeout){
 
   EE.call(this);
   var proxy = this;
-  window.top.addEventListener(types.TO_PAGE, function(ev) {
+  this.onEvent = function(ev) {
     proxy.emit(ev.detail.type, ev.detail.body);
-  });
+  };
+  window.top.addEventListener(types.TO_PAGE, this.onEvent);
 
   this.waitingForExtension = true;
 
@@ -50,12 +51,17 @@ function ExtensionEventProxy(timeout){
   this.on('error', function(err) {
     console.error('Error message received from content script: ' + err);
   });
-  this.on('crash', function(err) {
-    console.error('Crash message received from content script: ' + err);
+  this.on('crash', function() {
+    console.error('Crash message received from content script.');
   });
 }
 
 inherits(ExtensionEventProxy, EE);
+
+ExtensionEventProxy.prototype.destroy = function() {
+  this.removeAllListeners();
+  window.top.removeEventListener(types.TO_PAGE, this.onEvent);
+};
 
 ExtensionEventProxy.prototype.send = function(type, body) {
   // If we are still waiting for the extension, queue messages to be sent later.

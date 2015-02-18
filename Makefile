@@ -122,19 +122,18 @@ ifndef NOVDLGEN
 		-js_out_dir=$(JS_VDL_DIR) \
 		v.io/core/veyron2/vdl/testdata/... \
 		v.io/core/veyron2/ipc/... \
-	 	v.io/core/veyron2/naming/... \
-	 	v.io/wspr/veyron/services/wsprd/... \
+		v.io/core/veyron2/naming/... \
+		v.io/wspr/veyron/services/wsprd/... \
 		v.io/core/veyron2/vom/... \
 		v.io/core/veyron2/verror/... \
-	 	$(EXTRA_VDL_PATHS)
-  # We build the vdlroot stuff with a different set of command line options because the package path does
+		$(EXTRA_VDL_PATHS)
+	# We build the vdlroot stuff with a different set of command line options because the package path does
 	# not equal the directory path of the source file.  This is not ideal, but bjornick and toddw will discuss
 	# how to fix this later.
 	VDLPATH=$(VDLPATH) v23 go run $(VANADIUM_ROOT)/release/go/src/v.io/core/veyron2/vdl/vdl/main.go generate -lang=javascript \
 					-js_relative_path_to_core=$(JS_VDL_PATH_TO_CORE)/../../../../../.. \
 					-js_out_dir=$(JS_VDL_DIR) \
 					$(VANADIUM_ROOT)/release/go/src/v.io/core/veyron2/vdl/vdlroot/src/...
-
 endif
 
 test-vdl-node: test-precheck

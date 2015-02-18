@@ -59,9 +59,7 @@ backgroundPort.onMessage.addListener(function(msg) {
     // be sure the response will be correct.
     invalidated = true;
 
-    pageEventProxy.send('crash', 'Vanadium plug-in crashed. ' +
-      'It is necessary to reload this page for Vanadium to continue ' +
-      'to fully function.');
+    pageEventProxy.send('crash');
 
     return;
   }

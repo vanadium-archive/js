@@ -16,6 +16,7 @@ test('Test event proxy connects to extension', function(assert) {
     if (!finished) {
       finished = true;
       assert.fail(err);
+      extensionEventProxy.destroy();
       assert.end();
     }
   });
@@ -23,6 +24,7 @@ test('Test event proxy connects to extension', function(assert) {
   extensionEventProxy.once('connected', function() {
     if (!finished) {
       finished = true;
+      extensionEventProxy.destroy();
       assert.end();
     }
   });
@@ -48,6 +50,7 @@ test('Test event proxy fires error when timeout occurs before connection.',
         if (!finished) {
           finished = true;
           assert.ok((/timeout/i).test(err.message));
+          extensionEventProxy.destroy();
           assert.end();
         }
       });
@@ -56,6 +59,7 @@ test('Test event proxy fires error when timeout occurs before connection.',
         if (!finished) {
           finished = true;
           assert.fail('Expected the event proxy to timeout, but it did not.');
+          extensionEventProxy.destroy();
           assert.end();
         }
       });

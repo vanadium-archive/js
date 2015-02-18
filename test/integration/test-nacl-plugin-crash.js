@@ -1,5 +1,6 @@
 var test = require('prova');
 
+var extnUtils = require('../../src/lib/extension-utils');
 var leafDispatcher = require('../../src/ipc/leaf-dispatcher');
 var serve = require('./serve');
 
@@ -38,39 +39,28 @@ test('Test recovery from nacl plugin crash', function(t) {
   // nacl plugin.
   validateCommunication(t, 'test/name1', function(err, close1, runtime) {
     if (err) {
-      t.error(err);
-      return t.end();
+      return t.end(err);
     }
 
     // Handle the crash.
-    runtime.once('crash', vanadiumCrashEvent);
+    runtime.once('crash', function(err) {
+      t.ok(err instanceof extnUtils.ExtensionCrashError,
+        'Receive ExtensionCrashError object.');
 
-    var receivedError = false;
+      // Perform another communication validation.
+      validateCommunication(t, 'test/name2', function(err, close2) {
+        if (err) {
+          t.error(err);
+          return close1(t.end);
+        }
 
-    function vanadiumCrashEvent(err) {
-      if (!receivedError) {
-        receivedError = true; // Assumes crash is first error.
-
-        t.ok(err instanceof Error,
-          'Receive an error object during the crash event');
-        t.equal(err.message.indexOf('Vanadium plug-in crashed'), 0,
-          'Received crash message');
-
-        // Perform another communication validation.
-        validateCommunication(t, 'test/name2', function(err, close2) {
-          if (err) {
-            t.error(err);
-            return close1(t.end);
-          }
-
-          close1(function(err1) {
-            close2(function(err2) {
-              t.end(err1 && err2);
-            });
+        close1(function(err1) {
+          close2(function(err2) {
+            t.end(err1 && err2);
           });
         });
-      }
-    }
+      });
+    });
 
     // Send a message triggering a nacl plug-in crash.
     eventProxy.send('intentionallyPanic');

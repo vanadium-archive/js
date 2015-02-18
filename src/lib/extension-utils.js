@@ -6,9 +6,20 @@ var extensionId = 'jcaelnibllfoobpedofhlaobfcoknpap';
 var extensionUrl = 'https://chrome.google.com/webstore/detail/' + extensionId;
 
 module.exports = {
+  ExtensionCrashError: ExtensionCrashError,
   ExtensionNotInstalledError: ExtensionNotInstalledError,
   isExtensionInstalled: isExtensionInstalled
 };
+
+// ExtensionCrashError indicates that the Vanadium extension has crashed.
+function ExtensionCrashError(message) {
+  this.name = 'ExtensionCrashError';
+  this.message = message || [
+    'The Vanadium extension has crashed.  It is necessary to reload this page ',
+    'for Vanadium to continue to to fully function.'
+  ].join('');
+}
+inherits(ExtensionCrashError, Error);
 
 // ExtensionNotInstalledError indicates that the Vanadium extension is not
 // installed.
@@ -20,6 +31,8 @@ function ExtensionNotInstalledError(message) {
     extensionUrl
   ].join('');
 }
+
+inherits(ExtensionNotInstalledError, Error);
 
 // isExtensionInstalled checks if the Vanadium extension is installed by making
 // a request to a web accessible image.
@@ -41,5 +54,3 @@ function isExtensionInstalled(cb) {
 
   return def.promise;
 }
-
-inherits(ExtensionNotInstalledError, Error);

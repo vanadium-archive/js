@@ -124,7 +124,7 @@ function getAccount(cb) {
   function removeListeners() {
     extensionEventProxy.removeListener('auth:success', onAuthSuccess);
     extensionEventProxy.removeListener('auth:error', onAuthError);
-    extensionEventProxy.removeListener('error', onAuthError);
+    extensionEventProxy.removeListener('error', onError);
   }
 
   extensionEventProxy.on('auth:success', onAuthSuccess);

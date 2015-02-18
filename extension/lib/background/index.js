@@ -217,6 +217,18 @@ BackgroundPage.prototype.restartNaclPlugin = function() {
   this.startNaclPlugin();
 };
 
+// Returns an array of all active port objects.
+BackgroundPage.prototype.getAllPorts = function() {
+  var ports = [];
+  _.forEach(this.ports, function(portArray) {
+    ports = ports.concat(portArray);
+  });
+  // Sort the ports array so that _.uniq can use a faster search algorithm.
+  ports = _.sortBy(ports);
+  // The second argument to _.uniq is whether the array is sorted.
+  return _.uniq(ports, true);
+};
+
 // Restart nacl when it crashes.
 BackgroundPage.prototype.handleNaclCrash = function() {
   // Log the crash to the extension's console.
@@ -229,10 +241,9 @@ BackgroundPage.prototype.handleNaclCrash = function() {
   var crashNotificationMsg = {
     type: 'crash'
   };
-  var ports = this.ports;
-  Object.keys(ports).forEach(function(instanceId) {
+  this.getAllPorts().forEach(function(port) {
     try {
-      ports[instanceId].postMessage(crashNotificationMsg);
+      port.postMessage(crashNotificationMsg);
     } catch (e) {
       // Port no longer exists.  Safe to ignore.
     }
