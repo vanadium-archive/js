@@ -28,7 +28,12 @@ function validateCommunication(t, name, cb) {
   });
 }
 
-test('Test recovery from nacl plugin crash', function(t) {
+// TODO(nlacasse,bjornick): This test is flakey and sometimes hangs.  It appears
+// as though the nacl plugin deadlocks during panic, and a 'crash' event is
+// never emitted from the nacl element, preventing the javascript from detecting
+// the crash.  We should figure out why this happens sometimes, and re-enable
+// the test once it is fixed.
+test.skip('Test recovery from nacl plugin crash', function(t) {
   if (!require('is-browser')) {
     return t.end();
   }
