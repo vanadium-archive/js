@@ -74,6 +74,21 @@ module.exports.Controller = Controller
 Controller.prototype.serve = function(ctx, name, serverId) {
   throw new Error('Method Serve not implemented');
 };
+    
+      
+Controller.prototype.stop = function(ctx, serverId) {
+  throw new Error('Method Stop not implemented');
+};
+    
+      
+Controller.prototype.addName = function(ctx, serverId, name) {
+  throw new Error('Method AddName not implemented');
+};
+    
+      
+Controller.prototype.removeName = function(ctx, serverId, name) {
+  throw new Error('Method RemoveName not implemented');
+};
      
 
     
@@ -87,7 +102,7 @@ Controller.prototype._serviceDescription = {
       
     {
     name: 'Serve',
-    doc: "",
+    doc: "// Serve instructs WSPR to start listening for calls on behalf\n// of a javascript server.",
     inArgs: [{
       name: 'name',
       doc: "",
@@ -97,6 +112,64 @@ Controller.prototype._serviceDescription = {
       name: 'serverId',
       doc: "",
       type: vdl.Types.UINT32
+    },
+    ],
+    outArgs: [],
+    inStream: null,
+    outStream: null,
+    tags: []
+  },
+    
+      
+    {
+    name: 'Stop',
+    doc: "// Stop instructs WSPR to stop listening for calls for the\n// given javascript server.",
+    inArgs: [{
+      name: 'serverId',
+      doc: "",
+      type: vdl.Types.UINT32
+    },
+    ],
+    outArgs: [],
+    inStream: null,
+    outStream: null,
+    tags: []
+  },
+    
+      
+    {
+    name: 'AddName',
+    doc: "// AddName adds a published name to an existing server.",
+    inArgs: [{
+      name: 'serverId',
+      doc: "",
+      type: vdl.Types.UINT32
+    },
+    {
+      name: 'name',
+      doc: "",
+      type: vdl.Types.STRING
+    },
+    ],
+    outArgs: [],
+    inStream: null,
+    outStream: null,
+    tags: []
+  },
+    
+      
+    {
+    name: 'RemoveName',
+    doc: "// RemoveName removes a published name from an existing server.",
+    inArgs: [{
+      name: 'serverId',
+      doc: "",
+      type: vdl.Types.UINT32
+    },
+    {
+      name: 'name',
+      doc: "",
+      type: vdl.Types.STRING
     },
     ],
     outArgs: [],

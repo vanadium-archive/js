@@ -8,9 +8,7 @@ var Stream = require('../proxy/stream');
 var MessageType = require('../proxy/message-type');
 var IncomingPayloadType = require('../proxy/incoming-payload-type');
 var ErrorConversion = require('../proxy/error-conversion');
-var Deferred = require('./../lib/deferred');
 var vLog = require('./../lib/vlog');
-var SimpleHandler = require('../proxy/simple-handler');
 var StreamHandler = require('../proxy/stream-handler');
 var verror = require('../v.io/core/veyron2/verror/verror');
 var SecurityContext = require('../security/context');
@@ -500,11 +498,8 @@ Router.prototype.sendResult = function(messageId, name, results, err,
  */
 Router.prototype.serve = function(name, server, cb) {
   vLog.info('Serving under the name: ', name);
-
-  var def = new Deferred(cb);
-  def.resolve(this._controller.serve(this._rootCtx, name, server.id));
   this._servers[server.id] = server;
-  return def.promise;
+  return this._controller.serve(this._rootCtx, name, server.id, cb);
 };
 
 /**
@@ -516,16 +511,7 @@ Router.prototype.serve = function(name, server, cb) {
  * @return {Promise} Promise to be called when operation completes or fails
  */
 Router.prototype.addName = function(name, server, cb) {
-  var messageJSON = {
-    name: name,
-    serverId: server.id,
-  };
-
-  var def = new Deferred(cb);
-  var message = JSON.stringify(messageJSON);
-  this._sendRequest(this._rootCtx, message, MessageType.ADD_NAME, def);
-
-  return def.promise;
+  return this._controller.addName(this._rootCtx, server.id, name, cb);
 };
 
 /**
@@ -537,20 +523,9 @@ Router.prototype.addName = function(name, server, cb) {
  * @return {Promise} Promise to be called when operation completes or fails
  */
 Router.prototype.removeName = function(name, server, cb) {
-  var messageJSON = {
-    name: name,
-    serverId: server.id,
-  };
-
   // Delete our bind cache entry for that name
   this._proxy.signatureCache.del(name);
-
-  var def = new Deferred(cb);
-  var message = JSON.stringify(messageJSON);
-  this._sendRequest(this._rootCtx, message, MessageType.REMOVE_NAME,
-                    def);
-
-  return def.promise;
+  return this._controller.removeName(this._rootCtx, server.id, name, cb);
 };
 
 /**
@@ -564,40 +539,19 @@ Router.prototype.removeName = function(name, server, cb) {
 Router.prototype.stopServer = function(server, cb) {
   var self = this;
 
-  // We don't pass the callback into deferred here, because that would result
-  // in the callback being called before we can remove the entry from the
-  // server map.  Instead we call the cb in the then of the promise.
-  var def = new Deferred();
-  this._sendRequest(this._rootCtx, server.id.toString(),
-                    MessageType.STOP, def);
-
-  return def.promise.then(function(result) {
-    delete self._servers[server.id];
-    if (cb) {
-      cb(null, result);
-    }
-    return result;
-  }, function(err) {
-    if (cb) {
-      cb(err);
-    }
-    return Promise.reject(err);
-  });
+  return this._controller.stop(this._rootCtx, server.id)
+    .then(function(result) {
+      delete self._servers[server.id];
+      if (cb) {
+        cb(null, result);
+      }
+      return result;
+    }, function(err) {
+      if (cb) {
+        cb(err);
+      }
+      return Promise.reject(err);
+    });
 };
-
-/**
- * Sends a request to jspr.
- * @private
- * @param {Context} ctx The context for this message.
- * @param {object} message Message to send.
- * @param {MessageType} type Type of message
- * @param {Deffered} def Deferred object
- */
-Router.prototype._sendRequest = function(ctx, message, type, def) {
-  var id = this._proxy.nextId();
-  var handler = new SimpleHandler(ctx, def, this._proxy, id);
-  this._proxy.sendRequest(message, type, handler, id);
-};
-
 
 module.exports = Router;

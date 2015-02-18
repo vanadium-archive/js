@@ -362,7 +362,8 @@ Client.prototype.bindWithSignature = function(name, signature) {
       var err;
 
       // Callback is the last function argument, pull it out of the args
-      if (typeof args[args.length - 1] === 'function') {
+      var lastType = typeof args[args.length - 1];
+      if (lastType === 'function' || lastType === 'undefined') {
         callback = args.pop();
       }
 
@@ -400,6 +401,8 @@ Client.prototype.bindWithSignature = function(name, signature) {
                         Array.prototype.slice.call(arguments, 1),
                         methodSig.name,
                         expectedArgs ];
+        console.log('got args', arguments);
+        console.log('derived', args);
         err = new IncorrectArgCount(ctx, errArgs);
         if (callback) {
           return callback(err);
