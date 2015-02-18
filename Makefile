@@ -25,11 +25,6 @@ ifndef NOHEADLESS
 	endif
 endif
 
-ifeq ($(USER),veyron)
-	STOPONFAIL := --stopOnFirstFailure
-	SAVE_CHROME_LOGS := || (cp tmp/chrome.log /tmp/chrome.log$(BUILD_NUMBER) && exit 1)
-endif
-
 ifdef STOPONFAIL
 	STOPONFAIL := --stopOnFirstFailure
 endif
