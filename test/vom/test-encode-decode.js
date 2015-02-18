@@ -963,7 +963,71 @@ test('encode and decode', function(t) {
           ]
         }
       }
-    }
+    },
+    {
+      n: 'native string',
+      v: 'hi',
+      expectedOutput: 'hi'
+    },
+    {
+      n: 'native number',
+      v: 4,
+      expectedOutput: 4
+    },
+    {
+      n: 'native bool',
+      v: true,
+      expectedOutput: true
+    },
+    {
+      n: 'native list',
+      v: [{}, 'f', true],
+      expectedOutput: [{}, 'f', true]
+    },
+    {
+      n: 'native object',
+      v: {
+        a: 'three',
+        A: 'THREE',
+        b: 3
+      },
+      expectedOutput: {
+        a: 'three',
+        A: 'THREE',
+        b: 3
+      }
+    },
+    {
+      n: 'native map',
+      v: new Map([
+        [null, 3],
+        ['asdf', 'jkle']
+      ]),
+      expectedOutput: new Map([
+        [null, 3],
+        ['asdf', 'jkle']
+      ])
+    },
+    {
+      n: 'native set',
+      v: new Set([null, 3, true, ['asdf', 'jkle']]),
+      expectedOutput: new Set([null, 3, true, ['asdf', 'jkle']])
+    },
+    {
+      n: 'typed string',
+      v: new (Registry.lookupOrCreateConstructor(Types.STRING))(''),
+      expectedOutput: new (Registry.lookupOrCreateConstructor(Types.STRING))('')
+    },
+    {
+      n: 'typed number',
+      v: new (Registry.lookupOrCreateConstructor(Types.INT16))(4),
+      expectedOutput: new (Registry.lookupOrCreateConstructor(Types.INT16))(4)
+    },
+    {
+      n: 'typed boolean',
+      v: new (Registry.lookupOrCreateConstructor(Types.BOOL))(true),
+      expectedOutput: new (Registry.lookupOrCreateConstructor(Types.BOOL))(true)
+    },
   ];
   for (var i = 0; i < tests.length; i++) {
     var test = tests[i];
