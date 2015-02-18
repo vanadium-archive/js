@@ -23,11 +23,13 @@ function compatible(a, b) {
 }
 
 /*
- * Helper for compatible. Uses seen maps to help detect cycles.
+ * Helper for compatible. Keeps track of the set of ancestors for each type.
+ * This chain of ancestors allows detection of recursive types. When detected,
+ * the function returns true (potentially, a false positive).
  * @param {Type | undefined} a The first type (undefined for native values)
  * @param {Type | undefined} b The second type (undefined for native values)
- * @param {set[Type]} seenA The set of types seen from the original a type.
- * @param {set[Type]} seenB The set of types seen from the original b type.
+ * @param {set[Type]} seenA The set of ancestor types for type a.
+ * @param {set[Type]} seenB The set of ancestor types for type b.
  * @return {boolean} Whether or not the types are compatible.
  */
 function compat(a, b, seenA, seenB) {
@@ -54,8 +56,6 @@ function compat(a, b, seenA, seenB) {
   if (a === b || seenA.has(a) || seenB.has(b)) {
     return true;
   }
-  seenA.add(a);
-  seenB.add(b);
 
   var ka = a.kind;
   var kb = b.kind;
@@ -82,14 +82,16 @@ function compat(a, b, seenA, seenB) {
     return ka === Kind.TYPEOBJECT && kb === Kind.TYPEOBJECT;
   }
 
-  // Handle string, enum, []byte here.
-  // TODO(alexfandrianto): Huh? Why is []byte special?
-  // It should be convertible to []uint16, right?
+  // Handle string, enum, []byte here. []byte is not compatible with []number
   var sA = isStringEnumBytes(a);
   var sB = isStringEnumBytes(b);
   if (sA || sB) {
     return sA && sB;
   }
+
+  // Track composite types. Only these can be recursive.
+  seenA.add(a);
+  seenB.add(b);
 
   // Handle composites types.
   switch(ka) {
@@ -154,7 +156,8 @@ function compat(a, b, seenA, seenB) {
 // Requirement: a is a map type.
 // Keys and elems must be compatible.
 function compatMapKeyElem(a, bKey, bElem, seenA, seenB) {
-  return compat(a.key, bKey, seenA, seenB) &&
+  // Note: Use a separate copy of the ancestors-seen set for the keys.
+  return compat(a.key, bKey, setCopy(seenA), setCopy(seenB)) &&
     compat(a.elem, bElem, seenA, seenB);
 }
 
@@ -169,7 +172,8 @@ function compatStructKeyElem(a, bKey, bElem, seenA, seenB) {
     return false;
   }
   for (var i = 0; i < a.fields.length; i++) {
-    if (!compat(a.fields[i].type, bElem, seenA, seenB)) {
+    // Note: Each field needs an independent copy of the ancestors-seen set.
+    if (!compat(a.fields[i].type, bElem, setCopy(seenA), setCopy(seenB))) {
       return false;
     }
   }
@@ -193,8 +197,10 @@ function compatFields(a, b, seenA, seenB) {
       if (fieldA.name !== fieldB.name) {
         continue;
       } else {
-        var typeMatch = compat(fieldA.type, fieldB.type, seenA, seenB);
-        // Return false if despite a name match, the types did not.
+        // Note: Each field needs an independent copy of the ancestors-seen set.
+        var typeMatch = compat(fieldA.type, fieldB.type, setCopy(seenA),
+          setCopy(seenB));
+        // Return false if despite a name match, the types did not match.
         if (!typeMatch) {
           return false;
         }
@@ -206,10 +212,21 @@ function compatFields(a, b, seenA, seenB) {
   return fieldMatches;
 }
 
+// Returns a copy of the given set.
+// TODO(alexfandrianto): May be inefficient. Used to detect recursive types.
+// An alternative is to use branch ids when descending down the type graph.
+function setCopy(set) {
+  var s = new Set();
+  set.forEach(function(key) {
+    s.add(key);
+  });
+  return s;
+}
+
 // Helper to determine if the type represents a number.
 function isNumber(t) {
   switch(t.kind) {
-    case Kind.BYTE:
+    case Kind.BYTE: // TODO(alexfandrianto): Byte is not a number.
     case Kind.UINT16:
     case Kind.UINT32:
     case Kind.UINT64:

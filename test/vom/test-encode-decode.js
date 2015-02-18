@@ -4,8 +4,8 @@
 
 var test = require('prova');
 
-var Complex = require('./../../src/vdl/complex.js');
 var Kind = require('./../../src/vdl/kind.js');
+var Registry = require('./../../src/vdl/registry.js');
 var Type = require('./../../src/vdl/type.js');
 var Types = require('./../../src/vdl/types.js');
 var TypeUtil = require('./../../src/vdl/type-util.js');
@@ -1005,26 +1005,44 @@ test('encode and decode', function(t) {
 });
 
 test('encode error cases', function(t) {
+  var Str = Registry.lookupOrCreateConstructor(Types.STRING);
+  var IntList = Registry.lookupOrCreateConstructor(new Type({
+    kind: Kind.LIST,
+    elem: Types.INT16
+  }));
+
   var tests = [
     {
       n: 'converting null to non-optional type',
       v: null,
-      t: Kind.UINT64
+      t: Types.UINT64
     },
     {
       n: 'encoding float as int',
       v: 3.5,
-      t: Kind.INT32
+      t: Types.INT32
     },
     {
       n: 'converting string to complex type',
       v: 'a string cannot convert to Complex',
-      t: new Complex(42)
+      t: Types.COMPLEX64
+    },
+    {
+      n: 'converting wrapped string to complex type',
+      v: new Str('a string cannot convert to Complex'),
+      t: Types.COMPLEX64,
+      e: 'are not compatible'
     },
     {
       n: 'using value as typeobject',
       v: [3, 4, 90],
       t: Types.TYPEOBJECT
+    },
+    {
+      n: 'using wrapped value as typeobject',
+      v: new IntList([3, 4, 90]),
+      t: Types.TYPEOBJECT,
+      e: 'are not compatible'
     },
     {
       n: 'using label not in enum',
@@ -1131,7 +1149,7 @@ test('encode error cases', function(t) {
       }
     },
     {
-      n: 'Union is not Nunion',
+      n: 'Union is not NoneOf',
       v: {},
       t: {
         kind: Kind.UNION,
@@ -1157,7 +1175,8 @@ test('encode error cases', function(t) {
     var test = tests[i];
     var messageWriter = new ByteArrayMessageWriter();
     var encoder = new Encoder(messageWriter);
-    t.throws(encoder.encode.bind(encoder, test.v, test.t), test.n);
+    t.throws(encoder.encode.bind(encoder, test.v, test.t),
+      new RegExp('.*' + (test.e || '') + '.*'), test.n);
   }
   t.end();
 });

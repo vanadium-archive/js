@@ -2,8 +2,6 @@
  * @fileoverview A type for complex numbers
  */
 
-var Kind = require('./kind');
-
 module.exports = Complex;
 
 function Complex(real, imag) {
@@ -11,7 +9,6 @@ function Complex(real, imag) {
   this.imag = imag || 0;
 }
 
-Complex.prototype._type = Kind.COMPLEX128;
 Complex.prototype.toString = function() {
   if (this.imag === 0) {
     return this.real + '';

@@ -15,6 +15,7 @@ var guessType = require('./guess-type.js');
 var jsValueConvert = require('./js-value-convert.js');
 var util = require('./util.js');
 var stringify = require('./stringify.js');
+var typeCompatible = require('./type-compatible.js');
 var typeObjectFromKind = require('./type-object-from-kind.js');
 require('./es6-shim');
 
@@ -89,15 +90,27 @@ function canonicalize(inValue, t, deepWrap, seen, isTopLevelValue) {
   // This value needs a wrapper if either flag is set.
   var needsWrap = deepWrap || isTopLevelValue;
 
-  // Special case TypeObject. See canonicalizeType.
-  if (t.kind === Kind.TYPEOBJECT) {
-    return canonicalizeType(inValue, seen);
-  }
-
   // Special case JSValue. Convert the inValue to JSValue form.
   var isJSValue = Types.JSVALUE.equals(t);
   if (isJSValue) {
     inValue = jsValueConvert.fromNative(inValue);
+  }
+
+  // Check for type convertibility
+  var inType;
+  if (TypeUtil.isTyped(inValue)) {
+    inType = inValue._type;
+  }
+  if (!typeCompatible(inType, t)) {
+    if (inType.kind !== Kind.TYPEOBJECT) {
+      throw new TypeError(inType + ' and ' + t +
+        ' are not compatible');
+    }
+  }
+
+  // Special case TypeObject. See canonicalizeType.
+  if (t.kind === Kind.TYPEOBJECT) {
+    return canonicalizeType(inValue, seen);
   }
 
   // The outValue is an object associated with a constructor based on its type.
