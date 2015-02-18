@@ -4,7 +4,7 @@
 
 var test = require('prova');
 
-var BigInt = require('./../../src/vom/big-int.js');
+var BigInt = require('./../../src/vdl/big-int.js');
 var RawVomWriter = require('./../../src/vom/raw-vom-writer');
 var RawVomReader = require('./../../src/vom/raw-vom-reader');
 

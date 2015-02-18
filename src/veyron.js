@@ -31,7 +31,7 @@ module.exports = {
   Promise: require('./lib/promise'),
   aclAuthorizer: require('./security/acl-authorizer'),
   context: require('./runtime/context'),
-  vom: require('./vom/vom'),
+  vdl: require('./vdl/vdl'),
 };
 
 if (isBrowser) {

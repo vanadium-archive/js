@@ -4,10 +4,10 @@
 
 var test = require('prova');
 
-var Kind = require('./../../src/vom/kind.js');
-var Type = require('./../../src/vom/type.js');
-var Types = require('./../../src/vom/types.js');
-var typeCompatible = require('./../../src/vom/type-compatible.js');
+var Kind = require('./../../src/vdl/kind.js');
+var Type = require('./../../src/vdl/type.js');
+var Types = require('./../../src/vdl/types.js');
+var typeCompatible = require('./../../src/vdl/type-compatible.js');
 
 // This tests that any, optional, bool, typeobject, and number interconvert
 // properly. Also checks the string, enum, []byte loop.

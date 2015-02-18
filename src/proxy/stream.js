@@ -7,7 +7,7 @@ var MessageType = require('./message-type');
 var Duplex = require('stream').Duplex;
 var inherits = require('util').inherits;
 var EncodeUtil = require('../lib/encode-util');
-var vom = require('../vom/vom');
+var fill = require('../vdl/canonicalize').fill;
 var ServerRPCReply =
   require('../v.io/wspr/veyron/services/wsprd/lib/lib').ServerRPCReply;
 
@@ -112,7 +112,7 @@ Stream.prototype._queueRead = function(object) {
  * @return {boolean} Returns false if the write buffer is full.
  */
 Stream.prototype.write = function(chunk, encoding, cb) {
-  var canonChunk = vom.Canonicalize.fill(chunk, this.streamType);
+  var canonChunk = fill(chunk, this.streamType);
   var object = {
     id: this.flowId,
     data: EncodeUtil.encode(canonChunk),

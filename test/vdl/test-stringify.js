@@ -4,7 +4,7 @@
 
 var test = require('prova');
 
-var stringify = require('./../../src/vom/stringify.js');
+var stringify = require('./../../src/vdl/stringify.js');
 
 test('stableCircularStringify', function(t) {
   var recursiveA = {

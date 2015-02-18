@@ -4,7 +4,7 @@
 
 var test = require('prova');
 var Signature = require('../../src/vdl/signature.js');
-var vom = require('../../src/vom/vom');
+var vdl = require('../../src/vdl/vdl');
 
 function TestService() {
     this.nonPrototypeFunction = function(ctx, a, $stream, b) {};
@@ -44,23 +44,23 @@ test('signature', function(t) {
                         'inArgs': [
                             {
                                 'name': 'a',
-                                'type': vom.Types.JSVALUE
+                                'type': vdl.Types.JSVALUE
                             },
                             {
                                 'name': 'b',
-                                'type': vom.Types.JSVALUE
+                                'type': vdl.Types.JSVALUE
                             }
                         ],
                         'outArgs': [
                           {
-                            'type': vom.Types.JSVALUE
+                            'type': vdl.Types.JSVALUE
                           }
                         ],
                         'inStream': {
-                            'type': vom.Types.JSVALUE
+                            'type': vdl.Types.JSVALUE
                         },
                         'outStream': {
-                            'type': vom.Types.JSVALUE
+                            'type': vdl.Types.JSVALUE
                         },
                     },
                     {
@@ -68,7 +68,7 @@ test('signature', function(t) {
                         'inArgs': [],
                         'outArgs': [
                             {
-                                'type': vom.Types.JSVALUE
+                                'type': vdl.Types.JSVALUE
                             }
                         ]
                     },
@@ -77,20 +77,20 @@ test('signature', function(t) {
                         'inArgs': [
                             {
                                 'name': 'x',
-                                'type': vom.Types.JSVALUE
+                                'type': vdl.Types.JSVALUE
                             },
                             {
                                 'name': 'y',
-                                'type': vom.Types.JSVALUE
+                                'type': vdl.Types.JSVALUE
                             },
                             {
                                 'name': 'z',
-                                'type': vom.Types.JSVALUE
+                                'type': vdl.Types.JSVALUE
                             }
                         ],
                         'outArgs': [
                           {
-                            'type': vom.Types.JSVALUE
+                            'type': vdl.Types.JSVALUE
                           }
                         ]
                     },
@@ -123,19 +123,19 @@ test('signature', function(t) {
                             {
                                 'name': 'a',
                                 'doc': 'aDoc',
-                                'type': vom.Types.UINT32
+                                'type': vdl.Types.UINT32
                             },
                             {
                                 'name': 'b',
                                 'doc': 'bDoc',
-                                'type': vom.Types.STRING
+                                'type': vdl.Types.STRING
                             }
                         ],
                         'inStream': {
-                            'type': vom.Types.UINT32
+                            'type': vdl.Types.UINT32
                         },
                         'outStream': {
-                            'type': vom.Types.UINT32
+                            'type': vdl.Types.UINT32
                         },
                         'tags': [
                             {
@@ -143,7 +143,7 @@ test('signature', function(t) {
                                 '_wrappedType': true,
                                 '_type': {
                                     name: 'StringTag',
-                                    kind: vom.Kind.STRING
+                                    kind: vdl.Kind.STRING
                                 }
                             }
                         ]
@@ -155,12 +155,12 @@ test('signature', function(t) {
                             {
                                 'name': 'first',
                                 'doc': 'firstDoc',
-                                'type': vom.Types.INT16
+                                'type': vdl.Types.INT16
                             },
                             {
                                 'name': 'second',
                                 'doc': 'secondDoc',
-                                'type': vom.Types.STRING
+                                'type': vdl.Types.STRING
                             }
                         ]
                     },
@@ -171,17 +171,17 @@ test('signature', function(t) {
                             {
                                 'name': 'x',
                                 'doc': 'xDoc',
-                                'type': vom.Types.UINT32
+                                'type': vdl.Types.UINT32
                             },
                             {
                                 'name': 'y',
                                 'doc': 'yDoc',
-                                'type': vom.Types.STRING
+                                'type': vdl.Types.STRING
                             },
                             {
                                 'name': 'z',
                                 'doc': 'zDoc',
-                                'type': vom.Types.STRING
+                                'type': vdl.Types.STRING
                             }
                         ]
                     },
@@ -211,24 +211,24 @@ test('signature', function(t) {
                             {
                                 'name': 'a',
                                 'doc': 'aDoc',
-                                'type': vom.Types.UINT32
+                                'type': vdl.Types.UINT32
                             },
                             {
                                 'name': 'b',
                                 'doc': 'bDoc',
-                                'type': vom.Types.STRING
+                                'type': vdl.Types.STRING
                             }
                         ],
                         'outArgs': [
                           {
-                            'type': vom.Types.JSVALUE
+                            'type': vdl.Types.JSVALUE
                           }
                         ],
                         'inStream': {
-                            'type': vom.Types.UINT32
+                            'type': vdl.Types.UINT32
                         },
                         'outStream': {
-                            'type': vom.Types.UINT32
+                            'type': vdl.Types.UINT32
                         },
                         'tags': [
                             {
@@ -236,7 +236,7 @@ test('signature', function(t) {
                                 '_wrappedType': true,
                                 '_type': {
                                     'name': 'StringTag',
-                                    'kind': vom.Kind.STRING
+                                    'kind': vdl.Kind.STRING
                                 }
                             }
                         ]
@@ -249,12 +249,12 @@ test('signature', function(t) {
                             {
                                 'name': 'first',
                                 'doc': 'firstDoc',
-                                'type': vom.Types.INT16
+                                'type': vdl.Types.INT16
                             },
                             {
                                 'name': 'second',
                                 'doc': 'secondDoc',
-                                'type': vom.Types.STRING
+                                'type': vdl.Types.STRING
                             }
                         ]
                     },
@@ -265,22 +265,22 @@ test('signature', function(t) {
                             {
                                 'name': 'x',
                                 'doc': 'xDoc',
-                                'type': vom.Types.UINT32
+                                'type': vdl.Types.UINT32
                             },
                             {
                                 'name': 'y',
                                 'doc': 'yDoc',
-                                'type': vom.Types.STRING
+                                'type': vdl.Types.STRING
                             },
                             {
                                 'name': 'z',
                                 'doc': 'zDoc',
-                                'type': vom.Types.STRING
+                                'type': vdl.Types.STRING
                             }
                         ],
                         'outArgs': [
                           {
-                            'type': vom.Types.JSVALUE
+                            'type': vdl.Types.JSVALUE
                           }
                         ]
                     },
@@ -300,7 +300,7 @@ test('signature', function(t) {
                         'inArgs': [
                             {
                                 'name': 'a',
-                                'type': vom.Types.STRING
+                                'type': vdl.Types.STRING
                             }
                         ]
                     },
@@ -309,22 +309,22 @@ test('signature', function(t) {
                         'inArgs': [
                             {
                                 'name': 'x',
-                                'type': vom.Types.INT16
+                                'type': vdl.Types.INT16
                             },
                             {
                                 'name': 'SIGNATURENAME',
-                                'type': vom.Types.INT16
+                                'type': vdl.Types.INT16
                             },
                             {
                                 'name': 'z',
-                                'type': vom.Types.INT16
+                                'type': vdl.Types.INT16
                             }
                         ],
                         'inStream': {
-                            'type': vom.Types.ANY
+                            'type': vdl.Types.ANY
                         },
                         'outStream': {
-                            'type': vom.Types.STRING
+                            'type': vdl.Types.STRING
                         }
                     }
                 ]
@@ -336,23 +336,23 @@ test('signature', function(t) {
                         'inArgs': [
                             {
                                 'name': 'a',
-                                'type': vom.Types.JSVALUE
+                                'type': vdl.Types.JSVALUE
                             },
                             {
                                 'name': 'b',
-                                'type': vom.Types.JSVALUE
+                                'type': vdl.Types.JSVALUE
                             }
                         ],
                         'outArgs': [
                             {
-                                'type': vom.Types.JSVALUE
+                                'type': vdl.Types.JSVALUE
                             }
                         ],
                         'inStream': {
-                            'type': vom.Types.JSVALUE
+                            'type': vdl.Types.JSVALUE
                         },
                         'outStream': {
-                            'type': vom.Types.JSVALUE
+                            'type': vdl.Types.JSVALUE
                         }
                     },
                     {
@@ -360,20 +360,20 @@ test('signature', function(t) {
                         'inArgs': [
                             {
                                 'name': 'x',
-                                'type': vom.Types.INT16
+                                'type': vdl.Types.INT16
                             },
                             {
                                 'name': 'SIGNATURENAME',
-                                'type': vom.Types.INT16
+                                'type': vdl.Types.INT16
                             },
                             {
                                 'name': 'z',
-                                'type': vom.Types.INT16
+                                'type': vdl.Types.INT16
                             }
                         ],
                         'outArgs': [
                           {
-                            'type': vom.Types.JSVALUE
+                            'type': vdl.Types.JSVALUE
                           }
                         ],
                     }
@@ -386,9 +386,9 @@ test('signature', function(t) {
         var test = tests[i];
 
         var resultSig = new Signature(testService, test.desc);
-        var stringifiedResult = vom.Stringify(resultSig);
+        var stringifiedResult = vdl.Stringify(resultSig);
 
-        var stringifiedExpected = vom.Stringify(test.expected);
+        var stringifiedExpected = vdl.Stringify(test.expected);
 
         t.equals(stringifiedResult, stringifiedExpected, test.name);
     }

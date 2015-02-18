@@ -4,13 +4,17 @@
 
 module.exports = Decoder;
 
-var canonicalize = require('./canonicalize.js');
+var canonicalize = require('../vdl/canonicalize.js');
 var TypeDecoder = require('./type-decoder.js');
-var Kind = require('./kind.js');
-var Registry = require('./registry.js');
-var Types = require('./types.js');
-var util = require('./util.js');
-var binaryUtil = require('./binary-util');
+var Kind = require('../vdl/kind.js');
+var Registry = require('../vdl/registry.js');
+var Types = require('../vdl/types.js');
+var util = require('../vdl/util.js');
+var unwrap = require('../vdl/type-util').unwrap;
+var wiretype = require('../v.io/core/veyron2/vom/vom');
+
+var eofByte = unwrap(wiretype.WireCtrlEOF);
+var nilByte = unwrap(wiretype.WireCtrlNil);
 
 /**
  * Create a decoder to read objects from the provided message reader.
@@ -180,7 +184,7 @@ Decoder.prototype._decodeStruct = function(t, reader) {
   var obj = Object.create(Ctor.prototype);
   while (true) {
     var ctrl = reader.tryReadControlByte();
-    if (ctrl === binaryUtil.EOF_BYTE) {
+    if (ctrl === eofByte) {
       break;
     }
 
@@ -201,7 +205,7 @@ Decoder.prototype._decodeStruct = function(t, reader) {
 
 Decoder.prototype._decodeOptional = function(t, reader) {
   var isNil = reader.peekByte();
-  if (isNil === binaryUtil.NIL_BYTE) {
+  if (isNil === nilByte) {
     reader.readByte();
     return null;
   }
@@ -210,7 +214,7 @@ Decoder.prototype._decodeOptional = function(t, reader) {
 
 Decoder.prototype._decodeAny = function(reader) {
   var ctrl = reader.tryReadControlByte();
-  if (ctrl === binaryUtil.NIL_BYTE) {
+  if (ctrl === nilByte) {
     return null;
   }
 

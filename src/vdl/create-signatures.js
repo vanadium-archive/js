@@ -5,7 +5,8 @@
  */
 module.exports = createSignatures;
 
-var vom = require('../vom/vom');
+var stringify = require('./stringify');
+var capitalize = require('./util').capitalize;
 var Signature = require('./signature');
 function sigsHaveMethod(sigs, method) {
   return sigs.some(function(sig) {
@@ -35,7 +36,7 @@ function createSignatures(service, descs) {
   };
   for (var methodName in service) {
     if (typeof service[methodName] === 'function') {
-      var name = vom.MiscUtil.capitalize(methodName);
+      var name = capitalize(methodName);
       if (!sigsHaveMethod(sigs, name)) {
         leftOverSig.methods.push({ name: name });
       }
@@ -64,7 +65,7 @@ function checkForConflicts(sigs) {
       if (methodsSeen[method.name]) {
         var seenMethod = methodsSeen[method.name].sig;
         var iname = methodsSeen[method.name].interfaceName;
-        if (vom.Stringify(method) !== vom.Stringify(seenMethod)) {
+        if (stringify(method) !== stringify(seenMethod)) {
           throw new Error('Method ' + method.name + ' has conflicting ' +
                           'signatures in ' + iname + ' and ' + sig.name);
         }

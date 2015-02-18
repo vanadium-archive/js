@@ -5,9 +5,9 @@
 
 module.exports = RawVomReader;
 
-var BigInt = require('./big-int.js');
+var BigInt = require('../vdl/big-int.js');
 var BinaryReader = require('./binary-reader.js');
-var ByteUtil = require('./byte-util.js');
+var ByteUtil = require('../vdl/byte-util.js');
 
 /**
  * RawVomReader reads VOM primitive values (numbers, strings, bools) from a

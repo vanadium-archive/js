@@ -12,7 +12,7 @@ var ByteArrayMessageWriter = require(
     './../../src/vom/byte-array-message-writer.js');
 var Decoder = require('./../../src/vom/decoder.js');
 var Encoder = require('./../../src/vom/encoder.js');
-var util = require('./../../src/vom/byte-util.js');
+var util = require('./../../src/vdl/byte-util.js');
 
 // Test that the received type matches the expected type.
 testdata.Tests.val.forEach(function(t) {

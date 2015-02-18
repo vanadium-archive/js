@@ -4,13 +4,13 @@
 
 var test = require('prova');
 
-var Complex = require('./../../src/vom/complex.js');
-var Kind = require('./../../src/vom/kind.js');
-var Type = require('./../../src/vom/type.js');
-var Types = require('./../../src/vom/types.js');
-var TypeUtil = require('./../../src/vom/type-util.js');
-var stringify = require('./../../src/vom/stringify.js');
-var canonicalize = require('./../../src/vom/canonicalize.js');
+var Complex = require('./../../src/vdl/complex.js');
+var Kind = require('./../../src/vdl/kind.js');
+var Type = require('./../../src/vdl/type.js');
+var Types = require('./../../src/vdl/types.js');
+var TypeUtil = require('./../../src/vdl/type-util.js');
+var stringify = require('./../../src/vdl/stringify.js');
+var canonicalize = require('./../../src/vdl/canonicalize.js');
 
 var ByteArrayMessageWriter = require(
     './../../src/vom/byte-array-message-writer.js');

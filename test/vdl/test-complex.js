@@ -1,5 +1,5 @@
 var test = require('prova');
-var Complex = require('./../../src/vom/complex');
+var Complex = require('./../../src/vdl/complex');
 
 test('toString', function(assert) {
   assert.equal((new Complex(1, -3)).toString(), '1 - 3i');

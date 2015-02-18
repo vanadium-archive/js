@@ -4,13 +4,13 @@
 
 var test = require('prova');
 
-var BigInt = require('./../../src/vom/big-int.js');
-var Complex = require('./../../src/vom/complex.js');
-var Kind = require('./../../src/vom/kind.js');
-var Registry = require('./../../src/vom/registry.js');
-var Types = require('./../../src/vom/types.js');
-var canonicalize = require('./../../src/vom/canonicalize.js');
-var stringify = require('./../../src/vom/stringify.js');
+var BigInt = require('./../../src/vdl/big-int.js');
+var Complex = require('./../../src/vdl/complex.js');
+var Kind = require('./../../src/vdl/kind.js');
+var Registry = require('./../../src/vdl/registry.js');
+var Types = require('./../../src/vdl/types.js');
+var canonicalize = require('./../../src/vdl/canonicalize.js');
+var stringify = require('./../../src/vdl/stringify.js');
 
 // A helper function that shallow copies an object into an object with the
 // JSValue prototype. It makes the test cases a lot more readable.

@@ -4,11 +4,11 @@
 
 var test = require('prova');
 
-var registry = require('./../../src/vom/registry.js');
-var registryMultipleRequire = require('./../../src/vom/registry.js');
-var createConstructor = require('./../../src/vom/create-constructor.js');
+var registry = require('./../../src/vdl/registry.js');
+var registryMultipleRequire = require('./../../src/vdl/registry.js');
+var createConstructor = require('./../../src/vdl/create-constructor.js');
 
-var Kind = require('./../../src/vom/kind.js');
+var Kind = require('./../../src/vdl/kind.js');
 
 test('_addConstructor', function(t) {
   // Unique types do not throw.

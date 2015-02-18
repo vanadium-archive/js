@@ -5,17 +5,23 @@
 module.exports = Encoder;
 
 var TypeEncoder = require('./type-encoder.js');
-var util = require('./util.js');
-var TypeUtil = require('./type-util.js');
+var util = require('../vdl/util.js');
+var TypeUtil = require('../vdl/type-util.js');
 var RawVomWriter = require('./raw-vom-writer.js');
-var Kind = require('./kind.js');
-var canonicalize = require('./canonicalize.js');
-var stringify = require('./stringify.js');
-var guessType = require('./guess-type.js');
-var binaryUtil = require('./binary-util');
-var BigInt = require('./big-int');
+var Kind = require('../vdl/kind.js');
+var canonicalize = require('../vdl/canonicalize.js');
+var stringify = require('../vdl/stringify.js');
+var guessType = require('../vdl/guess-type.js');
+var BigInt = require('../vdl/big-int');
 var BootstrapTypes = require('./bootstrap-types');
-require('./es6-shim');
+
+var unwrap = require('../vdl/type-util').unwrap;
+var wiretype = require('../v.io/core/veyron2/vom/vom');
+
+var eofByte = unwrap(wiretype.WireCtrlEOF);
+var nilByte = unwrap(wiretype.WireCtrlNil);
+
+require('../vdl/es6-shim');
 
 /**
  * Create an encoder that writes to the specified message writer.
@@ -211,7 +217,7 @@ Encoder.prototype._encodeStruct = function(v, t, writer, omitEmpty) {
   if (omitEmpty && !hasWrittenFields) {
     return false;
   }
-  writer.writeByte(binaryUtil.EOF_BYTE);
+  writer.writeByte(eofByte);
   return true;
 };
 
@@ -234,7 +240,7 @@ Encoder.prototype._encodeOptional = function(v, t, writer, omitEmpty) {
     if (omitEmpty) {
       return false;
     }
-    writer.writeByte(binaryUtil.NIL_BYTE);
+    writer.writeByte(nilByte);
     return true;
   }
   this._encodeValue(v, t.elem, writer, false);
@@ -246,7 +252,7 @@ Encoder.prototype._encodeAny = function(v, writer, omitEmpty) {
     if (omitEmpty) {
       return false;
     }
-    writer.writeByte(binaryUtil.NIL_BYTE);
+    writer.writeByte(nilByte);
     return true;
   }
   var t = guessType(v);

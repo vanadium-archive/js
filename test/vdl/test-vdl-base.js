@@ -5,9 +5,9 @@ var context = require('../../src/runtime/context');
 var SharedContextKeys = require('../../src/runtime/shared-context-keys');
 var actions = require('../../src/errors/actions');
 
-var Kind = require('../../src/vom/vom').Kind;
-var Types = require('../../src/vom/vom').Types;
-var BigInt = require('../../src/vom/vom').BigInt;
+var Kind = require('../../src/vdl/vdl').Kind;
+var Types = require('../../src/vdl/vdl').Types;
+var BigInt = require('../../src/vdl/vdl').BigInt;
 
 test('named primitive types', function(assert) {
   var res = new base.NamedBool(false);
@@ -123,7 +123,7 @@ test('named composite types', function(assert) {
   assert.end();
 });
 
-// The vom behavior in createConstructor is to set the fields to their 0-value.
+// The vdl behavior in createConstructor is to set the fields to their 0-value.
 test('struct constructor', function(assert) {
   var res = new base.NamedStruct();
   // Make sure the default values are set.

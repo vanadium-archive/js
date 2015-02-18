@@ -7,7 +7,7 @@ module.exports = ReflectSignature;
 
 var ArgInspector = require('../lib/arg-inspector');
 var isPublicMethod = require('../lib/service-reflection').isPublicMethod;
-var vom = require('../vom/vom');
+var vdlUtil = require('./util');
 var format = require('util').format;
 
 /**
@@ -50,7 +50,7 @@ function ReflectSignature(service) {
 
     var method = service[key];
     var methodSignature = {
-      name: vom.MiscUtil.capitalize(key),
+      name: vdlUtil.capitalize(key),
       streaming: false
     };
 

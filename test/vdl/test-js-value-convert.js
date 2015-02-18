@@ -6,10 +6,10 @@
 
 var test = require('prova');
 
-var Registry = require('./../../src/vom/registry.js');
-var Types = require('./../../src/vom/types.js');
-var jsValueConvert = require('./../../src/vom/js-value-convert.js');
-var stringify = require('./../../src/vom/stringify.js');
+var Registry = require('./../../src/vdl/registry.js');
+var Types = require('./../../src/vdl/types.js');
+var jsValueConvert = require('./../../src/vdl/js-value-convert.js');
+var stringify = require('./../../src/vdl/stringify.js');
 
 // A helper function that shallow copies an object into an object with the
 // JSValue prototype. It makes the test cases a lot more readable.

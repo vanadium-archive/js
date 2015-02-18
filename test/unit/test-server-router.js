@@ -6,7 +6,7 @@ var test = require('prova');
 var Router = require('../../src/ipc/server-router');
 var Server = require('../../src/ipc/server');
 var MessageType = require('../../src/proxy/message-type');
-var vom = require('../../src/vom/vom');
+var vdl = require('../../src/vdl/vdl');
 var DecodeUtil = require('../../src/lib/decode-util');
 var context = require('../../src/runtime/context');
 
@@ -31,30 +31,30 @@ test('Server Router Signature Lookup', function(t) {
           {
             name: 'x',
             doc: '',
-            type: vom.Types.JSVALUE
+            type: vdl.Types.JSVALUE
           },
           {
             name: 'y',
             doc: '',
-            type: vom.Types.JSVALUE
+            type: vdl.Types.JSVALUE
           }
         ],
         outArgs: [
           {
             name: '',
             doc: '',
-            type: vom.Types.JSVALUE
+            type: vdl.Types.JSVALUE
           },
         ],
         inStream: {
           name: '',
           doc: '',
-          type: vom.Types.JSVALUE
+          type: vdl.Types.JSVALUE
         },
         outStream: {
           name: '',
           doc: '',
-          type: vom.Types.JSVALUE
+          type: vdl.Types.JSVALUE
         },
         tags: []
       }

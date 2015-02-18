@@ -4,9 +4,9 @@
  * @private
  */
 
-var typeutil = require('../vom/type-util');
+var typeutil = require('../vdl/type-util');
 var vdl = require('../v.io/core/veyron2/uniqueid/uniqueid');
-var vom = require('../vom/vom');
+var byteUtil = require('../vdl/byte-util');
 
 var currentRandom;
 var currentSequence = 0;
@@ -58,7 +58,7 @@ function valid(id) {
  * @return {string} A hexidecimal string.
  */
 function toHexString(id) {
-  return vom.Util.bytes2Hex(typeutil.unwrap(id));
+  return byteUtil.bytes2Hex(typeutil.unwrap(id));
 }
 
 /**
@@ -67,7 +67,7 @@ function toHexString(id) {
  * @return {Object} A uniqueid.Id instance.
  */
 function fromHexString(s) {
-  return new vdl.Id(vom.Util.hex2Bytes(s));
+  return new vdl.Id(byteUtil.hex2Bytes(s));
 }
 
 module.exports = {

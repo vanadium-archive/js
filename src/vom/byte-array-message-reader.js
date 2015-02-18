@@ -6,7 +6,7 @@
 module.exports = ByteArrayMessageReader;
 
 var RawVomReader = require('./raw-vom-reader.js');
-var TypeUtil = require('./type-util.js');
+var TypeUtil = require('../vdl/type-util.js');
 
 /**
  * Create a VOM message reader backed by a byte array.

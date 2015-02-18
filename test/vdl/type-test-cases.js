@@ -1,6 +1,6 @@
-var Kind = require('./../../src/vom/kind.js');
-var Type = require('./../../src/vom/type.js');
-var Types = require('./../../src/vom/types.js');
+var Kind = require('./../../src/vdl/kind.js');
+var Type = require('./../../src/vdl/type.js');
+var Types = require('./../../src/vdl/types.js');
 
 var recursiveType = new Type();
 recursiveType.kind = Kind.LIST;

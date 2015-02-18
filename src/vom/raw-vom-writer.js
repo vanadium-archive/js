@@ -5,9 +5,9 @@
 
 module.exports = RawVomWriter;
 
-var BigInt = require('./big-int.js');
+var BigInt = require('../vdl/big-int.js');
 var BinaryWriter = require('./binary-writer.js');
-var ByteUtil = require('./byte-util.js');
+var ByteUtil = require('../vdl/byte-util.js');
 
 /**
  * RawVomWriter writes VOM primitive values (numbers, strings, bools) to a

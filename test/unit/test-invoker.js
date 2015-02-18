@@ -8,7 +8,7 @@
 var test = require('prova');
 var Invoker = require('../../src/invocation/invoker.js');
 var Context = require('../../src/runtime/context').Context;
-var vom = require('../../src/vom/vom');
+var vdl = require('../../src/vdl/vdl');
 var base =
     require('../vdl-out/v.io/core/veyron2/vdl/testdata/base/base');
 
@@ -63,14 +63,14 @@ test('Invoker and signature for vdl-generated base.js',
                         {
                             'name': 'a',
                             'doc': '',
-                            'type': vom.Types.INT32
+                            'type': vdl.Types.INT32
                         }
                     ],
                     'outArgs': [
                         {
                             'name': 's',
                             'doc': '',
-                            'type': vom.Types.STRING
+                            'type': vdl.Types.STRING
                         }
                     ],
                     'inStream': null,
@@ -84,7 +84,7 @@ test('Invoker and signature for vdl-generated base.js',
                             val: 'tag'
                         },
                         {
-                            val: new vom.BigInt(1, new Uint8Array([0x6]))
+                            val: new vdl.BigInt(1, new Uint8Array([0x6]))
                         }
                     ]
                 },
@@ -95,19 +95,19 @@ test('Invoker and signature for vdl-generated base.js',
                         {
                             'name': 'a',
                             'doc': '',
-                            'type': vom.Types.INT32
+                            'type': vdl.Types.INT32
                         }
                     ],
                     'outArgs': [],
                     'inStream': {
                         'name': '',
                         'doc': '',
-                        'type': vom.Types.INT32
+                        'type': vdl.Types.INT32
                     },
                     'outStream': {
                         'name': '',
                         'doc': '',
-                        'type': vom.Types.STRING
+                        'type': vdl.Types.STRING
                     },
                     'tags': []
                 },
@@ -138,8 +138,8 @@ test('Invoker and signature for vdl-generated base.js',
             ]
         }];
 
-        var expectedStr = vom.Stringify(expectedSig);
-        var resultStr = vom.Stringify(sig);
+        var expectedStr = vdl.Stringify(expectedSig);
+        var resultStr = vdl.Stringify(sig);
 
         t.equals(resultStr, expectedStr);
         t.end();

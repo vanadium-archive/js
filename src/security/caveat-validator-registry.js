@@ -3,7 +3,7 @@
  * UUIDs and validations methods.
  */
 
-var vom = require('../vom/vom');
+var reduce = require('../vdl/canonicalize').reduce;
 var DecodeUtil = require('../lib/decode-util');
 
 module.exports = CaveatValidatorRegistry;
@@ -82,7 +82,7 @@ CaveatValidator.prototype.validate = function(ctx, paramForValidator) {
   var paramType = this.cavDesc.paramType;
   // TODO(bprosnitz) This should really be type conversion rather than
   // canonicalization. The behavior is slightly different.
-  var canonData = vom.Canonicalize.reduce(paramForValidator, paramType);
+  var canonData = reduce(paramForValidator, paramType);
 
   // TODO(bproznitz): we should be throwing security.ErrCaveatValidation.
   // This is dependent on having vdl-generated error id code for javascript.

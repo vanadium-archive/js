@@ -7,7 +7,7 @@
 
 module.exports = Signature;
 
-var vom = require('../vom/vom');
+var Types = require('./types');
 var vdlsig =
     require('../v.io/core/veyron2/vdl/vdlroot/src/signature/signature');
 var ReflectSignature = require('./reflect-signature');
@@ -15,7 +15,7 @@ var vlog = require('../lib/vlog');
 
 // Each argument type is JSValue.
 // This can be overriden by specifying types in the description.
-var defaultArgType = vom.Types.JSVALUE;
+var defaultArgType = Types.JSVALUE;
 
 // Default to returning a single out arg.
 var defaultOutArgs = [

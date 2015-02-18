@@ -20,11 +20,11 @@ module.exports = {
   }
 };
 
-var Kind = require('./kind.js');
-var stringify = require('./stringify.js');
-var Types = require('./types.js');
+var Kind = require('../vdl/kind.js');
+var stringify = require('../vdl/stringify.js');
+var Types = require('../vdl/types.js');
 var wiretype = require('../v.io/core/veyron2/vom/vom');
-var unwrap = require('./type-util').unwrap;
+var unwrap = require('../vdl/type-util').unwrap;
 
 var stringList = {
   name: '',

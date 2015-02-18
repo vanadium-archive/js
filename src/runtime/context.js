@@ -10,7 +10,7 @@ var inherits = require('util').inherits;
 var vError = require('../v.io/core/veyron2/verror/verror');
 var actions = require('../errors/actions');
 var ContextKey = require('./context-key');
-var BigInt = require('../vom/big-int');
+var BigInt = require('../vdl/big-int');
 
 module.exports = {
   Context: Context,

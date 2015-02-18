@@ -3,7 +3,7 @@ var verror = require('../../').errors;
 var Invoker = require('../../src/invocation/invoker.js');
 var Context = require('../../src/runtime/context').Context;
 var Promise = require('../../src/lib/promise');
-var vom = require('../../src/vom/vom');
+var vdl = require('../../src/vdl/vdl');
 var extend = require('xtend');
 
 var _fiveOutArgSig = [
@@ -13,19 +13,19 @@ var _fiveOutArgSig = [
         'name': 'FiveOutArgMethod',
         'outArgs': [
           {
-            type: vom.Types.ANY
+            type: vdl.Types.ANY
           },
           {
-            type: vom.Types.ANY
+            type: vdl.Types.ANY
           },
           {
-            type: vom.Types.ANY
+            type: vdl.Types.ANY
           },
           {
-            type: vom.Types.ANY
+            type: vdl.Types.ANY
           },
           {
-            type: vom.Types.ANY
+            type: vdl.Types.ANY
           }
         ]
       }

@@ -4,9 +4,9 @@
 
 var test = require('prova');
 
-var stringify = require('./../../src/vom/stringify.js');
-var Types = require('./../../src/vom/types.js');
-var Kind = require('./../../src/vom/kind.js');
+var stringify = require('./../../src/vdl/stringify.js');
+var Types = require('./../../src/vdl/types.js');
+var Kind = require('./../../src/vdl/kind.js');
 
 var TypeEncoder = require('./../../src/vom/type-encoder.js');
 var TypeDecoder = require('./../../src/vom/type-decoder.js');
@@ -52,7 +52,7 @@ TypeMessageReader.prototype.nextMessage = function(typeDecoder) {
 };
 
 test('type encoding encode and decode (optional fields filled)', function(t) {
-  var tests = require('./type-test-cases.js');
+  var tests = require('../vdl/type-test-cases.js');
 
   for (var i = 0; i < tests.length; i++) {
     encodeDecodeType(t, tests[i].type);

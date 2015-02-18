@@ -20,7 +20,9 @@ var context = require('../runtime/context');
 var constants = require('./constants');
 var DecodeUtil = require('../lib/decode-util');
 var SimpleHandler = require('../proxy/simple-handler');
-var vom = require('../vom/vom');
+var vdl = require('../vdl/vdl');
+var Encoder = require('../vom/encoder');
+var ByteArrayMessageWriter = require('../vom/byte-array-message-writer');
 var makeError = require('../errors/make-errors');
 var actions = require('../errors/actions');
 var VeyronRPCRequest =
@@ -61,10 +63,10 @@ OutstandingRPC.prototype.start = function() {
       // Each out argument should also be unwrapped. (results was []any)
       results = results ? results.map(function(res, i) {
         // If the out argument was specifically of type any, do not unwrap.
-        if (outArgTypes[i].kind === vom.Kind.ANY) {
+        if (outArgTypes[i].kind === vdl.Kind.ANY) {
           return res;
         }
-        return vom.TypeUtil.unwrap(res);
+        return vdl.TypeUtil.unwrap(res);
       }) : [];
       var resultsCopy = results.slice();
       resultsCopy.unshift(err);
@@ -86,10 +88,10 @@ OutstandingRPC.prototype.start = function() {
       // Each out argument should also be unwrapped. (args was []any)
       var unwrappedArgs = args.map(function(outArg, i) {
         // If the out argument was specifically of type any, do not unwrap.
-        if (outArgTypes[i].kind === vom.Kind.ANY) {
+        if (outArgTypes[i].kind === vdl.Kind.ANY) {
           return outArg;
         }
-        return vom.TypeUtil.unwrap(outArg);
+        return vdl.TypeUtil.unwrap(outArg);
       });
 
       // We expect:
@@ -166,7 +168,7 @@ OutstandingRPC.prototype.handleCompletion = function(data) {
         this._ctx, ['Failed to decode result: ', e]));
       return;
   }
-  
+
   vtrace.getStore(this._ctx).merge(response.traceResponse);
 
   this._def.resolve(response.outArgs);
@@ -248,13 +250,13 @@ OutstandingRPC.prototype.constructMessage = function() {
 
   var header = new VeyronRPCRequest(jsonMessage);
 
-  var writer = new vom.ByteArrayMessageWriter();
-  var encoder = new vom.Encoder(writer);
+  var writer = new ByteArrayMessageWriter();
+  var encoder = new Encoder(writer);
   encoder.encode(header);
   for (var i = 0; i < this._args.length; i++) {
     encoder.encode(this._args[i]);
   }
-  return vom.Util.bytes2Hex(writer.getBytes());
+  return vdl.Util.bytes2Hex(writer.getBytes());
 };
 
 /**
@@ -352,7 +354,7 @@ Client.prototype.bindWithSignature = function(name, signature) {
   var boundObject = {};
 
   function bindMethod(methodSig) {
-    var method = vom.MiscUtil.uncapitalize(methodSig.name);
+    var method = vdl.MiscUtil.uncapitalize(methodSig.name);
 
     boundObject[method] = function(ctx /*, arg1, arg2, ..., callback*/) {
       var args = Array.prototype.slice.call(arguments, 0);
@@ -383,7 +385,7 @@ Client.prototype.bindWithSignature = function(name, signature) {
         var expectedArgs = methodSig.inArgs.map(function(arg) {
           return arg.name;
         });
-        
+
         // TODO(jasoncampbell): Create an constructor for this error so it
         // can be created with less ceremony and checked in a
         // programatic way:
@@ -410,7 +412,7 @@ Client.prototype.bindWithSignature = function(name, signature) {
       var canonArgs = new Array(args.length);
       try {
         for (var i = 0; i < args.length; i++) {
-          canonArgs[i] = vom.Canonicalize.fill(args[i],
+          canonArgs[i] = vdl.Canonicalize.fill(args[i],
                                                methodSig.inArgs[i].type);
         }
       } catch(err) {
@@ -442,7 +444,7 @@ Client.prototype.bindWithSignature = function(name, signature) {
         numOutParams: methodSig.outArgs.length,
         isStreaming: isStreaming,
         inStreamingType: inStreaming ? methodSig.inStream.type :
-          vom.Types.JSVALUE
+          vdl.Types.JSVALUE
       }, callback);
 
       return rpc.start();
@@ -546,8 +548,8 @@ Client.prototype.remoteBlessings = function(ctx, name, method, cb) {
  * @param {string} type type of message to send to proxy.
  * @param {function} [cb] if given, this function will be called on
  * completion. The first argument will be an error if there is
- * one, and the second argument will be the vom-decoded proxy response.
- * @return {Promise} Promise that will be resolved with the vom-decoded proxy
+ * one, and the second argument will be the vdl-decoded proxy response.
+ * @return {Promise} Promise that will be resolved with the vdl-decoded proxy
  * response or rejected with an error if there is one.
  */
 Client.prototype._sendRequest = function(ctx, message, type, cb) {
@@ -564,7 +566,7 @@ Client.prototype._sendRequest = function(ctx, message, type, cb) {
 
   var reqDef = new Deferred();
   reqDef.promise.then(function(args) {
-    // If the response came off the wire, we need to vom decode the bytes.
+    // If the response came off the wire, we need to vdl decode the bytes.
     if (typeof args === 'string') {
       try {
         deferred.resolve(DecodeUtil.decode(args));

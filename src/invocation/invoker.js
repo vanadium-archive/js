@@ -8,7 +8,8 @@ module.exports = Invoker;
 var createSignatures = require('../vdl/create-signatures');
 var isPublicMethod = require('../lib/service-reflection').isPublicMethod;
 var verror = require('../v.io/core/veyron2/verror/verror');
-var vom = require('../vom/vom');
+var capitalize = require('../vdl/util').capitalize;
+var isCapitalized = require('../vdl/util').isCapitalized;
 var format = require('util').format;
 var context = require('../runtime/context');
 var ArgInspector = require('../lib/arg-inspector');
@@ -51,11 +52,11 @@ function Invoker(service) {
       continue;
     }
 
-    if (vom.MiscUtil.isCapitalized(key)) {
+    if (isCapitalized(key)) {
       throw new Error('Can\'t export capitalized method ' + key);
     }
 
-    var capitalizedMethodName = vom.MiscUtil.capitalize(key);
+    var capitalizedMethodName = capitalize(key);
     var method = service[key];
 
     invoker._methods[capitalizedMethodName] = {

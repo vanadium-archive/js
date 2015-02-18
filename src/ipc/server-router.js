@@ -17,7 +17,7 @@ var SecurityContext = require('../security/context');
 var ServerContext = require('./server-context');
 var DecodeUtil = require('../lib/decode-util');
 var EncodeUtil = require('../lib/encode-util');
-var vom = require('../vom/vom');
+var vdl = require('../vdl/vdl');
 var vdlsig =
     require('../v.io/core/veyron2/vdl/vdlroot/src/signature/signature');
 var namespaceUtil = require('../namespace/util');
@@ -132,8 +132,8 @@ Router.prototype.handleLookupRequest = function(messageId, request) {
       // See dispatcher.go lookupReply's signature field.
       // Also see dispatcher.go lookupIntermediateReply's signature field.
       // We have to pre-encode the signature list into a string.
-      var canonicalSignatureList = vom.Canonicalize.fill(signatureList, {
-        kind: vom.Kind.LIST,
+      var canonicalSignatureList = vdl.Canonicalize.fill(signatureList, {
+        kind: vdl.Kind.LIST,
         elem: vdlsig.Interface.prototype._type
       });
       res = EncodeUtil.encode(canonicalSignatureList);
@@ -179,7 +179,7 @@ Router.prototype.handleCancel = function(messageId) {
  * services in JavaScript.
  * @private
  * @param {string} messageId Message Id set by the server.
- * @param {Object} vomRequest VOM encoded request. Request's structure is
+ * @param {Object} vdlRequest VOM encoded request. Request's structure is
  * {
  *   serverId: number // the server id
  *   method: string // Name of the method on the service to call
@@ -187,18 +187,18 @@ Router.prototype.handleCancel = function(messageId) {
  *            // Note: This array contains wrapped arguments!
  * }
  */
-Router.prototype.handleRPCRequest = function(messageId, vomRequest) {
+Router.prototype.handleRPCRequest = function(messageId, vdlRequest) {
   // TODO(bjornick): Break this method up into smaller methods.
   var err;
   var request;
   try {
-   request = DecodeUtil.decode(vomRequest);
+   request = DecodeUtil.decode(vdlRequest);
   } catch (e) {
     err = new Error('Failed to decode args: ' + e);
     this.sendResult(messageId, '', null, err);
     return;
   }
-  var methodName = vom.MiscUtil.capitalize(request.method);
+  var methodName = vdl.MiscUtil.capitalize(request.method);
 
   var server = this._servers[request.serverId];
 
@@ -232,7 +232,7 @@ Router.prototype.handleRPCRequest = function(messageId, vomRequest) {
     this._contextMap[messageId] = ctx;
     this._outstandingRequestForId[messageId] = 0;
     this.incrementOutstandingRequestForId(messageId);
-    var globPattern = vom.TypeUtil.unwrap(request.args[0]);
+    var globPattern = vdl.TypeUtil.unwrap(request.args[0]);
     this.handleGlobRequest(messageId, ctx.suffix,
                            server, new Glob(globPattern),  ctx, invoker,
                            completion);
@@ -265,10 +265,10 @@ Router.prototype.handleRPCRequest = function(messageId, vomRequest) {
   // Unwrap the RPC arguments sent to the JS server.
   var unwrappedArgs = request.args.map(function(arg, i) {
     // If an any type was expected, unwrapping is not needed.
-    if (methodSig.inArgs[i].type.kind === vom.Kind.ANY) {
+    if (methodSig.inArgs[i].type.kind === vdl.Kind.ANY) {
       return arg;
     }
-    return vom.TypeUtil.unwrap(arg);
+    return vdl.TypeUtil.unwrap(arg);
   });
   var options = {
     methodName: methodName,
@@ -305,7 +305,7 @@ Router.prototype.handleRPCRequest = function(messageId, vomRequest) {
 
     // Has results; associate the types of the outArgs.
     var canonResults = results.map(function(result, i) {
-      return vom.Canonicalize.fill(result, methodSig.outArgs[i].type);
+      return vdl.Canonicalize.fill(result, methodSig.outArgs[i].type);
     });
     self.sendResult(messageId, methodName, canonResults, undefined,
                     methodSig.outArgs.length);

@@ -4,7 +4,7 @@
 var test = require('prova');
 var createSignatures = require('../../src/vdl/create-signatures');
 
-var vom = require('../../src/vom/vom');
+var vdl = require('../../src/vdl/vdl');
 
 function TestService() {
 }
@@ -23,39 +23,39 @@ test('create signatures with no description', function(t) {
       name: 'NoArgsFunction',
       inArgs: [],
       outArgs: [{
-        'type': vom.Types.JSVALUE
+        'type': vdl.Types.JSVALUE
       }]
     }, {
       name: 'NamedFunction',
       inArgs: [{
         name: 'x',
-        type: vom.Types.JSVALUE
+        type: vdl.Types.JSVALUE
       }, {
         name: 'y',
-        type: vom.Types.JSVALUE
+        type: vdl.Types.JSVALUE
       }, {
         name: 'z',
-        type: vom.Types.JSVALUE
+        type: vdl.Types.JSVALUE
       }],
       outArgs: [{
-        'type': vom.Types.JSVALUE
+        'type': vdl.Types.JSVALUE
       }]
     },{
       name: 'StreamingFunction',
       inArgs: [],
       outArgs: [{
-        'type': vom.Types.JSVALUE
+        'type': vdl.Types.JSVALUE
       }],
       inStream: {
-        type: vom.Types.JSVALUE,
+        type: vdl.Types.JSVALUE,
       },
       outStream: {
-        type: vom.Types.JSVALUE,
+        type: vdl.Types.JSVALUE,
       }
     }]
   };
-  var stringifiedResult = vom.Stringify(sigs[0]);
-  var stringifiedExpected = vom.Stringify(expected);
+  var stringifiedResult = vdl.Stringify(sigs[0]);
+  var stringifiedExpected = vdl.Stringify(expected);
   t.equals(stringifiedResult, stringifiedExpected);
   t.end();
 });
@@ -77,24 +77,24 @@ test('create signatures with full description', function(t) {
       inArgs: [{
         name: 'x',
         doc: 'xDoc',
-        type: vom.Types.UINT32
+        type: vdl.Types.UINT32
       }, {
         name: 'y',
         doc: 'yDoc',
-        type: vom.Types.STRING
+        type: vdl.Types.STRING
       }, {
         name: 'z',
         doc: 'zDoc',
-        type: vom.Types.Complex128
+        type: vdl.Types.Complex128
       }],
       outArgs: [{
         name: 'a',
         doc: 'aDoc',
-        type: vom.Types.STRING
+        type: vdl.Types.STRING
       }, {
         name: 'err',
         doc: 'errDoc',
-        type: vom.Types.ERROR
+        type: vdl.Types.ERROR
       }]
     }, {
       name: 'StreamingFunction',
@@ -103,20 +103,20 @@ test('create signatures with full description', function(t) {
       outArgs: [{
         name: 'err',
         doc: 'errDoc',
-        type: vom.Types.ERROR
+        type: vdl.Types.ERROR
       }],
       inStream: {
-        type: vom.Types.UINT32
+        type: vdl.Types.UINT32
       },
       outStream: {
-        type: vom.Types.INT32
+        type: vdl.Types.INT32
       }
     }]
   };
   var sigs = createSignatures(testService, desc);
   t.equals(sigs.length, 1);
-  var stringifiedResult = vom.Stringify(sigs[0]);
-  var stringifiedExpected = vom.Stringify(desc);
+  var stringifiedResult = vdl.Stringify(sigs[0]);
+  var stringifiedExpected = vdl.Stringify(desc);
   t.equals(stringifiedResult, stringifiedExpected);
   t.end();
 });
@@ -133,24 +133,24 @@ test('create signatures with one description but extra methods', function(t) {
       inArgs: [{
         name: 'x',
         doc: 'xDoc',
-        type: vom.Types.UINT32
+        type: vdl.Types.UINT32
       }, {
         name: 'y',
         doc: 'yDoc',
-        type: vom.Types.STRING
+        type: vdl.Types.STRING
       }, {
         name: 'z',
         doc: 'zDoc',
-        type: vom.Types.Complex128
+        type: vdl.Types.Complex128
       }],
       outArgs: [{
         name: 'a',
         doc: 'aDoc',
-        type: vom.Types.STRING
+        type: vdl.Types.STRING
       }, {
         name: 'err',
         doc: 'errDoc',
-        type: vom.Types.ERROR
+        type: vdl.Types.ERROR
       }]
     }, {
       name: 'StreamingFunction',
@@ -158,17 +158,17 @@ test('create signatures with one description but extra methods', function(t) {
       inArgs: [],
       outArgs: [],
       inStream: {
-        type: vom.Types.UINT32
+        type: vdl.Types.UINT32
       },
       outStream: {
-        type: vom.Types.INT32
+        type: vdl.Types.INT32
       }
     }]
   };
   var sigs = createSignatures(testService, desc);
   t.equals(sigs.length, 2);
-  var stringifiedResult = vom.Stringify(sigs[0]);
-  var stringifiedExpected = vom.Stringify(desc);
+  var stringifiedResult = vdl.Stringify(sigs[0]);
+  var stringifiedExpected = vdl.Stringify(desc);
   t.equals(stringifiedResult, stringifiedExpected);
 
   var expectedExtra = {
@@ -176,12 +176,12 @@ test('create signatures with one description but extra methods', function(t) {
       name: 'NoArgsFunction',
       inArgs: [],
       outArgs: [{
-        'type': vom.Types.JSVALUE
+        'type': vdl.Types.JSVALUE
       }]
     }]
   };
-  var stringifiedResultExtra = vom.Stringify(sigs[1]);
-  var stringifiedExpectedExtra = vom.Stringify(expectedExtra);
+  var stringifiedResultExtra = vdl.Stringify(sigs[1]);
+  var stringifiedExpectedExtra = vdl.Stringify(expectedExtra);
   t.equals(stringifiedResultExtra, stringifiedExpectedExtra);
 
   t.end();
@@ -210,20 +210,20 @@ test('create signatures with full description across multiple descs',
       inArgs: [{
         name: 'x',
         doc: 'xDoc',
-        type: vom.Types.UINT32
+        type: vdl.Types.UINT32
       }, {
         name: 'y',
         doc: 'yDoc',
-        type: vom.Types.STRING
+        type: vdl.Types.STRING
       }, {
         name: 'z',
         doc: 'zDoc',
-        type: vom.Types.Complex128
+        type: vdl.Types.Complex128
       }],
       outArgs: [{
         name: 'a',
         doc: 'aDoc',
-        type: vom.Types.STRING
+        type: vdl.Types.STRING
       }]
     }]
   }, {
@@ -236,17 +236,17 @@ test('create signatures with full description across multiple descs',
       inArgs: [],
       outArgs: [],
       inStream: {
-        type: vom.Types.UINT32
+        type: vdl.Types.UINT32
       },
       outStream: {
-        type: vom.Types.INT32
+        type: vdl.Types.INT32
       }
     }]
   }];
   var sigs = createSignatures(testService, descs);
   t.equals(sigs.length, 3);
-  var stringifiedResult = vom.Stringify(sigs);
-  var stringifiedExpected = vom.Stringify(descs);
+  var stringifiedResult = vdl.Stringify(sigs);
+  var stringifiedExpected = vdl.Stringify(descs);
   t.equals(stringifiedResult, stringifiedExpected);
   t.end();
 });
@@ -264,20 +264,20 @@ test('create signatures with multiple descs and missing methods',
       inArgs: [{
         name: 'x',
         doc: 'xDoc',
-        type: vom.Types.UINT32
+        type: vdl.Types.UINT32
       }, {
         name: 'y',
         doc: 'yDoc',
-        type: vom.Types.STRING
+        type: vdl.Types.STRING
       }, {
         name: 'z',
         doc: 'zDoc',
-        type: vom.Types.Complex128
+        type: vdl.Types.Complex128
       }],
       outArgs: [{
         name: 'a',
         doc: 'aDoc',
-        type: vom.Types.STRING
+        type: vdl.Types.STRING
       }]
     }]
   }, {
@@ -290,10 +290,10 @@ test('create signatures with multiple descs and missing methods',
       inArgs: [],
       outArgs: [],
       inStream: {
-        type: vom.Types.UINT32
+        type: vdl.Types.UINT32
       },
       outStream: {
-        type: vom.Types.INT32
+        type: vdl.Types.INT32
       }
     }]
   }];
@@ -304,12 +304,12 @@ test('create signatures with multiple descs and missing methods',
       name: 'NoArgsFunction',
       inArgs: [],
       outArgs: [{
-        'type': vom.Types.JSVALUE
+        'type': vdl.Types.JSVALUE
       }]
     }]
   }]);
-  var stringifiedResult = vom.Stringify(sigs);
-  var stringifiedExpected = vom.Stringify(expectedDescs);
+  var stringifiedResult = vdl.Stringify(sigs);
+  var stringifiedExpected = vdl.Stringify(expectedDescs);
   t.equals(stringifiedResult, stringifiedExpected);
   t.end();
 });
@@ -337,20 +337,20 @@ test('create signatures with full description across multiple descs with ' +
       inArgs: [{
         name: 'x',
         doc: 'xDoc',
-        type: vom.Types.UINT32
+        type: vdl.Types.UINT32
       }, {
         name: 'y',
         doc: 'yDoc',
-        type: vom.Types.STRING
+        type: vdl.Types.STRING
       }, {
         name: 'z',
         doc: 'zDoc',
-        type: vom.Types.Complex128
+        type: vdl.Types.Complex128
       }],
       outArgs: [{
         name: 'a',
         doc: 'aDoc',
-        type: vom.Types.STRING
+        type: vdl.Types.STRING
       }]
     }]
   }, {
@@ -363,20 +363,20 @@ test('create signatures with full description across multiple descs with ' +
       inArgs: [{
         name: 'x',
         doc: 'xDoc',
-        type: vom.Types.UINT32
+        type: vdl.Types.UINT32
       }, {
         name: 'y',
         doc: 'yDoc',
-        type: vom.Types.STRING
+        type: vdl.Types.STRING
       }, {
         name: 'z',
         doc: 'zDoc',
-        type: vom.Types.Complex128
+        type: vdl.Types.Complex128
       }],
       outArgs: [{
         name: 'a',
         doc: 'aDoc',
-        type: vom.Types.STRING
+        type: vdl.Types.STRING
       }]
     }, {
       name: 'StreamingFunction',
@@ -384,17 +384,17 @@ test('create signatures with full description across multiple descs with ' +
       inArgs: [],
       outArgs: [],
       inStream: {
-        type: vom.Types.UINT32
+        type: vdl.Types.UINT32
       },
       outStream: {
-        type: vom.Types.INT32
+        type: vdl.Types.INT32
       }
     }]
   }];
   var sigs = createSignatures(testService, descs);
   t.equals(sigs.length, 3);
-  var stringifiedResult = vom.Stringify(sigs);
-  var stringifiedExpected = vom.Stringify(descs);
+  var stringifiedResult = vdl.Stringify(sigs);
+  var stringifiedExpected = vdl.Stringify(descs);
   t.equals(stringifiedResult, stringifiedExpected);
   t.end();
 });
@@ -422,20 +422,20 @@ test('create signatures with full description across multiple descs with ' +
       inArgs: [{
         name: 'x',
         doc: 'xDoc',
-        type: vom.Types.UINT32
+        type: vdl.Types.UINT32
       }, {
         name: 'y',
         doc: 'yDoc',
-        type: vom.Types.STRING
+        type: vdl.Types.STRING
       }, {
         name: 'z',
         doc: 'zDoc',
-        type: vom.Types.Complex128
+        type: vdl.Types.Complex128
       }],
       outArgs: [{
         name: 'a',
         doc: 'aDoc',
-        type: vom.Types.STRING
+        type: vdl.Types.STRING
       }]
     }]
   }, {
@@ -448,10 +448,10 @@ test('create signatures with full description across multiple descs with ' +
       inArgs: [],
       outArgs: [],
       inStream: {
-        type: vom.Types.UINT32
+        type: vdl.Types.UINT32
       },
       outStream: {
-        type: vom.Types.INT32
+        type: vdl.Types.INT32
       }
     }, {
       name: 'NamedFunction',
@@ -459,20 +459,20 @@ test('create signatures with full description across multiple descs with ' +
       inArgs: [{
         name: 'x',
         doc: 'xDoc',
-        type: vom.Types.UINT32
+        type: vdl.Types.UINT32
       }, {
         name: 'y',
         doc: 'yDoc',
-        type: vom.Types.ANY
+        type: vdl.Types.ANY
       }, {
         name: 'z',
         doc: 'zDoc',
-        type: vom.Types.Complex128
+        type: vdl.Types.Complex128
       }],
       outArgs: [{
         name: 'a',
         doc: 'aDoc',
-        type: vom.Types.STRING
+        type: vdl.Types.STRING
       }]
     }]
   }];

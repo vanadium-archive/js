@@ -28,11 +28,14 @@ function TypeDecoder() {
   this._partialTypes = {};
 }
 
-var Kind = require('./kind.js');
-var Type = require('./type.js');
+var Kind = require('../vdl/kind.js');
+var Type = require('../vdl/type.js');
 var BootstrapTypes = require('./bootstrap-types.js');
 var RawVomReader = require('./raw-vom-reader.js');
-var binaryUtil = require('./binary-util');
+var unwrap = require('../vdl/type-util').unwrap;
+var wiretype = require('../v.io/core/veyron2/vom/vom');
+
+var eofByte = unwrap(wiretype.WireCtrlEOF);
 
 /**
  * Looks up a type in the decoded types cache by id.
@@ -259,7 +262,7 @@ TypeDecoder.prototype._readPartialType = function(messageBytes) {
     case BootstrapTypes.unionIds.NAMED_TYPE:
       endDef:
       while (true) {
-        if (reader.tryReadControlByte() === binaryUtil.EOF_BYTE) {
+        if (reader.tryReadControlByte() === eofByte) {
           break endDef;
         }
         nextIndex = reader.readUint();
@@ -279,7 +282,7 @@ TypeDecoder.prototype._readPartialType = function(messageBytes) {
       partialType.kind = Kind.ENUM;
       endDef2:
       while (true) {
-        if (reader.tryReadControlByte() === binaryUtil.EOF_BYTE) {
+        if (reader.tryReadControlByte() === eofByte) {
           break endDef2;
         }
 
@@ -303,7 +306,7 @@ TypeDecoder.prototype._readPartialType = function(messageBytes) {
       partialType.kind = Kind.ARRAY;
       endDef3:
       while (true) {
-        if (reader.tryReadControlByte() === binaryUtil.EOF_BYTE) {
+        if (reader.tryReadControlByte() === eofByte) {
           break endDef3;
         }
         nextIndex = reader.readUint();
@@ -326,7 +329,7 @@ TypeDecoder.prototype._readPartialType = function(messageBytes) {
       partialType.kind = Kind.LIST;
       endDef4:
       while (true) {
-        if (reader.tryReadControlByte() === binaryUtil.EOF_BYTE) {
+        if (reader.tryReadControlByte() === eofByte) {
           break endDef4;
         }
         nextIndex = reader.readUint();
@@ -346,7 +349,7 @@ TypeDecoder.prototype._readPartialType = function(messageBytes) {
       partialType.kind = Kind.SET;
       endDef5:
       while (true) {
-        if (reader.tryReadControlByte() === binaryUtil.EOF_BYTE) {
+        if (reader.tryReadControlByte() === eofByte) {
           break endDef5;
         }
         nextIndex = reader.readUint();
@@ -366,7 +369,7 @@ TypeDecoder.prototype._readPartialType = function(messageBytes) {
       partialType.kind = Kind.MAP;
       endDef6:
       while (true) {
-        if (reader.tryReadControlByte() === binaryUtil.EOF_BYTE) {
+        if (reader.tryReadControlByte() === eofByte) {
           break endDef6;
         }
         nextIndex = reader.readUint();
@@ -394,7 +397,7 @@ TypeDecoder.prototype._readPartialType = function(messageBytes) {
       }
       endDef7:
       while (true) {
-        if (reader.tryReadControlByte() === binaryUtil.EOF_BYTE) {
+        if (reader.tryReadControlByte() === eofByte) {
           break endDef7;
         }
         nextIndex = reader.readUint();
@@ -408,7 +411,7 @@ TypeDecoder.prototype._readPartialType = function(messageBytes) {
               partialType.fields[i] = {};
               sfEndDef:
               while(true) {
-                if (reader.tryReadControlByte() === binaryUtil.EOF_BYTE) {
+                if (reader.tryReadControlByte() === eofByte) {
                   break sfEndDef;
                 }
                 var sfNextIndex = reader.readUint();
@@ -437,7 +440,7 @@ TypeDecoder.prototype._readPartialType = function(messageBytes) {
       partialType.kind = Kind.OPTIONAL;
       endDef9:
       while (true) {
-        if (reader.tryReadControlByte() === binaryUtil.EOF_BYTE) {
+        if (reader.tryReadControlByte() === eofByte) {
           break endDef9;
         }
         nextIndex = reader.readUint();

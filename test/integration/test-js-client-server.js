@@ -2,7 +2,7 @@ var test = require('prova');
 var serve = require('./serve');
 var leafDispatcher = require('../../src/ipc/leaf-dispatcher');
 var Deferred = require('../../src/lib/deferred');
-var vom = require('../../src/vom/vom');
+var vdl = require('../../src/vdl/vdl');
 
 // TODO(bprosnitz) Combine CacheService and CacheServicePromises so there
 // isn't as much duplicated code.
@@ -281,7 +281,7 @@ var TypeService = {
   isTyped: function(context, any) {
     // We expect to receive the internally typed value of the any.
     // However, clients who send JSValue will not produce a typed value here.
-    return vom.TypeUtil.isTyped(any);
+    return vdl.TypeUtil.isTyped(any);
   },
   isString: function(context, str) {
     // We expect to receive a native string, if the client sent us one.
@@ -289,12 +289,12 @@ var TypeService = {
   },
   isStruct: function(context, struct) {
     // A struct should always be typed.
-    if (vom.TypeUtil.isTyped(struct)) {
+    if (vdl.TypeUtil.isTyped(struct)) {
       return;
     }
     // If it was untyped (a JSValue object), then the code is incorrect.
 
-    throw new Error('did not receive a typed struct' + vom.Stringify(struct));
+    throw new Error('did not receive a typed struct' + vdl.Stringify(struct));
   },
   swap: function(context, a, b) {
     return [b, a];
@@ -307,12 +307,12 @@ var TypeService = {
           {
             name: 'any',
             doc: 'The value can be anything.',
-            type: vom.Types.ANY
+            type: vdl.Types.ANY
           }
         ],
         outArgs: [
           {
-            type: vom.Types.BOOL
+            type: vdl.Types.BOOL
           }
         ]
       },
@@ -322,12 +322,12 @@ var TypeService = {
           {
             name: 'str',
             doc: 'The value should be a string.',
-            type: vom.Types.STRING
+            type: vdl.Types.STRING
           }
         ],
         outArgs: [
           {
-            type: vom.Types.BOOL
+            type: vdl.Types.BOOL
           }
         ]
       },
@@ -338,7 +338,7 @@ var TypeService = {
             name: 'struct',
             doc: 'The value should be a struct.',
             type: {
-              kind: vom.Kind.STRUCT,
+              kind: vdl.Kind.STRUCT,
               fields: []
             }
           }
@@ -351,22 +351,22 @@ var TypeService = {
           {
             name: 'a',
             doc: 'The first value',
-            type: vom.Types.ANY
+            type: vdl.Types.ANY
           },
           {
             name: 'b',
             doc: 'The second value',
-            type: vom.Types.ANY
+            type: vdl.Types.ANY
           }
         ],
         outArgs: [
           {
             doc: 'The second value is returned first',
-            type: vom.Types.ANY
+            type: vdl.Types.ANY
           },
           {
             doc: 'The first value is returned second',
-            type: vom.Types.ANY
+            type: vdl.Types.ANY
           }
         ]
       }
@@ -397,7 +397,7 @@ function runTypeService(options) {
         t.equal(res, false, '\'foo\' is an untyped string');
 
 
-        var VomStr = vom.Registry.lookupOrCreateConstructor(vom.Types.STRING);
+        var VomStr = vdl.Registry.lookupOrCreateConstructor(vdl.Types.STRING);
         var typedString = new VomStr('food');
         typeService.isTyped(ctx, typedString, function(err, res) {
           t.error(err, 'should not error on isTyped(...)');
@@ -457,36 +457,36 @@ function runTypeService(options) {
         // Now, swap a typed value (aa) with a wrapped and typed value (bb).
         var simpleType = {
           name: 'SimpleStruct',
-          kind: vom.Kind.STRUCT,
+          kind: vdl.Kind.STRUCT,
           fields: [
             {
               name: 'Foo',
-              type: vom.Types.INT32
+              type: vdl.Types.INT32
             },
             {
               name: 'Bar',
-              type: vom.Types.BOOL
+              type: vdl.Types.BOOL
             }
           ]
         };
-        var SimpleStruct = vom.Registry.lookupOrCreateConstructor(simpleType);
+        var SimpleStruct = vdl.Registry.lookupOrCreateConstructor(simpleType);
         var aa = new SimpleStruct({
           foo: 10,
           bar: true
         });
-        var simpleTypeB = vom.Types.INT32;
-        var SimpleInt32 = vom.Registry.lookupOrCreateConstructor(simpleTypeB);
+        var simpleTypeB = vdl.Types.INT32;
+        var SimpleInt32 = vdl.Registry.lookupOrCreateConstructor(simpleTypeB);
         var bb = new SimpleInt32(-32);
         typeService.swap(ctx, aa, bb, function(err, res1, res2) {
           t.error(err, 'should not error on swap(...)');
           t.deepEqual([res1, res2], [bb, aa], 'correctly swapped the 2 inputs');
 
           // Verify that res2 (the original aa) still has the right type.
-          t.ok(vom.TypeUtil.isTyped(res2), 'aa is still typed');
+          t.ok(vdl.TypeUtil.isTyped(res2), 'aa is still typed');
           t.deepEqual(res2._type, simpleType, 'aa has the correct type');
 
           // Verify that res1 (the original bb) still has the right type.
-          t.ok(vom.TypeUtil.isTyped(res1), 'bb is still typed');
+          t.ok(vdl.TypeUtil.isTyped(res1), 'bb is still typed');
           t.deepEqual(res1._type, simpleTypeB, 'bb has the correct type');
 
           end(t);

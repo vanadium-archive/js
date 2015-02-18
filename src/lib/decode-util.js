@@ -1,4 +1,6 @@
 var vom = require('../vom/vom');
+var hex2Bytes = require('../vdl/byte-util').hex2Bytes;
+var unwrap = require('../vdl/type-util').unwrap;
 module.exports = {
   decode: decode,
 };
@@ -9,11 +11,11 @@ module.exports = {
 function decode(hex, deepWrap) {
   deepWrap = deepWrap || false;
 
-  var reader = new vom.ByteArrayMessageReader(vom.Util.hex2Bytes(hex));
+  var reader = new vom.ByteArrayMessageReader(hex2Bytes(hex));
   var decoder = new vom.Decoder(reader, deepWrap);
   var decoded = decoder.decode();
   if (deepWrap) {
     return decoded;
   }
-  return vom.TypeUtil.unwrap(decoded); // drop top-level type information
+  return unwrap(decoded); // drop top-level type information
 }

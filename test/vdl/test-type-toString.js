@@ -5,7 +5,7 @@
 var test = require('prova');
 var testCases = require('./type-test-cases.js');
 
-var Type = require('./../../src/vom/type.js');
+var Type = require('./../../src/vdl/type.js');
 
 test('Type.toString', function(t) {
   for (var i = 0; i < testCases.length; i++) {

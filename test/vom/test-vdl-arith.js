@@ -74,7 +74,7 @@ test('method signature encode-decode match', function(assert) {
 });
 
 var expectedAdvancedMathDescription =
-  require('./expected-gen/testdata/arith/arith.js').AdvancedMath.
+  require('../vdl/expected-gen/testdata/arith/arith.js').AdvancedMath.
   prototype._serviceDescription;
 
 test('correct service description', function(assert) {

@@ -5,13 +5,16 @@
 
 module.exports = TypeEncoder;
 
-var Kind = require('./kind.js');
-var stringify = require('./stringify.js');
-var canonicalize = require('./canonicalize.js');
-var util = require('./util.js');
+var Kind = require('../vdl/kind.js');
+var stringify = require('../vdl/stringify.js');
+var canonicalize = require('../vdl/canonicalize.js');
+var util = require('../vdl/util.js');
 var BootstrapTypes = require('./bootstrap-types.js');
 var RawVomWriter = require('./raw-vom-writer.js');
-var binaryUtil = require('./binary-util');
+var unwrap = require('../vdl/type-util').unwrap;
+var wiretype = require('../v.io/core/veyron2/vom/vom');
+
+var eofByte = unwrap(wiretype.WireCtrlEOF);
 
 /**
  * Create a type encoder to help encode types and associate already sent types
@@ -22,7 +25,7 @@ function TypeEncoder() {
   this._typeIds = {};
   // TODO(bjornick): Use the vdl output after we fix:
   // https://github.com/veyron/release-issues/issues/1109
-  this._nextId = 41;
+  this._nextId = unwrap(wiretype.WireIDFirstUserType);
 }
 
 /**
@@ -129,7 +132,7 @@ TypeEncoder.prototype._encodeWireType = function(messageWriter, type, typeId) {
       }
       rawWriter.writeUint(1);
       rawWriter.writeUint(kindToBootstrapType(type.kind).id);
-      rawWriter.writeByte(binaryUtil.EOF_BYTE);
+      rawWriter.writeByte(eofByte);
       break;
     case Kind.OPTIONAL:
       elemId = this.encodeType(messageWriter, type.elem);
@@ -140,7 +143,7 @@ TypeEncoder.prototype._encodeWireType = function(messageWriter, type, typeId) {
       }
       rawWriter.writeUint(1);
       rawWriter.writeUint(elemId);
-      rawWriter.writeByte(binaryUtil.EOF_BYTE);
+      rawWriter.writeByte(eofByte);
       break;
     case Kind.ENUM:
       rawWriter.writeUint(BootstrapTypes.unionIds.ENUM_TYPE);
@@ -153,7 +156,7 @@ TypeEncoder.prototype._encodeWireType = function(messageWriter, type, typeId) {
       for (i = 0; i < type.labels.length; i++) {
         rawWriter.writeString(type.labels[i]);
       }
-      rawWriter.writeByte(binaryUtil.EOF_BYTE);
+      rawWriter.writeByte(eofByte);
       break;
     case Kind.ARRAY:
       elemId = this.encodeType(messageWriter, type.elem);
@@ -166,7 +169,7 @@ TypeEncoder.prototype._encodeWireType = function(messageWriter, type, typeId) {
       rawWriter.writeUint(elemId);
       rawWriter.writeUint(2);
       rawWriter.writeUint(type.len);
-      rawWriter.writeByte(binaryUtil.EOF_BYTE);
+      rawWriter.writeByte(eofByte);
       break;
     case Kind.LIST:
       elemId = this.encodeType(messageWriter, type.elem);
@@ -177,7 +180,7 @@ TypeEncoder.prototype._encodeWireType = function(messageWriter, type, typeId) {
       }
       rawWriter.writeUint(1);
       rawWriter.writeUint(elemId);
-      rawWriter.writeByte(binaryUtil.EOF_BYTE);
+      rawWriter.writeByte(eofByte);
       break;
     case Kind.SET:
       keyId = this.encodeType(messageWriter, type.key);
@@ -188,7 +191,7 @@ TypeEncoder.prototype._encodeWireType = function(messageWriter, type, typeId) {
       }
       rawWriter.writeUint(1);
       rawWriter.writeUint(keyId);
-      rawWriter.writeByte(binaryUtil.EOF_BYTE);
+      rawWriter.writeByte(eofByte);
       break;
     case Kind.MAP:
       keyId = this.encodeType(messageWriter, type.key);
@@ -202,7 +205,7 @@ TypeEncoder.prototype._encodeWireType = function(messageWriter, type, typeId) {
       rawWriter.writeUint(keyId);
       rawWriter.writeUint(2);
       rawWriter.writeUint(elemId);
-      rawWriter.writeByte(binaryUtil.EOF_BYTE);
+      rawWriter.writeByte(eofByte);
       break;
     case Kind.STRUCT:
     case Kind.UNION:
@@ -231,9 +234,9 @@ TypeEncoder.prototype._encodeWireType = function(messageWriter, type, typeId) {
         rawWriter.writeString(field.name);
         rawWriter.writeUint(1);
         rawWriter.writeUint(field.id);
-        rawWriter.writeByte(binaryUtil.EOF_BYTE);
+        rawWriter.writeByte(eofByte);
       }
-      rawWriter.writeByte(binaryUtil.EOF_BYTE);
+      rawWriter.writeByte(eofByte);
       break;
     default:
       throw new Error('encodeWireType with unknown kind: ' + type.kind);

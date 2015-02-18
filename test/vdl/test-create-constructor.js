@@ -4,11 +4,11 @@
 
 var test = require('prova');
 
-var BigInt = require('./../../src/vom/big-int.js');
-var createConstructor = require('./../../src/vom/create-constructor.js');
-var Kind = require('./../../src/vom/kind.js');
-var Types = require('./../../src/vom/types.js');
-var Complex = require('./../../src/vom/complex.js');
+var BigInt = require('./../../src/vdl/big-int.js');
+var createConstructor = require('./../../src/vdl/create-constructor.js');
+var Kind = require('./../../src/vdl/kind.js');
+var Types = require('./../../src/vdl/types.js');
+var Complex = require('./../../src/vdl/complex.js');
 
 test('create constructor', function(assert) {
   var tests = [
