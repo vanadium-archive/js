@@ -73,9 +73,7 @@ func (c implErrorThrowerClientStub) ThrowAborted(ctx *context.T, opts ...ipc.Cal
 	if call, err = c.c(ctx).StartCall(ctx, c.name, "ThrowAborted", nil, opts...); err != nil {
 		return
 	}
-	if ierr := call.Finish(&err); ierr != nil {
-		err = ierr
-	}
+	err = call.Finish()
 	return
 }
 
@@ -84,9 +82,7 @@ func (c implErrorThrowerClientStub) ThrowBadArg(ctx *context.T, opts ...ipc.Call
 	if call, err = c.c(ctx).StartCall(ctx, c.name, "ThrowBadArg", nil, opts...); err != nil {
 		return
 	}
-	if ierr := call.Finish(&err); ierr != nil {
-		err = ierr
-	}
+	err = call.Finish()
 	return
 }
 
@@ -95,9 +91,7 @@ func (c implErrorThrowerClientStub) ThrowBadProtocol(ctx *context.T, opts ...ipc
 	if call, err = c.c(ctx).StartCall(ctx, c.name, "ThrowBadProtocol", nil, opts...); err != nil {
 		return
 	}
-	if ierr := call.Finish(&err); ierr != nil {
-		err = ierr
-	}
+	err = call.Finish()
 	return
 }
 
@@ -106,9 +100,7 @@ func (c implErrorThrowerClientStub) ThrowInternal(ctx *context.T, opts ...ipc.Ca
 	if call, err = c.c(ctx).StartCall(ctx, c.name, "ThrowInternal", nil, opts...); err != nil {
 		return
 	}
-	if ierr := call.Finish(&err); ierr != nil {
-		err = ierr
-	}
+	err = call.Finish()
 	return
 }
 
@@ -117,9 +109,7 @@ func (c implErrorThrowerClientStub) ThrowNoAccess(ctx *context.T, opts ...ipc.Ca
 	if call, err = c.c(ctx).StartCall(ctx, c.name, "ThrowNoAccess", nil, opts...); err != nil {
 		return
 	}
-	if ierr := call.Finish(&err); ierr != nil {
-		err = ierr
-	}
+	err = call.Finish()
 	return
 }
 
@@ -128,9 +118,7 @@ func (c implErrorThrowerClientStub) ThrowNoExist(ctx *context.T, opts ...ipc.Cal
 	if call, err = c.c(ctx).StartCall(ctx, c.name, "ThrowNoExist", nil, opts...); err != nil {
 		return
 	}
-	if ierr := call.Finish(&err); ierr != nil {
-		err = ierr
-	}
+	err = call.Finish()
 	return
 }
 
@@ -139,9 +127,7 @@ func (c implErrorThrowerClientStub) ThrowNoExistOrNoAccess(ctx *context.T, opts 
 	if call, err = c.c(ctx).StartCall(ctx, c.name, "ThrowNoExistOrNoAccess", nil, opts...); err != nil {
 		return
 	}
-	if ierr := call.Finish(&err); ierr != nil {
-		err = ierr
-	}
+	err = call.Finish()
 	return
 }
 
@@ -150,9 +136,7 @@ func (c implErrorThrowerClientStub) ThrowUnknown(ctx *context.T, opts ...ipc.Cal
 	if call, err = c.c(ctx).StartCall(ctx, c.name, "ThrowUnknown", nil, opts...); err != nil {
 		return
 	}
-	if ierr := call.Finish(&err); ierr != nil {
-		err = ierr
-	}
+	err = call.Finish()
 	return
 }
 
@@ -161,9 +145,7 @@ func (c implErrorThrowerClientStub) ThrowGoError(ctx *context.T, opts ...ipc.Cal
 	if call, err = c.c(ctx).StartCall(ctx, c.name, "ThrowGoError", nil, opts...); err != nil {
 		return
 	}
-	if ierr := call.Finish(&err); ierr != nil {
-		err = ierr
-	}
+	err = call.Finish()
 	return
 }
 
@@ -172,9 +154,7 @@ func (c implErrorThrowerClientStub) ThrowCustomStandardError(ctx *context.T, opt
 	if call, err = c.c(ctx).StartCall(ctx, c.name, "ThrowCustomStandardError", nil, opts...); err != nil {
 		return
 	}
-	if ierr := call.Finish(&err); ierr != nil {
-		err = ierr
-	}
+	err = call.Finish()
 	return
 }
 
@@ -183,9 +163,7 @@ func (c implErrorThrowerClientStub) ListAllBuiltInErrorIDs(ctx *context.T, opts 
 	if call, err = c.c(ctx).StartCall(ctx, c.name, "ListAllBuiltInErrorIDs", nil, opts...); err != nil {
 		return
 	}
-	if ierr := call.Finish(&o0, &err); ierr != nil {
-		err = ierr
-	}
+	err = call.Finish(&o0)
 	return
 }
 
@@ -317,79 +295,48 @@ var descErrorThrower = ipc.InterfaceDesc{
 		{
 			Name: "ThrowAborted",
 			Doc:  "// Throws veyron2/vError.Aborted error",
-			OutArgs: []ipc.ArgDesc{
-				{"", ``}, // error
-			},
 		},
 		{
 			Name: "ThrowBadArg",
 			Doc:  "// Throws veyron2/vError.BadArg error",
-			OutArgs: []ipc.ArgDesc{
-				{"", ``}, // error
-			},
 		},
 		{
 			Name: "ThrowBadProtocol",
 			Doc:  "// Throws veyron2/vError.BadProtocol error",
-			OutArgs: []ipc.ArgDesc{
-				{"", ``}, // error
-			},
 		},
 		{
 			Name: "ThrowInternal",
 			Doc:  "// Throws veyron2/vError.Internal error",
-			OutArgs: []ipc.ArgDesc{
-				{"", ``}, // error
-			},
 		},
 		{
 			Name: "ThrowNoAccess",
 			Doc:  "// Throws veyron2/vError.NoAccess error",
-			OutArgs: []ipc.ArgDesc{
-				{"", ``}, // error
-			},
 		},
 		{
 			Name: "ThrowNoExist",
 			Doc:  "// Throws veyron2/vError.NoExist error",
-			OutArgs: []ipc.ArgDesc{
-				{"", ``}, // error
-			},
 		},
 		{
 			Name: "ThrowNoExistOrNoAccess",
 			Doc:  "// Throws veyron2/vError.NoExistOrNoAccess error",
-			OutArgs: []ipc.ArgDesc{
-				{"", ``}, // error
-			},
 		},
 		{
 			Name: "ThrowUnknown",
 			Doc:  "// Throws veyron2/vError.Unknown error",
-			OutArgs: []ipc.ArgDesc{
-				{"", ``}, // error
-			},
 		},
 		{
 			Name: "ThrowGoError",
 			Doc:  "// Throws normal Go error",
-			OutArgs: []ipc.ArgDesc{
-				{"", ``}, // error
-			},
 		},
 		{
 			Name: "ThrowCustomStandardError",
 			Doc:  "// Throws custom error created by using Standard",
-			OutArgs: []ipc.ArgDesc{
-				{"", ``}, // error
-			},
 		},
 		{
 			Name: "ListAllBuiltInErrorIDs",
 			Doc:  "// Lists all errors Ids available in veyron2/verror",
 			OutArgs: []ipc.ArgDesc{
 				{"", ``}, // []string
-				{"", ``}, // error
 			},
 		},
 	},

@@ -57,9 +57,7 @@ func (c implCancelCollectorClientStub) NeverReturn(ctx *context.T, i0 int64, opt
 	if call, err = c.c(ctx).StartCall(ctx, c.name, "NeverReturn", []interface{}{i0}, opts...); err != nil {
 		return
 	}
-	if ierr := call.Finish(&err); ierr != nil {
-		err = ierr
-	}
+	err = call.Finish()
 	return
 }
 
@@ -68,9 +66,7 @@ func (c implCancelCollectorClientStub) WaitForStatus(ctx *context.T, i0 int64, i
 	if call, err = c.c(ctx).StartCall(ctx, c.name, "WaitForStatus", []interface{}{i0, i1}, opts...); err != nil {
 		return
 	}
-	if ierr := call.Finish(&o0, &err); ierr != nil {
-		err = ierr
-	}
+	err = call.Finish(&o0)
 	return
 }
 
@@ -153,9 +149,6 @@ var descCancelCollector = ipc.InterfaceDesc{
 			InArgs: []ipc.ArgDesc{
 				{"key", ``}, // int64
 			},
-			OutArgs: []ipc.ArgDesc{
-				{"", ``}, // error
-			},
 		},
 		{
 			Name: "WaitForStatus",
@@ -166,7 +159,6 @@ var descCancelCollector = ipc.InterfaceDesc{
 			},
 			OutArgs: []ipc.ArgDesc{
 				{"timeout", ``}, // int64
-				{"err", ``},     // error
 			},
 		},
 	},

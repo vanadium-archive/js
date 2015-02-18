@@ -117,9 +117,7 @@ func (c implCacheClientStub) Set(ctx *context.T, i0 string, i1 vdl.AnyRep, opts 
 	if call, err = c.c(ctx).StartCall(ctx, c.name, "Set", []interface{}{i0, i1}, opts...); err != nil {
 		return
 	}
-	if ierr := call.Finish(&err); ierr != nil {
-		err = ierr
-	}
+	err = call.Finish()
 	return
 }
 
@@ -128,9 +126,7 @@ func (c implCacheClientStub) Get(ctx *context.T, i0 string, opts ...ipc.CallOpt)
 	if call, err = c.c(ctx).StartCall(ctx, c.name, "Get", []interface{}{i0}, opts...); err != nil {
 		return
 	}
-	if ierr := call.Finish(&o0, &err); ierr != nil {
-		err = ierr
-	}
+	err = call.Finish(&o0)
 	return
 }
 
@@ -139,9 +135,7 @@ func (c implCacheClientStub) GetAsByte(ctx *context.T, i0 string, opts ...ipc.Ca
 	if call, err = c.c(ctx).StartCall(ctx, c.name, "GetAsByte", []interface{}{i0}, opts...); err != nil {
 		return
 	}
-	if ierr := call.Finish(&o0, &err); ierr != nil {
-		err = ierr
-	}
+	err = call.Finish(&o0)
 	return
 }
 
@@ -150,9 +144,7 @@ func (c implCacheClientStub) GetAsInt32(ctx *context.T, i0 string, opts ...ipc.C
 	if call, err = c.c(ctx).StartCall(ctx, c.name, "GetAsInt32", []interface{}{i0}, opts...); err != nil {
 		return
 	}
-	if ierr := call.Finish(&o0, &err); ierr != nil {
-		err = ierr
-	}
+	err = call.Finish(&o0)
 	return
 }
 
@@ -161,9 +153,7 @@ func (c implCacheClientStub) GetAsInt64(ctx *context.T, i0 string, opts ...ipc.C
 	if call, err = c.c(ctx).StartCall(ctx, c.name, "GetAsInt64", []interface{}{i0}, opts...); err != nil {
 		return
 	}
-	if ierr := call.Finish(&o0, &err); ierr != nil {
-		err = ierr
-	}
+	err = call.Finish(&o0)
 	return
 }
 
@@ -172,9 +162,7 @@ func (c implCacheClientStub) GetAsUint32(ctx *context.T, i0 string, opts ...ipc.
 	if call, err = c.c(ctx).StartCall(ctx, c.name, "GetAsUint32", []interface{}{i0}, opts...); err != nil {
 		return
 	}
-	if ierr := call.Finish(&o0, &err); ierr != nil {
-		err = ierr
-	}
+	err = call.Finish(&o0)
 	return
 }
 
@@ -183,9 +171,7 @@ func (c implCacheClientStub) GetAsUint64(ctx *context.T, i0 string, opts ...ipc.
 	if call, err = c.c(ctx).StartCall(ctx, c.name, "GetAsUint64", []interface{}{i0}, opts...); err != nil {
 		return
 	}
-	if ierr := call.Finish(&o0, &err); ierr != nil {
-		err = ierr
-	}
+	err = call.Finish(&o0)
 	return
 }
 
@@ -194,9 +180,7 @@ func (c implCacheClientStub) GetAsFloat32(ctx *context.T, i0 string, opts ...ipc
 	if call, err = c.c(ctx).StartCall(ctx, c.name, "GetAsFloat32", []interface{}{i0}, opts...); err != nil {
 		return
 	}
-	if ierr := call.Finish(&o0, &err); ierr != nil {
-		err = ierr
-	}
+	err = call.Finish(&o0)
 	return
 }
 
@@ -205,9 +189,7 @@ func (c implCacheClientStub) GetAsFloat64(ctx *context.T, i0 string, opts ...ipc
 	if call, err = c.c(ctx).StartCall(ctx, c.name, "GetAsFloat64", []interface{}{i0}, opts...); err != nil {
 		return
 	}
-	if ierr := call.Finish(&o0, &err); ierr != nil {
-		err = ierr
-	}
+	err = call.Finish(&o0)
 	return
 }
 
@@ -216,9 +198,7 @@ func (c implCacheClientStub) GetAsString(ctx *context.T, i0 string, opts ...ipc.
 	if call, err = c.c(ctx).StartCall(ctx, c.name, "GetAsString", []interface{}{i0}, opts...); err != nil {
 		return
 	}
-	if ierr := call.Finish(&o0, &err); ierr != nil {
-		err = ierr
-	}
+	err = call.Finish(&o0)
 	return
 }
 
@@ -227,9 +207,7 @@ func (c implCacheClientStub) GetAsBool(ctx *context.T, i0 string, opts ...ipc.Ca
 	if call, err = c.c(ctx).StartCall(ctx, c.name, "GetAsBool", []interface{}{i0}, opts...); err != nil {
 		return
 	}
-	if ierr := call.Finish(&o0, &err); ierr != nil {
-		err = ierr
-	}
+	err = call.Finish(&o0)
 	return
 }
 
@@ -238,9 +216,7 @@ func (c implCacheClientStub) GetAsError(ctx *context.T, i0 string, opts ...ipc.C
 	if call, err = c.c(ctx).StartCall(ctx, c.name, "GetAsError", []interface{}{i0}, opts...); err != nil {
 		return
 	}
-	if ierr := call.Finish(&o0, &err); ierr != nil {
-		err = ierr
-	}
+	err = call.Finish(&o0)
 	return
 }
 
@@ -249,9 +225,7 @@ func (c implCacheClientStub) AsMap(ctx *context.T, opts ...ipc.CallOpt) (o0 map[
 	if call, err = c.c(ctx).StartCall(ctx, c.name, "AsMap", nil, opts...); err != nil {
 		return
 	}
-	if ierr := call.Finish(&o0, &err); ierr != nil {
-		err = ierr
-	}
+	err = call.Finish(&o0)
 	return
 }
 
@@ -260,9 +234,7 @@ func (c implCacheClientStub) KeyValuePairs(ctx *context.T, opts ...ipc.CallOpt) 
 	if call, err = c.c(ctx).StartCall(ctx, c.name, "KeyValuePairs", nil, opts...); err != nil {
 		return
 	}
-	if ierr := call.Finish(&o0, &err); ierr != nil {
-		err = ierr
-	}
+	err = call.Finish(&o0)
 	return
 }
 
@@ -271,9 +243,7 @@ func (c implCacheClientStub) MostRecentSet(ctx *context.T, opts ...ipc.CallOpt) 
 	if call, err = c.c(ctx).StartCall(ctx, c.name, "MostRecentSet", nil, opts...); err != nil {
 		return
 	}
-	if ierr := call.Finish(&o0, &o1, &err); ierr != nil {
-		err = ierr
-	}
+	err = call.Finish(&o0, &o1)
 	return
 }
 
@@ -282,9 +252,7 @@ func (c implCacheClientStub) KeyPage(ctx *context.T, i0 int64, opts ...ipc.CallO
 	if call, err = c.c(ctx).StartCall(ctx, c.name, "KeyPage", []interface{}{i0}, opts...); err != nil {
 		return
 	}
-	if ierr := call.Finish(&o0, &err); ierr != nil {
-		err = ierr
-	}
+	err = call.Finish(&o0)
 	return
 }
 
@@ -293,9 +261,7 @@ func (c implCacheClientStub) Size(ctx *context.T, opts ...ipc.CallOpt) (o0 int64
 	if call, err = c.c(ctx).StartCall(ctx, c.name, "Size", nil, opts...); err != nil {
 		return
 	}
-	if ierr := call.Finish(&o0, &err); ierr != nil {
-		err = ierr
-	}
+	err = call.Finish(&o0)
 	return
 }
 
@@ -407,9 +373,7 @@ func (c implCacheMultiGetCallSend) Close() error {
 	return c.c.CloseSend()
 }
 func (c *implCacheMultiGetCall) Finish() (err error) {
-	if ierr := c.Call.Finish(&err); ierr != nil {
-		err = ierr
-	}
+	err = c.Call.Finish()
 	return
 }
 
@@ -632,9 +596,6 @@ var descCache = ipc.InterfaceDesc{
 				{"key", ``},   // string
 				{"value", ``}, // vdl.AnyRep
 			},
-			OutArgs: []ipc.ArgDesc{
-				{"", ``}, // error
-			},
 		},
 		{
 			Name: "Get",
@@ -644,7 +605,6 @@ var descCache = ipc.InterfaceDesc{
 			},
 			OutArgs: []ipc.ArgDesc{
 				{"", ``}, // vdl.AnyRep
-				{"", ``}, // error
 			},
 		},
 		{
@@ -655,7 +615,6 @@ var descCache = ipc.InterfaceDesc{
 			},
 			OutArgs: []ipc.ArgDesc{
 				{"", ``}, // byte
-				{"", ``}, // error
 			},
 		},
 		{
@@ -666,7 +625,6 @@ var descCache = ipc.InterfaceDesc{
 			},
 			OutArgs: []ipc.ArgDesc{
 				{"", ``}, // int32
-				{"", ``}, // error
 			},
 		},
 		{
@@ -677,7 +635,6 @@ var descCache = ipc.InterfaceDesc{
 			},
 			OutArgs: []ipc.ArgDesc{
 				{"", ``}, // int64
-				{"", ``}, // error
 			},
 		},
 		{
@@ -688,7 +645,6 @@ var descCache = ipc.InterfaceDesc{
 			},
 			OutArgs: []ipc.ArgDesc{
 				{"", ``}, // uint32
-				{"", ``}, // error
 			},
 		},
 		{
@@ -699,7 +655,6 @@ var descCache = ipc.InterfaceDesc{
 			},
 			OutArgs: []ipc.ArgDesc{
 				{"", ``}, // uint64
-				{"", ``}, // error
 			},
 		},
 		{
@@ -710,7 +665,6 @@ var descCache = ipc.InterfaceDesc{
 			},
 			OutArgs: []ipc.ArgDesc{
 				{"", ``}, // float32
-				{"", ``}, // error
 			},
 		},
 		{
@@ -721,7 +675,6 @@ var descCache = ipc.InterfaceDesc{
 			},
 			OutArgs: []ipc.ArgDesc{
 				{"", ``}, // float64
-				{"", ``}, // error
 			},
 		},
 		{
@@ -732,7 +685,6 @@ var descCache = ipc.InterfaceDesc{
 			},
 			OutArgs: []ipc.ArgDesc{
 				{"", ``}, // string
-				{"", ``}, // error
 			},
 		},
 		{
@@ -743,7 +695,6 @@ var descCache = ipc.InterfaceDesc{
 			},
 			OutArgs: []ipc.ArgDesc{
 				{"", ``}, // bool
-				{"", ``}, // error
 			},
 		},
 		{
@@ -754,7 +705,6 @@ var descCache = ipc.InterfaceDesc{
 			},
 			OutArgs: []ipc.ArgDesc{
 				{"", ``}, // error
-				{"", ``}, // error
 			},
 		},
 		{
@@ -762,7 +712,6 @@ var descCache = ipc.InterfaceDesc{
 			Doc:  "// AsMap returns the full contents of the cache as a map.",
 			OutArgs: []ipc.ArgDesc{
 				{"", ``}, // map[string]vdl.AnyRep
-				{"", ``}, // error
 			},
 		},
 		{
@@ -770,7 +719,6 @@ var descCache = ipc.InterfaceDesc{
 			Doc:  "// KeyValuePairs returns the full contents of the cache as a slice of pairs.",
 			OutArgs: []ipc.ArgDesc{
 				{"", ``}, // []KeyValuePair
-				{"", ``}, // error
 			},
 		},
 		{
@@ -779,7 +727,6 @@ var descCache = ipc.InterfaceDesc{
 			OutArgs: []ipc.ArgDesc{
 				{"value", ``}, // KeyValuePair
 				{"time", ``},  // int64
-				{"err", ``},   // error
 			},
 		},
 		{
@@ -790,7 +737,6 @@ var descCache = ipc.InterfaceDesc{
 			},
 			OutArgs: []ipc.ArgDesc{
 				{"", ``}, // KeyPageResult
-				{"", ``}, // error
 			},
 		},
 		{
@@ -798,15 +744,11 @@ var descCache = ipc.InterfaceDesc{
 			Doc:  "// Size returns the total number of entries in the cache.",
 			OutArgs: []ipc.ArgDesc{
 				{"", ``}, // int64
-				{"", ``}, // error
 			},
 		},
 		{
 			Name: "MultiGet",
 			Doc:  "// MultiGet sets up a stream that allows fetching multiple keys.",
-			OutArgs: []ipc.ArgDesc{
-				{"", ``}, // error
-			},
 		},
 	},
 }
