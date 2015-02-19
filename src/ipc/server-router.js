@@ -25,8 +25,6 @@ var GlobStream = require('./glob-stream');
 var VDLMountEntry = require('../v.io/core/veyron2/naming').VDLMountEntry;
 var ServerRPCReply =
   require('../v.io/wspr/veyron/services/wsprd/lib').ServerRPCReply;
-var Controller =
-  require('../v.io/wspr/veyron/services/wsprd/app').Controller;
 
 /**
  * A router that handles routing incoming requests to the right
@@ -34,7 +32,7 @@ var Controller =
  * @constructor
  * @private
  */
-var Router = function(proxy, appName, rootCtx, client) {
+var Router = function(proxy, appName, rootCtx, controller) {
   this._servers = {};
   this._proxy = proxy;
   this._streamMap = {};
@@ -42,9 +40,7 @@ var Router = function(proxy, appName, rootCtx, client) {
   this._appName = appName;
   this._rootCtx = rootCtx;
   this._outstandingRequestForId = {};
-
-  this._controller = client.bindWithSignature(
-    'controller', [Controller.prototype._serviceDescription]);
+  this._controller = controller;
 
   proxy.addIncomingHandler(IncomingPayloadType.INVOKE_REQUEST, this);
   proxy.addIncomingHandler(IncomingPayloadType.LOOKUP_REQUEST, this);
@@ -94,7 +90,7 @@ Router.prototype.handleAuthorizationRequest = function(messageId, request) {
     return;
   }
   var router = this;
-  var securityContext = new SecurityContext(request.context, this._proxy);
+  var securityContext = new SecurityContext(request.context, this._controller);
   server.handleAuthorization(request.handle, securityContext).then(function() {
     router._proxy.sendRequest('{}', MessageType.AUTHORIZATION_RESPONSE, null,
         messageId);
@@ -217,7 +213,7 @@ Router.prototype.handleRPCRequest = function(messageId, vdlRequest) {
 
   var self = this;
   var stream;
-  var ctx = new ServerContext(request, this._proxy);
+  var ctx = new ServerContext(request, this._controller, this._rootCtx);
   if (request.method === 'Glob__') {
     if (!invoker.hasGlobber()) {
       err = new Error('Glob is not implemented');
@@ -330,7 +326,7 @@ Router.prototype.invokeMethod = function(invoker, options, cb) {
   };
 
   function InvocationFinishedCallback(err, results) {
-    ctx.remoteBlessings.release();
+    ctx.remoteBlessings.release(ctx);
     cb(err, results);
   }
 

@@ -3,17 +3,15 @@
  * @private
  */
 
-var MessageType = require('../proxy/message-type');
-
 /**
  * Blessings encapsulate the set of blessings (human-readable strings) have
  * been bound to a principal in a specific context.
  * @constructor
  */
-function Blessings(id, key, proxy) {
+function Blessings(id, key, controller) {
   this._id = id;
   this._count = 1;
-  this._proxy = proxy;
+  this._controller = controller;
   this._key = key;
 }
 
@@ -29,12 +27,10 @@ Blessings.prototype.retain = function() {
  * Decrements the reference count on the Blessings.  When the reference count
  * goes to zero, the Blessings will be removed from the cache in the go code.
  */
-Blessings.prototype.release = function() {
+Blessings.prototype.release = function(ctx) {
   this._count--;
   if (this._count === 0) {
-    var message = JSON.stringify(this._id);
-    this._proxy.sendRequest(message, MessageType.UNLINK_BLESSINGS, null,
-        this._proxy.nextId());
+    this._controller.unlinkJSBlessings(ctx, this._id);
   }
 };
 

@@ -261,7 +261,7 @@ module.exports.CaveatParamTypeMismatchError = makeError('v.io/core/veyron2/secur
 }, [
   new uniqueid.Id()._type,
   vdl.Types.TYPEOBJECT,
-  vdl.Types.STRING,
+  vdl.Types.TYPEOBJECT,
 ]);
 
 
