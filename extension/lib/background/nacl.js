@@ -128,8 +128,8 @@ Nacl.prototype.getBlessingRoot = function(url, cb) {
     console.log('Using hard-coded blessing root to connect to ' + url);
     var veyronTestRoot = {
       names: ['dev.v.io'],
-      publicKey: 'MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEjSehIL3JhB38DDql5lIey' +
-          'MaeTc0Mg1RYTGFf3XeLGZaDu4_mM5IDm72wKB2LjkHsPWFicBBJJuB_rTYGSKclwg=='
+      publicKey: 'MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEorLIuoiI9dh9qu97fz7i0' +
+        'Ay93VQG-KRrm_NqlciiqT6L9F5daSuUZse_EeYCAQE-76gozA_f7BcW3aPiTU40aw=='
     };
 
     return process.nextTick(cb.bind(null, null, veyronTestRoot));
