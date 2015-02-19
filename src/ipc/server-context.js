@@ -15,10 +15,12 @@ module.exports = ServerContext;
  * information about an ongoing server call.
  * @constructor
  * @param request An rpc request object or a ServerContext to clone from.
- * @param proxy A proxy instance.  This is only needed if the first arg
- * is not a ServerContext.
+ * @param controller A Controller instance.  This is only needed if the
+ * first arg is not a ServerContext.
+ * @param ctx A context.Context object to derive this new context from.
+ * This is only needed if the first arg is not a ServerContext.
  */
-function ServerContext(request, proxy) {
+function ServerContext(request, controller, ctx) {
   if (!(this instanceof ServerContext)) {
     return new ServerContext();
   }
@@ -35,13 +37,14 @@ function ServerContext(request, proxy) {
     this.remoteEndpoint = request.remoteEndpoint;
     this.methodTags = request.methodTags;
   } else {
-    this._ctx = new context.Context();
-    if (request.context.timeout !== constants.NO_TIMEOUT) {
+    this._ctx = ctx;
+    if (!request.context.timeout.equals(constants.NO_TIMEOUT)) {
       this._ctx = this._ctx.withTimeout(request.context.timeout);
     } else {
       this._ctx = this._ctx.withCancel();
     }
-    var security = new SecurityContext(request.context.securityContext, proxy);
+    var security = new SecurityContext(request.context.securityContext, 
+                                       controller);
 
     this.suffix = security.suffix;
     this.name = security.name;
@@ -66,7 +69,7 @@ ServerContext.prototype.waitUntilDone = function(callback) {
   return this._ctx.waitUntilDone(callback);
 };
 ServerContext.prototype.value = function(key) {
-  return this._ctx.value();
+  return this._ctx.value(key);
 };
 ServerContext.prototype.cancel = function() {
   return this._ctx.cancel();

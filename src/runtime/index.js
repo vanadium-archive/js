@@ -7,17 +7,17 @@ var inherits = require('util').inherits;
 var Server = require('../ipc/server');
 var ServerRouter = require('../ipc/server-router');
 var Client = require('../ipc/client');
-var MessageType = require('../proxy/message-type');
 var Namespace = require('../namespace');
 var CaveatValidatorRegistry = require('../security/caveat-validator-registry');
 var Principal = require('../security/principal');
 var Blessings = require('../security/blessings');
 var Deferred = require('../lib/deferred');
-var SimpleHandler = require('../proxy/simple-handler');
 var vlog = require('../lib/vlog');
 var context = require('./context');
 var SharedContextKeys = require('./shared-context-keys');
 var vtrace = require('../lib/vtrace');
+var Controller =
+  require('../v.io/wspr/veyron/services/wsprd/app').Controller;
 
 module.exports = Runtime;
 
@@ -40,7 +40,10 @@ function Runtime(options) {
 
   this.accountName = options.accountName;
   this._wspr = options.wspr;
-  this.principal = new Principal(this._getProxyConnection());
+  var client = this.newClient();
+  this._controller = client.bindWithSignature(
+    'controller', [Controller.prototype._serviceDescription]);
+  this.principal = new Principal(this.getContext(), this._controller);
   this._name = options.appName;
   this._language = options.language;
   this.caveatRegistry = new CaveatValidatorRegistry();
@@ -139,21 +142,17 @@ Runtime.prototype.namespace = function() {
  * @return {Promise} A promise that resolves to the new Blessings
  */
 Runtime.prototype.newBlessings = function(extension, cb) {
-  var newBlessingsDef = new Deferred(cb);
-  var messageDef = new Deferred();
-  var proxy = this._getProxyConnection();
-  var id = proxy.nextId();
-  var handler = new SimpleHandler(this.getContext(), messageDef, proxy, id);
-
-  proxy.sendRequest(JSON.stringify(extension), MessageType.NEW_BLESSINGS,
-    handler, id);
-
-  messageDef.promise.then(function(message) {
-    var id = new Blessings(message.handle, message.publicKey, proxy);
-    newBlessingsDef.resolve(id);
-  }, newBlessingsDef.reject);
-
-  return newBlessingsDef.promise;
+  var def = new Deferred(cb);
+  var ctx = this.getContext();
+  var controller = this._controller;
+  controller.createBlessings(ctx, extension, function(err, id, key) {
+    if (err !== null) {
+      def.reject(err);
+    } else {
+      def.resolve(new Blessings(id, key, controller));
+    }
+  });
+  return def.promise;
 };
 
 /**
@@ -190,7 +189,7 @@ Runtime.prototype._getRouter = function() {
   if (!this._router) {
     this._router = new ServerRouter(
       this._getProxyConnection(),
-      this._name, this.getContext(), this.newClient());
+      this._name, this.getContext(), this._controller);
   }
   return this._router;
 };

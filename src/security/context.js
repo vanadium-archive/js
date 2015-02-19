@@ -5,17 +5,17 @@
 var Blessings = require('./blessings.js');
 module.exports = Context;
 
-function Context(ctx, proxy) {
+function Context(ctx, controller) {
   this.method = ctx.method;
   this.suffix = ctx.suffix;
   // TODO(bjornick): Use the enums.
   this.methodTags = ctx.methodTags;
   this.localBlessings = new Blessings(ctx.localBlessings.handle,
                                       ctx.localBlessings.publicKey,
-                                      proxy);
+                                      controller);
   this.remoteBlessings = new Blessings(ctx.remoteBlessings.handle,
                                        ctx.remoteBlessings.publicKey,
-                                       proxy);
+                                       controller);
   this.localBlessingStrings = ctx.localBlessingStrings;
   this.remoteBlessingStrings = ctx.remoteBlessingStrings;
   // TODO(bjornick): Create endpoints.

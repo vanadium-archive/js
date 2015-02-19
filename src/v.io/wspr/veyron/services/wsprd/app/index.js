@@ -5,6 +5,7 @@ var vdl = require('../../../../../.././vdl');
 
 
 
+var time = require('./../../../../../core/veyron2/vdl/vdlroot/src/time');
 var security = require('./../../../../../core/veyron2/security');
 var vtrace = require('./../../../../../core/veyron2/vtrace');
 
@@ -18,7 +19,6 @@ var _type2 = new vdl.Type();
 var _type3 = new vdl.Type();
 var _type4 = new vdl.Type();
 var _type5 = new vdl.Type();
-var _typeBlessingRequest = new vdl.Type();
 var _typeVeyronRPCRequest = new vdl.Type();
 var _typeVeyronRPCResponse = new vdl.Type();
 _type1.kind = vdl.Kind.LIST;
@@ -36,16 +36,12 @@ _type4.elem = new security.Caveat()._type;
 _type5.kind = vdl.Kind.LIST;
 _type5.name = "";
 _type5.elem = vdl.Types.BYTE;
-_typeBlessingRequest.kind = vdl.Kind.STRUCT;
-_typeBlessingRequest.name = "v.io/wspr/veyron/services/wsprd/app.BlessingRequest";
-_typeBlessingRequest.fields = [{name: "Handle", type: vdl.Types.INT32}, {name: "Caveats", type: _type4}, {name: "DurationMs", type: vdl.Types.INT32}, {name: "Extension", type: vdl.Types.STRING}];
 _typeVeyronRPCRequest.kind = vdl.Kind.STRUCT;
 _typeVeyronRPCRequest.name = "v.io/wspr/veyron/services/wsprd/app.VeyronRPCRequest";
 _typeVeyronRPCRequest.fields = [{name: "Name", type: vdl.Types.STRING}, {name: "Method", type: vdl.Types.STRING}, {name: "NumInArgs", type: vdl.Types.INT32}, {name: "NumOutArgs", type: vdl.Types.INT32}, {name: "IsStreaming", type: vdl.Types.BOOL}, {name: "Timeout", type: vdl.Types.INT64}, {name: "TraceRequest", type: new vtrace.Request()._type}];
 _typeVeyronRPCResponse.kind = vdl.Kind.STRUCT;
 _typeVeyronRPCResponse.name = "v.io/wspr/veyron/services/wsprd/app.VeyronRPCResponse";
 _typeVeyronRPCResponse.fields = [{name: "OutArgs", type: _type1}, {name: "TraceResponse", type: new vtrace.Response()._type}];
-module.exports.BlessingRequest = (vdl.Registry.lookupOrCreateConstructor(_typeBlessingRequest));
 module.exports.VeyronRPCRequest = (vdl.Registry.lookupOrCreateConstructor(_typeVeyronRPCRequest));
 module.exports.VeyronRPCResponse = (vdl.Registry.lookupOrCreateConstructor(_typeVeyronRPCResponse));
 
@@ -88,6 +84,21 @@ Controller.prototype.addName = function(ctx, serverId, name) {
       
 Controller.prototype.removeName = function(ctx, serverId, name) {
   throw new Error('Method RemoveName not implemented');
+};
+    
+      
+Controller.prototype.unlinkJSBlessings = function(ctx, handle) {
+  throw new Error('Method UnlinkJSBlessings not implemented');
+};
+    
+      
+Controller.prototype.blessPublicKey = function(ctx, fromHandle, caveats, durationMs, extension) {
+  throw new Error('Method BlessPublicKey not implemented');
+};
+    
+      
+Controller.prototype.createBlessings = function(ctx, extension) {
+  throw new Error('Method CreateBlessings not implemented');
 };
      
 
@@ -173,6 +184,89 @@ Controller.prototype._serviceDescription = {
     },
     ],
     outArgs: [],
+    inStream: null,
+    outStream: null,
+    tags: []
+  },
+    
+      
+    {
+    name: 'UnlinkJSBlessings',
+    doc: "// UnlinkJSBlessings removes the given blessings from the blessings store.",
+    inArgs: [{
+      name: 'handle',
+      doc: "",
+      type: vdl.Types.INT32
+    },
+    ],
+    outArgs: [],
+    inStream: null,
+    outStream: null,
+    tags: []
+  },
+    
+      
+    {
+    name: 'BlessPublicKey',
+    doc: "// BlessPublicKey creates a new blessing.",
+    inArgs: [{
+      name: 'fromHandle',
+      doc: "",
+      type: vdl.Types.INT32
+    },
+    {
+      name: 'caveats',
+      doc: "",
+      type: _type4
+    },
+    {
+      name: 'durationMs',
+      doc: "",
+      type: new time.Duration()._type
+    },
+    {
+      name: 'extension',
+      doc: "",
+      type: vdl.Types.STRING
+    },
+    ],
+    outArgs: [{
+      name: 'handle',
+      doc: "",
+      type: vdl.Types.INT32
+    },
+    {
+      name: 'publicKey',
+      doc: "",
+      type: vdl.Types.STRING
+    },
+    ],
+    inStream: null,
+    outStream: null,
+    tags: []
+  },
+    
+      
+    {
+    name: 'CreateBlessings',
+    doc: "// CreateBlessings creates a new principal self-blessed with the given extension.",
+    inArgs: [{
+      name: 'extension',
+      doc: "",
+      type: vdl.Types.STRING
+    },
+    ],
+    outArgs: [{
+      name: 'handle',
+      doc: "",
+      type: vdl.Types.INT32
+    },
+    {
+      name: 'publicKey',
+      doc: "",
+      type: vdl.Types.STRING
+    },
+    ],
     inStream: null,
     outStream: null,
     tags: []

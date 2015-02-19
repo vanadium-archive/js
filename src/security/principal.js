@@ -4,20 +4,16 @@
  */
 
 var Deferred = require('../lib/deferred');
-var SimpleHandler = require('../proxy/simple-handler');
 var Blessings = require('./blessings');
-var MessageType = require('../proxy/message-type');
-var EncodeUtil = require('../lib/encode-util');
-var Context = require('../runtime/context').Context;
-var BlessingRequest =
-  require('../v.io/wspr/veyron/services/wsprd/app').BlessingRequest;
+var time = require('../v.io/core/veyron2/vdl/vdlroot/src/time');
 
 /**
  * Principal represents an entity capable of making or receiving RPCs.
  * @constructor
  */
-function Principal(proxy) {
-  this._proxy = proxy;
+function Principal(ctx, controller) {
+  this._controller = controller;
+  this._ctx = ctx;
 }
 
 /**
@@ -37,27 +33,22 @@ Principal.prototype.bless = function(blessee, extension, duration, caveats,
     return def.promise;
   }
 
-  var message;
-  try {
-    message = EncodeUtil.encode(new BlessingRequest({
-      handle: blessee._id,
-      extension: extension,
-      durationMs: duration,
-      caveats: caveats
-    }));
-  } catch(e) {
-    def.reject(e);
-    return def.promise;
-  }
-
-  var id = this._proxy.nextId();
-  var handler = new SimpleHandler(new Context(), def, this._proxy, id);
-  this._proxy.sendRequest(message, MessageType.BLESS_PUBLICKEY, handler, id);
-  var self = this._proxy;
-  return def.promise.then(function(message) {
-    var id = new Blessings(message.handle, message.publicKey, self._proxy);
-    return id;
+  var vdlDuration = new time.Duration({
+    seconds: Math.floor(duration / 1000),
+    nano: (duration % 1000) * 1000000
   });
+
+  var controller = this._controller;
+  controller.blessPublicKey(
+    this._ctx, blessee._id, caveats, vdlDuration, extension, 
+    function(err, id, key) {
+      if (err !== null) {
+        def.reject(err);
+      } else {
+        def.resolve(new Blessings(id, key, controller));
+      }
+    });
+  return def.promise;
 };
 
 module.exports = Principal;
