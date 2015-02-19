@@ -3,7 +3,6 @@
  */
 var test = require('prova');
 var createSignatures = require('../../src/vdl/create-signatures');
-
 var vdl = require('../../src/vdl');
 
 function TestService() {
@@ -19,39 +18,66 @@ test('create signatures with no description', function(t) {
   var sigs = createSignatures(testService);
   t.equals(sigs.length, 1);
   var expected = {
+    name: '',
+    pkgPath: '',
+    doc: '',
+    embeds: [],
     methods: [{
+      doc: '',
       name: 'NoArgsFunction',
+      inStream: null,
+      outStream: null,
       inArgs: [],
       outArgs: [{
+        name: '',
+        doc: '',
         'type': vdl.Types.JSVALUE
-      }]
+      }],
+      tags: []
     }, {
+      doc: '',
       name: 'NamedFunction',
+      inStream: null,
+      outStream: null,
       inArgs: [{
+        doc: '',
         name: 'x',
         type: vdl.Types.JSVALUE
       }, {
+        doc: '',
         name: 'y',
         type: vdl.Types.JSVALUE
       }, {
+        doc: '',
         name: 'z',
         type: vdl.Types.JSVALUE
       }],
       outArgs: [{
-        'type': vdl.Types.JSVALUE
-      }]
+        name: '',
+        doc: '',
+        type: vdl.Types.JSVALUE
+      }],
+      tags: []
     },{
+      doc: '',
       name: 'StreamingFunction',
       inArgs: [],
       outArgs: [{
-        'type': vdl.Types.JSVALUE
+        name: '',
+        doc: '',
+        type: vdl.Types.JSVALUE
       }],
       inStream: {
-        type: vdl.Types.JSVALUE,
+        doc: '',
+        name: '',
+        type: vdl.Types.JSVALUE
       },
       outStream: {
-        type: vdl.Types.JSVALUE,
-      }
+        doc: '',
+        name: '',
+        type: vdl.Types.JSVALUE
+      },
+      tags: []
     }]
   };
   var stringifiedResult = vdl.Stringify(sigs[0]);
@@ -66,11 +92,15 @@ test('create signatures with full description', function(t) {
     name: 'TestService',
     pkgPath: 'service/test',
     doc: 'TestServiceDoc',
+    embeds: [],
     methods: [{
       name: 'NoArgsFunction',
       doc: 'NoArgsDoc',
       inArgs: [],
       outArgs: [],
+      inStream: null,
+      outStream: null,
+      tags: []
     }, {
       name: 'NamedFunction',
       doc: 'NamedFunctionDoc',
@@ -85,7 +115,7 @@ test('create signatures with full description', function(t) {
       }, {
         name: 'z',
         doc: 'zDoc',
-        type: vdl.Types.Complex128
+        type: vdl.Types.COMPLEX128
       }],
       outArgs: [{
         name: 'a',
@@ -95,7 +125,10 @@ test('create signatures with full description', function(t) {
         name: 'err',
         doc: 'errDoc',
         type: vdl.Types.ERROR
-      }]
+      }],
+      inStream: null,
+      outStream: null,
+      tags: []
     }, {
       name: 'StreamingFunction',
       doc: 'StreamingFunctionDoc',
@@ -106,11 +139,16 @@ test('create signatures with full description', function(t) {
         type: vdl.Types.ERROR
       }],
       inStream: {
+        doc: '',
+        name: '',
         type: vdl.Types.UINT32
       },
       outStream: {
+        doc: '',
+        name: '',
         type: vdl.Types.INT32
-      }
+      },
+      tags: []
     }]
   };
   var sigs = createSignatures(testService, desc);
@@ -121,12 +159,14 @@ test('create signatures with full description', function(t) {
   t.end();
 });
 
-test('create signatures with one description but extra methods', function(t) {
+test('create signatures with one description but extra methods', 
+          function(t) {
   var testService = new TestService();
   var desc = {
     name: 'TestService',
     pkgPath: 'service/test',
     doc: 'TestServiceDoc',
+    embeds: [],
     methods: [{
       name: 'NamedFunction',
       doc: 'NamedFunctionDoc',
@@ -141,7 +181,7 @@ test('create signatures with one description but extra methods', function(t) {
       }, {
         name: 'z',
         doc: 'zDoc',
-        type: vdl.Types.Complex128
+        type: vdl.Types.COMPLEX128
       }],
       outArgs: [{
         name: 'a',
@@ -151,18 +191,26 @@ test('create signatures with one description but extra methods', function(t) {
         name: 'err',
         doc: 'errDoc',
         type: vdl.Types.ERROR
-      }]
+      }],
+      inStream: null,
+      outStream: null,
+      tags: []
     }, {
       name: 'StreamingFunction',
       doc: 'StreamingFunctionDoc',
       inArgs: [],
       outArgs: [],
       inStream: {
+        doc: '',
+        name: '',
         type: vdl.Types.UINT32
       },
       outStream: {
+        doc: '',
+        name: '',
         type: vdl.Types.INT32
-      }
+      },
+      tags: []
     }]
   };
   var sigs = createSignatures(testService, desc);
@@ -172,12 +220,22 @@ test('create signatures with one description but extra methods', function(t) {
   t.equals(stringifiedResult, stringifiedExpected);
 
   var expectedExtra = {
+    name: '',
+    pkgPath: '',
+    doc: '',
+    embeds: [],
     methods: [{
       name: 'NoArgsFunction',
+      doc: '',
       inArgs: [],
       outArgs: [{
-        'type': vdl.Types.JSVALUE
-      }]
+        doc: '',
+        name: '',
+        type: vdl.Types.JSVALUE
+      }],
+      inStream: null,
+      outStream: null,
+      tags: []
     }]
   };
   var stringifiedResultExtra = vdl.Stringify(sigs[1]);
@@ -194,16 +252,21 @@ test('create signatures with full description across multiple descs',
     name: 'TestService',
     pkgPath: 'service/test',
     doc: 'TestServiceDoc',
+    embeds: [],
     methods: [{
       name: 'NoArgsFunction',
       doc: 'NoArgsDoc',
       inArgs: [],
       outArgs: [],
+      inStream: null,
+      outStream: null,
+      tags: []
     }]
   }, {
     name: 'TestService2',
     pkgPath: 'service2/test',
     doc: 'TestService2Doc',
+    embeds: [],
     methods: [{
       name: 'NamedFunction',
       doc: 'NamedFunctionDoc',
@@ -218,29 +281,38 @@ test('create signatures with full description across multiple descs',
       }, {
         name: 'z',
         doc: 'zDoc',
-        type: vdl.Types.Complex128
+        type: vdl.Types.COMPLEX128
       }],
       outArgs: [{
         name: 'a',
         doc: 'aDoc',
         type: vdl.Types.STRING
-      }]
+      }],
+      inStream: null,
+      outStream: null,
+      tags: []
     }]
   }, {
     name: 'TestService3',
     pkgPath: 'service3/test',
     doc: 'TestService3Doc',
+    embeds: [],
     methods: [{
       name: 'StreamingFunction',
       doc: 'StreamingFunctionDoc',
       inArgs: [],
       outArgs: [],
       inStream: {
+        doc: '',
+        name: '',
         type: vdl.Types.UINT32
       },
       outStream: {
+        doc: '',
+        name: '',
         type: vdl.Types.INT32
-      }
+      },
+      tags: []
     }]
   }];
   var sigs = createSignatures(testService, descs);
@@ -258,6 +330,7 @@ test('create signatures with multiple descs and missing methods',
     name: 'TestService2',
     pkgPath: 'service2/test',
     doc: 'TestService2Doc',
+    embeds: [],
     methods: [{
       name: 'NamedFunction',
       doc: 'NamedFunctionDoc',
@@ -272,40 +345,59 @@ test('create signatures with multiple descs and missing methods',
       }, {
         name: 'z',
         doc: 'zDoc',
-        type: vdl.Types.Complex128
+        type: vdl.Types.COMPLEX128
       }],
       outArgs: [{
         name: 'a',
         doc: 'aDoc',
         type: vdl.Types.STRING
-      }]
+      }],
+      inStream: null,
+      outStream: null,
+      tags: []
     }]
   }, {
     name: 'TestService3',
     pkgPath: 'service3/test',
     doc: 'TestService3Doc',
+    embeds: [],
     methods: [{
       name: 'StreamingFunction',
       doc: 'StreamingFunctionDoc',
       inArgs: [],
       outArgs: [],
       inStream: {
+        doc: '',
+        name: '',
         type: vdl.Types.UINT32
       },
       outStream: {
+        doc: '',
+        name: '',
         type: vdl.Types.INT32
-      }
+      },
+      tags: []
     }]
   }];
   var sigs = createSignatures(testService, descs);
   t.equals(sigs.length, 3);
   var expectedDescs = descs.concat([{
+    name: '',
+    pkgPath: '',
+    doc: '',
+    embeds: [],
     methods: [{
       name: 'NoArgsFunction',
+      doc: '',
       inArgs: [],
       outArgs: [{
-        'type': vdl.Types.JSVALUE
-      }]
+        doc: '',
+        name: '',
+        type: vdl.Types.JSVALUE
+      }],
+      inStream: null,
+      outStream: null,
+      tags: []
     }]
   }]);
   var stringifiedResult = vdl.Stringify(sigs);
@@ -314,23 +406,28 @@ test('create signatures with multiple descs and missing methods',
   t.end();
 });
 
-test('create signatures with full description across multiple descs with ' +
-     'duplicates', function(t) {
+test('create signatures with full description across multiple descs' +
+     ' with duplicates', function(t) {
   var testService = new TestService();
   var descs = [{
     name: 'TestService',
     pkgPath: 'service/test',
     doc: 'TestServiceDoc',
+    embeds: [],
     methods: [{
       name: 'NoArgsFunction',
       doc: 'NoArgsDoc',
       inArgs: [],
       outArgs: [],
+      inStream: null,
+      outStream: null,
+      tags: []
     }]
   }, {
     name: 'TestService2',
     pkgPath: 'service2/test',
     doc: 'TestService2Doc',
+    embeds: [],
     methods: [{
       name: 'NamedFunction',
       doc: 'NamedFunctionDoc',
@@ -345,18 +442,22 @@ test('create signatures with full description across multiple descs with ' +
       }, {
         name: 'z',
         doc: 'zDoc',
-        type: vdl.Types.Complex128
+        type: vdl.Types.COMPLEX128
       }],
       outArgs: [{
         name: 'a',
         doc: 'aDoc',
         type: vdl.Types.STRING
-      }]
+      }], 
+      inStream: null,
+      outStream: null,
+      tags: []
     }]
   }, {
     name: 'TestService3',
     pkgPath: 'service3/test',
     doc: 'TestService3Doc',
+    embeds: [],
     methods: [{
       name: 'NamedFunction',
       doc: 'NamedFunctionDoc',
@@ -371,24 +472,32 @@ test('create signatures with full description across multiple descs with ' +
       }, {
         name: 'z',
         doc: 'zDoc',
-        type: vdl.Types.Complex128
+        type: vdl.Types.COMPLEX128
       }],
       outArgs: [{
         name: 'a',
         doc: 'aDoc',
         type: vdl.Types.STRING
-      }]
+      }],
+      inStream: null,
+      outStream: null,
+      tags: []
     }, {
       name: 'StreamingFunction',
       doc: 'StreamingFunctionDoc',
       inArgs: [],
       outArgs: [],
       inStream: {
+        doc: '',
+        name: '',
         type: vdl.Types.UINT32
       },
       outStream: {
+        doc: '',
+        name: '',
         type: vdl.Types.INT32
-      }
+      },
+      tags: []
     }]
   }];
   var sigs = createSignatures(testService, descs);
@@ -399,13 +508,14 @@ test('create signatures with full description across multiple descs with ' +
   t.end();
 });
 
-test('create signatures with full description across multiple descs with ' +
-     'incompatible methods', function(t) {
+test('create signatures with full description across multiple descs' +
+     ' with incompatible methods', function(t) {
   var testService = new TestService();
   var descs = [{
     name: 'TestService',
     pkgPath: 'service/test',
     doc: 'TestServiceDoc',
+    embeds: [],
     methods: [{
       name: 'NoArgsFunction',
       doc: 'NoArgsDoc',
@@ -416,6 +526,7 @@ test('create signatures with full description across multiple descs with ' +
     name: 'TestService2',
     pkgPath: 'service2/test',
     doc: 'TestService2Doc',
+    embeds: [],
     methods: [{
       name: 'NamedFunction',
       doc: 'NamedFunctionDoc',
@@ -430,7 +541,7 @@ test('create signatures with full description across multiple descs with ' +
       }, {
         name: 'z',
         doc: 'zDoc',
-        type: vdl.Types.Complex128
+        type: vdl.Types.COMPLEX128
       }],
       outArgs: [{
         name: 'a',
@@ -442,15 +553,20 @@ test('create signatures with full description across multiple descs with ' +
     name: 'TestService3',
     pkgPath: 'service3/test',
     doc: 'TestService3Doc',
+    embeds: [],
     methods: [{
       name: 'StreamingFunction',
       doc: 'StreamingFunctionDoc',
       inArgs: [],
       outArgs: [],
       inStream: {
+        doc: '',
+        name: '',
         type: vdl.Types.UINT32
       },
       outStream: {
+        doc: '',
+        name: '',
         type: vdl.Types.INT32
       }
     }, {
@@ -467,7 +583,7 @@ test('create signatures with full description across multiple descs with ' +
       }, {
         name: 'z',
         doc: 'zDoc',
-        type: vdl.Types.Complex128
+        type: vdl.Types.COMPLEX128
       }],
       outArgs: [{
         name: 'a',

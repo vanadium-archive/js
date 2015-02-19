@@ -2,13 +2,11 @@ var test = require('prova');
 var Client = require('../../src/ipc/client.js');
 var context = require('../../src/runtime/context');
 var createSignatures = require('../../src/vdl/create-signatures');
-var MessageType = require('../../src/proxy/message-type');
 var createMockProxy = require('./mock-proxy');
 var DecodeUtil = require('../../src/lib/decode-util');
 var EncodeUtil = require('../../src/lib/encode-util');
 var vtrace = require('../../src/lib/vtrace');
-var VeyronRPCResponse = require(
-  '../../src/v.io/wspr/veyron/services/wsprd/app').VeyronRPCResponse;
+var app = require('../../src/v.io/wspr/veyron/services/wsprd/app');
 
 var mockService = {
   tripleArgMethod: function(ctx, a, b, c) {},
@@ -25,15 +23,17 @@ function testContext() {
 }
 
 var mockProxy = createMockProxy(function(data, type) {
-  if (type === MessageType.SIGNATURE) {
-    return [mockSignature];
+  var decodedData = DecodeUtil.decode(data);
+  var response = new app.VeyronRPCResponse();
+
+  if (decodedData instanceof app.VeyronRPCRequest &&
+      decodedData.method === 'Signature') {
+    response.outArgs = [mockSignature];
   } else {
     // Take the first arg and return it in a result list.
-    var decodedData = DecodeUtil.decode(data);
-    var response = new VeyronRPCResponse();
     response.outArgs = [decodedData];
-    return EncodeUtil.encode(response);
   }
+  return EncodeUtil.encode(response);
 });
 
 test('creating instances', function(assert) {

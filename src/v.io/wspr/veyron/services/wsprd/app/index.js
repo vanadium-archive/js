@@ -5,6 +5,7 @@ var vdl = require('../../../../../.././vdl');
 
 
 
+var signature = require('./../../../../../core/veyron2/vdl/vdlroot/src/signature');
 var time = require('./../../../../../core/veyron2/vdl/vdlroot/src/time');
 var security = require('./../../../../../core/veyron2/security');
 var vtrace = require('./../../../../../core/veyron2/vtrace');
@@ -15,15 +16,27 @@ module.exports = {};
 
 // Types:
 var _type1 = new vdl.Type();
+var _type10 = new vdl.Type();
+var _type11 = new vdl.Type();
 var _type2 = new vdl.Type();
 var _type3 = new vdl.Type();
 var _type4 = new vdl.Type();
 var _type5 = new vdl.Type();
+var _type6 = new vdl.Type();
+var _type7 = new vdl.Type();
+var _type8 = new vdl.Type();
+var _type9 = new vdl.Type();
 var _typeVeyronRPCRequest = new vdl.Type();
 var _typeVeyronRPCResponse = new vdl.Type();
 _type1.kind = vdl.Kind.LIST;
 _type1.name = "";
 _type1.elem = vdl.Types.ANY;
+_type10.kind = vdl.Kind.LIST;
+_type10.name = "";
+_type10.elem = new signature.Arg()._type;
+_type11.kind = vdl.Kind.OPTIONAL;
+_type11.name = "";
+_type11.elem = new signature.Arg()._type;
 _type2.kind = vdl.Kind.LIST;
 _type2.name = "";
 _type2.elem = new vtrace.SpanRecord()._type;
@@ -36,6 +49,18 @@ _type4.elem = new security.Caveat()._type;
 _type5.kind = vdl.Kind.LIST;
 _type5.name = "";
 _type5.elem = vdl.Types.BYTE;
+_type6.kind = vdl.Kind.LIST;
+_type6.name = "";
+_type6.elem = vdl.Types.STRING;
+_type7.kind = vdl.Kind.LIST;
+_type7.name = "";
+_type7.elem = new signature.Interface()._type;
+_type8.kind = vdl.Kind.LIST;
+_type8.name = "";
+_type8.elem = new signature.Embed()._type;
+_type9.kind = vdl.Kind.LIST;
+_type9.name = "";
+_type9.elem = new signature.Method()._type;
 _typeVeyronRPCRequest.kind = vdl.Kind.STRUCT;
 _typeVeyronRPCRequest.name = "v.io/wspr/veyron/services/wsprd/app.VeyronRPCRequest";
 _typeVeyronRPCRequest.fields = [{name: "Name", type: vdl.Types.STRING}, {name: "Method", type: vdl.Types.STRING}, {name: "NumInArgs", type: vdl.Types.INT32}, {name: "NumOutArgs", type: vdl.Types.INT32}, {name: "IsStreaming", type: vdl.Types.BOOL}, {name: "Timeout", type: vdl.Types.INT64}, {name: "TraceRequest", type: new vtrace.Request()._type}];
@@ -99,6 +124,16 @@ Controller.prototype.blessPublicKey = function(ctx, fromHandle, caveats, duratio
       
 Controller.prototype.createBlessings = function(ctx, extension) {
   throw new Error('Method CreateBlessings not implemented');
+};
+    
+      
+Controller.prototype.remoteBlessings = function(ctx, name, method) {
+  throw new Error('Method RemoteBlessings not implemented');
+};
+    
+      
+Controller.prototype.signature = function(ctx, name) {
+  throw new Error('Method Signature not implemented');
 };
      
 
@@ -265,6 +300,53 @@ Controller.prototype._serviceDescription = {
       name: 'publicKey',
       doc: "",
       type: vdl.Types.STRING
+    },
+    ],
+    inStream: null,
+    outStream: null,
+    tags: []
+  },
+    
+      
+    {
+    name: 'RemoteBlessings',
+    doc: "// RemoteBlessings fetches the remote blessings for a given name and method.",
+    inArgs: [{
+      name: 'name',
+      doc: "",
+      type: vdl.Types.STRING
+    },
+    {
+      name: 'method',
+      doc: "",
+      type: vdl.Types.STRING
+    },
+    ],
+    outArgs: [{
+      name: '',
+      doc: "",
+      type: _type6
+    },
+    ],
+    inStream: null,
+    outStream: null,
+    tags: []
+  },
+    
+      
+    {
+    name: 'Signature',
+    doc: "// Signature fetches the signature for a given name.",
+    inArgs: [{
+      name: 'name',
+      doc: "",
+      type: vdl.Types.STRING
+    },
+    ],
+    outArgs: [{
+      name: '',
+      doc: "",
+      type: _type7
     },
     ],
     inStream: null,
