@@ -41,8 +41,8 @@ function ProxyConnection() {
   extensionEventProxy.on('browsprMsg', this.onBrowsprMsg);
 
   // rethrow crash error when proxy fails.
-  this.onCrash = function() {
-    self.emit('crash', new extnUtils.ExtensionCrashError());
+  this.onCrash = function(msg) {
+    self.emit('crash', new extnUtils.ExtensionCrashError(msg));
   };
 
   extensionEventProxy.on('crash', this.onCrash);

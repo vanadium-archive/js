@@ -230,16 +230,20 @@ BackgroundPage.prototype.getAllPorts = function() {
 };
 
 // Restart nacl when it crashes.
-BackgroundPage.prototype.handleNaclCrash = function() {
+BackgroundPage.prototype.handleNaclCrash = function(msg) {
   // Log the crash to the extension's console.
   console.error('NACL plugin crashed.');
+  if (msg) {
+    console.error(msg);
+  }
 
   // Restart the plugin
   this.stopNaclPlugin();
 
   // Notify all content scripts about the failure.
   var crashNotificationMsg = {
-    type: 'crash'
+    type: 'crash',
+    body: msg
   };
   this.getAllPorts().forEach(function(port) {
     try {

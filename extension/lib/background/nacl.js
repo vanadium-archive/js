@@ -26,7 +26,7 @@ function Nacl() {
 
     // 'load' listener must have useCapture argument set to 'true'.
     nacl._naclElt.addEventListener('load', nacl.emit.bind(nacl, 'load'), true);
-    nacl._naclElt.addEventListener('crash', nacl.emit.bind(nacl, 'crash'),
+    nacl._naclElt.addEventListener('crash', nacl.emit.bind(nacl, 'crash', null),
       true);
     nacl._naclElt.addEventListener('message', function(e) {
       var msg = e.data;
@@ -84,7 +84,7 @@ Nacl.prototype._start = function() {
   this.getBlessingRoot(settings.identitydBlessingUrl.value,
     function(err, identityBlessingRoot) {
       if (err) {
-        return console.error(err);
+        return nacl.emit('crash', err.message);
       }
 
       var body = {
@@ -98,7 +98,7 @@ Nacl.prototype._start = function() {
 
       nacl._directChannel.performRpc('start', body, function(err) {
         if (err) {
-          return console.error(err);
+          return nacl.emit('crash', err.message);
         }
 
         nacl._initialized = true;

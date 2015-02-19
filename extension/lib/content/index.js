@@ -59,7 +59,7 @@ backgroundPort.onMessage.addListener(function(msg) {
     // be sure the response will be correct.
     invalidated = true;
 
-    pageEventProxy.send('crash');
+    pageEventProxy.send('crash', msg.body);
 
     return;
   }
