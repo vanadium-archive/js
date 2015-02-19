@@ -130,6 +130,28 @@ module.exports.publicKeyThirdPartyCaveat = (vdl.Registry.lookupOrCreateConstruct
 
 // Consts:
 
+  module.exports.ConstCaveat = new (vdl.Registry.lookupOrCreateConstructor(_typeCaveatDescriptor))({
+  'id': new Uint8Array([
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+]),
+  'paramType': vdl.Types.BOOL,
+});
+
   module.exports.UnixTimeExpiryCaveatX = new (vdl.Registry.lookupOrCreateConstructor(_typeCaveatDescriptor))({
   'id': new Uint8Array([
 84,
@@ -222,6 +244,13 @@ module.exports.publicKeyThirdPartyCaveat = (vdl.Registry.lookupOrCreateConstruct
 
 module.exports.CaveatNotRegisteredError = makeError('v.io/core/veyron2/security.CaveatNotRegistered', actions.NO_RETRY, {
   'en': '{1:}{2:} no validation function registered for caveat id {3}',
+}, [
+  new uniqueid.Id()._type,
+]);
+
+
+module.exports.CaveatParamAnyError = makeError('v.io/core/veyron2/security.CaveatParamAny', actions.NO_RETRY, {
+  'en': '{1:}{2:} caveat {3} uses illegal param type any',
 }, [
   new uniqueid.Id()._type,
 ]);

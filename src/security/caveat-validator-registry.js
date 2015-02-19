@@ -3,8 +3,9 @@
  * UUIDs and validations methods.
  */
 
-var reduce = require('../vdl/canonicalize').reduce;
-var DecodeUtil = require('../lib/decode-util');
+var vdl = require('../vdl');
+var vom = require('../vom');
+var vdlSecurity = require('../v.io/core/veyron2/security');
 
 module.exports = CaveatValidatorRegistry;
 
@@ -16,22 +17,23 @@ module.exports = CaveatValidatorRegistry;
  */
 function CaveatValidatorRegistry() {
   this.validators = new Map();
+
+  registerDefaultCaveats(this);
 }
 
 /**
  * _makeKey generates a key for the given Uint8Array.
  * This is needed because ES6 map does === comparison and equivalent arrays
  * can be different under ===.
- * For simplicity, just return valueOf() (the array form).
  * @private
  */
 CaveatValidatorRegistry.prototype._makeKey = function(bytes) {
-  return bytes.valueOf();
+  return vdl.Util.bytes2Hex(bytes);
 };
 
 /**
  * @callback ValidationFunction
- * @param {Context}The context.
+ * @param {SecurityContext} The security context.
  * @param {*} param Validation-function specific parameter.
  * @throws Upon failure to validate, does not throw if successful.
  */
@@ -52,21 +54,22 @@ CaveatValidatorRegistry.prototype.register = function(cavDesc, validateFn) {
 
 /**
  * Perform validation on a caveat.
- * @param {Context} ctx The context.
+ * @param {SecurityContext} secCtx The context.
  * @param {Caveat} caveat The caveat to validate.
  * See security/types.vdl
  * @throws Upon failure to validate, does not throw if successful.
  */
-CaveatValidatorRegistry.prototype.validate = function(ctx, caveat) {
+CaveatValidatorRegistry.prototype.validate = function(secCtx, caveat) {
   var validator = this.validators.get(this._makeKey(caveat.id));
   if (validator === undefined) {
     // TODO(bprosnitz) we should be throwing security.UnknownCaveatUuid.
     // This is dependent on having vdl-generated error id code for javascript.
     throw new Error('Unknown caveat id: ' + this._makeKey(caveat.id));
   }
-  validator.validate(ctx, DecodeUtil.decode(caveat.paramVom));
+  var reader = new vom.ByteArrayMessageReader(caveat.paramVom);
+  var decoder = new vom.Decoder(reader);
+  validator.validate(secCtx, decoder.decode());
 };
-
 
 /**
  * CaveatValidator is a helper object representating a specific caveat
@@ -78,13 +81,37 @@ function CaveatValidator(cavDesc, validateFn) {
   this.validateFn = validateFn;
 }
 
-CaveatValidator.prototype.validate = function(ctx, paramForValidator) {
+CaveatValidator.prototype.validate = function(secCtx, paramForValidator) {
   var paramType = this.cavDesc.paramType;
   // TODO(bprosnitz) This should really be type conversion rather than
   // canonicalization. The behavior is slightly different.
-  var canonData = reduce(paramForValidator, paramType);
+  var canonData = vdl.Canonicalize.reduce(paramForValidator, paramType);
 
   // TODO(bproznitz): we should be throwing security.ErrCaveatValidation.
   // This is dependent on having vdl-generated error id code for javascript.
-  this.validateFn(ctx, canonData);
+  this.validateFn(secCtx, canonData);
 };
+
+function constCaveatValidator(secCtx, value) {
+  if (!value) {
+    throw new Error('failing validation in false const caveat');
+  }
+}
+
+// Temporary definition of validators for unimplemented basic caveats.
+// This is required to get calls that depend on these caveats to pass
+// before the validator is implemented.
+// TODO(bprosnitz) Add real implementations
+function TEMPalwaysValidateValidator() {}
+
+// Register the default caveats from the security package.
+function registerDefaultCaveats(registry) {
+  registry.register(vdlSecurity.ConstCaveat,
+    constCaveatValidator);
+  registry.register(vdlSecurity.UnixTimeExpiryCaveatX,
+    TEMPalwaysValidateValidator);
+  registry.register(vdlSecurity.MethodCaveatX,
+    TEMPalwaysValidateValidator);
+  registry.register(vdlSecurity.PublicKeyThirdPartyCaveatX,
+    TEMPalwaysValidateValidator);
+}

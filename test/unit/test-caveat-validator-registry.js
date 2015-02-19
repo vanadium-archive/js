@@ -2,7 +2,7 @@ var test = require('prova');
 var CaveatValidatorRegistry =
   require('../../src/security/caveat-validator-registry');
 var context = require('../../src/runtime/context');
-var EncodeUtil = require('../../src/lib/encode-util');
+var vom = require('../../src/vom');
 var testCaveats = require('../vdl-out/javascript-test/security/caveat');
 
 /**
@@ -14,9 +14,12 @@ var testCaveats = require('../vdl-out/javascript-test/security/caveat');
  * @throws Upon failure to encode the parameter, does not throw if successful.
  */
 function makeCaveat(descriptor, param) {
+  var writer = new vom.ByteArrayMessageWriter();
+  var encoder = new vom.Encoder(writer);
+  encoder.encode(param);
   return {
     id: descriptor.id,
-    paramVom: EncodeUtil.encode(param)
+    paramVom: writer.getBytes()
   };
 }
 
