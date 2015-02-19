@@ -1,5 +1,5 @@
 var test = require('prova');
-var Proxy = require('../../src/proxy/proxy.js');
+var Proxy = require('../../src/proxy');
 
 test('creating instances', function(assert) {
   var proxy = new Proxy();

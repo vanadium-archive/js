@@ -1,4 +1,4 @@
-var vom = require('../vom/vom');
+var vom = require('../vom');
 var bytes2Hex = require('../vdl/byte-util').bytes2Hex;
 module.exports = {
   encode: encode,

@@ -3,7 +3,7 @@ var verror = require('../../').errors;
 var Invoker = require('../../src/invocation/invoker.js');
 var Context = require('../../src/runtime/context').Context;
 var Promise = require('../../src/lib/promise');
-var vdl = require('../../src/vdl/vdl');
+var vdl = require('../../src/vdl');
 var extend = require('xtend');
 
 var _fiveOutArgSig = [

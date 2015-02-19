@@ -4,7 +4,7 @@
 
 var test = require('prova');
 
-var testdata = require('../vdl-out/v.io/core/veyron2/vom/testdata/testdata');
+var testdata = require('../vdl-out/v.io/core/veyron2/vom/testdata');
 
 var ByteArrayMessageReader = require(
     './../../src/vom/byte-array-message-reader.js');

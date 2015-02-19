@@ -11,7 +11,7 @@ var Registry = require('../vdl/registry.js');
 var Types = require('../vdl/types.js');
 var util = require('../vdl/util.js');
 var unwrap = require('../vdl/type-util').unwrap;
-var wiretype = require('../v.io/core/veyron2/vom/vom');
+var wiretype = require('../v.io/core/veyron2/vom');
 
 var eofByte = unwrap(wiretype.WireCtrlEOF);
 var nilByte = unwrap(wiretype.WireCtrlNil);

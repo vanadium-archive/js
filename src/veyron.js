@@ -8,7 +8,7 @@ var isBrowser = require('is-browser');
 
 var Deferred = require('./lib/deferred');
 var extnUtils = require('./lib/extension-utils');
-var Runtime = require('./runtime/runtime');
+var Runtime = require('./runtime');
 var vlog = require('./lib/vlog');
 
 var defaults = {
@@ -22,7 +22,7 @@ var defaults = {
  * Exports
  */
 module.exports = {
-  errors: require('./v.io/core/veyron2/verror/verror'),
+  errors: require('./v.io/core/veyron2/verror'),
   makeError:  require('./errors/make-errors'),
   errorActions: require('./errors/actions'),
   init: init,
@@ -31,7 +31,7 @@ module.exports = {
   Promise: require('./lib/promise'),
   aclAuthorizer: require('./security/acl-authorizer'),
   context: require('./runtime/context'),
-  vdl: require('./vdl/vdl'),
+  vdl: require('./vdl'),
 };
 
 if (isBrowser) {

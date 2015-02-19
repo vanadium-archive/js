@@ -8,7 +8,7 @@ var DecodeUtil = require('../../src/lib/decode-util');
 var EncodeUtil = require('../../src/lib/encode-util');
 var vtrace = require('../../src/lib/vtrace');
 var VeyronRPCResponse = require(
-  '../../src/v.io/wspr/veyron/services/wsprd/app/app').VeyronRPCResponse;
+  '../../src/v.io/wspr/veyron/services/wsprd/app').VeyronRPCResponse;
 
 var mockService = {
   tripleArgMethod: function(ctx, a, b, c) {},

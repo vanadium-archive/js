@@ -1,4 +1,4 @@
-var vom = require('../vom/vom');
+var vom = require('../vom');
 var hex2Bytes = require('../vdl/byte-util').hex2Bytes;
 var unwrap = require('../vdl/type-util').unwrap;
 module.exports = {

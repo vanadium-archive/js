@@ -6,7 +6,7 @@ var test = require('prova');
 var Router = require('../../src/ipc/server-router');
 var Server = require('../../src/ipc/server');
 var MessageType = require('../../src/proxy/message-type');
-var vdl = require('../../src/vdl/vdl');
+var vdl = require('../../src/vdl');
 var DecodeUtil = require('../../src/lib/decode-util');
 var context = require('../../src/runtime/context');
 

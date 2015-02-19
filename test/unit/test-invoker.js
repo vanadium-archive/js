@@ -8,9 +8,8 @@
 var test = require('prova');
 var Invoker = require('../../src/invocation/invoker.js');
 var Context = require('../../src/runtime/context').Context;
-var vdl = require('../../src/vdl/vdl');
-var base =
-    require('../vdl-out/v.io/core/veyron2/vdl/testdata/base/base');
+var vdl = require('../../src/vdl');
+var base = require('../vdl-out/v.io/core/veyron2/vdl/testdata/base');
 
 function BasePartialImpl() {
 }

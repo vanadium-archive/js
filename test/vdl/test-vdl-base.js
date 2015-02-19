@@ -1,13 +1,13 @@
 var test = require('prova');
 var base = require(
-  '../vdl-out/v.io/core/veyron2/vdl/testdata/base/base');
+  '../vdl-out/v.io/core/veyron2/vdl/testdata/base');
 var context = require('../../src/runtime/context');
 var SharedContextKeys = require('../../src/runtime/shared-context-keys');
 var actions = require('../../src/errors/actions');
 
-var Kind = require('../../src/vdl/vdl').Kind;
-var Types = require('../../src/vdl/vdl').Types;
-var BigInt = require('../../src/vdl/vdl').BigInt;
+var Kind = require('../../src/vdl').Kind;
+var Types = require('../../src/vdl').Types;
+var BigInt = require('../../src/vdl').BigInt;
 
 test('named primitive types', function(assert) {
   var res = new base.NamedBool(false);

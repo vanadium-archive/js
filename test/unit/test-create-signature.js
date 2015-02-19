@@ -4,7 +4,7 @@
 var test = require('prova');
 var createSignatures = require('../../src/vdl/create-signatures');
 
-var vdl = require('../../src/vdl/vdl');
+var vdl = require('../../src/vdl');
 
 function TestService() {
 }

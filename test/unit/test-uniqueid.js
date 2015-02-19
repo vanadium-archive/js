@@ -4,7 +4,7 @@
 
 var test = require('prova');
 var uniqueid = require('../../src/lib/uniqueid');
-var vdl = require('../../src/v.io/core/veyron2/uniqueid/uniqueid');
+var vdl = require('../../src/v.io/core/veyron2/uniqueid');
 var typeutil = require('../../src/vdl/type-util');
 
 test('Test random', function(assert) {

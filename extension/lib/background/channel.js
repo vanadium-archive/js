@@ -2,11 +2,11 @@
  * @fileoverview Channel RPCs to Nacl plugin.
  */
 
-var vom = require('../../../src/vom/vom');
+var vom = require('../../../src/vom');
 var channelVdl =
-  require('../../vdl/v.io/wspr/veyron/services/wsprd/channel/channel');
+  require('../../vdl/v.io/wspr/veyron/services/wsprd/channel');
 var browsprVdl =
-  require('../../vdl/v.io/wspr/veyron/services/wsprd/browspr/browspr');
+  require('../../vdl/v.io/wspr/veyron/services/wsprd/browspr');
 
 module.exports = RpcChannel;
 

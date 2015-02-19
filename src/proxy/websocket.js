@@ -6,7 +6,7 @@
 var WebSocket = require('ws');
 var Deferred = require('./../lib/deferred');
 var vLog = require('./../lib/vlog');
-var Proxy = require('./proxy');
+var Proxy = require('./index');
 var isBrowser = require('is-browser');
 var DecodeUtil = require('../lib/decode-util');
 

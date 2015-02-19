@@ -13,25 +13,25 @@ var Deferred = require('../lib/deferred');
 var vLog = require('../lib/vlog');
 var ErrorConversion = require('../proxy/error-conversion');
 var Stream = require('../proxy/stream');
-var verror = require('../v.io/core/veyron2/verror/verror');
+var verror = require('../v.io/core/veyron2/verror');
 var MessageType = require('../proxy/message-type');
 var IncomingPayloadType = require('../proxy/incoming-payload-type');
 var context = require('../runtime/context');
 var constants = require('./constants');
 var DecodeUtil = require('../lib/decode-util');
 var SimpleHandler = require('../proxy/simple-handler');
-var vdl = require('../vdl/vdl');
+var vdl = require('../vdl');
 var Encoder = require('../vom/encoder');
 var ByteArrayMessageWriter = require('../vom/byte-array-message-writer');
 var makeError = require('../errors/make-errors');
 var actions = require('../errors/actions');
 var VeyronRPCRequest =
-  require('../v.io/wspr/veyron/services/wsprd/app/app').VeyronRPCRequest;
+  require('../v.io/wspr/veyron/services/wsprd/app').VeyronRPCRequest;
 var vtrace = require('../lib/vtrace');
 var CollectInMemory =
-  require('../v.io/core/veyron2/vtrace/vtrace').CollectInMemory;
+  require('../v.io/core/veyron2/vtrace').CollectInMemory;
 var ReservedSignature =
-  require('../v.io/core/veyron2/ipc/ipc').ReservedSignature.val;
+  require('../v.io/core/veyron2/ipc').ReservedSignature.val;
 
 var OutstandingRPC = function(ctx, options, cb) {
   this._ctx = ctx;

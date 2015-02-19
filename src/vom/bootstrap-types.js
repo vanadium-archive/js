@@ -23,7 +23,7 @@ module.exports = {
 var Kind = require('../vdl/kind.js');
 var stringify = require('../vdl/stringify.js');
 var Types = require('../vdl/types.js');
-var wiretype = require('../v.io/core/veyron2/vom/vom');
+var wiretype = require('../v.io/core/veyron2/vom');
 var unwrap = require('../vdl/type-util').unwrap;
 
 var stringList = {

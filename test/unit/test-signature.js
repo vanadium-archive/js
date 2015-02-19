@@ -4,7 +4,7 @@
 
 var test = require('prova');
 var Signature = require('../../src/vdl/signature.js');
-var vdl = require('../../src/vdl/vdl');
+var vdl = require('../../src/vdl');
 
 function TestService() {
     this.nonPrototypeFunction = function(ctx, a, $stream, b) {};

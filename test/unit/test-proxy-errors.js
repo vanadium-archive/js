@@ -1,5 +1,5 @@
 var test = require('prova');
-var verror = require('../../src/v.io/core/veyron2/verror/verror');
+var verror = require('../../src/v.io/core/veyron2/verror');
 var ec = require('../../src/proxy/error-conversion');
 var Context = require('../../src/runtime/context').Context;
 var message = 'Something bad happened.';

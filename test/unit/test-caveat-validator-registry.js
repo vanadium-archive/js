@@ -3,7 +3,7 @@ var CaveatValidatorRegistry =
   require('../../src/security/caveat-validator-registry');
 var context = require('../../src/runtime/context');
 var EncodeUtil = require('../../src/lib/encode-util');
-var testCaveats = require('../vdl-out/javascript-test/security/caveat/caveat');
+var testCaveats = require('../vdl-out/javascript-test/security/caveat');
 
 /**
  * Create a Caveat object (See security/types.vdl).

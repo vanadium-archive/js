@@ -10,7 +10,7 @@ var MessageType = require('../proxy/message-type');
 var EncodeUtil = require('../lib/encode-util');
 var Context = require('../runtime/context').Context;
 var BlessingRequest =
-  require('../v.io/wspr/veyron/services/wsprd/app/app').BlessingRequest;
+  require('../v.io/wspr/veyron/services/wsprd/app').BlessingRequest;
 
 /**
  * Principal represents an entity capable of making or receiving RPCs.
