@@ -22,7 +22,6 @@ var namespaceUtil = require('../namespace/util');
 var naming = require('../v.io/core/veyron2/naming');
 var Glob = require('./glob');
 var GlobStream = require('./glob-stream');
-var VDLMountEntry = require('../v.io/core/veyron2/naming').VDLMountEntry;
 var ServerRPCReply =
   require('../v.io/wspr/veyron/services/wsprd/lib').ServerRPCReply;
 
@@ -205,7 +204,7 @@ Router.prototype.handleRPCRequest = function(messageId, vdlRequest) {
 
   var invoker = server.getInvokerForHandle(request.handle);
   if (!invoker) {
-    console.error('No invoker found: ', request);
+    vLog.error('No invoker found: ', request);
     err = new Error('No service found');
     this.sendResult(messageId, methodName, null, err);
     return;
@@ -221,7 +220,7 @@ Router.prototype.handleRPCRequest = function(messageId, vdlRequest) {
       return;
     }
     stream = new Stream(messageId, this._proxy.senderPromise, false,
-      VDLMountEntry.prototype._type);
+      naming.VDLGlobReply.prototype._type);
     this._streamMap[messageId] = stream;
     this._contextMap[messageId] = ctx;
     this._outstandingRequestForId[messageId] = 0;
@@ -333,6 +332,21 @@ Router.prototype.invokeMethod = function(invoker, options, cb) {
   invoker.invoke(methodName, args, injections, InvocationFinishedCallback);
 };
 
+function createGlobReply(name) {
+  name = name || '';
+  return new naming.VDLGlobReply({
+    'entry': new naming.VDLMountEntry({ name: name })
+  });
+}
+
+function createGlobErrorReply(name, err) {
+  name = name || '';
+  var convertedError = ErrorConversion.toStandardErrorStruct(err);
+  return new naming.VDLGlobReply({
+    'error': new naming.GlobError({ name: name, error: convertedError })
+  });
+}
+
 Router.prototype.handleGlobRequest = function(messageId, name, server, glob,
                                               context, invoker, cb) {
   var self = this;
@@ -349,15 +363,18 @@ Router.prototype.handleGlobRequest = function(messageId, name, server, glob,
     };
     this.invokeMethod(invoker, options, function(err, results) {
       if (err) {
-        vLog.info(name + '.__glob(' + glob + ') failed with ' + err);
+        var verr = new verror.InternalError(context,
+          ['__glob() failed', glob, err]);
+        var errReply = createGlobErrorReply(name, verr);
+        self._streamMap[messageId].write(errReply);
+        vLog.info(verr);
       }
       self.decrementOutstandingRequestForId(messageId, cb);
     });
   } else if (invoker.hasMethod('__globChildren')) {
     if (glob.length() === 0) {
       // This means we match the current object.
-      this._streamMap[messageId].write(new naming.VDLMountEntry({
-        name: name}));
+      this._streamMap[messageId].write(createGlobReply(name));
     }
 
     if (glob.finished()) {
@@ -376,7 +393,11 @@ Router.prototype.handleGlobRequest = function(messageId, name, server, glob,
     globStream.on('data', function(child) {
       // TODO(bjornick): Allow for escaped slashes.
       if (child.indexOf('/') !== -1) {
-        vLog.error(name + '.__globChildren returned a bad child ' +  child);
+        var verr = new verror.InternalError(context,
+          ['__globChildren returned a bad child', child]);
+        var errReply = createGlobErrorReply(name, verr);
+        self._streamMap[messageId].write(errReply);
+        vLog.info(verr);
         return;
       }
 
@@ -397,22 +418,28 @@ Router.prototype.handleGlobRequest = function(messageId, name, server, glob,
           self.decrementOutstandingRequestForId(messageId, cb);
         }
       }).catch(function(e) {
+        var verr = new verror.NoServersAndAuthError(context, [suffix, e]);
+        var errReply = createGlobErrorReply(name, verr);
+        self._streamMap[messageId].write(errReply);
+        vLog.info(errReply);
         self.decrementOutstandingRequestForId(messageId, cb);
-        vLog.info('ipc Glob: client not authorized ' + suffix + ' : ' + e);
       });
     });
 
     this.invokeMethod(invoker, options, function(err, results) {
       if (err) {
-        vLog.info('ipc Glob: ' + name + '.__globChildren failed with ' + err);
+        var verr = new verror.InternalError(context,
+          ['__globChildren() failed', glob, err]);
+        var errReply = createGlobErrorReply(name, verr);
+        this._streamMap[messageId].write(errReply);
+        vLog.info(verr);
       }
       self.decrementOutstandingRequestForId(messageId, cb);
     });
   } else {
     // This is a leaf of the globChildren call so we return this as
     // a result.
-    this._streamMap[messageId].write(new naming.VDLMountEntry({
-      name: name}));
+    this._streamMap[messageId].write(createGlobReply(name));
 
     this.decrementOutstandingRequestForId(messageId, cb);
   }

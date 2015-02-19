@@ -97,10 +97,12 @@ function createDispatcher(root, disallowed) {
 function runChildrenGlobTest(pattern, expectedResults, disallowed, assert) {
   runGlobTest(pattern, expectedResults,
               createDispatcher(createNodes(ALBUMS), disallowed),
+              disallowed,
               assert);
 }
 
-function runGlobTest(pattern, expectedResults, dispatcher, assert) {
+function runGlobTest(pattern, expectedResults, dispatcher, expectedErrors,
+  assert) {
   serve({
     name: 'testGlob',
     autoBind: false,
@@ -115,25 +117,41 @@ function runGlobTest(pattern, expectedResults, dispatcher, assert) {
     var globRPC = namespace.glob(ctx, pattern);
     var stream = globRPC.stream;
     var globResults = [];
+    var globErrors = [];
+    var hadErrors = false;
     stream.on('data', function(mountPoint) {
       globResults.push(mountPoint.name);
+    });
+
+    stream.on('error', function(err) {
+      hadErrors = true;
+      // TODO(aghassemi) this needs to change when toddw adds getters for errors
+      // or if we keep GlobError as a struct, we should send that instead of
+      // error objects
+      var errorItemName = err.paramList[2][0];
+      globErrors.push(errorItemName);
     });
 
     stream.on('end', function() {
       globResults.sort();
       expectedResults.sort();
       assert.deepEqual(globResults, expectedResults);
+      if (expectedErrors) {
+        globErrors.sort();
+        expectedErrors.sort();
+        assert.deepEqual(globErrors, expectedErrors);
+        assert.ok(hadErrors, 'expected to have errors on the stream');
+      } else {
+        assert.notOk(hadErrors, 'expected not to have errors on the stream');
+      }
       res.end(assert);
     });
 
-    stream.on('error', function(e) {
-      assert.error(e);
-      res.end(assert);
-    });
   });
 }
 
-test('... glob', function(assert) {
+test('Test globbing all decedents of root - GlobChildren - glob(testGlob/...)',
+  function(assert) {
   var expectedResults = ALBUMS.map(function(s) { return 'testGlob/' + s; });
   // We need to push testGlob twice because we get one entry from the
   // mountable and the next entry from the glob method.  This is expected
@@ -144,7 +162,9 @@ test('... glob', function(assert) {
   runChildrenGlobTest('testGlob/...', expectedResults, null, assert);
 });
 
-test('private/... glob', function(assert) {
+test('Test globbing all decedents of a child - GlobChildren - ' +
+  ' glob(testGlob/private/...)',
+  function(assert) {
   var expectedResults = [
     'testGlob/private',
     'testGlob/private/2013',
@@ -155,7 +175,8 @@ test('private/... glob', function(assert) {
   runChildrenGlobTest('testGlob/private/...', expectedResults, null, assert);
 });
 
-test('* glob', function(assert) {
+test('Test globbing children of root - GlobChildren - glob(testGlob/*)',
+  function(assert) {
   var expectedResults = [
     'testGlob/private',
     'testGlob/public',
@@ -163,7 +184,8 @@ test('* glob', function(assert) {
   runChildrenGlobTest('testGlob/*', expectedResults, null, assert);
 });
 
-test('testGlob/*/*/california glob', function(assert) {
+test('Test globbing pattern testGlob/*/*/california - GlobChildren',
+  function(assert) {
   var expectedResults = [
     'testGlob/private/2013/california',
     'testGlob/public/2014/california',
@@ -171,7 +193,8 @@ test('testGlob/*/*/california glob', function(assert) {
   runChildrenGlobTest('testGlob/*/*/california', expectedResults, null, assert);
 });
 
-test('testGlob/*/20*/california/... glob', function(assert) {
+test('Test globbing pattern testGlob/*/20*/california/... - GlobChildren',
+  function(assert) {
   var expectedResults = [
     'testGlob/private/2013/california',
     'testGlob/private/2013/california/wedding',
@@ -185,29 +208,52 @@ test('testGlob/*/20*/california/... glob', function(assert) {
                       assert);
 });
 
-test('... glob with public disallowed', function(assert) {
+test('Test globbing a partially restricted namespace - GlobChildren -' +
+  ' testGlob/private is restricted', function(assert) {
   var expectedResults = [
     'testGlob',
     'testGlob',
-    'testGlob/private',
-    'testGlob/private/2013',
-    'testGlob/private/2013/california',
-    'testGlob/private/2013/california/wedding',
-    'testGlob/private/2013/california/wedding/reception',
+    'testGlob/public',
+    'testGlob/public/2014',
+    'testGlob/public/2014/california',
+    'testGlob/public/2014/california/los-angeles',
+    'testGlob/public/2014/california/san-francisco',
+    'testGlob/public/2014/california/san-francisco/golden-gate',
+    'testGlob/public/2014/newyork',
+    'testGlob/public/2014/newyork/nyc',
+    'testGlob/public/2014/newyork/nyc/empire-state',
+    'testGlob/public/2015'
   ];
-  runChildrenGlobTest('testGlob/...', expectedResults, ['public'], assert);
+
+  var restrictedNames = ['private'];
+  runChildrenGlobTest('testGlob/...', expectedResults, restrictedNames, assert);
+});
+
+test('Test globbing a fully restricted namespace - GlobChildren -' +
+  ' all children of root are restricted', function(assert) {
+  var expectedResults = [
+    'testGlob',
+    'testGlob'
+  ];
+
+  var restrictedNames = ['private', 'public'];
+  runChildrenGlobTest('testGlob/...', expectedResults, restrictedNames, assert);
 });
 
 function FullGlobber() {
 }
 
 FullGlobber.prototype.__glob = function(ctx, glob, $stream) {
-    $stream.write(new naming.VDLMountEntry({
+    var mountEntry = new naming.VDLMountEntry({
       name: namespaceUtil.join(ctx.suffix, glob),
+    });
+    $stream.write(new naming.VDLGlobReply({
+      entry: mountEntry
     }));
 };
 
-test('... glob full globber', function(assert) {
+test('Test globbing all decedents of root - FullGlobber - glob(testGlob/...)',
+  function(assert) {
   var expectedResults = [
     'testGlob',
     'testGlob/...',
@@ -217,10 +263,11 @@ test('... glob full globber', function(assert) {
       service: new FullGlobber(),
     };
   }
-  runGlobTest('testGlob/...', expectedResults, dispatcher, assert);
+  runGlobTest('testGlob/...', expectedResults, dispatcher, null, assert);
 });
 
-test('bar/... glob full globber', function(assert) {
+test('Test globbing all decedents of a child - FullGlobber - ' +
+  'glob(testGlob/bar/...)', function(assert) {
   var expectedResults = [
     'testGlob/bar/...',
   ];
@@ -229,7 +276,7 @@ test('bar/... glob full globber', function(assert) {
       service: new FullGlobber(),
     };
   }
-  runGlobTest('testGlob/bar/...', expectedResults, dispatcher, assert);
+  runGlobTest('testGlob/bar/...', expectedResults, dispatcher, null, assert);
 });
 
 function ChildGlobber(children) {
@@ -242,7 +289,7 @@ ChildGlobber.prototype.__globChildren = function(ctx, $stream) {
   }
 };
 
-test('foo/bar/baz glob children globber + full globber', function(assert) {
+test('Test mixing GlobChildren and FullGlobber', function(assert) {
   var expectedResults = [
     'testGlob/foo/bar/baz',
   ];
@@ -260,7 +307,8 @@ test('foo/bar/baz glob children globber + full globber', function(assert) {
       service: service,
     };
   }
-  runGlobTest('testGlob/foo/bar/baz', expectedResults, dispatcher, assert);
+  runGlobTest('testGlob/foo/bar/baz', expectedResults, dispatcher, null,
+    assert);
 });
 
 
