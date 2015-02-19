@@ -17,7 +17,7 @@ MethodCaveat.prototype.toJSON = function() {
 
 test('Test blessing bob without caveats - ' +
   'i.bless(..., callback)', function(assert) {
-  blessings('alice', function(err, blessee, runtime) {
+  newBlessings('alice', function(err, blessings, runtime) {
     assert.error(err);
 
     var extension = 'bob';
@@ -26,7 +26,7 @@ test('Test blessing bob without caveats - ' +
 
     runtime
     .principal
-    .bless(blessee, extension, duration, caveats, function(err, blessing) {
+    .bless(blessings, extension, duration, caveats, function(err, blessing) {
       assert.error(err);
       runtime.close(assert.end);
     });
@@ -36,7 +36,7 @@ test('Test blessing bob without caveats - ' +
 
 test('Test blessing bob without caveats - ' +
   'var promise = i.bless(...)', function(assert) {
-  blessings('alice', function(err, blessee, runtime) {
+  newBlessings('alice', function(err, blessings, runtime) {
     assert.error(err);
 
     var extension = 'bob';
@@ -45,7 +45,7 @@ test('Test blessing bob without caveats - ' +
 
     runtime
     .principal
-    .bless(blessee, extension, duration, caveats)
+    .bless(blessings, extension, duration, caveats)
     .then(function(blessing) {
       runtime.close(assert.end);
     })
@@ -58,7 +58,7 @@ test('Test blessing bob without caveats - ' +
 
 test('Test blessing bob with method caveats - ' +
   'i.bless(..., callback) - caveats', function(assert) {
-  blessings('alice', function(err, blessee, runtime) {
+  newBlessings('alice', function(err, blessings, runtime) {
     assert.error(err);
 
     var extension = 'bob';
@@ -70,7 +70,7 @@ test('Test blessing bob with method caveats - ' +
 
     runtime
     .principal
-    .bless(blessee, extension, duration, caveats, function(err, blessing) {
+    .bless(blessings, extension, duration, caveats, function(err, blessing) {
       assert.error(err);
       runtime.close(assert.end);
     });
@@ -79,7 +79,7 @@ test('Test blessing bob with method caveats - ' +
 
 test('Test blessing bob with method caveats - ' +
   'var promise = i.bless(...) - caveats', function(assert) {
-  blessings('alice', function(err, blessee, runtime) {
+  newBlessings('alice', function(err, blessings, runtime) {
     assert.error(err);
 
     var extension = 'bob';
@@ -90,7 +90,7 @@ test('Test blessing bob with method caveats - ' +
 
     runtime
     .principal
-    .bless(blessee, extension, duration, caveats)
+    .bless(blessings, extension, duration, caveats)
     .then(function(blessing) {
       runtime.close(assert.end);
     })
@@ -103,7 +103,7 @@ test('Test blessing bob with method caveats - ' +
 
 test('Test blessing bob with invalid caveats - ' +
   'i.bless(..., callback) - invalid caveats', function(assert) {
-  blessings('alice', function(err, blessee, runtime) {
+  newBlessings('alice', function(err, blessings, runtime) {
     assert.error(err);
 
     var extension = 'bob';
@@ -113,7 +113,7 @@ test('Test blessing bob with invalid caveats - ' +
 
     runtime
     .principal
-    .bless(blessee, extension, duration, caveats, function(err, blessing) {
+    .bless(blessings, extension, duration, caveats, function(err, blessing) {
       assert.ok(err, 'should error');
       runtime.close(assert.end);
     });
@@ -122,7 +122,7 @@ test('Test blessing bob with invalid caveats - ' +
 
 test('Test blessing bob with invalid caveats - ' +
   'var promise = i.bless(...) - invalid caveats', function(assert) {
-  blessings('alice', function(err, blessee, runtime) {
+  newBlessings('alice', function(err, blessings, runtime) {
     assert.error(err);
 
     var extension = 'bob';
@@ -132,7 +132,7 @@ test('Test blessing bob with invalid caveats - ' +
 
     runtime
     .principal
-    .bless(blessee, extension, duration, caveats)
+    .bless(blessings, extension, duration, caveats)
     .then(function() {
       assert.fail('should not succeed');
       runtime.close(assert.end);
@@ -145,7 +145,7 @@ test('Test blessing bob with invalid caveats - ' +
 });
 
 
-function blessings(extension, callback) {
+function newBlessings(extension, callback) {
   veyron.init(config, function(err, runtime) {
     if (err) {
       return callback(err);
