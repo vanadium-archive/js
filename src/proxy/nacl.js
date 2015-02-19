@@ -29,7 +29,7 @@ function ProxyConnection() {
     try {
       body = DecodeUtil.decode(msg.body);
     } catch (e) {
-      vLog.warn('Failed to parse ' + body);
+      vLog.warn('Failed to parse ' + msg.body);
       return;
     }
 
