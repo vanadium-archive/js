@@ -17,19 +17,19 @@ function Principal(ctx, controller) {
 }
 
 /**
- * Blesses the blessee's public key with the given caveats.
- * @param {Blessings} blessee: a blessing on the public key to bless.
+ * Blesses the blessings's public key with the given caveats.
+ * @param {Blessings} blessings: a blessing on the public key to bless.
  * @param {String} extension: the extension for the blessing.
  * @param {Number} duration: the duration of the blessing in milliseconds.
  * @param {Array} caveats: an array of Cavaeats to restrict the blessing.
  * @papram {function} cb an optional callback that will return the blessing
  * @return {Promise} a promise that will be resolved with the blessing
  */
-Principal.prototype.bless = function(blessee, extension, duration, caveats,
+Principal.prototype.bless = function(blessings, extension, duration, caveats,
                                      cb) {
   var def = new Deferred(cb);
-  if (!(blessee instanceof Blessings)) {
-    def.reject(new Error('blessee should be of type Blessings'));
+  if (!(blessings instanceof Blessings)) {
+    def.reject(new Error('blessings should be of type Blessings'));
     return def.promise;
   }
 
@@ -40,7 +40,7 @@ Principal.prototype.bless = function(blessee, extension, duration, caveats,
 
   var controller = this._controller;
   controller.blessPublicKey(
-    this._ctx, blessee._id, caveats, vdlDuration, extension, 
+    this._ctx, blessings._id, caveats, vdlDuration, extension,
     function(err, id, key) {
       if (err !== null) {
         def.reject(err);
