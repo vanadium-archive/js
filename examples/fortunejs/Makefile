@@ -1,13 +1,14 @@
-PATH:=$(VANADIUM_ROOT)/environment/cout/node/bin:../../node_modules/.bin:$(PATH)
+PATH:=$(VANADIUM_ROOT)/environment/cout/node/bin:./node_modules/.bin:$(PATH)
 
-public/server/bundle.js: lib/server.js ../../node_modules
-	browserify $< --debug --outfile $@
-
-public/client/bundle.js: lib/client.js ../../node_modules
-	browserify $< --debug --outfile $@
-
-../../node_modules:
+node_modules:
 	npm install
+	touch node_modules
+
+public/server/bundle.js: lib/server.js node_modules
+	browserify $< --debug --outfile $@
+
+public/client/bundle.js: lib/client.js node_modules
+	browserify $< --debug --outfile $@
 
 run: public/server/bundle.js public/client/bundle.js
 	@echo Client will be at http://localhost:8080/server/index.html
@@ -16,6 +17,6 @@ run: public/server/bundle.js public/client/bundle.js
 
 # Clean all build artifacts
 clean:
-	rm -rf public/server/bundle.js public/client/bundle.js ../../node_modules
+	rm -rf public/server/bundle.js public/client/bundle.js ./node_modules
 
 .PHONY: clean run

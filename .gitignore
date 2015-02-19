@@ -1,6 +1,7 @@
 coverage
 dist
 docs
+examples/fortunejs/public
 extension/build
 extension/build-test
 extension/example/*bundle*

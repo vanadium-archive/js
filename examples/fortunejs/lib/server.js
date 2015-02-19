@@ -31,7 +31,7 @@ var fortuneService = {
   numFortunesServed: 0,
 
   // Gets a random fortune
-  getRandomFortune: function() {
+  getRandomFortune: function(ctx) {
     var numExistingfortunes = this.fortunes.length;
     if(numExistingfortunes === 0) {
       throw new Error('Sorry! No fortune available :(');
@@ -44,8 +44,7 @@ var fortuneService = {
   },
 
   // Adds a new fortune
-  addNewFortune: function(fortune) {
-    console.log('in here');
+  addNewFortune: function(ctx, fortune) {
     if(!fortune || fortune.trim() === '') {
       throw new Error('Sorry! Can\'t add empty or null fortune!');
     }
@@ -60,12 +59,20 @@ var fortuneService = {
 
 // Create a Veyron runtime using the configuration
 veyron.init(veyronConfig).then(function(rt){
+  var server = rt.newServer();
   // Serve the fortune server under a name. Serve returns a Promise object
-  rt.serve('bakery/cookie/fortune', fortuneService).then(function() {
+  server.serve('bakery/cookie/fortune', fortuneService).then(function() {
     ui.info('Fortune server serving under: bakery/cookie/fortune \n');
   }).catch(function(err) {
     ui.error('Failed to serve the Fortune server because: \n', err);
   });
+
+  var ctx = rt.getContext();
+
+  // Let's add a few fortunes to start with
+  fortuneService.addNewFortune(ctx, 'The fortune you seek is in another cookie.');
+  fortuneService.addNewFortune(ctx, 'Everything will now come your way.');
+  fortuneService.addNewFortune(ctx, 'Conquer your fears or they will conquer you.');
 
   if (isBrowser) {
     // Update the number of fortunes served and total number of fortunes in the browser UI.
@@ -77,7 +84,3 @@ veyron.init(veyronConfig).then(function(rt){
   ui.error('Failed to start the fortune server because:', err);
 });
 
-// Let's add a few fortunes to start with
-fortuneService.addNewFortune('The fortune you seek is in another cookie.');
-fortuneService.addNewFortune('Everything will now come your way.');
-fortuneService.addNewFortune('Conquer your fears or they will conquer you.');

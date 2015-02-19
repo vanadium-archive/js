@@ -11,9 +11,12 @@ the browser using the service.
 
 ## Environment Setup
 
-You will need to run three services to get a fortune: mountabled, proxyd, and
-wspr.  In addition, we will need to connect to the identitd server running on
-envyor.
+The fortune example uses npm to manage dependencies.  Install the dependencies with:
+
+    $ npm install
+
+You will need to run two services to get a fortune: mountabled, proxyd.  To run
+in nodejs, you will also need to run the wspr service.
 
 These commands all expect that $VANADIUM_ROOT/release/go/bin is in your path, and
 that you have installed all the veyron services.  See the "Developing Veyron"
@@ -25,7 +28,7 @@ The mountable is where your fortune service will be mounted. It's kind of like D
 
 We'll start it on port 9002.
 
-    $ mounttabled --address=:9002
+    $ mounttabled --veyron.tcp.address=:9002
 
 ### Proxyd
 
@@ -34,40 +37,36 @@ The proxyd allows nodes to communicate regardless of network topology.
 We have to pass it the location of the mountable in an environment variable
 called NAMESPACE_ROOT.
 
-    $ NAMESPACE_ROOT=/localhost:9002 proxyd --address=:9001
+    $ proxyd --veyron.namespace.root=/localhost:9002 --address=:9001
 
-### WSPR
+## Running in NodeJS
+
+### Run WSPR
 
 The WSPR proxy allows javascript to make Veyron RPC calls, and manages
 identities in a secure manner.
 
 We must tell WSPRD about the mountable using the NAMESPACE_ROOT env variable,
-and we pass in the location of the proxy with the '--vproxy' flag.
+and we pass in the location of the proxy with the '--veyron.proxy' flag.
 
-In addition, WSPR needs to talk to an identity server.  These arn't easy to run
-yourself, as they require some OAuth credentials, so we'll just use one running
-at /proxy.envyor.com:8101/identity/veyron-test/google.
+Lastly, WSPR needs an initial identity.  You can generate one of these by running:
 
-Lastly, WSPR needs an initial identity.  You can generate one of these with:
+    $ principal --veyron.credentials="$HOME"/veyron_credentials seekblessings
 
-    $ identity seekblessing > ~/identity
+Then click "Bless".
 
-Putting it all together, you start WSPR like so:
+Finally, we can start WSPR like so:
 
-    $ NAMESPACE_ROOT=/localhost:9002 \
-      VEYRON_IDENTITY=~/identity \
-      wsprd --v=1 --alsologtostderr=true \
-        -vproxy :9001 --port 8124 \
-        --identd "/proxy.envyor.com:8101/identity/veyron-test/google"
+    $ wsprd --v=1 --alsologtostderr=true \
+        --veyron.proxy=/localhost:9001 --port 8124 \
+        --veyron.credentials="$HOME"/veyron_credentials \
+        --veyron.namespace.root=/localhost:9002
 
-
-## Running in NodeJS
-
-Run the server:
+### Run the server:
 
     $ node ./lib/server.js
 
-Run the Client:
+### Run the client:
 
     $ node ./lib/client.js
 
@@ -81,10 +80,9 @@ This should display a random fortune.  You can add a new fortune with:
 ### Veyron Extension
 
 Before you can run the server or client in a browser, you will first need to
-install the Veyron Chrome Extension.  The extension lives in the
-veyron-extension repo, and you can download it here:
+install the Veyron Chrome Extension here:
 
-https://github.com/veyron/release/javascript/core/raw/master/extension/veyron.crx
+https://chrome.google.com/webstore/detail/vanadium-extension/jcaelnibllfoobpedofhlaobfcoknpap
 
 
 ### Browserify
@@ -94,14 +92,14 @@ the veyron javascript runtime.
 
 You can build these bundles with:
 
-    # Install browserify and other dependencies in ../../node_modules
+    # Install browserify and other dependencies in ./node_modules
     $ npm install
 
     # Bundle client.js into public/client/bundle.js
-    $ ../../node_modules/.bin/browserify lib/client.js --debug --outfile public/client/bundle.js
+    $ ./node_modules/.bin/browserify lib/client.js --debug --outfile public/client/bundle.js
 
     # Bundle server.js into public/server/bundle.js
-    $ ../../node_modules/.bin/browserify lib/server.js --debug --outfile public/server/bundle.js
+    $ ./node_modules/.bin/browserify lib/server.js --debug --outfile public/server/bundle.js
 
 ### Serving the files
 
@@ -112,7 +110,7 @@ We'll use the 'static' http server which was installed when you did 'npm
 install'.  The following line starts the 'static' http server and tells it to
 server all the content inside ./public/.
 
-    $ ../../node_mobules/.bin/static public
+    $ ./node_mobules/.bin/static public
 
 You can now visit the following URLs to see the fortune client and server running in the browser:
 

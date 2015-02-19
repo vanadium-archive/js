@@ -6,24 +6,26 @@ var veyronConfig = require('./config');
  * and bind it to the bakery/cookie/fortune service.
  */
 veyron.init(veyronConfig).then(function(rt){
-  rt.bindTo('bakery/cookie/fortune').then(function(fortuneService) {
+  var client = rt.newClient();
+  var ctx = rt.getContext();
+  client.bindTo(ctx, 'bakery/cookie/fortune').then(function(fortuneService) {
     function getFortune() {
-      fortuneService.getRandomFortune().then(function(fortune) {
-        context.handleGetSuccess(fortune);
+      fortuneService.getRandomFortune(ctx).then(function(fortune) {
+        platform.handleGetSuccess(fortune);
       }).catch(function(err) {
-        context.handleGetFailure(err);
+        platform.handleGetFailure(err);
       });
     }
 
     function addFortune() {
-      fortuneService.addNewFortune(context.getFortuneToAdd()).then(function() {
-        context.handleAddSuccess();
+      fortuneService.addNewFortune(ctx, platform.getFortuneToAdd()).then(function() {
+        platform.handleAddSuccess();
       }).catch(function(err) {
-        context.handleAddFailure(err);
+        platform.handleAddFailure(err);
       });
     }
 
-    var browserContext = {
+    var browserPlatform = {
       start: function() {
         // Load JS to handle browser client style.
         require('./client-style');
@@ -55,11 +57,11 @@ veyron.init(veyronConfig).then(function(rt){
       }
     };
 
-    var nodeContext = {
+    var nodePlatform = {
       fortuneText: '',
       start: function() {
         // Parse command line to see if this is an add or a get.
-        var argv = require('optimist').argv;
+        var argv = require('minimist')(process.argv.slice(2));
         if (argv.add) {
           this.fortuneText = argv.add;
           addFortune();
@@ -90,8 +92,8 @@ veyron.init(veyronConfig).then(function(rt){
     };
 
     console.log('*** Welcome to FortuneJS - Client ***');
-    var context = (typeof window === 'object') ? browserContext : nodeContext;
-    context.start();
+    var platform = (typeof window === 'object') ? browserPlatform : nodePlatform;
+    platform.start();
   });
 }).catch(function(err) {
   console.error('Failed to use the fortune service because:', err);
