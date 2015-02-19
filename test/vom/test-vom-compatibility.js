@@ -12,8 +12,8 @@ var ByteArrayMessageWriter = require(
     './../../src/vom/byte-array-message-writer.js');
 var Decoder = require('./../../src/vom/decoder.js');
 var Encoder = require('./../../src/vom/encoder.js');
-var util = require('./../../src/vdl/byte-util.js');
 var typeCompatible = require('./../../src/vdl/type-compatible.js');
+var util = require('./../../src/vdl/byte-util.js');
 
 // Test that the received type matches the expected type.
 testdata.Tests.val.forEach(function(t) {
@@ -61,14 +61,14 @@ testdata.Tests.val.forEach(function(t, i) {
   });
 });
 
-// Test that the given type lists are intra-compatible but not inter-compatible.
+// Test that the types within the same list are compatible.
 var compatTests = testdata.CompatTests.val;
 compatTests.forEach(function(typelist, typename) {
   test('vom type compatibility - ' + typename, function(assert) {
     for (var j = 0; j < typelist.length; j++) {
       var type1 = typelist[j];
 
-      // Check that type1 and type2 convert to each other, in either order.
+      // Check that type1 and type2 are compatible, in both orders.
       for (var k = 0; k < typelist.length; k++) {
         var type2 = typelist[k];
 
@@ -80,6 +80,7 @@ compatTests.forEach(function(typelist, typename) {
   });
 });
 
+// Test that the types between lists are incompatible.
 compatTests.forEach(function(typelist1, typename1) {
   compatTests.forEach(function(typelist2, typename2) {
     test('vom type incompatibility - ' + typename1 + ' vs ' + typename2,
@@ -88,7 +89,8 @@ compatTests.forEach(function(typelist1, typename1) {
           assert.end();
           return;
         }
-        // Check each set against all other sets, in both orders.
+        // Check each set of types against the other sets in both orders.
+        // All pairs of types from different sets should be incompatible.
         for (var i = 0; i < typelist1.length; i++) {
           var type1 = typelist1[i];
           for (var j = 0; j < typelist2.length; j++) {
