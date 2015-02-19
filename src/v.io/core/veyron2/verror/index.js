@@ -59,6 +59,12 @@ module.exports.BadStateError = makeError('v.io/core/veyron2/verror.BadState', ac
 ]);
 
 
+module.exports.BadEtagError = makeError('v.io/core/veyron2/verror.BadEtag', actions.NO_RETRY, {
+  'en': '{1:}{2:} Etag is out of date',
+}, [
+]);
+
+
 module.exports.ExistError = makeError('v.io/core/veyron2/verror.Exist', actions.NO_RETRY, {
   'en': '{1:}{2:} Already exists{:_}',
 }, [
