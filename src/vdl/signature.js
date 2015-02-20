@@ -1,5 +1,5 @@
 /**
- * @fileoverview Generator of service signature from javascript object.
+ * @fileoverview Generator of service signature from JavaScript object.
  * This signature can optionally include additional information in a
  * descriptor object.
  * @private

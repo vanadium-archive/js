@@ -63,7 +63,7 @@ CaveatValidatorRegistry.prototype.validate = function(secCtx, caveat) {
   var validator = this.validators.get(this._makeKey(caveat.id));
   if (validator === undefined) {
     // TODO(bprosnitz) we should be throwing security.UnknownCaveatUuid.
-    // This is dependent on having vdl-generated error id code for javascript.
+    // This is dependent on having vdl-generated error id code for JavaScript.
     throw new Error('Unknown caveat id: ' + this._makeKey(caveat.id));
   }
   var reader = new vom.ByteArrayMessageReader(caveat.paramVom);
@@ -88,7 +88,7 @@ CaveatValidator.prototype.validate = function(secCtx, paramForValidator) {
   var canonData = vdl.Canonicalize.reduce(paramForValidator, paramType);
 
   // TODO(bproznitz): we should be throwing security.ErrCaveatValidation.
-  // This is dependent on having vdl-generated error id code for javascript.
+  // This is dependent on having vdl-generated error id code for JavaScript.
   this.validateFn(secCtx, canonData);
 };
 

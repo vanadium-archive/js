@@ -280,7 +280,7 @@ var IncorrectArgCount = makeError(
   'arguments. Expected format: {5}({6})');
 
 /**
- * Performs client side binding of a remote service to a native javascript
+ * Performs client side binding of a remote service to a native JavaScript
  * stub object.
  *
  * Usage:
@@ -334,7 +334,7 @@ Client.prototype.bindTo = function(ctx, name, cb) {
 };
 
 /**
- * Performs client side binding of a remote service to a native javascript
+ * Performs client side binding of a remote service to a native JavaScript
  * stub object when you already have the service signature.
  *
  * Usage:
