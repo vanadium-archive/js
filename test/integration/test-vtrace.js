@@ -12,7 +12,7 @@ function findSpan(name, trace) {
   return null;
 }
 
-test('Test receiving traces with a javascript client', function(assert) {
+test('Test receiving traces with a JavaScript client', function(assert) {
   service('test_service/cache', function(err, ctx, cache, end, runtime) {
     cache.set(ctx, 'key', 'val').then(function() {
       var span = vtrace.getSpan(ctx);

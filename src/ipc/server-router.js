@@ -155,7 +155,7 @@ Router.prototype.handleLookupRequest = function(messageId, request) {
 };
 
 /**
- * Handles cancellations of in-progress requests againsts Javascript service
+ * Handles cancellations of in-progress requests againsts JavaScript service
  * invokations.
  * @private
  * @param {string} messageId Message Id set by the server.

@@ -1,5 +1,5 @@
 /**
- * @fileoverview Generator of typeless service signature from javascript object.
+ * @fileoverview Generator of typeless service signature from JavaScript object.
  * @private
  */
 

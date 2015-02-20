@@ -1,7 +1,7 @@
 {
   "name": "Vanadium Extension",
   "version": "0.0.29",
-  "description": "Access and create Vanadium services from Javascript.",
+  "description": "Access and create Vanadium services from JavaScript.",
   "manifest_version": 2,
   "icons": {
     "128": "images/icon_128.png"

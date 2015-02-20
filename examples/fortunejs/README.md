@@ -43,7 +43,7 @@ called NAMESPACE_ROOT.
 
 ### Run WSPR
 
-The WSPR proxy allows javascript to make Veyron RPC calls, and manages
+The WSPR proxy allows JavaScript to make Veyron RPC calls, and manages
 identities in a secure manner.
 
 We must tell WSPRD about the mountable using the NAMESPACE_ROOT env variable,
@@ -88,7 +88,7 @@ https://chrome.google.com/webstore/detail/vanadium-extension/jcaelnibllfoobpedof
 ### Browserify
 
 The fortune example uses browserify to bundle the client and server code with
-the veyron javascript runtime.
+the veyron JavaScript runtime.
 
 You can build these bundles with:
 

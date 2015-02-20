@@ -81,7 +81,7 @@ RawVomReader.prototype.readBigInt = function() {
 };
 
 /**
- * Reads a unsigned integer as a native javascript number.
+ * Reads a unsigned integer as a native JavaScript number.
  * @return {number} The uint that was read.
  */
 RawVomReader.prototype.readUint = function() {
@@ -89,7 +89,7 @@ RawVomReader.prototype.readUint = function() {
 };
 
 /**
- * Reads a integer as a native javascript number.
+ * Reads a integer as a native JavaScript number.
  * @return {number} The int that was read.
  */
 RawVomReader.prototype.readInt = function() {
@@ -98,7 +98,7 @@ RawVomReader.prototype.readInt = function() {
 
 
 /**
- * Reads a float as a native javascript number.
+ * Reads a float as a native JavaScript number.
  * @return {number} The float that was read.
  */
 RawVomReader.prototype.readFloat = function() {

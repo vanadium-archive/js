@@ -2,7 +2,7 @@
  * @fileoverview Tests the invoker and signature generation on the
  * vdl-generated testdata/base.js file.
  * This test is primarily to ensure that the vdl-generated format remains
- * compatible with that expected by the javascript signature generator.
+ * compatible with that expected by the JavaScript signature generator.
  */
 
 var test = require('prova');

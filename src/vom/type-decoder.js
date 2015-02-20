@@ -3,7 +3,7 @@
  * looking up by id.
  *
  * Definitions:
- * Type / Defined Type - The standard VOM javascript type object representation.
+ * Type / Defined Type - The standard VOM JavaScript type object representation.
  * Partial Type - The type representation off the wire, identical to defined
  * types but child types are described by type ids rather than actual complete
  * type objects.

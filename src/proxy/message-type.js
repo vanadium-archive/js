@@ -13,7 +13,7 @@ var MessageType = {
   STOP: 6, // Request to stop a server.
   BLESS_PUBLICKEY:  7, // Request to bless a public key.
   UNLINK_BLESSINGS: 8, // Unlinks blessings.
-  NEW_BLESSINGS: 9, // Creates a new Blessing for javascript.  This is only
+  NEW_BLESSINGS: 9, // Creates a new Blessing for JavaScript.  This is only
                     // used by tests.
   LOOKUP_RESPONSE: 11, // Response from a lookup call to Javacript.
   AUTHORIZATION_RESPONSE: 12, // Response from an authorization call to JS.

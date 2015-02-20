@@ -40,8 +40,8 @@ function trimBytes(bytes) {
 }
 
 /**
- * Create a BigInt from a native javascript number.
- * @param {number} val A native javascript value.
+ * Create a BigInt from a native JavaScript number.
+ * @param {number} val A native JavaScript value.
  * @throws {Error} If value cannot be represented as a BigInt.
  * @return {BigInt} The BigInt representation.
  */
@@ -76,7 +76,7 @@ BigInt.fromNativeNumber = function(val) {
 /**
  * Generate a string representation of the BigInt.
  * This must have the same output format as the string conversion of normal
- * javascript integer (for the range of valid javascript integers).
+ * JavaScript integer (for the range of valid JavaScript integers).
  * @return {string} The string representation.
  */
 BigInt.prototype.toString = function() {
@@ -434,30 +434,30 @@ BigInt.prototype.getUintBytes = function() {
 };
 
 /**
- * Convert to a native javascript float64 representation.
+ * Convert to a native JavaScript float64 representation.
  * @throws {Error} if the value cannot be converted to a float64 without loss.
- * @return {number} a native javascript float64 representation of the BigInt.
+ * @return {number} a native JavaScript float64 representation of the BigInt.
  */
 BigInt.prototype.toNativeNumber = function() {
   if (this._largerThanMaxLosslessInteger()) {
     throw new Error('BigInt \'' + ByteUtil.bytes2Hex(this) +
-      '\' out of range of native javascript numbers');
+      '\' out of range of native JavaScript numbers');
   }
   return this._convertToNative();
 };
 
 /**
- * Approximate the native javascript float64 representation.
+ * Approximate the native JavaScript float64 representation.
  * Caution: The conversion is not accurate when the BigInt is larger than the
  * maximum lossless integer.
- * @return {number} a native javascript float64 representation of the BigInt.
+ * @return {number} a native JavaScript float64 representation of the BigInt.
  */
 BigInt.prototype.toNativeNumberApprox = function() {
   return this._convertToNative();
 };
 
 /**
- * @return {number} a native javascript float64 representation of the BigInt.
+ * @return {number} a native JavaScript float64 representation of the BigInt.
  */
 BigInt.prototype._convertToNative = function() {
   var arr = new Uint8Array(4);
