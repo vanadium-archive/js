@@ -10,6 +10,7 @@ var Complex = require('./complex.js');
 var Kind = require('./kind.js');
 var Registry; // Must be lazily required to avoid circular dependency.
 var Types = require('./types.js');
+var Type = require('./type.js');
 var TypeUtil = require('./type-util.js');
 var guessType = require('./guess-type.js');
 var jsValueConvert = require('./js-value-convert.js');
@@ -17,6 +18,7 @@ var util = require('./util.js');
 var stringify = require('./stringify.js');
 var typeCompatible = require('./type-compatible.js');
 var typeObjectFromKind = require('./type-object-from-kind.js');
+var errorConversion = require('./error-conversion');
 require('./es6-shim');
 
 module.exports = {
@@ -87,6 +89,10 @@ function canonicalizeExternal(inValue, t, deepWrap) {
  * @return {any} The canonicalized value (May potentially refer to v)
  */
 function canonicalize(inValue, t, deepWrap, seen, isTopLevelValue) {
+  if (!(t instanceof Type)) {
+    t = new Type(t);
+  }
+
   // This value needs a wrapper if either flag is set.
   var needsWrap = deepWrap || isTopLevelValue;
 
@@ -211,6 +217,23 @@ function canonicalizeInternal(deepWrap, v, t, seen, outValue) {
     return TypeUtil.unwrap(canonicalize(zero, t, true, seen, false));
   } else if (v === null && (t.kind !== Kind.ANY && t.kind !== Kind.OPTIONAL)) {
     throw makeError(v, t, 'value is null for non-optional type');
+  }
+
+  // If this an error type, we need to convert to the correct
+  // error object.  An error type can either be the optional error (i.e
+  // Types.ERROR) or a concrete error (i.e. Types.ERROR.elem).
+  if (t.equals(Types.ERROR)) {
+    if (!v) {
+      return null;
+    }
+    // We don't just return the error, instead we defer to the rest of
+    // the canonicalize logic to determine where or not return wrapped
+    // values.
+    v = errorConversion.toJSerror(TypeUtil.unwrap(v));
+  }
+
+  if (t.equals(Types.ERROR.elem)) {
+    outValue = errorConversion.toJSerror(v);
   }
 
   var key;
@@ -428,12 +451,6 @@ function canonicalizeInternal(deepWrap, v, t, seen, outValue) {
       Object.keys(v).filter(util.isExportedStructField).forEach(function(key) {
         upperKey = util.capitalize(key);
         var hasMatchingField = t.fields.some(function fieldMatch(field) {
-          // TODO(alexfandrianto): Special-casing ID because of verror.
-          // https://github.com/veyron/release-issues/issues/848
-          if (upperKey.substring(0, 2) === 'Id' &&
-            field.name.substring(0, 2) === 'ID') {
-            return field.name.substring(2) === upperKey.substring(2);
-          }
           return field.name === upperKey;
         });
         if (!hasMatchingField) {

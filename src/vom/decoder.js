@@ -53,6 +53,10 @@ Decoder.prototype._decodeValue = function(t, reader, shouldWrap) {
     return canonicalize.reduce(value, Types.JSVALUE);
   }
 
+  if (Types.ERROR.equals(t) || Types.ERROR.elem.equals(t)) {
+    return canonicalize.reduce(value, t);
+  }
+
   // If this value should be wrapped, apply the constructor.
   if (t.kind !== Kind.TYPEOBJECT && shouldWrap) {
     var Ctor = Registry.lookupOrCreateConstructor(t);

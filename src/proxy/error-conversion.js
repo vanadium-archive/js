@@ -3,30 +3,16 @@
  * @private
  */
 
-var actions = require('./../errors/actions');
-var errorMap = require('./../runtime/error-map');
 var VanadiumError = require('./../errors/vanadium-error');
 var defaultLanguage = require('./../runtime/default-language');
 var defaultCatalog = require('./../runtime/default-catalog');
-var context = require('./../runtime/context');
 var verror = require('../v.io/core/veyron2/verror');
 
 module.exports = {
   toStandardErrorStruct: toStandardErrorStruct,
-  toJSerror: toJSerror
 };
 
-/*
- * Implements the same structure as Standard struct in veyron2/verror
- * @private
- * @param {Object} idAction idActionription of the error, which in JavaScript,
- * corresponds to the name property of an Error object.
- */
-var _standard = function(idAction, message, paramList) {
-  this.idAction = idAction;
-  this.msg = message;
-  this.paramList = paramList;
-};
+var unknownIdAction = (new verror.UnknownError(null)).iDAction;
 
 /**
  * Converts from a JavaScript error object to verror standard struct which
@@ -38,23 +24,20 @@ var _standard = function(idAction, message, paramList) {
  * @return {_standard} verror standard struct
  */
 function toStandardErrorStruct(err, appName, operation) {
-  var idAction = {
-    id: 'v.io/core/veyron2/verror.Unknown',
-    action: actions.NO_RETRY
-  };
+  if (err instanceof VanadiumError) {
+    return err;
+  }
   var message = '';
   var paramList = [];
 
   if (err instanceof Error) {
     message = err.message;
 
-    if (err.idAction) {
-      idAction = err.idAction;
-    }
-    paramList = err.paramList || [];
+    paramList = [];
   } else if (err !== undefined && err !== null) {
     paramList = [appName, operation, err + ''];
-    message = defaultCatalog.format(defaultLanguage, idAction.id, paramList);
+    message = defaultCatalog.format(
+      defaultLanguage, unknownIdAction.iD, paramList);
   }
 
   if (!paramList[0] && appName) {
@@ -64,48 +47,14 @@ function toStandardErrorStruct(err, appName, operation) {
   if (!paramList[1] && operation) {
     paramList[1] = operation;
   }
-  return new _standard(idAction, message, paramList);
+  // Make a copy of paramList
+  var args = paramList.slice(0);
+  // Add a null context to the front of the args.
+  args.unshift(null);
+  var e = new verror.UnknownError(args);
+  e.resetArgs.apply(e, paramList);
+  e.message = message;
+  e.msg = message;
+  return e;
 }
 
-/**
- * Converts from a verror standard struct which comes from wspr to JavaScript
- * Error object ensuring message and name are set properly
- * @private
- * @param {_standard} verr verror standard struct
- * @return {Error} JavaScript error object
- */
-function toJSerror(verr, ctx) {
-  var err;
-
-  // iDAction from GO, idAction from JS
-  var idAction = verr.iDAction || verr.idAction;
-  var id = idAction.iD || idAction.id || '';
-  var msg = verr.msg;
-  verr.paramList = verr.paramList || [];
-
-  var Ctor = errorMap[id];
-
-  if (id === '' && !Ctor) {
-    Ctor = verror.UnknownError;
-  }
-
-
-  if (!ctx) {
-    // TODO(bjornick): Remove this after context is everywhere.
-    ctx = new context.Context();
-  }
-  if (Ctor) {
-    err = new Ctor([ctx].concat(verr.paramList));
-  } else {
-    var args = [id, idAction.action || actions.NO_RETRY, ctx].concat(
-      verr.paramList);
-    err = new VanadiumError(args);
-  }
-
-  err.resetArgs.apply(err, verr.paramList);
-  if (msg !== '') {
-    err.message = msg;
-  }
-
-  return err;
-}

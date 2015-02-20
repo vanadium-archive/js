@@ -1,5 +1,4 @@
 var IncomingPayloadType = require('./incoming-payload-type');
-var ErrorConversion = require('./error-conversion');
 var DecodeUtil = require('../lib/decode-util');
 var vError = require('../v.io/core/veyron2/verror');
 
@@ -34,7 +33,7 @@ Handler.prototype.handleResponse = function(type, data) {
       this._stream._queueRead(null);
       return true;
     case IncomingPayloadType.ERROR_RESPONSE:
-      this._stream.emit('error', ErrorConversion.toJSerror(data, this._ctx));
+      this._stream.emit('error', data);
       return true;
   }
 

@@ -20,5 +20,6 @@ function guessType(val) {
   if (TypeUtil.isTyped(val)) {
     return val._type;
   }
+
   return Types.JSVALUE;
 }

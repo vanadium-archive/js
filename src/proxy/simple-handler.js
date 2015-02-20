@@ -4,7 +4,6 @@
  * @private
  */
 var IncomingPayloadType = require('./incoming-payload-type');
-var ErrorConversion = require('./error-conversion');
 var StreamHandler = require('./stream-handler');
 var vError = require('../v.io/core/veyron2/verror');
 
@@ -41,11 +40,7 @@ Handler.prototype.handleResponse = function(type, message) {
       this._def.resolve(message);
       break;
     case IncomingPayloadType.ERROR_RESPONSE:
-      var err = message;
-      if (!(err instanceof Error)) {
-        err = ErrorConversion.toJSerror(message, this._ctx);
-      }
-      this._def.reject(err);
+      this._def.reject(message);
       break;
     default:
       this._def.reject(

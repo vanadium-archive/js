@@ -11,7 +11,6 @@
 var Promise = require('../lib/promise');
 var Deferred = require('../lib/deferred');
 var vLog = require('../lib/vlog');
-var ErrorConversion = require('../proxy/error-conversion');
 var Stream = require('../proxy/stream');
 var verror = require('../v.io/core/veyron2/verror');
 var MessageType = require('../proxy/message-type');
@@ -202,14 +201,7 @@ OutstandingRPC.prototype.handleStreamClose = function() {
   }
 };
 
-OutstandingRPC.prototype.handleError = function(data) {
-  var err;
-  if (data instanceof Error) {
-    err = data;
-  } else {
-    err = ErrorConversion.toJSerror(data, this._ctx);
-  }
-
+OutstandingRPC.prototype.handleError = function(err) {
   if (this._def.stream) {
     this._def.stream.emit('error', err);
     this._def.stream._queueRead(null);
