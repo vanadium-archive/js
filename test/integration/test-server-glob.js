@@ -128,7 +128,7 @@ function runGlobTest(pattern, expectedResults, dispatcher, expectedErrors,
       // TODO(aghassemi) this needs to change when toddw adds getters for errors
       // or if we keep GlobError as a struct, we should send that instead of
       // error objects
-      var errorItemName = err.paramList[2][0];
+      var errorItemName = err.paramList[2];
       globErrors.push(errorItemName);
     });
 

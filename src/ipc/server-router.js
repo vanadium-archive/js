@@ -394,7 +394,7 @@ Router.prototype.handleGlobRequest = function(messageId, name, server, glob,
       // TODO(bjornick): Allow for escaped slashes.
       if (child.indexOf('/') !== -1) {
         var verr = new verror.InternalError(context,
-          ['__globChildren returned a bad child', child]);
+          '__globChildren returned a bad child', child);
         var errReply = createGlobErrorReply(name, verr);
         self._streamMap[messageId].write(errReply);
         vLog.info(verr);
@@ -418,7 +418,7 @@ Router.prototype.handleGlobRequest = function(messageId, name, server, glob,
           self.decrementOutstandingRequestForId(messageId, cb);
         }
       }).catch(function(e) {
-        var verr = new verror.NoServersAndAuthError(context, [suffix, e]);
+        var verr = new verror.NoServersAndAuthError(context, suffix, e);
         var errReply = createGlobErrorReply(name, verr);
         self._streamMap[messageId].write(errReply);
         vLog.info(errReply);
@@ -429,7 +429,7 @@ Router.prototype.handleGlobRequest = function(messageId, name, server, glob,
     this.invokeMethod(invoker, options, function(err, results) {
       if (err) {
         var verr = new verror.InternalError(context,
-          ['__globChildren() failed', glob, err]);
+          '__globChildren() failed', glob, err);
         var errReply = createGlobErrorReply(name, verr);
         this._streamMap[messageId].write(errReply);
         vLog.info(verr);

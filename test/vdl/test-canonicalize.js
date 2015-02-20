@@ -923,6 +923,7 @@ test('canonicalize deep to shallow - basic functionality', function(t) {
         _wrappedType: true, // pretend it is wrapped
         _type: {            // pretend it has a type
           kind: Kind.MAP,
+          name: '',
           key: Types.INT32,
           elem: Types.INT32
         }
@@ -946,6 +947,7 @@ test('canonicalize deep to shallow - basic functionality', function(t) {
         },
         _type: {              // pretend that this is on the prototype
           kind: Kind.STRUCT,
+          name: '',
           fields: [
             {
               name: 'Kind',
@@ -973,6 +975,7 @@ test('canonicalize deep to shallow - basic functionality', function(t) {
         },
         _type: {              // pretend that this is on the prototype
           kind: Kind.UNION,
+          name: '',
           fields: [
             {
               name: 'A',
@@ -1004,6 +1007,7 @@ test('canonicalize deep to shallow - basic functionality', function(t) {
         },
         _type: {              // pretend that this is on the prototype
           kind: Kind.STRUCT,
+          name: '',
           fields: [
             {
               name: 'A',
@@ -1036,6 +1040,7 @@ test('canonicalize deep to shallow - basic functionality', function(t) {
         },
         _type: {              // pretend that this is on the prototype
           kind: Kind.STRUCT,
+          name: '',
           fields: [
             {
               name: 'Any',

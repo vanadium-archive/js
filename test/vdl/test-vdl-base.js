@@ -152,5 +152,5 @@ test('errors', function(assert) {
   assert.end();
 
   e = new base.NoParams2Error(rootContext);
-  assert.equal(e.idAction.action, actions.RETRY_REFETCH);
+  assert.equal(e.iDAction.action, actions.RETRY_REFETCH);
 });

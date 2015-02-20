@@ -55,6 +55,7 @@ Proxy.prototype.process = function(message) {
     payload = DecodeUtil.decode(message.data);
     payload.message = unwrap(payload.message);
   } catch (e) {
+    vLog.error(e);
     if (!isServerOriginatedMessage) {
       handler.handleResponse(IncomingPayloadType.ERROR_RESPONSE, message.data);
     }
