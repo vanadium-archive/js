@@ -31,6 +31,8 @@ var CollectInMemory =
   require('../v.io/core/veyron2/vtrace').CollectInMemory;
 var ReservedSignature =
   require('../v.io/core/veyron2/ipc').ReservedSignature.val;
+var Controller =
+  require('../v.io/wspr/veyron/services/wsprd/app').Controller;
 
 var OutstandingRPC = function(ctx, options, cb) {
   this._ctx = ctx;
@@ -262,6 +264,8 @@ function Client(proxyConnection) {
   }
 
   this._proxyConnection = proxyConnection;
+  this._controller = this.bindWithSignature(
+    'controller', [Controller.prototype._serviceDescription]);
 }
 
 // TODO(bprosnitz) v.io/core/javascript.IncorrectArgCount.
@@ -360,7 +364,7 @@ Client.prototype.bindWithSignature = function(name, signature) {
       }
 
       // Require first arg to be a Context
-      if (args[0] instanceof context.Context) {
+      if (args.length >= 1 && args[0] instanceof context.Context) {
         ctx = args.shift();
       } else {
         err = new Error('First argument must be a Context object.');
@@ -393,8 +397,6 @@ Client.prototype.bindWithSignature = function(name, signature) {
                         Array.prototype.slice.call(arguments, 1),
                         methodSig.name,
                         expectedArgs ];
-        console.log('got args', arguments);
-        console.log('derived', args);
         err = new IncorrectArgCount(ctx, errArgs);
         if (callback) {
           return callback(err);
@@ -479,21 +481,21 @@ Client.prototype.signature = function(ctx, name, cb) {
   if (typeof arguments[last] === 'function') {
     cb = arguments[last];
   }
-
   var deferred = new Deferred(cb);
 
-  var proxy = this._proxyConnection;
+  if (!(ctx instanceof context.Context)) {
+    deferred.reject(new Error('First argument must be a Context object.'));
+    return deferred.promise;
+  }
 
-  var cacheEntry = proxy.signatureCache.get(name);
+  var cache = this._proxyConnection.signatureCache;
+  var cacheEntry = cache.get(name);
   if (cacheEntry) {
     deferred.resolve(cacheEntry);
     return deferred.promise;
   }
-
-  this._sendRequest(ctx, {
-    name: name
-  }, MessageType.SIGNATURE).then(function(signature){
-    proxy.signatureCache.set(name, signature);
+  this._controller.signature(ctx, name).then(function(signature){
+    cache.set(name, signature);
     deferred.resolve(signature);
   }).catch(function(err) {
     deferred.reject(err);
@@ -530,10 +532,7 @@ Client.prototype.remoteBlessings = function(ctx, name, method, cb) {
     method = ReservedSignature;
   }
 
-  return this._sendRequest(ctx, {
-    name: name,
-    method: method
-  }, MessageType.REMOTE_BLESSINGS, cb);
+  return this._controller.remoteBlessings(ctx, name, method, cb);
 };
 
 /*

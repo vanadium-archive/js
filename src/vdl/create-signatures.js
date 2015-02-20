@@ -8,6 +8,7 @@ module.exports = createSignatures;
 var stringify = require('./stringify');
 var capitalize = require('./util').capitalize;
 var Signature = require('./signature');
+
 function sigsHaveMethod(sigs, method) {
   return sigs.some(function(sig) {
     return sig.methods.some(function(elem) {

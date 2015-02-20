@@ -37,6 +37,8 @@ function Signature(service, desc) {
     desc = {};
   }
 
+  vdlsig.Interface.call(this);
+
   var reflectSig = new ReflectSignature(service);
 
   copyIfSet(this, desc, ['name', 'pkgPath', 'doc', 'embeds']);
@@ -76,10 +78,6 @@ function Signature(service, desc) {
       }
       var descMethod = foundMethods[0];
 
-      // Only add the method if it is in the desc passed in.
-      methods.push(thisMethod);
-
-
       if (descMethod.hasOwnProperty('inArgs')) {
         if (!Array.isArray(descMethod.inArgs)) {
           throw new Error('inArgs expected to be an array');
@@ -88,30 +86,29 @@ function Signature(service, desc) {
         var thisArgs = thisMethod.inArgs;
         var descArgs = descMethod.inArgs;
 
-        if (thisArgs.length !== descArgs.length) {
+        if (thisArgs.length === descArgs.length) {
+          // Copy arg details.
+          for (var argix = 0; argix < thisArgs.length; argix++) {
+            copyIfSet(thisArgs[argix], descArgs[argix],
+                      ['doc', 'type', 'name']);
+          }
+        } else {
           // TODO(bprosnitz) What about methods that use the
           // arguments variable and don't declare arguments.
           // TODO(bprosnitz) How would this look if we support vararg
           // in the future?
           vlog.warn('Args of method ' + thisMethod.name + ' don\'t ' +
                     'match descriptor');
-          return; // Skip this method because args don't match.
-        }
-
-        // Copy arg details.
-        for (var argix = 0; argix < thisArgs.length; argix++) {
-          copyIfSet(thisArgs[argix], descArgs[argix],
-                    ['doc', 'type', 'name']);
         }
       }
 
       copyIfSet(thisMethod, descMethod, ['doc', 'outArgs', 'tags']);
-
       if (reflectMethod.streaming === true) {
-        delete['inStream'];
-        delete['outStream'];
         copyIfSet(thisMethod, descMethod, ['inStream', 'outStream']);
       }
+
+      // Only add the method if it is in the desc passed in.
+      methods.push(new vdlsig.Method(thisMethod));
     }
   });
 }

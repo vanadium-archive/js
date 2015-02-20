@@ -36,6 +36,7 @@ test('Invoker and signature for vdl-generated base.js',
     var invoker = new Invoker(impl);
 
     invoker.invoke('MethodA3', ['a'], injections, function(err, res) {
+        t.error(err);
         t.deepEquals(res, [['methodA3', 'stream', 'a']]);
 
         var scalarsType = new base.Scalars()._type;
@@ -132,6 +133,8 @@ test('Invoker and signature for vdl-generated base.js',
                             'type': compCompType
                         }
                     ],
+                    'inStream': null,
+                    'outStream': null,
                     'tags': []
                 }
             ]

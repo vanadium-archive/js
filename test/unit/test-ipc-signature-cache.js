@@ -9,21 +9,37 @@ var context = require('../../src/runtime/context');
 var createMockProxy = require('./mock-proxy');
 var MessageType = require('../../src/proxy/message-type');
 var Client = require('../../src/ipc/client.js');
+var DecodeUtil = require('../../src/lib/decode-util');
+var EncodeUtil = require('../../src/lib/encode-util');
+var app = require('../../src/v.io/wspr/veyron/services/wsprd/app');
+var vtrace = require('../../src/lib/vtrace');
 
 var freshSig = [ { foo: 'fresh signature' } ];
 var cachedSig = [ { foo: 'cached signature'} ];
 var staleSig = [ { foo: 'bad signature' } ];
 var name = 'service_name';
-var ctx = context.Context();
 
 var CACHE_TTL = 100; // we set the signature cache TTL to 100ms for tests.
 function createProxy() {
   return createMockProxy(function(message, type) {
-    if (type === MessageType.SIGNATURE) {
-      return [ freshSig ];
+    if (type === MessageType.REQUEST) {
+      var decodedData = DecodeUtil.decode(message);
+      if (decodedData.method !== 'Signature') {
+        throw new Error('Unexpected method call');
+      }
+      var response = new app.VeyronRPCResponse();
+      response.outArgs = [freshSig];
+      return EncodeUtil.encode(response);
     }
     throw new Error('Unexpected message type');
   }, CACHE_TTL);
+}
+
+function testContext() {
+  var ctx = new context.Context();
+  ctx = vtrace.withNewStore(ctx);
+  ctx = vtrace.withNewTrace(ctx);
+  return ctx;
 }
 
 test('Test getting signature using valid cache - ' +
@@ -35,7 +51,7 @@ test('Test getting signature using valid cache - ' +
     // fake a valid cached signature
     proxy.signatureCache.set(name, cachedSig);
 
-    client.signature(ctx, name)
+    client.signature(testContext(), name)
     .then(function(signature) {
       assert.deepEqual(signature, cachedSig);
       assert.end();
@@ -54,7 +70,7 @@ test('Test getting signature does not use stale cache entry - ' +
 
     // wait > CACHE_TTL ms until it goes stale, ensure we get a fresh signature
     setTimeout( function() {
-      client.signature(ctx, name)
+      client.signature(testContext(), name)
       .then(function(signature) {
         assert.deepEqual(signature, freshSig);
         assert.end();
@@ -70,7 +86,7 @@ test('Test service signature cache is set properly - ' +
     var proxy = createProxy();
     var client = new Client(proxy);
 
-    client.signature(ctx, name)
+    client.signature(testContext(), name)
     .then(function(signature) {
       var cacheEntry = proxy.signatureCache.get(name);
 
