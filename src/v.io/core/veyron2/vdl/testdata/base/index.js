@@ -332,6 +332,40 @@ false,
   'b14': { "c": 123 },
 });
 
+  module.exports.CScalars = new (vdl.Registry.lookupOrCreateConstructor(_typeScalars))({
+  'a0': true,
+  'a1': 1,
+  'a2': 2,
+  'a3': 3,
+  'a4': new vdl.BigInt(1, new Uint8Array([0x4])),
+  'a5': 5,
+  'a6': 6,
+  'a7': new vdl.BigInt(1, new Uint8Array([0x7])),
+  'a8': 8,
+  'a9': 9,
+  'a10': new vdl.Complex(10.000000, 0.000000),
+  'a11': new vdl.Complex(11.000000, 0.000000),
+  'a12': "abc",
+  'a13': null,
+  'a14': new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.BOOL))(false),
+  'a15': vdl.Types.BOOL,
+  'b0': true,
+  'b1': 1,
+  'b2': 2,
+  'b3': 3,
+  'b4': new vdl.BigInt(1, new Uint8Array([0x4])),
+  'b5': 5,
+  'b6': 6,
+  'b7': new vdl.BigInt(1, new Uint8Array([0x7])),
+  'b8': 8,
+  'b9': 9,
+  'b10': new vdl.Complex(10.000000, 0.000000),
+  'b11': new vdl.Complex(11.000000, 0.000000),
+  'b12': "abc",
+  'b13': 'B',
+  'b14': { "c": 123 },
+});
+
   module.exports.True = new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.BOOL))(true);
 
   module.exports.Foo = new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.STRING))("foo");

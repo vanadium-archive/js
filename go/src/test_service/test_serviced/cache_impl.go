@@ -17,22 +17,20 @@ const pkgPath = "release/javascript/core/test_service/test_serviced"
 
 var errIndexOutOfBounds = verror.Register(pkgPath+".errIndexOutOfBounds", verror.NoRetry, "{1:}{2:} Page index out of bounds{:_}")
 
-var typedNil []int
-
 // A simple in-memory implementation of a Cache service.
 type cacheImpl struct {
-	cache          map[string]vdl.AnyRep
+	cache          map[string]*vdl.Value
 	mostRecent     test_service.KeyValuePair
 	lastUpdateTime time.Time
 }
 
 // NewCached returns a new implementation of CacheServerMethods.
 func NewCached() test_service.CacheServerMethods {
-	return &cacheImpl{cache: make(map[string]vdl.AnyRep)}
+	return &cacheImpl{cache: make(map[string]*vdl.Value)}
 }
 
 // Set sets a value for a key.  This should never return an error.
-func (c *cacheImpl) Set(_ ipc.ServerContext, key string, value vdl.AnyRep) error {
+func (c *cacheImpl) Set(_ ipc.ServerContext, key string, value *vdl.Value) error {
 	c.cache[key] = value
 	c.mostRecent = test_service.KeyValuePair{Key: key, Value: value}
 	c.lastUpdateTime = time.Now()
@@ -41,12 +39,11 @@ func (c *cacheImpl) Set(_ ipc.ServerContext, key string, value vdl.AnyRep) error
 
 // Get returns the value for a key.  If the key is not in the map, it returns
 // an error.
-func (c *cacheImpl) Get(ctx ipc.ServerContext, key string) (vdl.AnyRep, error) {
+func (c *cacheImpl) Get(ctx ipc.ServerContext, key string) (*vdl.Value, error) {
 	if value, ok := c.cache[key]; ok {
 		return value, nil
 	}
-
-	return typedNil, verror.New(verror.ErrNoExist, ctx.Context(), key)
+	return nil, verror.New(verror.ErrNoExist, ctx.Context(), key)
 }
 
 // getWithTypeCheck gets the key and tests if its type matches the given time, erroring if it does
@@ -125,7 +122,7 @@ func (c *cacheImpl) GetAsError(_ ipc.ServerContext, key string) (storedError err
 }
 
 // AsMap returns the full contents of the cache as a map.
-func (c *cacheImpl) AsMap(ipc.ServerContext) (map[string]vdl.AnyRep, error) {
+func (c *cacheImpl) AsMap(ipc.ServerContext) (map[string]*vdl.Value, error) {
 	return c.cache, nil
 }
 

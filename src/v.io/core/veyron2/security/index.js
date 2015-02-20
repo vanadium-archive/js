@@ -266,14 +266,14 @@ module.exports.CaveatParamCodingError = makeError('v.io/core/veyron2/security.Ca
 }, [
   new uniqueid.Id()._type,
   vdl.Types.TYPEOBJECT,
-  vdl.Types.ANY,
+  vdl.Types.STRING,
 ]);
 
 
 module.exports.CaveatValidationError = makeError('v.io/core/veyron2/security.CaveatValidation', actions.NO_RETRY, {
   'en': '{1:}{2:} caveat validation failed: {3}',
 }, [
-  vdl.Types.ANY,
+  vdl.Types.STRING,
 ]);
 
 
