@@ -1,5 +1,5 @@
 var errorMap = require('../runtime/error-map');
-var inherits = require('util').inherits;
+var inherits = require('inherits');
 var defaultCatalog = require('../runtime/default-catalog');
 var VanadiumError = require('./vanadium-error');
 

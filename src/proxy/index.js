@@ -5,7 +5,7 @@
  */
 
 var EE = require('eventemitter2').EventEmitter2;
-var inherits = require('util').inherits;
+var inherits = require('inherits');
 var LRU = require('lru-cache');
 var MessageType = require('./message-type');
 var IncomingPayloadType = require('./incoming-payload-type');

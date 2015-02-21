@@ -3,7 +3,7 @@
  * @private
  */
 var EE = require('eventemitter2').EventEmitter2;
-var inherits = require('util').inherits;
+var inherits = require('inherits');
 var Server = require('../ipc/server');
 var ServerRouter = require('../ipc/server-router');
 var Client = require('../ipc/client');

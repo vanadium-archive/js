@@ -10,7 +10,7 @@ var isPublicMethod = require('../lib/service-reflection').isPublicMethod;
 var verror = require('../v.io/core/veyron2/verror');
 var capitalize = require('../vdl/util').capitalize;
 var isCapitalized = require('../vdl/util').isCapitalized;
-var format = require('util').format;
+var format = require('format');
 var context = require('../runtime/context');
 var ArgInspector = require('../lib/arg-inspector');
 

@@ -5,7 +5,7 @@
 
 var context = require('../runtime/context');
 var SecurityContext = require('../security/context');
-var inherits = require('util').inherits;
+var inherits = require('inherits');
 var constants = require('./constants');
 
 module.exports = ServerContext;

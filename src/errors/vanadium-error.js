@@ -1,7 +1,7 @@
 var defaultCatalog = require('../runtime/default-catalog');
 var defaultLanguage = require('../runtime/default-language');
 var SharedContextKeys = require('../runtime/shared-context-keys');
-var inherits = require('util').inherits;
+var inherits = require('inherits');
 var Types = require('../vdl/types');
 module.exports = VanadiumError;
 

@@ -1,5 +1,5 @@
 var Transform = require('stream').Transform;
-var inherits = require('util').inherits;
+var inherits = require('inherits');
 
 module.exports = GlobStream;
 

@@ -12,7 +12,9 @@
     "eventemitter2": "~0.4.14",
     "lru-cache": "~2.5.0",
     "minimatch": "~2.0.1",
-    "es6-shim": "^0.20.2"
+    "es6-shim": "^0.20.2",
+    "inherits": "~2.0.1",
+    "format": "~0.2.1"
   },
   "devDependencies": {
     "browserify": "^8.1.1",

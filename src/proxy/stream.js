@@ -5,7 +5,7 @@
 
 var MessageType = require('./message-type');
 var Duplex = require('stream').Duplex;
-var inherits = require('util').inherits;
+var inherits = require('inherits');
 var EncodeUtil = require('../lib/encode-util');
 var fill = require('../vdl/canonicalize').fill;
 var ServerRPCReply =

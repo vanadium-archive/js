@@ -1,5 +1,5 @@
 var EE = require('eventemitter2').EventEmitter2;
-var inherits = require('util').inherits;
+var inherits = require('inherits');
 
 var types = require('../../../src/proxy/event-proxy-message-types');
 

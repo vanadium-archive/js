@@ -1,6 +1,6 @@
 var domready = require('domready');
 var EE = require('events').EventEmitter;
-var inherits = require('util').inherits;
+var inherits = require('inherits');
 
 var Channel = require('./channel');
 var QueuedRpcChannelWrapper = require('./queued_channel');

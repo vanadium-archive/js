@@ -8,7 +8,7 @@ module.exports = ReflectSignature;
 var ArgInspector = require('../lib/arg-inspector');
 var isPublicMethod = require('../lib/service-reflection').isPublicMethod;
 var vdlUtil = require('./util');
-var format = require('util').format;
+var format = require('format');
 
 /**
   * Create a signature for a service by inspecting the service object.

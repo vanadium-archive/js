@@ -1,3 +1,4 @@
 if (typeof Map === 'undefined' || typeof Set === 'undefined') {
-  require('es6-shim');
+  // Make this require an expression, so browserify won't include it.
+  require('es6-' + 'shim');
 }
