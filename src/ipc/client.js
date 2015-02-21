@@ -189,7 +189,6 @@ OutstandingRPC.prototype.handleStreamData = function(data) {
                                  ['Failed to decode result: ', e]));
         return;
     }
-
     this._def.stream._queueRead(data);
   } else {
     vLog.warn('Ignoring streaming message for non-streaming flow : ' +
@@ -265,7 +264,7 @@ function Client(proxyConnection) {
 
   this._proxyConnection = proxyConnection;
   this._controller = this.bindWithSignature(
-    'controller', [Controller.prototype._serviceDescription]);
+    '__controller', [Controller.prototype._serviceDescription]);
 }
 
 // TODO(bprosnitz) v.io/core/javascript.IncorrectArgCount.

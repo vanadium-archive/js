@@ -93,7 +93,6 @@ function createDispatcher(root, disallowed) {
   };
 }
 
-
 function runChildrenGlobTest(pattern, expectedResults, disallowed, assert) {
   runGlobTest(pattern, expectedResults,
               createDispatcher(createNodes(ALBUMS), disallowed),
@@ -235,7 +234,6 @@ test('Test globbing a fully restricted namespace - GlobChildren -' +
     'testGlob',
     'testGlob'
   ];
-
   var restrictedNames = ['private', 'public'];
   runChildrenGlobTest('testGlob/...', expectedResults, restrictedNames, assert);
 });

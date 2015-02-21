@@ -42,7 +42,7 @@ function Runtime(options) {
   this._wspr = options.wspr;
   var client = this.newClient();
   this._controller = client.bindWithSignature(
-    'controller', [Controller.prototype._serviceDescription]);
+    '__controller', [Controller.prototype._serviceDescription]);
   this.principal = new Principal(this.getContext(), this._controller);
   this._name = options.appName;
   this._language = options.language;
@@ -127,7 +127,7 @@ Runtime.prototype.getContext = function() {
  * @return {Namespace} A namespace client instance.
  */
 Runtime.prototype.namespace = function() {
-  this._ns = this._ns || new Namespace(this._getProxyConnection(),
+  this._ns = this._ns || new Namespace(this.newClient(),
     this.getContext());
   return this._ns;
 };

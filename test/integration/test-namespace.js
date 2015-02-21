@@ -168,7 +168,7 @@ test('Test globbing non-existing rooted name - ' +
       numErrorItems++;
       assert.ok(errItem, 'Should get one error result item');
       assert.ok(errItem instanceof verror.NoServersError,
-        'error result item should be NoServersError');
+                'error result item should be NoServersError');
     });
 
     rpc.stream.on('end', end);

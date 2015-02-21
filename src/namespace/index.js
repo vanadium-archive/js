@@ -1,31 +1,59 @@
-var Deferred = require('../lib/deferred');
-var MessageType = require('../proxy/message-type');
-var Stream = require('../proxy/stream');
-var SimpleHandler = require('../proxy/simple-handler');
-var Context = require('../runtime/context').Context;
+var vdl = require('../v.io/wspr/veyron/services/wsprd/namespace');
+var time = require('../v.io/core/veyron2/vdl/vdlroot/src/time');
+var Readable = require('stream').Readable;
+var inherits = require('util').inherits;
 
 module.exports = Namespace;
 
 /**
  * Creates a Namespace client stub to current runtime's Namespace.
- * @param {Proxy} Proxy instance.
+ * @param {Client} Client instance.
  * @constructor
  */
-function Namespace(proxy, rootCtx) {
-  this._proxy = proxy;
+function Namespace(client, rootCtx) {
+  this._namespace = client.bindWithSignature(
+    '__namespace', [vdl.Namespace.prototype._serviceDescription]);
   this._rootCtx = rootCtx;
 }
 
-var NamespaceMethods = {
-  GLOB: 0,
-  MOUNT: 1,
-  UNMOUNT: 2,
-  RESOLVE: 3,
-  RESOLVETOMT: 4,
-  FLUSHCACHEENTRY: 5,
-  DISABLECACHE: 6,
-  ROOTS: 7,
-  SETROOTS: 8
+function GlobStream(orig) {
+  Readable.call(this, {objectMode: true});
+  this._orig = orig;
+
+  var stream = this;
+  orig.on('end', function() {
+    if (!stream._flow(true)) {
+      orig.on('writable', stream._flow.bind(stream, true));
+    }
+  });
+  orig.on('readable', stream._flow.bind(stream, false));
+
+  stream._flow(false);
+}
+
+inherits(GlobStream, Readable);
+
+GlobStream.prototype._flow = function(drain) {
+  // We split the GlobReply union type and send GlobErrors through the 
+  // stream's error channel and valid MountPoints through the data channel.
+  var chunk;
+  while((chunk = this._orig.read()) !== null) {
+    if (chunk.entry) {
+      if (!this.push(chunk.entry)) {
+        return false;
+      }
+    } else if (chunk.error) {
+      this.emit('error', chunk.error.error);
+    }
+  }
+  if (drain) {
+    this.push(null);
+  }
+  return true;
+};
+
+GlobStream.prototype._read = function() {
+  // We don't need to do anything, we're always trying to read.
 };
 
 /**
@@ -37,11 +65,14 @@ var NamespaceMethods = {
  * @return {Promise} A promise with an stream object hanging from it.
  */
 Namespace.prototype.glob = function(ctx, pattern, cb) {
-  var args = {
-    pattern: pattern
-  };
+  var promise = this._namespace.glob(ctx, pattern, cb);
 
-  return this._sendRequest(ctx, NamespaceMethods.GLOB, args, cb, true);
+  // We get back a single stream of errors and entries,
+  // we now split them into a separate stream of errors and
+  // data via a transform stream.
+  var newPromise = Promise.resolve(promise);
+  newPromise.stream = new GlobStream(promise.stream);
+  return newPromise;
 };
 
 /**
@@ -60,15 +91,12 @@ Namespace.prototype.glob = function(ctx, pattern, cb) {
 Namespace.prototype.mount = function(ctx, name, server, ttl, replaceMount,
                                      cb) {
   ttl = ttl || 0; // Default is 0
+  var duration = new time.Duration({
+    seconds: Math.floor(ttl / 1000),
+    nano: (ttl % 1000) * 1000000
+  });
   replaceMount = !!replaceMount; // Cast to bool
-  var args = {
-    name: name,
-    server: server,
-    ttl: ttl * 1000, // Go API uses nanoseconds, we use milliseconds in JS
-    replaceMount: replaceMount
-  };
-
-  return this._sendRequest(ctx, NamespaceMethods.MOUNT, args, cb);
+  return this._namespace.mount(ctx, name, server, duration, replaceMount, cb);
 };
 
 /**
@@ -82,13 +110,7 @@ Namespace.prototype.mount = function(ctx, name, server, ttl, replaceMount,
  * rejected when there is an error
  */
 Namespace.prototype.unmount = function(ctx, name, server, cb) {
-  server = server || '';
-  var args = {
-    name: name,
-    server: server
-  };
-
-  return this._sendRequest(ctx, NamespaceMethods.UNMOUNT, args, cb);
+  return this._namespace.unmount(ctx, name, server, cb);
 };
 
 /**
@@ -100,11 +122,7 @@ Namespace.prototype.unmount = function(ctx, name, server, cb) {
  * addresses or rejected when there is an error
  */
 Namespace.prototype.resolve = function(ctx, name, cb) {
-  var args = {
-    name: name
-  };
-
-  return this._sendRequest(ctx, NamespaceMethods.RESOLVE, args, cb);
+  return this._namespace.resolve(ctx, name, cb);
 };
 
 /**
@@ -117,11 +135,7 @@ Namespace.prototype.resolve = function(ctx, name, cb) {
  * object addresses or rejected when there is an error
  */
 Namespace.prototype.resolveToMounttable = function(ctx, name, cb) {
-  var args = {
-    name: name
-  };
-
-  return this._sendRequest(ctx, NamespaceMethods.RESOLVETOMT, args, cb);
+  return this._namespace.resolveToMT(ctx, name, cb);
 };
 
 /*
@@ -132,12 +146,7 @@ Namespace.prototype.resolveToMounttable = function(ctx, name, cb) {
  * was flushed or rejected when there is an error
  */
 Namespace.prototype.flushCacheEntry = function(name, cb) {
-  var args = {
-    name: name
-  };
-
-  return this._sendRequest(this._rootCtx,
-                           NamespaceMethods.FLUSHCACHEENTRY, args, cb);
+  return this._namespace.flushCacheEntry(this._rootCtx, name, cb);
 };
 
 /*
@@ -149,12 +158,7 @@ Namespace.prototype.flushCacheEntry = function(name, cb) {
  */
 Namespace.prototype.disableCache = function(disable, cb) {
   disable = !!disable; // Cast to bool
-  var args = {
-    disable: disable
-  };
-
-  return this._sendRequest(this._rootCtx,
-                           NamespaceMethods.DISABLECACHE, args, cb);
+  return this._namespace.disableCache(this._rootCtx, disable, cb);
 };
 
 /**
@@ -165,8 +169,7 @@ Namespace.prototype.disableCache = function(disable, cb) {
  * when getRoots is complete or rejected when there is an error
  */
 Namespace.prototype.roots = function(cb) {
-  return this._sendRequest(this._rootCtx, NamespaceMethods.ROOTS, null,
-                           cb);
+  return this._namespace.roots(this._rootCtx, cb);
 };
 
 /**
@@ -186,52 +189,10 @@ Namespace.prototype.setRoots = function(roots, cb) {
     if (typeof roots[roots.length - 1] === 'function') {
       cb = roots.pop();
     } else {
-      cb = null;
+      cb = undefined;
     }
   }
-  var args = {
-    roots: roots
-  };
-
-  return this._sendRequest(this._rootCtx,
-                           NamespaceMethods.SETROOTS, args, cb);
+  return this._namespace.setRoots(this._rootCtx, roots, cb);
 };
 
 //TODO(aghassemi) Implement Unresolve after Go library makes its changes.
-
-Namespace.prototype._sendRequest = function(ctx, method, args, cb,
-                                            isStreaming) {
-  var def = new Deferred(cb);
-
-  if (!(ctx instanceof Context)) {
-    var err = new Error('First argument must be a Context object.');
-    def.reject(err);
-    return def.promise;
-  }
-
-  // Add an empty callback to the context.  This prevents "Possibly unhandled
-  // errors" when the context is cancelled or times out.
-  // TODO(mattr): Come up with a better solution than this hack.
-  ctx.waitUntilDone(function(){});
-
-  var id = this._proxy.nextId();
-  if( isStreaming) {
-    // TODO(alexfandrianto): I don't think this client stream sends anything.
-    // What type do we want to give it? For now, I chose undefined.
-    def.stream = new Stream(id, this._proxy.senderPromise, true, undefined);
-    def.promise.stream = def.stream;
-  }
-  var handler = new SimpleHandler(ctx, def, this._proxy, id);
-  var message = this._createMessage(method, args);
-  this._proxy.sendRequest(message, MessageType.NAMESPACE_REQUEST, handler, id);
-  return def.promise;
-};
-
-Namespace.prototype._createMessage = function(method, args) {
-  var messageObject = {
-    method: method,
-    args: args || null
-  };
-
-  return JSON.stringify(messageObject);
-};
