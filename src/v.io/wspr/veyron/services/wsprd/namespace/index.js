@@ -33,6 +33,11 @@ _type4.elem = vdl.Types.ANY;
 _typeerror.kind = vdl.Kind.STRUCT;
 _typeerror.name = "error";
 _typeerror.fields = [{name: "IDAction", type: _type3}, {name: "Msg", type: vdl.Types.STRING}, {name: "ParamList", type: _type4}];
+_type1.freeze();
+_type2.freeze();
+_type3.freeze();
+_type4.freeze();
+_typeerror.freeze();
 module.exports.error = (vdl.Registry.lookupOrCreateConstructor(_typeerror));
 
 

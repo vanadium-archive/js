@@ -67,6 +67,19 @@ _typeVeyronRPCRequest.fields = [{name: "Name", type: vdl.Types.STRING}, {name: "
 _typeVeyronRPCResponse.kind = vdl.Kind.STRUCT;
 _typeVeyronRPCResponse.name = "v.io/wspr/veyron/services/wsprd/app.VeyronRPCResponse";
 _typeVeyronRPCResponse.fields = [{name: "OutArgs", type: _type1}, {name: "TraceResponse", type: new vtrace.Response()._type}];
+_type1.freeze();
+_type10.freeze();
+_type11.freeze();
+_type2.freeze();
+_type3.freeze();
+_type4.freeze();
+_type5.freeze();
+_type6.freeze();
+_type7.freeze();
+_type8.freeze();
+_type9.freeze();
+_typeVeyronRPCRequest.freeze();
+_typeVeyronRPCResponse.freeze();
 module.exports.VeyronRPCRequest = (vdl.Registry.lookupOrCreateConstructor(_typeVeyronRPCRequest));
 module.exports.VeyronRPCResponse = (vdl.Registry.lookupOrCreateConstructor(_typeVeyronRPCResponse));
 

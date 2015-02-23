@@ -48,6 +48,15 @@ _typeStartMessage.fields = [{name: "Identityd", type: vdl.Types.STRING}, {name: 
 _typeblessingRoot.kind = vdl.Kind.STRUCT;
 _typeblessingRoot.name = "v.io/wspr/veyron/services/wsprd/browspr.blessingRoot";
 _typeblessingRoot.fields = [{name: "Names", type: _type1}, {name: "PublicKey", type: vdl.Types.STRING}];
+_type1.freeze();
+_type2.freeze();
+_typeAssociateAccountMessage.freeze();
+_typeCleanupMessage.freeze();
+_typeCreateAccountMessage.freeze();
+_typeGetAccountsMessage.freeze();
+_typeOriginHasAccountMessage.freeze();
+_typeStartMessage.freeze();
+_typeblessingRoot.freeze();
 module.exports.AssociateAccountMessage = (vdl.Registry.lookupOrCreateConstructor(_typeAssociateAccountMessage));
 module.exports.CleanupMessage = (vdl.Registry.lookupOrCreateConstructor(_typeCleanupMessage));
 module.exports.CreateAccountMessage = (vdl.Registry.lookupOrCreateConstructor(_typeCreateAccountMessage));

@@ -9,7 +9,6 @@
 
 var TypeUtil = require('./type-util.js');
 var Types = require('./types.js');
-var stringify = require('./stringify.js');
 var util = require('./util.js');
 require('./es6-shim');
 
@@ -111,9 +110,7 @@ function convertFromNative(val) {
  */
 function convertToNative(jsval) {
   // No need to convert if jsval lacks type or isn't of type JSValue.
-  if (!TypeUtil.isTyped(jsval) ||
-    stringify(jsval._type) !== stringify(Types.JSVALUE)) {
-
+  if (!TypeUtil.isTyped(jsval) || !Types.JSVALUE.equals(jsval._type)) {
     return jsval;
   }
   if (jsval === undefined) {

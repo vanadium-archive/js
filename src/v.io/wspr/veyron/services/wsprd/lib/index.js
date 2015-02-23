@@ -27,6 +27,10 @@ _typeServerRPCReply.fields = [{name: "Results", type: _type1}, {name: "Err", typ
 _typeerror.kind = vdl.Kind.STRUCT;
 _typeerror.name = "error";
 _typeerror.fields = [{name: "IDAction", type: _type2}, {name: "Msg", type: vdl.Types.STRING}, {name: "ParamList", type: _type1}];
+_type1.freeze();
+_type2.freeze();
+_typeServerRPCReply.freeze();
+_typeerror.freeze();
 module.exports.ServerRPCReply = (vdl.Registry.lookupOrCreateConstructor(_typeServerRPCReply));
 module.exports.error = (vdl.Registry.lookupOrCreateConstructor(_typeerror));
 

@@ -16,6 +16,7 @@ _typeId.kind = vdl.Kind.ARRAY;
 _typeId.name = "v.io/core/veyron2/uniqueid.Id";
 _typeId.len = 16;
 _typeId.elem = vdl.Types.BYTE;
+_typeId.freeze();
 module.exports.Id = (vdl.Registry.lookupOrCreateConstructor(_typeId));
 
 

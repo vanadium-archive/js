@@ -51,16 +51,24 @@ Type.prototype.equals = function(other) {
 };
 
 /**
+ * Freeze a type, setting its _unique string.
+ */
+Type.prototype.freeze = function() {
+  if (!Object.isFrozen(this)) {
+    var descriptor = {
+      value: this.toString()
+    };
+    Object.defineProperty(this, '_unique', descriptor);
+    Object.freeze(this);
+  }
+};
+
+/**
  * @return {string} The human-readable string for this type
  */
 Type.prototype.toString = function() {
-  /* TODO(alexfandrianto): unique is never set on a type.
-   * Go sets unique in the type constructor during registration.
-   * Their registry uses uniqueTypeStr, so we should replace stringify too.
-   * Do we also want to enforce uniqueTypeStr as being truly unique?
-   */
-  if (this.unique) {
-    return this.unique;
+  if (this._unique) {
+    return this._unique;
   }
   return uniqueTypeStr(this, []);
 };

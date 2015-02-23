@@ -234,9 +234,16 @@ TypeDecoder.prototype._tryBuildPartialType = function(typeId) {
         }
         type.name = partialType.name;
       }
+    }
+  }
 
-      // Make the type immutable.
-      Object.freeze(type);
+  // Now that the types are all prepared, make them immutable.
+  for (id in flattenedTypes) {
+    if (flattenedTypes.hasOwnProperty(id)) {
+      type = flattenedTypes[id].type;
+
+      // Make the type immutable, setting its _unique string too.
+      type.freeze();
 
       // Define the type.
       this._definedTypes[id] = type;

@@ -19,6 +19,8 @@ _typeDuration.fields = [{name: "Seconds", type: vdl.Types.INT64}, {name: "Nano",
 _typeTime.kind = vdl.Kind.STRUCT;
 _typeTime.name = "time.Time";
 _typeTime.fields = [{name: "Seconds", type: vdl.Types.INT64}, {name: "Nano", type: vdl.Types.INT32}];
+_typeDuration.freeze();
+_typeTime.freeze();
 module.exports.Duration = (vdl.Registry.lookupOrCreateConstructor(_typeDuration));
 module.exports.Time = (vdl.Registry.lookupOrCreateConstructor(_typeTime));
 

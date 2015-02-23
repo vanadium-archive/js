@@ -47,6 +47,15 @@ _typeInterface.fields = [{name: "Name", type: vdl.Types.STRING}, {name: "PkgPath
 _typeMethod.kind = vdl.Kind.STRUCT;
 _typeMethod.name = "signature.Method";
 _typeMethod.fields = [{name: "Name", type: vdl.Types.STRING}, {name: "Doc", type: vdl.Types.STRING}, {name: "InArgs", type: _type3}, {name: "OutArgs", type: _type3}, {name: "InStream", type: _type4}, {name: "OutStream", type: _type4}, {name: "Tags", type: _type5}];
+_type1.freeze();
+_type2.freeze();
+_type3.freeze();
+_type4.freeze();
+_type5.freeze();
+_typeArg.freeze();
+_typeEmbed.freeze();
+_typeInterface.freeze();
+_typeMethod.freeze();
 module.exports.Arg = (vdl.Registry.lookupOrCreateConstructor(_typeArg));
 module.exports.Embed = (vdl.Registry.lookupOrCreateConstructor(_typeEmbed));
 module.exports.Interface = (vdl.Registry.lookupOrCreateConstructor(_typeInterface));

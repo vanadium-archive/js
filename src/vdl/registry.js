@@ -1,4 +1,3 @@
-var stringify = require('./stringify.js');
 var createConstructor = require('./create-constructor.js');
 var typeObjectFromKind = require('./type-object-from-kind.js');
 var Kind = require('./kind.js');
@@ -31,7 +30,10 @@ Registry.prototype._getBuiltinTypes = function() {
 };
 
 Registry.prototype._addConstructor = function(type, ctor) {
-  var str = stringify(type);
+  if (!(type instanceof Type)) {
+    type = new Type(type);
+  }
+  var str = type.toString();
   if (this._registeredTypes.hasOwnProperty(str)) {
     throw new Error(str + ' is already registered');
   }
@@ -39,13 +41,16 @@ Registry.prototype._addConstructor = function(type, ctor) {
 };
 
 Registry.prototype._lookupConstructor = function(type) {
+  if (!(type instanceof Type)) {
+    type = new Type(type);
+  }
   // Special Case: Certain builtin types, matched via ===, use a specially
   // chosen constructor.
   if (this._builtinTypes.has(type)) {
     return this._builtinTypes.get(type);
   }
 
-  var str = stringify(type);
+  var str = type.toString();
   if (this._registeredTypes.hasOwnProperty(str)) {
     return this._registeredTypes[str];
   }
@@ -54,6 +59,9 @@ Registry.prototype._lookupConstructor = function(type) {
 
 // Lookup a constructor or if it isn't found, create a new one and register it.
 Registry.prototype.lookupOrCreateConstructor = function(type) {
+  if (!(type instanceof Type)) {
+    type = new Type(type);
+  }
   var lookupResult = this._lookupConstructor(type);
   if (lookupResult !== null) {
     return lookupResult;

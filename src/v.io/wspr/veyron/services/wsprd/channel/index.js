@@ -23,6 +23,9 @@ _typeRequest.fields = [{name: "Type", type: vdl.Types.STRING}, {name: "Seq", typ
 _typeResponse.kind = vdl.Kind.STRUCT;
 _typeResponse.name = "v.io/wspr/veyron/services/wsprd/channel.Response";
 _typeResponse.fields = [{name: "ReqSeq", type: vdl.Types.UINT32}, {name: "Err", type: vdl.Types.STRING}, {name: "Body", type: vdl.Types.ANY}];
+_typeMessage.freeze();
+_typeRequest.freeze();
+_typeResponse.freeze();
 module.exports.Message = (vdl.Registry.lookupOrCreateConstructor(_typeMessage));
 module.exports.Request = (vdl.Registry.lookupOrCreateConstructor(_typeRequest));
 module.exports.Response = (vdl.Registry.lookupOrCreateConstructor(_typeResponse));

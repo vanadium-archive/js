@@ -15,6 +15,7 @@ var _typedataRep = new vdl.Type();
 _typedataRep.kind = vdl.Kind.ENUM;
 _typedataRep.name = "v.io/core/veyron2/vom/vom.dataRep";
 _typedataRep.labels = ["Hex", "Binary"];
+_typedataRep.freeze();
 module.exports.dataRep = (vdl.Registry.lookupOrCreateConstructor(_typedataRep));
 
 
