@@ -72,7 +72,8 @@ function canonicalizeExternal(inValue, t, deepWrap) {
   }
 
   // Canonicalize the given value as a top-level value.
-  return canonicalize(inValue, t, deepWrap, new Map(), true);
+  var inType = TypeUtil.isTyped(inValue) ? inValue._type : undefined;
+  return canonicalize(inValue, inType, t, deepWrap, new Map(), true);
 }
 
 /**
@@ -81,6 +82,9 @@ function canonicalizeExternal(inValue, t, deepWrap) {
  * cycles and preserve shared references.
  *
  * @param {any} v The value to be canonicalized
+ * @param {Type} inType The inferred type of the value. This type is tracked in
+ *                      order to ensure that internal any keys/elems/fields are
+ *                      properly filled in with type information.
  * @param {Type} t The target type
  * @param {boolean} deepWrap Whether or not to deeply wrap the contents.
  * @param {object} seen A cache from old to new
@@ -88,7 +92,7 @@ function canonicalizeExternal(inValue, t, deepWrap) {
  * @param {boolean} isTopLevelValue If true, then the return value is wrapped
  * @return {any} The canonicalized value (May potentially refer to v)
  */
-function canonicalize(inValue, t, deepWrap, seen, isTopLevelValue) {
+function canonicalize(inValue, inType, t, deepWrap, seen, isTopLevelValue) {
   if (!(t instanceof Type)) {
     t = new Type(t);
   }
@@ -102,11 +106,7 @@ function canonicalize(inValue, t, deepWrap, seen, isTopLevelValue) {
     inValue = jsValueConvert.fromNative(inValue);
   }
 
-  // Check for type convertibility
-  var inType;
-  if (TypeUtil.isTyped(inValue)) {
-    inType = inValue._type;
-  }
+  // Check for type convertibility; fail early if the types are incompatible.
   if (!typeCompatible(inType, t)) {
     if (inType.kind !== Kind.TYPEOBJECT) {
       throw new TypeError(inType + ' and ' + t +
@@ -153,20 +153,31 @@ function canonicalize(inValue, t, deepWrap, seen, isTopLevelValue) {
   var canonValue;
   var v;
   if (t.kind === Kind.ANY) {
+    // TODO(alexfandrianto): This logic is complex and unwieldy.
+    // See https://github.com/veyron/release-issues/issues/1149
+
     // The inValue could be wrapped, unwrapped, or potentially even multiply
     // wrapped with ANY. Unwrap the value and guess its type.
     var dropped = unwrapAndGuessType(inValue);
     v = dropped.unwrappedValue;
-    var internalType = dropped.guessedType;
-    if (internalType.kind === Kind.ANY) {
+
+    // Note: guessType is Types.ANY whenever v is null or undefined.
+    // However, we should use inType if present.
+    var guessedType = dropped.guessedType;
+    if (inType && inType.kind !== Kind.ANY) {
+      guessedType = inType;
+    }
+
+    if (guessedType.kind === Kind.ANY) {
       canonValue = null;
     } else {
       // The value inside an ANY needs to be canonicalized as a top-level value.
-      canonValue = canonicalize(v, internalType, deepWrap, seen, true);
+      canonValue = canonicalize(v, guessedType, guessedType, deepWrap, seen,
+        true);
     }
   } else {
     v = TypeUtil.unwrap(inValue);
-    canonValue = canonicalizeInternal(deepWrap, v, t, seen, outValue);
+    canonValue = canonicalizeInternal(deepWrap, v, inType, t, seen, outValue);
   }
 
   // Non-structLike types may need to wrap the clone with a wrapper constructor.
@@ -201,7 +212,7 @@ function decodeNativeNumber(v, t) {
  * Helper function for canonicalize, which canonicalizes and validates on an
  * unwrapped value.
  */
-function canonicalizeInternal(deepWrap, v, t, seen, outValue) {
+function canonicalizeInternal(deepWrap, v, inType, t, seen, outValue) {
   // Any undefined value obtains its zero-value.
   if (v === undefined) {
     var zero = zeroValue(t);
@@ -214,9 +225,18 @@ function canonicalizeInternal(deepWrap, v, t, seen, outValue) {
 
     // Otherwise, canonicalize but remove the top-level wrapping.
     // The top-level will be reapplied by this function's caller.
-    return TypeUtil.unwrap(canonicalize(zero, t, true, seen, false));
+    return TypeUtil.unwrap(canonicalize(zero, inType, t, true, seen, false));
   } else if (v === null && (t.kind !== Kind.ANY && t.kind !== Kind.OPTIONAL)) {
-    throw makeError(v, t, 'value is null for non-optional type');
+
+    // Convert null to the zero-value in the case of converting optional to its
+    // non-optional type.
+    var isCompatOptional = inType && inType.kind === Kind.OPTIONAL &&
+      typeCompatible(inType.elem, t);
+    if (isCompatOptional) {
+      v = zeroValue(inType.elem);
+    } else {
+      throw makeError(v, t, 'value is null for non-optional type');
+    }
   }
 
   // If this an error type, we need to convert to the correct
@@ -236,6 +256,9 @@ function canonicalizeInternal(deepWrap, v, t, seen, outValue) {
     outValue = errorConversion.toJSerror(v);
   }
 
+  var inKeyType = inType ? inType.key : undefined;
+  var inElemType = inType ? inType.elem : undefined;
+  var inFieldType;
   var key;
   var i;
   // Otherwise, the value is defined; validate it and canonicalize the value.
@@ -249,7 +272,8 @@ function canonicalizeInternal(deepWrap, v, t, seen, outValue) {
       if (v === null) {
         return null;
       }
-      return canonicalize(v, t.elem, deepWrap, seen, false);
+      return canonicalize(v, inElemType, t.elem, deepWrap, seen,
+        false);
     case Kind.BOOL:
       // Verify the value is a boolean.
       if (typeof v !== 'boolean') {
@@ -355,7 +379,8 @@ function canonicalizeInternal(deepWrap, v, t, seen, outValue) {
 
       // Then canonicalize the internal values of the array.
       for (var arri = 0; arri < neededLen; arri++) {
-        var e = canonicalize(v[arri], t.elem, deepWrap, seen, false);
+        var e = canonicalize(v[arri], inElemType, t.elem, deepWrap, seen,
+          false);
         if (t.elem.kind === Kind.BYTE && deepWrap) {
           e = e.val; // Uint8Array doesn't accept wrapped values.
         }
@@ -379,7 +404,8 @@ function canonicalizeInternal(deepWrap, v, t, seen, outValue) {
       // Recurse: Validate internal keys.
       outValue = new Set();
       v.forEach(function(value) {
-        outValue.add(canonicalize(value, t.key, deepWrap, seen, false));
+        outValue.add(canonicalize(value, inKeyType, t.key, deepWrap, seen,
+          false));
       });
 
       return outValue;
@@ -401,8 +427,8 @@ function canonicalizeInternal(deepWrap, v, t, seen, outValue) {
       outValue = new Map();
       v.forEach(function(val, key) {
         outValue.set(
-          canonicalize(key, t.key, deepWrap, seen, false),
-          canonicalize(val, t.elem, deepWrap, seen, false)
+          canonicalize(key, inKeyType, t.key, deepWrap, seen, false),
+          canonicalize(val, inElemType, t.elem, deepWrap, seen, false)
         );
       });
 
@@ -424,8 +450,9 @@ function canonicalizeInternal(deepWrap, v, t, seen, outValue) {
           if (isSet) {
             throw makeError(v, t, '>1 Union fields are set');
           } else {
-            outValue[lowerKey] = canonicalize(v[lowerKey], t.fields[i].type,
-              deepWrap, seen, false);
+            inFieldType = inType ? inType.fields[i].type : undefined;
+            outValue[lowerKey] = canonicalize(v[lowerKey], inFieldType,
+              t.fields[i].type, deepWrap, seen, false);
             isSet = true;
           }
         }
@@ -466,9 +493,10 @@ function canonicalizeInternal(deepWrap, v, t, seen, outValue) {
         var fieldName = util.uncapitalize(fields[i].name);
         var fieldType = fields[i].type;
 
+        inFieldType = inType ? inType.fields[i].type : undefined;
         // Each entry needs to be canonicalized too.
-        outValue[fieldName] = canonicalize(v[fieldName], fieldType, deepWrap,
-          seen, false);
+        outValue[fieldName] = canonicalize(v[fieldName], inFieldType, fieldType,
+          deepWrap, seen, false);
       }
 
       return outValue;
@@ -599,7 +627,8 @@ function canonicalizeType(type, seen) {
 
   // Call canonicalize with this typeOfType. Even though typeOfType is a Struct,
   // behind the scenes, canonType will be a TypeObject.
-  var canonType = canonicalize(type, typeOfType, false, seen, false);
+  var canonType = canonicalize(type, typeOfType, typeOfType, false, seen,
+    false);
 
   // Certain types may not be named.
   if (type.kind === Kind.ANY || type.kind === Kind.TYPEOBJECT) {
@@ -696,10 +725,11 @@ function getFromSeenCache(seen, oldRef, type) {
 
 /**
  * Recursively unwraps v to drop excess ANY. Guesses the type, after.
- * Ex: null => { unwrappedValue: null, guessedType: Types.ANY }
+ * Ex: null => { unwrappedValue: undefined, guessedType: Types.ANY }
  * Ex: { val: null, of type ANY } =>
- *     { unwrappedValue: null, guessedType: Types.ANY }
- * Ex: ANY in ANY with null => { unwrappedValue: null, guessedType: Types.ANY }
+ *     { unwrappedValue: undefined, guessedType: Types.ANY }
+ * Ex: ANY in ANY with null =>
+ *     { unwrappedValue: undefined, guessedType: Types.ANY }
  * Ex: wrapped primitive =>
        { unwrappedValue: primitive, guessedType: typeOfPrimitiveWrapper }
  * Ex: nativeVal => { unwrappedValue: nativeVal, guessedType: Types.JSVALUE }
@@ -709,7 +739,7 @@ function getFromSeenCache(seen, oldRef, type) {
 function unwrapAndGuessType(v) {
   if (v === null || v === undefined) {
     return {
-      unwrappedValue: null,
+      unwrappedValue: undefined,
       guessedType: Types.ANY
     };
   }

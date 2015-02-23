@@ -8,6 +8,7 @@ var BigInt = require('./../../src/vdl/big-int.js');
 var Complex = require('./../../src/vdl/complex.js');
 var Kind = require('./../../src/vdl/kind.js');
 var Registry = require('./../../src/vdl/registry.js');
+var Type = require('./../../src/vdl/type.js');
 var Types = require('./../../src/vdl/types.js');
 var canonicalize = require('./../../src/vdl/canonicalize.js');
 var stringify = require('./../../src/vdl/stringify.js');
@@ -298,6 +299,21 @@ test('canonicalize JSValue - mixed JSValue and non-JSValue functionality',
 });
 
 test('canonicalize struct - basic functionality', function(t) {
+  var Bool = Registry.lookupOrCreateConstructor(Types.BOOL);
+  var Str = Registry.lookupOrCreateConstructor(Types.STRING);
+  var OptStringType = new Type({
+    kind: Kind.OPTIONAL,
+    elem: Types.STRING
+  });
+  var AnyListType = new Type({
+    kind: Kind.LIST,
+    elem: Types.ANY
+  });
+  var BoolListType = new Type({
+    kind: Kind.LIST,
+    elem: Types.BOOL
+  });
+
   var tests = [
     {
       name: 'empty object, no fields',
@@ -375,6 +391,200 @@ test('canonicalize struct - basic functionality', function(t) {
         man: { val: null },
         ban: { val: false },
         dan: { val: new Complex(0, 0) }
+      }
+    },
+    {
+      name: 'struct with internal string/any',
+      inputObject: {
+        jSValueString: 'go as JSValue',
+        wrappedString: new Str('overly wrapped input'),
+        nativeString: 'true string',
+        anyString: new Str('string any'),
+        nullOptionalAny: null,
+        nullOptionalToZeroString: null,
+        undefinedToZeroString: undefined,
+        undefinedToZeroStringAny: undefined,
+        _type: new Type({ // pretend that this is going from this struct
+          kind: Kind.STRUCT,
+          fields: [
+            {
+              name: 'JSValueString',
+              type: Types.ANY
+            },
+            {
+              name: 'WrappedString',
+              type: Types.STRING
+            },
+            {
+              name: 'NativeString',
+              type: Types.STRING
+            },
+            {
+              name: 'AnyString',
+              type: Types.ANY
+            },
+            {
+              name: 'NullOptionalAny',
+              type: OptStringType
+            },
+            {
+              name: 'NullOptionalToZeroString',
+              type: OptStringType
+            },
+            {
+              name: 'UndefinedToZeroString',
+              type: Types.STRING
+            },
+            {
+              name: 'UndefinedToZeroStringAny',
+              type: Types.STRING
+            }
+          ]
+        })
+      },
+      inputFields: [
+        {
+          name: 'JSValueString',
+          type: Types.ANY
+        },
+        {
+          name: 'WrappedString',
+          type: Types.ANY
+        },
+        {
+          name: 'NativeString',
+          type: Types.ANY
+        },
+        {
+          name: 'AnyString',
+          type: Types.STRING
+        },
+        {
+          name: 'NullOptionalAny',
+          type: Types.ANY
+        },
+        {
+          name: 'NullOptionalToZeroString',
+          type: Types.STRING
+        },
+        {
+          name: 'UndefinedToZeroString',
+          type: Types.STRING
+        },
+        {
+          name: 'UndefinedToZeroStringAny',
+          type: Types.ANY
+        }
+      ],
+      outputObject: {
+        jSValueString: 'go as JSValue',
+        wrappedString: new Str('overly wrapped input'),
+        nativeString: new Str('true string'),
+        anyString: 'string any',
+        nullOptionalAny: {
+          val: null
+        },
+        nullOptionalToZeroString: '',
+        undefinedToZeroString: '',
+        undefinedToZeroStringAny: new Str('')
+      },
+      outputObjectDeep: {
+        jSValueString: {
+          val: {
+            string: {
+              val: 'go as JSValue'
+            }
+          }
+        },
+        wrappedString: {
+          val: new Str('overly wrapped input')
+        },
+        nativeString: {
+          val: new Str('true string')
+        },
+        anyString: new Str('string any'),
+        nullOptionalAny: {
+          val: {
+            val: null
+          }
+        },
+        nullOptionalToZeroString: new Str(''),
+        undefinedToZeroString: new Str(''),
+        undefinedToZeroStringAny: {
+          val: new Str('')
+        }
+      }
+    },
+    {
+      name: 'struct with internal []any and []bool',
+      inputObject: {
+        boolToAny: [true, false, true],
+        boolToBool: [false, false],
+        anyToBool: [new Bool(true), new Bool(true), new Bool(false)],
+        anyToAny: [new Bool(true)],
+        _type: new Type({ // pretend that this is going from this struct
+          kind: Kind.STRUCT,
+          fields: [
+            {
+              name: 'BoolToAny',
+              type: BoolListType
+            },
+            {
+              name: 'BoolToBool',
+              type: BoolListType
+            },
+            {
+              name: 'AnyToBool',
+              type: AnyListType
+            },
+            {
+              name: 'AnyToAny',
+              type: AnyListType
+            }
+          ]
+        })
+      },
+      inputFields: [
+        {
+          name: 'BoolToAny',
+          type: AnyListType
+        },
+        {
+          name: 'BoolToBool',
+          type: BoolListType
+        },
+        {
+          name: 'AnyToBool',
+          type: BoolListType
+        },
+        {
+          name: 'AnyToAny',
+          type: AnyListType
+        },
+      ],
+      outputObject: {
+        boolToAny: [new Bool(true), new Bool(false), new Bool(true)],
+        boolToBool: [false, false],
+        anyToBool: [true, true, false],
+        anyToAny: [new Bool(true)]
+      },
+      outputObjectDeep: {
+        boolToAny: {
+          val: [
+            { val: new Bool(true) },
+            { val: new Bool(false) },
+            { val: new Bool(true) }
+          ]
+        },
+        boolToBool: {
+          val: [new Bool(false), new Bool(false)]
+        },
+        anyToBool: {
+          val: [new Bool(true), new Bool(true), new Bool(false)]
+        },
+        anyToAny: {
+          val: [{ val: new Bool(true) }]
+        },
       }
     },
     {
@@ -576,10 +786,10 @@ test('canonicalize struct - basic functionality', function(t) {
     var fields = tests[i].inputFields;
     var expected = tests[i].outputObject;
     var expectedDeep = tests[i].outputObjectDeep;
-    var type = {
+    var type = new Type({
       kind: Kind.STRUCT,
       fields: fields
-    };
+    });
 
     // The input object and its fields canonicalize to the expected output.
     var output = canonicalize.reduce(input, type);
@@ -754,10 +964,10 @@ test('canonicalize union - basic functionality', function(t) {
     var fields = tests[i].inputFields;
     var expected = tests[i].outputObject;
     var expectedDeep = tests[i].outputObjectDeep;
-    var type = {
+    var type = new Type({
       kind: Kind.UNION,
       fields: fields
-    };
+    });
 
     // The input object and its fields canonicalize to the expected output.
     var output = canonicalize.reduce(input, type);
