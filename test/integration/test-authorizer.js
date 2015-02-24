@@ -34,7 +34,7 @@ function createDispatcher(authorizer, tags) {
 
 function testErrorCase(assert, authorizer) {
   serve({
-    name: 'authorizer',
+    name: 'authorizerTestService',
     autoBind: false,
     dispatcher: createDispatcher(authorizer)
   }, function(err, res) {
@@ -43,7 +43,7 @@ function testErrorCase(assert, authorizer) {
     }
     var client = res.runtime.newClient();
     var ctx = res.runtime.getContext();
-    client.bindTo(ctx, 'authorizer/auth').then(function(service) {
+    client.bindTo(ctx, 'authorizerTestService/auth').then(function(service) {
       service.call(ctx, 'foo').then(function(value) {
         assert.error(new Error('call should not have succeeded' + value));
         res.end(assert);
@@ -89,7 +89,7 @@ function(assert) {
 
 function testSuccessCase(assert, authorizer, tags) {
   serve({
-    name: 'authorizer',
+    name: 'authorizerTestService',
     autoBind: false,
     dispatcher: createDispatcher(authorizer, tags)
   }, function(err, res) {
@@ -98,7 +98,7 @@ function testSuccessCase(assert, authorizer, tags) {
     }
     var client = res.runtime.newClient();
     var ctx = res.runtime.getContext();
-    client.bindTo(ctx, 'authorizer/auth').then(function(service) {
+    client.bindTo(ctx, 'authorizerTestService/auth').then(function(service) {
       return service.call(ctx, 'foo');
     }).then(function() {
       res.end(assert);

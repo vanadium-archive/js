@@ -58,7 +58,9 @@ function ReflectSignature(service) {
 
     if (!argInspector.hasContext()) {
       var message = format('Service method "%s" is missing the required ' +
-        '`context` object as the first argument in its definition.', key);
+        '`context` object as the first argument in its definition. ' +
+        'Args were: %s',
+          key, argInspector.names);
       throw new Error(message);
     }
 
