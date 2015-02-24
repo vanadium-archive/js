@@ -53,14 +53,21 @@ function serve(name, dispatcher, callback) {
   }
 
   veyron.init(config, function(err, runtime) {
+    // basic response used for failures where we want .close and .end to
+    // still work:
+    var basicRes = {
+      end: end,
+      close: close
+    };
+
     if (err) {
-      return callback(err);
+      return callback(err, basicRes);
     }
 
     var server = runtime.newServer();
     server.serveDispatcher(name, dispatcher, function(err) {
       if (err) {
-        return callback(err);
+        return callback(err, basicRes);
       }
 
       var ctx = runtime.getContext();
@@ -82,7 +89,10 @@ function serve(name, dispatcher, callback) {
             if (err || s.length === 0) {
               count++;
               if (count === 10) {
-                return callback(err);
+                return callback(
+                  new Error(
+                    'Timed out waiting for resolve in serve.js: ' + err),
+                  basicRes);
               }
               return setTimeout(runResolve, 10);
             }
@@ -94,6 +104,7 @@ function serve(name, dispatcher, callback) {
         var res = {
           runtime: runtime,
           config: config,
+          close: close,
           end: end,
           server: server
         };
@@ -104,7 +115,7 @@ function serve(name, dispatcher, callback) {
 
         function onBind(err, service) {
           if (err) {
-            return callback(err);
+            return callback(err, basicRes);
           }
 
           res.service = service;
@@ -115,17 +126,19 @@ function serve(name, dispatcher, callback) {
       }
     });
 
+    function close(callback) {
+      return runtime.close(callback);
+    }
+
     // hoisted and passed as the last argument to the callback argument.
-    function end(assert) {
-      if (typeof assert === 'function') {
-        return runtime.close(assert);
-      } else if (!! assert.end && typeof assert.end === 'function') {
-        return runtime.close(function(err) {
+    function end(assert, errorMsg) {
+      if (!! assert.end && typeof assert.end === 'function') {
+        return close(function(err) {
           assert.error(err, 'should not error on runtime.close(...)');
-          assert.end();
+          assert.end(errorMsg);
         });
       } else {
-        var message = 'end(callback) requires a callback or assert object';
+        var message = 'end(callback) requires an assert object';
         throw new Error(message);
       }
     }

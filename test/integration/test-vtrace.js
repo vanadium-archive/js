@@ -14,6 +14,9 @@ function findSpan(name, trace) {
 
 test('Test receiving traces with a JavaScript client', function(assert) {
   service('test_service/cache', function(err, ctx, cache, end, runtime) {
+    if (err) {
+      end(assert, err);
+    }
     cache.set(ctx, 'key', 'val').then(function() {
       var span = vtrace.getSpan(ctx);
       var record = vtrace.getStore(ctx).traceRecord(span.trace);

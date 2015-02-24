@@ -23,7 +23,7 @@ function validateCommunication(t, name, cb) {
     res.service.anRpc(res.runtime.getContext(), function(err, result) {
       t.error(err, 'Err expected to be null');
       t.equal(result, response, 'Expected different response from anRpc()');
-      cb(null, res.end, res.runtime);
+      cb(null, res.close, res.runtime);
     });
   });
 }

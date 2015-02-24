@@ -32,6 +32,18 @@ test('ValueContext (parent/child values)', function(assert) {
   assert.end();
 });
 
+// TODO(bprosnitz) WithValue is not immutable.
+test.skip('WithValue Immutability', function(assert) {
+  var expectedRes = 99;
+  var vctx3 = vctx2.withValue('key3', {
+    x : expectedRes
+  });
+  var vctx4 = vctx3.withValue('something', 'something2');
+  vctx4.value('key3').x = 77;
+  assert.equal(vctx3.value('key3').x, expectedRes,
+    'Expected to not have changed');
+});
+
 test('CancelContext.done', function(assert) {
   var cctx = ctx.withCancel();
   assert.plan(3);
