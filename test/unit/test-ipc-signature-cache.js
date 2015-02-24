@@ -7,7 +7,7 @@
 var test = require('prova');
 var context = require('../../src/runtime/context');
 var createMockProxy = require('./mock-proxy');
-var MessageType = require('../../src/proxy/message-type');
+var Outgoing = require('../../src/proxy/message-type').Outgoing;
 var Client = require('../../src/ipc/client.js');
 var DecodeUtil = require('../../src/lib/decode-util');
 var EncodeUtil = require('../../src/lib/encode-util');
@@ -22,7 +22,7 @@ var name = 'service_name';
 var CACHE_TTL = 100; // we set the signature cache TTL to 100ms for tests.
 function createProxy() {
   return createMockProxy(function(message, type) {
-    if (type === MessageType.REQUEST) {
+    if (type === Outgoing.REQUEST) {
       var decodedData = DecodeUtil.decode(message);
       if (decodedData.method !== 'Signature') {
         throw new Error('Unexpected method call');

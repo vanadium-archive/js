@@ -8,7 +8,8 @@ var EE = require('eventemitter2').EventEmitter2;
 var inherits = require('inherits');
 var LRU = require('lru-cache');
 var MessageType = require('./message-type');
-var IncomingPayloadType = require('./incoming-payload-type');
+var Incoming = MessageType.Incoming;
+var Outgoing = MessageType.Outgoing;
 var vLog = require('./../lib/vlog');
 var DecodeUtil = require('../lib/decode-util');
 var unwrap = require('../vdl/type-util').unwrap;
@@ -57,7 +58,7 @@ Proxy.prototype.process = function(message) {
   } catch (e) {
     vLog.error(e);
     if (!isServerOriginatedMessage) {
-      handler.handleResponse(IncomingPayloadType.ERROR_RESPONSE, message.data);
+      handler.handleResponse(Incoming.ERROR_RESPONSE, message.data);
     }
     return;
   }
@@ -114,9 +115,9 @@ Proxy.prototype.cancelFromContext = function(ctx, id) {
   var proxy = this;
   ctx.waitUntilDone().catch(function(error) {
     var h = proxy.outstandingRequests[id];
-    proxy.sendRequest(null, MessageType.CANCEL, null, id);
+    proxy.sendRequest(null, Outgoing.CANCEL, null, id);
     if (h) {
-      h.handleResponse(IncomingPayloadType.ERROR_RESPONSE, error);
+      h.handleResponse(Incoming.ERROR_RESPONSE, error);
       delete proxy.outstandingRequests[id];
     }
   });
@@ -151,7 +152,7 @@ Proxy.prototype.sendRequest = function(message, type, handler, id) {
     var h = self.outstandingRequests[id];
 
     if (h) {
-      h.handleResponse(IncomingPayloadType.ERROR_RESPONSE, err);
+      h.handleResponse(Incoming.ERROR_RESPONSE, err);
       delete self.outstandingRequests[id];
     }
   });

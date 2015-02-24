@@ -14,7 +14,8 @@ var vLog = require('../lib/vlog');
 var Stream = require('../proxy/stream');
 var verror = require('../v.io/v23/verror');
 var MessageType = require('../proxy/message-type');
-var IncomingPayloadType = require('../proxy/incoming-payload-type');
+var Incoming = MessageType.Incoming;
+var Outgoing = MessageType.Outgoing;
 var context = require('../runtime/context');
 var constants = require('./constants');
 var DecodeUtil = require('../lib/decode-util');
@@ -124,7 +125,7 @@ OutstandingRPC.prototype.start = function() {
 
   this._def = def;
   this._proxy.cancelFromContext(this._ctx, this._id);
-  this._proxy.sendRequest(message, MessageType.REQUEST, this, this._id);
+  this._proxy.sendRequest(message, Outgoing.REQUEST, this, this._id);
   if (streamingDeferred) {
     this._proxy.senderPromise.then(function(ws) {
       streamingDeferred.resolve(ws);
@@ -138,16 +139,16 @@ OutstandingRPC.prototype.start = function() {
 
 OutstandingRPC.prototype.handleResponse = function(type, data) {
   switch (type) {
-    case IncomingPayloadType.FINAL_RESPONSE:
+    case Incoming.FINAL_RESPONSE:
       this.handleCompletion(data);
       break;
-    case IncomingPayloadType.STREAM_RESPONSE:
+    case Incoming.STREAM_RESPONSE:
       this.handleStreamData(data);
       break;
-    case IncomingPayloadType.ERROR_RESPONSE:
+    case Incoming.ERROR_RESPONSE:
       this.handleError(data);
       break;
-    case IncomingPayloadType.STREAM_CLOSE:
+    case Incoming.STREAM_CLOSE:
       this.handleStreamClose();
       break;
     default:

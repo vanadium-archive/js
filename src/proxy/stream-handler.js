@@ -1,4 +1,4 @@
-var IncomingPayloadType = require('./incoming-payload-type');
+var Incoming = require('./message-type').Incoming;
 var DecodeUtil = require('../lib/decode-util');
 var emitStreamError = require('../lib/emit-stream-error');
 var vError = require('../v.io/v23/verror');
@@ -18,7 +18,7 @@ function Handler(ctx, stream) {
 
 Handler.prototype.handleResponse = function(type, data) {
   switch (type) {
-    case IncomingPayloadType.STREAM_RESPONSE:
+    case Incoming.STREAM_RESPONSE:
       try {
         data = DecodeUtil.decode(data);
       } catch (e) {
@@ -30,10 +30,10 @@ Handler.prototype.handleResponse = function(type, data) {
 
       this._stream._queueRead(data);
       return true;
-    case IncomingPayloadType.STREAM_CLOSE:
+    case Incoming.STREAM_CLOSE:
       this._stream._queueRead(null);
       return true;
-    case IncomingPayloadType.ERROR_RESPONSE:
+    case Incoming.ERROR_RESPONSE:
       emitStreamError(this._stream, data);
       this._stream._queueRead(null);
       return true;
