@@ -1,12 +1,12 @@
 /**
- * @fileoverview conversion between JavaScript and veyron2/verror Error object
+ * @fileoverview conversion between JavaScript and v23/verror Error object
  * @private
  */
 
 var VanadiumError = require('./../errors/vanadium-error');
 var defaultLanguage = require('./../runtime/default-language');
 var defaultCatalog = require('./../runtime/default-catalog');
-var verror = require('../v.io/core/veyron2/verror');
+var verror = require('../v.io/v23/verror');
 
 module.exports = {
   toStandardErrorStruct: toStandardErrorStruct,
@@ -57,4 +57,3 @@ function toStandardErrorStruct(err, appName, operation) {
   e.msg = message;
   return e;
 }
-

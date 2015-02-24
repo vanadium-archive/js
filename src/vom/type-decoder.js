@@ -33,7 +33,7 @@ var Type = require('../vdl/type.js');
 var BootstrapTypes = require('./bootstrap-types.js');
 var RawVomReader = require('./raw-vom-reader.js');
 var unwrap = require('../vdl/type-util').unwrap;
-var wiretype = require('../v.io/core/veyron2/vom');
+var wiretype = require('../v.io/v23/vom');
 
 var eofByte = unwrap(wiretype.WireCtrlEOF);
 

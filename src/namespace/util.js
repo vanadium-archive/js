@@ -1,6 +1,6 @@
 /**
  * @fileoverview Helpers for manipulating veyron names.
- * See vanadium/release/go/src/v.io/core/veyron2/naming/parse.go for the
+ * See vanadium/release/go/src/v.io/v23/naming/parse.go for the
  * corresponding operations in golang.
  * @private
  */

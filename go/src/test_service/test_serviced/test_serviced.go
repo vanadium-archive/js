@@ -5,11 +5,11 @@ import (
 	"strings"
 
 	_ "v.io/core/veyron/profiles"
-	"v.io/core/veyron2"
-	"v.io/core/veyron2/context"
-	"v.io/core/veyron2/ipc"
-	"v.io/core/veyron2/naming"
-	"v.io/core/veyron2/security"
+	"v.io/v23"
+	"v.io/v23/context"
+	"v.io/v23/ipc"
+	"v.io/v23/naming"
+	"v.io/v23/security"
 
 	"test_service"
 )
@@ -47,7 +47,7 @@ func (sd *testServiceDispatcher) Lookup(suffix string) (interface{}, security.Au
 
 func StartServer(ctx *context.T) (ipc.Server, naming.Endpoint, error) {
 	// Create a new server instance.
-	s, err := veyron2.NewServer(ctx)
+	s, err := v23.NewServer(ctx)
 	if err != nil {
 		return nil, nil, fmt.Errorf("failure creating server: %v", err)
 	}

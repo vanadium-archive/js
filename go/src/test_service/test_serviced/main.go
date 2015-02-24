@@ -7,11 +7,11 @@ import (
 
 	"v.io/core/veyron/lib/signals"
 	_ "v.io/core/veyron/profiles"
-	"v.io/core/veyron2"
+	"v.io/v23"
 )
 
 func main() {
-	ctx, shutdown := veyron2.Init()
+	ctx, shutdown := v23.Init()
 	defer shutdown()
 
 	s, endpoint, err := StartServer(ctx)

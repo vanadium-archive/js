@@ -12,7 +12,7 @@ var Promise = require('../lib/promise');
 var Deferred = require('../lib/deferred');
 var vLog = require('../lib/vlog');
 var Stream = require('../proxy/stream');
-var verror = require('../v.io/core/veyron2/verror');
+var verror = require('../v.io/v23/verror');
 var MessageType = require('../proxy/message-type');
 var IncomingPayloadType = require('../proxy/incoming-payload-type');
 var context = require('../runtime/context');
@@ -28,9 +28,9 @@ var VeyronRPCRequest =
   require('../v.io/wspr/veyron/services/wsprd/app').VeyronRPCRequest;
 var vtrace = require('../lib/vtrace');
 var CollectInMemory =
-  require('../v.io/core/veyron2/vtrace').CollectInMemory;
+  require('../v.io/v23/vtrace').CollectInMemory;
 var ReservedSignature =
-  require('../v.io/core/veyron2/ipc').ReservedSignature.val;
+  require('../v.io/v23/ipc').ReservedSignature.val;
 var Controller =
   require('../v.io/wspr/veyron/services/wsprd/app').Controller;
 

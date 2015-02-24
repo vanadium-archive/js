@@ -5,7 +5,7 @@
 
 var vdl = require('../vdl');
 var vom = require('../vom');
-var vdlSecurity = require('../v.io/core/veyron2/security');
+var vdlSecurity = require('../v.io/v23/security');
 
 module.exports = CaveatValidatorRegistry;
 

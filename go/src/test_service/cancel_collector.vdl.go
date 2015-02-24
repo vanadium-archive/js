@@ -5,9 +5,9 @@ package test_service
 
 import (
 	// VDL system imports
-	"v.io/core/veyron2"
-	"v.io/core/veyron2/context"
-	"v.io/core/veyron2/ipc"
+	"v.io/v23"
+	"v.io/v23/context"
+	"v.io/v23/ipc"
 )
 
 // CancelCollectorClientMethods is the client interface
@@ -49,7 +49,7 @@ func (c implCancelCollectorClientStub) c(ctx *context.T) ipc.Client {
 	if c.client != nil {
 		return c.client
 	}
-	return veyron2.GetClient(ctx)
+	return v23.GetClient(ctx)
 }
 
 func (c implCancelCollectorClientStub) NeverReturn(ctx *context.T, i0 int64, opts ...ipc.CallOpt) (err error) {

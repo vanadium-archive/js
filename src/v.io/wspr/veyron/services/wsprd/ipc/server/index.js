@@ -7,7 +7,7 @@ var actions = require('../../../../../../.././errors/actions');
 
 
 
-var security = require('./../../../../../../core/veyron2/security');
+var security = require('./../../../../../../v23/security');
 var principal = require('./../../principal');
 
 module.exports = {};
@@ -95,5 +95,3 @@ module.exports.CaveatValidationTimeoutError = makeError('v.io/wspr/veyron/servic
 
    
  
-
-

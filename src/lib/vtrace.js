@@ -6,8 +6,8 @@
 
 var uniqueid = require('./uniqueid');
 var context = require('../runtime/context');
-var vdl = require('../v.io/core/veyron2/vtrace');
-var time = require('../v.io/core/veyron2/vdl/vdlroot/src/time');
+var vdl = require('../v.io/v23/vtrace');
+var time = require('../v.io/v23/vdl/vdlroot/src/time');
 
 var spanKey = context.ContextKey();
 var storeKey = context.ContextKey();

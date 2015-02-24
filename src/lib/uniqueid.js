@@ -5,7 +5,7 @@
  */
 
 var typeutil = require('../vdl/type-util');
-var vdl = require('../v.io/core/veyron2/uniqueid');
+var vdl = require('../v.io/v23/uniqueid');
 var byteUtil = require('../vdl/byte-util');
 
 var currentRandom;

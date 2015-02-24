@@ -40,7 +40,7 @@ Exp.prototype.exp = function(ctx, x) {
 
 Exp.prototype._serviceDescription = {
   name: 'Exp',
-  pkgPath: 'v.io/core/veyron2/vdl/testdata/arith/exp',
+  pkgPath: 'v.io/v23/vdl/testdata/arith/exp',
   doc: "",
   embeds: [],
   methods: [

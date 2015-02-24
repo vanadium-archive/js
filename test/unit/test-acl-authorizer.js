@@ -1,7 +1,7 @@
 
 var test = require('prova');
 var aclAuthorizer = require('../../src/security/acl-authorizer');
-var verror = require('../../src/v.io/core/veyron2/verror');
+var verror = require('../../src/v.io/v23/verror');
 var Labels = require('../../src/security/labels');
 
 test('allow same public key access with no other acls', function(assert) {

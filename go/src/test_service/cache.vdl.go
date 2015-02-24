@@ -6,10 +6,10 @@ package test_service
 import (
 	// VDL system imports
 	"io"
-	"v.io/core/veyron2"
-	"v.io/core/veyron2/context"
-	"v.io/core/veyron2/ipc"
-	"v.io/core/veyron2/vdl"
+	"v.io/v23"
+	"v.io/v23/context"
+	"v.io/v23/ipc"
+	"v.io/v23/vdl"
 )
 
 // KeyPageResult is a page of 10 keys.
@@ -109,7 +109,7 @@ func (c implCacheClientStub) c(ctx *context.T) ipc.Client {
 	if c.client != nil {
 		return c.client
 	}
-	return veyron2.GetClient(ctx)
+	return v23.GetClient(ctx)
 }
 
 func (c implCacheClientStub) Set(ctx *context.T, i0 string, i1 *vdl.Value, opts ...ipc.CallOpt) (err error) {

@@ -5,7 +5,7 @@
  */
 var IncomingPayloadType = require('./incoming-payload-type');
 var StreamHandler = require('./stream-handler');
-var vError = require('../v.io/core/veyron2/verror');
+var vError = require('../v.io/v23/verror');
 
 /**
  * An object that rejects/resolves a promise based on a response

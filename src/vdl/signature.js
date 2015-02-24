@@ -9,7 +9,7 @@ module.exports = Signature;
 
 var Types = require('./types');
 var vdlsig =
-    require('../v.io/core/veyron2/vdl/vdlroot/src/signature');
+    require('../v.io/v23/vdl/vdlroot/src/signature');
 var ReflectSignature = require('./reflect-signature');
 var vlog = require('../lib/vlog');
 

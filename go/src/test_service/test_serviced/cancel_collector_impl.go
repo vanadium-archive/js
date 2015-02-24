@@ -4,7 +4,7 @@ import (
 	"sync"
 	"time"
 
-	"v.io/core/veyron2/ipc"
+	"v.io/v23/ipc"
 
 	"test_service"
 )

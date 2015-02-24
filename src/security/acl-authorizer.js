@@ -3,7 +3,7 @@
  * @private
  */
 var blessingMatches = require('./blessing-matching');
-var vError = require('./../v.io/core/veyron2/verror');
+var vError = require('./../v.io/v23/verror');
 var context = require('../runtime/context');
 
 module.exports = authorizer;

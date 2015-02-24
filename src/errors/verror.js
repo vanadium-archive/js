@@ -1,7 +1,7 @@
 var makeError = require('./make-errors');
 var actions = require('./actions');
 
-var goPkg = 'v.io/core/veyron2/verror.';
+var goPkg = 'v.io/v23/verror.';
 function makeNoRetryError(suffix, english) {
   return makeError(goPkg + suffix, actions.NO_RETRY, english);
 }

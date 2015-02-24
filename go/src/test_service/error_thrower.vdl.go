@@ -5,9 +5,9 @@ package test_service
 
 import (
 	// VDL system imports
-	"v.io/core/veyron2"
-	"v.io/core/veyron2/context"
-	"v.io/core/veyron2/ipc"
+	"v.io/v23"
+	"v.io/v23/context"
+	"v.io/v23/ipc"
 )
 
 // ErrorThrowerClientMethods is the client interface
@@ -15,27 +15,27 @@ import (
 //
 // A testing interface with methods that throw various types of errors
 type ErrorThrowerClientMethods interface {
-	// Throws veyron2/vError.Aborted error
+	// Throws v23/vError.Aborted error
 	ThrowAborted(*context.T, ...ipc.CallOpt) error
-	// Throws veyron2/vError.BadArg error
+	// Throws v23/vError.BadArg error
 	ThrowBadArg(*context.T, ...ipc.CallOpt) error
-	// Throws veyron2/vError.BadProtocol error
+	// Throws v23/vError.BadProtocol error
 	ThrowBadProtocol(*context.T, ...ipc.CallOpt) error
-	// Throws veyron2/vError.Internal error
+	// Throws v23/vError.Internal error
 	ThrowInternal(*context.T, ...ipc.CallOpt) error
-	// Throws veyron2/vError.NoAccess error
+	// Throws v23/vError.NoAccess error
 	ThrowNoAccess(*context.T, ...ipc.CallOpt) error
-	// Throws veyron2/vError.NoExist error
+	// Throws v23/vError.NoExist error
 	ThrowNoExist(*context.T, ...ipc.CallOpt) error
-	// Throws veyron2/vError.NoExistOrNoAccess error
+	// Throws v23/vError.NoExistOrNoAccess error
 	ThrowNoExistOrNoAccess(*context.T, ...ipc.CallOpt) error
-	// Throws veyron2/vError.Unknown error
+	// Throws v23/vError.Unknown error
 	ThrowUnknown(*context.T, ...ipc.CallOpt) error
 	// Throws normal Go error
 	ThrowGoError(*context.T, ...ipc.CallOpt) error
 	// Throws custom error created by using Standard
 	ThrowCustomStandardError(*context.T, ...ipc.CallOpt) error
-	// Lists all errors Ids available in veyron2/verror
+	// Lists all errors Ids available in v23/verror
 	ListAllBuiltInErrorIDs(*context.T, ...ipc.CallOpt) ([]string, error)
 }
 
@@ -65,7 +65,7 @@ func (c implErrorThrowerClientStub) c(ctx *context.T) ipc.Client {
 	if c.client != nil {
 		return c.client
 	}
-	return veyron2.GetClient(ctx)
+	return v23.GetClient(ctx)
 }
 
 func (c implErrorThrowerClientStub) ThrowAborted(ctx *context.T, opts ...ipc.CallOpt) (err error) {
@@ -172,27 +172,27 @@ func (c implErrorThrowerClientStub) ListAllBuiltInErrorIDs(ctx *context.T, opts 
 //
 // A testing interface with methods that throw various types of errors
 type ErrorThrowerServerMethods interface {
-	// Throws veyron2/vError.Aborted error
+	// Throws v23/vError.Aborted error
 	ThrowAborted(ipc.ServerContext) error
-	// Throws veyron2/vError.BadArg error
+	// Throws v23/vError.BadArg error
 	ThrowBadArg(ipc.ServerContext) error
-	// Throws veyron2/vError.BadProtocol error
+	// Throws v23/vError.BadProtocol error
 	ThrowBadProtocol(ipc.ServerContext) error
-	// Throws veyron2/vError.Internal error
+	// Throws v23/vError.Internal error
 	ThrowInternal(ipc.ServerContext) error
-	// Throws veyron2/vError.NoAccess error
+	// Throws v23/vError.NoAccess error
 	ThrowNoAccess(ipc.ServerContext) error
-	// Throws veyron2/vError.NoExist error
+	// Throws v23/vError.NoExist error
 	ThrowNoExist(ipc.ServerContext) error
-	// Throws veyron2/vError.NoExistOrNoAccess error
+	// Throws v23/vError.NoExistOrNoAccess error
 	ThrowNoExistOrNoAccess(ipc.ServerContext) error
-	// Throws veyron2/vError.Unknown error
+	// Throws v23/vError.Unknown error
 	ThrowUnknown(ipc.ServerContext) error
 	// Throws normal Go error
 	ThrowGoError(ipc.ServerContext) error
 	// Throws custom error created by using Standard
 	ThrowCustomStandardError(ipc.ServerContext) error
-	// Lists all errors Ids available in veyron2/verror
+	// Lists all errors Ids available in v23/verror
 	ListAllBuiltInErrorIDs(ipc.ServerContext) ([]string, error)
 }
 
@@ -294,35 +294,35 @@ var descErrorThrower = ipc.InterfaceDesc{
 	Methods: []ipc.MethodDesc{
 		{
 			Name: "ThrowAborted",
-			Doc:  "// Throws veyron2/vError.Aborted error",
+			Doc:  "// Throws v23/vError.Aborted error",
 		},
 		{
 			Name: "ThrowBadArg",
-			Doc:  "// Throws veyron2/vError.BadArg error",
+			Doc:  "// Throws v23/vError.BadArg error",
 		},
 		{
 			Name: "ThrowBadProtocol",
-			Doc:  "// Throws veyron2/vError.BadProtocol error",
+			Doc:  "// Throws v23/vError.BadProtocol error",
 		},
 		{
 			Name: "ThrowInternal",
-			Doc:  "// Throws veyron2/vError.Internal error",
+			Doc:  "// Throws v23/vError.Internal error",
 		},
 		{
 			Name: "ThrowNoAccess",
-			Doc:  "// Throws veyron2/vError.NoAccess error",
+			Doc:  "// Throws v23/vError.NoAccess error",
 		},
 		{
 			Name: "ThrowNoExist",
-			Doc:  "// Throws veyron2/vError.NoExist error",
+			Doc:  "// Throws v23/vError.NoExist error",
 		},
 		{
 			Name: "ThrowNoExistOrNoAccess",
-			Doc:  "// Throws veyron2/vError.NoExistOrNoAccess error",
+			Doc:  "// Throws v23/vError.NoExistOrNoAccess error",
 		},
 		{
 			Name: "ThrowUnknown",
-			Doc:  "// Throws veyron2/vError.Unknown error",
+			Doc:  "// Throws v23/vError.Unknown error",
 		},
 		{
 			Name: "ThrowGoError",
@@ -334,7 +334,7 @@ var descErrorThrower = ipc.InterfaceDesc{
 		},
 		{
 			Name: "ListAllBuiltInErrorIDs",
-			Doc:  "// Lists all errors Ids available in veyron2/verror",
+			Doc:  "// Lists all errors Ids available in v23/verror",
 			OutArgs: []ipc.ArgDesc{
 				{"", ``}, // []string
 			},

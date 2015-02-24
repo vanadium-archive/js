@@ -1,6 +1,6 @@
 var IncomingPayloadType = require('./incoming-payload-type');
 var DecodeUtil = require('../lib/decode-util');
-var vError = require('../v.io/core/veyron2/verror');
+var vError = require('../v.io/v23/verror');
 
 module.exports = Handler;
 

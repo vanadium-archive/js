@@ -64,7 +64,7 @@ function testStandardErrors() {
           // string can be convert the template "{1} {2} Error {_}" into
           // something like "my-server my-method Error Error: my-error-message"
           //
-          // SEE: v.io/core/veyron2/verror
+          // SEE: v.io/v23/verror
           // assert.equal(err.message, message);
           assert.notEqual(err.stack, error.stack,
             'the original stack should not be sent over the wire');

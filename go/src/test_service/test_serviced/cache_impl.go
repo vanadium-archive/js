@@ -6,9 +6,9 @@ import (
 	"sort"
 	"time"
 
-	"v.io/core/veyron2/ipc"
-	"v.io/core/veyron2/vdl"
-	"v.io/core/veyron2/verror"
+	"v.io/v23/ipc"
+	"v.io/v23/vdl"
+	"v.io/v23/verror"
 
 	"test_service"
 )

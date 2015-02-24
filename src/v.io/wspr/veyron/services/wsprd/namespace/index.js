@@ -5,8 +5,8 @@ var vdl = require('../../../../../.././vdl');
 
 
 
-var time = require('./../../../../../core/veyron2/vdl/vdlroot/src/time');
-var naming = require('./../../../../../core/veyron2/naming');
+var time = require('./../../../../../v23/vdl/vdlroot/src/time');
+var naming = require('./../../../../../v23/naming');
 
 module.exports = {};
 

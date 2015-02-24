@@ -5,10 +5,10 @@ var vdl = require('../../../../../.././vdl');
 
 
 
-var signature = require('./../../../../../core/veyron2/vdl/vdlroot/src/signature');
-var time = require('./../../../../../core/veyron2/vdl/vdlroot/src/time');
-var security = require('./../../../../../core/veyron2/security');
-var vtrace = require('./../../../../../core/veyron2/vtrace');
+var signature = require('./../../../../../v23/vdl/vdlroot/src/signature');
+var time = require('./../../../../../v23/vdl/vdlroot/src/time');
+var security = require('./../../../../../v23/security');
+var vtrace = require('./../../../../../v23/vtrace');
 
 module.exports = {};
 

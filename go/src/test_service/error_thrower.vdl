@@ -2,28 +2,28 @@ package test_service
 
 // A testing interface with methods that throw various types of errors
 type ErrorThrower interface {
-    // Throws veyron2/vError.Aborted error
+    // Throws v23/vError.Aborted error
     ThrowAborted() error
 
-    // Throws veyron2/vError.BadArg error
+    // Throws v23/vError.BadArg error
     ThrowBadArg() error
 
-    // Throws veyron2/vError.BadProtocol error
+    // Throws v23/vError.BadProtocol error
     ThrowBadProtocol() error
 
-    // Throws veyron2/vError.Internal error
+    // Throws v23/vError.Internal error
     ThrowInternal() error
 
-    // Throws veyron2/vError.NoAccess error
+    // Throws v23/vError.NoAccess error
     ThrowNoAccess() error
 
-    // Throws veyron2/vError.NoExist error
+    // Throws v23/vError.NoExist error
     ThrowNoExist() error
 
-    // Throws veyron2/vError.NoExistOrNoAccess error
+    // Throws v23/vError.NoExistOrNoAccess error
     ThrowNoExistOrNoAccess() error
 
-    // Throws veyron2/vError.Unknown error
+    // Throws v23/vError.Unknown error
     ThrowUnknown() error
 
     // Throws normal Go error
@@ -32,6 +32,6 @@ type ErrorThrower interface {
     // Throws custom error created by using Standard
     ThrowCustomStandardError() error
 
-    // Lists all errors Ids available in veyron2/verror
+    // Lists all errors Ids available in v23/verror
     ListAllBuiltInErrorIDs() ([]string | error)
 }

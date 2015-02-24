@@ -119,7 +119,7 @@ build-test/nacl: build-test/nacl/main.nmf build-test/nacl/main-64.nexe
 build-test: build-test/html build-test/images build-test/manifest.json build-test/js build-test/nacl
 
 gen-vdl: $(WSPRD_PATH)/channel/channel.vdl $(WSPRD_PATH)/browspr/browspr.vdl $(WSPRD_PATH)/account/account.vdl
-	v23 go run $(VANADIUM_ROOT)/release/go/src/v.io/core/veyron2/vdl/vdl/main.go \
+	v23 go run $(VANADIUM_ROOT)/release/go/src/v.io/v23/vdl/vdl/main.go \
 	generate -lang=javascript -js_out_dir="$(VANADIUM_ROOT)/release/javascript/core/extension/vdl" -js_relative_path_to_core=../../src $(dir $^) 
 
 example-server: example/index.bundle.js

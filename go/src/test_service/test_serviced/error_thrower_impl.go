@@ -3,8 +3,8 @@ package main
 import (
 	"errors"
 
-	"v.io/core/veyron2/ipc"
-	"v.io/core/veyron2/verror"
+	"v.io/v23/ipc"
+	"v.io/v23/verror"
 
 	"test_service"
 )
@@ -60,7 +60,7 @@ func (e *errorThrowerImpl) ThrowCustomStandardError(ctx ipc.ServerContext) error
 
 func (e *errorThrowerImpl) ListAllBuiltInErrorIDs(_ ipc.ServerContext) ([]string, error) {
 	// TODO(aghassemi) Use when we have enum for error IDs in IDL
-	// This is not used yet but the idea is to pass all error types in veyron2/verror to
+	// This is not used yet but the idea is to pass all error types in v23/verror to
 	// JavaScript so if a new one is added, this test would break and we add the new one to
 	// JavaScript as well. There is no way to enumerate all error IDs right now since they
 	// are constants and not an Enum. Enum support is coming later.

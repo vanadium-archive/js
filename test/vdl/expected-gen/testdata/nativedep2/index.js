@@ -13,7 +13,7 @@ module.exports = {};
 // Types:
 var _typeMyTime = new vdl.Type();
 _typeMyTime.kind = vdl.Kind.INT32;
-_typeMyTime.name = "v.io/core/veyron2/vdl/testdata/nativedep2.MyTime";
+_typeMyTime.name = "v.io/v23/vdl/testdata/nativedep2.MyTime";
 _typeMyTime.freeze();
 module.exports.MyTime = (vdl.Registry.lookupOrCreateConstructor(_typeMyTime));
 
