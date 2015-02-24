@@ -3,7 +3,7 @@
  * on a response from the proxy.
  * @private
  */
-var IncomingPayloadType = require('./incoming-payload-type');
+var Incoming = require('./message-type').Incoming;
 var StreamHandler = require('./stream-handler');
 var vError = require('../v.io/v23/verror');
 
@@ -36,10 +36,10 @@ Handler.prototype.handleResponse = function(type, message) {
   }
 
   switch (type) {
-    case IncomingPayloadType.FINAL_RESPONSE:
+    case Incoming.FINAL_RESPONSE:
       this._def.resolve(message);
       break;
-    case IncomingPayloadType.ERROR_RESPONSE:
+    case Incoming.ERROR_RESPONSE:
       this._def.reject(message);
       break;
     default:

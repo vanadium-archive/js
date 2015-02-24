@@ -3,7 +3,7 @@
  * @private
  */
 
-var MessageType = require('./message-type');
+var Outgoing = require('./message-type').Outgoing;
 var Duplex = require('stream').Duplex;
 var inherits = require('inherits');
 var EncodeUtil = require('../lib/encode-util');
@@ -50,7 +50,7 @@ inherits(Stream, Duplex);
 Stream.prototype.clientClose = function() {
   var object = {
     id: this.flowId,
-    type: MessageType.STREAM_CLOSE
+    type: Outgoing.STREAM_CLOSE
   };
   Duplex.prototype.write.call(this, object);
 };
@@ -58,7 +58,7 @@ Stream.prototype.clientClose = function() {
 Stream.prototype.serverClose = function(results, err) {
   var object = {
     id: this.flowId,
-    type: MessageType.RESPONSE,
+    type: Outgoing.RESPONSE,
     data: EncodeUtil.encode(new ServerRPCReply({
       results: results,
       err: err || null
@@ -116,7 +116,7 @@ Stream.prototype.write = function(chunk, encoding, cb) {
   var object = {
     id: this.flowId,
     data: EncodeUtil.encode(canonChunk),
-    type: MessageType.STREAM_VALUE
+    type: Outgoing.STREAM_VALUE
   };
   return Duplex.prototype.write.call(this, object, encoding, cb);
 };

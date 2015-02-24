@@ -125,7 +125,8 @@ runCache({
 function runCache(options) {
   var namePrefix = 'Test JS client/server ipc ' + options.testName + ' - ';
 
-  test(namePrefix + 'cache.set(key, string) -> cache.get(key)', function(t) {
+  test(namePrefix + 'cache.set(key, string) -> cache.get(key)',
+            function(t) {
     setup(options, function(err, ctx, cache, end) {
       t.error(err, 'should not error on setup');
 
@@ -270,7 +271,6 @@ function runCache(options) {
 
   function setup(options, cb) {
     var dispatcher = leafDispatcher(options.definition);
-
     serve('testing/cache', dispatcher, function(err, res) {
       cb(err, res.runtime.getContext(), res.service, res.end);
     });

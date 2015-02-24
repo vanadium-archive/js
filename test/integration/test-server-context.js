@@ -69,7 +69,7 @@ test('Test non-empty suffix is available in context', function(assert) {
     var ctx = res.runtime.getContext();
     client.bindTo(ctx, 'a/b/foo', function(err, service) {
       assert.error(err, 'should not error on runtime.bindTo(...)');
-
+      
       service.getSuffix(ctx, function(err, suffix) {
         assert.error(err, 'should not error on getSuffix(...)');
         assert.equal(suffix, 'foo');

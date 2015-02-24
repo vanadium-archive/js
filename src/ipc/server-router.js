@@ -6,7 +6,8 @@
 var Promise = require('../lib/promise');
 var Stream = require('../proxy/stream');
 var MessageType = require('../proxy/message-type');
-var IncomingPayloadType = require('../proxy/incoming-payload-type');
+var Incoming = MessageType.Incoming;
+var Outgoing = MessageType.Outgoing;
 var ErrorConversion = require('../proxy/error-conversion');
 var vLog = require('./../lib/vlog');
 var StreamHandler = require('../proxy/stream-handler');
@@ -41,24 +42,24 @@ var Router = function(proxy, appName, rootCtx, controller) {
   this._outstandingRequestForId = {};
   this._controller = controller;
 
-  proxy.addIncomingHandler(IncomingPayloadType.INVOKE_REQUEST, this);
-  proxy.addIncomingHandler(IncomingPayloadType.LOOKUP_REQUEST, this);
-  proxy.addIncomingHandler(IncomingPayloadType.AUTHORIZATION_REQUEST, this);
-  proxy.addIncomingHandler(IncomingPayloadType.CANCEL, this);
+  proxy.addIncomingHandler(Incoming.INVOKE_REQUEST, this);
+  proxy.addIncomingHandler(Incoming.LOOKUP_REQUEST, this);
+  proxy.addIncomingHandler(Incoming.AUTHORIZATION_REQUEST, this);
+  proxy.addIncomingHandler(Incoming.CANCEL, this);
 };
 
 Router.prototype.handleRequest = function(messageId, type, request) {
   switch (type) {
-    case IncomingPayloadType.INVOKE_REQUEST:
+    case Incoming.INVOKE_REQUEST:
       this.handleRPCRequest(messageId, request);
       break;
-    case IncomingPayloadType.LOOKUP_REQUEST:
+    case Incoming.LOOKUP_REQUEST:
       this.handleLookupRequest(messageId, request);
       break;
-    case IncomingPayloadType.AUTHORIZATION_REQUEST:
+    case Incoming.AUTHORIZATION_REQUEST:
       this.handleAuthorizationRequest(messageId, request);
       break;
-    case IncomingPayloadType.CANCEL:
+    case Incoming.CANCEL:
       this.handleCancel(messageId, request);
       break;
     default:
@@ -75,7 +76,7 @@ Router.prototype.handleAuthorizationRequest = function(messageId, request) {
       err: new verror.InternalError(this._rootCtx,
                                     ['Failed to decode ', e])
     });
-    this._proxy.sendRequest(data, MessageType.AUTHORIZATION_RESPONSE,
+    this._proxy.sendRequest(data, Outgoing.AUTHORIZATION_RESPONSE,
         null, messageId);
   }
   var server = this._servers[request.serverID];
@@ -84,21 +85,21 @@ Router.prototype.handleAuthorizationRequest = function(messageId, request) {
       // TODO(bjornick): Use the real context
       err: new verror.ExistsError(this._rootCtx, ['unknown server'])
     });
-    this._proxy.sendRequest(data, MessageType.AUTHORIZATION_RESPONSE,
+    this._proxy.sendRequest(data, Outgoing.AUTHORIZATION_RESPONSE,
         null, messageId);
     return;
   }
   var router = this;
   var securityContext = new SecurityContext(request.context, this._controller);
   server.handleAuthorization(request.handle, securityContext).then(function() {
-    router._proxy.sendRequest('{}', MessageType.AUTHORIZATION_RESPONSE, null,
+    router._proxy.sendRequest('{}', Outgoing.AUTHORIZATION_RESPONSE, null,
         messageId);
   }).catch(function(e) {
     var data = JSON.stringify({
       err: ErrorConversion.toStandardErrorStruct(e, this._appName,
                                                  request.context.method)
     });
-    router._proxy.sendRequest(data, MessageType.AUTHORIZATION_RESPONSE, null,
+    router._proxy.sendRequest(data, Outgoing.AUTHORIZATION_RESPONSE, null,
         messageId);
   });
 };
@@ -111,7 +112,7 @@ Router.prototype.handleLookupRequest = function(messageId, request) {
     var data = JSON.stringify({
       err: new verror.NoExistError(this._rootCtx, ['unknown server'])
     });
-    this._proxy.sendRequest(data, MessageType.LOOKUP_RESPONSE,
+    this._proxy.sendRequest(data, Outgoing.LOOKUP_RESPONSE,
         null, messageId);
     return;
   }
@@ -142,14 +143,14 @@ Router.prototype.handleLookupRequest = function(messageId, request) {
       hasAuthorizer: hasAuthorizer,
       hasGlobber: hasGlobber
     };
-    self._proxy.sendRequest(JSON.stringify(data), MessageType.LOOKUP_RESPONSE,
+    self._proxy.sendRequest(JSON.stringify(data), Outgoing.LOOKUP_RESPONSE,
         null, messageId);
   }).catch(function(err) {
     var data = JSON.stringify({
       err: ErrorConversion.toStandardErrorStruct(err, self._appName,
                                                  '__Signature'),
     });
-    self._proxy.sendRequest(data, MessageType.LOOKUP_RESPONSE,
+    self._proxy.sendRequest(data, Outgoing.LOOKUP_RESPONSE,
         null, messageId);
   });
 };
@@ -503,7 +504,7 @@ Router.prototype.sendResult = function(messageId, name, results, err,
       err: errorStruct
     });
     var responseDataVOM = EncodeUtil.encode(responseData);
-    this._proxy.sendRequest(responseDataVOM, MessageType.RESPONSE, null,
+    this._proxy.sendRequest(responseDataVOM, Outgoing.RESPONSE, null,
         messageId);
   }
 };

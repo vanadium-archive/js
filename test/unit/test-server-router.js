@@ -5,7 +5,7 @@
 var test = require('prova');
 var Router = require('../../src/ipc/server-router');
 var Server = require('../../src/ipc/server');
-var MessageType = require('../../src/proxy/message-type');
+var Outgoing = require('../../src/proxy/message-type').Outgoing;
 var vdl = require('../../src/vdl');
 var DecodeUtil = require('../../src/lib/decode-util');
 var context = require('../../src/runtime/context');
@@ -94,7 +94,7 @@ test('Server Router Signature Lookup', function(t) {
     suffix: inputName
   };
   router.handleLookupRequest(inputMessageId, request).then(function(result) {
-    t.equals(responseType, MessageType.LOOKUP_RESPONSE, 'response type');
+    t.equals(responseType, Outgoing.LOOKUP_RESPONSE, 'response type');
     t.equals(responseMessageId, inputMessageId, 'message id');
 
     var data = JSON.parse(responseData);
