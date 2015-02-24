@@ -141,13 +141,12 @@ BackgroundPage.prototype.handleBrowsprCleanup = function(port, msg) {
         ' that does not match port.');
   }
 
-  var pId = portId(port);
-
-  this.instanceIds[pId] = _.remove(this.instanceIds[pId], [instanceId]);
-  delete this.ports[instanceId];
-
+  var bp = this;
   this.nacl.cleanupInstance(instanceId, function() {
     console.log('Cleaned up instance: ' + instanceId);
+    var pId = portId(port);
+    bp.instanceIds[pId] = _.remove(bp.instanceIds[pId], [instanceId]);
+    delete bp.ports[instanceId];
     sendCleanupFinishedMessage();
   });
 };

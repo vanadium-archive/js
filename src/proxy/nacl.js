@@ -68,7 +68,6 @@ ProxyConnection.prototype.close = function(cb) {
   var defaultTimeout = 5000;
   var deferred = new Deferred(cb);
 
-  extensionEventProxy.removeListener('browsprMsg', this.onBrowsprMsg);
   extensionEventProxy.removeListener('crash', this.onCrash);
 
   extensionEventProxy.send('browsprCleanup', {
@@ -84,7 +83,9 @@ ProxyConnection.prototype.close = function(cb) {
     deferred.reject(err);
   }, defaultTimeout);
 
+  var self = this;
   extensionEventProxy.once('browsprCleanupFinished', function() {
+    extensionEventProxy.removeListener('browsprMsg', self.onBrowsprMsg);
     clearTimeout(timeout);
     if(!timedout) {
       deferred.resolve();

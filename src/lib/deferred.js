@@ -27,8 +27,12 @@ function addCallback(promise, cb) {
     // a .then() callback are wrapped in a try/catch, whereas errors thrown
     // inside of a .done() callback will be thrown as an error.
     promise.done(
-      function success(value) { cb(null, value); },
-      function error(err) { cb(err); }
+      function success(value) {
+        cb(null, value);
+      },
+      function error(err) {
+        cb(err);
+      }
     );
   }
 }
