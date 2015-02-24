@@ -18,6 +18,7 @@ var IncomingPayloadType = require('../proxy/incoming-payload-type');
 var context = require('../runtime/context');
 var constants = require('./constants');
 var DecodeUtil = require('../lib/decode-util');
+var emitStreamError = require('../lib/emit-stream-error');
 var SimpleHandler = require('../proxy/simple-handler');
 var vdl = require('../vdl');
 var Encoder = require('../vom/encoder');
@@ -204,7 +205,7 @@ OutstandingRPC.prototype.handleStreamClose = function() {
 
 OutstandingRPC.prototype.handleError = function(err) {
   if (this._def.stream) {
-    this._def.stream.emit('error', err);
+    emitStreamError(this._def.stream, err);
     this._def.stream._queueRead(null);
   }
   this._def.reject(err);

@@ -1,5 +1,6 @@
 var IncomingPayloadType = require('./incoming-payload-type');
 var DecodeUtil = require('../lib/decode-util');
+var emitStreamError = require('../lib/emit-stream-error');
 var vError = require('../v.io/v23/verror');
 
 module.exports = Handler;
@@ -21,7 +22,7 @@ Handler.prototype.handleResponse = function(type, data) {
       try {
         data = DecodeUtil.decode(data);
       } catch (e) {
-        this._stream.emit('error',
+        emitStreamError(this._stream,
           new vError.InternalError(this._ctx,
                                    ['Failed to decode result: ', e]));
         return true;
@@ -33,7 +34,8 @@ Handler.prototype.handleResponse = function(type, data) {
       this._stream._queueRead(null);
       return true;
     case IncomingPayloadType.ERROR_RESPONSE:
-      this._stream.emit('error', data);
+      emitStreamError(this._stream, data);
+      this._stream._queueRead(null);
       return true;
   }
 

@@ -240,3 +240,23 @@ test('Test getting signature of Go sample cache service - ' +
     });
   });
 });
+
+test('Test a streaming method timing out - ' +
+  'var promise = cache.multiGet(shortTimeout)', function(assert) {
+  service('test_service/cache', function(err, ctx, cache, end) {
+    assert.error(err);
+    if (err) {
+      return end(assert);
+    }
+
+    var shortCtx = ctx.withTimeout(10); // very short timeout
+    var promise = cache.multiGet(shortCtx); // streaming method
+    promise.then(function success() {
+      assert.fail('Should have timedout and errored but succeeded');
+      end(assert);
+    }, function error() {
+      assert.pass('Steaming method timedout correctly');
+      end(assert);
+    });
+  });
+});

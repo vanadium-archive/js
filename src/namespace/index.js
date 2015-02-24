@@ -1,5 +1,6 @@
 var vdl = require('../v.io/wspr/veyron/services/wsprd/namespace');
 var time = require('../v.io/v23/vdl/vdlroot/src/time');
+var emitStreamError = require('../lib/emit-stream-error');
 var Readable = require('stream').Readable;
 var inherits = require('util').inherits;
 
@@ -34,7 +35,7 @@ function GlobStream(orig) {
 inherits(GlobStream, Readable);
 
 GlobStream.prototype._flow = function(drain) {
-  // We split the GlobReply union type and send GlobErrors through the 
+  // We split the GlobReply union type and send GlobErrors through the
   // stream's error channel and valid MountPoints through the data channel.
   var chunk;
   while((chunk = this._orig.read()) !== null) {
@@ -43,7 +44,7 @@ GlobStream.prototype._flow = function(drain) {
         return false;
       }
     } else if (chunk.error) {
-      this.emit('error', chunk.error.error);
+      emitStreamError(this, chunk.error.error);
     }
   }
   if (drain) {
