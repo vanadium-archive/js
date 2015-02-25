@@ -114,8 +114,8 @@ function getAccount(cb) {
     cb(objectToError(data.error));
   }
 
-  // Handle generic error event, which can be triggered if the extension is not
-  // running.
+  // Handle errors and crashes, which can be triggered if the extension is not
+  // running or if it crashes during initialization.
   function onError(err) {
     removeListeners();
     cb(err);
@@ -124,11 +124,13 @@ function getAccount(cb) {
   function removeListeners() {
     extensionEventProxy.removeListener('auth:success', onAuthSuccess);
     extensionEventProxy.removeListener('auth:error', onAuthError);
+    extensionEventProxy.removeListener('crash', onError);
     extensionEventProxy.removeListener('error', onError);
   }
 
   extensionEventProxy.on('auth:success', onAuthSuccess);
   extensionEventProxy.on('auth:error', onAuthError);
+  extensionEventProxy.on('crash', onError);
   extensionEventProxy.on('error', onError);
 
   // Send auth request.
