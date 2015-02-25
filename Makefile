@@ -126,7 +126,7 @@ ifndef NOVDLGEN
 	# not equal the directory path of the source file.  This is not ideal, but bjornick and toddw will discuss
 	# how to fix this later.
 	VDLPATH=$(VDLPATH) v23 go run $(VANADIUM_ROOT)/release/go/src/v.io/v23/vdl/vdl/main.go generate -lang=javascript \
-					-js_relative_path_to_core=$(JS_VDL_PATH_TO_CORE)/../../../../.. \
+					-js_relative_path_to_core=../../../../../$(JS_VDL_PATH_TO_CORE) \
 					-js_out_dir=$(JS_VDL_DIR) \
 					$(VANADIUM_ROOT)/release/go/src/v.io/v23/vdl/vdlroot/src/...
 endif
