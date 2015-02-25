@@ -1,4 +1,3 @@
-var actions = require('./../errors/actions');
 var errorMap = require('./../runtime/error-map');
 var VanadiumError = require('./../errors/vanadium-error');
 
@@ -20,8 +19,8 @@ function toJSerror(verr) {
   }
   var err;
 
-  var idAction = verr.iDAction;
-  var id = idAction.iD;
+  var id = verr.id;
+  var retry = verr.retryCode;
   var msg = verr.msg;
   verr.paramList = verr.paramList || [];
 
@@ -36,10 +35,9 @@ function toJSerror(verr) {
     err = new Ctor([null].concat(verr.paramList));
   } else {
     // The required args to VanadiumError are:
-    // errorId, action, context
+    // errorId, retry, context
     // Any remaining parameters are considered the param list.
-    var args = [id, idAction.action || actions.NO_RETRY, null].concat(
-      verr.paramList);
+    var args = [id, retry, null].concat(verr.paramList);
     err = new VanadiumError(args);
   }
 

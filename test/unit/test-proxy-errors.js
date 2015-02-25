@@ -5,7 +5,7 @@ var vdlec = require('../../src/vdl/error-conversion');
 var Context = require('../../src/runtime/context').Context;
 var message = 'Something bad happened.';
 
-var unknownIdAction = (new verror.UnknownError(new Context())).iDAction;
+var unknownError = new verror.UnknownError(new Context());
 test('var struct = ec.toStandardErrorStruct(err)', function(assert) {
   var err = new Error(message);
   var struct = ec.toStandardErrorStruct(err, 'app', 'call');
@@ -46,7 +46,8 @@ test('Error => Struct => Error', function(assert) {
   var converted = vdlec.toJSerror(struct);
 
   assert.equal(struct.msg, original.message);
-  assert.deepEqual(struct.iDAction, unknownIdAction);
+  assert.equal(struct.id, unknownError.id);
+  assert.equal(struct.retryCode, unknownError.retryCode);
   assert.equal(converted.message, original.message);
 
   assert.end();

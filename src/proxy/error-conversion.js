@@ -12,7 +12,7 @@ module.exports = {
   toStandardErrorStruct: toStandardErrorStruct,
 };
 
-var unknownIdAction = (new verror.UnknownError(null)).iDAction;
+var unknownId = (new verror.UnknownError(null)).id;
 
 /**
  * Converts from a JavaScript error object to verror standard struct which
@@ -37,7 +37,7 @@ function toStandardErrorStruct(err, appName, operation) {
   } else if (err !== undefined && err !== null) {
     paramList = [appName, operation, err + ''];
     message = defaultCatalog.format(
-      defaultLanguage, unknownIdAction.iD, paramList);
+      defaultLanguage, unknownId, paramList);
   }
 
   if (!paramList[0] && appName) {

@@ -1,6 +1,6 @@
 module.exports = {
-  NO_RETRY: 0,
-  RETRY_CONNECTION: 1,
-  RETRY_REFETCH: 2,
-  RETRY_BACKOFF: 3
+  NO_RETRY: 'NoRetry',
+  RETRY_CONNECTION: 'RetryConnection',
+  RETRY_REFETCH: 'RetryRefetch',
+  RETRY_BACKOFF: 'RetryBackoff'
 };

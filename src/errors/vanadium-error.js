@@ -15,13 +15,11 @@ function VanadiumError() {
     return new VanadiumError(args);
   }
   var id = args.shift();
-  var action = args.shift();
+  var retry = args.shift();
   var ctx = args.shift();
   this.paramList = args;
-  this.iDAction = {
-    iD: id,
-    action: action,
-  };
+  this.id = id;
+  this.retryCode = retry;
   if (ctx) {
     this._langId = ctx.value(SharedContextKeys.LANG_KEY) || defaultLanguage;
   } else {
@@ -56,7 +54,7 @@ inherits(VanadiumError, Error);
 VanadiumError.prototype.resetArgs = function() {
   var args = Array.prototype.slice.call(arguments);
   this.paramList = args;
-  this.message = defaultCatalog.format(this._langId, this.iDAction.iD, args);
+  this.message = defaultCatalog.format(this._langId, this.id, args);
   this.msg = this.message;
 };
 

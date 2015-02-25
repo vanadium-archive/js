@@ -17,6 +17,7 @@ var _typeWireMultiImport = new vdl.Type();
 var _typeWireSamePkg = new vdl.Type();
 var _typeWireString = new vdl.Type();
 var _typeWireTime = new vdl.Type();
+var _typeignoreme = new vdl.Type();
 _typeWireAll.kind = vdl.Kind.STRUCT;
 _typeWireAll.name = "v.io/v23/vdl/testdata/nativetest.WireAll";
 _typeWireAll.fields = [{name: "A", type: _typeWireString}, {name: "B", type: _typeWireMapStringInt}, {name: "C", type: _typeWireTime}, {name: "D", type: _typeWireSamePkg}, {name: "E", type: _typeWireMultiImport}];
@@ -30,18 +31,22 @@ _typeWireString.kind = vdl.Kind.INT32;
 _typeWireString.name = "v.io/v23/vdl/testdata/nativetest.WireString";
 _typeWireTime.kind = vdl.Kind.INT32;
 _typeWireTime.name = "v.io/v23/vdl/testdata/nativetest.WireTime";
+_typeignoreme.kind = vdl.Kind.STRING;
+_typeignoreme.name = "v.io/v23/vdl/testdata/nativetest.ignoreme";
 _typeWireAll.freeze();
 _typeWireMapStringInt.freeze();
 _typeWireMultiImport.freeze();
 _typeWireSamePkg.freeze();
 _typeWireString.freeze();
 _typeWireTime.freeze();
+_typeignoreme.freeze();
 module.exports.WireAll = (vdl.Registry.lookupOrCreateConstructor(_typeWireAll));
 module.exports.WireMapStringInt = (vdl.Registry.lookupOrCreateConstructor(_typeWireMapStringInt));
 module.exports.WireMultiImport = (vdl.Registry.lookupOrCreateConstructor(_typeWireMultiImport));
 module.exports.WireSamePkg = (vdl.Registry.lookupOrCreateConstructor(_typeWireSamePkg));
 module.exports.WireString = (vdl.Registry.lookupOrCreateConstructor(_typeWireString));
 module.exports.WireTime = (vdl.Registry.lookupOrCreateConstructor(_typeWireTime));
+module.exports.ignoreme = (vdl.Registry.lookupOrCreateConstructor(_typeignoreme));
 
 
 
@@ -55,6 +60,8 @@ module.exports.WireTime = (vdl.Registry.lookupOrCreateConstructor(_typeWireTime)
 
 
 // Services:
+
+   
 
    
  

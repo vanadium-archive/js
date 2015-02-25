@@ -14,7 +14,7 @@ function run(ctx, err, collector, end, assert, id, runtime) {
   ctx = ctx.withTimeout(timeout);
 
   collector.neverReturn(ctx, id).catch(function(err) {
-    if (!err.iDAction || err.iDAction.iD !== 'CancelError') {
+    if (err.id !== 'CancelError') {
       assert.fail(err);
     }
   });
