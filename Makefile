@@ -10,10 +10,31 @@ NODE_MODULE_JS_FILES := $(shell find node_modules -name *.js | sed 's/ /\\ /')
 
 SHELL := /bin/bash -e -o pipefail
 
+UNAME := $(shell uname)
+
 .DEFAULT_GOAL := all
 
-UNAME := $(shell uname)
-BROWSER := chrome
+# Default browserify options: create a standalone bundle, and use sourcemaps.
+BROWSERIFY_OPTS := --standalone veyron --debug
+# Names that should not be mangled by minification.
+RESERVED_NAMES := 'context,ctx,callback,cb,$$stream'
+# Don't mangle RESERVED_NAMES, and screw ie8.
+MANGLE_OPTS := --mangle [--except $(RESERVED_NAMES) --screw_ie8 ]
+# Don't remove unused variables from function arguments, which could mess up signatures.
+# Also don't evaulate constant expressions, since we rely on them to conditionally require modules only in node.
+COMPRESS_OPTS := --compress [ --no-unused --no-evaluate ]
+
+# Browserify and extract sourcemap, but do not minify.
+define BROWSERIFY
+	mkdir -p $(dir $2)
+	browserify $1 $(BROWSERIFY_OPTS) | exorcist $2.map > $2
+endef
+
+# Browserify, minify, and extract sourcemap.
+define BROWSERIFY-MIN
+	mkdir -p $(dir $2)
+	browserify $1 $(BROWSERIFY_OPTS) --g [ uglifyify $(MANGLE_OPTS) $(COMPRESS_OPTS) ] | exorcist $2.map > $2
+endef
 
 # When running browser tests on non-Darwin machines, set the --headless flag.
 # This uses Xvfb underneath the hood (inside prova => browser-launcher =>
@@ -60,7 +81,7 @@ endif
 
 PROVA_OPTS := --includeFilenameAsPackage $(TAP) $(QUIT) $(STOPONFAIL)
 
-BROWSER_OPTS := --browser --transform envify --launch $(BROWSER) $(HEADLESS)
+BROWSER_OPTS := --browser --transform envify --launch chrome $(HEADLESS)
 
 JS_SRC_FILES = $(shell find src -name "*.js" | sed 's/ /\\ /')
 
@@ -68,19 +89,15 @@ JS_SRC_FILES = $(shell find src -name "*.js" | sed 's/ /\\ /')
 # string with no spaces.
 COMMON_SERVICES := "test_serviced"
 
-BROWSERIFY_OPTS := --debug --standalone veyron
-
 all: gen-vdl lint build
 
 build: dist/veyron.js dist/veyron.min.js extension/veyron.zip
 
 dist/veyron.js: src/veyron.js $(JS_SRC_FILES) $(NODE_MODULES_JS_FILES) | node_modules
-	mkdir -p dist
-	browserify $< $(BROWSERIFY_OPTS) --outfile $@
+	$(call BROWSERIFY,$<,$@)
 
 dist/veyron.min.js: src/veyron.js $(JS_SRC_FILES) $(NODE_MODULES_JS_FILES) | node_modules
-	mkdir -p dist
-	browserify $< $(BROWSERIFY_OPTS) --plugin [ minifyify --map dist/veyron.js.map --output $@.map ] --outfile $@
+	$(call BROWSERIFY-MIN,$<,$@)
 
 extension/veyron.zip: node_modules
 	$(MAKE) -C extension veyron.zip
