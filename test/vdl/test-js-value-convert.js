@@ -25,6 +25,8 @@ function JS(obj) {
 // Note: These test cases usually convert native and jsval correctly. There are
 // some edge cases like 'undefined', so nativeFinal is used in such cases.
 test('js-value convert to and from native', function(t) {
+  var Float32 = Registry.lookupOrCreateConstructor(Types.FLOAT32);
+
   var tests = [
     {
       name: 'Undefined',
@@ -223,11 +225,7 @@ test('js-value convert to and from native', function(t) {
     },
     {
       name: 'List with some typed values',
-      native: [3, false, null, 'abc', undefined, {
-        val: 3.14,
-        _type: Types.FLOAT32,   // pretend this is on the prototype
-        _wrappedType: true      // pretend this is on the prototype
-      }],
+      native: [3, false, null, 'abc', undefined, new Float32(3.14)],
       jsval: JS({
         'list': [
           JS({
@@ -245,18 +243,10 @@ test('js-value convert to and from native', function(t) {
           JS({
             'null': {}
           }),
-          {
-            val: 3.14,
-            _type: Types.FLOAT32, // pretend this is on the prototype
-            _wrappedType: true    // pretend this is on the prototype
-          }
+          new Float32(3.14)
         ]
       }),
-      nativeFinal: [3, false, null, 'abc', null, {
-        val: 3.14,
-        _type: Types.FLOAT32,   // pretend this is on the prototype
-        _wrappedType: true      // pretend this is on the prototype
-      }]
+      nativeFinal: [3, false, null, 'abc', null, new Float32(3.14)]
     }
   ];
 

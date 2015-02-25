@@ -207,17 +207,13 @@ test('canonicalize JSValue - basic functionality', function(t) {
 test('canonicalize JSValue - mixed JSValue and non-JSValue functionality',
   function(t) {
 
+  var Float32 = Registry.lookupOrCreateConstructor(Types.FLOAT32);
+
   var tests = [
     {
       name: 'list w/ typed values',
-      input: [3, false, null, 'abc', undefined, {
-        val: 3.14,
-        _type: Types.FLOAT32,   // pretend this is on the prototype
-        _wrappedType: true      // pretend this is on the prototype
-      }],
-      output: [3, false, null, 'abc', null, {
-        val: 3.14               // This 3.14 needs to have _type FLOAT32
-      }],                       // TODO(alexfandrianto): This needs a test.
+      input: [3, false, null, 'abc', undefined, new Float32(3.14)],
+      output: [3, false, null, 'abc', null, new Float32(3.14)],
       outputDeep: JS({
         'list': {
           val: [
@@ -247,9 +243,7 @@ test('canonicalize JSValue - mixed JSValue and non-JSValue functionality',
               })
             },
             {
-              val: {             // any with wrapped float32
-                val: 3.14
-              }
+              val: new Float32(3.14)// any with wrapped float32
             }
           ]
         }
@@ -299,8 +293,6 @@ test('canonicalize JSValue - mixed JSValue and non-JSValue functionality',
 });
 
 test('canonicalize struct - basic functionality', function(t) {
-  var Bool = Registry.lookupOrCreateConstructor(Types.BOOL);
-  var Str = Registry.lookupOrCreateConstructor(Types.STRING);
   var OptStringType = new Type({
     kind: Kind.OPTIONAL,
     elem: Types.STRING
@@ -313,6 +305,72 @@ test('canonicalize struct - basic functionality', function(t) {
     kind: Kind.LIST,
     elem: Types.BOOL
   });
+
+  var ComplicatedStringStructType = new Type({
+    kind: Kind.STRUCT,
+    fields: [
+      {
+        name: 'JSValueString',
+        type: Types.ANY
+      },
+      {
+        name: 'WrappedString',
+        type: Types.STRING
+      },
+      {
+        name: 'NativeString',
+        type: Types.STRING
+      },
+      {
+        name: 'AnyString',
+        type: Types.ANY
+      },
+      {
+        name: 'NullOptionalAny',
+        type: OptStringType
+      },
+      {
+        name: 'NullOptionalToZeroString',
+        type: OptStringType
+      },
+      {
+        name: 'UndefinedToZeroString',
+        type: Types.STRING
+      },
+      {
+        name: 'UndefinedToZeroStringAny',
+        type: Types.STRING
+      }
+    ]
+  });
+  var ComplicatedBoolAnyListType = new Type({
+    kind: Kind.STRUCT,
+    fields: [
+      {
+        name: 'BoolToAny',
+        type: BoolListType
+      },
+      {
+        name: 'BoolToBool',
+        type: BoolListType
+      },
+      {
+        name: 'AnyToBool',
+        type: AnyListType
+      },
+      {
+        name: 'AnyToAny',
+        type: AnyListType
+      }
+    ]
+  });
+
+  var Bool = Registry.lookupOrCreateConstructor(Types.BOOL);
+  var Str = Registry.lookupOrCreateConstructor(Types.STRING);
+  var ComplicatedStringStruct = Registry.lookupOrCreateConstructor(
+    ComplicatedStringStructType);
+  var ComplicatedBoolAnyList = Registry.lookupOrCreateConstructor(
+    ComplicatedBoolAnyListType);
 
   var tests = [
     {
@@ -395,7 +453,7 @@ test('canonicalize struct - basic functionality', function(t) {
     },
     {
       name: 'struct with internal string/any',
-      inputObject: {
+      inputObject: new ComplicatedStringStruct({
         jSValueString: 'go as JSValue',
         wrappedString: new Str('overly wrapped input'),
         nativeString: 'true string',
@@ -403,45 +461,8 @@ test('canonicalize struct - basic functionality', function(t) {
         nullOptionalAny: null,
         nullOptionalToZeroString: null,
         undefinedToZeroString: undefined,
-        undefinedToZeroStringAny: undefined,
-        _type: new Type({ // pretend that this is going from this struct
-          kind: Kind.STRUCT,
-          fields: [
-            {
-              name: 'JSValueString',
-              type: Types.ANY
-            },
-            {
-              name: 'WrappedString',
-              type: Types.STRING
-            },
-            {
-              name: 'NativeString',
-              type: Types.STRING
-            },
-            {
-              name: 'AnyString',
-              type: Types.ANY
-            },
-            {
-              name: 'NullOptionalAny',
-              type: OptStringType
-            },
-            {
-              name: 'NullOptionalToZeroString',
-              type: OptStringType
-            },
-            {
-              name: 'UndefinedToZeroString',
-              type: Types.STRING
-            },
-            {
-              name: 'UndefinedToZeroStringAny',
-              type: Types.STRING
-            }
-          ]
-        })
-      },
+        undefinedToZeroStringAny: undefined
+      }),
       inputFields: [
         {
           name: 'JSValueString',
@@ -517,33 +538,12 @@ test('canonicalize struct - basic functionality', function(t) {
     },
     {
       name: 'struct with internal []any and []bool',
-      inputObject: {
+      inputObject: new ComplicatedBoolAnyList({
         boolToAny: [true, false, true],
         boolToBool: [false, false],
         anyToBool: [new Bool(true), new Bool(true), new Bool(false)],
-        anyToAny: [new Bool(true)],
-        _type: new Type({ // pretend that this is going from this struct
-          kind: Kind.STRUCT,
-          fields: [
-            {
-              name: 'BoolToAny',
-              type: BoolListType
-            },
-            {
-              name: 'BoolToBool',
-              type: BoolListType
-            },
-            {
-              name: 'AnyToBool',
-              type: AnyListType
-            },
-            {
-              name: 'AnyToAny',
-              type: AnyListType
-            }
-          ]
-        })
-      },
+        anyToAny: [new Bool(true)]
+      }),
       inputFields: [
         {
           name: 'BoolToAny',
@@ -1067,109 +1067,105 @@ test('canonicalize type - basic functionality', function(t) {
 // canonicalize and canonicalizeType to be idempotent when successful.
 
 
+// TODO(alexfandrianto): Perhaps this test is not necessary anymore; we have
+// other coverage, and it seems like it's just checking that deep wrap converts
+// to shallow wrap.
 test('canonicalize deep to shallow - basic functionality', function(t) {
+  var Int16 = Registry.lookupOrCreateConstructor(Types.INT16);
+  var Int64 = Registry.lookupOrCreateConstructor(Types.INT64);
+  var Uint32 = Registry.lookupOrCreateConstructor(Types.UINT32);
+  var Complex64 = Registry.lookupOrCreateConstructor(Types.COMPLEX64);
+  var Str = Registry.lookupOrCreateConstructor(Types.STRING);
+  var Uint32Uint32Map = Registry.lookupOrCreateConstructor({
+    kind: Kind.MAP,
+    name: '',
+    key: Types.INT32,
+    elem: Types.INT32
+  });
+  var KindNameStruct = Registry.lookupOrCreateConstructor({
+    kind: Kind.STRUCT,
+    name: '',
+    fields: [
+      {
+        name: 'Kind',
+        type: Types.UINT32
+      },
+      {
+        name: 'Name',
+        type: Types.STRING
+      }
+    ]
+  });
+  var ABUnion = Registry.lookupOrCreateConstructor({
+    kind: Kind.UNION,
+    name: '',
+    fields: [
+      {
+        name: 'A',
+        type: Types.UINT32
+      },
+      {
+        name: 'B',
+        type: Types.STRING
+      }
+    ]
+  });
+  var ABStruct = Registry.lookupOrCreateConstructor({
+    kind: Kind.STRUCT,
+    name: '',
+    fields: [
+      {
+        name: 'A',
+        type: Types.UINT32
+      },
+      {
+        name: 'B',
+        type: Types.STRING
+      }
+    ]
+  });
+  var AnyStrStruct = Registry.lookupOrCreateConstructor({
+    kind: Kind.STRUCT,
+    name: '',
+    fields: [
+      {
+        name: 'Any',
+        type: Types.ANY
+      },
+      {
+        name: 'Normal',
+        type: Types.STRING
+      }
+    ]
+  });
+
   var tests = [
     {
       name: 'top-level only',
-      input: {
-        val: 5,
-        _wrappedType: true, // pretend that this is on the prototype
-        _type: Types.INT16  // pretend that this is on the prototype
-      },
-      expected: {
-        val: 5
-      }
+      input: new Int16(5, true),
+      expected: new Int16(5)
     },
     {
       name: 'wrapped big int',
-      input: {
-        val: new BigInt(1, new Uint8Array([0x10, 0xff])),
-        _wrappedType: true, // pretend that this is on the prototype
-        _type: Types.INT64  // pretend that this is on the prototype
-      },
-      expected: {
-        val: new BigInt(1, new Uint8Array([0x10, 0xff]))
-      }
+      input: new Int64(new BigInt(1, new Uint8Array([0x10, 0xff])), true),
+      expected: new Int64(new BigInt(1, new Uint8Array([0x10, 0xff])))
     },
     {
       name: 'wrapped complex',
-      input: {
-        val: new Complex(4, 5),
-        _wrappedType: true, // pretend that this is on the prototype
-        _type: Types.COMPLEX64  // pretend that this is on the prototype
-      },
-      expected: {
-        val: new Complex(4, 5)
-      }
+      input: new Complex64(new Complex(4, 5), true),
+      expected: new Complex64(new Complex(4, 5))
     },
     {
       name: 'map',
-      input: {
-        val: new Map([
-          [
-            {
-              val: 3,
-              _wrappedType: true, // pretend that this is on the prototype
-              _type: Types.UINT32 // pretend that this is on the prototype
-            },
-            {
-              val: 4,
-              _wrappedType: true, // pretend that this is on the prototype
-              _type: Types.UINT32 // pretend that this is on the prototype
-            }
-          ], [
-            {
-              val: 6,
-              _wrappedType: true, // pretend that this is on the prototype
-              _type: Types.UINT32 // pretend that this is on the prototype
-            },
-            {
-              val: 3,
-              _wrappedType: true, // pretend that this is on the prototype
-              _type: Types.UINT32 // pretend that this is on the prototype
-            }
-          ]
-        ]),
-        _wrappedType: true, // pretend it is wrapped
-        _type: {            // pretend it has a type
-          kind: Kind.MAP,
-          name: '',
-          key: Types.INT32,
-          elem: Types.INT32
-        }
-      },
-      expected: {
-        val: new Map([[3, 4], [6, 3]])
-      }
+      input: new Uint32Uint32Map(new Map([[3, 4], [6, 3]]), true),
+      expected: new Uint32Uint32Map(new Map([[3, 4], [6, 3]]))
     },
     {
       name: 'fake typeobject',
-      input: {
-        kind: {
-          val: 3,
-          _wrappedType: true, // pretend that this is on the prototype
-          _type: Types.UINT32 // pretend that this is on the prototype
-        },
-        name: {
-          val: 'Boolean',
-          _wrappedType: true, // pretend that this is on the prototype
-          _type: Types.STRING // pretend that this is on the prototype
-        },
-        _type: {              // pretend that this is on the prototype
-          kind: Kind.STRUCT,
-          name: '',
-          fields: [
-            {
-              name: 'Kind',
-              type: Types.UINT32
-            },
-            {
-              name: 'Name',
-              type: Types.STRING
-            }
-          ]
-        }
-      },
+      input: new KindNameStruct({
+        kind: new Uint32(3, true),
+        name: new Str('Boolean', true)
+      }, true),
       expected: {
         kind: 3,
         name: 'Boolean'
@@ -1177,59 +1173,19 @@ test('canonicalize deep to shallow - basic functionality', function(t) {
     },
     {
       name: 'union',
-      input: {
-        b: {
-          val: 'abc',
-          _wrappedType: true, // pretend that this is on the prototype
-          _type: Types.STRING // pretend that this is on the prototype
-        },
-        _type: {              // pretend that this is on the prototype
-          kind: Kind.UNION,
-          name: '',
-          fields: [
-            {
-              name: 'A',
-              type: Types.UINT32
-            },
-            {
-              name: 'B',
-              type: Types.STRING
-            }
-          ]
-        }
-      },
+      input: new ABUnion({
+        b: new Str('abc', true),
+      }, true),
       expected: {
         b: 'abc'
       }
     },
     {
       name: 'struct',
-      input: {
-        a: {
-          val: 3,
-          _wrappedType: true, // pretend that this is on the prototype
-          _type: Types.UINT32 // pretend that this is on the prototype
-        },
-        b: {
-          val: 'abc',
-          _wrappedType: true, // pretend that this is on the prototype
-          _type: Types.STRING // pretend that this is on the prototype
-        },
-        _type: {              // pretend that this is on the prototype
-          kind: Kind.STRUCT,
-          name: '',
-          fields: [
-            {
-              name: 'A',
-              type: Types.UINT32
-            },
-            {
-              name: 'B',
-              type: Types.STRING
-            }
-          ]
-        }
-      },
+      input: new ABStruct({
+        a: new Uint32(3, true),
+        b: new Str('abc', true)
+      }, true),
       expected: {
         a: 3,
         b: 'abc',
@@ -1237,36 +1193,12 @@ test('canonicalize deep to shallow - basic functionality', function(t) {
     },
     {
       name: 'Struct with ANY',
-      input: {
-        any: {
-          val: 'wrapped',
-          _wrappedType: true, // pretend that this is on the prototype
-          _type: Types.STRING // pretend that this is on the prototype
-        },
-        normal: {
-          val: 'shallow',
-          _wrappedType: true, // pretend that this is on the prototype
-          _type: Types.STRING // pretend that this is on the prototype
-        },
-        _type: {              // pretend that this is on the prototype
-          kind: Kind.STRUCT,
-          name: '',
-          fields: [
-            {
-              name: 'Any',
-              type: Types.ANY
-            },
-            {
-              name: 'Normal',
-              type: Types.STRING
-            }
-          ]
-        }
-      },
+      input: new AnyStrStruct({
+        any: new Str('wrapped', true),
+        normal: new Str('shallow', true)
+      }, true),
       expected: {
-        any: {
-          val: 'wrapped'
-        },
+        any: new Str('wrapped'),
         normal: 'shallow'
       }
     }
