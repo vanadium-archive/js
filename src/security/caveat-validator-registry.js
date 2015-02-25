@@ -110,6 +110,8 @@ function registerDefaultCaveats(registry) {
     constCaveatValidator);
   registry.register(vdlSecurity.UnixTimeExpiryCaveatX,
     TEMPalwaysValidateValidator);
+  registry.register(vdlSecurity.ExpiryCaveatX,
+    TEMPalwaysValidateValidator);
   registry.register(vdlSecurity.MethodCaveatX,
     TEMPalwaysValidateValidator);
   registry.register(vdlSecurity.PublicKeyThirdPartyCaveatX,

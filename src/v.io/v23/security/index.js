@@ -7,6 +7,7 @@ var actions = require('../../.././errors/actions');
 
 
 
+var time = require('./../vdlroot/time');
 var uniqueid = require('./../uniqueid');
 
 module.exports = {};
@@ -191,6 +192,28 @@ module.exports.publicKeyThirdPartyCaveat = (vdl.Registry.lookupOrCreateConstruct
 4,
 ]),
   'paramType': vdl.Types.INT64,
+});
+
+  module.exports.ExpiryCaveatX = new (vdl.Registry.lookupOrCreateConstructor(_typeCaveatDescriptor))({
+  'id': new Uint8Array([
+166,
+76,
+45,
+1,
+25,
+251,
+163,
+52,
+128,
+113,
+254,
+235,
+47,
+48,
+128,
+0,
+]),
+  'paramType': new time.Time()._type,
 });
 
   module.exports.MethodCaveatX = new (vdl.Registry.lookupOrCreateConstructor(_typeCaveatDescriptor))({
