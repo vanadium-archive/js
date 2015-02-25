@@ -1,8 +1,6 @@
 var test = require('prova');
 var vom = require('../../src/vom');
-var ifaceSigType = require(
-  '../../src/v.io/v23/vdl/vdlroot/src/signature'
-).Interface;
+var ifaceSigType = require('../../src/v.io/v23/vdlroot/signature').Interface;
 
 test('import paths work', function(assert) {
   // We just need to require the arith package to make sure that

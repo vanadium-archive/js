@@ -5,7 +5,7 @@ var vdl = require('../../../../../.././vdl');
 
 
 
-var time = require('./../../../../../v23/vdl/vdlroot/src/time');
+var time = require('./../../../../../v23/vdlroot/time');
 var naming = require('./../../../../../v23/naming');
 
 module.exports = {};

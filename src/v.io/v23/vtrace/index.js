@@ -5,7 +5,7 @@ var vdl = require('../../.././vdl');
 
 
 
-var time = require('./../vdl/vdlroot/src/time');
+var time = require('./../vdlroot/time');
 var uniqueid = require('./../uniqueid');
 
 module.exports = {};

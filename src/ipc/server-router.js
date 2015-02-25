@@ -17,8 +17,7 @@ var ServerContext = require('./server-context');
 var DecodeUtil = require('../lib/decode-util');
 var EncodeUtil = require('../lib/encode-util');
 var vdl = require('../vdl');
-var vdlsig =
-    require('../v.io/v23/vdl/vdlroot/src/signature');
+var vdlsig = require('../v.io/v23/vdlroot/signature');
 var namespaceUtil = require('../namespace/util');
 var naming = require('../v.io/v23/naming');
 var Glob = require('./glob');

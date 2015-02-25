@@ -1,5 +1,5 @@
 var vdl = require('../v.io/wspr/veyron/services/wsprd/namespace');
-var time = require('../v.io/v23/vdl/vdlroot/src/time');
+var time = require('../v.io/v23/vdlroot/time');
 var emitStreamError = require('../lib/emit-stream-error');
 var Readable = require('stream').Readable;
 var inherits = require('util').inherits;

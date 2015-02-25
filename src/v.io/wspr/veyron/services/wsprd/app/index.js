@@ -5,8 +5,8 @@ var vdl = require('../../../../../.././vdl');
 
 
 
-var signature = require('./../../../../../v23/vdl/vdlroot/src/signature');
-var time = require('./../../../../../v23/vdl/vdlroot/src/time');
+var signature = require('./../../../../../v23/vdlroot/signature');
+var time = require('./../../../../../v23/vdlroot/time');
 var security = require('./../../../../../v23/security');
 var vtrace = require('./../../../../../v23/vtrace');
 
