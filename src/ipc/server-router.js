@@ -311,7 +311,7 @@ Router.prototype.handleRPCRequest = function(messageId, vdlRequest) {
     methodSig: methodSig,
     ctx: ctx,
   };
-
+  
   this._contextMap[messageId] = options.ctx;
   if (methodIsStreaming(methodSig)) {
     stream = new Stream(messageId, this._proxy.senderPromise, false,
@@ -366,8 +366,12 @@ Router.prototype.invokeMethod = function(invoker, options, cb) {
     stream: options.stream
   };
 
+  var rootCtx = this._rootCtx;
   function InvocationFinishedCallback(err, results) {
-    ctx.remoteBlessings.release(ctx);
+    // Note: We use the rootCtx here because we want to make this
+    // call to clean up the blessings even if the method invocation
+    // is cancelled.
+    ctx.remoteBlessings.release(rootCtx);
     cb(err, results);
   }
 
@@ -522,11 +526,7 @@ Router.prototype.sendResult = function(messageId, name, results, err,
   // Clean up the context map.
   var ctx = this._contextMap[messageId];
   if (ctx) {
-    // Set an empty error handler to catch the now useless cancellation error
-    // before we cancel the context.  This just prevents an annoying warning
-    // from being printed.
-    ctx.waitUntilDone().catch(function(err) {});
-    ctx.cancel();
+    ctx.finish();
     delete this._contextMap[messageId];
   }
 

@@ -22,6 +22,7 @@ function testStandardErrors() {
     },
     rejectPromise: function(ctx) {
       var def = new Deferred();
+      def.promise.catch(function() {});
       def.reject(error);
       return def.promise;
     },
@@ -82,6 +83,7 @@ function testNonStandardErrors() {
     },
     rejectPromiseWithString: function(ctx) {
       var def = new Deferred();
+      def.promise.catch(function() {});
       def.reject(message);
       return def.promise;
     },
@@ -93,16 +95,19 @@ function testNonStandardErrors() {
     },
     rejectNothing: function(ctx) {
       var def = new Deferred();
+      def.promise.catch(function() {});
       def.reject();
       return def.promise;
     },
     rejectNull: function(ctx) {
       var def = new Deferred();
+      def.promise.catch(function() {});
       def.reject(null);
       return def.promise;
     },
     rejectEmpty: function(ctx) {
       var def = new Deferred();
+      def.promise.catch(function() {});
       def.reject('');
       return def.promise;
     }

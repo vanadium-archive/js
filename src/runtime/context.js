@@ -50,8 +50,8 @@ Context.prototype.deadline = function() {
 
 
 /**
- * Returns true if the context has exceeded its deadline or has
- * been cancelled.
+ * Returns true if the context has exceeded its deadline,
+ * been cancelled, or been finished.
  * @return {boolean} True if the context is done
  */
 Context.prototype.done = function() {
@@ -60,8 +60,8 @@ Context.prototype.done = function() {
 
 /**
  * Returns a promise that will be resolved when the context exceeds
- * its deadline or is cancelled.  Optionally you can pass a callback
- * that will be run when the promise is resolved.
+ * its deadline, is cancelled, or is finished.  Optionally you can
+ * pass a callback that will be run when the promise is resolved.
  * @param {function} A callback function(error) to call upon cancellation
  */
 Context.prototype.waitUntilDone = function(callback) {
@@ -99,9 +99,11 @@ Context.prototype.withValue = function(key, value) {
 };
 
 /**
- * Returns a new context derived from the current context but that
- * can be cancelled.  The returned context will have an additional
- * method cancel() which can be used to cancel the context.
+ * Returns a new context derived from the current context but that can
+ * be cancelled.  The returned context will have two additional
+ * methods cancel() which can be used to cancel the context and
+ * generate a CancelledError and finish() which frees resources
+ * associated with the context without generating an error.
  * @return {Context} A new derived cancellable context.
  */
 Context.prototype.withCancel = function() {
@@ -226,7 +228,11 @@ CancelContext.prototype.done = function() {
 
 CancelContext.prototype._cancel = function(error) {
   this._done = true;
-  this._deferred.reject(error);
+  if (error) {
+    this._deferred.reject(error);
+  } else {
+    this._deferred.resolve();
+  }
   for (var id in this._children) {
     if (this._children.hasOwnProperty(id)) {
       this._children[id]._cancel(error);
@@ -241,6 +247,10 @@ CancelContext.prototype.cancel = function() {
     delete ca._children[this._id];
   }
   this._cancel(new CancelledError(this));
+};
+
+CancelContext.prototype.finish = function() {
+  this._cancel(null);
 };
 
 CancelContext.prototype.waitUntilDone = function(callback) {

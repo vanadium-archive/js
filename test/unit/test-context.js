@@ -58,6 +58,20 @@ test('CancelContext.done', function(assert) {
   }
 });
 
+test('CancelContext.finish', function(assert) {
+  var cctx = ctx.withCancel();
+  assert.plan(3);
+
+  assert.equal(cctx.done(), false);
+  cctx.waitUntilDone().then(ondone);
+  cctx.finish();
+  assert.equal(cctx.done(), true);
+
+  function ondone(arg) {
+    assert.equal(arg, undefined);
+  }
+});
+
 test('CancelContext (parent cancellation)', function(assert) {
   var cctx1 = ctx.withCancel();
   var cctx2 = cctx1.withCancel();

@@ -3,6 +3,8 @@
  * @private
  */
 
+var vLog = require('../lib/vlog');
+
 /**
  * Blessings encapsulate the set of blessings (human-readable strings) have
  * been bound to a principal in a specific context.
@@ -30,7 +32,9 @@ Blessings.prototype.retain = function() {
 Blessings.prototype.release = function(ctx) {
   this._count--;
   if (this._count === 0) {
-    this._controller.unlinkJSBlessings(ctx, this._id);
+    this._controller.unlinkJSBlessings(ctx, this._id).catch(function(err) {
+      vLog.warn('Ignoring failure while cleaning up blessings: ' + err);
+    });
   }
 };
 

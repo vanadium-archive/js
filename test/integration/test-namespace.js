@@ -152,8 +152,11 @@ test('Test globbing non-existing rooted name - ' +
   init(config).then(function glob(rt) {
     runtime = rt;
     var namespace = rt.namespace();
-    var rpc = namespace.glob(rt.getContext().withDeadline(1000),
+    var rpc = namespace.glob(rt.getContext().withDeadline(1000), 
                              '/RootedBadName.Google.tld:1234/*');
+    rpc.catch(function(err) {
+      // Ignore the timeout error.
+    });
 
     // We expect no actual result items but one stream error result item
     rpc.stream.on('data', function(item) {

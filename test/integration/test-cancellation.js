@@ -3,6 +3,7 @@ var service = require('./get-service');
 var serve = require('./serve');
 var leafDispatcher = require('../../src/ipc/leaf-dispatcher');
 var NO_TIMEOUT = require('../../src/ipc/constants').NO_TIMEOUT;
+var CancelledError = require('../../src/runtime/context').CancelledError;
 
 
 function run(ctx, err, collector, end, assert, id, runtime) {
@@ -19,6 +20,9 @@ function run(ctx, err, collector, end, assert, id, runtime) {
     }
   });
 
+  ctx.waitUntilDone().catch(function(err) {
+    assert.ok(err instanceof CancelledError);
+  });
   var dctx = runtime.getContext().withTimeout(60000);
   collector.waitForStatus(dctx, id, 'running')
     .then(function(serverTimeout) {
@@ -82,8 +86,10 @@ function newDispatcher() {
       info.cb = cb;
       this._processWaiters(key);
 
-
-      context.waitUntilDone().catch(this._onCancel.bind(this, key));
+      var server = this;
+      context.waitUntilDone().catch(function(err) {
+        server._onCancel(key, err);
+      });
     },
     waitForStatus: function(context, key, status, cb) {
       var info = this.callInfo[key];

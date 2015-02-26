@@ -68,11 +68,17 @@ var CacheServicePromises = {
   get: function(context, key) {
     var def = new Deferred();
     var val = this.cacheMap[key];
-    if (val === undefined) {
-      def.reject('unknown key');
-    } else {
-      def.resolve(val);
-    }
+    process.nextTick(function() {
+      if (val === undefined) {
+        // Since we're rejecting the promise before we've returned it
+        // we'll register a catch handler now to avoid an unhandled rejection
+        // warning.
+        def.promise.catch(function() {});
+        def.reject('unknown key');
+      } else {
+        def.resolve(val);
+      }
+    });
     return def.promise;
   } ,
   multiGet: function(context, $stream) {

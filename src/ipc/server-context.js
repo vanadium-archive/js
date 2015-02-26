@@ -43,9 +43,8 @@ function ServerContext(request, controller, ctx) {
     } else {
       this._ctx = this._ctx.withCancel();
     }
-    var security = new SecurityContext(request.context.securityContext, 
+    var security = new SecurityContext(request.context.securityContext,
                                        controller);
-
     this.suffix = security.suffix;
     this.name = security.name;
     this.localBlessings = security.localBlessings;
@@ -73,4 +72,7 @@ ServerContext.prototype.value = function(key) {
 };
 ServerContext.prototype.cancel = function() {
   return this._ctx.cancel();
+};
+ServerContext.prototype.finish = function() {
+  return this._ctx.finish();
 };
