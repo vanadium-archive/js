@@ -189,7 +189,10 @@ Runtime.prototype._getRouter = function() {
   if (!this._router) {
     this._router = new ServerRouter(
       this._getProxyConnection(),
-      this._name, this.getContext(), this._controller);
+      this._name,
+      this.getContext(),
+      this._controller,
+      this.caveatRegistry);
   }
   return this._router;
 };

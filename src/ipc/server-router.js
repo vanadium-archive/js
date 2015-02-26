@@ -9,7 +9,7 @@ var MessageType = require('../proxy/message-type');
 var Incoming = MessageType.Incoming;
 var Outgoing = MessageType.Outgoing;
 var ErrorConversion = require('../proxy/error-conversion');
-var vLog = require('./../lib/vlog');
+var vlog = require('./../lib/vlog');
 var StreamHandler = require('../proxy/stream-handler');
 var verror = require('../v.io/v23/verror');
 var SecurityContext = require('../security/context');
@@ -24,6 +24,9 @@ var Glob = require('./glob');
 var GlobStream = require('./glob-stream');
 var ServerRPCReply =
   require('../v.io/wspr/veyron/services/wsprd/lib').ServerRPCReply;
+var CaveatValidationResponse =
+  require('../v.io/wspr/veyron/services/wsprd/ipc/server').
+  CaveatValidationResponse;
 
 /**
  * A router that handles routing incoming requests to the right
@@ -31,13 +34,14 @@ var ServerRPCReply =
  * @constructor
  * @private
  */
-var Router = function(proxy, appName, rootCtx, controller) {
+var Router = function(proxy, appName, rootCtx, controller, caveatRegistry) {
   this._servers = {};
   this._proxy = proxy;
   this._streamMap = {};
   this._contextMap = {};
   this._appName = appName;
   this._rootCtx = rootCtx;
+  this._caveatRegistry = caveatRegistry;
   this._outstandingRequestForId = {};
   this._controller = controller;
 
@@ -45,6 +49,7 @@ var Router = function(proxy, appName, rootCtx, controller) {
   proxy.addIncomingHandler(Incoming.LOOKUP_REQUEST, this);
   proxy.addIncomingHandler(Incoming.AUTHORIZATION_REQUEST, this);
   proxy.addIncomingHandler(Incoming.CANCEL, this);
+  proxy.addIncomingHandler(Incoming.CAVEAT_VALIDATION_REQUEST, this);
 };
 
 Router.prototype.handleRequest = function(messageId, type, request) {
@@ -61,8 +66,11 @@ Router.prototype.handleRequest = function(messageId, type, request) {
     case Incoming.CANCEL:
       this.handleCancel(messageId, request);
       break;
+    case Incoming.CAVEAT_VALIDATION_REQUEST:
+      this.handleCaveatValidationRequest(messageId, request);
+      break;
     default:
-      vLog.Error('Unknown request type ' + type);
+      vlog.Error('Unknown request type ' + type);
   }
 };
 
@@ -101,6 +109,40 @@ Router.prototype.handleAuthorizationRequest = function(messageId, request) {
     router._proxy.sendRequest(data, Outgoing.AUTHORIZATION_RESPONSE, null,
         messageId);
   });
+};
+
+Router.prototype.handleCaveatValidationRequest = function(messageId, request) {
+  var results = new Array(request.cavs.length);
+  var secCtx = new SecurityContext(request.ctx);
+  for (var i = 0; i < request.cavs.length; i++) {
+    var chainCavs = request.cavs[i];
+    for (var j = 0; j < chainCavs.length; j++) {
+      var cav = chainCavs[j];
+      // TODO(bprosnitz) Support waiting on async validators.
+      var validationErr;
+      try {
+        validationErr = this._caveatRegistry.validate(secCtx, cav);
+      } catch (err) {
+        validationErr = err;
+      }
+      if (validationErr !== undefined) {
+        if (!(validationErr instanceof Error)) {
+          validationErr = new Error(
+            'Non-error value returned from caveat validator: ' +
+            validationErr);
+        }
+        results[i] = ErrorConversion.toStandardErrorStruct(validationErr,
+          this._appName, 'caveat validation');
+        break;
+      }
+    }
+  }
+  var response = new CaveatValidationResponse({
+    results: results
+  });
+  var data = EncodeUtil.encode(response);
+  this._proxy.sendRequest(data, Outgoing.CAVEAT_VALIDATION_RESPONSE, null,
+    messageId);
 };
 
 Router.prototype.handleLookupRequest = function(messageId, request) {
@@ -204,7 +246,7 @@ Router.prototype.handleRPCRequest = function(messageId, vdlRequest) {
 
   var invoker = server.getInvokerForHandle(request.handle);
   if (!invoker) {
-    vLog.error('No invoker found: ', request);
+    vlog.error('No invoker found: ', request);
     err = new Error('No service found');
     this.sendResult(messageId, methodName, null, err);
     return;
@@ -287,7 +329,7 @@ Router.prototype.handleRPCRequest = function(messageId, vdlRequest) {
       if (err instanceof Error && err.stack !== undefined) {
         stackTrace = err.stack;
       }
-      vLog.debug('Requested method ' + methodName +
+      vlog.debug('Requested method ' + methodName +
           ' threw an exception on invoke: ', err, stackTrace);
 
       // The error case has no results; only send the error.
@@ -367,7 +409,7 @@ Router.prototype.handleGlobRequest = function(messageId, name, server, glob,
           ['__glob() failed', glob, err]);
         var errReply = createGlobErrorReply(name, verr);
         self._streamMap[messageId].write(errReply);
-        vLog.info(verr);
+        vlog.info(verr);
       }
       self.decrementOutstandingRequestForId(messageId, cb);
     });
@@ -397,7 +439,7 @@ Router.prototype.handleGlobRequest = function(messageId, name, server, glob,
           '__globChildren returned a bad child', child);
         var errReply = createGlobErrorReply(name, verr);
         self._streamMap[messageId].write(errReply);
-        vLog.info(verr);
+        vlog.info(verr);
         return;
       }
 
@@ -421,7 +463,7 @@ Router.prototype.handleGlobRequest = function(messageId, name, server, glob,
         var verr = new verror.NoServersAndAuthError(context, suffix, e);
         var errReply = createGlobErrorReply(name, verr);
         self._streamMap[messageId].write(errReply);
-        vLog.info(errReply);
+        vlog.info(errReply);
         self.decrementOutstandingRequestForId(messageId, cb);
       });
     });
@@ -432,7 +474,7 @@ Router.prototype.handleGlobRequest = function(messageId, name, server, glob,
           '__globChildren() failed', glob, err);
         var errReply = createGlobErrorReply(name, verr);
         this._streamMap[messageId].write(errReply);
-        vLog.info(verr);
+        vlog.info(verr);
       }
       self.decrementOutstandingRequestForId(messageId, cb);
     });
@@ -520,7 +562,7 @@ Router.prototype.sendResult = function(messageId, name, results, err,
  * @return {Promise} Promise to be called when serve completes or fails.
  */
 Router.prototype.serve = function(name, server, cb) {
-  vLog.info('Serving under the name: ', name);
+  vlog.info('Serving under the name: ', name);
   this._servers[server.id] = server;
   return this._controller.serve(this._rootCtx, name, server.id, cb);
 };

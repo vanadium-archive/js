@@ -65,7 +65,7 @@ ProxyConnection.prototype.send = function(msg) {
 };
 
 ProxyConnection.prototype.close = function(cb) {
-  var defaultTimeout = 5000;
+  var defaultTimeout = 20000; // TODO(bprosnitz) Revisit decreasing this.
   var deferred = new Deferred(cb);
 
   extensionEventProxy.removeListener('crash', this.onCrash);

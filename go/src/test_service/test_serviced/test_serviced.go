@@ -25,6 +25,7 @@ type testServiceDispatcher struct {
 	cache           interface{}
 	errorThrower    interface{}
 	cancelCollector interface{}
+	caveatedInvoker interface{}
 }
 
 func (sd *testServiceDispatcher) Lookup(suffix string) (interface{}, security.Authorizer, error) {
@@ -42,6 +43,10 @@ func (sd *testServiceDispatcher) Lookup(suffix string) (interface{}, security.Au
 		return ipc.ReflectInvokerOrDie(sd.cancelCollector), authorizer, nil
 	}
 
+	if strings.HasPrefix(suffix, "caveatedInvoker") {
+		return ipc.ReflectInvokerOrDie(sd.caveatedInvoker), authorizer, nil
+	}
+
 	return ipc.ReflectInvokerOrDie(sd.cache), authorizer, nil
 }
 
@@ -56,6 +61,7 @@ func StartServer(ctx *context.T) (ipc.Server, naming.Endpoint, error) {
 		cache:           test_service.CacheServer(NewCached()),
 		errorThrower:    test_service.ErrorThrowerServer(NewErrorThrower()),
 		cancelCollector: test_service.CancelCollectorServer(NewCancelCollector()),
+		caveatedInvoker: test_service.InvokeMethodWithCaveatedIdentityServer(NewInvokeMethodWithCaveatedIdentityServer()),
 	}
 
 	// Create an endpoint and begin listening.

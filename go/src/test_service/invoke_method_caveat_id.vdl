@@ -1,0 +1,26 @@
+package test_service
+
+import (
+    "v.io/v23/uniqueid"
+    "v.io/v23/security"
+)
+
+type InvokableTestMethod interface {
+    AMethod() error
+}
+
+type InvokeMethodWithCaveatedIdentity interface {
+    Invoke(name string, cavDesc security.CaveatDescriptor, cavParam any) error
+}
+
+type TestCaveatData struct {
+    A string
+    B any // Use any for value so that we can confirm VDL is being used properly.
+}
+
+const (
+    ConditionallyValidatingTestCaveat = security.CaveatDescriptor{
+        Id: uniqueid.Id{0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0xaa, 0xbb, 0xcc, 0xdd, 0xee, 0xff},
+        ParamType: typeobject(TestCaveatData),
+    }
+)

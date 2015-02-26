@@ -119,8 +119,8 @@ gen-vdl: gen-vdl-impl
 # This generates the output of the vdl files in test/vdl-out/v.io/<package-path>
 # The command will generate all the dependent files as well.
 gen-vdl-test: JS_VDL_DIR := "$(VANADIUM_ROOT)/release/javascript/core/test/vdl-out"
-gen-vdl-test: EXTRA_VDL_PATHS := "javascript-test/..."
-gen-vdl-test: VDLPATH := "$(VANADIUM_ROOT)/release/javascript/core/test/vdl-in"
+gen-vdl-test: EXTRA_VDL_PATHS := "javascript-test/..." "test_service/..."
+gen-vdl-test: VDLPATH := "$(VANADIUM_ROOT)/release/javascript/core/test/vdl-in:$(VANADIUM_ROOT)/release/javascript/core/go"
 gen-vdl-test: JS_VDL_PATH_TO_CORE := "../../src"
 gen-vdl-test: clean-test-vdl gen-vdl-impl
 
@@ -190,7 +190,9 @@ go/bin: $(GO_FILES)
 	@$(VGO) build -o $(GOBIN)/test_serviced test_service/test_serviced
 
 lint: node_modules
-ifndef NOLINT
+ifdef NOLINT
+	@echo "Skipping lint - disabled by NOLINT environment variable"
+else
 	jshint .
 	$(MAKE) -C extension lint
 endif
