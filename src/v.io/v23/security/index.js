@@ -312,14 +312,14 @@ module.exports.CaveatParamCodingError = makeError('v.io/v23/security.CaveatParam
 }, [
   new uniqueid.Id()._type,
   vdl.Types.TYPEOBJECT,
-  vdl.Types.STRING,
+  vdl.Types.ERROR,
 ]);
 
 
 module.exports.CaveatValidationError = makeError('v.io/v23/security.CaveatValidation', actions.NO_RETRY, {
   'en': '{1:}{2:} caveat validation failed: {3}',
 }, [
-  vdl.Types.STRING,
+  vdl.Types.ERROR,
 ]);
 
 
