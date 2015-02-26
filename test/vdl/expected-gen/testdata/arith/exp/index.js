@@ -25,27 +25,27 @@ module.exports = {};
 
 // Services:
 
-
-
+  
+    
 function Exp(){}
 module.exports.Exp = Exp
 
-
-
+    
+      
 Exp.prototype.exp = function(ctx, x) {
   throw new Error('Method Exp not implemented');
 };
+     
 
-
-
+    
 Exp.prototype._serviceDescription = {
   name: 'Exp',
-  pkgPath: 'v.io/v23/vdl/testdata/arith/exp',
+  pkgPath: 'v.io/core/veyron/lib/vdl/testdata/arith/exp',
   doc: "",
   embeds: [],
   methods: [
-
-
+    
+      
     {
     name: 'Exp',
     doc: "",
@@ -65,11 +65,9 @@ Exp.prototype._serviceDescription = {
     outStream: null,
     tags: []
   },
-
+     
   ]
 };
 
-
-
-
-
+   
+ 
