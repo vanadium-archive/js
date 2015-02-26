@@ -1,5 +1,9 @@
 PATH:=$(VANADIUM_ROOT)/environment/cout/node/bin:./node_modules/.bin:$(PATH)
 
+.DEFAULT_GOAL := all
+
+all: public/server/bundle.js public/client/bundle.js
+
 node_modules:
 	npm install
 	touch node_modules
