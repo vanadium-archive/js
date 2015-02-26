@@ -12,6 +12,7 @@ var Types = require('../vdl/types.js');
 var util = require('../vdl/util.js');
 var unwrap = require('../vdl/type-util').unwrap;
 var wiretype = require('../v.io/v23/vom');
+var nativeTypeRegistry = require('../vdl/native-type-registry');
 
 var eofByte = unwrap(wiretype.WireCtrlEOF);
 var nilByte = unwrap(wiretype.WireCtrlNil);
@@ -53,10 +54,9 @@ Decoder.prototype._decodeValue = function(t, reader, shouldWrap) {
     return canonicalize.reduce(value, Types.JSVALUE);
   }
 
-  if (Types.ERROR.equals(t) || Types.ERROR.elem.equals(t)) {
+  if (nativeTypeRegistry.hasNativeType(t)) {
     return canonicalize.reduce(value, t);
   }
-
   // If this value should be wrapped, apply the constructor.
   if (t.kind !== Kind.TYPEOBJECT && shouldWrap) {
     var Ctor = Registry.lookupOrCreateConstructor(t);

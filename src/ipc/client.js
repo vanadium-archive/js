@@ -409,6 +409,7 @@ Client.prototype.bindWithSignature = function(name, signature) {
         for (var i = 0; i < args.length; i++) {
           canonArgs[i] = vdl.Canonicalize.fill(args[i],
                                                methodSig.inArgs[i].type);
+
         }
       } catch(err) {
         if (callback) {

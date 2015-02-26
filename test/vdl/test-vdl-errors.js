@@ -4,8 +4,8 @@ var ec = require('../../src/vdl/error-conversion');
 var message = 'Something bad happened.';
 
 var noAccessError = new verror.NoAccessError(null);
-test('var err = ec.toJSerror(struct)', function(assert) {
-  var err = ec.toJSerror({
+test('var err = ec.fromWireType(struct)', function(assert) {
+  var err = ec.fromWireType({
     msg: message,
     id: noAccessError.id,
     retryCode: noAccessError.retryCode,
@@ -19,12 +19,12 @@ test('var err = ec.toJSerror(struct)', function(assert) {
   assert.end();
 });
 
-test('var err = ec.toJSerror(verror)', function(assert) {
+test('var err = ec.fromWireType(verror)', function(assert) {
   var errors = Object.keys(verror);
   errors.forEach(function(name) {
     var E = verror[name];
     var newE = new E(null);
-    var err = ec.toJSerror({
+    var err = ec.fromWireType({
       id: newE.id,
       retryCode: newE.retryCode,
       msg: message
@@ -38,6 +38,54 @@ test('var err = ec.toJSerror(verror)', function(assert) {
     assert.equal(err.retryCode, newE.retryCode);
     assert.equal(err.toString(), err.name + ': ' + err.message);
   });
+
+  assert.end();
+});
+
+var unknownError = (new verror.UnknownError(null));
+test('var struct = ec.fromNativeType(err)', function(assert) {
+  var err = new Error(message);
+  var struct = ec.fromNativeType(err, 'app', 'call');
+  var expectedError = new verror.UnknownError(null);
+  expectedError.message = message;
+  expectedError.msg = message;
+  expectedError.paramList = ['app', 'call'];
+  assert.deepEqual(struct, expectedError);
+  assert.end();
+});
+
+// TODO: this should loop.
+test('var struct = ec.fromNativeType(verr)', function(assert) {
+  var err = verror.NoAccessError(null, 'app', 'call');
+  var struct = ec.fromNativeType(err);
+
+  assert.deepEqual(struct, err);
+  assert.end();
+});
+
+test('var struct = ec.fromNativeType(string)', function(assert) {
+  var struct = ec.fromNativeType(message, 'appName', 'call');
+
+  var expectedError = new verror.UnknownError(null);
+  var msg = 'appName:call: Error: ' + message;
+  expectedError.message = msg;
+  expectedError.msg = msg;
+  expectedError.paramList = ['appName', 'call', message];
+
+  assert.deepEqual(struct, expectedError);
+  assert.end();
+});
+
+test('Error => Struct => Error', function(assert) {
+  var message = 'testing JS error conversion';
+  var original = new Error(message);
+  var struct = ec.fromNativeType(original);
+  var converted = ec.fromWireType(struct);
+
+  assert.equal(struct.msg, original.message);
+  assert.deepEqual(struct.id, unknownError.id);
+  assert.deepEqual(struct.retryCode, unknownError.retryCode);
+  assert.equal(converted.message, original.message);
 
   assert.end();
 });
