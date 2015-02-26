@@ -17,7 +17,7 @@ var context = require('./context');
 var SharedContextKeys = require('./shared-context-keys');
 var vtrace = require('../lib/vtrace');
 var Controller =
-  require('../v.io/wspr/veyron/services/wsprd/app').Controller;
+  require('../v.io/core/veyron/services/wsprd/app').Controller;
 
 module.exports = Runtime;
 

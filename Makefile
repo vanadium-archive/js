@@ -133,11 +133,11 @@ ifndef NOVDLGEN
 		-js_relative_path_to_core=$(JS_VDL_PATH_TO_CORE) \
 		-js_out_dir=$(JS_VDL_DIR) \
 		v.io/core/veyron/lib/vdl/testdata/... \
+		v.io/core/veyron/services/wsprd/... \
 		v.io/v23/ipc/... \
 		v.io/v23/naming/... \
 		v.io/v23/verror/... \
 		v.io/v23/vom/... \
-		v.io/wspr/veyron/services/wsprd/... \
 		$(EXTRA_VDL_PATHS)
 	# We build the vdlroot stuff with a different set of command line options because the package path does
 	# not equal the directory path of the source file.  This is not ideal, but bjornick and toddw will discuss

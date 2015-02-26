@@ -13,7 +13,7 @@ module.exports = {};
 // Types:
 var _typeBlessingsHandle = new vdl.Type();
 _typeBlessingsHandle.kind = vdl.Kind.STRUCT;
-_typeBlessingsHandle.name = "v.io/wspr/veyron/services/wsprd/principal.BlessingsHandle";
+_typeBlessingsHandle.name = "v.io/core/veyron/services/wsprd/principal.BlessingsHandle";
 _typeBlessingsHandle.fields = [{name: "Handle", type: vdl.Types.INT32}, {name: "PublicKey", type: vdl.Types.STRING}];
 _typeBlessingsHandle.freeze();
 module.exports.BlessingsHandle = (vdl.Registry.lookupOrCreateConstructor(_typeBlessingsHandle));

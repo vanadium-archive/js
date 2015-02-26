@@ -62,10 +62,10 @@ _type9.kind = vdl.Kind.LIST;
 _type9.name = "";
 _type9.elem = new signature.Method()._type;
 _typeVeyronRPCRequest.kind = vdl.Kind.STRUCT;
-_typeVeyronRPCRequest.name = "v.io/wspr/veyron/services/wsprd/app.VeyronRPCRequest";
+_typeVeyronRPCRequest.name = "v.io/core/veyron/services/wsprd/app.VeyronRPCRequest";
 _typeVeyronRPCRequest.fields = [{name: "Name", type: vdl.Types.STRING}, {name: "Method", type: vdl.Types.STRING}, {name: "NumInArgs", type: vdl.Types.INT32}, {name: "NumOutArgs", type: vdl.Types.INT32}, {name: "IsStreaming", type: vdl.Types.BOOL}, {name: "Timeout", type: vdl.Types.INT64}, {name: "TraceRequest", type: new vtrace.Request()._type}];
 _typeVeyronRPCResponse.kind = vdl.Kind.STRUCT;
-_typeVeyronRPCResponse.name = "v.io/wspr/veyron/services/wsprd/app.VeyronRPCResponse";
+_typeVeyronRPCResponse.name = "v.io/core/veyron/services/wsprd/app.VeyronRPCResponse";
 _typeVeyronRPCResponse.fields = [{name: "OutArgs", type: _type1}, {name: "TraceResponse", type: new vtrace.Response()._type}];
 _type1.freeze();
 _type10.freeze();
@@ -153,7 +153,7 @@ Controller.prototype.signature = function(ctx, name) {
     
 Controller.prototype._serviceDescription = {
   name: 'Controller',
-  pkgPath: 'v.io/wspr/veyron/services/wsprd/app',
+  pkgPath: 'v.io/core/veyron/services/wsprd/app',
   doc: "",
   embeds: [],
   methods: [

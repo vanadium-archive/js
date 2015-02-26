@@ -23,9 +23,9 @@ var naming = require('../v.io/v23/naming');
 var Glob = require('./glob');
 var GlobStream = require('./glob-stream');
 var ServerRPCReply =
-  require('../v.io/wspr/veyron/services/wsprd/lib').ServerRPCReply;
+  require('../v.io/core/veyron/services/wsprd/lib').ServerRPCReply;
 var CaveatValidationResponse =
-  require('../v.io/wspr/veyron/services/wsprd/ipc/server').
+  require('../v.io/core/veyron/services/wsprd/ipc/server').
   CaveatValidationResponse;
 
 /**

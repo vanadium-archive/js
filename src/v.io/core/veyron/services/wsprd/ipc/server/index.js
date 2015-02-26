@@ -7,8 +7,8 @@ var actions = require('../../../../../../.././errors/actions');
 
 
 
-var security = require('./../../../../../../v23/security');
 var principal = require('./../../principal');
+var security = require('./../../../../../../v23/security');
 
 module.exports = {};
 
@@ -48,13 +48,13 @@ _type7.kind = vdl.Kind.ENUM;
 _type7.name = "";
 _type7.labels = ["NoRetry", "RetryConnection", "RetryRefetch", "RetryBackoff"];
 _typeCaveatValidationRequest.kind = vdl.Kind.STRUCT;
-_typeCaveatValidationRequest.name = "v.io/wspr/veyron/services/wsprd/ipc/server.CaveatValidationRequest";
+_typeCaveatValidationRequest.name = "v.io/core/veyron/services/wsprd/ipc/server.CaveatValidationRequest";
 _typeCaveatValidationRequest.fields = [{name: "Ctx", type: _typeSecurityContext}, {name: "Cavs", type: _type3}];
 _typeCaveatValidationResponse.kind = vdl.Kind.STRUCT;
-_typeCaveatValidationResponse.name = "v.io/wspr/veyron/services/wsprd/ipc/server.CaveatValidationResponse";
+_typeCaveatValidationResponse.name = "v.io/core/veyron/services/wsprd/ipc/server.CaveatValidationResponse";
 _typeCaveatValidationResponse.fields = [{name: "Results", type: _type6}];
 _typeSecurityContext.kind = vdl.Kind.STRUCT;
-_typeSecurityContext.name = "v.io/wspr/veyron/services/wsprd/ipc/server.SecurityContext";
+_typeSecurityContext.name = "v.io/core/veyron/services/wsprd/ipc/server.SecurityContext";
 _typeSecurityContext.fields = [{name: "Method", type: vdl.Types.STRING}, {name: "Suffix", type: vdl.Types.STRING}, {name: "MethodTags", type: _type1}, {name: "LocalBlessings", type: new principal.BlessingsHandle()._type}, {name: "LocalBlessingStrings", type: _type2}, {name: "RemoteBlessings", type: new principal.BlessingsHandle()._type}, {name: "RemoteBlessingStrings", type: _type2}, {name: "LocalEndpoint", type: vdl.Types.STRING}, {name: "RemoteEndpoint", type: vdl.Types.STRING}];
 _typeerror.kind = vdl.Kind.STRUCT;
 _typeerror.name = "error";
@@ -84,13 +84,13 @@ module.exports.error = (vdl.Registry.lookupOrCreateConstructor(_typeerror));
 
 // Errors:
 
-module.exports.CaveatValidationTimeoutError = makeError('v.io/wspr/veyron/services/wsprd/ipc/server.CaveatValidationTimeout', actions.NO_RETRY, {
+module.exports.CaveatValidationTimeoutError = makeError('v.io/core/veyron/services/wsprd/ipc/server.CaveatValidationTimeout', actions.NO_RETRY, {
   'en': '{1:}{2:} Caveat validation has timed out',
 }, [
 ]);
 
 
-module.exports.InvalidValidationResponseFromJavascriptError = makeError('v.io/wspr/veyron/services/wsprd/ipc/server.InvalidValidationResponseFromJavascript', actions.NO_RETRY, {
+module.exports.InvalidValidationResponseFromJavascriptError = makeError('v.io/core/veyron/services/wsprd/ipc/server.InvalidValidationResponseFromJavascript', actions.NO_RETRY, {
   'en': '{1:}{2:} Invalid validation response from javascript',
 }, [
 ]);

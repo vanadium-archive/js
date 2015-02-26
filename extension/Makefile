@@ -1,5 +1,5 @@
 PATH := node_modules/.bin:${VANADIUM_ROOT}/environment/cout/node/bin:$(PATH)
-WSPRD_PATH := $(VANADIUM_ROOT)/release/go/src/v.io/wspr/veyron/services/wsprd
+WSPRD_PATH := $(VANADIUM_ROOT)/release/go/src/v.io/core/veyron/services/wsprd
 SHELL := /bin/bash -e -o pipefail
 .DEFAULT_GOAL := all
 
@@ -55,7 +55,7 @@ build/nacl/main.nmf: nacl
 	mkdir -p $(dir $@)
 	cp -r nacl/main.nmf $@
 
-build/nacl/main-64.nexe: $(VANADIUM_ROOT)/release/go/src/v.io/wspr/veyron/services/wsprd/browspr/main/main_nacl.go
+build/nacl/main-64.nexe: $(VANADIUM_ROOT)/release/go/src/v.io/core/veyron/services/wsprd/browspr/main/main_nacl.go
 	$(call COMPILE-NACL-PLUGIN,$<,$@)
 
 build/nacl: build/nacl/main.nmf build/nacl/main-64.nexe

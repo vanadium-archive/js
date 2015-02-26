@@ -108,7 +108,7 @@ Namespace.prototype.setRoots = function(ctx, roots) {
     
 Namespace.prototype._serviceDescription = {
   name: 'Namespace',
-  pkgPath: 'v.io/wspr/veyron/services/wsprd/namespace',
+  pkgPath: 'v.io/core/veyron/services/wsprd/namespace',
   doc: "",
   embeds: [],
   methods: [
