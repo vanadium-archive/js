@@ -75,11 +75,7 @@ Workaround.prototype.unused = function(ctx, unused) {
     
 Workaround.prototype._serviceDescription = {
   name: 'Workaround',
-<<<<<<< HEAD
-  pkgPath: 'v.io/wspr/veyron/services/wsprd/namespace',
-=======
   pkgPath: 'v.io/core/veyron/services/wsprd/namespace',
->>>>>>> master
   doc: "// TODO(nlacasse,bprosnitz): Remove this unused type and the security import\n// once https://github.com/veyron/release-issues/issues/1202 is fixed.",
   embeds: [],
   methods: [
