@@ -1,9 +1,13 @@
 var test = require('prova');
-var veyron = require('../../');
-var Promise = require('../../src/lib/promise');
-var verror = veyron.errors;
+
+var access = require('../../src/v.io/v23/services/security/access');
 var config = require('./default-config');
+var Promise = require('../../src/lib/promise');
+var random = require('../../src/lib/random');
 var timeouts = require('./timeouts');
+var veyron = require('../../');
+var verror = veyron.errors;
+
 var namespaceRoot = process.env.NAMESPACE_ROOT;
 var PREFIX = 'namespace-testing/';
 
@@ -446,6 +450,85 @@ test('Test setting and getting roots - ' +
       runtime.close(assert.end);
     }
   }
+});
+
+test('Test getACL() on non-existant name', function(assert) {
+  veyron.init(config, function(err, rt) {
+    if (err) {
+      return assert.end(err);
+    }
+
+    var ns = rt.namespace();
+
+    var name = 'non/existant/name/' + random.hex();
+
+    ns.getACL(name, function(err) {
+      assert.ok(err, 'should error');
+      rt.close(assert.end);
+    });
+  });
+});
+
+test('Test setting and getting ACLs - ' +
+    'setACL(), getACL()', function(assert) {
+  veyron.init(config, function(err, rt) {
+    if (err) {
+      return assert.end(err);
+    }
+
+    var ns = rt.namespace();
+
+    // Note: we use a random name here so we can run the test multiple times
+    // with the same mounttable without getting locked out of a name.
+    var name = 'path/to/some/name/' + random.hex();
+
+    // TODO(nlacasse): This is the best way I found to build a tagged acl map.
+    // Are there better ways?  Consider making a helper function.
+    var tam = new access.TaggedACLMap(new Map([
+      [access.Admin, new access.ACL({
+        'in': ['...'],
+        'notIn': ['foo']
+      })],
+      [access.Read, new access.ACL({
+        'in': ['bar/baz']
+      })],
+      [access.Write, new access.ACL({
+        'notIn': ['biz/qux']
+      })]
+    ]));
+
+    ns.setACL(name, tam, function(err) {
+      if (err) {
+        return end(err);
+      }
+
+      ns.getACL(name, function(err, gotTam, gotEtag) {
+        if (err) {
+          return end(err);
+        }
+
+        assert.equal(typeof gotEtag, 'string', 'getACL returns a string etag');
+
+        assert.ok(gotTam, 'getACL returns a tagged acl map');
+        assert.deepEqual(gotTam, tam.val,
+            'getACL returns the same tagged acl map that we set');
+
+        ns.setACL(name, tam, 'badEtag', function(err) {
+          assert.ok(err, 'setACL with a bad etag should error');
+
+          ns.setACL(name, tam, gotEtag, function(err) {
+            assert.error(err, 'setACL with the correct etag should not error');
+            end();
+          });
+        });
+      });
+    });
+
+    function end(err) {
+      assert.error(err, 'should not error');
+      rt.close(assert.end);
+    }
+  });
 });
 
 /*

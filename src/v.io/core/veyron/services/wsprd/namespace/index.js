@@ -7,6 +7,8 @@ var vdl = require('../../../../../.././vdl');
 
 var time = require('./../../../../../v23/vdlroot/time');
 var naming = require('./../../../../../v23/naming');
+var security = require('./../../../../../v23/security');
+var access = require('./../../../../../v23/services/security/access');
 
 module.exports = {};
 
@@ -17,6 +19,7 @@ var _type1 = new vdl.Type();
 var _type2 = new vdl.Type();
 var _type3 = new vdl.Type();
 var _type4 = new vdl.Type();
+var _type5 = new vdl.Type();
 var _typeerror = new vdl.Type();
 _type1.kind = vdl.Kind.LIST;
 _type1.name = "";
@@ -30,6 +33,9 @@ _type3.labels = ["NoRetry", "RetryConnection", "RetryRefetch", "RetryBackoff"];
 _type4.kind = vdl.Kind.LIST;
 _type4.name = "";
 _type4.elem = vdl.Types.ANY;
+_type5.kind = vdl.Kind.LIST;
+_type5.name = "";
+_type5.elem = new security.BlessingPattern()._type;
 _typeerror.kind = vdl.Kind.STRUCT;
 _typeerror.name = "error";
 _typeerror.fields = [{name: "Id", type: vdl.Types.STRING}, {name: "RetryCode", type: _type3}, {name: "Msg", type: vdl.Types.STRING}, {name: "ParamList", type: _type4}];
@@ -37,6 +43,7 @@ _type1.freeze();
 _type2.freeze();
 _type3.freeze();
 _type4.freeze();
+_type5.freeze();
 _typeerror.freeze();
 module.exports.error = (vdl.Registry.lookupOrCreateConstructor(_typeerror));
 
@@ -52,6 +59,45 @@ module.exports.error = (vdl.Registry.lookupOrCreateConstructor(_typeerror));
 
 
 // Services:
+
+  
+    
+function Workaround(){}
+module.exports.Workaround = Workaround
+
+    
+      
+Workaround.prototype.unused = function(ctx, unused) {
+  throw new Error('Method Unused not implemented');
+};
+     
+
+    
+Workaround.prototype._serviceDescription = {
+  name: 'Workaround',
+  pkgPath: 'v.io/core/veyron/services/wsprd/namespace',
+  doc: "// TODO(nlacasse,bprosnitz): Remove this unused type and the security import\n// once https://github.com/veyron/release-issues/issues/1202 is fixed.",
+  embeds: [],
+  methods: [
+    
+      
+    {
+    name: 'Unused',
+    doc: "",
+    inArgs: [{
+      name: 'unused',
+      doc: "",
+      type: new security.BlessingPattern()._type
+    },
+    ],
+    outArgs: [],
+    inStream: null,
+    outStream: null,
+    tags: []
+  },
+     
+  ]
+};
 
   
     
@@ -102,6 +148,16 @@ Namespace.prototype.roots = function(ctx) {
       
 Namespace.prototype.setRoots = function(ctx, roots) {
   throw new Error('Method SetRoots not implemented');
+};
+    
+      
+Namespace.prototype.setACL = function(ctx, name, acl, etag) {
+  throw new Error('Method SetACL not implemented');
+};
+    
+      
+Namespace.prototype.getACL = function(ctx, name) {
+  throw new Error('Method GetACL not implemented');
 };
      
 
@@ -291,6 +347,58 @@ Namespace.prototype._serviceDescription = {
     },
     ],
     outArgs: [],
+    inStream: null,
+    outStream: null,
+    tags: []
+  },
+    
+      
+    {
+    name: 'SetACL',
+    doc: "// SetACL sets the ACL in a node in a mount table.",
+    inArgs: [{
+      name: 'name',
+      doc: "",
+      type: vdl.Types.STRING
+    },
+    {
+      name: 'acl',
+      doc: "",
+      type: new access.TaggedACLMap()._type
+    },
+    {
+      name: 'etag',
+      doc: "",
+      type: vdl.Types.STRING
+    },
+    ],
+    outArgs: [],
+    inStream: null,
+    outStream: null,
+    tags: []
+  },
+    
+      
+    {
+    name: 'GetACL',
+    doc: "// GetACL returns the ACL in a node in a mount table.",
+    inArgs: [{
+      name: 'name',
+      doc: "",
+      type: vdl.Types.STRING
+    },
+    ],
+    outArgs: [{
+      name: 'acl',
+      doc: "",
+      type: new access.TaggedACLMap()._type
+    },
+    {
+      name: 'etag',
+      doc: "",
+      type: vdl.Types.STRING
+    },
+    ],
     inStream: null,
     outStream: null,
     tags: []
