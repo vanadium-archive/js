@@ -220,23 +220,6 @@ test('type encoding encode errors', function(t) {
       kind: Kind.ENUM,
       labels: ['do not', 'put a number in', 'the enum labels', 3]
     },
-    'union w/ field w/ too many keys': {
-      kind: Kind.UNION,
-      fields: [
-        {
-          name: 'FirstField',
-          type: Types.STRING,
-          extra: 'should not be here'
-        },
-        {
-          name: 'SecondField',
-          type: {
-            kind: Kind.LIST,
-            elem: Types.INT16
-          }
-        }
-      ]
-    },
     'union w/o fields': {
       kind: Kind.UNION,
       fields: []

@@ -297,6 +297,7 @@ test('canonicalize struct - basic functionality', function(t) {
     kind: Kind.OPTIONAL,
     elem: Types.STRING
   });
+  var OptStr = Registry.lookupOrCreateConstructor(OptStringType);
   var AnyListType = new Type({
     kind: Kind.LIST,
     elem: Types.ANY
@@ -330,7 +331,7 @@ test('canonicalize struct - basic functionality', function(t) {
         type: OptStringType
       },
       {
-        name: 'NullOptionalToZeroString',
+        name: 'OptionalToString',
         type: OptStringType
       },
       {
@@ -459,7 +460,7 @@ test('canonicalize struct - basic functionality', function(t) {
         nativeString: 'true string',
         anyString: new Str('string any'),
         nullOptionalAny: null,
-        nullOptionalToZeroString: null,
+        optionalToString: new OptStr('non-empty string'),
         undefinedToZeroString: undefined,
         undefinedToZeroStringAny: undefined
       }),
@@ -485,7 +486,7 @@ test('canonicalize struct - basic functionality', function(t) {
           type: Types.ANY
         },
         {
-          name: 'NullOptionalToZeroString',
+          name: 'OptionalToString',
           type: Types.STRING
         },
         {
@@ -505,7 +506,7 @@ test('canonicalize struct - basic functionality', function(t) {
         nullOptionalAny: {
           val: null
         },
-        nullOptionalToZeroString: '',
+        optionalToString: 'non-empty string',
         undefinedToZeroString: '',
         undefinedToZeroStringAny: new Str('')
       },
@@ -529,7 +530,7 @@ test('canonicalize struct - basic functionality', function(t) {
             val: null
           }
         },
-        nullOptionalToZeroString: new Str(''),
+        optionalToString: new Str('non-empty string'),
         undefinedToZeroString: new Str(''),
         undefinedToZeroStringAny: {
           val: new Str('')
@@ -1233,3 +1234,235 @@ function testDeepWrapToUnwrap(t, test) {
   var outputTypeStr = stringify(output._type);
   t.equal(outputTypeStr, expectedTypeStr, name + ' - top-level type match');
 }
+
+
+// This test checks the successful cases of value to type conversion.
+// For example, some structs can convert to maps, and non-null optionals convert
+// to their base type.
+// This test supplements the cross-language conversion tests cases in
+// test-vom-compatible.js
+test('canonicalize conversion - success', function(t) {
+  var OptStringType = new Type({
+    kind: Kind.OPTIONAL,
+    elem: Types.STRING
+  });
+  var IntSetType = new Type({
+    kind: Kind.SET,
+    key: Types.INT16
+  });
+  var FloatBoolMapType = new Type({
+    kind: Kind.MAP,
+    key: Types.FLOAT32,
+    elem: Types.BOOL
+  });
+  var Byte10ArrayType = new Type({
+    kind: Kind.ARRAY,
+    elem: Types.BYTE,
+    len: 10
+  });
+  var StructABCType = new Type({
+    kind: Kind.STRUCT,
+    fields: [
+      {
+        name: 'A',
+        type: Types.BOOL
+      },
+      {
+        name: 'B',
+        type: Types.STRING
+      },
+      {
+        name: 'C',
+        type: Types.UINT32
+      }
+    ]
+  });
+  var StructCDBType = new Type({
+    kind: Kind.STRUCT,
+    fields: [
+      {
+        name: 'C',
+        type: Types.UINT32
+      },
+      {
+        name: 'D',
+        type: OptStringType
+      },
+      {
+        name: 'B',
+        type: Types.STRING
+      }
+    ]
+  });
+
+  var Str = Registry.lookupOrCreateConstructor(Types.STRING);
+  var OptStr = Registry.lookupOrCreateConstructor(OptStringType);
+  var IntSet = Registry.lookupOrCreateConstructor(IntSetType);
+  var FloatBoolMap = Registry.lookupOrCreateConstructor(FloatBoolMapType);
+  var Byte10Array = Registry.lookupOrCreateConstructor(Byte10ArrayType);
+  var StructABC = Registry.lookupOrCreateConstructor(StructABCType);
+  var StructCDB = Registry.lookupOrCreateConstructor(StructCDBType);
+
+  var tests = [
+    {
+      name: 'OptString to String',
+      inValue: new OptStr('abc'),
+      outValue: new Str('abc'),
+      targetType: Types.STRING
+    },
+    {
+      name: 'String to ByteArray',
+      inValue: '1234567',
+      outValue: new Byte10Array(
+        new Uint8Array([49, 50, 51, 52, 53, 54, 55, 0, 0, 0])
+      ),
+      targetType: Byte10ArrayType
+    },
+    {
+      name: 'Set to Map',
+      inValue: new IntSet(new Set([4, -5, 8])),
+      outValue: new FloatBoolMap(new Map([[4, true], [-5, true], [8, true]])),
+      targetType: FloatBoolMapType
+    },
+    {
+      name: 'Map to Set',
+      inValue: new FloatBoolMap(new Map([[4, false], [-5, true], [8, true]])),
+      outValue: new IntSet(new Set([-5, 8])),
+      targetType: IntSetType
+    },
+    {
+      name: 'StructABC to StructCDB',
+      inValue: new StructABC({
+        a: true,
+        b: 'boom',
+        c: 5
+      }),
+      outValue: new StructCDB({
+        b: 'boom',
+        c: 5,
+        d: undefined
+      }),
+      targetType: StructCDBType
+    },
+    {
+      name: 'StructCDB to StructABC',
+      inValue: new StructCDB({
+        d: null,
+        b: 'doom',
+        c: 6
+      }),
+      outValue: new StructABC({
+        a: undefined,
+        b: 'doom',
+        c: 6
+      }),
+      targetType: StructABCType
+    }
+  ];
+  for (var i = 0; i < tests.length; i++) {
+    var test = tests[i];
+
+    t.deepEqual(
+      canonicalize.reduce(test.inValue, test.targetType),
+      test.outValue,
+      test.name + ' converts correctly'
+    );
+  }
+  t.end();
+});
+
+// This test checks the failure cases of value to type conversion.
+// For example, some maps fail to convert to sets, and null optional values
+// cannot convert to their base type.
+// This test supplements the cross-language conversion tests cases in
+// test-vom-compatible.js
+test('canonicalize conversion - failure', function(t) {
+  var OptStringType = new Type({
+    kind: Kind.OPTIONAL,
+    elem: Types.STRING
+  });
+  var IntListType = new Type({
+    kind: Kind.LIST,
+    elem: Types.INT32
+  });
+  var Int3ArrType = new Type({
+    kind: Kind.ARRAY,
+    elem: Types.INT32,
+    len: 3
+  });
+  var IntSetType = new Type({
+    kind: Kind.SET,
+    key: Types.INT16
+  });
+
+  var Str = Registry.lookupOrCreateConstructor(Types.STRING);
+  var OptStr = Registry.lookupOrCreateConstructor(OptStringType);
+  var IntList = Registry.lookupOrCreateConstructor(IntListType);
+
+  var tests = [
+    {
+      name: 'number larger than MAX_FLOAT32',
+      inValue: 1e40,
+      targetType: Types.FLOAT32,
+      expectedErr: 'is too large'
+    },
+    {
+      name: 'imag smaller than MAX_FLOAT32 in Complex64',
+      inValue: { real: 0, imag: -1e40 },
+      targetType: Types.COMPLEX64,
+      expectedErr: 'is too small'
+    },
+    {
+      name: 'negative, real Complex to uint',
+      inValue: new Complex(-4, 0),
+      targetType: Types.UINT16,
+      expectedErr: 'value cannot be negative'
+    },
+    {
+      name: 'null OptString to String',
+      inValue: new OptStr(null),
+      targetType: Types.STRING,
+      expectedErr: 'value is null for non-optional type'
+    },
+    {
+      name: 'String to Bool',
+      inValue: new Str('not a boolean'),
+      targetType: Types.BOOL,
+      expectedErr: 'not compatible'
+    },
+    {
+      name: 'String to Bool - native',
+      inValue: 'not a boolean',
+      targetType: Types.BOOL,
+      expectedErr: 'value is not a boolean'
+    },
+    {
+      name: 'large list to smaller array',
+      inValue: new IntList([3, 4, 8, 1]),
+      targetType: Int3ArrType,
+      expectedErr: 'exceeds type length 3'
+    },
+    {
+      name: 'large list to smaller array - native',
+      inValue: [3, 4, 8, 1],
+      targetType: Int3ArrType,
+      expectedErr: 'exceeds type length 3'
+    },
+    {
+      name: 'map to set',
+      inValue: new Map([[4, 'not a bool'], [5, true]]),
+      targetType: IntSetType,
+      expectedErr: 'this Map value cannot convert to Set'
+    }
+  ];
+  for (var i = 0; i < tests.length; i++) {
+    var test = tests[i];
+
+    t.throws(
+      canonicalize.reduce.bind(null, test.inValue, test.targetType),
+      new RegExp('.*' + (test.expectedErr || '') + '.*'),
+      test.name + ' fails to convert'
+    );
+  }
+  t.end();
+});

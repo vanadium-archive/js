@@ -79,14 +79,14 @@ test('named primitive types', function(assert) {
   });
   assert.equal(res.val, 1);
 
-  res = new base.NamedComplex64({});
+  res = new base.NamedComplex64();
   assert.deepEqual(res._type, {
     kind: Kind.COMPLEX64,
     name: 'v.io/core/veyron/lib/vdl/testdata/base.NamedComplex64',
   });
   assert.deepEqual(res.val, { real: 0, imag: 0 });
 
-  res = new base.NamedComplex128({});
+  res = new base.NamedComplex128();
   assert.deepEqual(res._type, {
     kind: Kind.COMPLEX128,
     name: 'v.io/core/veyron/lib/vdl/testdata/base.NamedComplex128',

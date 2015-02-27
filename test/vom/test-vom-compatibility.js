@@ -12,12 +12,13 @@ var ByteArrayMessageWriter = require(
     './../../src/vom/byte-array-message-writer.js');
 var Decoder = require('./../../src/vom/decoder.js');
 var Encoder = require('./../../src/vom/encoder.js');
+var canonicalize = require('./../../src/vdl/canonicalize.js');
 var typeCompatible = require('./../../src/vdl/type-compatible.js');
 var util = require('./../../src/vdl/byte-util.js');
 
 // Test that the received type matches the expected type.
 testdata.Tests.val.forEach(function(t) {
-  test('type compatibility - ' + t.name, function(assert) {
+  test('type toString compatibility - ' + t.name, function(assert) {
     var typeStr = t.typeString;
     var type = t.value._type;
     assert.equal(type.toString(), typeStr, 'type string matches');
@@ -104,5 +105,56 @@ compatTests.forEach(function(typelist1, typename1) {
         assert.end();
       }
     );
+  });
+});
+
+// Test that values follow the VDL conversion rules; success cases.
+var convertTests = testdata.ConvertTests.val;
+convertTests.forEach(function(convertLists, typename) {
+  test('vom type conversion success - ' + typename, function(assert) {
+    // Calues within the same convert list are convertible.
+    for (var level = 0; level < convertLists.length; level++) {
+      var convertData = convertLists[level];
+      var name = convertData.name;
+      var values = convertData.values;
+
+      // Each pair of values should be able to convert to every other value's
+      // type within a set.
+      // TODO(alexfandrianto): also test the unwrapped native value...
+      for (var i = 0; i < values.length; i++) {
+        var val1 = values[i];
+        for (var j = 0; j < values.length; j++) {
+          var val2 = values[j];
+          var convert1 = canonicalize.reduce(val1, val2._type);
+
+          assert.deepEqual(convert1, val2, name + ' converts to ' +
+            val2._type.toString());
+        }
+      }
+    }
+    assert.end();
+  });
+});
+
+// Test that values follow the VDL conversion rules; failure cases.
+convertTests.forEach(function(convertLists, typename) {
+  test('vom type conversion failure - ' + typename, function(assert) {
+    // Higher-level lists cannot down convert to lower-level lists.
+    for (var level = 0; level < convertLists.length; level++) {
+      var values = convertLists[level].values;
+
+      for (var lower = 0; lower < level; lower++) {
+        var targetType = convertLists[lower].primaryType;
+        var targetName = convertLists[lower].name;
+
+        // Every conversion attempt must throw.
+        for (var i = 0; i < values.length; i++) {
+          assert.throws(canonicalize.reduce.bind(null, values[i], targetType),
+            targetName + ' cannot be converted from this instance of ' +
+            values[i]._type.toString());
+        }
+      }
+    }
+    assert.end();
   });
 });

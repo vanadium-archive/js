@@ -210,7 +210,7 @@ test('create constructor', function(assert) {
   assert.end();
 });
 
-test('created constructor fails on extra struct field', function(assert) {
+test('created constructor fails on invalid data - struct', function(assert) {
   var type = {
     kind: Kind.STRUCT,
     name: 'aStruct',
@@ -222,17 +222,14 @@ test('created constructor fails on extra struct field', function(assert) {
     ]
   };
   var constructor = createConstructor(type);
-  var value = {
-    usedField: 'value',
-    extraField: 4
-  };
+  var value = [255, 0, 35]; // array, not an object/map/set
   assert.throws(function() {
     constructor(value);
   });
   assert.end();
 });
 
-test('created constructor fails on invalid data', function(assert) {
+test('created constructor fails on invalid data - bool', function(assert) {
   var type = {
     kind: Kind.BOOL,
     name: 'aBool'
