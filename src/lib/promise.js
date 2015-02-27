@@ -1,5 +1,5 @@
 /**
- * @fileoverview Veyron.js promise implementation.
+ * @fileoverview Vanadium.js promise implementation.
  *
  * Currently this is just bluebird promises.
  *

@@ -4,7 +4,7 @@ var config = require('./default-config');
 var defaultBlessingRegex = require('./default-blessing-regex');
 var leafDispatcher = require('../../src/ipc/leaf-dispatcher');
 var serve = require('./serve');
-var veyron = require('../../');
+var vanadium = require('../../');
 
 function assertBlessings(blessings, t) {
   t.ok(Array.isArray(blessings), 'blessings is an array');
@@ -91,7 +91,7 @@ test('Test remote blessings with unknown method ' +
 
 test('Test remote blessings with non-existant server ' +
     '- client.remoteBlessings(unknown, cb)', function(t) {
-  veyron.init(config, function(err, rt) {
+  vanadium.init(config, function(err, rt) {
     if (err) {
       return t.end(err);
     }

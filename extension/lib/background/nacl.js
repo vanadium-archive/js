@@ -126,13 +126,13 @@ Nacl.prototype.getBlessingRoot = function(url, cb) {
   var hostname = require('url').parse(url).hostname;
   if ((/v\.io$/).test(hostname)) {
     console.log('Using hard-coded blessing root to connect to ' + url);
-    var veyronTestRoot = {
+    var vanadiumTestRoot = {
       names: ['dev.v.io'],
       publicKey: 'MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEorLIuoiI9dh9qu97fz7i0' +
         'Ay93VQG-KRrm_NqlciiqT6L9F5daSuUZse_EeYCAQE-76gozA_f7BcW3aPiTU40aw=='
     };
 
-    return process.nextTick(cb.bind(null, null, veyronTestRoot));
+    return process.nextTick(cb.bind(null, null, vanadiumTestRoot));
   }
 
   console.log('Requesting blessing root from ' + url);

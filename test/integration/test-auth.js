@@ -1,9 +1,9 @@
 var test = require('prova');
 
 var config = require('./default-config');
-var veyron = require('../../src/veyron');
+var vanadium = require('../../src/vanadium');
 
-test('veyron.init with authentication gives runtime with account name',
+test('vanadium.init with authentication gives runtime with account name',
     function(t) {
 
   // Don't test this in node because there is no extension to talk to.
@@ -11,7 +11,7 @@ test('veyron.init with authentication gives runtime with account name',
     return t.end();
   }
 
-  veyron.init(config, function(err, rt) {
+  vanadium.init(config, function(err, rt) {
     if (err) {
       t.error(err);
       return t.end(err);

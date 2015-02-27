@@ -1,11 +1,11 @@
-var veyron = require('../../');
+var vanadium = require('../../');
 var config = require('./default-config');
 
 module.exports = service;
 
 // DRYs up test code by wrapping the default success case for:
 //
-//    veyron.init() -> runtime.bindTo() -> assertions -> runtime.close()
+//    vanadium.init() -> runtime.bindTo() -> assertions -> runtime.close()
 //
 // To make a connection to the default integration test wspr instance and
 // bind to a service use:
@@ -21,7 +21,7 @@ module.exports = service;
 //     })
 //
 function service(name, callback) {
-  veyron.init(config, function(err, runtime) {
+  vanadium.init(config, function(err, runtime) {
     if (err) {
       return callback(err);
     }

@@ -1,12 +1,12 @@
 {
-  "name": "Veyron-Extension",
+  "name": "Vanadium-Extension",
   "version": "0.0.1",
   "description": "## Goals: ### Short-term: Extension provides UI to manage identities WSPR holds on to all private keys and never exposes them.  The extension works with WSPR to manage identities.  A webapp should not be able to see all identities known to WSPR.",
   "scripts": {
     "start": "make example-server",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "veyron",
+  "author": "vanadium",
   "license": "MIT",
   "dependencies": {
     "debug": "^2.1.1",
@@ -33,6 +33,6 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://veyron.googlesource.com/veyron-extension"
+    "url": "https://vandium.googlesource.com/vanadium-extension"
   }
 }

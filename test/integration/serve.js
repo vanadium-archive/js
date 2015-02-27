@@ -1,4 +1,4 @@
-var veyron = require('../../');
+var vanadium = require('../../');
 var config = require('./default-config');
 var extend = require('xtend');
 var defaults = {
@@ -11,11 +11,11 @@ module.exports = serve;
 //
 // DRYs up test code by wrapping the default success case for:
 //
-//    veyron.init() ->
+//    vanadium.init() ->
 //    runtime.server(name, dispatcher, ...) ->
 //    runtime.bindTo(ctx, name, ...) -> r
 //    assertions ->
-//    untime.close()
+//    runtime.close()
 //
 // To make a connection to the default integration test wspr instance and
 // bind to a service use:
@@ -28,8 +28,8 @@ module.exports = serve;
 //
 //         // `res` has several attributes to make your life easier:
 //         //
-//         // * runtime: veyron runtime object
-//         // * config: config passed into veyron.init()
+//         // * runtime: vanadium runtime object
+//         // * config: config passed into vanadium.init()
 //         // * server: returned from runtime._getServer()
 //         // * service: returned from runtime.bindTo(name, ...)
 //         // * end: the end function to shut down the connection
@@ -52,7 +52,7 @@ function serve(name, dispatcher, callback) {
     dispatcher = options.dispatcher;
   }
 
-  veyron.init(config, function(err, runtime) {
+  vanadium.init(config, function(err, runtime) {
     // basic response used for failures where we want .close and .end to
     // still work:
     var basicRes = {

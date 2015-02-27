@@ -1,5 +1,5 @@
 /**
- * @fileoverview Blessings stub of veyron identities
+ * @fileoverview Blessings stub of vanadium identities
  * @private
  */
 

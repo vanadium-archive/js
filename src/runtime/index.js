@@ -1,5 +1,5 @@
 /**
- * @fileoverview Veyron Runtime
+ * @fileoverview Vanadium Runtime
  * @private
  */
 var EE = require('eventemitter2').EventEmitter2;
@@ -170,7 +170,7 @@ Runtime.prototype._getProxyConnection = function() {
     ProxyConnection = require('../proxy/websocket');
     this._proxyConnection = new ProxyConnection(this._wspr);
   } else {
-    vlog.info('Using the Veyron Extension\'s NaCl WSPR');
+    vlog.info('Using the Vanadium Extension\'s NaCl WSPR');
     ProxyConnection = require('../proxy/nacl');
     this._proxyConnection = new ProxyConnection();
   }

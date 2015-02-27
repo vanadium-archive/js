@@ -1,7 +1,7 @@
 /**
  * @private
  * @fileoverview An object that handles marshaling and unmarshal
- * messages from the native veyron implementation.
+ * messages from the native vanadium implementation.
  */
 
 var EE = require('eventemitter2').EventEmitter2;
@@ -18,7 +18,7 @@ var unwrap = require('../vdl/type-util').unwrap;
 var SIGNATURE_CACHE_TTL = 3600 * 1000;
 
 /**
- * A client for the native veyron implementation.
+ * A client for the native vanadium implementation.
  * @constructor
  * @private
  * @param {Promise} senderPromise A promise that is resolved when we are able
@@ -41,9 +41,9 @@ function Proxy(senderPromise) {
 inherits(Proxy, EE);
 
 /**
- * Handles a message from native veyron implementation.
+ * Handles a message from native vanadium implementation.
  * @private
- * @param {Object} messsage The message from the native veyron code.
+ * @param {Object} messsage The message from the native vanadium code.
  */
 Proxy.prototype.process = function(message) {
   // Messages originating from server are even numbers

@@ -81,7 +81,7 @@ Service.prototype.spawn = function(args) {
     // Buffer stderr until close so that a meaningful error can be emitted
     // when a non-zero exit code is encountered.
     //
-    // NOTE: All veyron bins log to stderr so this buffer will just grow
+    // NOTE: All vanadium bins log to stderr so this buffer will just grow
     // until that is resolved...
     if (service.process.stderr) {
       var stderr = new PassThrough();
@@ -136,7 +136,7 @@ Service.prototype.kill = function() {
 };
 
 function notfound(name) {
-  var message = 'Veyron binary not found: ' + name + '\n' +
+  var message = 'Vanadium binary not found: ' + name + '\n' +
       'Please run "make clean" and try again.' +
       'If problem persists, "make go/bin -B" can force building of binaries.';
 

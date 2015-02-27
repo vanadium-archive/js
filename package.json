@@ -1,8 +1,8 @@
 {
-  "name": "veyron",
-  "description": "Veyron JavaScript API",
+  "name": "vanadium",
+  "description": "Vanadium JavaScript API",
   "version": "0.0.1",
-  "main": "./src/veyron",
+  "main": "./src/vanadium",
   "private": true,
   "dependencies": {
     "bluebird": "^2.3.2",

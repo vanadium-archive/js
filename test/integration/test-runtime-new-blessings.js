@@ -1,11 +1,11 @@
 var test = require('prova');
-var veyron = require('../../');
+var vanadium = require('../../');
 var Blessings = require('../../src/security/blessings.js');
 var config = require('./default-config');
 
 test('Test creating a new blessing - ' +
   'runtime.newBlessings(extension, callback)', function(assert) {
-  veyron.init(config, function(err, runtime) {
+  vanadium.init(config, function(err, runtime) {
     assert.error(err);
 
     runtime.newBlessings('alice', function(err, blessings) {
@@ -18,7 +18,7 @@ test('Test creating a new blessing - ' +
 
 test('Test creating a new blessing - ' +
   'var promise = runtime.newBlessings(extension)', function(assert) {
-  veyron.init(config, function(err, runtime) {
+  vanadium.init(config, function(err, runtime) {
     assert.error(err);
 
     runtime

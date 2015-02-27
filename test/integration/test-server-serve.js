@@ -1,5 +1,5 @@
 var test = require('prova');
-var veyron = require('../../');
+var vanadium = require('../../');
 var config = require('./default-config');
 var service = {
   changeChannel: function(ctx) {
@@ -9,7 +9,7 @@ var service = {
 
 test.skip('Test serving a JS service named livingroom/tv - ' +
   'server.serve(name, service, callback)', function(assert) {
-  veyron.init(config, function(err, runtime) {
+  vanadium.init(config, function(err, runtime) {
     assert.error(err);
 
     var server = runtime.newServer();
@@ -22,7 +22,7 @@ test.skip('Test serving a JS service named livingroom/tv - ' +
 
 test.skip('Test serving a JS service named livingroom/tv - ' +
   'var promise = server.serve(name, service)', function(assert) {
-  veyron.init(config, function(err, runtime) {
+  vanadium.init(config, function(err, runtime) {
     assert.error(err);
 
     var server = runtime.newServer();
@@ -40,7 +40,7 @@ test.skip('Test serving a JS service named livingroom/tv - ' +
 
 test('Test serving a JS service when proxy Url is invalid - '+
   'server.serve(name, service, callback)', function(assert) {
-  veyron.init({ wspr: 'http://bad-address.tld' }, function(err, runtime) {
+  vanadium.init({ wspr: 'http://bad-address.tld' }, function(err, runtime) {
     assert.error(err);
 
     var server = runtime.newServer();
@@ -53,7 +53,7 @@ test('Test serving a JS service when proxy Url is invalid - '+
 
 test('Test serving a JS service when proxy Url is invalid - '+
   'var promise = server.serve(name, service)', function(assert) {
-  veyron.init({ wspr: 'http://bad-address.tld' }, function(err, runtime) {
+  vanadium.init({ wspr: 'http://bad-address.tld' }, function(err, runtime) {
     assert.error(err);
 
     var server = runtime.newServer();
@@ -74,7 +74,7 @@ test('Test serving a JS service when proxy Url is invalid - '+
 
 test.skip('Test serving a JS service multiple times should fail - ' +
   'server.serve(name, service)', function(assert) {
-  veyron.init(config, function(err, runtime) {
+  vanadium.init(config, function(err, runtime) {
     assert.error(err);
 
     if(err) {
@@ -96,7 +96,7 @@ test.skip('Test serving a JS service multiple times should fail - ' +
 
 test.skip('Test serving a JS service multiple times should fail - ' +
   'var promise = server.serve(name, service)', function(assert) {
-  veyron.init(config, function(err, runtime) {
+  vanadium.init(config, function(err, runtime) {
     assert.error(err);
 
     var server = runtime.newServer();
@@ -122,7 +122,7 @@ test('Test serving a JS service under multiple names - ' +
   'runtime.addName(name), runtime.removeName(name)', function(assert) {
   var ctx;
 
-  veyron.init(config, function(err, runtime) {
+  vanadium.init(config, function(err, runtime) {
     assert.error(err);
 
     var server = runtime.newServer();
@@ -161,7 +161,7 @@ test('Test serving a JS service under multiple names - ' +
 
 test('Test adding additional names before serving a JS service should fail - ' +
   'runtime.addName(name, cb) - before server.serve()', function(assert) {
-  veyron.init(config, function(err, runtime) {
+  vanadium.init(config, function(err, runtime) {
     assert.error(err);
 
     var server = runtime.newServer();

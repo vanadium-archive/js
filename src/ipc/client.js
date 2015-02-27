@@ -1,5 +1,5 @@
 /**
- *  @fileoverview Client for the veyron service.
+ *  @fileoverview Client for the vanadium service.
  *
  *  Usage:
  *  var cl = new client(proxyConnection);
@@ -26,7 +26,7 @@ var Encoder = require('../vom/encoder');
 var ByteArrayMessageWriter = require('../vom/byte-array-message-writer');
 var makeError = require('../errors/make-errors');
 var actions = require('../errors/actions');
-var VeyronRPCRequest =
+var VanadiumRPCRequest =
   require('../v.io/core/veyron/services/wsprd/app').VeyronRPCRequest;
 var vtrace = require('../lib/vtrace');
 var ReservedSignature =
@@ -213,7 +213,7 @@ OutstandingRPC.prototype.handleError = function(err) {
 
 
 /**
- * Construct a message to send to the veyron native code
+ * Construct a message to send to the vanadium native code
  * @private
  * @return {string} json string to send to jspr
  */
@@ -240,7 +240,7 @@ OutstandingRPC.prototype.constructMessage = function() {
     }
   };
 
-  var header = new VeyronRPCRequest(jsonMessage);
+  var header = new VanadiumRPCRequest(jsonMessage);
 
   var writer = new ByteArrayMessageWriter();
   var encoder = new Encoder(writer);
@@ -252,9 +252,9 @@ OutstandingRPC.prototype.constructMessage = function() {
 };
 
 /**
- * Client for the veyron service.
+ * Client for the vanadium service.
  * @constructor
- * @param {Object} proxyConnection Veyron proxy client
+ * @param {Object} proxyConnection Vanadium proxy client
  */
 function Client(proxyConnection) {
   if (!(this instanceof Client)) {
@@ -289,7 +289,7 @@ var IncorrectArgCount = makeError(
  * });
  *
  * @param {Context} A context.
- * @param {string} name the veyron name of the service to bind to.
+ * @param {string} name the vanadium name of the service to bind to.
  * @param {function} [cb] if given, this function will be called on
  * completion of the bind.  The first argument will be an error if there is
  * one, and the second argument is an object with methods that perform rpcs to
@@ -339,7 +339,7 @@ Client.prototype.bindTo = function(ctx, name, cb) {
  *   // Calling fooMethod failed.
  * });
  *
- * @param {string} name the veyron name of the service to bind to.
+ * @param {string} name the vanadium name of the service to bind to.
  * @param {Object} signature the service signature of a veryon service.
  * @return {Object} An object with methods that perform rpcs to service methods
  */
@@ -465,7 +465,7 @@ Client.prototype.bindWithSignature = function(name, signature) {
 /**
  * Returns the object signatures for a given object name.
  * @param {Context} A context.
- * @param {string} name the veyron name of the service to bind to.
+ * @param {string} name the vanadium name of the service to bind to.
  * @param {function} [cb] if given, this function will be called on
  * completion. The first argument will be an error if there is
  * one, and the second argument is the signature.
@@ -506,7 +506,7 @@ Client.prototype.signature = function(ctx, name, cb) {
 /*
  * Returns the remote blessings of a server at the given name.
  * @param {Context} A context.
- * @param {string} name the veyron name of the service to get the remote
+ * @param {string} name the vanadium name of the service to get the remote
  * blessings of.
  * @param {string} [method] the name of the rpc method that will be started in
  * order to read the blessings.  Defaults to 'Signature'.  This only matters in

@@ -1,5 +1,5 @@
 var test = require('prova');
-var veyron = require('../../');
+var vanadium = require('../../');
 var Promise = require('../../src/lib/promise');
 var config = require('./default-config');
 var timeouts = require('./timeouts');
@@ -36,7 +36,7 @@ test('Test running several JS servers concurrently and under multiple ' +
   // big test, give it more time to finish
   assert.timeout(timeouts.long);
 
-  return veyron.init(config)
+  return vanadium.init(config)
   .then(function createTwoServers(rt) {
     runtime = rt;
     client = rt.newClient();

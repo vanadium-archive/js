@@ -1,9 +1,9 @@
 var test = require('prova');
-var veyron = require('../../');
+var vanadium = require('../../');
 var config = require('./default-config');
 
 test('Test closing runtime - runtime.close(cb)', function(assert) {
-  veyron.init(config, oninit);
+  vanadium.init(config, oninit);
 
   var rt;
   function oninit(err, runtime) {
@@ -21,7 +21,7 @@ test('Test closing runtime - runtime.close(cb)', function(assert) {
 });
 
 test('Test closing runtime - var promise = runtime.close()', function(assert) {
-  veyron
+  vanadium
   .init(config)
   .then(bindTo)
   .then(close)

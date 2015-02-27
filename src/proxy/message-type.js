@@ -5,7 +5,7 @@
 
 module.exports = {
   Outgoing: {
-    REQUEST: 0, // Request to invoke a method on a Veyron name.
+    REQUEST: 0, // Request to invoke a method on a Vanadium name.
     RESPONSE: 2, // Indicates a response from a JavaScript server.
     STREAM_VALUE: 3, // Indicates a stream value.
     STREAM_CLOSE: 4, // Request to close a stream.

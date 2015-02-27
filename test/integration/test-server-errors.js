@@ -1,5 +1,5 @@
 var test = require('prova');
-var veyron = require('../../');
+var vanadium = require('../../');
 var Deferred = require('../../src/lib/deferred');
 var serve = require('./serve');
 var leafDispatcher = require('../../src/ipc/leaf-dispatcher');
@@ -57,7 +57,7 @@ function testStandardErrors() {
           assert.ok(err instanceof Error, 'should be Error');
           // TODO(jasoncampbell): The JS is missing support for server context
           // that would allow the error.message to be translated properly as it
-          // travels through the supporting veyron services. Currently the
+          // travels through the supporting vanadium services. Currently the
           // message will be converted to "wsprd Root Error " after it goes out
           // over the wire and gets to the client. To resolve this we need to
           // make sure that the context (contains server name and operation)
@@ -133,8 +133,8 @@ function testNonStandardErrors() {
           // SEE: test/integration/test-server-error.js:62
           // assert.equal(err.message, 'Unknown exception.');
           // TODO(bprosnitz) Change back to
-          // assert.deepEquals(err.idAction, veyron.errors.IdActions);
-          assert.ok(err instanceof veyron.errors.UnknownError,
+          // assert.deepEquals(err.idAction, vanadium.errors.IdActions);
+          assert.ok(err instanceof vanadium.errors.UnknownError,
             'error ids match');
           assert.ok(err.stack, 'error has a stack');
           res.end(assert);

@@ -554,7 +554,7 @@ Router.prototype.sendResult = function(messageId, name, results, err,
  * Serves the server under the given name
  * @private
  * @param {string} name Name to serve under
- * @param {Veyron.Server} server The server who will handle the requests for
+ * @param {Vanadium.Server} server The server who will handle the requests for
  * this name.
  * @param {function} [cb] If provided, the function will be called when
  * serve completes.  The first argument passed in is the error if there

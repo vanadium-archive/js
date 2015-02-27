@@ -1,5 +1,5 @@
 /**
- * @fileoverview Helpers for manipulating veyron names.
+ * @fileoverview Helpers for manipulating vanadium names.
  * See vanadium/release/go/src/v.io/v23/naming/parse.go for the
  * corresponding operations in golang.
  * @private
@@ -47,7 +47,7 @@ var join = function(parts) {
 
 /**
   * Determines if a name is rooted, that is beginning with a single '/'.
-  * @param {string} The veyron name.
+  * @param {string} The vanadium name.
   * @return {boolean} True if the name is rooted, false otherwise.
   */
 var isRooted = function(name) {
@@ -56,7 +56,7 @@ var isRooted = function(name) {
 
 /**
   * Retrieves the parent of the given name.
-  * @param {string} The veyron name.
+  * @param {string} The vanadium name.
   * @return {string | null} The parent's name or null, if there isn't one.
   */
 var stripBasename = function(name) {
@@ -65,8 +65,8 @@ var stripBasename = function(name) {
 };
 
 /**
-  * Gets the basename of the given veyron name.
-  * @param {string} The veyron name.
+  * Gets the basename of the given vanadium name.
+  * @param {string} The vanadium name.
   * @return {string} The basename of the given name
   */
 var basename = function(name) {

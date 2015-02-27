@@ -15,7 +15,7 @@ UNAME := $(shell uname)
 .DEFAULT_GOAL := all
 
 # Default browserify options: create a standalone bundle, and use sourcemaps.
-BROWSERIFY_OPTS := --standalone veyron --debug
+BROWSERIFY_OPTS := --standalone vanadium --debug
 # Names that should not be mangled by minification.
 RESERVED_NAMES := 'context,ctx,callback,cb,$$stream'
 # Don't mangle RESERVED_NAMES, and screw ie8.
@@ -91,16 +91,16 @@ COMMON_SERVICES := "test_serviced"
 
 all: gen-vdl lint build
 
-build: dist/veyron.js dist/veyron.min.js extension/veyron.zip
+build: dist/vanadium.js dist/vanadium.min.js extension/vanadium.zip
 
-dist/veyron.js: src/veyron.js $(JS_SRC_FILES) $(NODE_MODULES_JS_FILES) | node_modules
+dist/vanadium.js: src/vanadium.js $(JS_SRC_FILES) $(NODE_MODULES_JS_FILES) | node_modules
 	$(call BROWSERIFY,$<,$@)
 
-dist/veyron.min.js: src/veyron.js $(JS_SRC_FILES) $(NODE_MODULES_JS_FILES) | node_modules
+dist/vanadium.min.js: src/vanadium.js $(JS_SRC_FILES) $(NODE_MODULES_JS_FILES) | node_modules
 	$(call BROWSERIFY-MIN,$<,$@)
 
-extension/veyron.zip: node_modules
-	$(MAKE) -C extension veyron.zip
+extension/vanadium.zip: node_modules
+	$(MAKE) -C extension vanadium.zip
 
 test-precheck: gen-vdl-test node_modules lint dependency-check
 
@@ -198,7 +198,7 @@ else
 endif
 
 dependency-check: node_modules
-	dependency-check package.json --entry src/veyron.js
+	dependency-check package.json --entry src/vanadium.js
 
 clean:
 	@$(RM) -fr dist/*

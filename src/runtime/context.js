@@ -1,5 +1,5 @@
 /**
- * @fileoverview Veyron Context
+ * @fileoverview Vanadium Context
  * @private
  */
 

@@ -1,12 +1,12 @@
 var test = require('prova');
-var veyron = require('../../');
+var vanadium = require('../../');
 var config = require('./default-config');
 
 test('Test binding to a Go service named test_service/cache - ' +
   'client.bindTo(name, callback)', function(assert) {
   var rt;
 
-  veyron.init(config, oninit);
+  vanadium.init(config, oninit);
 
   function oninit(err, runtime) {
     assert.error(err);
@@ -27,7 +27,7 @@ test('Test binding to a Go service named test_service/cache - ' +
 
 test('Test binding to a Go service named test_service/cache - ' +
   'var promise = client.bindTo(name)', function(assert) {
-  veyron
+  vanadium
   .init(config)
   .then(bindTo)
   .catch(assert.end);
@@ -45,7 +45,7 @@ test('Test binding to a Go service named test_service/cache - ' +
 
 test('Test binding to a non-existing name - ' +
   'client.bindTo(badName, callback)', function(assert) {
-  veyron.init(config, function(err, runtime) {
+  vanadium.init(config, function(err, runtime) {
     assert.error(err);
 
     var client = runtime.newClient();
@@ -53,7 +53,7 @@ test('Test binding to a non-existing name - ' +
     client.bindTo(ctx, 'does-not/exist', function(err, service) {
       assert.ok(err instanceof Error);
 
-      assert.ok(err instanceof veyron.errors.NoServersError);
+      assert.ok(err instanceof vanadium.errors.NoServersError);
       runtime.close(assert.end);
     });
   });
@@ -63,7 +63,7 @@ test('Test binding to a non-existing name - ' +
   'var promise = client.bindTo(badName) ', function(assert) {
   var rt;
 
-  veyron
+  vanadium
   .init(config)
   .then(function(runtime) {
     rt = runtime;
@@ -76,7 +76,7 @@ test('Test binding to a non-existing name - ' +
     rt.close(assert.end);
   }, function(err) {
     assert.ok(err instanceof Error);
-    assert.ok(err instanceof veyron.errors.NoServersError);
+    assert.ok(err instanceof vanadium.errors.NoServersError);
     rt.close(assert.end);
   })
   .catch(function(err) {
@@ -88,7 +88,7 @@ test('Test binding to a non-existing name - ' +
 test('Test binding when proxy Url is invalid - ' +
   'client.bindTo(name, callback)', function(assert) {
 
-  veyron.init({ wspr: 'http://bad-address.tld' }, onruntime);
+  vanadium.init({ wspr: 'http://bad-address.tld' }, onruntime);
 
   function onruntime(err, runtime) {
     assert.error(err);
@@ -106,7 +106,7 @@ test('Test binding when proxy Url is invalid - ' +
 test('Test binding when wspr Url is invalid - ' +
   'var promise = client.bindTo(name) ', function(assert) {
 
-  veyron
+  vanadium
   .init({ wspr: 'http://bad-address.tld' })
   .then(bindTo)
   .catch(assert.end);

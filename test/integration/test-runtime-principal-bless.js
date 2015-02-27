@@ -1,5 +1,5 @@
 var test = require('prova');
-var veyron = require('../../');
+var vanadium = require('../../');
 var config = require('./default-config');
 
 // TODO(bprosnitz) Remove MethodCaveat after WSPR is updated to use the new
@@ -146,7 +146,7 @@ test('Test blessing bob with invalid caveats - ' +
 
 
 function newBlessings(extension, callback) {
-  veyron.init(config, function(err, runtime) {
+  vanadium.init(config, function(err, runtime) {
     if (err) {
       return callback(err);
     }

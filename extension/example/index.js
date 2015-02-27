@@ -1,6 +1,6 @@
-var veyron = window.veyron = require('../../src/veyron.js');
+var vanadium = window.vanadium = require('../../src/vanadium.js');
 
-var veyronConfig = {
+var vanadiumConfig = {
   authenticate: true
 };
 
@@ -15,7 +15,7 @@ function handleLogin(e){
   e.preventDefault();
   console.log('login clicked');
 
-  veyron.init(veyronConfig, function(err, rt){
+  vanadium.init(vanadiumConfig, function(err, rt){
     if (err) {
       return console.error(err);
     }

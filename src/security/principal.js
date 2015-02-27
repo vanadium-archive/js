@@ -1,5 +1,5 @@
 /**
- * @fileoverview Principal stub for veyron principals
+ * @fileoverview Principal stub for vanadium principals
  * @private
  */
 

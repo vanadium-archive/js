@@ -23,7 +23,7 @@ define COMPILE-NACL-PLUGIN
 	v23 xgo --target_go=$(VANADIUM_ROOT)/environment/go_ppapi/bin/go amd64p32-nacl build -o $2 $1
 endef
 
-all: veyron.zip
+all: vanadium.zip
 
 build/html: html/*
 	mkdir -p build
@@ -65,7 +65,7 @@ build: build/html build/images build/manifest.json build/js build/nacl
 build-dev: build
 	patch build/manifest.json < manifest-test.json.patch # Adds "key" as first line.
 
-veyron.zip: build
+vanadium.zip: build
 	zip -r $@ ./build/*
 
 build-test/html: html/*
@@ -136,7 +136,7 @@ dependency-check: node_modules
 
 clean:
 	@$(RM) -fr node_modules npm-debug.log
-	@$(RM) -fr veyron.zip build build-test
+	@$(RM) -fr vanadium.zip build build-test
 
 node_modules: package.json | check-that-npm-is-in-path
 	@npm prune

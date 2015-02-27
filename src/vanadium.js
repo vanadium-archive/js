@@ -1,5 +1,5 @@
 /**
- *  @fileoverview Public Veyron API.
+ *  @fileoverview Public Vanadium API.
  *  @private
  */
 
@@ -44,7 +44,7 @@ if (isBrowser) {
 }
 
 /**
- * Creates a Veyron runtime.
+ * Creates a Vanadium runtime.
  * @param {Object} config Configuration options
  */
 function init(config, cb) {
@@ -68,8 +68,8 @@ function init(config, cb) {
 
   // If the user has set config.authenticate to true, get an authenticated
   // (blessed-by-Blessing-server) account for the user.  This requires the
-  // Veyron Chrome Extension to be installed and enabled.  The resulting runtime
-  // will have runtime.accountName set of authenticated account.
+  // Vanadium Chrome Extension to be installed and enabled.  The resulting
+  // runtime will have runtime.accountName set of authenticated account.
   //
   // Otherwise, create a runtime with accountName 'unknown'.
   if (config.authenticate) {
@@ -89,7 +89,7 @@ function init(config, cb) {
   return def.promise;
 }
 
-// getAccounts tells the Veyron Extension to start an OAuth flow, gets an
+// getAccounts tells the Vanadium Extension to start an OAuth flow, gets an
 // access token for the user, and exchanges that access token for an account
 // which is then associated with the origin of the web app.
 //

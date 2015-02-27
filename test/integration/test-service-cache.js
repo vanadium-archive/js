@@ -1,6 +1,6 @@
 var test = require('prova');
-var veyron = require('../../');
-var NoExistError = veyron.errors.NoExistError;
+var vanadium = require('../../');
+var NoExistError = vanadium.errors.NoExistError;
 var config = require('./default-config');
 var service = require('./get-service');
 var Promise = require('bluebird');
@@ -207,7 +207,7 @@ test('Test multiGet() streaming method of Go sample cache service - ' +
 
 test('Test getting signature of Go sample cache service - ' +
   'var promise = client.signature(ctx, test_service/cache)', function(assert) {
-  veyron.init(config)
+  vanadium.init(config)
   .then(function(runtime) {
     var ctx = runtime.getContext();
     var client = runtime.newClient();
@@ -225,7 +225,7 @@ test('Test getting signature of Go sample cache service - ' +
 
 test('Test getting signature of Go sample cache service - ' +
   'client.signature(ctx, test_service/cache, callback)', function(assert) {
-  veyron.init(config, function(err, runtime) {
+  vanadium.init(config, function(err, runtime) {
     if(err) {
       assert.end(err);
     }

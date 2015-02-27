@@ -11,11 +11,11 @@ var isBrowser = require('is-browser');
 var DecodeUtil = require('../lib/decode-util');
 
 /**
- * A client for the veyron service using websockets. Connects to the veyron wspr
- * and performs RPCs.
+ * A client for the vanadium service using websockets. Connects to the vanadium
+ * wspr and performs RPCs.
  * @constructor
  * @private
- * @param {string} url of wspr that connects to the veyron network
+ * @param {string} url of wspr that connects to the vanadium network
  * identity
  */
 function ProxyConnection(url) {

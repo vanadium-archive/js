@@ -32,7 +32,7 @@ AuthHandler.prototype.getAccessToken = function(cb) {
   // For now, we don't have a way to ask the user which profile they would
   // like to use.  However, once the `chrome.identity.getAccounts` API call
   // gets out of dev/beta channel, we can get a list of accounts and prompt
-  // the user for which one they would like to use with veyron.
+  // the user for which one they would like to use with vanadium.
   chrome.identity.getAuthToken({
     interactive: true
   }, function(token) {

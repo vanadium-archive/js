@@ -9,7 +9,7 @@ var methods = [
   'error'
 ];
 
-test('var vlog = require("veyron/lib/src/vlog")', function(assert) {
+test('var vlog = require("vanadium/lib/src/vlog")', function(assert) {
   assert.ok(vlog instanceof Vlog);
   assert.end();
 });

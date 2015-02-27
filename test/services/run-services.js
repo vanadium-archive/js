@@ -16,7 +16,7 @@ module.exports = Runner;
  *
  * Emits: start, stop, error
  *
- * @param {Array} names of the veyron services to run.
+ * @param {Array} names of the vanadium services to run.
  * @returns {Runner}
  */
 function Runner(names) {

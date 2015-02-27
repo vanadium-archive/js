@@ -1,4 +1,7 @@
 var test = require('prova');
+var vanadium = require('../../');
+var Promise = require('../../src/lib/promise');
+var verror = vanadium.errors;
 
 var access = require('../../src/v.io/v23/services/security/access');
 var config = require('./default-config');
@@ -156,7 +159,7 @@ test('Test globbing non-existing rooted name - ' +
   init(config).then(function glob(rt) {
     runtime = rt;
     var namespace = rt.namespace();
-    var rpc = namespace.glob(rt.getContext().withDeadline(1000), 
+    var rpc = namespace.glob(rt.getContext().withDeadline(1000),
                              '/RootedBadName.Google.tld:1234/*');
     rpc.catch(function(err) {
       // Ignore the timeout error.
@@ -203,7 +206,7 @@ test('Test mounting and unmounting - ' +
 
   var ctx;
   var server;
-  veyron.init(config).then(function createServer(rt) {
+  vanadium.init(config).then(function createServer(rt) {
     runtime = rt;
     namespace = rt.namespace();
     ctx = rt.getContext();
@@ -428,7 +431,7 @@ test('Test setting and getting roots - ' +
   var runtime;
   var namespace;
 
-  veyron.init(config, onInit);
+  vanadium.init(config, onInit);
 
   function onInit(err, rt) {
     assert.error(err);
@@ -565,7 +568,7 @@ var SAMPLE_NAMESPACE = [
 function init(config) {
   var runtime;
   var server;
-  return veyron.init(config)
+  return vanadium.init(config)
     .then(function serveEmptyService(rt) {
       runtime = rt;
       server = rt.newServer();

@@ -14,7 +14,7 @@ var DecodeUtil = require('../lib/decode-util');
 module.exports = ProxyConnection;
 
 /**
- * A client for the veyron service using postMessage. Connects to the veyron
+ * A client for the vanadium service using postMessage. Connects to the vanadium
  * browspr and performs RPCs.
  * @constructor
  * @private
