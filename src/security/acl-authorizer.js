@@ -85,13 +85,8 @@ function canAccessACL(name, label, acl) {
     if (!acl.notIn.hasOwnProperty(pattern)) {
       continue;
     }
-    if (pattern.lastIndexOf('...') === pattern.length - 4) {
-      pattern = pattern.substr(0, pattern.length - 3);
-    }
     patLabels = acl.notIn[pattern];
-    // We flip name and pattern, because we want to match any blessing
-    // that could be derived from the pattern in the map.
-    if (blessingMatches(pattern, name)) {
+    if (blessingMatches(name, pattern)) {
       if (patLabels.indexOf(label) !== -1) {
         return false;
       }

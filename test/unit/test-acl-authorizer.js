@@ -30,11 +30,11 @@ test('full suite of go tests', function(assert) {
   var acl = {
     in: {
       '...': [Labels.READ],
-      'server/alice/...': [Labels.WRITE, Labels.READ],
-      'server/alice': [Labels.ADMIN, Labels.DEBUG, Labels.MONITORING],
-      'server/bob': [Labels.DEBUG, Labels.MONITORING],
-      'server/che/...': [Labels.WRITE, Labels.READ],
-      'server/che/': [Labels.WRITE, Labels.READ],
+      'server/alice': [Labels.WRITE, Labels.READ],
+      'server/alice/$': [Labels.ADMIN, Labels.DEBUG, Labels.MONITORING],
+      'server/bob/$': [Labels.DEBUG, Labels.MONITORING],
+      'server/che': [Labels.WRITE, Labels.READ],
+      'server/che/$': [Labels.WRITE, Labels.READ],
     },
     notIn: {
       'server/che/friend': [Labels.WRITE],

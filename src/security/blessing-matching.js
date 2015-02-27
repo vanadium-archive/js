@@ -4,29 +4,31 @@
  */
 module.exports = blessingMatches;
 
-// A blessing matches if it is a prefix of the pattern or if the pattern ends
-// in a '/...' and the pattern is a prefix of the blessing.
+// A blessing matches a pattern iff one of the following holds:
+// - the pattern is '...' which is matched by all blessings.
+// - the pattern ends in '/$' and the blessing is the same as the
+//   pattern string with the '/$' stripped out.
+// - the pattern does not end in '/$' and the blessing is an extension
+//   of the pattern.
 function blessingMatches(blessing, pattern) {
-  var paths = blessing.split('/');
-  var expectedPaths = pattern.split('/');
-  for (var i = 0; i < expectedPaths.length; i++) {
-    // If there is a '...' at the end of the pattern then
-    // we have a match, since the prefix of the pattern
-    // was matched by the blessing.
-    if (expectedPaths[i] === '...') {
-      return i === expectedPaths.length - 1;
+  // TODO(ataly, ashankar): Do we need to check that the pattern is valid?
+  if (pattern === '...') {
+    return true;
+  }
+  var blessingParts = blessing.split('/');
+  var patternParts = pattern.split('/');
+
+  for (var i = 0; i < patternParts.length; i++) {
+    // If there is a '$' at the end of the pattern then
+    // we have a match if there are no more blessingParts
+    // left
+    if (patternParts[i] === '$') {
+      return i === patternParts.length-1 && i === blessingParts.length;
     }
 
-    // name is a prefix of pattern
-    if (i === paths.length) {
-      return true;
-    }
-
-    if (paths[i] !== expectedPaths[i]) {
+    if ((i >= blessingParts.length) || (blessingParts[i] !== patternParts[i])) {
       return false;
     }
   }
-
-  return paths.length === expectedPaths.length;
+  return true;
 }
-
