@@ -18,10 +18,9 @@
   "trailing": true,
   "undef": true,
   "unused": "vars",
-
+  "esnext": true,
   "devel": true,
   "node": true,
-
   "globals": {
     "window": false,
     "Promise": true,
