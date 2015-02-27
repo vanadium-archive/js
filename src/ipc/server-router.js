@@ -8,7 +8,7 @@ var Stream = require('../proxy/stream');
 var MessageType = require('../proxy/message-type');
 var Incoming = MessageType.Incoming;
 var Outgoing = MessageType.Outgoing;
-var ErrorConversion = require('../proxy/error-conversion');
+var ErrorConversion = require('../vdl/error-conversion');
 var vlog = require('./../lib/vlog');
 var StreamHandler = require('../proxy/stream-handler');
 var verror = require('../v.io/v23/verror');
@@ -103,8 +103,8 @@ Router.prototype.handleAuthorizationRequest = function(messageId, request) {
         messageId);
   }).catch(function(e) {
     var data = JSON.stringify({
-      err: ErrorConversion.toStandardErrorStruct(e, this._appName,
-                                                 request.context.method)
+      err: ErrorConversion.fromNativeType(e, this._appName,
+                                          request.context.method)
     });
     router._proxy.sendRequest(data, Outgoing.AUTHORIZATION_RESPONSE, null,
         messageId);
@@ -131,7 +131,7 @@ Router.prototype.handleCaveatValidationRequest = function(messageId, request) {
             'Non-error value returned from caveat validator: ' +
             validationErr);
         }
-        results[i] = ErrorConversion.toStandardErrorStruct(validationErr,
+        results[i] = ErrorConversion.fromNativeType(validationErr,
           this._appName, 'caveat validation');
         break;
       }
@@ -188,8 +188,8 @@ Router.prototype.handleLookupRequest = function(messageId, request) {
         null, messageId);
   }).catch(function(err) {
     var data = JSON.stringify({
-      err: ErrorConversion.toStandardErrorStruct(err, self._appName,
-                                                 '__Signature'),
+      err: ErrorConversion.fromNativeType(err, self._appName,
+                                          '__Signature'),
     });
     self._proxy.sendRequest(data, Outgoing.LOOKUP_RESPONSE,
         null, messageId);
@@ -385,9 +385,9 @@ function createGlobReply(name) {
   });
 }
 
-function createGlobErrorReply(name, err) {
+function createGlobErrorReply(name, err, appName) {
   name = name || '';
-  var convertedError = ErrorConversion.toStandardErrorStruct(err);
+  var convertedError = ErrorConversion.fromNativeType(err, appName, 'glob');
   return new naming.VDLGlobReply({
     'error': new naming.GlobError({ name: name, error: convertedError })
   });
@@ -411,7 +411,7 @@ Router.prototype.handleGlobRequest = function(messageId, name, server, glob,
       if (err) {
         var verr = new verror.InternalError(context,
           ['__glob() failed', glob, err]);
-        var errReply = createGlobErrorReply(name, verr);
+        var errReply = createGlobErrorReply(name, verr, self._appName);
         self._streamMap[messageId].write(errReply);
         vlog.info(verr);
       }
@@ -441,7 +441,7 @@ Router.prototype.handleGlobRequest = function(messageId, name, server, glob,
       if (child.indexOf('/') !== -1) {
         var verr = new verror.InternalError(context,
           '__globChildren returned a bad child', child);
-        var errReply = createGlobErrorReply(name, verr);
+        var errReply = createGlobErrorReply(name, verr, self._appName);
         self._streamMap[messageId].write(errReply);
         vlog.info(verr);
         return;
@@ -465,7 +465,7 @@ Router.prototype.handleGlobRequest = function(messageId, name, server, glob,
         }
       }).catch(function(e) {
         var verr = new verror.NoServersAndAuthError(context, suffix, e);
-        var errReply = createGlobErrorReply(name, verr);
+        var errReply = createGlobErrorReply(name, verr, self._appName);
         self._streamMap[messageId].write(errReply);
         vlog.info(errReply);
         self.decrementOutstandingRequestForId(messageId, cb);
@@ -476,7 +476,7 @@ Router.prototype.handleGlobRequest = function(messageId, name, server, glob,
       if (err) {
         var verr = new verror.InternalError(context,
           '__globChildren() failed', glob, err);
-        var errReply = createGlobErrorReply(name, verr);
+        var errReply = createGlobErrorReply(name, verr, self._appName);
         this._streamMap[messageId].write(errReply);
         vlog.info(verr);
       }
@@ -519,8 +519,8 @@ Router.prototype.sendResult = function(messageId, name, results, err,
 
   var errorStruct = null;
   if (err !== undefined && err !== null) {
-    errorStruct = ErrorConversion.toStandardErrorStruct(err, this._appName,
-                                                        name);
+    errorStruct = ErrorConversion.fromNativeType(err, this._appName,
+                                                 name);
   }
 
   // Clean up the context map.

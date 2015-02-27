@@ -18,7 +18,7 @@ var util = require('./util.js');
 var stringify = require('./stringify.js');
 var typeCompatible = require('./type-compatible.js');
 var typeObjectFromKind = require('./type-object-from-kind.js');
-var errorConversion = require('./error-conversion');
+var nativeTypeRegistry = require('./native-type-registry');
 require('./es6-shim');
 
 module.exports = {
@@ -119,6 +119,23 @@ function canonicalize(inValue, inType, t, deepWrap, seen, isTopLevelValue) {
     return canonicalizeType(inValue, seen);
   }
 
+  var n = inValue;
+  if (!deepWrap) {
+    n = nativeTypeRegistry.fromWireType(t, inValue);
+  } else if (n !== undefined && n !== null) {
+    n = nativeTypeRegistry.fromNativeType(inValue.constructor, inValue);
+  }
+
+  var isNative = !deepWrap;
+
+  // If we have a true native that doesn't have vdl fields in it (i.e. Date),
+  // then we can stop canonicalizing.
+  if (nativeTypeRegistry.isNative(n)) {
+    return n;
+  }
+  inValue = n;
+
+
   // The outValue is an object associated with a constructor based on its type.
   // We pre-allocate wrapped values and add them to seen so that they can be
   // referenced in canonicalizeInternal (types may have recursive references).
@@ -131,6 +148,10 @@ function canonicalize(inValue, inType, t, deepWrap, seen, isTopLevelValue) {
     outValue = null;
   }
 
+  if (outValue && isNative && nativeTypeRegistry.hasNativeType(t) &&
+      inValue && t.equals(inValue._type)) {
+    outValue = inValue;
+  }
   // Seen maps an inValue and type to an outValue.
   // If the inValue and type combination already have a cached value, then that
   // is returned. Otherwise, the outValue is put into the seen cache.
@@ -237,23 +258,6 @@ function canonicalizeInternal(deepWrap, v, inType, t, seen, outValue) {
     } else {
       throw makeError(v, t, 'value is null for non-optional type');
     }
-  }
-
-  // If this an error type, we need to convert to the correct
-  // error object.  An error type can either be the optional error (i.e
-  // Types.ERROR) or a concrete error (i.e. Types.ERROR.elem).
-  if (t.equals(Types.ERROR)) {
-    if (!v) {
-      return null;
-    }
-    // We don't just return the error, instead we defer to the rest of
-    // the canonicalize logic to determine where or not return wrapped
-    // values.
-    v = errorConversion.toJSerror(TypeUtil.unwrap(v));
-  }
-
-  if (t.equals(Types.ERROR.elem)) {
-    outValue = errorConversion.toJSerror(v);
   }
 
   var inKeyType = inType ? inType.key : undefined;

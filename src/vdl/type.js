@@ -46,7 +46,9 @@ Type.prototype.equals = function(other) {
   if (this === other) {
     return true;
   }
-  return this.name === other.name && (other instanceof Type) &&
+
+
+  return other && this.name === other.name && (other instanceof Type) &&
     this.toString() === other.toString();
 };
 

@@ -101,5 +101,8 @@ function createWrappedConstructor() {
     this.val = ideal.val;
   };
   constructor.prototype._wrappedType = true;
+  constructor.prototype.toString = function() {
+    return '' + this.val;
+  };
   return constructor;
 }

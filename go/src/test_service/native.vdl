@@ -1,0 +1,9 @@
+package test_service
+
+import "time"
+
+type NativeTest interface {
+    PassTime(t time.Time) (time.Time | error)
+
+    PassError(e error) error
+}

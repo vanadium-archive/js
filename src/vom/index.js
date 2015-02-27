@@ -4,3 +4,4 @@ module.exports = {
   Encoder: require('./encoder'),
   Decoder: require('./decoder')
 };
+require('../vdl/native-types');

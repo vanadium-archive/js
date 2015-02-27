@@ -25,6 +25,7 @@ type testServiceDispatcher struct {
 	cache           interface{}
 	errorThrower    interface{}
 	cancelCollector interface{}
+	native          interface{}
 	caveatedInvoker interface{}
 }
 
@@ -41,6 +42,11 @@ func (sd *testServiceDispatcher) Lookup(suffix string) (interface{}, security.Au
 
 	if strings.HasPrefix(suffix, "serviceToCancel") {
 		return ipc.ReflectInvokerOrDie(sd.cancelCollector), authorizer, nil
+	}
+
+	if strings.HasPrefix(suffix, "native") {
+		fmt.Println("got call to native")
+		return ipc.ReflectInvokerOrDie(sd.native), authorizer, nil
 	}
 
 	if strings.HasPrefix(suffix, "caveatedInvoker") {
@@ -61,6 +67,7 @@ func StartServer(ctx *context.T) (ipc.Server, naming.Endpoint, error) {
 		cache:           test_service.CacheServer(NewCached()),
 		errorThrower:    test_service.ErrorThrowerServer(NewErrorThrower()),
 		cancelCollector: test_service.CancelCollectorServer(NewCancelCollector()),
+		native:          test_service.NativeTestServer(NewNativeTest()),
 		caveatedInvoker: test_service.InvokeMethodWithCaveatedIdentityServer(NewInvokeMethodWithCaveatedIdentityServer()),
 	}
 
