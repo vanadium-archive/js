@@ -120,6 +120,8 @@ function canonicalize(inValue, inType, t, deepWrap, seen, isTopLevelValue) {
     return canonicalizeType(inValue, seen);
   }
 
+  // TODO(bprosnitz) We need to canonicalize (without native conversion) before
+  // passing inValue to fromWireType.
   var n = inValue;
   if (!deepWrap) {
     n = nativeTypeRegistry.fromWireType(t, inValue);

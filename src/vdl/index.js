@@ -13,4 +13,5 @@ module.exports = {
   Stringify: require('./stringify')
 };
 
+require('./native-types'); // Register standard native types.
 require('./es6-shim.js'); // If necessary, adds ES6 Map, Set, etc.

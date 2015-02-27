@@ -17,15 +17,25 @@ registry.registerFromNativeType(Date, toDateWireType);
 registry.registerFromWireType(timeType, fromDateWireType);
 
 function fromDateWireType(v) {
-  if (v === undefined || v === null) {
-    return v;
+  v = v || {};
+  var seconds;
+  if (v.seconds) {
+    if (v.seconds instanceof BigInt) {
+      // TODO(bprosnitz) We should always have big int once we canonicalize
+      // before calling this.
+      seconds = v.seconds.toNativeNumberApprox();
+    } else {
+      seconds = v.seconds;
+    }
+  } else {
+    seconds = new BigInt(0, new Uint8Array());
   }
-  var seconds = v.seconds;
-  if (seconds instanceof BigInt) {
-    seconds = seconds.toNativeNumberApprox();
-  }
+  // TODO(bprosnitz) Remove the undefined cases because they
+  // shouldn't be required after canonicalized is changed to canonicalized the
+  // input before passing to this function.
+  var nanos = v.nano || 0;
   var epochInMillis = seconds * 1000 +
-    v.nano / 1000000;
+    nanos / 1000000;
 
   return new Date(epochInMillis);
 }
