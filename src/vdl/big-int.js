@@ -472,9 +472,11 @@ BigInt.prototype._convertToNative = function() {
   copySrcIndex = this._bytes.length - Math.min(this._bytes.length, 8);
   copyDstIndex = Math.max(8 - this._bytes.length, 0);
   var copyableLength = Math.min(this._bytes.length - 4, 4);
-  arr.set(this._bytes.subarray(copySrcIndex, copySrcIndex + copyableLength),
+  var arr2 = new Uint8Array(4);
+  arr2.set(this._bytes.subarray(copySrcIndex, copySrcIndex + copyableLength),
     copyDstIndex);
-  var upperVal = view.getUint32(0, false);
+  var view2 = new DataView(arr2.buffer);
+  var upperVal = view2.getUint32(0, false);
   var combinedVal = upperVal * 0x100000000 + lowerVal;
   return this._sign * combinedVal;
 };
