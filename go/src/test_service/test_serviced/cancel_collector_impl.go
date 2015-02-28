@@ -68,7 +68,7 @@ func (c *cancelCollectorImpl) getInfoLocked(key int64) *callInfo {
 	return info
 }
 
-func (c *cancelCollectorImpl) NeverReturn(ctx ipc.ServerContext, key int64) error {
+func (c *cancelCollectorImpl) NeverReturn(ctx ipc.ServerCall, key int64) error {
 	timeout := int64(0x7FFFFFFFFFFFFFFF / 1000000)
 	if deadline, ok := ctx.Context().Deadline(); ok {
 		timeout = int64(deadline.Sub(time.Now())) / 1000000
@@ -85,7 +85,7 @@ func (c *cancelCollectorImpl) NeverReturn(ctx ipc.ServerContext, key int64) erro
 	return nil
 }
 
-func (c *cancelCollectorImpl) WaitForStatus(ctx ipc.ServerContext, key int64, statusStr string) (int64, error) {
+func (c *cancelCollectorImpl) WaitForStatus(ctx ipc.ServerCall, key int64, statusStr string) (int64, error) {
 	status := statusFromString(statusStr)
 
 	c.mu.Lock()

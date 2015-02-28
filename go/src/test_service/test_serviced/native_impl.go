@@ -12,10 +12,10 @@ func NewNativeTest() test_service.NativeTestServerMethods {
 
 type nativeTest struct{}
 
-func (*nativeTest) PassTime(_ ipc.ServerContext, t time.Time) (time.Time, error) {
+func (*nativeTest) PassTime(_ ipc.ServerCall, t time.Time) (time.Time, error) {
 	return t, nil
 }
 
-func (*nativeTest) PassError(_ ipc.ServerContext, e error) error {
+func (*nativeTest) PassError(_ ipc.ServerCall, e error) error {
 	return e
 }

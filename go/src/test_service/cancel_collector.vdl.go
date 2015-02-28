@@ -53,7 +53,7 @@ func (c implCancelCollectorClientStub) c(ctx *context.T) ipc.Client {
 }
 
 func (c implCancelCollectorClientStub) NeverReturn(ctx *context.T, i0 int64, opts ...ipc.CallOpt) (err error) {
-	var call ipc.Call
+	var call ipc.ClientCall
 	if call, err = c.c(ctx).StartCall(ctx, c.name, "NeverReturn", []interface{}{i0}, opts...); err != nil {
 		return
 	}
@@ -62,7 +62,7 @@ func (c implCancelCollectorClientStub) NeverReturn(ctx *context.T, i0 int64, opt
 }
 
 func (c implCancelCollectorClientStub) WaitForStatus(ctx *context.T, i0 int64, i1 string, opts ...ipc.CallOpt) (o0 int64, err error) {
-	var call ipc.Call
+	var call ipc.ClientCall
 	if call, err = c.c(ctx).StartCall(ctx, c.name, "WaitForStatus", []interface{}{i0, i1}, opts...); err != nil {
 		return
 	}
@@ -76,11 +76,11 @@ func (c implCancelCollectorClientStub) WaitForStatus(ctx *context.T, i0 int64, i
 // CancelCollector is a test interface for use in testing cancellation and deadlines.
 type CancelCollectorServerMethods interface {
 	// A function that never returns, but records the status of the given key.
-	NeverReturn(ctx ipc.ServerContext, key int64) error
+	NeverReturn(ctx ipc.ServerCall, key int64) error
 	// Wait for the call with the given key to have the given status.  Possible statuses are:
 	// "running", and, "cancelled".  Returns the number of nanoseconds left on
 	// the deadline of the specified call when the call first began.
-	WaitForStatus(ctx ipc.ServerContext, key int64, status string) (timeout int64, err error)
+	WaitForStatus(ctx ipc.ServerCall, key int64, status string) (timeout int64, err error)
 }
 
 // CancelCollectorServerStubMethods is the server interface containing
@@ -118,11 +118,11 @@ type implCancelCollectorServerStub struct {
 	gs   *ipc.GlobState
 }
 
-func (s implCancelCollectorServerStub) NeverReturn(ctx ipc.ServerContext, i0 int64) error {
+func (s implCancelCollectorServerStub) NeverReturn(ctx ipc.ServerCall, i0 int64) error {
 	return s.impl.NeverReturn(ctx, i0)
 }
 
-func (s implCancelCollectorServerStub) WaitForStatus(ctx ipc.ServerContext, i0 int64, i1 string) (int64, error) {
+func (s implCancelCollectorServerStub) WaitForStatus(ctx ipc.ServerCall, i0 int64, i1 string) (int64, error) {
 	return s.impl.WaitForStatus(ctx, i0, i1)
 }
 

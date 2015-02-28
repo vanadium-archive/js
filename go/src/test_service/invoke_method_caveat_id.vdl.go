@@ -87,7 +87,7 @@ func (c implInvokableTestMethodClientStub) c(ctx *context.T) ipc.Client {
 }
 
 func (c implInvokableTestMethodClientStub) AMethod(ctx *context.T, opts ...ipc.CallOpt) (err error) {
-	var call ipc.Call
+	var call ipc.ClientCall
 	if call, err = c.c(ctx).StartCall(ctx, c.name, "AMethod", nil, opts...); err != nil {
 		return
 	}
@@ -98,7 +98,7 @@ func (c implInvokableTestMethodClientStub) AMethod(ctx *context.T, opts ...ipc.C
 // InvokableTestMethodServerMethods is the interface a server writer
 // implements for InvokableTestMethod.
 type InvokableTestMethodServerMethods interface {
-	AMethod(ipc.ServerContext) error
+	AMethod(ipc.ServerCall) error
 }
 
 // InvokableTestMethodServerStubMethods is the server interface containing
@@ -136,7 +136,7 @@ type implInvokableTestMethodServerStub struct {
 	gs   *ipc.GlobState
 }
 
-func (s implInvokableTestMethodServerStub) AMethod(ctx ipc.ServerContext) error {
+func (s implInvokableTestMethodServerStub) AMethod(ctx ipc.ServerCall) error {
 	return s.impl.AMethod(ctx)
 }
 
@@ -198,7 +198,7 @@ func (c implInvokeMethodWithCaveatedIdentityClientStub) c(ctx *context.T) ipc.Cl
 }
 
 func (c implInvokeMethodWithCaveatedIdentityClientStub) Invoke(ctx *context.T, i0 string, i1 security.CaveatDescriptor, i2 *vdl.Value, opts ...ipc.CallOpt) (err error) {
-	var call ipc.Call
+	var call ipc.ClientCall
 	if call, err = c.c(ctx).StartCall(ctx, c.name, "Invoke", []interface{}{i0, i1, i2}, opts...); err != nil {
 		return
 	}
@@ -209,7 +209,7 @@ func (c implInvokeMethodWithCaveatedIdentityClientStub) Invoke(ctx *context.T, i
 // InvokeMethodWithCaveatedIdentityServerMethods is the interface a server writer
 // implements for InvokeMethodWithCaveatedIdentity.
 type InvokeMethodWithCaveatedIdentityServerMethods interface {
-	Invoke(ctx ipc.ServerContext, name string, cavDesc security.CaveatDescriptor, cavParam *vdl.Value) error
+	Invoke(ctx ipc.ServerCall, name string, cavDesc security.CaveatDescriptor, cavParam *vdl.Value) error
 }
 
 // InvokeMethodWithCaveatedIdentityServerStubMethods is the server interface containing
@@ -247,7 +247,7 @@ type implInvokeMethodWithCaveatedIdentityServerStub struct {
 	gs   *ipc.GlobState
 }
 
-func (s implInvokeMethodWithCaveatedIdentityServerStub) Invoke(ctx ipc.ServerContext, i0 string, i1 security.CaveatDescriptor, i2 *vdl.Value) error {
+func (s implInvokeMethodWithCaveatedIdentityServerStub) Invoke(ctx ipc.ServerCall, i0 string, i1 security.CaveatDescriptor, i2 *vdl.Value) error {
 	return s.impl.Invoke(ctx, i0, i1, i2)
 }
 

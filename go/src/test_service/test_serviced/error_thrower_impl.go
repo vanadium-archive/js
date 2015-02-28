@@ -16,49 +16,49 @@ func NewErrorThrower() test_service.ErrorThrowerServerMethods {
 
 type errorThrowerImpl struct{}
 
-func (e *errorThrowerImpl) ThrowAborted(ctx ipc.ServerContext) error {
+func (e *errorThrowerImpl) ThrowAborted(ctx ipc.ServerCall) error {
 	return verror.New(verror.ErrAborted, ctx.Context())
 }
 
-func (e *errorThrowerImpl) ThrowBadArg(ctx ipc.ServerContext) error {
+func (e *errorThrowerImpl) ThrowBadArg(ctx ipc.ServerCall) error {
 	return verror.New(verror.ErrBadArg, ctx.Context())
 }
 
-func (e *errorThrowerImpl) ThrowBadProtocol(ctx ipc.ServerContext) error {
+func (e *errorThrowerImpl) ThrowBadProtocol(ctx ipc.ServerCall) error {
 	return verror.New(verror.ErrBadProtocol, ctx.Context())
 }
 
-func (e *errorThrowerImpl) ThrowInternal(ctx ipc.ServerContext) error {
+func (e *errorThrowerImpl) ThrowInternal(ctx ipc.ServerCall) error {
 	return verror.New(verror.ErrInternal, ctx.Context())
 }
 
-func (e *errorThrowerImpl) ThrowNoAccess(ctx ipc.ServerContext) error {
+func (e *errorThrowerImpl) ThrowNoAccess(ctx ipc.ServerCall) error {
 	return verror.New(verror.ErrNoAccess, ctx.Context())
 }
 
-func (e *errorThrowerImpl) ThrowNoExist(ctx ipc.ServerContext) error {
+func (e *errorThrowerImpl) ThrowNoExist(ctx ipc.ServerCall) error {
 	return verror.New(verror.ErrNoExist, ctx.Context())
 }
 
-func (e *errorThrowerImpl) ThrowNoExistOrNoAccess(ctx ipc.ServerContext) error {
+func (e *errorThrowerImpl) ThrowNoExistOrNoAccess(ctx ipc.ServerCall) error {
 	return verror.New(verror.ErrNoExistOrNoAccess, ctx.Context())
 }
 
-func (e *errorThrowerImpl) ThrowUnknown(ctx ipc.ServerContext) error {
+func (e *errorThrowerImpl) ThrowUnknown(ctx ipc.ServerCall) error {
 	return verror.New(verror.ErrUnknown, ctx.Context())
 }
 
-func (e *errorThrowerImpl) ThrowGoError(ctx ipc.ServerContext) error {
+func (e *errorThrowerImpl) ThrowGoError(ctx ipc.ServerCall) error {
 	return errors.New("GoError!")
 }
 
 var customError = verror.Register(pkgPath+".customError", verror.NoRetry, "{1:}{2:} CustomStandard!{:_}")
 
-func (e *errorThrowerImpl) ThrowCustomStandardError(ctx ipc.ServerContext) error {
+func (e *errorThrowerImpl) ThrowCustomStandardError(ctx ipc.ServerCall) error {
 	return verror.New(customError, ctx.Context())
 }
 
-func (e *errorThrowerImpl) ListAllBuiltInErrorIDs(_ ipc.ServerContext) ([]string, error) {
+func (e *errorThrowerImpl) ListAllBuiltInErrorIDs(_ ipc.ServerCall) ([]string, error) {
 	// TODO(aghassemi) Use when we have enum for error IDs in IDL
 	// This is not used yet but the idea is to pass all error types in v23/verror to
 	// JavaScript so if a new one is added, this test would break and we add the new one to

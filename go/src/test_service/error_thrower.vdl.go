@@ -69,7 +69,7 @@ func (c implErrorThrowerClientStub) c(ctx *context.T) ipc.Client {
 }
 
 func (c implErrorThrowerClientStub) ThrowAborted(ctx *context.T, opts ...ipc.CallOpt) (err error) {
-	var call ipc.Call
+	var call ipc.ClientCall
 	if call, err = c.c(ctx).StartCall(ctx, c.name, "ThrowAborted", nil, opts...); err != nil {
 		return
 	}
@@ -78,7 +78,7 @@ func (c implErrorThrowerClientStub) ThrowAborted(ctx *context.T, opts ...ipc.Cal
 }
 
 func (c implErrorThrowerClientStub) ThrowBadArg(ctx *context.T, opts ...ipc.CallOpt) (err error) {
-	var call ipc.Call
+	var call ipc.ClientCall
 	if call, err = c.c(ctx).StartCall(ctx, c.name, "ThrowBadArg", nil, opts...); err != nil {
 		return
 	}
@@ -87,7 +87,7 @@ func (c implErrorThrowerClientStub) ThrowBadArg(ctx *context.T, opts ...ipc.Call
 }
 
 func (c implErrorThrowerClientStub) ThrowBadProtocol(ctx *context.T, opts ...ipc.CallOpt) (err error) {
-	var call ipc.Call
+	var call ipc.ClientCall
 	if call, err = c.c(ctx).StartCall(ctx, c.name, "ThrowBadProtocol", nil, opts...); err != nil {
 		return
 	}
@@ -96,7 +96,7 @@ func (c implErrorThrowerClientStub) ThrowBadProtocol(ctx *context.T, opts ...ipc
 }
 
 func (c implErrorThrowerClientStub) ThrowInternal(ctx *context.T, opts ...ipc.CallOpt) (err error) {
-	var call ipc.Call
+	var call ipc.ClientCall
 	if call, err = c.c(ctx).StartCall(ctx, c.name, "ThrowInternal", nil, opts...); err != nil {
 		return
 	}
@@ -105,7 +105,7 @@ func (c implErrorThrowerClientStub) ThrowInternal(ctx *context.T, opts ...ipc.Ca
 }
 
 func (c implErrorThrowerClientStub) ThrowNoAccess(ctx *context.T, opts ...ipc.CallOpt) (err error) {
-	var call ipc.Call
+	var call ipc.ClientCall
 	if call, err = c.c(ctx).StartCall(ctx, c.name, "ThrowNoAccess", nil, opts...); err != nil {
 		return
 	}
@@ -114,7 +114,7 @@ func (c implErrorThrowerClientStub) ThrowNoAccess(ctx *context.T, opts ...ipc.Ca
 }
 
 func (c implErrorThrowerClientStub) ThrowNoExist(ctx *context.T, opts ...ipc.CallOpt) (err error) {
-	var call ipc.Call
+	var call ipc.ClientCall
 	if call, err = c.c(ctx).StartCall(ctx, c.name, "ThrowNoExist", nil, opts...); err != nil {
 		return
 	}
@@ -123,7 +123,7 @@ func (c implErrorThrowerClientStub) ThrowNoExist(ctx *context.T, opts ...ipc.Cal
 }
 
 func (c implErrorThrowerClientStub) ThrowNoExistOrNoAccess(ctx *context.T, opts ...ipc.CallOpt) (err error) {
-	var call ipc.Call
+	var call ipc.ClientCall
 	if call, err = c.c(ctx).StartCall(ctx, c.name, "ThrowNoExistOrNoAccess", nil, opts...); err != nil {
 		return
 	}
@@ -132,7 +132,7 @@ func (c implErrorThrowerClientStub) ThrowNoExistOrNoAccess(ctx *context.T, opts 
 }
 
 func (c implErrorThrowerClientStub) ThrowUnknown(ctx *context.T, opts ...ipc.CallOpt) (err error) {
-	var call ipc.Call
+	var call ipc.ClientCall
 	if call, err = c.c(ctx).StartCall(ctx, c.name, "ThrowUnknown", nil, opts...); err != nil {
 		return
 	}
@@ -141,7 +141,7 @@ func (c implErrorThrowerClientStub) ThrowUnknown(ctx *context.T, opts ...ipc.Cal
 }
 
 func (c implErrorThrowerClientStub) ThrowGoError(ctx *context.T, opts ...ipc.CallOpt) (err error) {
-	var call ipc.Call
+	var call ipc.ClientCall
 	if call, err = c.c(ctx).StartCall(ctx, c.name, "ThrowGoError", nil, opts...); err != nil {
 		return
 	}
@@ -150,7 +150,7 @@ func (c implErrorThrowerClientStub) ThrowGoError(ctx *context.T, opts ...ipc.Cal
 }
 
 func (c implErrorThrowerClientStub) ThrowCustomStandardError(ctx *context.T, opts ...ipc.CallOpt) (err error) {
-	var call ipc.Call
+	var call ipc.ClientCall
 	if call, err = c.c(ctx).StartCall(ctx, c.name, "ThrowCustomStandardError", nil, opts...); err != nil {
 		return
 	}
@@ -159,7 +159,7 @@ func (c implErrorThrowerClientStub) ThrowCustomStandardError(ctx *context.T, opt
 }
 
 func (c implErrorThrowerClientStub) ListAllBuiltInErrorIDs(ctx *context.T, opts ...ipc.CallOpt) (o0 []string, err error) {
-	var call ipc.Call
+	var call ipc.ClientCall
 	if call, err = c.c(ctx).StartCall(ctx, c.name, "ListAllBuiltInErrorIDs", nil, opts...); err != nil {
 		return
 	}
@@ -173,27 +173,27 @@ func (c implErrorThrowerClientStub) ListAllBuiltInErrorIDs(ctx *context.T, opts 
 // A testing interface with methods that throw various types of errors
 type ErrorThrowerServerMethods interface {
 	// Throws v23/vError.Aborted error
-	ThrowAborted(ipc.ServerContext) error
+	ThrowAborted(ipc.ServerCall) error
 	// Throws v23/vError.BadArg error
-	ThrowBadArg(ipc.ServerContext) error
+	ThrowBadArg(ipc.ServerCall) error
 	// Throws v23/vError.BadProtocol error
-	ThrowBadProtocol(ipc.ServerContext) error
+	ThrowBadProtocol(ipc.ServerCall) error
 	// Throws v23/vError.Internal error
-	ThrowInternal(ipc.ServerContext) error
+	ThrowInternal(ipc.ServerCall) error
 	// Throws v23/vError.NoAccess error
-	ThrowNoAccess(ipc.ServerContext) error
+	ThrowNoAccess(ipc.ServerCall) error
 	// Throws v23/vError.NoExist error
-	ThrowNoExist(ipc.ServerContext) error
+	ThrowNoExist(ipc.ServerCall) error
 	// Throws v23/vError.NoExistOrNoAccess error
-	ThrowNoExistOrNoAccess(ipc.ServerContext) error
+	ThrowNoExistOrNoAccess(ipc.ServerCall) error
 	// Throws v23/vError.Unknown error
-	ThrowUnknown(ipc.ServerContext) error
+	ThrowUnknown(ipc.ServerCall) error
 	// Throws normal Go error
-	ThrowGoError(ipc.ServerContext) error
+	ThrowGoError(ipc.ServerCall) error
 	// Throws custom error created by using Standard
-	ThrowCustomStandardError(ipc.ServerContext) error
+	ThrowCustomStandardError(ipc.ServerCall) error
 	// Lists all errors Ids available in v23/verror
-	ListAllBuiltInErrorIDs(ipc.ServerContext) ([]string, error)
+	ListAllBuiltInErrorIDs(ipc.ServerCall) ([]string, error)
 }
 
 // ErrorThrowerServerStubMethods is the server interface containing
@@ -231,47 +231,47 @@ type implErrorThrowerServerStub struct {
 	gs   *ipc.GlobState
 }
 
-func (s implErrorThrowerServerStub) ThrowAborted(ctx ipc.ServerContext) error {
+func (s implErrorThrowerServerStub) ThrowAborted(ctx ipc.ServerCall) error {
 	return s.impl.ThrowAborted(ctx)
 }
 
-func (s implErrorThrowerServerStub) ThrowBadArg(ctx ipc.ServerContext) error {
+func (s implErrorThrowerServerStub) ThrowBadArg(ctx ipc.ServerCall) error {
 	return s.impl.ThrowBadArg(ctx)
 }
 
-func (s implErrorThrowerServerStub) ThrowBadProtocol(ctx ipc.ServerContext) error {
+func (s implErrorThrowerServerStub) ThrowBadProtocol(ctx ipc.ServerCall) error {
 	return s.impl.ThrowBadProtocol(ctx)
 }
 
-func (s implErrorThrowerServerStub) ThrowInternal(ctx ipc.ServerContext) error {
+func (s implErrorThrowerServerStub) ThrowInternal(ctx ipc.ServerCall) error {
 	return s.impl.ThrowInternal(ctx)
 }
 
-func (s implErrorThrowerServerStub) ThrowNoAccess(ctx ipc.ServerContext) error {
+func (s implErrorThrowerServerStub) ThrowNoAccess(ctx ipc.ServerCall) error {
 	return s.impl.ThrowNoAccess(ctx)
 }
 
-func (s implErrorThrowerServerStub) ThrowNoExist(ctx ipc.ServerContext) error {
+func (s implErrorThrowerServerStub) ThrowNoExist(ctx ipc.ServerCall) error {
 	return s.impl.ThrowNoExist(ctx)
 }
 
-func (s implErrorThrowerServerStub) ThrowNoExistOrNoAccess(ctx ipc.ServerContext) error {
+func (s implErrorThrowerServerStub) ThrowNoExistOrNoAccess(ctx ipc.ServerCall) error {
 	return s.impl.ThrowNoExistOrNoAccess(ctx)
 }
 
-func (s implErrorThrowerServerStub) ThrowUnknown(ctx ipc.ServerContext) error {
+func (s implErrorThrowerServerStub) ThrowUnknown(ctx ipc.ServerCall) error {
 	return s.impl.ThrowUnknown(ctx)
 }
 
-func (s implErrorThrowerServerStub) ThrowGoError(ctx ipc.ServerContext) error {
+func (s implErrorThrowerServerStub) ThrowGoError(ctx ipc.ServerCall) error {
 	return s.impl.ThrowGoError(ctx)
 }
 
-func (s implErrorThrowerServerStub) ThrowCustomStandardError(ctx ipc.ServerContext) error {
+func (s implErrorThrowerServerStub) ThrowCustomStandardError(ctx ipc.ServerCall) error {
 	return s.impl.ThrowCustomStandardError(ctx)
 }
 
-func (s implErrorThrowerServerStub) ListAllBuiltInErrorIDs(ctx ipc.ServerContext) ([]string, error) {
+func (s implErrorThrowerServerStub) ListAllBuiltInErrorIDs(ctx ipc.ServerCall) ([]string, error) {
 	return s.impl.ListAllBuiltInErrorIDs(ctx)
 }
 

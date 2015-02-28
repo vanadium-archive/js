@@ -51,7 +51,7 @@ func (c implNativeTestClientStub) c(ctx *context.T) ipc.Client {
 }
 
 func (c implNativeTestClientStub) PassTime(ctx *context.T, i0 time.Time, opts ...ipc.CallOpt) (o0 time.Time, err error) {
-	var call ipc.Call
+	var call ipc.ClientCall
 	if call, err = c.c(ctx).StartCall(ctx, c.name, "PassTime", []interface{}{i0}, opts...); err != nil {
 		return
 	}
@@ -60,7 +60,7 @@ func (c implNativeTestClientStub) PassTime(ctx *context.T, i0 time.Time, opts ..
 }
 
 func (c implNativeTestClientStub) PassError(ctx *context.T, i0 error, opts ...ipc.CallOpt) (err error) {
-	var call ipc.Call
+	var call ipc.ClientCall
 	if call, err = c.c(ctx).StartCall(ctx, c.name, "PassError", []interface{}{&i0}, opts...); err != nil {
 		return
 	}
@@ -71,8 +71,8 @@ func (c implNativeTestClientStub) PassError(ctx *context.T, i0 error, opts ...ip
 // NativeTestServerMethods is the interface a server writer
 // implements for NativeTest.
 type NativeTestServerMethods interface {
-	PassTime(ctx ipc.ServerContext, t time.Time) (time.Time, error)
-	PassError(ctx ipc.ServerContext, e error) error
+	PassTime(ctx ipc.ServerCall, t time.Time) (time.Time, error)
+	PassError(ctx ipc.ServerCall, e error) error
 }
 
 // NativeTestServerStubMethods is the server interface containing
@@ -110,11 +110,11 @@ type implNativeTestServerStub struct {
 	gs   *ipc.GlobState
 }
 
-func (s implNativeTestServerStub) PassTime(ctx ipc.ServerContext, i0 time.Time) (time.Time, error) {
+func (s implNativeTestServerStub) PassTime(ctx ipc.ServerCall, i0 time.Time) (time.Time, error) {
 	return s.impl.PassTime(ctx, i0)
 }
 
-func (s implNativeTestServerStub) PassError(ctx ipc.ServerContext, i0 error) error {
+func (s implNativeTestServerStub) PassError(ctx ipc.ServerCall, i0 error) error {
 	return s.impl.PassError(ctx, i0)
 }
 
