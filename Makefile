@@ -129,11 +129,11 @@ clean-test-vdl:
 
 gen-vdl-impl:
 ifndef NOVDLGEN
-	VDLPATH=$(VDLPATH) v23 go run $(VANADIUM_ROOT)/release/go/src/v.io/core/veyron/tools/vdl/main.go generate -lang=javascript \
+	VDLPATH=$(VDLPATH) v23 go run $(VANADIUM_ROOT)/release/go/src/v.io/x/ref/tools/vdl/main.go generate -lang=javascript \
 		-js_relative_path_to_core=$(JS_VDL_PATH_TO_CORE) \
 		-js_out_dir=$(JS_VDL_DIR) \
-		v.io/core/veyron/lib/vdl/testdata/... \
-		v.io/core/veyron/services/wsprd/... \
+		v.io/x/ref/lib/vdl/testdata/... \
+		v.io/x/ref/services/wsprd/... \
 		v.io/v23/ipc/... \
 		v.io/v23/naming/... \
 		v.io/v23/verror/... \
@@ -142,7 +142,7 @@ ifndef NOVDLGEN
 	# We build the vdlroot stuff with a different set of command line options because the package path does
 	# not equal the directory path of the source file.  This is not ideal, but bjornick and toddw will discuss
 	# how to fix this later.
-	VDLPATH=$(VDLPATH) v23 go run $(VANADIUM_ROOT)/release/go/src/v.io/core/veyron/tools/vdl/main.go generate -lang=javascript \
+	VDLPATH=$(VDLPATH) v23 go run $(VANADIUM_ROOT)/release/go/src/v.io/x/ref/tools/vdl/main.go generate -lang=javascript \
 					-js_relative_path_to_core=../../../$(JS_VDL_PATH_TO_CORE) \
 					-js_out_dir=$(JS_VDL_DIR) \
 					$(VANADIUM_ROOT)/release/go/src/v.io/v23/vdlroot/...
@@ -185,8 +185,8 @@ test-integration-browser-runner:
 	prova test/integration/test-*.js --log=./tmp/chrome.log $(PROVA_OPTS) $(BROWSER_OPTS) $(BROWSER_OUTPUT_LOCAL) $(SAVE_CHROME_LOGS)
 
 go/bin: $(GO_FILES)
-	@$(VGO) build -o $(GOBIN)/principal v.io/core/veyron/tools/principal
-	@$(VGO) build -o $(GOBIN)/servicerunner v.io/core/veyron/tools/servicerunner
+	@$(VGO) build -o $(GOBIN)/principal v.io/x/ref/tools/principal
+	@$(VGO) build -o $(GOBIN)/servicerunner v.io/x/ref/tools/servicerunner
 	@$(VGO) build -o $(GOBIN)/test_serviced test_service/test_serviced
 
 lint: node_modules

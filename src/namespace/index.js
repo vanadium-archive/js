@@ -1,4 +1,4 @@
-var vdl = require('../v.io/core/veyron/services/wsprd/namespace');
+var vdl = require('../v.io/x/ref/services/wsprd/namespace');
 var time = require('../v.io/v23/vdlroot/time');
 var emitStreamError = require('../lib/emit-stream-error');
 var Readable = require('stream').Readable;

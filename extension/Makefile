@@ -1,5 +1,5 @@
 PATH := node_modules/.bin:${VANADIUM_ROOT}/environment/cout/node/bin:$(PATH)
-WSPRD_PATH := $(VANADIUM_ROOT)/release/go/src/v.io/core/veyron/services/wsprd
+WSPRD_PATH := $(VANADIUM_ROOT)/release/go/src/v.io/x/ref/services/wsprd
 SHELL := /bin/bash -e -o pipefail
 .DEFAULT_GOAL := all
 
@@ -55,7 +55,7 @@ build/nacl/main.nmf: nacl
 	mkdir -p $(dir $@)
 	cp -r nacl/main.nmf $@
 
-build/nacl/main-64.nexe: $(VANADIUM_ROOT)/release/go/src/v.io/core/veyron/services/wsprd/browspr/main/main_nacl.go
+build/nacl/main-64.nexe: $(VANADIUM_ROOT)/release/go/src/v.io/x/ref/services/wsprd/browspr/main/main_nacl.go
 	$(call COMPILE-NACL-PLUGIN,$<,$@)
 
 build/nacl: build/nacl/main.nmf build/nacl/main-64.nexe
@@ -119,7 +119,7 @@ build-test/nacl: build-test/nacl/main.nmf build-test/nacl/main-64.nexe
 build-test: build-test/html build-test/images build-test/manifest.json build-test/js build-test/nacl
 
 gen-vdl: $(WSPRD_PATH)/channel/channel.vdl $(WSPRD_PATH)/browspr/browspr.vdl $(WSPRD_PATH)/account/account.vdl
-	v23 go run $(VANADIUM_ROOT)/release/go/src/v.io/core/veyron/tools/vdl/main.go \
+	v23 go run $(VANADIUM_ROOT)/release/go/src/v.io/x/ref/tools/vdl/main.go \
 	generate -lang=javascript -js_out_dir="$(VANADIUM_ROOT)/release/javascript/core/extension/vdl" -js_relative_path_to_core=../../src $(dir $^) 
 
 example-server: example/index.bundle.js

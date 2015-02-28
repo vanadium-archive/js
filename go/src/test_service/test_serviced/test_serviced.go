@@ -4,12 +4,12 @@ import (
 	"fmt"
 	"strings"
 
-	_ "v.io/core/veyron/profiles"
 	"v.io/v23"
 	"v.io/v23/context"
 	"v.io/v23/ipc"
 	"v.io/v23/naming"
 	"v.io/v23/security"
+	_ "v.io/x/ref/profiles"
 
 	"test_service"
 )

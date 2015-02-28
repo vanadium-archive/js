@@ -9,7 +9,7 @@ var test = require('prova');
 var Invoker = require('../../src/invocation/invoker.js');
 var Context = require('../../src/runtime/context').Context;
 var vdl = require('../../src/vdl');
-var base = require('../vdl-out/v.io/core/veyron/lib/vdl/testdata/base');
+var base = require('../vdl-out/v.io/x/ref/lib/vdl/testdata/base');
 
 function BasePartialImpl() {
 }
@@ -46,12 +46,12 @@ test('Invoker and signature for vdl-generated base.js',
         var sig = invoker.signature();
         var expectedSig = [{
             'name': 'ServiceB',
-            'pkgPath': 'v.io/core/veyron/lib/vdl/testdata/base',
+            'pkgPath': 'v.io/x/ref/lib/vdl/testdata/base',
             'doc': '',
             'embeds': [
                 {
                     'name': 'ServiceA',
-                    'pkgPath': 'v.io/core/veyron/lib/vdl/testdata/base',
+                    'pkgPath': 'v.io/x/ref/lib/vdl/testdata/base',
                     'doc': ''
                 }
             ],

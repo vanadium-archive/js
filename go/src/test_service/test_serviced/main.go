@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"log"
 
-	"v.io/core/veyron/lib/signals"
-	_ "v.io/core/veyron/profiles"
 	"v.io/v23"
+	"v.io/x/ref/lib/signals"
+	_ "v.io/x/ref/profiles"
 )
 
 func main() {

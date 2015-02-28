@@ -3,7 +3,7 @@ package main
 import (
 	"test_service"
 
-	vsecurity "v.io/core/veyron/security"
+	vsecurity "v.io/x/ref/security"
 
 	"v.io/v23"
 	"v.io/v23/ipc"

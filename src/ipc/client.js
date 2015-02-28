@@ -27,12 +27,12 @@ var ByteArrayMessageWriter = require('../vom/byte-array-message-writer');
 var makeError = require('../errors/make-errors');
 var actions = require('../errors/actions');
 var VanadiumRPCRequest =
-  require('../v.io/core/veyron/services/wsprd/app').VeyronRPCRequest;
+  require('../v.io/x/ref/services/wsprd/app').VeyronRPCRequest;
 var vtrace = require('../lib/vtrace');
 var ReservedSignature =
   require('../v.io/v23/ipc').ReservedSignature.val;
 var Controller =
-  require('../v.io/core/veyron/services/wsprd/app').Controller;
+  require('../v.io/x/ref/services/wsprd/app').Controller;
 
 var OutstandingRPC = function(ctx, options, cb) {
   this._ctx = ctx;

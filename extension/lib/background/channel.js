@@ -4,9 +4,9 @@
 
 var vom = require('../../../src/vom');
 var channelVdl =
-  require('../../vdl/v.io/core/veyron/services/wsprd/channel');
+  require('../../vdl/v.io/x/ref/services/wsprd/channel');
 var browsprVdl =
-  require('../../vdl/v.io/core/veyron/services/wsprd/browspr');
+  require('../../vdl/v.io/x/ref/services/wsprd/browspr');
 
 module.exports = RpcChannel;
 
