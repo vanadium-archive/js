@@ -33,7 +33,7 @@ function fromDateWireType(v) {
   // TODO(bprosnitz) Remove the undefined cases because they
   // shouldn't be required after canonicalized is changed to canonicalized the
   // input before passing to this function.
-  var nanos = v.nano || 0;
+  var nanos = v.nanos || 0;
   var epochInMillis = seconds * 1000 +
     nanos / 1000000;
 
@@ -45,6 +45,6 @@ function toDateWireType(v) {
   var seconds = Math.floor(time / 1000);
   var nanos = Math.floor((time - seconds * 1000) * 1000000);
   var f = new Time({ seconds: BigInt.fromNativeNumber(seconds),
-                         nano: nanos}, true);
+                         nanos: nanos}, true);
   return f;
 }

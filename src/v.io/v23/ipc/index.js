@@ -5,6 +5,7 @@ var vdl = require('../../.././vdl');
 
 
 
+var time = require('./../vdlroot/time');
 var security = require('./../security');
 var vtrace = require('./../vtrace');
 
@@ -62,7 +63,7 @@ _typeBlessingsRequest.name = "v.io/v23/ipc.BlessingsRequest";
 _typeBlessingsRequest.fields = [{name: "Key", type: vdl.Types.UINT64}, {name: "Blessings", type: _type5}];
 _typeRequest.kind = vdl.Kind.STRUCT;
 _typeRequest.name = "v.io/v23/ipc.Request";
-_typeRequest.fields = [{name: "Suffix", type: vdl.Types.STRING}, {name: "Method", type: vdl.Types.STRING}, {name: "NumPosArgs", type: vdl.Types.UINT64}, {name: "EndStreamArgs", type: vdl.Types.BOOL}, {name: "Timeout", type: vdl.Types.INT64}, {name: "GrantedBlessings", type: new security.WireBlessings()._type}, {name: "Blessings", type: _typeBlessingsRequest}, {name: "Discharges", type: _type6}, {name: "TraceRequest", type: new vtrace.Request()._type}];
+_typeRequest.fields = [{name: "Suffix", type: vdl.Types.STRING}, {name: "Method", type: vdl.Types.STRING}, {name: "NumPosArgs", type: vdl.Types.UINT64}, {name: "EndStreamArgs", type: vdl.Types.BOOL}, {name: "Deadline", type: new time.WireDeadline()._type}, {name: "GrantedBlessings", type: new security.WireBlessings()._type}, {name: "Blessings", type: _typeBlessingsRequest}, {name: "Discharges", type: _type6}, {name: "TraceRequest", type: new vtrace.Request()._type}];
 _typeResponse.kind = vdl.Kind.STRUCT;
 _typeResponse.name = "v.io/v23/ipc.Response";
 _typeResponse.fields = [{name: "Error", type: vdl.Types.ERROR}, {name: "EndStreamResults", type: vdl.Types.BOOL}, {name: "NumPosResults", type: vdl.Types.UINT64}, {name: "TraceResponse", type: new vtrace.Response()._type}, {name: "AckBlessings", type: vdl.Types.BOOL}];
@@ -92,8 +93,6 @@ module.exports.error = (vdl.Registry.lookupOrCreateConstructor(_typeerror));
 
 
 // Consts:
-
-  module.exports.NoTimeout = new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.INT64))(new vdl.BigInt(1, new Uint8Array([0x7f, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff])));
 
   module.exports.GlobMethod = new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.STRING))("__Glob");
 

@@ -27,13 +27,21 @@ var _type9 = new vdl.Type();
 var _typeABCStruct = new vdl.Type();
 var _typeADEStruct = new vdl.Type();
 var _typeArray3String = new vdl.Type();
-var _typeBDEunion = new vdl.Type();
+var _typeArray4String = new vdl.Type();
+var _typeBDEUnion = new vdl.Type();
+var _typeBEANum = new vdl.Type();
+var _typeBRIENum = new vdl.Type();
 var _typeConvertGroup = new vdl.Type();
+var _typeFOODYNum = new vdl.Type();
 var _typeListString = new vdl.Type();
 var _typeMBool = new vdl.Type();
 var _typeMList = new vdl.Type();
 var _typeMMap = new vdl.Type();
 var _typeMStruct = new vdl.Type();
+var _typeMapOnlyA = new vdl.Type();
+var _typeMapOnlyA2 = new vdl.Type();
+var _typeMapOnlyB = new vdl.Type();
+var _typeMapOnlyB2 = new vdl.Type();
 var _typeMapOnlySet = new vdl.Type();
 var _typeMapOnlyStruct = new vdl.Type();
 var _typeMapSetStruct = new vdl.Type();
@@ -63,8 +71,13 @@ var _typeNUnion = new vdl.Type();
 var _typeRecA = new vdl.Type();
 var _typeRecX = new vdl.Type();
 var _typeRecY = new vdl.Type();
+var _typeSetOnlyA = new vdl.Type();
+var _typeSetOnlyA2 = new vdl.Type();
+var _typeSetOnlyB = new vdl.Type();
+var _typeSetOnlyB2 = new vdl.Type();
 var _typeSetOnlyMap = new vdl.Type();
 var _typeSetStructMap = new vdl.Type();
+var _typeSometimesSetMap = new vdl.Type();
 var _typeStructOnlyMap = new vdl.Type();
 var _typeTestCase = new vdl.Type();
 var _typeVomdataStruct = new vdl.Type();
@@ -123,12 +136,25 @@ _typeArray3String.kind = vdl.Kind.ARRAY;
 _typeArray3String.name = "v.io/v23/vom/testdata.Array3String";
 _typeArray3String.len = 3;
 _typeArray3String.elem = vdl.Types.STRING;
-_typeBDEunion.kind = vdl.Kind.UNION;
-_typeBDEunion.name = "v.io/v23/vom/testdata.BDEunion";
-_typeBDEunion.fields = [{name: "B", type: vdl.Types.STRING}, {name: "D", type: vdl.Types.ANY}, {name: "E", type: vdl.Types.TYPEOBJECT}];
+_typeArray4String.kind = vdl.Kind.ARRAY;
+_typeArray4String.name = "v.io/v23/vom/testdata.Array4String";
+_typeArray4String.len = 4;
+_typeArray4String.elem = vdl.Types.STRING;
+_typeBDEUnion.kind = vdl.Kind.UNION;
+_typeBDEUnion.name = "v.io/v23/vom/testdata.BDEUnion";
+_typeBDEUnion.fields = [{name: "B", type: vdl.Types.STRING}, {name: "D", type: vdl.Types.ANY}, {name: "E", type: vdl.Types.TYPEOBJECT}];
+_typeBEANum.kind = vdl.Kind.ENUM;
+_typeBEANum.name = "v.io/v23/vom/testdata.BEANum";
+_typeBEANum.labels = ["Bean"];
+_typeBRIENum.kind = vdl.Kind.ENUM;
+_typeBRIENum.name = "v.io/v23/vom/testdata.BRIENum";
+_typeBRIENum.labels = ["Glee", "Brie", "Three"];
 _typeConvertGroup.kind = vdl.Kind.STRUCT;
 _typeConvertGroup.name = "v.io/v23/vom/testdata.ConvertGroup";
 _typeConvertGroup.fields = [{name: "Name", type: vdl.Types.STRING}, {name: "PrimaryType", type: vdl.Types.TYPEOBJECT}, {name: "Values", type: _type13}];
+_typeFOODYNum.kind = vdl.Kind.ENUM;
+_typeFOODYNum.name = "v.io/v23/vom/testdata.FOODYNum";
+_typeFOODYNum.labels = ["Bean", "Brie", "Cherry"];
 _typeListString.kind = vdl.Kind.LIST;
 _typeListString.name = "v.io/v23/vom/testdata.ListString";
 _typeListString.elem = vdl.Types.STRING;
@@ -144,15 +170,31 @@ _typeMMap.key = _typeNFloat32;
 _typeMStruct.kind = vdl.Kind.STRUCT;
 _typeMStruct.name = "v.io/v23/vom/testdata.MStruct";
 _typeMStruct.fields = [{name: "A", type: vdl.Types.BOOL}, {name: "B", type: _typeNBool}, {name: "C", type: _typeMBool}, {name: "D", type: _type6}, {name: "E", type: vdl.Types.TYPEOBJECT}, {name: "F", type: vdl.Types.ANY}];
+_typeMapOnlyA.kind = vdl.Kind.MAP;
+_typeMapOnlyA.name = "v.io/v23/vom/testdata.MapOnlyA";
+_typeMapOnlyA.elem = vdl.Types.UINT32;
+_typeMapOnlyA.key = vdl.Types.UINT32;
+_typeMapOnlyA2.kind = vdl.Kind.MAP;
+_typeMapOnlyA2.name = "v.io/v23/vom/testdata.MapOnlyA2";
+_typeMapOnlyA2.elem = vdl.Types.FLOAT64;
+_typeMapOnlyA2.key = vdl.Types.INT64;
+_typeMapOnlyB.kind = vdl.Kind.MAP;
+_typeMapOnlyB.name = "v.io/v23/vom/testdata.MapOnlyB";
+_typeMapOnlyB.elem = vdl.Types.STRING;
+_typeMapOnlyB.key = vdl.Types.BOOL;
+_typeMapOnlyB2.kind = vdl.Kind.MAP;
+_typeMapOnlyB2.name = "v.io/v23/vom/testdata.MapOnlyB2";
+_typeMapOnlyB2.elem = _typeNString;
+_typeMapOnlyB2.key = _typeNBool;
 _typeMapOnlySet.kind = vdl.Kind.SET;
 _typeMapOnlySet.name = "v.io/v23/vom/testdata.MapOnlySet";
-_typeMapOnlySet.key = vdl.Types.UINT16;
+_typeMapOnlySet.key = vdl.Types.FLOAT64;
 _typeMapOnlyStruct.kind = vdl.Kind.STRUCT;
 _typeMapOnlyStruct.name = "v.io/v23/vom/testdata.MapOnlyStruct";
 _typeMapOnlyStruct.fields = [{name: "Key1", type: vdl.Types.INT64}, {name: "Key2", type: vdl.Types.UINT32}, {name: "Key3", type: vdl.Types.COMPLEX128}];
 _typeMapSetStruct.kind = vdl.Kind.STRUCT;
 _typeMapSetStruct.name = "v.io/v23/vom/testdata.MapSetStruct";
-_typeMapSetStruct.fields = [{name: "Key", type: vdl.Types.BOOL}];
+_typeMapSetStruct.fields = [{name: "Feat", type: vdl.Types.BOOL}, {name: "Tire", type: vdl.Types.BOOL}, {name: "Eel", type: vdl.Types.BOOL}];
 _typeMapStructSet.kind = vdl.Kind.SET;
 _typeMapStructSet.name = "v.io/v23/vom/testdata.MapStructSet";
 _typeMapStructSet.key = vdl.Types.STRING;
@@ -221,14 +263,30 @@ _typeRecX.elem = _typeRecY;
 _typeRecY.kind = vdl.Kind.LIST;
 _typeRecY.name = "v.io/v23/vom/testdata.RecY";
 _typeRecY.elem = _typeRecX;
+_typeSetOnlyA.kind = vdl.Kind.SET;
+_typeSetOnlyA.name = "v.io/v23/vom/testdata.SetOnlyA";
+_typeSetOnlyA.key = vdl.Types.BOOL;
+_typeSetOnlyA2.kind = vdl.Kind.SET;
+_typeSetOnlyA2.name = "v.io/v23/vom/testdata.SetOnlyA2";
+_typeSetOnlyA2.key = _typeNBool;
+_typeSetOnlyB.kind = vdl.Kind.SET;
+_typeSetOnlyB.name = "v.io/v23/vom/testdata.SetOnlyB";
+_typeSetOnlyB.key = vdl.Types.INT16;
+_typeSetOnlyB2.kind = vdl.Kind.SET;
+_typeSetOnlyB2.name = "v.io/v23/vom/testdata.SetOnlyB2";
+_typeSetOnlyB2.key = _typeNInt16;
 _typeSetOnlyMap.kind = vdl.Kind.MAP;
 _typeSetOnlyMap.name = "v.io/v23/vom/testdata.SetOnlyMap";
 _typeSetOnlyMap.elem = vdl.Types.BOOL;
-_typeSetOnlyMap.key = vdl.Types.INT64;
+_typeSetOnlyMap.key = vdl.Types.FLOAT64;
 _typeSetStructMap.kind = vdl.Kind.MAP;
 _typeSetStructMap.name = "v.io/v23/vom/testdata.SetStructMap";
 _typeSetStructMap.elem = vdl.Types.BOOL;
 _typeSetStructMap.key = vdl.Types.STRING;
+_typeSometimesSetMap.kind = vdl.Kind.MAP;
+_typeSometimesSetMap.name = "v.io/v23/vom/testdata.SometimesSetMap";
+_typeSometimesSetMap.elem = vdl.Types.ANY;
+_typeSometimesSetMap.key = vdl.Types.FLOAT64;
 _typeStructOnlyMap.kind = vdl.Kind.MAP;
 _typeStructOnlyMap.name = "v.io/v23/vom/testdata.StructOnlyMap";
 _typeStructOnlyMap.elem = vdl.Types.UINT64;
@@ -241,7 +299,7 @@ _typeVomdataStruct.name = "v.io/v23/vom/testdata.VomdataStruct";
 _typeVomdataStruct.fields = [{name: "EncodeDecodeData", type: _type13}, {name: "CompatData", type: _type7}, {name: "ConvertData", type: _type11}];
 _typeXYZStruct.kind = vdl.Kind.STRUCT;
 _typeXYZStruct.name = "v.io/v23/vom/testdata.XYZStruct";
-_typeXYZStruct.fields = [{name: "X", type: vdl.Types.BOOL}, {name: "Y", type: vdl.Types.ANY}, {name: "Z", type: vdl.Types.STRING}];
+_typeXYZStruct.fields = [{name: "X", type: vdl.Types.BOOL}, {name: "Y", type: _typeMBool}, {name: "Z", type: vdl.Types.STRING}];
 _typeYZStruct.kind = vdl.Kind.STRUCT;
 _typeYZStruct.name = "v.io/v23/vom/testdata.YZStruct";
 _typeYZStruct.fields = [{name: "Y", type: _typeNBool}, {name: "Z", type: _typeNString}];
@@ -264,13 +322,21 @@ _type9.freeze();
 _typeABCStruct.freeze();
 _typeADEStruct.freeze();
 _typeArray3String.freeze();
-_typeBDEunion.freeze();
+_typeArray4String.freeze();
+_typeBDEUnion.freeze();
+_typeBEANum.freeze();
+_typeBRIENum.freeze();
 _typeConvertGroup.freeze();
+_typeFOODYNum.freeze();
 _typeListString.freeze();
 _typeMBool.freeze();
 _typeMList.freeze();
 _typeMMap.freeze();
 _typeMStruct.freeze();
+_typeMapOnlyA.freeze();
+_typeMapOnlyA2.freeze();
+_typeMapOnlyB.freeze();
+_typeMapOnlyB2.freeze();
 _typeMapOnlySet.freeze();
 _typeMapOnlyStruct.freeze();
 _typeMapSetStruct.freeze();
@@ -300,8 +366,13 @@ _typeNUnion.freeze();
 _typeRecA.freeze();
 _typeRecX.freeze();
 _typeRecY.freeze();
+_typeSetOnlyA.freeze();
+_typeSetOnlyA2.freeze();
+_typeSetOnlyB.freeze();
+_typeSetOnlyB2.freeze();
 _typeSetOnlyMap.freeze();
 _typeSetStructMap.freeze();
+_typeSometimesSetMap.freeze();
 _typeStructOnlyMap.freeze();
 _typeTestCase.freeze();
 _typeVomdataStruct.freeze();
@@ -311,13 +382,21 @@ _typeZStruct.freeze();
 module.exports.ABCStruct = (vdl.Registry.lookupOrCreateConstructor(_typeABCStruct));
 module.exports.ADEStruct = (vdl.Registry.lookupOrCreateConstructor(_typeADEStruct));
 module.exports.Array3String = (vdl.Registry.lookupOrCreateConstructor(_typeArray3String));
-module.exports.BDEunion = (vdl.Registry.lookupOrCreateConstructor(_typeBDEunion));
+module.exports.Array4String = (vdl.Registry.lookupOrCreateConstructor(_typeArray4String));
+module.exports.BDEUnion = (vdl.Registry.lookupOrCreateConstructor(_typeBDEUnion));
+module.exports.BEANum = (vdl.Registry.lookupOrCreateConstructor(_typeBEANum));
+module.exports.BRIENum = (vdl.Registry.lookupOrCreateConstructor(_typeBRIENum));
 module.exports.ConvertGroup = (vdl.Registry.lookupOrCreateConstructor(_typeConvertGroup));
+module.exports.FOODYNum = (vdl.Registry.lookupOrCreateConstructor(_typeFOODYNum));
 module.exports.ListString = (vdl.Registry.lookupOrCreateConstructor(_typeListString));
 module.exports.MBool = (vdl.Registry.lookupOrCreateConstructor(_typeMBool));
 module.exports.MList = (vdl.Registry.lookupOrCreateConstructor(_typeMList));
 module.exports.MMap = (vdl.Registry.lookupOrCreateConstructor(_typeMMap));
 module.exports.MStruct = (vdl.Registry.lookupOrCreateConstructor(_typeMStruct));
+module.exports.MapOnlyA = (vdl.Registry.lookupOrCreateConstructor(_typeMapOnlyA));
+module.exports.MapOnlyA2 = (vdl.Registry.lookupOrCreateConstructor(_typeMapOnlyA2));
+module.exports.MapOnlyB = (vdl.Registry.lookupOrCreateConstructor(_typeMapOnlyB));
+module.exports.MapOnlyB2 = (vdl.Registry.lookupOrCreateConstructor(_typeMapOnlyB2));
 module.exports.MapOnlySet = (vdl.Registry.lookupOrCreateConstructor(_typeMapOnlySet));
 module.exports.MapOnlyStruct = (vdl.Registry.lookupOrCreateConstructor(_typeMapOnlyStruct));
 module.exports.MapSetStruct = (vdl.Registry.lookupOrCreateConstructor(_typeMapSetStruct));
@@ -347,8 +426,13 @@ module.exports.NUnion = (vdl.Registry.lookupOrCreateConstructor(_typeNUnion));
 module.exports.RecA = (vdl.Registry.lookupOrCreateConstructor(_typeRecA));
 module.exports.RecX = (vdl.Registry.lookupOrCreateConstructor(_typeRecX));
 module.exports.RecY = (vdl.Registry.lookupOrCreateConstructor(_typeRecY));
+module.exports.SetOnlyA = (vdl.Registry.lookupOrCreateConstructor(_typeSetOnlyA));
+module.exports.SetOnlyA2 = (vdl.Registry.lookupOrCreateConstructor(_typeSetOnlyA2));
+module.exports.SetOnlyB = (vdl.Registry.lookupOrCreateConstructor(_typeSetOnlyB));
+module.exports.SetOnlyB2 = (vdl.Registry.lookupOrCreateConstructor(_typeSetOnlyB2));
 module.exports.SetOnlyMap = (vdl.Registry.lookupOrCreateConstructor(_typeSetOnlyMap));
 module.exports.SetStructMap = (vdl.Registry.lookupOrCreateConstructor(_typeSetStructMap));
+module.exports.SometimesSetMap = (vdl.Registry.lookupOrCreateConstructor(_typeSometimesSetMap));
 module.exports.StructOnlyMap = (vdl.Registry.lookupOrCreateConstructor(_typeStructOnlyMap));
 module.exports.TestCase = (vdl.Registry.lookupOrCreateConstructor(_typeTestCase));
 module.exports.VomdataStruct = (vdl.Registry.lookupOrCreateConstructor(_typeVomdataStruct));
@@ -1951,6 +2035,7 @@ _typeMBool,
   ["map[X]bool/set[X]", [
 _typeSetOnlyMap,
 _typeMapOnlySet,
+_typeSometimesSetMap,
 ]],
   ["map[string]X/struct", [
 _typeMapOnlyStruct,
@@ -1992,6 +2077,7 @@ _typeNComplex128,
 _type10,
 _typeListString,
 _typeArray3String,
+_typeArray4String,
 ]],
   ["string/[]byte/enum", [
 vdl.Types.STRING,
@@ -2016,10 +2102,69 @@ vdl.Types.TYPEOBJECT,
 ]],
   ["union B", [
 _typeNUnion,
-_typeBDEunion,
+_typeBDEUnion,
 ]]]));
 
   module.exports.ConvertTests = new (vdl.Registry.lookupOrCreateConstructor(_type11))(new Map([
+  ["array/list", [
+{
+  'name': "[3]string",
+  'primaryType': _typeArray3String,
+  'values': [
+new (vdl.Registry.lookupOrCreateConstructor(_typeArray3String))([
+"A",
+"B",
+"C",
+]),
+new (vdl.Registry.lookupOrCreateConstructor(_type10))([
+"A",
+"B",
+"C",
+]),
+],
+},
+{
+  'name': "[4]string",
+  'primaryType': _typeArray4String,
+  'values': [
+new (vdl.Registry.lookupOrCreateConstructor(_typeArray4String))([
+"D",
+"E",
+"F",
+"G",
+]),
+],
+},
+{
+  'name': "ByteArray",
+  'primaryType': _typeNByteArray,
+  'values': [
+new (vdl.Registry.lookupOrCreateConstructor(_typeNByteArray))(new Uint8Array([
+5,
+2,
+0,
+4,
+])),
+new (vdl.Registry.lookupOrCreateConstructor(_type2))(new Uint8Array([
+5,
+2,
+0,
+4,
+])),
+],
+},
+]],
+  ["bool", [
+{
+  'name': "bool",
+  'primaryType': vdl.Types.BOOL,
+  'values': [
+new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.BOOL))(true),
+new (vdl.Registry.lookupOrCreateConstructor(_typeNBool))(true),
+new (vdl.Registry.lookupOrCreateConstructor(_typeMBool))(true),
+],
+},
+]],
   ["number", [
 {
   'name': "byte",
@@ -2074,6 +2219,265 @@ new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.INT64))(new vdl.BigInt(-1,
   'primaryType': vdl.Types.COMPLEX128,
   'values': [
 new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.COMPLEX128))(new vdl.Complex(1.500000, -1.000000)),
+],
+},
+]],
+  ["string, []byte, [n]byte, and enum", [
+{
+  'name': "enum (A)",
+  'primaryType': _typeNEnum,
+  'values': [
+new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.STRING))("A"),
+new (vdl.Registry.lookupOrCreateConstructor(_typeNString))("A"),
+new (vdl.Registry.lookupOrCreateConstructor(_typeNEnum))('A'),
+new (vdl.Registry.lookupOrCreateConstructor(_type2))(new Uint8Array([
+65,
+])),
+],
+},
+{
+  'name': "enum (brie)",
+  'primaryType': _typeBRIENum,
+  'values': [
+new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.STRING))("Brie"),
+new (vdl.Registry.lookupOrCreateConstructor(_typeNString))("Brie"),
+new (vdl.Registry.lookupOrCreateConstructor(_typeBRIENum))('Brie'),
+new (vdl.Registry.lookupOrCreateConstructor(_typeFOODYNum))('Brie'),
+new (vdl.Registry.lookupOrCreateConstructor(_type2))(new Uint8Array([
+66,
+114,
+105,
+101,
+])),
+new (vdl.Registry.lookupOrCreateConstructor(_typeNByteArray))(new Uint8Array([
+66,
+114,
+105,
+101,
+])),
+],
+},
+{
+  'name': "[4]byte",
+  'primaryType': _typeNByteArray,
+  'values': [
+new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.STRING))("Bean"),
+new (vdl.Registry.lookupOrCreateConstructor(_typeNString))("Bean"),
+new (vdl.Registry.lookupOrCreateConstructor(_typeBEANum))('Bean'),
+new (vdl.Registry.lookupOrCreateConstructor(_typeFOODYNum))('Bean'),
+new (vdl.Registry.lookupOrCreateConstructor(_type2))(new Uint8Array([
+66,
+101,
+97,
+110,
+])),
+new (vdl.Registry.lookupOrCreateConstructor(_typeNByteArray))(new Uint8Array([
+66,
+101,
+97,
+110,
+])),
+],
+},
+{
+  'name': "string",
+  'primaryType': _typeNString,
+  'values': [
+new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.STRING))("Cherry"),
+new (vdl.Registry.lookupOrCreateConstructor(_typeNString))("Cherry"),
+new (vdl.Registry.lookupOrCreateConstructor(_typeFOODYNum))('Cherry'),
+new (vdl.Registry.lookupOrCreateConstructor(_type2))(new Uint8Array([
+67,
+104,
+101,
+114,
+114,
+121,
+])),
+new (vdl.Registry.lookupOrCreateConstructor(_typeNByteSlice))(new Uint8Array([
+67,
+104,
+101,
+114,
+114,
+121,
+])),
+],
+},
+]],
+  ["struct, map, and set", [
+{
+  'name': "map[uint32]uint32",
+  'primaryType': _typeMapOnlyA,
+  'values': [
+new (vdl.Registry.lookupOrCreateConstructor(_typeMapOnlyA))(new Map([
+  [4, 0],
+  [6, 7]])),
+new (vdl.Registry.lookupOrCreateConstructor(_typeMapOnlyA2))(new Map([
+  [new vdl.BigInt(1, new Uint8Array([0x4])), 0],
+  [new vdl.BigInt(1, new Uint8Array([0x6])), 7]])),
+],
+},
+{
+  'name': "map[bool]string",
+  'primaryType': _typeMapOnlyB,
+  'values': [
+new (vdl.Registry.lookupOrCreateConstructor(_typeMapOnlyB))(new Map([
+  [true, "hello"]])),
+new (vdl.Registry.lookupOrCreateConstructor(_typeMapOnlyB2))(new Map([
+  [true, "hello"]])),
+],
+},
+{
+  'name': "set[bool]",
+  'primaryType': _typeSetOnlyA,
+  'values': [
+new (vdl.Registry.lookupOrCreateConstructor(_typeSetOnlyA))(new Set([
+  false, 
+  true, ])),
+new (vdl.Registry.lookupOrCreateConstructor(_typeSetOnlyA2))(new Set([
+  false, 
+  true, ])),
+],
+},
+{
+  'name': "set[int16]",
+  'primaryType': _typeSetOnlyB,
+  'values': [
+new (vdl.Registry.lookupOrCreateConstructor(_typeSetOnlyB))(new Set([
+  4, 
+  6, ])),
+new (vdl.Registry.lookupOrCreateConstructor(_typeSetOnlyB2))(new Set([
+  4, 
+  6, ])),
+],
+},
+{
+  'name': "structABC",
+  'primaryType': _typeABCStruct,
+  'values': [
+new (vdl.Registry.lookupOrCreateConstructor(_typeABCStruct))({
+  'a': true,
+  'b': "",
+  'c': new vdl.BigInt(0, new Uint8Array([])),
+}),
+new (vdl.Registry.lookupOrCreateConstructor(_typeADEStruct))({
+  'a': true,
+  'd': null,
+  'e': vdl.Types.ANY,
+}),
+new (vdl.Registry.lookupOrCreateConstructor(_typeNStruct))({
+  'a': true,
+  'b': "",
+  'c': new vdl.BigInt(0, new Uint8Array([])),
+}),
+],
+},
+{
+  'name': "structYZ",
+  'primaryType': _typeYZStruct,
+  'values': [
+new (vdl.Registry.lookupOrCreateConstructor(_typeXYZStruct))({
+  'x': false,
+  'y': false,
+  'z': "ahoy",
+}),
+new (vdl.Registry.lookupOrCreateConstructor(_typeYZStruct))({
+  'y': false,
+  'z': "ahoy",
+}),
+new (vdl.Registry.lookupOrCreateConstructor(_typeZStruct))({
+  'z': "ahoy",
+}),
+],
+},
+{
+  'name': "struct+map",
+  'primaryType': _typeMapOnlyStruct,
+  'values': [
+new (vdl.Registry.lookupOrCreateConstructor(_typeStructOnlyMap))(new Map([
+  ["Key1", new vdl.BigInt(1, new Uint8Array([0x4]))],
+  ["Key2", new vdl.BigInt(1, new Uint8Array([0x5]))],
+  ["Key3", new vdl.BigInt(0, new Uint8Array([]))]])),
+new (vdl.Registry.lookupOrCreateConstructor(_typeStructOnlyMap))(new Map([
+  ["AlsoNotAKey", new vdl.BigInt(1, new Uint8Array([0x7]))],
+  ["Key1", new vdl.BigInt(1, new Uint8Array([0x4]))],
+  ["Key2", new vdl.BigInt(1, new Uint8Array([0x5]))],
+  ["NotAKey", new vdl.BigInt(1, new Uint8Array([0x6]))]])),
+new (vdl.Registry.lookupOrCreateConstructor(_typeMapOnlyStruct))({
+  'key1': new vdl.BigInt(1, new Uint8Array([0x4])),
+  'key2': 5,
+  'key3': new vdl.Complex(0.000000, 0.000000),
+}),
+],
+},
+{
+  'name': "map+set",
+  'primaryType': _typeMapOnlySet,
+  'values': [
+new (vdl.Registry.lookupOrCreateConstructor(_typeMapOnlySet))(new Set([
+  3.14, 
+  8, ])),
+new (vdl.Registry.lookupOrCreateConstructor(_typeSometimesSetMap))(new Map([
+  [3.14, new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.BOOL))(true)],
+  [8, new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.BOOL))(true)]])),
+new (vdl.Registry.lookupOrCreateConstructor(_typeSetOnlyMap))(new Map([
+  [3.14, true],
+  [8, true]])),
+],
+},
+{
+  'name': "map-set",
+  'primaryType': _typeSetOnlyMap,
+  'values': [
+new (vdl.Registry.lookupOrCreateConstructor(_typeSometimesSetMap))(new Map([
+  [3.14, new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.STRING))("cannot be a set anymore")],
+  [8, new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.BOOL))(true)]])),
+],
+},
+{
+  'name': "struct+map+set",
+  'primaryType': _typeMapStructSet,
+  'values': [
+new (vdl.Registry.lookupOrCreateConstructor(_typeMapStructSet))(new Set([
+  "Eel", 
+  "Feat", 
+  "Tire", ])),
+new (vdl.Registry.lookupOrCreateConstructor(_typeSetStructMap))(new Map([
+  ["Eel", true],
+  ["Feat", true],
+  ["Tire", true]])),
+new (vdl.Registry.lookupOrCreateConstructor(_typeMapSetStruct))({
+  'feat': true,
+  'tire': true,
+  'eel': true,
+}),
+],
+},
+]],
+  ["typeobject", [
+{
+  'name': "typeobject(any)",
+  'primaryType': vdl.Types.TYPEOBJECT,
+  'values': [
+vdl.Types.ANY,
+],
+},
+]],
+  ["union", [
+{
+  'name': "BDEUnion",
+  'primaryType': _typeBDEUnion,
+  'values': [
+new (vdl.Registry.lookupOrCreateConstructor(_typeBDEUnion))({ "b": "bde" }),
+new (vdl.Registry.lookupOrCreateConstructor(_typeNUnion))({ "b": "bde" }),
+],
+},
+{
+  'name': "BDEUnion fail",
+  'primaryType': _typeNUnion,
+  'values': [
+new (vdl.Registry.lookupOrCreateConstructor(_typeNUnion))({ "a": true }),
 ],
 },
 ]]]));

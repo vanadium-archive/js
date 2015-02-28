@@ -28,10 +28,10 @@ var unixEpoch = (1969*365 + 1969/4 - 1969/100 + 1969/400) * secondsPerDay;
 function toVDLTime(date) {
   var ms = date.getTime();
   var seconds = Math.floor(ms / 1000);
-  var nano = (ms % 1000) * 1000000;
+  var nanos = (ms % 1000) * 1000000;
   return time.Time({
     seconds: seconds + unixEpoch,
-    nano: nano
+    nanos: nanos
   });
 }
 

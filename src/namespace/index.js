@@ -94,7 +94,7 @@ Namespace.prototype.mount = function(ctx, name, server, ttl, replaceMount,
   ttl = ttl || 0; // Default is 0
   var duration = new time.Duration({
     seconds: Math.floor(ttl / 1000),
-    nano: (ttl % 1000) * 1000000
+    nanos: (ttl % 1000) * 1000000
   });
   replaceMount = !!replaceMount; // Cast to bool
   return this._namespace.mount(ctx, name, server, duration, replaceMount, cb);

@@ -782,17 +782,17 @@ type CacheMultiGetContext interface {
 	CacheMultiGetServerStream
 }
 
-// CacheMultiGetContextStub is a wrapper that converts ipc.ServerCall into
+// CacheMultiGetContextStub is a wrapper that converts ipc.StreamServerCall into
 // a typesafe stub that implements CacheMultiGetContext.
 type CacheMultiGetContextStub struct {
-	ipc.ServerCall
+	ipc.StreamServerCall
 	valRecv string
 	errRecv error
 }
 
-// Init initializes CacheMultiGetContextStub from ipc.ServerCall.
-func (s *CacheMultiGetContextStub) Init(call ipc.ServerCall) {
-	s.ServerCall = call
+// Init initializes CacheMultiGetContextStub from ipc.StreamServerCall.
+func (s *CacheMultiGetContextStub) Init(call ipc.StreamServerCall) {
+	s.StreamServerCall = call
 }
 
 // RecvStream returns the receiver side of the Cache.MultiGet server stream.

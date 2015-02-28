@@ -35,7 +35,7 @@ Principal.prototype.bless = function(blessings, extension, duration, caveats,
 
   var vdlDuration = new time.Duration({
     seconds: Math.floor(duration / 1000),
-    nano: (duration % 1000) * 1000000
+    nanos: (duration % 1000) * 1000000
   });
 
   var controller = this._controller;
