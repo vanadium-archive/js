@@ -914,7 +914,7 @@ function convertToNativeNumber(v, t) {
 // Only use this for the UINT64 and INT64 kinds.
 function convertToBigIntNumber(v, t) {
   if (v instanceof BigInt) {
-    if (v.getUintBytes().length > 64) {
+    if (v.getUintBytes().length > 8) {
       throw makeError(v, t, 'BigInt has too many bytes');
     }
     return v;
