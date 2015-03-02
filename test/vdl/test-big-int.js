@@ -534,6 +534,12 @@ test('toNativeNumber', function(t) {
       expectedFailure: true,
       expectedOutputApprox: -0xffffffffffffffff
     },
+    {
+      input: new BigInt(1,
+        new Uint8Array([0x0e, 0xcc, 0xf9, 0xa0, 0x2f])),
+      expectedOutput: 63568453679,
+      expectedOutputApprox: 63568453679
+    },
   ];
   var generator = function(test) {
     return function() {
