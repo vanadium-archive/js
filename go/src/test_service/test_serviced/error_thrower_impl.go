@@ -16,46 +16,46 @@ func NewErrorThrower() test_service.ErrorThrowerServerMethods {
 
 type errorThrowerImpl struct{}
 
-func (e *errorThrowerImpl) ThrowAborted(ctx ipc.ServerCall) error {
-	return verror.New(verror.ErrAborted, ctx.Context())
+func (e *errorThrowerImpl) ThrowAborted(call ipc.ServerCall) error {
+	return verror.New(verror.ErrAborted, call.Context())
 }
 
-func (e *errorThrowerImpl) ThrowBadArg(ctx ipc.ServerCall) error {
-	return verror.New(verror.ErrBadArg, ctx.Context())
+func (e *errorThrowerImpl) ThrowBadArg(call ipc.ServerCall) error {
+	return verror.New(verror.ErrBadArg, call.Context())
 }
 
-func (e *errorThrowerImpl) ThrowBadProtocol(ctx ipc.ServerCall) error {
-	return verror.New(verror.ErrBadProtocol, ctx.Context())
+func (e *errorThrowerImpl) ThrowBadProtocol(call ipc.ServerCall) error {
+	return verror.New(verror.ErrBadProtocol, call.Context())
 }
 
-func (e *errorThrowerImpl) ThrowInternal(ctx ipc.ServerCall) error {
-	return verror.New(verror.ErrInternal, ctx.Context())
+func (e *errorThrowerImpl) ThrowInternal(call ipc.ServerCall) error {
+	return verror.New(verror.ErrInternal, call.Context())
 }
 
-func (e *errorThrowerImpl) ThrowNoAccess(ctx ipc.ServerCall) error {
-	return verror.New(verror.ErrNoAccess, ctx.Context())
+func (e *errorThrowerImpl) ThrowNoAccess(call ipc.ServerCall) error {
+	return verror.New(verror.ErrNoAccess, call.Context())
 }
 
-func (e *errorThrowerImpl) ThrowNoExist(ctx ipc.ServerCall) error {
-	return verror.New(verror.ErrNoExist, ctx.Context())
+func (e *errorThrowerImpl) ThrowNoExist(call ipc.ServerCall) error {
+	return verror.New(verror.ErrNoExist, call.Context())
 }
 
-func (e *errorThrowerImpl) ThrowNoExistOrNoAccess(ctx ipc.ServerCall) error {
-	return verror.New(verror.ErrNoExistOrNoAccess, ctx.Context())
+func (e *errorThrowerImpl) ThrowNoExistOrNoAccess(call ipc.ServerCall) error {
+	return verror.New(verror.ErrNoExistOrNoAccess, call.Context())
 }
 
-func (e *errorThrowerImpl) ThrowUnknown(ctx ipc.ServerCall) error {
-	return verror.New(verror.ErrUnknown, ctx.Context())
+func (e *errorThrowerImpl) ThrowUnknown(call ipc.ServerCall) error {
+	return verror.New(verror.ErrUnknown, call.Context())
 }
 
-func (e *errorThrowerImpl) ThrowGoError(ctx ipc.ServerCall) error {
+func (e *errorThrowerImpl) ThrowGoError(call ipc.ServerCall) error {
 	return errors.New("GoError!")
 }
 
 var customError = verror.Register(pkgPath+".customError", verror.NoRetry, "{1:}{2:} CustomStandard!{:_}")
 
-func (e *errorThrowerImpl) ThrowCustomStandardError(ctx ipc.ServerCall) error {
-	return verror.New(customError, ctx.Context())
+func (e *errorThrowerImpl) ThrowCustomStandardError(call ipc.ServerCall) error {
+	return verror.New(customError, call.Context())
 }
 
 func (e *errorThrowerImpl) ListAllBuiltInErrorIDs(_ ipc.ServerCall) ([]string, error) {

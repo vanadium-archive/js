@@ -39,11 +39,11 @@ func (c *cacheImpl) Set(_ ipc.ServerCall, key string, value *vdl.Value) error {
 
 // Get returns the value for a key.  If the key is not in the map, it returns
 // an error.
-func (c *cacheImpl) Get(ctx ipc.ServerCall, key string) (*vdl.Value, error) {
+func (c *cacheImpl) Get(call ipc.ServerCall, key string) (*vdl.Value, error) {
 	if value, ok := c.cache[key]; ok {
 		return value, nil
 	}
-	return nil, verror.New(verror.ErrNoExist, ctx.Context(), key)
+	return nil, verror.New(verror.ErrNoExist, call.Context(), key)
 }
 
 // getWithTypeCheck gets the key and tests if its type matches the given time, erroring if it does
@@ -138,17 +138,17 @@ func (c *cacheImpl) KeyValuePairs(ipc.ServerCall) ([]test_service.KeyValuePair, 
 // MostRecentSet returns the key and value and the timestamp for the most
 // recent set operation
 // TODO(bprosnitz) support type types and change time to native time type
-func (c *cacheImpl) MostRecentSet(ctx ipc.ServerCall) (test_service.KeyValuePair, int64, error) {
+func (c *cacheImpl) MostRecentSet(call ipc.ServerCall) (test_service.KeyValuePair, int64, error) {
 	var err error
 	if c.lastUpdateTime.IsZero() {
-		err = verror.New(verror.ErrNoExist, ctx.Context())
+		err = verror.New(verror.ErrNoExist, call.Context())
 	}
 	return c.mostRecent, c.lastUpdateTime.Unix(), err
 }
 
 // KeyPage indexes into the keys (in alphanumerically sorted order) and
 // returns the indexth page of 10 keys.
-func (c *cacheImpl) KeyPage(ctx ipc.ServerCall, index int64) (test_service.KeyPageResult, error) {
+func (c *cacheImpl) KeyPage(call ipc.ServerCall, index int64) (test_service.KeyPageResult, error) {
 	results := test_service.KeyPageResult{}
 
 	keys := sort.StringSlice{}
@@ -159,7 +159,7 @@ func (c *cacheImpl) KeyPage(ctx ipc.ServerCall, index int64) (test_service.KeyPa
 
 	lowIndex := int(index) * 10
 	if index < 0 || len(keys) <= lowIndex {
-		return results, verror.New(errIndexOutOfBounds, ctx.Context(), index)
+		return results, verror.New(errIndexOutOfBounds, call.Context(), index)
 	}
 	highIndex := lowIndex + 9
 	if highIndex > len(keys)-1 {
