@@ -7,8 +7,8 @@ var actions = require('../../../../../../.././errors/actions');
 
 
 
-var principal = require('./../../principal');
 var security = require('./../../../../../../v23/security');
+var principal = require('./../../principal');
 
 module.exports = {};
 

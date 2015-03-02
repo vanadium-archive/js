@@ -3,15 +3,23 @@ var VanadiumError = require('./../errors/vanadium-error');
 var defaultLanguage = require('./../runtime/default-language');
 var defaultCatalog = require('./../runtime/default-catalog');
 var unwrap = require('./type-util').unwrap;
-var verror = require('../errors/verror');
-
+var verror = require('../v.io/v23/verror');
+var registry = require('./native-type-registry');
+var Types = require('./types');
 
 module.exports = {
   fromWireType: fromWireType,
   fromNativeType: fromNativeType,
 };
 
-
+// VanadiumErrors already have the right type description.  We registered Error
+// in case anyone tries to pass a non-vanadium error as an argument to a
+// function.
+registry.registerFromNativeType(Error, fromNativeType);
+// We register both the optional and the concrete type for the error depending
+// on what gets sent on the wire.
+registry.registerFromWireType(Types.ERROR, fromWireType);
+registry.registerFromWireType(Types.ERROR.elem, fromWireType);
 
 var unknown = (new verror.UnknownError(null));
 

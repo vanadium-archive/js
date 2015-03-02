@@ -133,9 +133,11 @@ test('Test proper context is passed to authorizer', function(assert) {
 
   testSuccessCase(assert, function (ctx) {
     if (!defaultBlessingRegex.test(ctx.remoteBlessingStrings[0])) {
-      return new Error('unknown blessings ' + ctx.remoteBlessingStrings);
+      return new Error('unknown remote blessings ' +
+        ctx.remoteBlessingStrings);
     } else if (!defaultBlessingRegex.test(ctx.localBlessingStrings[0])) {
-      return new Error('unknown blessings ' + ctx.localBlessingStrings);
+      return new Error('unknown local blessings ' +
+        ctx.localBlessingStrings);
     } else if (ctx.method !== 'call') {
       return new Error('wrong method ' + ctx.method);
     } else if (ctx.suffix !== 'auth') {

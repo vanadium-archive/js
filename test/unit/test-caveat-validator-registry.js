@@ -2,26 +2,9 @@ var test = require('prova');
 var CaveatValidatorRegistry =
   require('../../src/security/caveat-validator-registry');
 var context = require('../../src/runtime/context');
-var vom = require('../../src/vom');
-var testCaveats = require('../vdl-out/javascript-test/security/caveat');
 
-/**
- * Create a Caveat object (See security/types.vdl).
- * @param {CaveatDescriptor} descriptor The descriptor of the caveat identifier
- * and its parameter.
- * @param {any} param The parameter (of type descriptor.ParamType) to use
- * when validating.
- * @throws Upon failure to encode the parameter, does not throw if successful.
- */
-function makeCaveat(descriptor, param) {
-  var writer = new vom.ByteArrayMessageWriter();
-  var encoder = new vom.Encoder(writer);
-  encoder.encode(param);
-  return {
-    id: descriptor.id,
-    paramVom: writer.getBytes()
-  };
-}
+var testCaveats = require('../vdl-out/javascript-test/security/caveat');
+var caveatUtil = require('./caveat-util');
 
 test('Validating caveats', function(t) {
   var registry = new CaveatValidatorRegistry();
@@ -56,15 +39,15 @@ test('Validating caveats', function(t) {
   // Make calls to validate(), providing caveats.
   t.doesNotThrow(function() {
       registry.validate(
-	      ctx,
-              makeCaveat(testCaveats.CaveatThatValidates,
+              ctx,
+              caveatUtil.makeCaveat(testCaveats.CaveatThatValidates,
                          testCaveats.CaveatThatValidatesExpectedData));
     },
     'Should validate');
   t.throws(function() {
       registry.validate(
               ctx,
-              makeCaveat(testCaveats.CaveatDoesntValidate,
+              caveatUtil.makeCaveat(testCaveats.CaveatDoesntValidate,
                          testCaveats.CaveatDoesntValidateExpectedData));
     },
     'Validation should fail',
@@ -86,8 +69,8 @@ test('Validating caveats', function(t) {
   t.throws(function() {
       registry.validate(
 	      ctx,
-              makeCaveat(testCaveats.CaveatWithCollision,
-                         testCaveats.CaveatWithCollisionExpectedData));
+              caveatUtil.makeCaveat(testCaveats.CaveatWithCollision,
+                         testCaveats.CaveatWithCollisionExpectedData.val));
     },
     'Validation should fail',
     'Shouldn\'t validate after validation function is changed');

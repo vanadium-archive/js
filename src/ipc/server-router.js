@@ -311,7 +311,7 @@ Router.prototype.handleRPCRequest = function(messageId, vdlRequest) {
     methodSig: methodSig,
     ctx: ctx,
   };
-  
+
   this._contextMap[messageId] = options.ctx;
   if (methodIsStreaming(methodSig)) {
     stream = new Stream(messageId, this._proxy.senderPromise, false,

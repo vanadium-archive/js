@@ -323,6 +323,28 @@ module.exports.CaveatValidationError = makeError('v.io/v23/security.CaveatValida
 ]);
 
 
+module.exports.ConstCaveatValidationError = makeError('v.io/v23/security.ConstCaveatValidation', actions.NO_RETRY, {
+  'en': '{1:}{2:} false const caveat always fails validation',
+}, [
+]);
+
+
+module.exports.ExpiryCaveatValidationError = makeError('v.io/v23/security.ExpiryCaveatValidation', actions.NO_RETRY, {
+  'en': '{1:}{2:} now({4}) is after expiry({3})',
+}, [
+  new time.Time()._type,
+  new time.Time()._type,
+]);
+
+
+module.exports.MethodCaveatValidationError = makeError('v.io/v23/security.MethodCaveatValidation', actions.NO_RETRY, {
+  'en': '{1:}{2:} method {3} not in list {4}',
+}, [
+  vdl.Types.STRING,
+  _type3,
+]);
+
+
 module.exports.UntrustedRootError = makeError('v.io/v23/security.UntrustedRoot', actions.NO_RETRY, {
   'en': '{1:}{2:} {3}: root not trusted',
 }, [
