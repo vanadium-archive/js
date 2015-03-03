@@ -5,7 +5,9 @@
 
 var vdl = require('../vdl');
 var vom = require('../vom');
+var standardCaveats = require('./standard-caveats');
 var vdlSecurity = require('../v.io/v23/security');
+var unwrapArg = require('../lib/unwrap-arg');
 
 module.exports = CaveatValidatorRegistry;
 
@@ -18,7 +20,7 @@ module.exports = CaveatValidatorRegistry;
 function CaveatValidatorRegistry() {
   this.validators = new Map();
 
-  registerDefaultCaveats(this);
+  standardCaveats.registerDefaultCaveats(this);
 }
 
 /**
@@ -62,13 +64,12 @@ CaveatValidatorRegistry.prototype.register = function(cavDesc, validateFn) {
 CaveatValidatorRegistry.prototype.validate = function(secCtx, caveat) {
   var validator = this.validators.get(this._makeKey(caveat.id));
   if (validator === undefined) {
-    // TODO(bprosnitz) we should be throwing security.UnknownCaveatUuid.
-    // This is dependent on having vdl-generated error id code for JavaScript.
-    throw new Error('Unknown caveat id: ' + this._makeKey(caveat.id));
+    throw new vdlSecurity.CaveatNotRegisteredError(secCtx.context,
+      'Unknown caveat id: ' + this._makeKey(caveat.id));
   }
   var reader = new vom.ByteArrayMessageReader(caveat.paramVom);
   var decoder = new vom.Decoder(reader);
-  validator.validate(secCtx, decoder.decode());
+  return validator.validate(secCtx, decoder.decode());
 };
 
 /**
@@ -83,37 +84,8 @@ function CaveatValidator(cavDesc, validateFn) {
 
 CaveatValidator.prototype.validate = function(secCtx, paramForValidator) {
   var paramType = this.cavDesc.paramType;
-  // TODO(bprosnitz) This should really be type conversion rather than
-  // canonicalization. The behavior is slightly different.
-  var canonData = vdl.Canonicalize.reduce(paramForValidator, paramType);
+  var canonParam = vdl.Canonicalize.reduce(paramForValidator, paramType);
+  var unwrappedParam = unwrapArg(canonParam, paramType);
 
-  // TODO(bproznitz): we should be throwing security.ErrCaveatValidation.
-  // This is dependent on having vdl-generated error id code for JavaScript.
-  this.validateFn(secCtx, canonData);
+  return this.validateFn(secCtx, unwrappedParam);
 };
-
-function constCaveatValidator(secCtx, value) {
-  if (!value) {
-    throw new Error('failing validation in false const caveat');
-  }
-}
-
-// Temporary definition of validators for unimplemented basic caveats.
-// This is required to get calls that depend on these caveats to pass
-// before the validator is implemented.
-// TODO(bprosnitz) Add real implementations
-function TEMPalwaysValidateValidator() {}
-
-// Register the default caveats from the security package.
-function registerDefaultCaveats(registry) {
-  registry.register(vdlSecurity.ConstCaveat,
-    constCaveatValidator);
-  registry.register(vdlSecurity.UnixTimeExpiryCaveatX,
-    TEMPalwaysValidateValidator);
-  registry.register(vdlSecurity.ExpiryCaveatX,
-    TEMPalwaysValidateValidator);
-  registry.register(vdlSecurity.MethodCaveatX,
-    TEMPalwaysValidateValidator);
-  registry.register(vdlSecurity.PublicKeyThirdPartyCaveatX,
-    TEMPalwaysValidateValidator);
-}

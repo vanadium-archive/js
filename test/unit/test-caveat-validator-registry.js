@@ -28,7 +28,7 @@ test('Validating caveats', function(t) {
   });
   registry.register(testCaveats.CaveatDoesntValidate, function(fnCtx, param) {
     t.equal(fnCtx, ctx, 'Contexts should match');
-    t.deepEqual(param, testCaveats.CaveatDoesntValidateExpectedData,
+    t.deepEqual(param, testCaveats.CaveatDoesntValidateExpectedData.val,
       'Validation param matches expectation (CaveatDoesntValidate)');
 
     seenCalls.push('not validate');
@@ -58,7 +58,7 @@ test('Validating caveats', function(t) {
   // function.
   registry.register(testCaveats.CaveatWithCollision, function(fnCtx, param) {
     t.equal(fnCtx, ctx, 'Contexts should match');
-    t.deepEqual(param, testCaveats.CaveatWithCollisionExpectedData,
+    t.deepEqual(param, testCaveats.CaveatWithCollisionExpectedData.val,
       'Validation param matches expectation (CaveatWithCollision)');
 
     seenCalls.push('collision');
