@@ -205,6 +205,7 @@ Namespace.prototype.setRoots = function(roots, cb) {
  * returned ACL, and then call setACL with the modified ACL.  You should use the
  * etag parameter in this case to ensure that the ACL has not been modified in
  * between read and write.
+ * @param {Context} ctx The rpc context.
  * @param {string} name name to set the ACL of
  * @params {Map} acl tagged ACL map to set on the name
  * @params {string} etag Optional etag of the ACL
@@ -212,7 +213,7 @@ Namespace.prototype.setRoots = function(roots, cb) {
  * @returns {Promise} A promise to be resolved when setACL is complete or
  * rejected when there is an error.
  */
-Namespace.prototype.setACL = function(name, acl, etag, cb) {
+Namespace.prototype.setACL = function(ctx, name, acl, etag, cb) {
   // TODO(nlacasse): It's *very* easy to lock yourself out of a name.  If you
   // accidentally call setACL without an Admin key you will be locked out, and
   // all further getACL/setACL on that name will fail with just "ErrNoAccess".
@@ -227,18 +228,19 @@ Namespace.prototype.setACL = function(name, acl, etag, cb) {
     etag = '';
   }
 
-  return this._namespace.setACL(this._rootCtx, name, acl, etag, cb);
+  return this._namespace.setACL(ctx, name, acl, etag, cb);
 };
 
 /**
  * Gets the ACL on a namespace.
+ * @param {Context} ctx The rpc context.
  * @param {string} name name to get the ACL of
  * @params {function} cb(err, acl, etag) Optional callback
  * @returns {Promise} A promise to be resolved when getACL is complete or
  * rejected when there is an error.
  */
-Namespace.prototype.getACL = function(name, cb) {
-  return this._namespace.getACL(this._rootCtx, name, cb);
+Namespace.prototype.getACL = function(ctx, name, cb) {
+  return this._namespace.getACL(ctx, name, cb);
 };
 
 //TODO(aghassemi) Implement Unresolve after Go library makes its changes.

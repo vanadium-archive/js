@@ -461,11 +461,11 @@ test('Test getACL() on non-existant name', function(assert) {
       return assert.end(err);
     }
 
+    var ctx = rt.getContext();
     var ns = rt.namespace();
+    var name = 'non/existant/name';
 
-    var name = 'non/existant/name/' + random.hex();
-
-    ns.getACL(name, function(err) {
+    ns.getACL(ctx, name, function(err) {
       assert.ok(err, 'should error');
       rt.close(assert.end);
     });
@@ -479,8 +479,8 @@ test('Test setting and getting ACLs - ' +
       return assert.end(err);
     }
 
+    var ctx = rt.getContext();
     var ns = rt.namespace();
-
     // Note: we use a random name here so we can run the test multiple times
     // with the same mounttable without getting locked out of a name.
     var name = 'path/to/some/name/' + random.hex();
@@ -500,12 +500,12 @@ test('Test setting and getting ACLs - ' +
       })]
     ]));
 
-    ns.setACL(name, tam, function(err) {
+    ns.setACL(ctx, name, tam, function(err) {
       if (err) {
         return end(err);
       }
 
-      ns.getACL(name, function(err, gotTam, gotEtag) {
+      ns.getACL(ctx, name, function(err, gotTam, gotEtag) {
         if (err) {
           return end(err);
         }
@@ -516,10 +516,10 @@ test('Test setting and getting ACLs - ' +
         assert.deepEqual(gotTam, tam.val,
             'getACL returns the same tagged acl map that we set');
 
-        ns.setACL(name, tam, 'badEtag', function(err) {
+        ns.setACL(ctx, name, tam, 'badEtag', function(err) {
           assert.ok(err, 'setACL with a bad etag should error');
 
-          ns.setACL(name, tam, gotEtag, function(err) {
+          ns.setACL(ctx, name, tam, gotEtag, function(err) {
             assert.error(err, 'setACL with the correct etag should not error');
             end();
           });
