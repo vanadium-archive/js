@@ -1,15 +1,14 @@
 var test = require('prova');
-var vanadium = require('../../');
 var Promise = require('../../src/lib/promise');
-var verror = vanadium.errors;
 
 var access = require('../../src/v.io/v23/services/security/access');
 var config = require('./default-config');
+var MINUTE = 60 * 1000; // a minute
 var Promise = require('../../src/lib/promise');
 var random = require('../../src/lib/random');
 var timeouts = require('./timeouts');
-var veyron = require('../../');
-var verror = veyron.errors;
+var vanadium = require('../../');
+var verror = vanadium.errors;
 
 var namespaceRoot = process.env.NAMESPACE_ROOT;
 var PREFIX = 'namespace-testing/';
@@ -199,7 +198,6 @@ test('Test mounting and unmounting - ' +
   function(assert) {
   var runtime;
   var namespace;
-  var MINUTE = 60 * 1000; // a minute
   var expectedServerAddress;
   var initialName = PREFIX + 'first/name';
   var secondaryName = PREFIX + 'new/name';
@@ -456,7 +454,7 @@ test('Test setting and getting roots - ' +
 });
 
 test('Test getACL() on non-existant name', function(assert) {
-  veyron.init(config, function(err, rt) {
+  vanadium.init(config, function(err, rt) {
     if (err) {
       return assert.end(err);
     }
@@ -474,7 +472,7 @@ test('Test getACL() on non-existant name', function(assert) {
 
 test('Test setting and getting ACLs - ' +
     'setACL(), getACL()', function(assert) {
-  veyron.init(config, function(err, rt) {
+  vanadium.init(config, function(err, rt) {
     if (err) {
       return assert.end(err);
     }
@@ -522,6 +520,148 @@ test('Test setting and getting ACLs - ' +
           ns.setACL(ctx, name, tam, gotEtag, function(err) {
             assert.error(err, 'setACL with the correct etag should not error');
             end();
+          });
+        });
+      });
+    });
+
+    function end(err) {
+      assert.error(err, 'should not error');
+      rt.close(assert.end);
+    }
+  });
+});
+
+test('Test delete() on non-existant name', function(assert) {
+  vanadium.init(config, function(err, rt) {
+    if (err) {
+      return assert.end(err);
+    }
+
+    var ctx = rt.getContext();
+    var ns = rt.namespace();
+    var name = 'non/existant/name';
+
+    ns.delete(ctx, name, true, function(err) {
+      assert.error(err, 'should not error');
+      rt.close(assert.end);
+    });
+  });
+});
+
+test('Test delete() unmounts a name', function(assert) {
+
+  vanadium.init(config, function(err, rt) {
+    if (err) {
+      return assert.end(err);
+    }
+
+    var ctx = rt.getContext();
+    var ns = rt.namespace();
+    var name = 'name/that/will/be/deleted';
+    var ep = '/@3@ws@2.2.2.2:2222@e8972f90fe028674f78a164f001d07c5@5@7@s@@';
+
+    ns.mount(ctx, name, ep, MINUTE)
+    .then(function onMount(err) {
+      if (err) {
+        return end(err);
+      }
+    }).then(wait(1000))
+    .then(function resolveOnce() {
+      return ns.resolve(ctx, name);
+    }).then(function validateResolvedEp(gotEps) {
+      assert.equal(gotEps.length, 1, 'resolves to a single endpoint');
+      assert.equal(ep, gotEps[0], 'resolves to the correct endpoint');
+    }).then(function deleteName() {
+      return ns.delete(ctx, name, false);
+    }).then(function resolveTwice() {
+      ns.resolve(ctx, name, function(err) {
+        assert.ok(err, 'name should be unmounted');
+        end();
+      });
+    }).catch(function(err) {
+      assert.error(err);
+      end(err);
+    });
+
+    function end(err) {
+      assert.error(err, 'should not error');
+      rt.close(assert.end);
+    }
+  });
+});
+
+test('Test delete() on name with no children', function(assert) {
+  vanadium.init(config, function(err, rt) {
+    if (err) {
+      return assert.end(err);
+    }
+
+    var ctx = rt.getContext();
+    var ns = rt.namespace();
+    var name = 'path/to/name/with/no/children';
+
+    var tam = new access.TaggedACLMap(new Map([
+      [access.Admin, new access.ACL({
+        'in': ['...'],
+      })]
+    ]));
+
+    ns.setACL(ctx, name, tam, function(err) {
+      if (err) {
+        return end(err);
+      }
+
+      ns.delete(ctx, name, false, end);
+    });
+
+    function end(err) {
+      assert.error(err, 'should not error');
+      rt.close(assert.end);
+    }
+  });
+});
+
+test('Test delete() on name with children', function(assert) {
+  var nsutil = vanadium.namespaceUtil;
+  vanadium.init(config, function(err, rt) {
+    if (err) {
+      return assert.end(err);
+    }
+
+    var ctx = rt.getContext();
+    var ns = rt.namespace();
+    var name = 'path/to/name/with/children';
+    var childName1 = nsutil.join(name, 'child1');
+    var childName2 = nsutil.join(name, 'node/child2');
+
+    var tam = new access.TaggedACLMap(new Map([
+      [access.Admin, new access.ACL({
+        'in': ['...'],
+      })]
+    ]));
+
+    // Create all three names.
+    ns.setACL(ctx, name, tam, function(err) {
+      if (err) {
+        return end(err);
+      }
+      ns.setACL(ctx, childName1, tam, function(err) {
+        if (err) {
+          return end(err);
+        }
+        ns.setACL(ctx, childName2, tam, function(err) {
+          if (err) {
+            return end(err);
+          }
+
+          ns.delete(ctx, name, false, function(err) {
+            assert.ok(err, 'should error if we don\'t delete subchildren');
+
+            ns.delete(ctx, name, true, function(err) {
+              assert.error(err, 'should not error if we delete subchildren');
+              end();
+            });
           });
         });
       });

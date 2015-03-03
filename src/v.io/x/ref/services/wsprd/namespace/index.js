@@ -159,6 +159,11 @@ Namespace.prototype.setACL = function(ctx, name, acl, etag) {
 Namespace.prototype.getACL = function(ctx, name) {
   throw new Error('Method GetACL not implemented');
 };
+    
+      
+Namespace.prototype.delete = function(ctx, name, deleteSubtree) {
+  throw new Error('Method Delete not implemented');
+};
      
 
     
@@ -399,6 +404,27 @@ Namespace.prototype._serviceDescription = {
       type: vdl.Types.STRING
     },
     ],
+    inStream: null,
+    outStream: null,
+    tags: []
+  },
+    
+      
+    {
+    name: 'Delete',
+    doc: "// Delete deletes the name from the mounttable and, if requested, any subtree.",
+    inArgs: [{
+      name: 'name',
+      doc: "",
+      type: vdl.Types.STRING
+    },
+    {
+      name: 'deleteSubtree',
+      doc: "",
+      type: vdl.Types.BOOL
+    },
+    ],
+    outArgs: [],
     inStream: null,
     outStream: null,
     tags: []

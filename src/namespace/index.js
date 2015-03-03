@@ -243,4 +243,19 @@ Namespace.prototype.getACL = function(ctx, name, cb) {
   return this._namespace.getACL(ctx, name, cb);
 };
 
+/**
+ * Deletes a name from the namespace, and possibly all names in subtree.
+ * @param {Context} ctx The rpc context.
+ * @param {string} name name to delete
+ * @param {boolean} deleteSubtree whether to delete all decendent names in
+ * subtree.  If deleteSubtree is false and the name has decendents, then the
+ * deletion will fail.
+ * @params {function} cb(err) Optional callback
+ * @returns {Promise} A promise to be resolved when delete is complete or
+ * rejected when there is an error.
+ */
+Namespace.prototype.delete = function(ctx, name, deleteSubtree, cb) {
+  return this._namespace.delete(ctx, name, deleteSubtree, cb);
+};
+
 //TODO(aghassemi) Implement Unresolve after Go library makes its changes.
