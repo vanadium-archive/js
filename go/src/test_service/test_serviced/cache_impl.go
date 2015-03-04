@@ -181,14 +181,14 @@ func (c *cacheImpl) Size(ipc.ServerCall) (int64, error) {
 // MultiGet handles a stream of get requests.  Returns an error if one of the
 // keys in the stream is not in the map or if there was an issue reading
 // the stream.
-func (c *cacheImpl) MultiGet(ctx test_service.CacheMultiGetContext) error {
-	for ctx.RecvStream().Advance() {
-		key := ctx.RecvStream().Value()
+func (c *cacheImpl) MultiGet(call test_service.CacheMultiGetServerCall) error {
+	for call.RecvStream().Advance() {
+		key := call.RecvStream().Value()
 		value, ok := c.cache[key]
 		if !ok {
-			return verror.New(verror.ErrNoExist, ctx.Context(), key)
+			return verror.New(verror.ErrNoExist, call.Context(), key)
 		}
-		ctx.SendStream().Send(value)
+		call.SendStream().Send(value)
 	}
-	return ctx.RecvStream().Err()
+	return call.RecvStream().Err()
 }
