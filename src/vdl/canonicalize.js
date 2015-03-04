@@ -115,6 +115,15 @@ function canonicalize(inValue, inType, t, deepWrap, seen, isTopLevelValue) {
     }
   }
 
+  // If the inType is ANY and inValue's type is ANY, then unwrap and try again.
+  // This allows any(foo) to be converted to foo.
+  if (Types.ANY.equals(inType) && TypeUtil.isTyped(inValue) &&
+    Types.ANY.equals(inValue._type)) {
+
+    return canonicalize(TypeUtil.unwrap(inValue), inValue._type, t, deepWrap,
+      seen, isTopLevelValue);
+  }
+
   // Special case TypeObject. See canonicalizeType.
   if (t.kind === Kind.TYPEOBJECT) {
     return canonicalizeType(inValue, seen);

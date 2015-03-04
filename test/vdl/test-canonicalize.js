@@ -1242,8 +1242,16 @@ function testDeepWrapToUnwrap(t, test) {
 // This test supplements the cross-language conversion tests cases in
 // test-vom-compatible.js
 test('canonicalize conversion - success', function(t) {
+  var AnyListType = new Type({
+    kind: Kind.LIST,
+    elem: Types.ANY
+  });
   var OptStringType = new Type({
     kind: Kind.OPTIONAL,
+    elem: Types.STRING
+  });
+  var StringListType = new Type({
+    kind: Kind.LIST,
     elem: Types.STRING
   });
   var IntSetType = new Type({
@@ -1295,7 +1303,10 @@ test('canonicalize conversion - success', function(t) {
     ]
   });
 
+  var Any = Registry.lookupOrCreateConstructor(Types.ANY);
+  var AnyList = Registry.lookupOrCreateConstructor(AnyListType);
   var Str = Registry.lookupOrCreateConstructor(Types.STRING);
+  var StrList = Registry.lookupOrCreateConstructor(StringListType);
   var OptStr = Registry.lookupOrCreateConstructor(OptStringType);
   var IntSet = Registry.lookupOrCreateConstructor(IntSetType);
   var FloatBoolMap = Registry.lookupOrCreateConstructor(FloatBoolMapType);
@@ -1304,6 +1315,32 @@ test('canonicalize conversion - success', function(t) {
   var StructCDB = Registry.lookupOrCreateConstructor(StructCDBType);
 
   var tests = [
+    {
+      name: 'Any(String) to String',
+      inValue: new Any(new Str('fff')),
+      outValue: new Str('fff'),
+      targetType: Types.STRING
+    },
+    {
+      name: 'String to Any(String)',
+      inValue: new Str('fff'),
+      outValue: new Any(new Str('fff')),
+      targetType: Types.ANY
+    },
+    {
+      name: '[]Any to []String',
+      // Note: 'jsval' is a JSValue that happens to convert to a string.
+      // This cannot always be expected to work, however.
+      inValue: new AnyList([new Str('fff'), 'jsval']),
+      outValue: new StrList(['fff', 'jsval']),
+      targetType: StringListType
+    },
+    {
+      name: '[]string to []any',
+      inValue: new StrList(['fff', 'not jsval']),
+      outValue: new AnyList([new Str('fff'), new Str('not jsval')]),
+      targetType: AnyListType
+    },
     {
       name: 'OptString to String',
       inValue: new OptStr('abc'),
