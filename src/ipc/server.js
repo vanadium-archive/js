@@ -16,6 +16,7 @@
 
 var Deferred = require('./../lib/deferred');
 var Promise = require('./../lib/promise');
+var asyncValidateCall = require('./async-validate-call');
 var leafDispatcher = require('./leaf-dispatcher');
 var vLog = require('./../lib/vlog');
 var inspector = require('./../lib/arg-inspector');
@@ -252,37 +253,8 @@ Server.prototype.handleAuthorization = function(handle, request) {
   if (handler && handler.authorizer) {
     authorizer = handler.authorizer;
   }
-  var def = new Deferred();
 
-  function cb(e) {
-    if (e) {
-      def.reject(e);
-      return;
-    }
-    def.resolve();
-  }
-
-  var result;
-  try {
-    result = authorizer(request, cb);
-  } catch (e) {
-    vLog.error(e);
-    return Promise.reject(e);
-  }
-
-  if (result === undefined) {
-    return def.promise;
-  }
-
-  if (result === null) {
-    return Promise.resolve();
-  }
-
-  if (result.then) {
-    return result;
-  }
-
-  return Promise.reject(result);
+  return asyncValidateCall(authorizer, request);
 };
 
 var InvokeOnNonInvoker = makeError(

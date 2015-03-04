@@ -22,6 +22,7 @@ var namespaceUtil = require('../namespace/util');
 var naming = require('../v.io/v23/naming');
 var Glob = require('./glob');
 var GlobStream = require('./glob-stream');
+var asyncValidateCall = require('./async-validate-call');
 var ServerRPCReply =
   require('../v.io/x/ref/services/wsprd/lib').ServerRPCReply;
 var CaveatValidationResponse =
@@ -111,38 +112,42 @@ Router.prototype.handleAuthorizationRequest = function(messageId, request) {
   });
 };
 
+Router.prototype._validateChain = function(secCtx, cavs) {
+  var promises = new Array(cavs.length);
+  for (var j = 0; j < cavs.length; j++) {
+    var boundFn = this._caveatRegistry.validate.bind(this._caveatRegistry);
+    promises[j] = asyncValidateCall(boundFn, secCtx, cavs[j]);
+  }
+  return Promise.all(promises).then(function(results) {
+    return undefined;
+  }).catch(function(err) {
+    if (!(err instanceof Error)) {
+      err = new Error(
+        'Non-error value returned from caveat validator: ' +
+        err);
+    }
+    return ErrorConversion.fromNativeValue(err, this._appName,
+      'caveat validation');
+  });
+};
+
 Router.prototype.handleCaveatValidationRequest = function(messageId, request) {
-  var results = new Array(request.cavs.length);
+  var resultPromises = new Array(request.cavs.length);
   var secCtx = new SecurityContext(request.ctx);
   for (var i = 0; i < request.cavs.length; i++) {
-    var chainCavs = request.cavs[i];
-    for (var j = 0; j < chainCavs.length; j++) {
-      var cav = chainCavs[j];
-      // TODO(bprosnitz) Support waiting on async validators.
-      var validationErr;
-      try {
-        validationErr = this._caveatRegistry.validate(secCtx, cav);
-      } catch (err) {
-        validationErr = err;
-      }
-      if (validationErr !== undefined) {
-        if (!(validationErr instanceof Error)) {
-          validationErr = new Error(
-            'Non-error value returned from caveat validator: ' +
-            validationErr);
-        }
-        results[i] = ErrorConversion.fromNativeValue(validationErr,
-          this._appName, 'caveat validation');
-        break;
-      }
-    }
+    resultPromises[i] = this._validateChain(secCtx, request.cavs[i]);
   }
-  var response = new CaveatValidationResponse({
-    results: results
+  var self = this;
+  Promise.all(resultPromises).then(function(results) {
+    var response = new CaveatValidationResponse({
+      results: results
+    });
+    var data = EncodeUtil.encode(response);
+    self._proxy.sendRequest(data, Outgoing.CAVEAT_VALIDATION_RESPONSE, null,
+      messageId);
+  }).catch(function(err) {
+    throw new Error('Unexpected error (all promises should resolve): ' + err);
   });
-  var data = EncodeUtil.encode(response);
-  this._proxy.sendRequest(data, Outgoing.CAVEAT_VALIDATION_RESPONSE, null,
-    messageId);
 };
 
 Router.prototype.handleLookupRequest = function(messageId, request) {

@@ -23,10 +23,12 @@ function constCaveatValidator(secCtx, value) {
   if (!value) {
     return new vdlSecurity.ConstCaveatValidationError(secCtx.context);
   }
+  return null;
 }
 
 function unixTimeExpiryCaveatValidator(secCtx, value) {
   // TEMP will be removed soon so just validate always
+  return null;
 }
 
 function expiryCaveatValidator(secCtx, expiry) {
@@ -35,15 +37,16 @@ function expiryCaveatValidator(secCtx, expiry) {
     return new vdlSecurity.ExpiryCaveatValidationError(secCtx.context,
       now, expiry);
   }
+  return null;
 }
 
 function methodCaveatValidator(secCtx, methods) {
   if (!secCtx.method || methods.length === 0) {
-    return;
+    return null;
   }
   for (var i = 0; i < methods.length; i++) {
     if (secCtx.method === methods[i]) {
-      return;
+      return null;
     }
   }
   return new vdlSecurity.MethodCaveatValidationError(secCtx.context,
@@ -52,4 +55,5 @@ function methodCaveatValidator(secCtx, methods) {
 
 function publicKeyThirdPartyCaveatValidator(secCtx, value) {
   // TODO(bprosnitz) Intercept this caveat and handle in go.
+  return null;
 }

@@ -121,7 +121,7 @@ function fromNativeValue(err, appName, operation) {
   if (err instanceof Error) {
     message = err.message;
 
-    paramList = [];
+    paramList = ['app', 'call'];
   } else if (err !== undefined && err !== null) {
     paramList = [appName, operation, err + ''];
     message = defaultCatalog.format(
@@ -145,5 +145,3 @@ function fromNativeValue(err, appName, operation) {
   e.msg = message;
   return e;
 }
-
-

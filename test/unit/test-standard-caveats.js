@@ -37,7 +37,7 @@ function assertValidate(t, cavType, val, msg) {
   var cav = caveatUtil.makeCaveat(cavType, val);
 
   t.doesNotThrow(function() {
-    t.equal(undefined,
+    t.equal(null,
       registry.validate(secCtx, cav),
       msg);
   },
