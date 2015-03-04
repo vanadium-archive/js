@@ -42,6 +42,11 @@ test('Test PassError of Go native service', function(assert) {
       assert.equal(e.retryCode, err.retryCode);
       assert.equal(e.msg, err.msg);
       assert.equal(e.message, err.message);
+      // The decoded error has the paramList values wrapped, since the
+      // paramList is an list of any.  The error passed into the call
+      // does not have that wrapping.  We add the wrapping to e to make sure
+      // the decoded error has the wrapped paramlist.
+      e.paramList = e.paramList.map(function (v) { return { val: v }; });
       assert.deepEqual(e.paramList, err.paramList);
       end(assert);
     });

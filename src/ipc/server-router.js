@@ -103,7 +103,7 @@ Router.prototype.handleAuthorizationRequest = function(messageId, request) {
         messageId);
   }).catch(function(e) {
     var data = JSON.stringify({
-      err: ErrorConversion.fromNativeType(e, this._appName,
+      err: ErrorConversion.fromNativeValue(e, this._appName,
                                           request.context.method)
     });
     router._proxy.sendRequest(data, Outgoing.AUTHORIZATION_RESPONSE, null,
@@ -131,7 +131,7 @@ Router.prototype.handleCaveatValidationRequest = function(messageId, request) {
             'Non-error value returned from caveat validator: ' +
             validationErr);
         }
-        results[i] = ErrorConversion.fromNativeType(validationErr,
+        results[i] = ErrorConversion.fromNativeValue(validationErr,
           this._appName, 'caveat validation');
         break;
       }
@@ -188,7 +188,7 @@ Router.prototype.handleLookupRequest = function(messageId, request) {
         null, messageId);
   }).catch(function(err) {
     var data = JSON.stringify({
-      err: ErrorConversion.fromNativeType(err, self._appName,
+      err: ErrorConversion.fromNativeValue(err, self._appName,
                                           '__Signature'),
     });
     self._proxy.sendRequest(data, Outgoing.LOOKUP_RESPONSE,
@@ -387,7 +387,7 @@ function createGlobReply(name) {
 
 function createGlobErrorReply(name, err, appName) {
   name = name || '';
-  var convertedError = ErrorConversion.fromNativeType(err, appName, 'glob');
+  var convertedError = ErrorConversion.fromNativeValue(err, appName, 'glob');
   return new naming.VDLGlobReply({
     'error': new naming.GlobError({ name: name, error: convertedError })
   });
@@ -519,7 +519,7 @@ Router.prototype.sendResult = function(messageId, name, results, err,
 
   var errorStruct = null;
   if (err !== undefined && err !== null) {
-    errorStruct = ErrorConversion.fromNativeType(err, this._appName,
+    errorStruct = ErrorConversion.fromNativeValue(err, this._appName,
                                                  name);
   }
 

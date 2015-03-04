@@ -1,7 +1,7 @@
 module.exports = normalize(detectLanguage());
 function detectLanguage() {
   if (typeof this.navigator !== 'undefined') {
-    return this.navigator.language;
+    return this.navigator.languages[0];
   }
 
   if (process.env.LANGUAGE) {
@@ -18,5 +18,5 @@ function detectLanguage() {
 }
 
 function normalize(l) {
-  return l.replace('_', '-');
+  return l.replace('_', '-').split('.')[0];
 }

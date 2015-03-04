@@ -4,22 +4,24 @@ var defaultLanguage = require('./../runtime/default-language');
 var defaultCatalog = require('./../runtime/default-catalog');
 var unwrap = require('./type-util').unwrap;
 var verror = require('../v.io/v23/verror');
+var canonicalize = require('./canonicalize');
 var registry = require('./native-type-registry');
 var Types = require('./types');
+var defaultLanguage = require('../runtime/default-language');
 
 module.exports = {
-  fromWireType: fromWireType,
-  fromNativeType: fromNativeType,
+  fromWireValue: fromWireValue,
+  fromNativeValue: fromNativeValue,
 };
 
 // VanadiumErrors already have the right type description.  We registered Error
 // in case anyone tries to pass a non-vanadium error as an argument to a
 // function.
-registry.registerFromNativeType(Error, fromNativeType);
+registry.registerFromNativeValue(Error, fromNativeValue, Types.ERROR.elem);
 // We register both the optional and the concrete type for the error depending
 // on what gets sent on the wire.
-registry.registerFromWireType(Types.ERROR, fromWireType);
-registry.registerFromWireType(Types.ERROR.elem, fromWireType);
+registry.registerFromWireValue(Types.ERROR, fromWireValue);
+registry.registerFromWireValue(Types.ERROR.elem, fromWireValue);
 
 var unknown = (new verror.UnknownError(null));
 
@@ -30,15 +32,14 @@ var unknown = (new verror.UnknownError(null));
  * @param {_standard} verr verror standard struct
  * @return {Error} JavaScript error object
  */
-function fromWireType(verr) {
+function fromWireValue(verr) {
   // We have to unwrap verr, because it could either be of type Types.ERROR
   // or Types.ERROR.elem The first type is an optional version of the
   // second type.
   verr = unwrap(verr);
   if (verr instanceof VanadiumError) {
-    return verr;
+    return verr.clone();
   }
-  var err;
 
   if (!verr) {
     return null;
@@ -48,26 +49,22 @@ function fromWireType(verr) {
   var msg = verr.msg;
   verr.paramList = verr.paramList || [];
 
-  var Ctor = errorMap[id];
+  var Ctor = errorMap[id] || VanadiumError;
+  var err = Object.create(Ctor.prototype);
+  Object.defineProperty(err, 'constructor', { value: Ctor });
+  err.id = id;
+  err.retryCode = retry;
+  err.msg = msg;
+  err.paramList = verr.paramList || [];
+  // TODO(bjornick): We should plumb the context into the decoder so we can
+  // get the correct langid.
+  err._langId = defaultLanguage;
+  Object.defineProperty(err, 'message', { value: msg });
 
-
-  if (Ctor) {
-    // First parameter to all error constructors is the context, which
-    // in this case is null.  In this case, we don't need a context
-    // since everything we need from the context should already be in
-    // the wire protocol.
-    err = new Ctor([null].concat(verr.paramList));
+  if (typeof Error.captureStackTrace === 'function') {
+    Error.captureStackTrace(err, VanadiumError);
   } else {
-    // The required args to VanadiumError are:
-    // errorId, retry, context
-    // Any remaining parameters are considered the param list.
-    var args = [id, retry, null].concat(verr.paramList);
-    err = new VanadiumError(args);
-  }
-
-  err.resetArgs.apply(err, verr.paramList);
-  if (msg !== '') {
-    err.message = msg;
+    Object.defineProperty(err, 'stack', { value: (new Error()).stack });
   }
 
   return err;
@@ -82,16 +79,44 @@ function fromWireType(verr) {
  * @param {string} operation operation name.
  * @return {_standard} verror standard struct
  */
-function fromNativeType(err, appName, operation) {
+function fromNativeValue(err, appName, operation) {
+  var paramList = [];
   if (err instanceof VanadiumError) {
-    return err;
+    var res = err.clone();
+    // We need to call fill on the paramList.  We know what
+    // the expected for the defined parameters are so, we should
+    // use that rather than JSValue when encoding them.
+    paramList = unwrap(res.paramList);
+    if (paramList.length > 0) {
+      paramList[0] = canonicalize.fill(
+        canonicalize.reduce(unwrap(paramList[0]), Types.STRING),
+        Types.ANY);
+    }
+    if (paramList.length > 1) {
+      paramList[1] = canonicalize.fill(
+        canonicalize.reduce(unwrap(paramList[1]), Types.STRING),
+        Types.ANY);
+    }
+
+    if (res._argTypes) {
+      // The first two arguments, if they exist are strings
+      for (var i = 0; i < res._argTypes.length; i++) {
+        if (i + 2 >= paramList.length) {
+          break;
+        }
+        paramList[i + 2] = canonicalize.fill(
+          canonicalize.fill(unwrap(paramList[i + 2]),
+                            res._argTypes[i]),
+          Types.ANY);
+      }
+    }
+    return res;
   }
 
   if (!err) {
     return null;
   }
   var message = '';
-  var paramList = [];
 
   if (err instanceof Error) {
     message = err.message;

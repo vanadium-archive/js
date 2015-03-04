@@ -3,6 +3,7 @@ var defaultLanguage = require('../runtime/default-language');
 var SharedContextKeys = require('../runtime/shared-context-keys');
 var inherits = require('inherits');
 var Types = require('../vdl/types');
+var TypeUtil = require('../vdl/type-util');
 module.exports = VanadiumError;
 
 function VanadiumError() {
@@ -35,18 +36,19 @@ function VanadiumError() {
   } else {
     args.unshift('app');
   }
+  this.msg = defaultCatalog.format(this._langId, id, args);
+
   Object.defineProperty(this,
                         'message',
                         {
-                          value: defaultCatalog.format(this._langId, id, args),
-                          writable: true,
+                          value: this.msg,
+                          writable: true
                         });
-  this.msg = this.message;
 
   if (typeof Error.captureStackTrace === 'function') {
     Error.captureStackTrace(this, VanadiumError);
   } else {
-    this.stack = (new Error()).stack;
+    Object.defineProperty(this, 'stack', { value: (new Error()).stack });
   }
 }
 inherits(VanadiumError, Error);
@@ -59,3 +61,25 @@ VanadiumError.prototype.resetArgs = function() {
 };
 
 VanadiumError.prototype._type = Types.ERROR.elem;
+
+VanadiumError.prototype.clone = function() {
+  var res = Object.create(this.constructor.prototype);
+  Object.defineProperty(res, 'constructor', { value: this.constructor });
+  // Make a copy of the paramList.
+  if (TypeUtil.isWrapped(this.paramList)) {
+    res.paramList = Object.create(this.paramList.constructor.prototype);
+    Object.defineProperty(res.paramList, 'constructor', {
+      value: this.paramList.constructor
+    });
+    res.paramList.val = TypeUtil.unwrap(this.paramList).slice(0);
+  } else {
+    res.paramList = this.paramList.slice(0);
+  }
+  res.id = this.id;
+  res.retryCode = this.retryCode;
+  res._langId = this._langId;
+  Object.defineProperty(res, 'message', { value: this.msg });
+  res.msg = this.msg;
+  Object.defineProperty(res, 'stack', { value: this.stack });
+  return res;
+};

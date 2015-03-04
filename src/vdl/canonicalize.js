@@ -131,27 +131,24 @@ function canonicalize(inValue, inType, t, deepWrap, seen, isTopLevelValue) {
 
   // TODO(bprosnitz) We need to canonicalize (without native conversion) before
   // passing inValue to fromWireType.
-  var n = inValue;
   if (!deepWrap) {
-    n = nativeTypeRegistry.fromWireType(t, inValue);
-  } else if (n !== undefined && n !== null) {
-    n = nativeTypeRegistry.fromNativeType(inValue.constructor, inValue);
+    inValue = nativeTypeRegistry.fromWireValue(t, inValue);
+  } else if (inValue !== undefined && inValue !== null) {
+    inValue = nativeTypeRegistry.fromNativeValue(inValue);
   }
-
-  var isNative = !deepWrap;
 
   // If we have a true native that doesn't have vdl fields in it (i.e. Date),
-  // then we can stop canonicalizing.
-  if (nativeTypeRegistry.isNative(n)) {
-    return n;
+  // then we can stop canonicalizing.  Other "natives" like VandiumError have
+  // nested fields that need to be canonicalized.
+  if (nativeTypeRegistry.isNative(inValue) && !TypeUtil.isTyped(inValue)) {
+    return inValue;
   }
-  inValue = n;
 
 
   // The outValue is an object associated with a constructor based on its type.
   // We pre-allocate wrapped values and add them to seen so that they can be
   // referenced in canonicalizeInternal (types may have recursive references).
-  var outValue = getObjectWithType(t);
+  var outValue = getObjectWithType(t, inValue);
   var cacheType = outValue._type;
 
   // Only top-level values and primitives should be wrapped unless deep wrapping
@@ -160,10 +157,6 @@ function canonicalize(inValue, inType, t, deepWrap, seen, isTopLevelValue) {
     outValue = null;
   }
 
-  if (outValue && isNative && nativeTypeRegistry.hasNativeType(t) &&
-      inValue && t.equals(inValue._type)) {
-    outValue = inValue;
-  }
   // Seen maps an inValue and type to an outValue.
   // If the inValue and type combination already have a cached value, then that
   // is returned. Otherwise, the outValue is put into the seen cache.
@@ -213,6 +206,13 @@ function canonicalize(inValue, inType, t, deepWrap, seen, isTopLevelValue) {
     canonValue = canonicalizeInternal(deepWrap, v, inType, t, seen, outValue);
   }
 
+  // We need to copy the msg field of WireError to the message property of
+  // Javascript Errors so that toString() works.
+  // TODO(bjornick): We should make this go away when we fix:
+  // https://github.com/veyron/release-issues/issues/1279
+  if (canonValue instanceof Error) {
+    Object.defineProperty(canonValue, 'message', { value: canonValue.msg });
+  }
   // Non-structLike types may need to wrap the clone with a wrapper constructor.
   if (needsWrap && outValue !== null && outValue._wrappedType) {
     outValue.val = canonValue;
@@ -717,16 +717,23 @@ function mapToSet(m, t) {
 /**
  * Creates an empty object with the correct Constructor and prototype chain.
  * @param {type} type The proposed type whose constructor is needed.
+ * @param {v} value The value that is passed in.  If v is a native type,
+ * its constructor is used instead of looking up in the registry.
  * @return {object} The empty object with correct type
  */
-function getObjectWithType(t) {
+function getObjectWithType(t, v) {
   // Get the proper constructor from the Registry.
   Registry = Registry || require('./registry.js');
   var Constructor = Registry.lookupOrCreateConstructor(t);
 
+  if (nativeTypeRegistry.isNative(v)) {
+    Constructor = v.constructor;
+  }
+
   // Then make an empty object with that constructor.
   var obj = Object.create(Constructor.prototype);
   Object.defineProperty(obj, 'constructor', { value: Constructor });
+
   return obj;
 }
 

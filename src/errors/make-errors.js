@@ -4,6 +4,7 @@ var defaultCatalog = require('../runtime/default-catalog');
 var VanadiumError = require('./vanadium-error');
 
 module.exports = makeError;
+
 /**
  * Returns a constructor that represents the error id
  * and retryCode passed in.
@@ -48,3 +49,5 @@ function makeError(id, retryCode, format, types) {
   }
   return Errors[fname];
 }
+
+

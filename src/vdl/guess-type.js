@@ -7,6 +7,7 @@
 var Types = require('./types.js');
 var TypeUtil = require('./type-util.js');
 require('./es6-shim');
+var nativeTypeRegistry = require('./native-type-registry');
 
 module.exports = guessType;
 
@@ -19,6 +20,11 @@ module.exports = guessType;
 function guessType(val) {
   if (TypeUtil.isTyped(val)) {
     return val._type;
+  }
+
+  var nativeType = nativeTypeRegistry.lookupNativeToWireConverter(val);
+  if (nativeType) {
+    return nativeType.type;
   }
 
   return Types.JSVALUE;
