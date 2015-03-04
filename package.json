@@ -29,7 +29,7 @@
     "jshint": "^2.6.0",
     "minimist": "^1.1.0",
     "mkdirp": "^0.5.0",
-    "prova": "aghassemi/prova#0.0.2",
+    "prova": "aghassemi/prova#0.0.4",
     "run-parallel": "^1.0.0",
     "which": "^1.0.5",
     "esprima": "~1.2.2",
