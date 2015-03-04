@@ -24,11 +24,12 @@ function encodeDecodeDate(encodeType) {
 }
 
 // TODO(bprosnitz) Implement native type guessing and enable this test.
-test.skip('test encoding and decoding javascript date without type',
+test('test encoding and decoding javascript date without type',
   function(t) {
   var result = encodeDecodeDate();
   t.ok(result instanceof Date, 'Decoded date should be a date object');
-  t.equal(result, expectedDate, 'Should decode to the expected date');
+  var diff = Math.abs(expectedDate - result);
+  t.ok(diff < 1, 'Should decode to the expected date');
   t.end();
 });
 

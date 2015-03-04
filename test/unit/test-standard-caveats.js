@@ -71,7 +71,7 @@ test('Const caveat is validated correctly', function(t) {
 
 // TODO(bprosnitz) Enable this after implementing type guessing from native
 // types.
-test.skip('Expiry caveat is validated correctly using native Date',
+test('Expiry caveat is validated correctly using native Date',
   function(t) {
   var now = Date.now();
   var oneHour = 1*60*60*1000;

@@ -7,7 +7,7 @@ var service = {
   }
 };
 
-test.skip('Test serving a JS service named livingroom/tv - ' +
+test('Test serving a JS service named livingroom/tv - ' +
   'server.serve(name, service, callback)', function(assert) {
   vanadium.init(config, function(err, runtime) {
     assert.error(err);
@@ -20,7 +20,7 @@ test.skip('Test serving a JS service named livingroom/tv - ' +
   });
 });
 
-test.skip('Test serving a JS service named livingroom/tv - ' +
+test('Test serving a JS service named livingroom/tv - ' +
   'var promise = server.serve(name, service)', function(assert) {
   vanadium.init(config, function(err, runtime) {
     assert.error(err);
@@ -72,7 +72,7 @@ test('Test serving a JS service when proxy Url is invalid - '+
   });
 });
 
-test.skip('Test serving a JS service multiple times should fail - ' +
+test('Test serving a JS service multiple times should fail - ' +
   'server.serve(name, service)', function(assert) {
   vanadium.init(config, function(err, runtime) {
     assert.error(err);
@@ -94,7 +94,7 @@ test.skip('Test serving a JS service multiple times should fail - ' +
   });
 });
 
-test.skip('Test serving a JS service multiple times should fail - ' +
+test('Test serving a JS service multiple times should fail - ' +
   'var promise = server.serve(name, service)', function(assert) {
   vanadium.init(config, function(err, runtime) {
     assert.error(err);

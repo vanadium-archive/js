@@ -76,11 +76,11 @@ func (c implCancelCollectorClientStub) WaitForStatus(ctx *context.T, i0 int64, i
 // CancelCollector is a test interface for use in testing cancellation and deadlines.
 type CancelCollectorServerMethods interface {
 	// A function that never returns, but records the status of the given key.
-	NeverReturn(ctx ipc.ServerCall, key int64) error
+	NeverReturn(call ipc.ServerCall, key int64) error
 	// Wait for the call with the given key to have the given status.  Possible statuses are:
 	// "running", and, "cancelled".  Returns the number of nanoseconds left on
 	// the deadline of the specified call when the call first began.
-	WaitForStatus(ctx ipc.ServerCall, key int64, status string) (timeout int64, err error)
+	WaitForStatus(call ipc.ServerCall, key int64, status string) (timeout int64, err error)
 }
 
 // CancelCollectorServerStubMethods is the server interface containing
@@ -118,12 +118,12 @@ type implCancelCollectorServerStub struct {
 	gs   *ipc.GlobState
 }
 
-func (s implCancelCollectorServerStub) NeverReturn(ctx ipc.ServerCall, i0 int64) error {
-	return s.impl.NeverReturn(ctx, i0)
+func (s implCancelCollectorServerStub) NeverReturn(call ipc.ServerCall, i0 int64) error {
+	return s.impl.NeverReturn(call, i0)
 }
 
-func (s implCancelCollectorServerStub) WaitForStatus(ctx ipc.ServerCall, i0 int64, i1 string) (int64, error) {
-	return s.impl.WaitForStatus(ctx, i0, i1)
+func (s implCancelCollectorServerStub) WaitForStatus(call ipc.ServerCall, i0 int64, i1 string) (int64, error) {
+	return s.impl.WaitForStatus(call, i0, i1)
 }
 
 func (s implCancelCollectorServerStub) Globber() *ipc.GlobState {

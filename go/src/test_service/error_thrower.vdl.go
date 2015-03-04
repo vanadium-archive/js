@@ -231,48 +231,48 @@ type implErrorThrowerServerStub struct {
 	gs   *ipc.GlobState
 }
 
-func (s implErrorThrowerServerStub) ThrowAborted(ctx ipc.ServerCall) error {
-	return s.impl.ThrowAborted(ctx)
+func (s implErrorThrowerServerStub) ThrowAborted(call ipc.ServerCall) error {
+	return s.impl.ThrowAborted(call)
 }
 
-func (s implErrorThrowerServerStub) ThrowBadArg(ctx ipc.ServerCall) error {
-	return s.impl.ThrowBadArg(ctx)
+func (s implErrorThrowerServerStub) ThrowBadArg(call ipc.ServerCall) error {
+	return s.impl.ThrowBadArg(call)
 }
 
-func (s implErrorThrowerServerStub) ThrowBadProtocol(ctx ipc.ServerCall) error {
-	return s.impl.ThrowBadProtocol(ctx)
+func (s implErrorThrowerServerStub) ThrowBadProtocol(call ipc.ServerCall) error {
+	return s.impl.ThrowBadProtocol(call)
 }
 
-func (s implErrorThrowerServerStub) ThrowInternal(ctx ipc.ServerCall) error {
-	return s.impl.ThrowInternal(ctx)
+func (s implErrorThrowerServerStub) ThrowInternal(call ipc.ServerCall) error {
+	return s.impl.ThrowInternal(call)
 }
 
-func (s implErrorThrowerServerStub) ThrowNoAccess(ctx ipc.ServerCall) error {
-	return s.impl.ThrowNoAccess(ctx)
+func (s implErrorThrowerServerStub) ThrowNoAccess(call ipc.ServerCall) error {
+	return s.impl.ThrowNoAccess(call)
 }
 
-func (s implErrorThrowerServerStub) ThrowNoExist(ctx ipc.ServerCall) error {
-	return s.impl.ThrowNoExist(ctx)
+func (s implErrorThrowerServerStub) ThrowNoExist(call ipc.ServerCall) error {
+	return s.impl.ThrowNoExist(call)
 }
 
-func (s implErrorThrowerServerStub) ThrowNoExistOrNoAccess(ctx ipc.ServerCall) error {
-	return s.impl.ThrowNoExistOrNoAccess(ctx)
+func (s implErrorThrowerServerStub) ThrowNoExistOrNoAccess(call ipc.ServerCall) error {
+	return s.impl.ThrowNoExistOrNoAccess(call)
 }
 
-func (s implErrorThrowerServerStub) ThrowUnknown(ctx ipc.ServerCall) error {
-	return s.impl.ThrowUnknown(ctx)
+func (s implErrorThrowerServerStub) ThrowUnknown(call ipc.ServerCall) error {
+	return s.impl.ThrowUnknown(call)
 }
 
-func (s implErrorThrowerServerStub) ThrowGoError(ctx ipc.ServerCall) error {
-	return s.impl.ThrowGoError(ctx)
+func (s implErrorThrowerServerStub) ThrowGoError(call ipc.ServerCall) error {
+	return s.impl.ThrowGoError(call)
 }
 
-func (s implErrorThrowerServerStub) ThrowCustomStandardError(ctx ipc.ServerCall) error {
-	return s.impl.ThrowCustomStandardError(ctx)
+func (s implErrorThrowerServerStub) ThrowCustomStandardError(call ipc.ServerCall) error {
+	return s.impl.ThrowCustomStandardError(call)
 }
 
-func (s implErrorThrowerServerStub) ListAllBuiltInErrorIDs(ctx ipc.ServerCall) ([]string, error) {
-	return s.impl.ListAllBuiltInErrorIDs(ctx)
+func (s implErrorThrowerServerStub) ListAllBuiltInErrorIDs(call ipc.ServerCall) ([]string, error) {
+	return s.impl.ListAllBuiltInErrorIDs(call)
 }
 
 func (s implErrorThrowerServerStub) Globber() *ipc.GlobState {

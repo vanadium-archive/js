@@ -136,8 +136,8 @@ type implInvokableTestMethodServerStub struct {
 	gs   *ipc.GlobState
 }
 
-func (s implInvokableTestMethodServerStub) AMethod(ctx ipc.ServerCall) error {
-	return s.impl.AMethod(ctx)
+func (s implInvokableTestMethodServerStub) AMethod(call ipc.ServerCall) error {
+	return s.impl.AMethod(call)
 }
 
 func (s implInvokableTestMethodServerStub) Globber() *ipc.GlobState {
@@ -209,7 +209,7 @@ func (c implInvokeMethodWithCaveatedIdentityClientStub) Invoke(ctx *context.T, i
 // InvokeMethodWithCaveatedIdentityServerMethods is the interface a server writer
 // implements for InvokeMethodWithCaveatedIdentity.
 type InvokeMethodWithCaveatedIdentityServerMethods interface {
-	Invoke(ctx ipc.ServerCall, name string, cavDesc security.CaveatDescriptor, cavParam *vdl.Value) error
+	Invoke(call ipc.ServerCall, name string, cavDesc security.CaveatDescriptor, cavParam *vdl.Value) error
 }
 
 // InvokeMethodWithCaveatedIdentityServerStubMethods is the server interface containing
@@ -247,8 +247,8 @@ type implInvokeMethodWithCaveatedIdentityServerStub struct {
 	gs   *ipc.GlobState
 }
 
-func (s implInvokeMethodWithCaveatedIdentityServerStub) Invoke(ctx ipc.ServerCall, i0 string, i1 security.CaveatDescriptor, i2 *vdl.Value) error {
-	return s.impl.Invoke(ctx, i0, i1, i2)
+func (s implInvokeMethodWithCaveatedIdentityServerStub) Invoke(call ipc.ServerCall, i0 string, i1 security.CaveatDescriptor, i2 *vdl.Value) error {
+	return s.impl.Invoke(call, i0, i1, i2)
 }
 
 func (s implInvokeMethodWithCaveatedIdentityServerStub) Globber() *ipc.GlobState {
