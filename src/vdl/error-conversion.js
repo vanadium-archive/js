@@ -89,12 +89,12 @@ function fromNativeValue(err, appName, operation) {
     paramList = unwrap(res.paramList);
     if (paramList.length > 0) {
       paramList[0] = canonicalize.fill(
-        canonicalize.reduce(unwrap(paramList[0]), Types.STRING),
+        canonicalize.reduce(paramList[0], Types.STRING),
         Types.ANY);
     }
     if (paramList.length > 1) {
       paramList[1] = canonicalize.fill(
-        canonicalize.reduce(unwrap(paramList[1]), Types.STRING),
+        canonicalize.reduce(paramList[1], Types.STRING),
         Types.ANY);
     }
 
@@ -105,8 +105,7 @@ function fromNativeValue(err, appName, operation) {
           break;
         }
         paramList[i + 2] = canonicalize.fill(
-          canonicalize.fill(unwrap(paramList[i + 2]),
-                            res._argTypes[i]),
+          canonicalize.fill(paramList[i + 2], res._argTypes[i]),
           Types.ANY);
       }
     }
