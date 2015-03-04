@@ -1,10 +1,11 @@
 module.exports = {
-  fromNativeType: fromNativeType,
-  fromWireType: fromWireType,
-  registerFromNativeType: registerFromNativeType,
-  registerFromWireType: registerFromWireType,
+  fromNativeValue: fromNativeValue,
+  fromWireValue: fromWireValue,
+  registerFromNativeValue: registerFromNativeValue,
+  registerFromWireValue: registerFromWireValue,
   hasNativeType: hasNativeType,
   isNative: isNative,
+  lookupNativeToWireConverter: lookupNativeToWireConverter,
 };
 
 require('./es6-shim');
@@ -21,50 +22,74 @@ var wireToNative = {};
 /**
  * Registers a converter that converts from wire type to native type.
  * @private
- * @param {Type} t The type to convert from
+ * @param {Value} t The type to convert from
  * @param {function} f A function that takes in a wire type representation
  * and returns the native type for it.
  */
-function registerFromWireType(t, f) {
+function registerFromWireValue(t, f) {
   wireToNative[t.toString()] = f;
 }
 
 /**
  * Registers a converter that converts from native type to wire type.
  * @private
- * @param {constructor} t The constructor for the native object.
+ * @param {constructor} constructor The constructor for the native object.
  * @param {function} f A function that takes in a native object and returns
  * the wire type representation of it.
+ * @param {Type} type The wiretype fo the native value.
  */
-function registerFromNativeType(t, f) {
-  nativeToWire.set(t, f);
+function registerFromNativeValue(constructor, f, t) {
+  nativeToWire.set(constructor, { converter: f, type: t });
 }
 
 /**
  * Converts v from native type to the wire type format.
  * @private
- * @param {constructor} t The constructor of v.
  * @param {function} v The value to convert
  * @returns {object} The wiretype respresentation of the object.  If
  * no conversion happened, v is returned.
  */
-function fromNativeType(t, v) {
-  var transform = nativeToWire.get(t);
+function fromNativeValue(v) {
+  var transform = lookupNativeToWireConverter(v);
   if (transform) {
-    return transform(v);
+    return transform.converter(v);
   }
   return v;
+}
+
+// In ES5 Object.getPrototypeOf fails on primitive values, so we have
+// to try catch it.  In ES6 this won't happen because Object.getPrototypeOf
+// will coerce the input into an object.
+function getPrototypeSafe(v) {
+  try {
+    return Object.getPrototypeOf(v);
+  } catch (e) {
+    return null;
+  }
+}
+
+function lookupNativeToWireConverter(v) {
+  // Walk up the prototype chain finding the most specific
+  // match.
+  do {
+    var transform = nativeToWire.get(v.constructor);
+    if (transform) {
+      return transform;
+    }
+    v = getPrototypeSafe(v);
+  } while(v);
+  return null;
 }
 
 /**
  * Converts v from wire type to native type.
  * @private
- * @param {Type} t The type of v
+ * @param {Value} t The type of v
  * @param {function} v The value to convert
  * @returns {object} The native object that is equivalent to v.  If
  * no conversion happened, v is returned.
  */
-function fromWireType(t, v) {
+function fromWireValue(t, v) {
   try {
     var transform = wireToNative[t.toString()];
     if (transform) {
@@ -78,7 +103,7 @@ function fromWireType(t, v) {
 
 /**
  * Returns whether this Type has a native converter registered
- * @param {Type} t The type
+ * @param {Value} t The type
  * @returns {boolean} True iff there is native converter for this type.
  */
 function hasNativeType(t) {
@@ -95,5 +120,5 @@ function isNative(v) {
   if (v === undefined || v === null) {
     return false;
   }
-  return !!nativeToWire.get(v.constructor);
+  return !!lookupNativeToWireConverter(v);
 }

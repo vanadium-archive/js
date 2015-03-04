@@ -1,11 +1,15 @@
 var test = require('prova');
 var verror = require('../../src/v.io/v23/verror');
 var ec = require('../../src/vdl/error-conversion');
+var Types = require('../../src/vdl/types');
+var Kind = require('../../src/vdl/kind');
+var reduce = require('../../src/vdl/canonicalize').reduce;
+var unwrap = require('../../src/vdl/type-util').unwrap;
 var message = 'Something bad happened.';
 
 var noAccessError = new verror.NoAccessError(null);
-test('var err = ec.fromWireType(struct)', function(assert) {
-  var err = ec.fromWireType({
+test('var err = ec.fromWireValue(struct)', function(assert) {
+  var err = ec.fromWireValue({
     msg: message,
     id: noAccessError.id,
     retryCode: noAccessError.retryCode,
@@ -19,12 +23,12 @@ test('var err = ec.fromWireType(struct)', function(assert) {
   assert.end();
 });
 
-test('var err = ec.fromWireType(verror)', function(assert) {
+test('var err = ec.fromWireValue(verror)', function(assert) {
   var errors = Object.keys(verror);
   errors.forEach(function(name) {
     var E = verror[name];
     var newE = new E(null);
-    var err = ec.fromWireType({
+    var err = ec.fromWireValue({
       id: newE.id,
       retryCode: newE.retryCode,
       msg: message
@@ -42,10 +46,22 @@ test('var err = ec.fromWireType(verror)', function(assert) {
   assert.end();
 });
 
+var anyList = {
+  kind: Kind.LIST,
+  elem: Types.ANY,
+};
+
+function deepUnwrapParamList(paramList) {
+  return reduce(paramList, anyList).val.map(function(v) {
+   return unwrap(v);
+  });
+}
+
 var unknownError = (new verror.UnknownError(null));
-test('var struct = ec.fromNativeType(err)', function(assert) {
+test('var struct = ec.fromNativeValue(err)', function(assert) {
   var err = new Error(message);
-  var struct = ec.fromNativeType(err, 'app', 'call');
+  var struct = ec.fromNativeValue(err, 'app', 'call');
+  struct.paramList = deepUnwrapParamList(struct.paramList);
   var expectedError = new verror.UnknownError(null);
   expectedError.message = message;
   expectedError.msg = message;
@@ -55,16 +71,18 @@ test('var struct = ec.fromNativeType(err)', function(assert) {
 });
 
 // TODO: this should loop.
-test('var struct = ec.fromNativeType(verr)', function(assert) {
+test('var struct = ec.fromNativeValue(verr)', function(assert) {
   var err = verror.NoAccessError(null, 'app', 'call');
-  var struct = ec.fromNativeType(err);
+  var struct = ec.fromNativeValue(err);
+  struct.paramList = deepUnwrapParamList(struct.paramList);
 
   assert.deepEqual(struct, err);
   assert.end();
 });
 
-test('var struct = ec.fromNativeType(string)', function(assert) {
-  var struct = ec.fromNativeType(message, 'appName', 'call');
+test('var struct = ec.fromNativeValue(string)', function(assert) {
+  var struct = ec.fromNativeValue(message, 'appName', 'call');
+  struct.paramList = deepUnwrapParamList(struct.paramList);
 
   var expectedError = new verror.UnknownError(null);
   var msg = 'appName:call: Error: ' + message;
@@ -79,8 +97,8 @@ test('var struct = ec.fromNativeType(string)', function(assert) {
 test('Error => Struct => Error', function(assert) {
   var message = 'testing JS error conversion';
   var original = new Error(message);
-  var struct = ec.fromNativeType(original);
-  var converted = ec.fromWireType(struct);
+  var struct = ec.fromNativeValue(original);
+  var converted = ec.fromWireValue(struct);
 
   assert.equal(struct.msg, original.message);
   assert.deepEqual(struct.id, unknownError.id);

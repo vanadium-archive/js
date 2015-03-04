@@ -3,11 +3,10 @@ var vdl = require('../vdl');
 var Time = require('../v.io/v23/vdlroot/time').Time;
 
 var timeType = Time.prototype._type;
+registry.registerFromNativeValue(Date, toDateWireValue, timeType);
+registry.registerFromWireValue(timeType, fromDateWireValue);
 
-registry.registerFromNativeType(Date, toDateWireType);
-registry.registerFromWireType(timeType, fromDateWireType);
-
-function fromDateWireType(v) {
+function fromDateWireValue(v) {
   v = v || {};
   if (v instanceof Date) {
     return v;
@@ -35,7 +34,7 @@ function fromDateWireType(v) {
   return out;
 }
 
-function toDateWireType(v) {
+function toDateWireValue(v) {
   var time = v.getTime();
   var seconds = Math.floor(time / 1000);
   var nanos = Math.floor((time - seconds * 1000) * 1000000);

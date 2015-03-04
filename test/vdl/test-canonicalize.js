@@ -10,8 +10,13 @@ var Kind = require('./../../src/vdl/kind.js');
 var Registry = require('./../../src/vdl/registry.js');
 var Type = require('./../../src/vdl/type.js');
 var Types = require('./../../src/vdl/types.js');
+var TypeUtil = require('../../src/vdl/type-util');
 var canonicalize = require('./../../src/vdl/canonicalize.js');
 var stringify = require('./../../src/vdl/stringify.js');
+require('../../src/vom/native-types');
+var Time = require('../../src/v.io/v23/vdlroot/time').Time;
+var makeError = require('../../src/errors/make-errors');
+var actions = require('../../src/errors/actions');
 
 // A helper function that shallow copies an object into an object with the
 // JSValue prototype. It makes the test cases a lot more readable.
@@ -1367,6 +1372,122 @@ test('canonicalize conversion - success', function(t) {
       test.outValue,
       test.name + ' converts correctly'
     );
+  }
+  t.end();
+});
+
+test('canonicalize error', function(t) {
+  var E = makeError('MyId', actions.NO_RETRY, '', [
+    Types.STRING, Types.INT32 ]);
+
+  // There are two different values of native errors we expect.  The first is
+  // the value that the developer will pass in.  It's paramList will not have
+  // any wrapped elements.  The second is the result of the conversion from the
+  // wire format to the native format.  In this form, the individual values of
+  // in the paramList will be wrapped since they are of type any.  This is
+  // strictly correct, but cumbersome.  This is probably ok since we want to
+  // strongly discourage the use of the paramList programmatically.
+  var err = new E(null, 'foo', 32);
+  err.msg = 'My awesome message!!!';
+  Object.defineProperty(err, 'message', { value: err.msg });
+  var wrappedErr = err.clone();
+  wrappedErr.paramList = wrappedErr.paramList.map(function(v) {
+    return { val: v };
+  });
+
+  var VerrorConstructor = Registry.lookupOrCreateConstructor(Types.ERROR);
+  var Str = Registry.lookupOrCreateConstructor(Types.STRING);
+  var Int32 = Registry.lookupOrCreateConstructor(Types.INT32);
+
+  var wrappedMessage = new VerrorConstructor({
+    id: 'MyId',
+    retryCode: actions.NO_RETRY,
+    msg: 'My awesome message!!!',
+    paramList: [new Str('app'), new Str('op'), new Str('foo'), new Int32(32)]
+  }, true);
+
+  var wrappedMessageWithLangId = new VerrorConstructor({
+    id: 'MyId',
+    retryCode: actions.NO_RETRY,
+    msg: 'My awesome message!!!',
+    paramList: [new Str('app'), new Str('op'), new Str('foo'), new Int32(32)]
+  }, true);
+  // When we convert from native type to wire type we transfer the _
+  wrappedMessageWithLangId.val._langId = 'en-US';
+  var tests = [{
+    name: 'err, deepWrap = false',
+    inValue: err,
+    deepWrap: false,
+    outValue: err,
+  }, {
+    name: 'err, deepWrap = true',
+    inValue: err,
+    deepWrap: true,
+    outValue: TypeUtil.unwrap(wrappedMessageWithLangId),
+  }, {
+    name: 'wrappedMessage, deepWrap = false',
+    inValue: wrappedMessage,
+    deepWrap: false,
+    outValue: { val: wrappedErr },
+  }, {
+    name: 'wrappedMessage, deepWrap = true',
+    inValue: wrappedMessage,
+    deepWrap: true,
+    outValue: { val: wrappedMessage },
+  }];
+
+  for (var i = 0; i < tests.length; i++) {
+    var test = tests[i];
+    t.deepEqual(
+      canonicalize.value(test.inValue, Types.ANY, test.deepWrap),
+      test.outValue,
+      test.name);
+  }
+  t.end();
+});
+
+test('canonicalize time', function(t) {
+  var d = new Date(1999,11,30,23,59,59);
+  var millis = d.getTime();
+  var timeStruct = new Time({
+    seconds: millis / 1000,
+    nanos: 0,
+  }, true);
+
+  var tests = [{
+    name: 'date deepWrap = true',
+    inValue: d,
+    deepWrap: true,
+    outValue: {
+      val: timeStruct
+    }
+  }, {
+    name: 'date deepWrap = false',
+    inValue: d,
+    deepWrap: false,
+    outValue: d
+  }, {
+    name: 'time.Time deepWrap = true',
+    inValue: timeStruct,
+    deepWrap: true,
+    outValue: {
+      val: timeStruct
+    },
+  },{
+    name: 'time.Time deepWrap = false',
+    inValue: timeStruct,
+    deepWrap: false,
+    outValue: {
+      val: d
+    }
+  }];
+
+  for (var i = 0; i < tests.length; i++) {
+    var test = tests[i];
+    t.deepEqual(
+      canonicalize.value(test.inValue, Types.ANY, test.deepWrap),
+      test.outValue,
+      test.name);
   }
   t.end();
 });
