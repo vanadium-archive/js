@@ -57,28 +57,14 @@ function fromNativeValue(v) {
   return v;
 }
 
-// In ES5 Object.getPrototypeOf fails on primitive values, so we have
-// to try catch it.  In ES6 this won't happen because Object.getPrototypeOf
-// will coerce the input into an object.
-function getPrototypeSafe(v) {
-  try {
-    return Object.getPrototypeOf(v);
-  } catch (e) {
-    return null;
-  }
-}
-
 function lookupNativeToWireConverter(v) {
-  // Walk up the prototype chain finding the most specific
-  // match.
-  do {
-    var transform = nativeToWire.get(v.constructor);
-    if (transform) {
-      return transform;
+  var result = null;
+  nativeToWire.forEach(function(wire, native) {
+    if (result === null && v instanceof native) {
+      result = wire;
     }
-    v = getPrototypeSafe(v);
-  } while(v);
-  return null;
+  });
+  return result;
 }
 
 /**
