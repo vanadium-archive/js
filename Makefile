@@ -110,13 +110,13 @@ test-vdl: test-vdl-node test-vdl-browser
 
 test-vom: test-vom-node test-vom-browser
 
-# This generates the output of the vdl files in src/v.io/<package-path>
+# This generates the output of the vdl files in src/gen-vdl/v.io/<package-path>
 # The command will generate all the dependent files as well.
-gen-vdl: JS_VDL_DIR := "$(VANADIUM_ROOT)/release/javascript/core/src"
-gen-vdl: JS_VDL_PATH_TO_CORE := "."
+gen-vdl: JS_VDL_DIR := "$(VANADIUM_ROOT)/release/javascript/core/src/gen-vdl"
+gen-vdl: JS_VDL_PATH_TO_CORE := ".."
 gen-vdl: gen-vdl-impl
 
-# This generates the output of the vdl files in test/vdl-out/v.io/<package-path>
+# This generates the output of the vdl files in test/vdl-out/gen-vdl/v.io/<package-path>
 # The command will generate all the dependent files as well.
 gen-vdl-test: JS_VDL_DIR := "$(VANADIUM_ROOT)/release/javascript/core/test/vdl-out"
 gen-vdl-test: EXTRA_VDL_PATHS := "javascript-test/..." "test_service/..."

@@ -1,7 +1,7 @@
 var Incoming = require('./message-type').Incoming;
 var DecodeUtil = require('../lib/decode-util');
 var emitStreamError = require('../lib/emit-stream-error');
-var vError = require('../v.io/v23/verror');
+var vError = require('../gen-vdl/v.io/v23/verror');
 
 module.exports = Handler;
 

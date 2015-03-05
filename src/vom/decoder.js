@@ -11,7 +11,7 @@ var Registry = require('../vdl/registry.js');
 var Types = require('../vdl/types.js');
 var util = require('../vdl/util.js');
 var unwrap = require('../vdl/type-util').unwrap;
-var wiretype = require('../v.io/v23/vom');
+var wiretype = require('../gen-vdl/v.io/v23/vom');
 var nativeTypeRegistry = require('../vdl/native-type-registry');
 
 var eofByte = unwrap(wiretype.WireCtrlEOF);

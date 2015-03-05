@@ -11,22 +11,22 @@ var Outgoing = MessageType.Outgoing;
 var ErrorConversion = require('../vdl/error-conversion');
 var vlog = require('./../lib/vlog');
 var StreamHandler = require('../proxy/stream-handler');
-var verror = require('../v.io/v23/verror');
+var verror = require('../gen-vdl/v.io/v23/verror');
 var SecurityContext = require('../security/context');
 var ServerContext = require('./server-context');
 var DecodeUtil = require('../lib/decode-util');
 var EncodeUtil = require('../lib/encode-util');
 var vdl = require('../vdl');
-var vdlsig = require('../v.io/v23/vdlroot/signature');
+var vdlsig = require('../gen-vdl/v.io/v23/vdlroot/signature');
 var namespaceUtil = require('../namespace/util');
-var naming = require('../v.io/v23/naming');
+var naming = require('../gen-vdl/v.io/v23/naming');
 var Glob = require('./glob');
 var GlobStream = require('./glob-stream');
 var asyncValidateCall = require('./async-validate-call');
 var ServerRPCReply =
-  require('../v.io/x/ref/services/wsprd/lib').ServerRPCReply;
+  require('../gen-vdl/v.io/x/ref/services/wsprd/lib').ServerRPCReply;
 var CaveatValidationResponse =
-  require('../v.io/x/ref/services/wsprd/ipc/server').
+  require('../gen-vdl/v.io/x/ref/services/wsprd/ipc/server').
   CaveatValidationResponse;
 
 /**

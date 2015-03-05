@@ -4,7 +4,7 @@ examples
 extension
 src/signature/signature.js
 src/vdltool/
-src/v.io
+src/gen-vdl/v.io
 src/time
 nacl/out
 test/vdl/expected-gen

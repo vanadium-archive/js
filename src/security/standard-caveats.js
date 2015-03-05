@@ -1,4 +1,4 @@
-var vdlSecurity = require('../v.io/v23/security');
+var vdlSecurity = require('../gen-vdl/v.io/v23/security');
 
 // Register the default caveats from the security package.
 module.exports = {

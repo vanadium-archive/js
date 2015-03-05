@@ -16,7 +16,7 @@ var BigInt = require('../vdl/big-int');
 var BootstrapTypes = require('./bootstrap-types');
 
 var unwrap = require('../vdl/type-util').unwrap;
-var wiretype = require('../v.io/v23/vom');
+var wiretype = require('../gen-vdl/v.io/v23/vom');
 
 var eofByte = unwrap(wiretype.WireCtrlEOF);
 var nilByte = unwrap(wiretype.WireCtrlNil);

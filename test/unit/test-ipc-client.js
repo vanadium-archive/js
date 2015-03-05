@@ -6,7 +6,7 @@ var createMockProxy = require('./mock-proxy');
 var DecodeUtil = require('../../src/lib/decode-util');
 var EncodeUtil = require('../../src/lib/encode-util');
 var vtrace = require('../../src/lib/vtrace');
-var app = require('../../src/v.io/x/ref/services/wsprd/app');
+var app = require('../../src/gen-vdl/v.io/x/ref/services/wsprd/app');
 
 var mockService = {
   tripleArgMethod: function(ctx, a, b, c) {},

@@ -6,7 +6,7 @@ var ByteArrayMessageReader = require(
     './../../src/vom/byte-array-message-reader');
 var Encoder = require('./../../src/vom/encoder');
 var Decoder = require('./../../src/vom/decoder');
-var Time = require('../../src/v.io/v23/vdlroot/time').Time;
+var Time = require('../../src/gen-vdl/v.io/v23/vdlroot/time').Time;
 require('../../src/vom/native-types'); // Register native types.
 
 var expectedDate = new Date(1999, 9, 9, 9, 9, 999);

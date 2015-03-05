@@ -5,7 +5,7 @@
  */
 var Incoming = require('./message-type').Incoming;
 var StreamHandler = require('./stream-handler');
-var vError = require('../v.io/v23/verror');
+var vError = require('../gen-vdl/v.io/v23/verror');
 
 /**
  * An object that rejects/resolves a promise based on a response

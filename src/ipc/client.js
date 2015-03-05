@@ -12,7 +12,7 @@ var Promise = require('../lib/promise');
 var Deferred = require('../lib/deferred');
 var vLog = require('../lib/vlog');
 var Stream = require('../proxy/stream');
-var verror = require('../v.io/v23/verror');
+var verror = require('../gen-vdl/v.io/v23/verror');
 var MessageType = require('../proxy/message-type');
 var Incoming = MessageType.Incoming;
 var Outgoing = MessageType.Outgoing;
@@ -27,12 +27,12 @@ var ByteArrayMessageWriter = require('../vom/byte-array-message-writer');
 var makeError = require('../errors/make-errors');
 var actions = require('../errors/actions');
 var VanadiumRPCRequest =
-  require('../v.io/x/ref/services/wsprd/app').VeyronRPCRequest;
+  require('../gen-vdl/v.io/x/ref/services/wsprd/app').VeyronRPCRequest;
 var vtrace = require('../lib/vtrace');
 var ReservedSignature =
-  require('../v.io/v23/ipc').ReservedSignature.val;
+  require('../gen-vdl/v.io/v23/ipc').ReservedSignature.val;
 var Controller =
-  require('../v.io/x/ref/services/wsprd/app').Controller;
+  require('../gen-vdl/v.io/x/ref/services/wsprd/app').Controller;
 
 var OutstandingRPC = function(ctx, options, cb) {
   this._ctx = ctx;

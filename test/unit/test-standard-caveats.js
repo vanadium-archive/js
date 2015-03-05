@@ -2,11 +2,11 @@ var test = require('prova');
 var CaveatValidatorRegistry =
   require('../../src/security/caveat-validator-registry');
 var caveatUtil = require('./caveat-util');
-var vdlSecurity = require('../../src/v.io/v23/security');
+var vdlSecurity = require('../../src/gen-vdl/v.io/v23/security');
 var context = require('../../src/runtime/context');
 var SecurityContext = require('../../src/security/context');
 var VanadiumError = require('../../src/errors/vanadium-error');
-var Time = require('../../src/v.io/v23/vdlroot/time').Time;
+var Time = require('../../src/gen-vdl/v.io/v23/vdlroot/time').Time;
 var vdl = require('../../src/vdl');
 
 function getMockSecurityContext() {

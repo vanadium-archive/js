@@ -9,7 +9,7 @@ var inherits = require('inherits');
 var EncodeUtil = require('../lib/encode-util');
 var fill = require('../vdl/canonicalize').fill;
 var ServerRPCReply =
-  require('../v.io/x/ref/services/wsprd/lib').ServerRPCReply;
+  require('../gen-vdl/v.io/x/ref/services/wsprd/lib').ServerRPCReply;
 
 /**
  * A stream that allows sending and receiving data for a streaming rpc.  If

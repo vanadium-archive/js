@@ -14,7 +14,7 @@ var TypeUtil = require('../../src/vdl/type-util');
 var canonicalize = require('./../../src/vdl/canonicalize.js');
 var stringify = require('./../../src/vdl/stringify.js');
 require('../../src/vom/native-types');
-var Time = require('../../src/v.io/v23/vdlroot/time').Time;
+var Time = require('../../src/gen-vdl/v.io/v23/vdlroot/time').Time;
 var makeError = require('../../src/errors/make-errors');
 var actions = require('../../src/errors/actions');
 

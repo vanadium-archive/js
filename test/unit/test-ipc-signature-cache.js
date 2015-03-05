@@ -11,7 +11,7 @@ var Outgoing = require('../../src/proxy/message-type').Outgoing;
 var Client = require('../../src/ipc/client.js');
 var DecodeUtil = require('../../src/lib/decode-util');
 var EncodeUtil = require('../../src/lib/encode-util');
-var app = require('../../src/v.io/x/ref/services/wsprd/app');
+var app = require('../../src/gen-vdl/v.io/x/ref/services/wsprd/app');
 var vtrace = require('../../src/lib/vtrace');
 
 var freshSig = [ { foo: 'fresh signature' } ];

@@ -7,7 +7,7 @@ module.exports = Invoker;
 
 var createSignatures = require('../vdl/create-signatures');
 var isPublicMethod = require('../lib/service-reflection').isPublicMethod;
-var verror = require('../v.io/v23/verror');
+var verror = require('../gen-vdl/v.io/v23/verror');
 var capitalize = require('../vdl/util').capitalize;
 var isCapitalized = require('../vdl/util').isCapitalized;
 var format = require('format');

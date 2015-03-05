@@ -22,7 +22,7 @@ var defaults = {
  * Exports
  */
 module.exports = {
-  errors: require('./v.io/v23/verror'),
+  errors: require('./gen-vdl/v.io/v23/verror'),
   makeError:  require('./errors/make-errors'),
   errorActions: require('./errors/actions'),
   init: init,

@@ -1,5 +1,5 @@
 var test = require('prova');
-var verror = require('../../src/v.io/v23/verror');
+var verror = require('../../src/gen-vdl/v.io/v23/verror');
 var ec = require('../../src/vdl/error-conversion');
 var Types = require('../../src/vdl/types');
 var Kind = require('../../src/vdl/kind');

@@ -6,7 +6,7 @@
 var vdl = require('../vdl');
 var vom = require('../vom');
 var standardCaveats = require('./standard-caveats');
-var vdlSecurity = require('../v.io/v23/security');
+var vdlSecurity = require('../gen-vdl/v.io/v23/security');
 var unwrapArg = require('../lib/unwrap-arg');
 
 module.exports = CaveatValidatorRegistry;

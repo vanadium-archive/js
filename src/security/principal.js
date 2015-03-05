@@ -5,7 +5,7 @@
 
 var Deferred = require('../lib/deferred');
 var Blessings = require('./blessings');
-var time = require('../v.io/v23/vdlroot/time');
+var time = require('../gen-vdl/v.io/v23/vdlroot/time');
 
 /**
  * Principal represents an entity capable of making or receiving RPCs.

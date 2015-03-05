@@ -1,7 +1,7 @@
 var test = require('prova');
 var Promise = require('../../src/lib/promise');
 
-var access = require('../../src/v.io/v23/services/security/access');
+var access = require('../../src/gen-vdl/v.io/v23/services/security/access');
 var config = require('./default-config');
 var MINUTE = 60 * 1000; // a minute
 var Promise = require('../../src/lib/promise');

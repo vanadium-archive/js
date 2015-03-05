@@ -1,6 +1,6 @@
 var registry = require('../vdl/native-type-registry');
 var vdl = require('../vdl');
-var Time = require('../v.io/v23/vdlroot/time').Time;
+var Time = require('../gen-vdl/v.io/v23/vdlroot/time').Time;
 
 var timeType = Time.prototype._type;
 registry.registerFromNativeValue(Date, toDateWireValue, timeType);
