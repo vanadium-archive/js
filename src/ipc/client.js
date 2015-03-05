@@ -17,7 +17,6 @@ var MessageType = require('../proxy/message-type');
 var Incoming = MessageType.Incoming;
 var Outgoing = MessageType.Outgoing;
 var context = require('../runtime/context');
-var constants = require('./constants');
 var emitStreamError = require('../lib/emit-stream-error');
 var SimpleHandler = require('../proxy/simple-handler');
 var vdl = require('../vdl');
@@ -33,6 +32,7 @@ var ReservedSignature =
   require('../gen-vdl/v.io/v23/ipc').ReservedSignature.val;
 var Controller =
   require('../gen-vdl/v.io/x/ref/services/wsprd/app').Controller;
+var time = require('../gen-vdl/v.io/v23/vdlroot/time');
 
 var OutstandingRPC = function(ctx, options, cb) {
   this._ctx = ctx;
@@ -219,9 +219,16 @@ OutstandingRPC.prototype.handleError = function(err) {
  */
 OutstandingRPC.prototype.constructMessage = function() {
   var deadline = this._ctx.deadline();
-  var timeout = constants.NO_TIMEOUT;
+  var timeout = new time.WireDeadline();
   if (deadline !== null) {
-    timeout = deadline - Date.now();
+    var millis = deadline - Date.now();
+    var seconds = Math.floor(millis / 1000);
+    timeout.fromNow = new time.Duration({
+      seconds: seconds,
+      nanos: (millis - seconds * 1000) * 1000000
+    });
+  } else {
+    timeout.noDeadline = true;
   }
 
   var span = vtrace.getSpan(this._ctx);
@@ -233,7 +240,7 @@ OutstandingRPC.prototype.constructMessage = function() {
     // TODO(bprosnitz) Is || 0 needed?
     numOutArgs: this._numOutParams || 0,
     isStreaming: this._isStreaming,
-    timeout: timeout,
+    deadline: timeout,
     traceRequest: {
       spanID: span.id,
       traceID: span.trace,
