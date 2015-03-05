@@ -6,7 +6,6 @@
 var context = require('../runtime/context');
 var SecurityContext = require('../security/context');
 var inherits = require('inherits');
-var constants = require('./constants');
 
 module.exports = ServerContext;
 
@@ -38,8 +37,11 @@ function ServerContext(request, controller, ctx) {
     this.methodTags = request.methodTags;
   } else {
     this._ctx = ctx;
-    if (!request.context.timeout.equals(constants.NO_TIMEOUT)) {
-      this._ctx = this._ctx.withTimeout(request.context.timeout);
+    if (!request.context.deadline.noDeadline) {
+      var fromNow = request.context.deadline.fromNow;
+      var timeout = fromNow.seconds * 1000;
+      timeout += fromNow.nanos / 1000000;
+      this._ctx = this._ctx.withTimeout(timeout);
     } else {
       this._ctx = this._ctx.withCancel();
     }
