@@ -8,8 +8,6 @@ module.exports = {
 function registerDefaultCaveats(registry) {
   registry.register(vdlSecurity.ConstCaveat,
     constCaveatValidator);
-  registry.register(vdlSecurity.UnixTimeExpiryCaveatX,
-    unixTimeExpiryCaveatValidator);
   registry.register(vdlSecurity.ExpiryCaveatX,
     expiryCaveatValidator);
   registry.register(vdlSecurity.MethodCaveatX,
@@ -23,11 +21,6 @@ function constCaveatValidator(secCtx, value) {
   if (!value) {
     return new vdlSecurity.ConstCaveatValidationError(secCtx.context);
   }
-  return null;
-}
-
-function unixTimeExpiryCaveatValidator(secCtx, value) {
-  // TEMP will be removed soon so just validate always
   return null;
 }
 

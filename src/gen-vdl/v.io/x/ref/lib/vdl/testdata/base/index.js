@@ -2,6 +2,7 @@
 var vdl = require('../../../../../../../../vdl');
 var makeError = require('../../../../../../../../errors/make-errors');
 var actions = require('../../../../../../../../errors/actions');
+var canonicalize = require('../../../../../../../../vdl/canonicalize');
 
 
 
@@ -286,67 +287,67 @@ module.exports.error = (vdl.Registry.lookupOrCreateConstructor(_typeerror));
 
 // Consts:
 
-  module.exports.Cbool = new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.BOOL))(true);
+  module.exports.Cbool = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.BOOL))(true, true), vdl.Types.BOOL);
 
-  module.exports.Cbyte = new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.BYTE))(1);
+  module.exports.Cbyte = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.BYTE))(1, true), vdl.Types.BYTE);
 
-  module.exports.Cint32 = new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.INT32))(2);
+  module.exports.Cint32 = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.INT32))(2, true), vdl.Types.INT32);
 
-  module.exports.Cint64 = new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.INT64))(new vdl.BigInt(1, new Uint8Array([0x3])));
+  module.exports.Cint64 = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.INT64))(new vdl.BigInt(1, new Uint8Array([0x3])), true), vdl.Types.INT64);
 
-  module.exports.Cuint32 = new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.UINT32))(4);
+  module.exports.Cuint32 = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.UINT32))(4, true), vdl.Types.UINT32);
 
-  module.exports.Cuint64 = new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.UINT64))(new vdl.BigInt(1, new Uint8Array([0x5])));
+  module.exports.Cuint64 = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.UINT64))(new vdl.BigInt(1, new Uint8Array([0x5])), true), vdl.Types.UINT64);
 
-  module.exports.Cfloat32 = new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.FLOAT32))(6);
+  module.exports.Cfloat32 = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.FLOAT32))(6, true), vdl.Types.FLOAT32);
 
-  module.exports.Cfloat64 = new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.FLOAT64))(7);
+  module.exports.Cfloat64 = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.FLOAT64))(7, true), vdl.Types.FLOAT64);
 
-  module.exports.CNamedBool = new (vdl.Registry.lookupOrCreateConstructor(_typeNamedBool))(true);
+  module.exports.CNamedBool = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeNamedBool))(true, true), _typeNamedBool);
 
-  module.exports.CNamedStruct = new (vdl.Registry.lookupOrCreateConstructor(_typeNamedStruct))({
+  module.exports.CNamedStruct = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeNamedStruct))({
   'a': true,
   'b': "test",
   'c': 0,
-});
+}, true), _typeNamedStruct);
 
-  module.exports.Ccomplex64 = new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.COMPLEX64))(new vdl.Complex(8.000000, 9.000000));
+  module.exports.Ccomplex64 = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.COMPLEX64))(new vdl.Complex(8.000000, 9.000000), true), vdl.Types.COMPLEX64);
 
-  module.exports.Ccomplex128 = new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.COMPLEX128))(new vdl.Complex(10.000000, 11.000000));
+  module.exports.Ccomplex128 = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.COMPLEX128))(new vdl.Complex(10.000000, 11.000000), true), vdl.Types.COMPLEX128);
 
-  module.exports.Cstring = new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.STRING))("foo");
+  module.exports.Cstring = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.STRING))("foo", true), vdl.Types.STRING);
 
-  module.exports.Cenum = new (vdl.Registry.lookupOrCreateConstructor(_typeNamedEnum))('A');
+  module.exports.Cenum = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeNamedEnum))('A', true), _typeNamedEnum);
 
-  module.exports.Cunion = new (vdl.Registry.lookupOrCreateConstructor(_typeNamedUnion))({ "a": true });
+  module.exports.Cunion = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeNamedUnion))({ "a": true }, true), _typeNamedUnion);
 
-  module.exports.Carray = new (vdl.Registry.lookupOrCreateConstructor(_typeNamedArray))([
+  module.exports.Carray = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeNamedArray))([
 true,
 false,
-]);
+], true), _typeNamedArray);
 
-  module.exports.Clist = new (vdl.Registry.lookupOrCreateConstructor(_type13))([
+  module.exports.Clist = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_type13))([
 1,
 2,
 3,
-]);
+], true), _type13);
 
-  module.exports.Cset = new (vdl.Registry.lookupOrCreateConstructor(_type14))(new Set([
+  module.exports.Cset = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_type14))(new Set([
   1, 
   2, 
-  3, ]));
+  3, ]), true), _type14);
 
-  module.exports.cmap = new (vdl.Registry.lookupOrCreateConstructor(_type15))(new Map([
+  module.exports.cmap = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_type15))(new Map([
   [1, "A"],
   [2, "B"],
-  [3, "C"]]));
+  [3, "C"]]), true), _type15);
 
-  module.exports.Cargs = new (vdl.Registry.lookupOrCreateConstructor(_typeArgs))({
+  module.exports.Cargs = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeArgs))({
   'a': 1,
   'b': 2,
-});
+}, true), _typeArgs);
 
-  module.exports.CScalars = new (vdl.Registry.lookupOrCreateConstructor(_typeScalars))({
+  module.exports.CScalars = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeScalars))({
   'a0': true,
   'a1': 1,
   'a2': 2,
@@ -361,7 +362,7 @@ false,
   'a11': new vdl.Complex(11.000000, 0.000000),
   'a12': "abc",
   'a13': null,
-  'a14': new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.BOOL))(false),
+  'a14': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.BOOL))(false, true), vdl.Types.BOOL),
   'a15': vdl.Types.BOOL,
   'b0': true,
   'b1': 1,
@@ -378,19 +379,19 @@ false,
   'b12': "abc",
   'b13': 'B',
   'b14': { "c": 123 },
-});
+}, true), _typeScalars);
 
-  module.exports.True = new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.BOOL))(true);
+  module.exports.True = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.BOOL))(true, true), vdl.Types.BOOL);
 
-  module.exports.Foo = new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.STRING))("foo");
+  module.exports.Foo = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.STRING))("foo", true), vdl.Types.STRING);
 
-  module.exports.Five = new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.INT32))(5);
+  module.exports.Five = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.INT32))(5, true), vdl.Types.INT32);
 
-  module.exports.Six = new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.UINT64))(new vdl.BigInt(1, new Uint8Array([0x6])));
+  module.exports.Six = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.UINT64))(new vdl.BigInt(1, new Uint8Array([0x6])), true), vdl.Types.UINT64);
 
-  module.exports.SixSquared = new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.UINT64))(new vdl.BigInt(1, new Uint8Array([0x24])));
+  module.exports.SixSquared = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.UINT64))(new vdl.BigInt(1, new Uint8Array([0x24])), true), vdl.Types.UINT64);
 
-  module.exports.FiveSquared = new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.INT32))(25);
+  module.exports.FiveSquared = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.INT32))(25, true), vdl.Types.INT32);
 
   module.exports.CTObool = vdl.Types.BOOL;
 
@@ -566,7 +567,7 @@ ServiceA.prototype._serviceDescription = {
       doc: '',
       type: _typeScalars
     },
-    tags: [new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.STRING))("tag"), new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.UINT64))(new vdl.BigInt(1, new Uint8Array([0x6]))), ]
+    tags: [canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.STRING))("tag", true), vdl.Types.STRING), canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.UINT64))(new vdl.BigInt(1, new Uint8Array([0x6])), true), vdl.Types.UINT64), ]
   },
     
       
@@ -726,7 +727,7 @@ ServiceB.prototype._serviceDescription = {
       doc: '',
       type: _typeScalars
     },
-    tags: [new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.STRING))("tag"), new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.UINT64))(new vdl.BigInt(1, new Uint8Array([0x6]))), ]
+    tags: [canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.STRING))("tag", true), vdl.Types.STRING), canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.UINT64))(new vdl.BigInt(1, new Uint8Array([0x6])), true), vdl.Types.UINT64), ]
   },
     
       
