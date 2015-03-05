@@ -1,0 +1,12 @@
+package time
+
+import (
+   "time"
+)
+
+const (
+   D = time.Time{
+      Seconds: 1355588120,
+      Nanos: 453000000,
+   }
+)

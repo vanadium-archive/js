@@ -2,7 +2,6 @@
 var vdl = require('../../../../vdl');
 var makeError = require('../../../../errors/make-errors');
 var actions = require('../../../../errors/actions');
-var canonicalize = require('../../../../vdl/canonicalize');
 
 
 
@@ -151,7 +150,7 @@ module.exports.publicKeyThirdPartyCaveat = (vdl.Registry.lookupOrCreateConstruct
 
 // Consts:
 
-  module.exports.ConstCaveat = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeCaveatDescriptor))({
+  module.exports.ConstCaveat = new (vdl.Registry.lookupOrCreateConstructor(_typeCaveatDescriptor))({
   'id': new Uint8Array([
 0,
 0,
@@ -171,31 +170,9 @@ module.exports.publicKeyThirdPartyCaveat = (vdl.Registry.lookupOrCreateConstruct
 0,
 ]),
   'paramType': vdl.Types.BOOL,
-}, true), _typeCaveatDescriptor);
+});
 
-  module.exports.UnixTimeExpiryCaveatX = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeCaveatDescriptor))({
-  'id': new Uint8Array([
-84,
-166,
-118,
-57,
-129,
-55,
-24,
-126,
-205,
-178,
-109,
-45,
-105,
-186,
-0,
-4,
-]),
-  'paramType': vdl.Types.INT64,
-}, true), _typeCaveatDescriptor);
-
-  module.exports.ExpiryCaveatX = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeCaveatDescriptor))({
+  module.exports.ExpiryCaveatX = new (vdl.Registry.lookupOrCreateConstructor(_typeCaveatDescriptor))({
   'id': new Uint8Array([
 166,
 76,
@@ -215,9 +192,9 @@ module.exports.publicKeyThirdPartyCaveat = (vdl.Registry.lookupOrCreateConstruct
 0,
 ]),
   'paramType': new time.Time()._type,
-}, true), _typeCaveatDescriptor);
+});
 
-  module.exports.MethodCaveatX = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeCaveatDescriptor))({
+  module.exports.MethodCaveatX = new (vdl.Registry.lookupOrCreateConstructor(_typeCaveatDescriptor))({
   'id': new Uint8Array([
 84,
 166,
@@ -237,9 +214,9 @@ module.exports.publicKeyThirdPartyCaveat = (vdl.Registry.lookupOrCreateConstruct
 3,
 ]),
   'paramType': _type3,
-}, true), _typeCaveatDescriptor);
+});
 
-  module.exports.PublicKeyThirdPartyCaveatX = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeCaveatDescriptor))({
+  module.exports.PublicKeyThirdPartyCaveatX = new (vdl.Registry.lookupOrCreateConstructor(_typeCaveatDescriptor))({
   'id': new Uint8Array([
 121,
 114,
@@ -259,27 +236,27 @@ module.exports.publicKeyThirdPartyCaveat = (vdl.Registry.lookupOrCreateConstruct
 0,
 ]),
   'paramType': _typepublicKeyThirdPartyCaveat,
-}, true), _typeCaveatDescriptor);
+});
 
-  module.exports.NoExtension = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeBlessingPattern))("$", true), _typeBlessingPattern);
+  module.exports.NoExtension = new (vdl.Registry.lookupOrCreateConstructor(_typeBlessingPattern))("$");
 
-  module.exports.AllPrincipals = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeBlessingPattern))("...", true), _typeBlessingPattern);
+  module.exports.AllPrincipals = new (vdl.Registry.lookupOrCreateConstructor(_typeBlessingPattern))("...");
 
-  module.exports.ChainSeparator = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.STRING))("/", true), vdl.Types.STRING);
+  module.exports.ChainSeparator = new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.STRING))("/");
 
-  module.exports.SHA1Hash = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeHash))("SHA1", true), _typeHash);
+  module.exports.SHA1Hash = new (vdl.Registry.lookupOrCreateConstructor(_typeHash))("SHA1");
 
-  module.exports.SHA256Hash = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeHash))("SHA256", true), _typeHash);
+  module.exports.SHA256Hash = new (vdl.Registry.lookupOrCreateConstructor(_typeHash))("SHA256");
 
-  module.exports.SHA384Hash = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeHash))("SHA384", true), _typeHash);
+  module.exports.SHA384Hash = new (vdl.Registry.lookupOrCreateConstructor(_typeHash))("SHA384");
 
-  module.exports.SHA512Hash = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeHash))("SHA512", true), _typeHash);
+  module.exports.SHA512Hash = new (vdl.Registry.lookupOrCreateConstructor(_typeHash))("SHA512");
 
-  module.exports.SignatureForMessageSigning = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.STRING))("S", true), vdl.Types.STRING);
+  module.exports.SignatureForMessageSigning = new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.STRING))("S");
 
-  module.exports.SignatureForBlessingCertificates = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.STRING))("B", true), vdl.Types.STRING);
+  module.exports.SignatureForBlessingCertificates = new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.STRING))("B");
 
-  module.exports.SignatureForDischarge = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.STRING))("D", true), vdl.Types.STRING);
+  module.exports.SignatureForDischarge = new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.STRING))("D");
 
 
 

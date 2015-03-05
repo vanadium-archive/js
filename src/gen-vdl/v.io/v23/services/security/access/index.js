@@ -2,7 +2,6 @@
 var vdl = require('../../../../../../vdl');
 var makeError = require('../../../../../../errors/make-errors');
 var actions = require('../../../../../../errors/actions');
-var canonicalize = require('../../../../../../vdl/canonicalize');
 
 
 
@@ -70,15 +69,15 @@ module.exports.error = (vdl.Registry.lookupOrCreateConstructor(_typeerror));
 
 // Consts:
 
-  module.exports.Admin = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeTag))("Admin", true), _typeTag);
+  module.exports.Admin = new (vdl.Registry.lookupOrCreateConstructor(_typeTag))("Admin");
 
-  module.exports.Debug = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeTag))("Debug", true), _typeTag);
+  module.exports.Debug = new (vdl.Registry.lookupOrCreateConstructor(_typeTag))("Debug");
 
-  module.exports.Read = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeTag))("Read", true), _typeTag);
+  module.exports.Read = new (vdl.Registry.lookupOrCreateConstructor(_typeTag))("Read");
 
-  module.exports.Write = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeTag))("Write", true), _typeTag);
+  module.exports.Write = new (vdl.Registry.lookupOrCreateConstructor(_typeTag))("Write");
 
-  module.exports.Resolve = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeTag))("Resolve", true), _typeTag);
+  module.exports.Resolve = new (vdl.Registry.lookupOrCreateConstructor(_typeTag))("Resolve");
 
 
 
