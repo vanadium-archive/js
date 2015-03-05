@@ -6,7 +6,8 @@
 var Outgoing = require('./message-type').Outgoing;
 var Duplex = require('stream').Duplex;
 var inherits = require('inherits');
-var EncodeUtil = require('../lib/encode-util');
+var vdl = require('../vdl');
+var vom = require('../vom');
 var fill = require('../vdl/canonicalize').fill;
 var ServerRPCReply =
   require('../gen-vdl/v.io/x/ref/services/wsprd/lib').ServerRPCReply;
@@ -59,10 +60,10 @@ Stream.prototype.serverClose = function(results, err) {
   var object = {
     id: this.flowId,
     type: Outgoing.RESPONSE,
-    data: EncodeUtil.encode(new ServerRPCReply({
+    data: vdl.Util.bytes2Hex(vom.encode(new ServerRPCReply({
       results: results,
       err: err || null
-    }))
+    })))
   };
   Duplex.prototype.write.call(this, object);
 };
@@ -115,7 +116,7 @@ Stream.prototype.write = function(chunk, encoding, cb) {
   var canonChunk = fill(chunk, this.streamType);
   var object = {
     id: this.flowId,
-    data: EncodeUtil.encode(canonChunk),
+    data: vdl.Util.bytes2Hex(vom.encode(canonChunk)),
     type: Outgoing.STREAM_VALUE
   };
   return Duplex.prototype.write.call(this, object, encoding, cb);

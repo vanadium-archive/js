@@ -9,7 +9,8 @@ var Deferred = require('./../lib/deferred');
 var Proxy = require('./index');
 var random = require('../lib/random');
 var vLog = require('./../lib/vlog');
-var DecodeUtil = require('../lib/decode-util');
+var vdl = require('../vdl');
+var vom = require('../vom');
 
 module.exports = ProxyConnection;
 
@@ -27,7 +28,7 @@ function ProxyConnection() {
   this.onBrowsprMsg = function(msg) {
     var body;
     try {
-      body = DecodeUtil.decode(msg.body);
+      body = vom.decode(vdl.Util.hex2Bytes(msg.body));
     } catch (e) {
       vLog.warn('Failed to parse ' + msg.body);
       return;

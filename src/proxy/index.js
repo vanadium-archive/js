@@ -11,7 +11,8 @@ var MessageType = require('./message-type');
 var Incoming = MessageType.Incoming;
 var Outgoing = MessageType.Outgoing;
 var vLog = require('./../lib/vlog');
-var DecodeUtil = require('../lib/decode-util');
+var vdl = require('../vdl');
+var vom = require('../vom');
 var unwrap = require('../vdl/type-util').unwrap;
 
 // Cache the service signatures for one hour.
@@ -58,7 +59,7 @@ Proxy.prototype.process = function(message) {
 
   var payload;
   try {
-    payload = DecodeUtil.decode(message.data);
+    payload = vom.decode(vdl.Util.hex2Bytes(message.data));
     payload.message = unwrap(payload.message);
   } catch (e) {
     vLog.error(e);

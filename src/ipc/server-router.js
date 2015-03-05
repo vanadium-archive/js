@@ -14,9 +14,8 @@ var StreamHandler = require('../proxy/stream-handler');
 var verror = require('../gen-vdl/v.io/v23/verror');
 var SecurityContext = require('../security/context');
 var ServerContext = require('./server-context');
-var DecodeUtil = require('../lib/decode-util');
-var EncodeUtil = require('../lib/encode-util');
 var vdl = require('../vdl');
+var vom = require('../vom');
 var vdlsig = require('../gen-vdl/v.io/v23/vdlroot/signature');
 var namespaceUtil = require('../namespace/util');
 var naming = require('../gen-vdl/v.io/v23/naming');
@@ -77,7 +76,7 @@ Router.prototype.handleRequest = function(messageId, type, request) {
 
 Router.prototype.handleAuthorizationRequest = function(messageId, request) {
   try {
-   request = DecodeUtil.decode(request);
+   request = vom.decode(vdl.Util.hex2Bytes(request));
   } catch (e) {
     JSON.stringify({
       // TODO(bjornick): Use the real context
@@ -142,7 +141,7 @@ Router.prototype.handleCaveatValidationRequest = function(messageId, request) {
     var response = new CaveatValidationResponse({
       results: results
     });
-    var data = EncodeUtil.encode(response);
+    var data = vdl.Util.bytes2Hex(vom.encode(response));
     self._proxy.sendRequest(data, Outgoing.CAVEAT_VALIDATION_RESPONSE, null,
       messageId);
   }).catch(function(err) {
@@ -176,7 +175,7 @@ Router.prototype.handleLookupRequest = function(messageId, request) {
         kind: vdl.Kind.LIST,
         elem: vdlsig.Interface.prototype._type
       });
-      res = EncodeUtil.encode(canonicalSignatureList);
+      res = vdl.Util.bytes2Hex(vom.encode(canonicalSignatureList));
     } catch (e) {
       return Promise.reject(e);
     }
@@ -232,7 +231,7 @@ Router.prototype.handleRPCRequest = function(messageId, vdlRequest) {
   var err;
   var request;
   try {
-   request = DecodeUtil.decode(vdlRequest);
+   request = vom.decode(vdl.Util.hex2Bytes(vdlRequest));
   } catch (e) {
     err = new Error('Failed to decode args: ' + e);
     this.sendResult(messageId, '', null, err);
@@ -549,7 +548,7 @@ Router.prototype.sendResult = function(messageId, name, results, err,
       results: results,
       err: errorStruct
     });
-    var responseDataVOM = EncodeUtil.encode(responseData);
+    var responseDataVOM = vdl.Util.bytes2Hex(vom.encode(responseData));
     this._proxy.sendRequest(responseDataVOM, Outgoing.RESPONSE, null,
         messageId);
   }

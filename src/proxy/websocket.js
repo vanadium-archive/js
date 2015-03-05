@@ -8,7 +8,8 @@ var Deferred = require('./../lib/deferred');
 var vLog = require('./../lib/vlog');
 var Proxy = require('./index');
 var isBrowser = require('is-browser');
-var DecodeUtil = require('../lib/decode-util');
+var vdl = require('../vdl');
+var vom = require('../vom');
 
 /**
  * A client for the vanadium service using websockets. Connects to the vanadium
@@ -82,7 +83,7 @@ ProxyConnection.prototype.getWebSocket = function() {
   websocket.onmessage = function(frame) {
     var message;
     try {
-      message = DecodeUtil.decode(frame.data);
+      message = vom.decode(vdl.Util.hex2Bytes(frame.data));
     } catch (e) {
       vLog.warn('Failed to parse ' + frame.data);
       return;

@@ -7,7 +7,7 @@ var Router = require('../../src/ipc/server-router');
 var Server = require('../../src/ipc/server');
 var Outgoing = require('../../src/proxy/message-type').Outgoing;
 var vdl = require('../../src/vdl');
-var DecodeUtil = require('../../src/lib/decode-util');
+var vom = require('../../src/vom');
 var context = require('../../src/runtime/context');
 
 test('Server Router Signature Lookup', function(t) {
@@ -81,7 +81,7 @@ test('Server Router Signature Lookup', function(t) {
       return new context.Context();
     }
   };
-  var router = new Router(mockProxy, 'TestAppName', 
+  var router = new Router(mockProxy, 'TestAppName',
                           mockRuntime, mockController);
   var server = new Server(router);
   var options = {
@@ -100,8 +100,8 @@ test('Server Router Signature Lookup', function(t) {
     var data = JSON.parse(responseData);
     t.ok(data.hasOwnProperty('handle'), 'has a handle');
     t.equals(data.hasAuthorizer, true, 'has authorizer');
-    var decodedSignature = DecodeUtil.decode(data.signature);
-    t.deepEquals(decodedSignature, expectedSignature, 'signature');
+    var decodedSignature = vom.decode(vdl.Util.hex2Bytes(data.signature));
+    t.deepEquals(decodedSignature.val, expectedSignature, 'signature');
 
     t.end();
   });

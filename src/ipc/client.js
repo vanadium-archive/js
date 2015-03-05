@@ -18,10 +18,10 @@ var Incoming = MessageType.Incoming;
 var Outgoing = MessageType.Outgoing;
 var context = require('../runtime/context');
 var constants = require('./constants');
-var DecodeUtil = require('../lib/decode-util');
 var emitStreamError = require('../lib/emit-stream-error');
 var SimpleHandler = require('../proxy/simple-handler');
 var vdl = require('../vdl');
+var vom = require('../vom');
 var Encoder = require('../vom/encoder');
 var ByteArrayMessageWriter = require('../vom/byte-array-message-writer');
 var makeError = require('../errors/make-errors');
@@ -162,7 +162,7 @@ OutstandingRPC.prototype.handleResponse = function(type, data) {
 OutstandingRPC.prototype.handleCompletion = function(data) {
   var response;
   try {
-    response = DecodeUtil.decode(data);
+    response = vom.decode(vdl.Util.hex2Bytes(data));
   } catch (e) {
     this.handleError(
       new verror.InternalError(
@@ -182,7 +182,7 @@ OutstandingRPC.prototype.handleCompletion = function(data) {
 OutstandingRPC.prototype.handleStreamData = function(data) {
   if (this._def.stream) {
     try {
-      data = DecodeUtil.decode(data);
+      data = vom.decode(vdl.Util.hex2Bytes(data));
     } catch (e) {
       this.handleError(
         new verror.InternalError(this._ctx,
@@ -562,7 +562,7 @@ Client.prototype._sendRequest = function(ctx, message, type, cb) {
     // If the response came off the wire, we need to vdl decode the bytes.
     if (typeof args === 'string') {
       try {
-        deferred.resolve(DecodeUtil.decode(args));
+        deferred.resolve(vom.decode(vdl.Util.hex2Bytes(args)));
       } catch (e) {
         deferred.reject(
           new verror.InternalError(ctx, ['Failed to decode result: ', e]));

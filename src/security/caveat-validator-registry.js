@@ -67,9 +67,7 @@ CaveatValidatorRegistry.prototype.validate = function(secCtx, caveat) {
     throw new vdlSecurity.CaveatNotRegisteredError(secCtx.context,
       'Unknown caveat id: ' + this._makeKey(caveat.id));
   }
-  var reader = new vom.ByteArrayMessageReader(caveat.paramVom);
-  var decoder = new vom.Decoder(reader);
-  return validator.validate(secCtx, decoder.decode());
+  return validator.validate(secCtx, vom.decode(caveat.paramVom));
 };
 
 /**

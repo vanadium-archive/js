@@ -9,8 +9,8 @@ var context = require('../../src/runtime/context');
 var createMockProxy = require('./mock-proxy');
 var Outgoing = require('../../src/proxy/message-type').Outgoing;
 var Client = require('../../src/ipc/client.js');
-var DecodeUtil = require('../../src/lib/decode-util');
-var EncodeUtil = require('../../src/lib/encode-util');
+var vdl = require('../../src/vdl');
+var vom = require('../../src/vom');
 var app = require('../../src/gen-vdl/v.io/x/ref/services/wsprd/app');
 var vtrace = require('../../src/lib/vtrace');
 
@@ -23,13 +23,13 @@ var CACHE_TTL = 100; // we set the signature cache TTL to 100ms for tests.
 function createProxy() {
   return createMockProxy(function(message, type) {
     if (type === Outgoing.REQUEST) {
-      var decodedData = DecodeUtil.decode(message);
+      var decodedData = vom.decode(vdl.Util.hex2Bytes(message));
       if (decodedData.method !== 'Signature') {
         throw new Error('Unexpected method call');
       }
       var response = new app.VeyronRPCResponse();
       response.outArgs = [freshSig];
-      return EncodeUtil.encode(response);
+      return vdl.Util.bytes2Hex(vom.encode(response));
     }
     throw new Error('Unexpected message type');
   }, CACHE_TTL);
