@@ -6,7 +6,7 @@ var Decoder = require('./decoder');
  * decode - VOM decode bytes
  *
  * @param  {Uint8Array} bytes    VOM-encoded bytes
- * @param  {boolean=false} deepWrap true if the values on the object should
+ * @param  {boolean} [deepWrap=false] true if the values on the object should
  * remain wrapped with type information deeply, false (default) to strip
  * deep type information and obtain a more usage-friendly value
  * @return {*} decoded value
