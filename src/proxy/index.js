@@ -48,8 +48,13 @@ inherits(Proxy, EE);
 Proxy.prototype.process = function(message) {
   // Messages originating from server are even numbers
   var isServerOriginatedMessage = (message.id % 2) === 0;
-
   var handler = this.outstandingRequests[message.id];
+
+  // If we don't know about this flow, just drop the message. Unless it
+  // originated from the sever.
+  if (!isServerOriginatedMessage && !handler) {
+    return;
+  }
 
   var payload;
   try {
@@ -60,14 +65,6 @@ Proxy.prototype.process = function(message) {
     if (!isServerOriginatedMessage) {
       handler.handleResponse(Incoming.ERROR_RESPONSE, message.data);
     }
-    return;
-  }
-
-  // If we don't know about this flow, just drop the message. Unless it
-  // originated from the sever.
-  if (!isServerOriginatedMessage && !handler) {
-    vLog.warn('Dropping message for unknown flow ' + message.id + ' ' +
-        message.data);
     return;
   }
 
