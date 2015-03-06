@@ -6,7 +6,7 @@ extension/build
 extension/build-test
 extension/example/*bundle*
 extension/vdl
-extension/veyron.zip
+extension/vanadium.zip
 test/vdl-out
 node_modules
 npm-debug.log
