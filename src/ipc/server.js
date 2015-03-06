@@ -244,7 +244,7 @@ Server.prototype.getInvokerForHandle = function(handle) {
  * Handles the authorization for an RPC.
  * @private
  * @param {Number} handle The handle for the authorizer
- * @param {object} request The context of the authorization
+ * @param {object} request The call of the authorization
  * @return {Promise} a promise that will be fulfilled with the result.
  */
 Server.prototype.handleAuthorization = function(handle, request) {

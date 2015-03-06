@@ -12,8 +12,8 @@ var ErrorConversion = require('../vdl/error-conversion');
 var vlog = require('./../lib/vlog');
 var StreamHandler = require('../proxy/stream-handler');
 var verror = require('../gen-vdl/v.io/v23/verror');
-var SecurityContext = require('../security/context');
-var ServerContext = require('./server-context');
+var SecurityCall = require('../security/call');
+var ServerCall = require('./server-call');
 var vdl = require('../vdl');
 var vom = require('../vom');
 var vdlsig = require('../gen-vdl/v.io/v23/vdlroot/signature');
@@ -97,25 +97,25 @@ Router.prototype.handleAuthorizationRequest = function(messageId, request) {
     return;
   }
   var router = this;
-  var securityContext = new SecurityContext(request.context, this._controller);
-  server.handleAuthorization(request.handle, securityContext).then(function() {
+  var securityCall = new SecurityCall(request.call, this._controller);
+  server.handleAuthorization(request.handle, securityCall).then(function() {
     router._proxy.sendRequest('{}', Outgoing.AUTHORIZATION_RESPONSE, null,
         messageId);
   }).catch(function(e) {
     var data = JSON.stringify({
       err: ErrorConversion.fromNativeValue(e, this._appName,
-                                          request.context.method)
+                                          request.call.method)
     });
     router._proxy.sendRequest(data, Outgoing.AUTHORIZATION_RESPONSE, null,
         messageId);
   });
 };
 
-Router.prototype._validateChain = function(secCtx, cavs) {
+Router.prototype._validateChain = function(secCall, cavs) {
   var promises = new Array(cavs.length);
   for (var j = 0; j < cavs.length; j++) {
     var boundFn = this._caveatRegistry.validate.bind(this._caveatRegistry);
-    promises[j] = asyncValidateCall(boundFn, secCtx, cavs[j]);
+    promises[j] = asyncValidateCall(boundFn, secCall, cavs[j]);
   }
   return Promise.all(promises).then(function(results) {
     return undefined;
@@ -132,9 +132,9 @@ Router.prototype._validateChain = function(secCtx, cavs) {
 
 Router.prototype.handleCaveatValidationRequest = function(messageId, request) {
   var resultPromises = new Array(request.cavs.length);
-  var secCtx = new SecurityContext(request.ctx);
+  var secCall = new SecurityCall(request.call);
   for (var i = 0; i < request.cavs.length; i++) {
-    resultPromises[i] = this._validateChain(secCtx, request.cavs[i]);
+    resultPromises[i] = this._validateChain(secCall, request.cavs[i]);
   }
   var self = this;
   Promise.all(resultPromises).then(function(results) {
@@ -258,7 +258,7 @@ Router.prototype.handleRPCRequest = function(messageId, vdlRequest) {
 
   var self = this;
   var stream;
-  var ctx = new ServerContext(request, this._controller, this._rootCtx);
+  var call = new ServerCall(request, this._controller, this._rootCtx);
   if (request.method === 'Glob__') {
     if (!invoker.hasGlobber()) {
       err = new Error('Glob is not implemented');
@@ -268,12 +268,12 @@ Router.prototype.handleRPCRequest = function(messageId, vdlRequest) {
     stream = new Stream(messageId, this._proxy.senderPromise, false,
       naming.VDLGlobReply.prototype._type);
     this._streamMap[messageId] = stream;
-    this._contextMap[messageId] = ctx;
+    this._contextMap[messageId] = call;
     this._outstandingRequestForId[messageId] = 0;
     this.incrementOutstandingRequestForId(messageId);
     var globPattern = vdl.TypeUtil.unwrap(request.args[0]);
-    this.handleGlobRequest(messageId, ctx.suffix,
-                           server, new Glob(globPattern),  ctx, invoker,
+    this.handleGlobRequest(messageId, call.suffix,
+                           server, new Glob(globPattern),  call, invoker,
                            completion);
     return;
   }
@@ -296,7 +296,7 @@ Router.prototype.handleRPCRequest = function(messageId, vdlRequest) {
   });
   if (methodSig === undefined) {
     err = new verror.NoExistError(
-      ctx, ['Requested method', methodName, 'not found on']);
+      call, ['Requested method', methodName, 'not found on']);
     this.sendResult(messageId, methodName, null, err);
     return;
   }
@@ -313,7 +313,7 @@ Router.prototype.handleRPCRequest = function(messageId, vdlRequest) {
     methodName: methodName,
     args: unwrappedArgs,
     methodSig: methodSig,
-    ctx: ctx,
+    ctx: call,
   };
 
   this._contextMap[messageId] = options.ctx;
@@ -453,7 +453,7 @@ Router.prototype.handleGlobRequest = function(messageId, name, server, glob,
 
       var suffix = namespaceUtil.join(name, child);
       self.incrementOutstandingRequestForId(messageId);
-      var ctx = new ServerContext(context);
+      var ctx = new ServerCall(context);
       ctx.suffix = suffix;
       var nextInvoker;
       server._handleLookup(suffix).then(function(value) {
