@@ -122,13 +122,11 @@ function runGlobTest(pattern, expectedResults, dispatcher, expectedErrors,
       globResults.push(mountPoint.name);
     });
 
-    stream.on('error', function(err) {
+    stream.on('error', function(errItem) {
       hadErrors = true;
-      // TODO(aghassemi) this needs to change when toddw adds getters for errors
-      // or if we keep GlobError as a struct, we should send that instead of
-      // error objects
-      var errorItemName = err.paramList[2];
-      globErrors.push(errorItemName);
+      assert.ok(errItem.error instanceof Error);
+      assert.ok(typeof errItem.name === 'string');
+      globErrors.push(errItem.name);
     });
 
     stream.on('end', function() {

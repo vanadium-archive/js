@@ -469,7 +469,7 @@ Router.prototype.handleGlobRequest = function(messageId, name, server, glob,
         }
       }).catch(function(e) {
         var verr = new verror.NoServersAndAuthError(context, suffix, e);
-        var errReply = createGlobErrorReply(name, verr, self._appName);
+        var errReply = createGlobErrorReply(suffix, verr, self._appName);
         self._streamMap[messageId].write(errReply);
         vlog.info(errReply);
         self.decrementOutstandingRequestForId(messageId, cb);

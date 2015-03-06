@@ -44,7 +44,7 @@ GlobStream.prototype._flow = function(drain) {
         return false;
       }
     } else if (chunk.error) {
-      emitStreamError(this, chunk.error.error);
+      emitStreamError(this, chunk.error);
     }
   }
   if (drain) {
