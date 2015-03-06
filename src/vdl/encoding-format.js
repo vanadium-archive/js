@@ -1,5 +1,6 @@
 /**
  * @fileoverview Constants used in the VOM encoding format.
+ * @private
  */
 
 var flags = {

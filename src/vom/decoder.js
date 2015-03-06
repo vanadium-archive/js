@@ -1,5 +1,6 @@
 /**
  * @fileoverview Represents a VOM decoder.
+ * @private
  */
 
 module.exports = Decoder;

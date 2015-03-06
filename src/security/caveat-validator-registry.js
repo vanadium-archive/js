@@ -1,6 +1,7 @@
 /**
  * @fileoverview Registry for caveats. Provides a mapping between caveat
  * UUIDs and validations methods.
+ * @private
  */
 
 var vdl = require('../vdl');
@@ -15,6 +16,7 @@ module.exports = CaveatValidatorRegistry;
  * CaveatValidatorRegistry is a registry for caveats.
  * It enables registration of caveat validation functions and provides
  * provides functionality to perform validation given UUIDs
+ * @private
  * @constructor
  */
 function CaveatValidatorRegistry() {

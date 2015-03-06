@@ -1,5 +1,6 @@
 /**
  * @fileoverview Definition of BigInt.
+ * @private
  */
 
 var ByteUtil = require('./byte-util.js');

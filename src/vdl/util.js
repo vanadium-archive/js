@@ -1,5 +1,6 @@
 /**
  * @fileoverview Defines helpers for miscellaneous operations.
+ * @private
  */
 module.exports = {
   capitalize: capitalize,

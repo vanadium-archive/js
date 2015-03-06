@@ -1,7 +1,7 @@
 /**
  * @fileoverview Vtrace implements cross process debug tracing.
- *
  * TODO(mattr): Write up usage docs once the implementation is further along.
+ * @private
  */
 
 var uniqueid = require('./uniqueid');

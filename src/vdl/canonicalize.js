@@ -3,6 +3,7 @@
  * for encoding. Any undefined values will be filled with their corresponding
  * zero-values. This validated value is a modified copy of the given value.
  * Canonicalizing a canonicalized value with the same type is a no-op.
+ * @private
  */
 
 var BigInt = require('./big-int.js');

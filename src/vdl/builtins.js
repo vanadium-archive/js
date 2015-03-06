@@ -1,5 +1,6 @@
 /**
  * @fileoverview a set of wrapped primitives
+ * @private
  */
 
 module.exports = {};

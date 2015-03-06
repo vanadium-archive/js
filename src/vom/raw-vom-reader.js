@@ -1,6 +1,7 @@
 /*global escape: true */
 /**
  * @fileoverview Definition of RawVomReader.
+ * @private
  */
 
 module.exports = RawVomReader;

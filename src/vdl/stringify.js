@@ -1,5 +1,6 @@
 /**
  * @fileoverview Defines a stable stringifier that handles cycles.
+ * @private
  */
 
 module.exports = stableCircularStringify;

@@ -1,5 +1,6 @@
 /**
  * @fileoverview A type for complex numbers
+ * @private
  */
 
 module.exports = Complex;

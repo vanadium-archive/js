@@ -1,5 +1,6 @@
 /**
  * @fileoverview Kind definitions.
+ * @private
  */
 
 var kindCount = 0;

@@ -1,5 +1,6 @@
 /**
  * @fileoverview Defines helpers for dealing with types.
+ * @private
  */
 
 var Kind = require('./kind.js');

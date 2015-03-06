@@ -1,6 +1,7 @@
 /**
  * @fileoverview Represents a write stream of VOM messages backed by a byte
  * array.
+ * @private
  */
 
 module.exports = ByteArrayMessageWriter;

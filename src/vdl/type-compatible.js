@@ -4,6 +4,7 @@
  * Compatible: Two types can potentially convert to each other.
  * Convertible: A value with one type can be converted to a second type.
  * See canonicalize.js for the function that converts a value to a given type.
+ * @private
  */
 
 var Kind = require('./kind.js');
