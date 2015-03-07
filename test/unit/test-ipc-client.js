@@ -10,10 +10,27 @@ var app = require('../../src/gen-vdl/v.io/x/ref/services/wsprd/app');
 
 var mockService = {
   tripleArgMethod: function(ctx, a, b, c) {},
-  singleArgMethod: function(ctx, a) {}
+  singleArgMethod: function(ctx, a) {},
+  lyingBoolMethod: function(ctx) {},
 };
+var mockServiceDescs = [
+  {
+    methods: [
+      {
+        name: 'LyingBoolMethod',
+        inArgs: [],
+        outArgs: [
+          {
+            name: 'Is VanadiumRPCRequest not Bool',
+            type: vdl.Types.BOOL
+          }
+        ]
+      }
+    ]
+  }
+];
 
-var mockSignature = createSignatures(mockService);
+var mockSignature = createSignatures(mockService, mockServiceDescs);
 
 function testContext() {
   var ctx = new context.Context();
@@ -187,6 +204,51 @@ test('Test that service.method() fails without a context - using promises',
       })
       .catch(assert.end);
   });
+});
+
+function assertStrBoolNotCompatible(assert, err, result) {
+  assert.ok(err, 'errors when receiving string instead of bool');
+  assert.ok(err.message.indexOf('are not compatible') !== -1,
+    'err is not compatible');
+  assert.notOk(result, 'no result');
+}
+
+test('Test that service.method() fails when receiving bad outArgs - ' +
+  'using callbacks', function(assert) {
+
+  var client = new Client(mockProxy);
+  var ctx = testContext();
+
+  client.bindTo(ctx, 'service-name', function(err, service) {
+    assert.error(err);
+
+    service.lyingBoolMethod(ctx, function(err, result) {
+      // LyingBoolMethod gives a string back, but it says it will be a bool.
+      assertStrBoolNotCompatible(assert, err, result);
+      assert.end();
+    });
+  });
+});
+
+test('Test that service.method() fails when receiving bad outArgs - ' +
+  'using promises', function(assert) {
+  var client = new Client(mockProxy);
+  var ctx = testContext();
+
+  client
+    .bindTo(ctx, 'service-name')
+    .catch(assert.end) // cannot fail here
+    .then(function(service) {
+      return service.lyingBoolMethod(ctx);
+    })
+    .then(function(result) {
+      assert.end('Did not error when receiving string instead of bool');
+    })
+    .catch(function(err) {
+      // LyingBoolMethod gives a string back, but it says it will be a bool.
+      assertStrBoolNotCompatible(assert, err, null);
+      assert.end();
+    });
 });
 
 test('service.method() - callback error', function(assert) {

@@ -49,11 +49,34 @@ var OutstandingRPC = function(ctx, options, cb) {
   this._def = null;
 };
 
+// Helper function to convert an out argument to the given type.
+function convertOutArg(arg, type) {
+  var canonOutArg = arg;
+
+  // There's no protection against bad out args if it's a JSValue.
+  // Otherwise, convert to the out arg type to ensure type correctness.
+  if (!type.equals(vdl.Types.JSVALUE)) {
+    canonOutArg = vdl.Canonicalize.reduce(arg, type);
+  }
+  return vdl.TypeUtil.unwrap(canonOutArg);
+}
+
+// Helper function to safely convert an out argument.
+// The returned error, if any is useful for a callback.
+function convertOutArgSafe(arg, type) {
+  try {
+    return [undefined, convertOutArg(arg, type)];
+  } catch(err) {
+    return [err, undefined];
+  }
+}
+
 OutstandingRPC.prototype.start = function() {
   this._id = this._proxy.nextId();
 
   var cb;
   var outArgTypes = this._outArgTypes;
+
   if (this._cb) {
     // Wrap the callback to call with multiple arguments cb(err, a, b, c)
     // rather than cb(err, [a, b, c]).
@@ -63,12 +86,15 @@ OutstandingRPC.prototype.start = function() {
 
       // Each out argument should also be unwrapped. (results was []any)
       results = results ? results.map(function(res, i) {
-        // If the out argument was specifically of type any, do not unwrap.
-        if (outArgTypes[i].kind === vdl.Kind.ANY) {
-          return res;
+        var errOrArg = convertOutArgSafe(res, outArgTypes[i]);
+        if (errOrArg[0] && !err) {
+          err = errOrArg[0];
         }
-        return vdl.TypeUtil.unwrap(res);
+        return errOrArg[1];
       }) : [];
+
+      // TODO(alexfandrianto): Callbacks seem to be able to get both error and
+      // results, but I think we want to limit it to one or the other.
       var resultsCopy = results.slice();
       resultsCopy.unshift(err);
       origCb.apply(null, resultsCopy);
@@ -88,11 +114,7 @@ OutstandingRPC.prototype.start = function() {
 
       // Each out argument should also be unwrapped. (args was []any)
       var unwrappedArgs = args.map(function(outArg, i) {
-        // If the out argument was specifically of type any, do not unwrap.
-        if (outArgTypes[i].kind === vdl.Kind.ANY) {
-          return outArg;
-        }
-        return vdl.TypeUtil.unwrap(outArg);
+        return convertOutArg(outArg, outArgTypes[i]);
       });
 
       // We expect:

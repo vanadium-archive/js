@@ -13,10 +13,11 @@ var vdl = require('../../src/vdl');
 var vom = require('../../src/vom');
 var app = require('../../src/gen-vdl/v.io/x/ref/services/wsprd/app');
 var vtrace = require('../../src/lib/vtrace');
+var vdlsig = require('../../src/gen-vdl/v.io/v23/vdlroot/signature');
 
-var freshSig = [ { foo: 'fresh signature' } ];
-var cachedSig = [ { foo: 'cached signature'} ];
-var staleSig = [ { foo: 'bad signature' } ];
+var freshSig = [ new vdlsig.Interface({ doc: 'fresh signature' }) ];
+var cachedSig = [ new vdlsig.Interface({ doc: 'cached signature'}) ];
+var staleSig = [ new vdlsig.Interface({ doc: 'bad signature' }) ];
 var name = 'service_name';
 
 var CACHE_TTL = 100; // we set the signature cache TTL to 100ms for tests.
@@ -53,7 +54,9 @@ test('Test getting signature using valid cache - ' +
 
     client.signature(testContext(), name)
     .then(function(signature) {
+      assert.notDeepEqual(signature, freshSig);
       assert.deepEqual(signature, cachedSig);
+      assert.notDeepEqual(signature, staleSig);
       assert.end();
     })
     .catch(assert.end);
@@ -73,6 +76,8 @@ test('Test getting signature does not use stale cache entry - ' +
       client.signature(testContext(), name)
       .then(function(signature) {
         assert.deepEqual(signature, freshSig);
+        assert.notDeepEqual(signature, cachedSig);
+        assert.notDeepEqual(signature, staleSig);
         assert.end();
       })
       .catch(assert.end);
@@ -91,6 +96,8 @@ test('Test service signature cache is set properly - ' +
       var cacheEntry = proxy.signatureCache.get(name);
 
       assert.deepEqual(signature, freshSig);
+      assert.notDeepEqual(signature, cachedSig);
+      assert.notDeepEqual(signature, staleSig);
       assert.deepEqual(cacheEntry, signature);
 
       assert.end();
