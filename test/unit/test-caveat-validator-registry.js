@@ -2,20 +2,44 @@ var test = require('prova');
 var CaveatValidatorRegistry =
   require('../../src/security/caveat-validator-registry');
 var context = require('../../src/runtime/context');
+var SecurityCall = require('../../src/security/call');
 
 var testCaveats = require('../vdl-out/javascript-test/security/caveat');
 var caveatUtil = require('./caveat-util');
 
+function getMockSecurityCall() {
+  return new SecurityCall({
+    method: '',
+    suffix: '',
+    methodTags: [],
+    localBlessings: {
+      handle: '',
+      publicKey: '',
+    },
+    remoteBlessings: {
+      handle: '',
+      publicKey: '',
+    },
+    localBlessingStrings: [],
+    remoteBlessingStrings: [],
+    localEndpoint: '',
+    remoteEndpoint: ''
+  },
+  null, // controller
+  context.Context());
+}
+
+
 test('Validating caveats', function(t) {
   var registry = new CaveatValidatorRegistry();
-  var ctx = context.Context();
+  var call = getMockSecurityCall();
 
   // Keep track of the validation calls when they happen.
   var seenCalls = [];
 
   // Register caveat validators.
-  registry.register(testCaveats.CaveatThatValidates, function(fnCtx, param) {
-    t.equal(fnCtx, ctx, 'Contexts should match');
+  registry.register(testCaveats.CaveatThatValidates, function(fnCall, param) {
+    t.equal(fnCall, call, 'Contexts should match');
     t.equal(param._type, (new testCaveats.CaveatThatValidatesData())._type,
       'Validation param has the correct type (CaveatThatValidates)');
     t.deepEqual(param, testCaveats.CaveatThatValidatesExpectedData,
@@ -26,8 +50,8 @@ test('Validating caveats', function(t) {
     return false; // This should be ignored, but make sure it isn't treated
     // as a failed validation.
   });
-  registry.register(testCaveats.CaveatDoesntValidate, function(fnCtx, param) {
-    t.equal(fnCtx, ctx, 'Contexts should match');
+  registry.register(testCaveats.CaveatDoesntValidate, function(fnCall, param) {
+    t.equal(fnCall, call, 'Contexts should match');
     t.deepEqual(param, testCaveats.CaveatDoesntValidateExpectedData.val,
       'Validation param matches expectation (CaveatDoesntValidate)');
 
@@ -39,14 +63,14 @@ test('Validating caveats', function(t) {
   // Make calls to validate(), providing caveats.
   t.doesNotThrow(function() {
       registry.validate(
-              ctx,
+              call,
               caveatUtil.makeCaveat(testCaveats.CaveatThatValidates,
                          testCaveats.CaveatThatValidatesExpectedData));
     },
     'Should validate');
   t.throws(function() {
       registry.validate(
-              ctx,
+              call,
               caveatUtil.makeCaveat(testCaveats.CaveatDoesntValidate,
                          testCaveats.CaveatDoesntValidateExpectedData));
     },
@@ -56,8 +80,8 @@ test('Validating caveats', function(t) {
 
   // Test re-registering on the same UUID. This should replace the validation
   // function.
-  registry.register(testCaveats.CaveatWithCollision, function(fnCtx, param) {
-    t.equal(fnCtx, ctx, 'Contexts should match');
+  registry.register(testCaveats.CaveatWithCollision, function(fnCall, param) {
+    t.equal(fnCall, call, 'Contexts should match');
     t.deepEqual(param, testCaveats.CaveatWithCollisionExpectedData.val,
       'Validation param matches expectation (CaveatWithCollision)');
 
@@ -68,7 +92,7 @@ test('Validating caveats', function(t) {
 
   t.throws(function() {
       registry.validate(
-	      ctx,
+	      call,
               caveatUtil.makeCaveat(testCaveats.CaveatWithCollision,
                          testCaveats.CaveatWithCollisionExpectedData.val));
     },
@@ -83,10 +107,10 @@ test('Validating caveats', function(t) {
 
 test('Unknown caveat id', function(t) {
   var registry = new CaveatValidatorRegistry();
-  var ctx = context.Context();
+  var call = getMockSecurityCall();
 
   t.throws(function() {
-    registry.validate(ctx, {
+    registry.validate(call, {
       id: 99,
       paramVom: null
     });

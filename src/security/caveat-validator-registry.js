@@ -15,6 +15,7 @@ module.exports = CaveatValidatorRegistry;
  * CaveatValidatorRegistry is a registry for caveats.
  * It enables registration of caveat validation functions and provides
  * provides functionality to perform validation given UUIDs
+ * @private
  * @constructor
  */
 function CaveatValidatorRegistry() {
@@ -56,18 +57,18 @@ CaveatValidatorRegistry.prototype.register = function(cavDesc, validateFn) {
 
 /**
  * Perform validation on a caveat.
- * @param {SecurityContext} secCtx The context.
+ * @param {SecurityCall} secCall The context.
  * @param {Caveat} caveat The caveat to validate.
  * See security/types.vdl
  * @throws Upon failure to validate, does not throw if successful.
  */
-CaveatValidatorRegistry.prototype.validate = function(secCtx, caveat) {
+CaveatValidatorRegistry.prototype.validate = function(secCall, caveat) {
   var validator = this.validators.get(this._makeKey(caveat.id));
   if (validator === undefined) {
-    throw new vdlSecurity.CaveatNotRegisteredError(secCtx.context,
+    throw new vdlSecurity.CaveatNotRegisteredError(secCall.context,
       'Unknown caveat id: ' + this._makeKey(caveat.id));
   }
-  return validator.validate(secCtx, vom.decode(caveat.paramVom));
+  return validator.validate(secCall, vom.decode(caveat.paramVom));
 };
 
 /**
@@ -80,10 +81,10 @@ function CaveatValidator(cavDesc, validateFn) {
   this.validateFn = validateFn;
 }
 
-CaveatValidator.prototype.validate = function(secCtx, paramForValidator) {
+CaveatValidator.prototype.validate = function(secCall, paramForValidator) {
   var paramType = this.cavDesc.paramType;
   var canonParam = vdl.Canonicalize.reduce(paramForValidator, paramType);
   var unwrappedParam = unwrapArg(canonParam, paramType);
 
-  return this.validateFn(secCtx, unwrappedParam);
+  return this.validateFn(secCall, unwrappedParam);
 };

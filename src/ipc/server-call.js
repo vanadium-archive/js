@@ -4,27 +4,27 @@
  */
 
 var context = require('../runtime/context');
-var SecurityContext = require('../security/context');
+var SecurityCall = require('../security/call');
 var inherits = require('inherits');
 
-module.exports = ServerContext;
+module.exports = ServerCall;
 
 /*
- * A ServerContext is a context.Context subclass that includes additional
+ * A ServerCall is a context.Context subclass that includes additional
  * information about an ongoing server call.
  * @constructor
- * @param request An rpc request object or a ServerContext to clone from.
+ * @param request An rpc request object or a ServerCall to clone from.
  * @param controller A Controller instance.  This is only needed if the
- * first arg is not a ServerContext.
- * @param ctx A context.Context object to derive this new context from.
- * This is only needed if the first arg is not a ServerContext.
+ * first arg is not a ServerCall.
+ * @param call A context.Context object to derive this new context from.
+ * This is only needed if the first arg is not a ServerCall.
  */
-function ServerContext(request, controller, ctx) {
-  if (!(this instanceof ServerContext)) {
-    return new ServerContext();
+function ServerCall(request, controller, ctx) {
+  if (!(this instanceof ServerCall)) {
+    return new ServerCall(request, controller, ctx);
   }
 
-  if (request instanceof ServerContext) {
+  if (request instanceof ServerCall) {
     this._ctx = request._ctx;
     this.suffix = request.suffix;
     this.name = request.name;
@@ -37,15 +37,15 @@ function ServerContext(request, controller, ctx) {
     this.methodTags = request.methodTags;
   } else {
     this._ctx = ctx;
-    if (!request.context.deadline.noDeadline) {
-      var fromNow = request.context.deadline.fromNow;
+    if (!request.call.deadline.noDeadline) {
+      var fromNow = request.call.deadline.fromNow;
       var timeout = fromNow.seconds * 1000;
       timeout += fromNow.nanos / 1000000;
       this._ctx = this._ctx.withTimeout(timeout);
     } else {
       this._ctx = this._ctx.withCancel();
     }
-    var security = new SecurityContext(request.context.securityContext,
+    var security = new SecurityCall(request.call.securityCall,
                                        controller);
     this.suffix = security.suffix;
     this.name = security.name;
@@ -58,23 +58,23 @@ function ServerContext(request, controller, ctx) {
     this.methodTags = security.methodTags;
   }
 }
-inherits(ServerContext, context.Context);
+inherits(ServerCall, context.Context);
 
-ServerContext.prototype.deadline = function() {
+ServerCall.prototype.deadline = function() {
   return this._ctx.deadline();
 };
-ServerContext.prototype.done = function() {
+ServerCall.prototype.done = function() {
   return this._ctx.done();
 };
-ServerContext.prototype.waitUntilDone = function(callback) {
+ServerCall.prototype.waitUntilDone = function(callback) {
   return this._ctx.waitUntilDone(callback);
 };
-ServerContext.prototype.value = function(key) {
+ServerCall.prototype.value = function(key) {
   return this._ctx.value(key);
 };
-ServerContext.prototype.cancel = function() {
+ServerCall.prototype.cancel = function() {
   return this._ctx.cancel();
 };
-ServerContext.prototype.finish = function() {
+ServerCall.prototype.finish = function() {
   return this._ctx.finish();
 };

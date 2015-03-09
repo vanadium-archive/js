@@ -4,13 +4,13 @@ var CaveatValidatorRegistry =
 var caveatUtil = require('./caveat-util');
 var vdlSecurity = require('../../src/gen-vdl/v.io/v23/security');
 var context = require('../../src/runtime/context');
-var SecurityContext = require('../../src/security/context');
+var SecurityCall = require('../../src/security/call');
 var VanadiumError = require('../../src/errors/vanadium-error');
 var Time = require('../../src/gen-vdl/v.io/v23/vdlroot/time').Time;
 var vdl = require('../../src/vdl');
 
-function getMockSecurityContext() {
-  return new SecurityContext({
+function getMockSecurityCall() {
+  return new SecurityCall({
     method: 'aMethod', // only field currently used
     suffix: '',
     methodTags: [],
@@ -33,12 +33,12 @@ function getMockSecurityContext() {
 
 function assertValidate(t, cavType, val, msg) {
   var registry = new CaveatValidatorRegistry();
-  var secCtx = getMockSecurityContext();
+  var secCall = getMockSecurityCall();
   var cav = caveatUtil.makeCaveat(cavType, val);
 
   t.doesNotThrow(function() {
     t.equal(null,
-      registry.validate(secCtx, cav),
+      registry.validate(secCall, cav),
       msg);
   },
   undefined,
@@ -47,12 +47,12 @@ function assertValidate(t, cavType, val, msg) {
 
 function assertDoesntValidate(t, cavType, val, msg) {
   var registry = new CaveatValidatorRegistry();
-  var secCtx = getMockSecurityContext();
+  var secCall = getMockSecurityCall();
   var cav = caveatUtil.makeCaveat(cavType, val);
 
   var res;
   try {
-    res = registry.validate(secCtx, cav);
+    res = registry.validate(secCall, cav);
   } catch(err) {
     res = err;
   }
@@ -69,8 +69,6 @@ test('Const caveat is validated correctly', function(t) {
   t.end();
 });
 
-// TODO(bprosnitz) Enable this after implementing type guessing from native
-// types.
 test('Expiry caveat is validated correctly using native Date',
   function(t) {
   var now = Date.now();
