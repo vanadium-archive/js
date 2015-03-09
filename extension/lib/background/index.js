@@ -72,6 +72,8 @@ BackgroundPage.prototype.handleMessageFromContentScript = function(port, msg) {
         return bp.handleBrowsprMessage(port, msg);
       case 'browsprCleanup':
         return bp.handleBrowsprCleanup(port, msg);
+      case 'createInstance':
+        return bp.handleCreateInstance(port, msg);
       case 'auth':
         return bp.authHandler.handleAuthMessage(port);
       case 'assocAccount:finish':
@@ -115,12 +117,7 @@ BackgroundPage.prototype.handleNewContentScriptConnection = function(port) {
 // Clean up an instance, and tell Nacl to clean it up as well.
 BackgroundPage.prototype.handleBrowsprCleanup = function(port, msg) {
   function sendCleanupFinishedMessage() {
-    try {
-      port.postMessage({type: 'browsprCleanupFinished'});
-    } catch (e) {
-      // This will error if the port has been closed, usually due to the tab
-      // being closed or navigating to a new page.  Safe to ignore.
-    }
+    safePostMessage(port, {type: 'browsprCleanupFinished'});
   }
 
   if (!this.naclPluginIsActive()) {
@@ -151,29 +148,67 @@ BackgroundPage.prototype.handleBrowsprCleanup = function(port, msg) {
   });
 };
 
-// Handle messages that will be sent to Nacl.
-BackgroundPage.prototype.handleBrowsprMessage = function(port, msg) {
+BackgroundPage.prototype.isValidMessageForPort = function(msg, port) {
   var body = msg.body;
   if (!body) {
-    return console.error('Got message with no body: ', msg);
+    console.error('Got message with no body: ', msg);
+    return false;
   }
   if (!body.instanceId) {
-    return console.error('Got message with no instanceId: ', msg);
+    console.error('Got message with no instanceId: ', msg);
+    return false;
   }
   if (this.ports[body.instanceId] && this.ports[body.instanceId] !== port) {
-    return console.error('Got browspr message with instanceId ' +
-        body.instanceId + ' that does match port.');
+    console.error('Got browspr message with instanceId ' +
+        body.instanceId + ' that does not match port.');
+    return false;
   }
+  return true;
+};
 
+BackgroundPage.prototype.assocPortAndInstanceId = function(port, instanceId) {
   // Store the instanceId->port.
-  this.ports[body.instanceId] = port;
+  this.ports[instanceId] = port;
   // Store the portId->instanceId.
   var portId = port.sender.tab.id;
   this.instanceIds[portId] =
-      _.union(this.instanceIds[portId] || [], [body.instanceId]);
+      _.union(this.instanceIds[portId] || [], [instanceId]);
 
   // Cache the origin on the port object.
   port.origin = port.origin || getOrigin(port.sender.tab.url);
+};
+
+
+// Handle an createInstance message.
+BackgroundPage.prototype.handleCreateInstance = function(port, msg) {
+  if (!this.isValidMessageForPort(msg, port)) {
+    return console.error('Invalid port for message.  Ignoring.');
+  }
+
+  var body = msg.body;
+  this.assocPortAndInstanceId(port, body.instanceId);
+
+  this.nacl.channel.performRpc('create-instance', {
+    instanceId: body.instanceId,
+    origin: port.origin,
+    namespaceRoots: body.settings.namespaceRoots,
+    proxy: body.settings.proxy
+  }, function(err) {
+    if (err) {
+      return safePostMessage(port, {type: 'createInstance:error', error: err});
+    }
+    safePostMessage(port, {type: 'createInstance:success'});
+  });
+};
+
+// Handle messages that will be sent to Nacl.
+BackgroundPage.prototype.handleBrowsprMessage = function(port, msg) {
+  if (!this.isValidMessageForPort(msg, port)) {
+    return;
+  }
+
+  var body = msg.body;
+  this.assocPortAndInstanceId(port, body.instanceId);
 
   var naclMsg = {
     type: msg.type,
@@ -245,10 +280,14 @@ BackgroundPage.prototype.handleNaclCrash = function(msg) {
     body: msg
   };
   this.getAllPorts().forEach(function(port) {
-    try {
-      port.postMessage(crashNotificationMsg);
-    } catch (e) {
-      // Port no longer exists.  Safe to ignore.
-    }
+    safePostMessage(port, crashNotificationMsg);
   });
 };
+
+function safePostMessage(port, msg) {
+  try {
+    port.postMessage(msg);
+  } catch (e) {
+    // Port no longer exists.  Safe to ignore.
+  }
+}

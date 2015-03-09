@@ -126,5 +126,55 @@ ExtensionEventProxy.prototype.waitForExtension = function(timeout) {
   });
 };
 
+// Wrapper around 'send' method that will call callback with error and data when
+// extension responds.
+ExtensionEventProxy.prototype.sendRpc = function(type, data, cb) {
+  function onSuccess(data) {
+    removeListeners();
+    cb(null, data);
+  }
+
+  // Handle rpc-specific errors.
+  function onRpcError(data) {
+    removeListeners();
+    cb(objectToError(data.error));
+  }
+
+  // Handle errors and crashes, which can be triggered if the extension is not
+  // running or if it crashes during initialization.
+  function onError(err) {
+    removeListeners();
+    cb(err);
+  }
+
+  var proxy = this;
+  function removeListeners() {
+    proxy.removeListener(type + ':success', onSuccess);
+    proxy.removeListener(type + ':error', onRpcError);
+    proxy.removeListener('crash', onError);
+    proxy.removeListener('error', onError);
+  }
+
+  this.on(type + ':success', onSuccess);
+  this.on(type + ':error', onRpcError);
+  this.on('crash', onError);
+  this.on('error', onError);
+
+  // Send request.
+  this.send(type, data);
+};
+
+// An error that gets sent via postMessage will be received as a plain Object.
+// This function turns it back into an Error object.
+function objectToError(obj) {
+  if (obj instanceof Error) {
+    return obj;
+  }
+  var err = new Error(obj.message);
+  err.name = obj.name;
+  err.stack = obj.stack;
+  return err;
+}
+
 module.exports = new ExtensionEventProxy();
 module.exports.ctor = ExtensionEventProxy;

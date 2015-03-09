@@ -50,6 +50,9 @@ RpcChannel.prototype.performRpc = function(type, val, callback) {
     case 'auth:associate-account':
       BrowsprMessage = browsprVdl.AssociateAccountMessage;
       break;
+    case 'create-instance':
+      BrowsprMessage = browsprVdl.CreateInstanceMessage;
+      break;
     case 'cleanup':
       BrowsprMessage = browsprVdl.CleanupMessage;
       break;

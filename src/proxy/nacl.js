@@ -95,3 +95,11 @@ ProxyConnection.prototype.close = function(cb) {
 
   return deferred.promise;
 };
+
+ProxyConnection.prototype.createInstance = function(settings, cb) {
+  var msg = {
+    instanceId: this.instanceId,
+    settings: settings
+  };
+  extensionEventProxy.sendRpc('createInstance', msg, cb);
+};

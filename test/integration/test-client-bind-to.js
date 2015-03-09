@@ -1,3 +1,4 @@
+var isBrowser = require('is-browser');
 var test = require('prova');
 var vanadium = require('../../');
 var config = require('./default-config');
@@ -87,6 +88,9 @@ test('Test binding to a non-existing name - ' +
 
 test('Test binding when proxy Url is invalid - ' +
   'client.bindTo(name, callback)', function(assert) {
+  if (isBrowser) {
+    return assert.end();
+  }
 
   vanadium.init({ wspr: 'http://bad-address.tld' }, onruntime);
 
@@ -105,6 +109,9 @@ test('Test binding when proxy Url is invalid - ' +
 
 test('Test binding when wspr Url is invalid - ' +
   'var promise = client.bindTo(name) ', function(assert) {
+  if (isBrowser) {
+    return assert.end();
+  }
 
   vanadium
   .init({ wspr: 'http://bad-address.tld' })

@@ -3,6 +3,7 @@
  * @private
  */
 var EE = require('eventemitter2').EventEmitter2;
+var isBrowser = require('is-browser');
 var inherits = require('inherits');
 var Server = require('../ipc/server');
 var ServerRouter = require('../ipc/server-router');
@@ -19,10 +20,48 @@ var vtrace = require('../lib/vtrace');
 var Controller =
   require('../gen-vdl/v.io/x/ref/services/wsprd/app').Controller;
 
-module.exports = Runtime;
+module.exports = {
+  init: init
+};
 
 /*
- * Vanadium runtime.
+ * Initialize a Vanadium Runtime.
+ * Runtime exposes entry points to create servers, client, blessing and other
+ * parts of the Vanadium functionality.
+ */
+function init(options, cb) {
+  var def = new Deferred(cb);
+
+  if (!isBrowser) {
+    // In node we can just return the runtime.  No more initialization is
+    // necessary.
+    process.nextTick(function() {
+      def.resolve(new Runtime(options));
+    });
+    return def.promise;
+  }
+
+  // In the browser, we must create the app instance in browspr.  We send along
+  // the namespaceRoots and proxy, if they have been provided.  If they are
+  // empty, the defaults from the extension options page will be used.
+  var settings = {
+    namespaceRoots: options.namespaceRoots || [],
+    proxy: options.proxy || ''
+  };
+
+  var rt = new Runtime(options);
+  rt._getProxyConnection().createInstance(settings, function(err) {
+    if (err) {
+      return def.reject(err);
+    }
+    def.resolve(rt);
+  });
+
+  return def.promise;
+}
+
+/*
+ * Vanadium Runtime constructor.
  * Runtime exposes entry points to create servers, client, blessing and other
  * parts of the Vanadium functionality.
  *
@@ -68,9 +107,7 @@ inherits(Runtime, EE);
  *
  */
 Runtime.prototype.close = function(cb) {
-  var runtime = this;
-
-  return runtime
+  return this
     ._getProxyConnection()
     .close(cb);
 };

@@ -8,7 +8,7 @@ var isBrowser = require('is-browser');
 
 var Deferred = require('./lib/deferred');
 var extnUtils = require('./lib/extension-utils');
-var Runtime = require('./runtime');
+var runtime = require('./runtime');
 var vlog = require('./lib/vlog');
 
 var defaults = {
@@ -72,6 +72,9 @@ if (isBrowser) {
 /**
  * Creates a Vanadium runtime.
  * @param {Object} config Configuration options
+ * @param {function} [cb] If provided, the callback that will be called with an
+ * error or the new runtime
+ * @return {Promise} A promise that resolves to the new Runtime
  */
 function init(config, cb) {
   if (typeof config === 'function') {
@@ -81,16 +84,36 @@ function init(config, cb) {
 
   config = extend(defaults, config);
 
-  var runtimeOpts = {
-    appName: config.appName,
-    wspr: config.wspr
-  };
-
   if (config.logLevel) {
     vlog.level = config.logLevel;
   }
 
+  var runtimeOpts = {
+    appName: config.appName,
+    namespaceRoots: config.namespaceRoots,
+    proxy: config.proxy,
+    wspr: config.wspr
+  };
+
   var def = new Deferred(cb);
+
+  // Validate config settings.
+  if (isBrowser && config.wspr) {
+    return def.reject(new Error('config.wspr requires NodeJS environment.'));
+  }
+  if (!isBrowser && !config.wspr) {
+    return def.reject(new Error('config.wspr is required in NodeJS ' +
+          'environment.'));
+  }
+  if (!isBrowser && config.authenticate) {
+    return def.reject(new Error('config.authenticate requires browser ' +
+          'environment'));
+  }
+  if (config.wspr && (config.namespaceRoots || config.proxy)) {
+    return def.reject(new Error('Cannot set config.namespaceRoots or ' +
+          'config.proxy when using wspr.  Use --veyron.namespace.root ' +
+          'and --veyron.proxy flags to wsprd.'));
+  }
 
   // If the user has set config.authenticate to true, get an authenticated
   // (blessed-by-Blessing-server) account for the user.  This requires the
@@ -99,17 +122,23 @@ function init(config, cb) {
   //
   // Otherwise, create a runtime with accountName 'unknown'.
   if (config.authenticate) {
-    getAccount(function(err, account) {
+    getAccount(function(err, accountName) {
       if (err) {
-        def.reject(err);
-        return def.promise;
+        return def.reject(err);
       }
-      runtimeOpts.accountName = account;
-      def.resolve(new Runtime(runtimeOpts));
+      runtimeOpts.accountName = accountName;
+      runtime.init(runtimeOpts, onRtInit);
     });
   } else {
     runtimeOpts.accountName = 'unknown';
-    def.resolve(new Runtime(runtimeOpts));
+    runtime.init(runtimeOpts, onRtInit);
+  }
+
+  function onRtInit(err, rt) {
+    if (err) {
+      return def.reject(err);
+    }
+    def.resolve(rt);
   }
 
   return def.promise;
@@ -123,51 +152,12 @@ function init(config, cb) {
 // <-> WSPR identity flow, and respond with either an 'auth:success' message or
 // an 'auth:error' message.
 function getAccount(cb) {
-  if (!isBrowser) {
-    return cb(new Error('authenticate=true requires browser environment'));
-  }
-
   var extensionEventProxy = require('./proxy/event-proxy');
 
-  function onAuthSuccess(data) {
-    removeListeners();
-    cb(null, data.account);
-  }
-
-  // Handle auth-specific errors.
-  function onAuthError(data) {
-    removeListeners();
-    cb(objectToError(data.error));
-  }
-
-  // Handle errors and crashes, which can be triggered if the extension is not
-  // running or if it crashes during initialization.
-  function onError(err) {
-    removeListeners();
-    cb(err);
-  }
-
-  function removeListeners() {
-    extensionEventProxy.removeListener('auth:success', onAuthSuccess);
-    extensionEventProxy.removeListener('auth:error', onAuthError);
-    extensionEventProxy.removeListener('crash', onError);
-    extensionEventProxy.removeListener('error', onError);
-  }
-
-  extensionEventProxy.on('auth:success', onAuthSuccess);
-  extensionEventProxy.on('auth:error', onAuthError);
-  extensionEventProxy.on('crash', onError);
-  extensionEventProxy.on('error', onError);
-
-  // Send auth request.
-  extensionEventProxy.send('auth');
-}
-
-// An error that gets sent via postMessage will be received as a plain Object.
-// This function turns it back into an Error object.
-function objectToError(obj) {
-  var err = new Error(obj.message);
-  err.name = obj.name;
-  err.stack = obj.stack;
-  return err;
+  extensionEventProxy.sendRpc('auth', null, function(err, data) {
+    if (err) {
+      return cb(err);
+    }
+    return cb(null, data.account);
+  });
 }

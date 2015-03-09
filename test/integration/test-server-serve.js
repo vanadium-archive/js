@@ -1,3 +1,4 @@
+var isBrowser = require('is-browser');
 var test = require('prova');
 var vanadium = require('../../');
 var config = require('./default-config');
@@ -40,6 +41,10 @@ test('Test serving a JS service named livingroom/tv - ' +
 
 test('Test serving a JS service when proxy Url is invalid - '+
   'server.serve(name, service, callback)', function(assert) {
+  if (isBrowser) {
+    return assert.end();
+  }
+
   vanadium.init({ wspr: 'http://bad-address.tld' }, function(err, runtime) {
     assert.error(err);
 
@@ -53,6 +58,10 @@ test('Test serving a JS service when proxy Url is invalid - '+
 
 test('Test serving a JS service when proxy Url is invalid - '+
   'var promise = server.serve(name, service)', function(assert) {
+  if (isBrowser) {
+    return assert.end();
+  }
+
   vanadium.init({ wspr: 'http://bad-address.tld' }, function(err, runtime) {
     assert.error(err);
 
