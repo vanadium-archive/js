@@ -1,5 +1,6 @@
 /**
  * @fileoverview Definition of BinaryReader.
+ * @private
  */
 
 module.exports = BinaryReader;

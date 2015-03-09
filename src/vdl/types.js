@@ -1,5 +1,6 @@
 /**
  * @fileoverview Utilities for manipulating types.
+ * @private
  */
 
 var Type = require('./type.js');

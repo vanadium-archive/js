@@ -1,6 +1,7 @@
 /**
  * @fileoverview Type encoder maintains a mapping of types to type ids and
  * assists in encoding types on the VOM stream.
+ * @private
  */
 
 module.exports = TypeEncoder;

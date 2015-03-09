@@ -1,5 +1,6 @@
 /**
  * @fileoverview Definition of BinaryWriter.
+ * @private
  */
 
 module.exports = BinaryWriter;

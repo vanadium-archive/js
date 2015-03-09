@@ -1,5 +1,6 @@
 /**
  * @fileoverview Utility for converting from a Kind to a TypeObject.
+ * @private
  */
 
 var Kind = require('./kind.js');

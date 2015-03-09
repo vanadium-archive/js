@@ -1,6 +1,7 @@
 /**
  * @fileoverview Defines the set of initially known bootstrap type ids and their
  * corresponding VDL type.
+ * @private
  */
 
 module.exports = {

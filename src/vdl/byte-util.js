@@ -1,5 +1,6 @@
 /**
  * @fileoverview Utilities for manipulating bytes.
+ * @private
  */
 
  module.exports = {

@@ -5,6 +5,7 @@
  * a list of key-value pairs.
  * This file should not be exported at the top-level; it is meant to be used by
  * canonicalize only. It is unit-tested separately.
+ * @private
  */
 
 var TypeUtil = require('./type-util.js');
@@ -36,6 +37,7 @@ function getJSValueConstructor() {
  * Note: Skips typed values, so it will not convert any native values there.
  * Excluding undefined, raw values satisfy the following equality:
  * convertToNative(convertFromNative(val)) === val
+ * @private
  * @param{any} val The value to be molded into a JSValue
  * @return The JSValue
  */
@@ -105,6 +107,7 @@ function convertFromNative(val) {
  * Note: Skips conversion of non-JS values.
  * Excluding undefined, raw values satisfy the following equality:
  * convertToNative(convertFromNative(val)) === val
+ * @private
  * @param{JSValue} jsval The JSValue to be restored into raw form.
  * @return The raw value
  */

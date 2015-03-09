@@ -12,6 +12,7 @@
  * Type decoders hold a cache of decoded types. Types are read off the wire in
  * defineType() and then lazily converted from partial to defined types when
  * they are needed in lookupType().
+ * @private
  */
 
 module.exports = TypeDecoder;

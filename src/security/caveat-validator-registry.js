@@ -1,6 +1,7 @@
 /**
  * @fileoverview Registry for caveats. Provides a mapping between caveat
  * UUIDs and validations methods.
+ * @private
  */
 
 var vdl = require('../vdl');

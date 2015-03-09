@@ -3,6 +3,7 @@
  * should be used in its place.
  * TODO(alexfandrianto): If this is temporary, how can type registry take the
  * place of the Type Constructor?
+ * @private
  */
 
 module.exports = Type;

@@ -19,18 +19,44 @@ var defaults = {
 };
 
 /**
- * Exports
+ * A module to improve cross device development.  For more details
+ * see @{link https://v.io/} for more details.
+ * @module vanadium
  */
 module.exports = {
+  /**
+   * Error namespace
+   * @namespace
+   */
   errors: require('./gen-vdl/v.io/v23/verror'),
   makeError:  require('./errors/make-errors'),
+  /**
+   * Namespace for error codes
+   * @namespace
+   */
   errorActions: require('./errors/actions'),
   init: init,
+  /**
+   * Namespace of vlog levels
+   * @namespace
+   */
   logLevels: require('./lib/vlog').levels,
+  /**
+   * Namespace of utilities for the Vanadium namespace
+   * @namespace
+   */
   namespaceUtil: require('./namespace/util'),
   Promise: require('./lib/promise'),
   aclAuthorizer: require('./security/acl-authorizer'),
+  /**
+   * Namespace for context related objects
+   * @namespace
+   */
   context: require('./runtime/context'),
+  /**
+   * Nmespace for all VDL related exports
+   * @namespace
+   */
   vdl: require('./vdl'),
 };
 

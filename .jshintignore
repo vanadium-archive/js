@@ -9,3 +9,4 @@ src/time
 nacl/out
 test/vdl/expected-gen
 test/vdl-out
+docs
