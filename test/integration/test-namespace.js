@@ -2,6 +2,7 @@ var test = require('prova');
 var Promise = require('../../src/lib/promise');
 
 var access = require('../../src/gen-vdl/v.io/v23/services/security/access');
+var reserved = require('../../src/gen-vdl/v.io/v23/ipc/reserved');
 var config = require('./default-config');
 var MINUTE = 60 * 1000; // a minute
 var Promise = require('../../src/lib/promise');
@@ -698,8 +699,8 @@ function readAllNames(stream) {
     });
 
     stream.on('error', function(errItem) {
-      // we don't expect any errors other than ErrGlobNotImplemented
-      if (!(errItem.error instanceof verror.NotImplementedError)) {
+      // we don't expect any errors other than GlobNotImplementedError
+      if (!(errItem.error instanceof reserved.GlobNotImplementedError)) {
         reject(errItem.error);
       }
     });

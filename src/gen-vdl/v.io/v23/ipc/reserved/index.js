@@ -35,6 +35,12 @@ module.exports.GlobMatchesOmittedError = makeError('v.io/v23/ipc/reserved.GlobMa
 ]);
 
 
+module.exports.GlobNotImplementedError = makeError('v.io/v23/ipc/reserved.GlobNotImplemented', actions.NO_RETRY, {
+  'en': '{1:}{2:} Glob not implemented',
+}, [
+]);
+
+
 
 
 // Services:
