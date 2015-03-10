@@ -6,6 +6,7 @@ var nextKey = 0;
  * to the context should first construct a key, then use that key
  * whenever they want to store or retrieve their data from the context.
  * @constructor
+ * @memberof module:vanadium.context
  */
 function ContextKey() {
   if (!(this instanceof ContextKey)) {
