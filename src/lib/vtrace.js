@@ -7,7 +7,6 @@
 var uniqueid = require('./uniqueid');
 var context = require('../runtime/context');
 var vdl = require('../gen-vdl/v.io/v23/vtrace');
-var time = require('../gen-vdl/v.io/v23/vdlroot/time');
 
 var spanKey = context.ContextKey();
 var storeKey = context.ContextKey();
@@ -20,19 +19,6 @@ var storeKey = context.ContextKey();
  */
 function key(id) {
   return uniqueid.toHexString(id);
-}
-
-var secondsPerDay = 86400;
-var unixEpoch = (1969*365 + 1969/4 - 1969/100 + 1969/400) * secondsPerDay;
-
-function toVDLTime(date) {
-  var ms = date.getTime();
-  var seconds = Math.floor(ms / 1000);
-  var nanos = (ms % 1000) * 1000000;
-  return time.Time({
-    seconds: seconds + unixEpoch,
-    nanos: nanos
-  });
 }
 
 /**
@@ -120,8 +106,21 @@ function Store() {
     return new Store();
   }
 
+  this._collectRegexp = null;
   this._nodes = {};
 }
+
+Store.prototype.setCollectRegexp = function(regexp) {
+  this._collectRegexp = new RegExp(regexp);
+};
+
+Store.prototype._flags = function(id) {
+  var node = this._nodes[key(id)];
+  if (!node) {
+    return vdl.Empty;
+  }
+  return vdl.CollectInMemory;
+};
 
 /**
  * Returns vtrace.TraceRecord instances for all traces recorded by the store.
@@ -153,18 +152,31 @@ Store.prototype.traceRecord = function(id) {
   return node.record();
 };
 
-Store.prototype._getOrCreateNode = function(traceid) {
+// _getNode get's a trace node from the store.  force
+// is either a boolean or a function that returns a boolean.
+// if force or force() is true, then we will create the node
+// if it does not exist, otherwise we'll return null.
+Store.prototype._getNode = function(traceid, force) {
   var k = key(traceid);
   var node = this._nodes[k];
-  if (!node) {
+  if (node) {
+    return node;
+  }
+  if (typeof force === 'function') {
+    force = force();
+  }
+  if (force) {
     node = new Node(traceid);
     this._nodes[k] = node;
   }
   return node;
 };
 
-Store.prototype._getOrCreateSpan = function(span) {
-  var node = this._getOrCreateNode(span.trace);
+Store.prototype._getSpan = function(span, force) {
+  var node = this._getNode(span.trace, force);
+  if (!node) {
+    return null;
+  }
   var spankey = key(span.id);
   var record = node.spans[spankey];
   if (!record) {
@@ -178,21 +190,39 @@ Store.prototype._getOrCreateSpan = function(span) {
 };
 
 Store.prototype._start = function(span) {
-  var record = this._getOrCreateSpan(span);
-  record.start = toVDLTime(new Date());
+  var store = this;
+  var record = this._getSpan(span, function() {
+    var re = store._collectRegexp;
+    return re && re.test(span.name);
+  });
+  if (record) {
+    record.start = new Date();
+  }
 };
 
 Store.prototype._finish = function(span) {
-  var record = this._getOrCreateSpan(span);
-  record.end = toVDLTime(new Date());
+  var store = this;
+  var record = this._getSpan(span, function() {
+    var re = store._collectRegexp;
+    return re && re.test(span.name);
+  });
+  if (record) {
+    record.end = new Date();
+  }
 };
 
 Store.prototype._annotate = function(span, msg) {
-  var record = this._getOrCreateSpan(span);
-  var annotation = new vdl.Annotation();
-  annotation.when = toVDLTime(new Date());
-  annotation.message = msg;
-  record.annotations.push(annotation);
+  var store = this;
+  var record = this._getSpan(span, function() {
+    var re = store._collectRegexp;
+    return re && re.test(msg);
+  });
+  if (record) {
+    var annotation = new vdl.Annotation();
+    annotation.when = new Date();
+    annotation.message = msg;
+    record.annotations.push(annotation);
+  }
 };
 
 /**
@@ -204,7 +234,11 @@ Store.prototype.merge = function(response) {
   if (!uniqueid.valid(response.trace.iD)) {
     return;
   }
-  var node = this._getOrCreateNode(response.trace.iD);
+  var force = (response.flags & vdl.CollectInMemory) !== 0;
+  var node = this._getNode(response.trace.iD, force);
+  if (!node) {
+    return;
+  }
   var spans = response.trace.spans;
   for (var i = 0; i < spans.length; i++) {
     var span = spans[i];
@@ -275,4 +309,28 @@ module.exports.withNewStore = function(ctx) {
  */
 module.exports.getStore = function(ctx) {
   return ctx.value(storeKey);
+};
+
+/**
+ * Force collection of the current trace.
+ * @param {Object} ctx A context.Context instance.
+ */
+module.exports.forceCollect = function(ctx) {
+  var store = ctx.value(storeKey);
+  var span = ctx.value(spanKey);
+  store._getNode(span.trace, true);
+};
+
+/**
+ * Generate a vtrace.Request to send over the wire.
+ * @param {Object} ctx A context.Context instance.
+ */
+module.exports.request = function(ctx) {
+  var store = ctx.value(storeKey);
+  var span = ctx.value(spanKey);
+  return vdl.Request({
+    spanID: span.id,
+    traceID: span.trace,
+    flags: store._flags(span.trace)
+  });
 };
