@@ -8,6 +8,7 @@ module.exports = BinaryReader;
 /**
  * BinaryReader assists in reading from a Uint8Array by keeping track of the
  * position being read.
+ * @private
  * @param {Uint8Array} The buffer to read from.
  * @constructor
  */

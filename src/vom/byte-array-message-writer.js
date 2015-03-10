@@ -10,6 +10,7 @@ var RawVomWriter = require('./raw-vom-writer.js');
 
 /**
  * Create a VOM message writer that writes to a byte array.
+ * @private
  * @constructor
  */
 function ByteArrayMessageWriter() {

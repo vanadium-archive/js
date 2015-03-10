@@ -1,6 +1,7 @@
 /**
  * Arguments inspector module
  * @module vanadium/src/lib/arg-inspector
+ * @private
  */
 module.exports = ArgumentInspector;
 

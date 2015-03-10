@@ -9,6 +9,7 @@ module.exports = BigInt;
 
 /**
  * BigInt represents an integer value of arbitrary size.
+ * @memberof module:vanadium.vdl
  * @param {number} sign The sign of the number 1, -1 or 0.
  * @param {Uint8Array} uintBytes The backing byte array, in network byte order.
  * @constructor
@@ -458,6 +459,7 @@ BigInt.prototype.toNativeNumberApprox = function() {
 };
 
 /**
+ * @private
  * @return {number} a native JavaScript float64 representation of the BigInt.
  */
 BigInt.prototype._convertToNative = function() {
@@ -483,6 +485,7 @@ BigInt.prototype._convertToNative = function() {
 };
 
 /**
+ * @private
  * @return true if abs(this) > 2^53, false otherwise.
  */
 BigInt.prototype._largerThanMaxLosslessInteger = function() {
@@ -508,6 +511,7 @@ BigInt.prototype._largerThanMaxLosslessInteger = function() {
 
 /**
  * Get the sign of the value.
+ * @private
  * @param {number} val input value
  * @return {number} 1, -1, 0 depending on the sign of the input
  */

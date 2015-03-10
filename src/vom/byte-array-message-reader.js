@@ -11,6 +11,7 @@ var TypeUtil = require('../vdl/type-util.js');
 
 /**
  * Create a VOM message reader backed by a byte array.
+ * @private
  * @param {Uint8Array} bytes The byte array.
  * @constructor
  */

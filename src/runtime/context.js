@@ -18,13 +18,14 @@ module.exports = {
   ContextKey: ContextKey,
 };
 
+module.exports.CancelledError = makeError('CancelError', actions.NO_RETRY,
+                                          '{1:} {2:} Canceled{:_}');
 /**
  * Creates an Error object indicating that the context was manually
  * cancelled.
  * @constructor
+ * @memberof module:vanadium.context
  */
-module.exports.CancelledError = makeError('CancelError', actions.NO_RETRY,
-                                          '{1:} {2:} Canceled{:_}');
 var CancelledError = module.exports.CancelledError;
 
 /**
@@ -32,6 +33,7 @@ var CancelledError = module.exports.CancelledError;
  * context for a new operation which is unrealted to any ongoing
  * activity.
  * @constructor
+ * @memberof module:vanadium.context
  */
 function Context() {
   if (!(this instanceof Context)) {
@@ -62,7 +64,7 @@ Context.prototype.done = function() {
  * Returns a promise that will be resolved when the context exceeds
  * its deadline, is cancelled, or is finished.  Optionally you can
  * pass a callback that will be run when the promise is resolved.
- * @param {function} A callback function(error) to call upon cancellation
+ * @param {function} cb A callback function(error) to call upon cancellation
  */
 Context.prototype.waitUntilDone = function(callback) {
   // The root context can never be cancelled, and therefore we
@@ -73,13 +75,15 @@ Context.prototype.waitUntilDone = function(callback) {
 
 /**
  * Returns the value corresponding to the given key.  The
- * value/withValue methods can be used to attach data to context that
+ * [value]{@link module:vanadium.context.Context#value}/
+ * [withValue]{@link module:vanadium.context.Context#withValue}
+ * methods can be used to attach data to context that
  * will be carried across API boundaries.  You should use this only
  * for data that is relevant across multiple API boundaries and not
  * just to pass extra parameters to functions and methods.  The key
  * must be an instance of ContextKey.  This function will return null
  * if there is no value associated with the given key.
- * @param {ContextKey} A ContextKey to look up
+ * @param {module:vanadium.context.ContextKey} A ContextKey to look up
  * @return {*} The value associated with the key, or null
  */
 Context.prototype.value = function(key) {
@@ -90,9 +94,9 @@ Context.prototype.value = function(key) {
  * Returns a new context derived from the current context but that
  * will return the given value when value(key) is called with the
  * given key.
- * @param {ContextKey} A key.
- * @param {*} A value to associate with the key.
- * @return {Context} A new derived context.
+ * @param {module:vanadium.context.ContextKey} key A key.
+ * @param {*} value A value to associate with the key.
+ * @return {module:vanadium.context.Context} A new derived context.
  */
 Context.prototype.withValue = function(key, value) {
   return new ValueContext(this, key, value);
@@ -104,7 +108,7 @@ Context.prototype.withValue = function(key, value) {
  * methods cancel() which can be used to cancel the context and
  * generate a CancelledError and finish() which frees resources
  * associated with the context without generating an error.
- * @return {Context} A new derived cancellable context.
+ * @return {module:vanadium.context.Context} A new derived cancellable context.
  */
 Context.prototype.withCancel = function() {
   return new CancelContext(this);
@@ -115,8 +119,8 @@ Context.prototype.withCancel = function() {
  * will be automatically cancelled after a given deadline.  The
  * returned context will have an additional method cancel() which can
  * be used to cancel the context early.
- * @param {Date} A date object which specifies the deadline.
- * @return {Context} A new derived cancellable context.
+ * @param {Date} deadline A date object which specifies the deadline.
+ * @return {module:vanadium.context.Context} A new derived cancellable context.
  */
 Context.prototype.withDeadline = function(deadline) {
   return new DeadlineContext(this, deadline);
@@ -127,8 +131,8 @@ Context.prototype.withDeadline = function(deadline) {
  * will be automatically cancelled after a given timeout.  The
  * returned context will have an additional method cancel() which can
  * be used to cancel the context early.
- * @param {Number} A timeout in milliseconds.
- * @return {Context} A new derived cancellable context.
+ * @param {number} timeout A timeout in milliseconds.
+ * @return {module:vanadium.context.Context} A new derived cancellable context.
  */
 Context.prototype.withTimeout = function(timeout) {
   var msTimeout = timeout;

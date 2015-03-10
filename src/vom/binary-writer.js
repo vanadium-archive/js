@@ -10,6 +10,7 @@ var INITIAL_SIZE = 64;
 /**
  * BinaryWriter assists in writing to a Uint8Array by expanding the buffer to
  * the necessary size and keeping track of the current write position.
+ * @private
  * @constructor
  */
 function BinaryWriter() {
