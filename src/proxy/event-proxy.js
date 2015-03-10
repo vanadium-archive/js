@@ -144,7 +144,7 @@ ExtensionEventProxy.prototype.sendRpc = function(type, data, cb) {
   // running or if it crashes during initialization.
   function onError(err) {
     removeListeners();
-    cb(err);
+    cb(objectToError(err));
   }
 
   var proxy = this;
