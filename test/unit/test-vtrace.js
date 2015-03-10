@@ -10,6 +10,7 @@ test('Basic Span', function(assert) {
   var ctx = context.Context();
   ctx = vtrace.withNewStore(ctx);
   ctx = vtrace.withNewTrace(ctx);
+  vtrace.forceCollect(ctx);
   ctx = vtrace.withNewSpan(ctx, 'span1');
 
   var span = vtrace.getSpan(ctx);
@@ -22,9 +23,8 @@ test('Basic Span', function(assert) {
   assert.equal(records.length, 1);
   var trace = records[0];
 
-  assert.equal(trace.spans.length, 2);
-  assert.equal(trace.spans[0].name, '');
-  assert.equal(trace.spans[1].name, 'span1');
+  assert.equal(trace.spans.length, 1);
+  assert.equal(trace.spans[0].name, 'span1');
 
   assert.end();
 });

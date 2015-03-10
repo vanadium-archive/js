@@ -253,8 +253,6 @@ OutstandingRPC.prototype.constructMessage = function() {
     timeout.noDeadline = true;
   }
 
-  var span = vtrace.getSpan(this._ctx);
-
   var jsonMessage = {
     name: this._name,
     method: this._methodName,
@@ -262,11 +260,8 @@ OutstandingRPC.prototype.constructMessage = function() {
     // TODO(bprosnitz) Is || 0 needed?
     numOutArgs: this._numOutParams || 0,
     isStreaming: this._isStreaming,
-    deadline: timeout,
-    traceRequest: {
-      spanID: span.id,
-      traceID: span.trace,
-    }
+    traceRequest: vtrace.request(this._ctx),
+    deadline: timeout
   };
 
   var header = new VanadiumRPCRequest(jsonMessage);
