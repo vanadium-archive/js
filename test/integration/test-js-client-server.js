@@ -3,6 +3,8 @@ var serve = require('./serve');
 var leafDispatcher = require('../../src/ipc/leaf-dispatcher');
 var Deferred = require('../../src/lib/deferred');
 var vdl = require('../../src/vdl');
+var stringify = require('../../src/vdl/stringify');
+var TypeUtil = require('../../src/vdl/type-util');
 
 // TODO(bprosnitz) Combine CacheService and CacheServicePromises so there
 // isn't as much duplicated code.
@@ -287,7 +289,7 @@ var TypeService = {
   isTyped: function(context, any) {
     // We expect to receive the internally typed value of the any.
     // However, clients who send JSValue will not produce a typed value here.
-    return vdl.TypeUtil.isTyped(any);
+    return TypeUtil.isTyped(any);
   },
   isString: function(context, str) {
     // We expect to receive a native string, if the client sent us one.
@@ -295,12 +297,12 @@ var TypeService = {
   },
   isStruct: function(context, struct) {
     // A struct should always be typed.
-    if (vdl.TypeUtil.isTyped(struct)) {
+    if (TypeUtil.isTyped(struct)) {
       return;
     }
     // If it was untyped (a JSValue object), then the code is incorrect.
 
-    throw new Error('did not receive a typed struct' + vdl.Stringify(struct));
+    throw new Error('did not receive a typed struct' + stringify(struct));
   },
   swap: function(context, a, b) {
     return [b, a];
@@ -488,11 +490,11 @@ function runTypeService(options) {
           t.deepEqual([res1, res2], [bb, aa], 'correctly swapped the 2 inputs');
 
           // Verify that res2 (the original aa) still has the right type.
-          t.ok(vdl.TypeUtil.isTyped(res2), 'aa is still typed');
+          t.ok(TypeUtil.isTyped(res2), 'aa is still typed');
           t.deepEqual(res2._type, simpleType, 'aa has the correct type');
 
           // Verify that res1 (the original bb) still has the right type.
-          t.ok(vdl.TypeUtil.isTyped(res1), 'bb is still typed');
+          t.ok(TypeUtil.isTyped(res1), 'bb is still typed');
           t.deepEqual(res1._type, simpleTypeB, 'bb has the correct type');
 
           end(t);

@@ -1,5 +1,5 @@
 var Incoming = require('./message-type').Incoming;
-var vdl = require('../vdl');
+var byteUtil = require('../vdl/byte-util');
 var vom = require('../vom');
 var emitStreamError = require('../lib/emit-stream-error');
 var vError = require('../gen-vdl/v.io/v23/verror');
@@ -21,7 +21,7 @@ Handler.prototype.handleResponse = function(type, data) {
   switch (type) {
     case Incoming.STREAM_RESPONSE:
       try {
-        data = vom.decode(vdl.Util.hex2Bytes(data));
+        data = vom.decode(byteUtil.hex2Bytes(data));
       } catch (e) {
         emitStreamError(this._stream,
           new vError.InternalError(this._ctx,

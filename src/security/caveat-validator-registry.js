@@ -6,6 +6,7 @@
 
 var vdl = require('../vdl');
 var vom = require('../vom');
+var byteUtil = require('../vdl/byte-util');
 var standardCaveats = require('./standard-caveats');
 var vdlSecurity = require('../gen-vdl/v.io/v23/security');
 var unwrapArg = require('../lib/unwrap-arg');
@@ -32,7 +33,7 @@ function CaveatValidatorRegistry() {
  * @private
  */
 CaveatValidatorRegistry.prototype._makeKey = function(bytes) {
-  return vdl.Util.bytes2Hex(bytes);
+  return byteUtil.bytes2Hex(bytes);
 };
 
 /**

@@ -4,6 +4,7 @@
 var test = require('prova');
 var createSignatures = require('../../src/vdl/create-signatures');
 var vdl = require('../../src/vdl');
+var stringify = require('../../src/vdl/stringify');
 
 function TestService() {
 }
@@ -80,8 +81,8 @@ test('create signatures with no description', function(t) {
       tags: []
     }]
   };
-  var stringifiedResult = vdl.Stringify(sigs[0]);
-  var stringifiedExpected = vdl.Stringify(expected);
+  var stringifiedResult = stringify(sigs[0]);
+  var stringifiedExpected = stringify(expected);
   t.equals(stringifiedResult, stringifiedExpected);
   t.end();
 });
@@ -153,13 +154,13 @@ test('create signatures with full description', function(t) {
   };
   var sigs = createSignatures(testService, desc);
   t.equals(sigs.length, 1);
-  var stringifiedResult = vdl.Stringify(sigs[0]);
-  var stringifiedExpected = vdl.Stringify(desc);
+  var stringifiedResult = stringify(sigs[0]);
+  var stringifiedExpected = stringify(desc);
   t.equals(stringifiedResult, stringifiedExpected);
   t.end();
 });
 
-test('create signatures with one description but extra methods', 
+test('create signatures with one description but extra methods',
           function(t) {
   var testService = new TestService();
   var desc = {
@@ -215,8 +216,8 @@ test('create signatures with one description but extra methods',
   };
   var sigs = createSignatures(testService, desc);
   t.equals(sigs.length, 2);
-  var stringifiedResult = vdl.Stringify(sigs[0]);
-  var stringifiedExpected = vdl.Stringify(desc);
+  var stringifiedResult = stringify(sigs[0]);
+  var stringifiedExpected = stringify(desc);
   t.equals(stringifiedResult, stringifiedExpected);
 
   var expectedExtra = {
@@ -238,8 +239,8 @@ test('create signatures with one description but extra methods',
       tags: []
     }]
   };
-  var stringifiedResultExtra = vdl.Stringify(sigs[1]);
-  var stringifiedExpectedExtra = vdl.Stringify(expectedExtra);
+  var stringifiedResultExtra = stringify(sigs[1]);
+  var stringifiedExpectedExtra = stringify(expectedExtra);
   t.equals(stringifiedResultExtra, stringifiedExpectedExtra);
 
   t.end();
@@ -317,8 +318,8 @@ test('create signatures with full description across multiple descs',
   }];
   var sigs = createSignatures(testService, descs);
   t.equals(sigs.length, 3);
-  var stringifiedResult = vdl.Stringify(sigs);
-  var stringifiedExpected = vdl.Stringify(descs);
+  var stringifiedResult = stringify(sigs);
+  var stringifiedExpected = stringify(descs);
   t.equals(stringifiedResult, stringifiedExpected);
   t.end();
 });
@@ -400,8 +401,8 @@ test('create signatures with multiple descs and missing methods',
       tags: []
     }]
   }]);
-  var stringifiedResult = vdl.Stringify(sigs);
-  var stringifiedExpected = vdl.Stringify(expectedDescs);
+  var stringifiedResult = stringify(sigs);
+  var stringifiedExpected = stringify(expectedDescs);
   t.equals(stringifiedResult, stringifiedExpected);
   t.end();
 });
@@ -448,7 +449,7 @@ test('create signatures with full description across multiple descs' +
         name: 'a',
         doc: 'aDoc',
         type: vdl.Types.STRING
-      }], 
+      }],
       inStream: null,
       outStream: null,
       tags: []
@@ -502,8 +503,8 @@ test('create signatures with full description across multiple descs' +
   }];
   var sigs = createSignatures(testService, descs);
   t.equals(sigs.length, 3);
-  var stringifiedResult = vdl.Stringify(sigs);
-  var stringifiedExpected = vdl.Stringify(descs);
+  var stringifiedResult = stringify(sigs);
+  var stringifiedExpected = stringify(descs);
   t.equals(stringifiedResult, stringifiedExpected);
   t.end();
 });

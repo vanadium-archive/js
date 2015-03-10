@@ -28,25 +28,18 @@ module.exports = {
    * Error namespace
    * @namespace
    */
-  errors: require('./gen-vdl/v.io/v23/verror'),
-  makeError:  require('./errors/make-errors'),
-  /**
-   * Namespace for error codes
-   * @namespace
-   */
-  errorActions: require('./errors/actions'),
+  errors: require('./errors'),
   init: init,
   /**
-   * Namespace of vlog levels
+   * Namespace of vlog
    * @namespace
    */
-  logLevels: require('./lib/vlog').levels,
+  vlog: require('./lib/vlog'),
   /**
    * Namespace of utilities for the Vanadium namespace
    * @namespace
    */
   namespaceUtil: require('./namespace/util'),
-  Promise: require('./lib/promise'),
   aclAuthorizer: require('./security/acl-authorizer'),
   /**
    * Namespace for context related objects
@@ -58,13 +51,18 @@ module.exports = {
    * @namespace
    */
   vdl: require('./vdl'),
+
+  /**
+   * Namespace for vom related exports
+   * @namespace
+   */
+  vom: require('./vom'),
 };
 
 if (isBrowser) {
   // Add ExtensionNotInstalledError and isExtensionInstalled to exports if we
   // are in a browser.
   module.exports = extend(module.exports, {
-    ExtensionNotInstalledError: extnUtils.ExtensionNotInstalledError,
     isExtensionInstalled: extnUtils.isExtensionInstalled
   });
 }

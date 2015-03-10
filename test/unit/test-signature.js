@@ -5,6 +5,7 @@
 var test = require('prova');
 var Signature = require('../../src/vdl/signature.js');
 var vdl = require('../../src/vdl');
+var stringify = require('../../src/vdl/stringify');
 
 function TestService() {
   this.nonPrototypeFunction = function(ctx, a, $stream, b) {};
@@ -20,11 +21,11 @@ test('signature', function(t) {
     {
       name: 'No descriptor',
       desc: undefined,
-      expected: { 
-        methods: [], 
-        name: '', 
-        doc: '', 
-        embeds: [], 
+      expected: {
+        methods: [],
+        name: '',
+        doc: '',
+        embeds: [],
         pkgPath: ''
       }
     },
@@ -44,9 +45,9 @@ test('signature', function(t) {
         ]
       },
       expected: {
-        name: '', 
-        doc: '', 
-        embeds: [], 
+        name: '',
+        doc: '',
+        embeds: [],
         pkgPath: '',
         methods: [
           {
@@ -375,9 +376,9 @@ test('signature', function(t) {
         ]
       },
       expected: {
-        name: '', 
-        doc: '', 
-        embeds: [], 
+        name: '',
+        doc: '',
+        embeds: [],
         pkgPath: '',
         methods: [
           {
@@ -454,8 +455,8 @@ test('signature', function(t) {
     var test = tests[i];
 
     var resultSig = new Signature(testService, test.desc);
-    var stringifiedResult = vdl.Stringify(resultSig);
-    var stringifiedExpected = vdl.Stringify(test.expected);
+    var stringifiedResult = stringify(resultSig);
+    var stringifiedExpected = stringify(test.expected);
 
     t.equals(stringifiedResult, stringifiedExpected, test.name);
   }

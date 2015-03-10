@@ -15,6 +15,9 @@ var verror = require('../gen-vdl/v.io/v23/verror');
 var SecurityCall = require('../security/call');
 var ServerCall = require('./server-call');
 var vdl = require('../vdl');
+var byteUtil = require('../vdl/byte-util');
+var typeUtil = require('../vdl/type-util');
+var capitalize = require('../vdl/util').capitalize;
 var vom = require('../vom');
 var vdlsig = require('../gen-vdl/v.io/v23/vdlroot/signature');
 var namespaceUtil = require('../namespace/util');
@@ -76,7 +79,7 @@ Router.prototype.handleRequest = function(messageId, type, request) {
 
 Router.prototype.handleAuthorizationRequest = function(messageId, request) {
   try {
-   request = vom.decode(vdl.Util.hex2Bytes(request));
+   request = vom.decode(byteUtil.hex2Bytes(request));
   } catch (e) {
     JSON.stringify({
       // TODO(bjornick): Use the real context
@@ -141,7 +144,7 @@ Router.prototype.handleCaveatValidationRequest = function(messageId, request) {
     var response = new CaveatValidationResponse({
       results: results
     });
-    var data = vdl.Util.bytes2Hex(vom.encode(response));
+    var data = byteUtil.bytes2Hex(vom.encode(response));
     self._proxy.sendRequest(data, Outgoing.CAVEAT_VALIDATION_RESPONSE, null,
       messageId);
   }).catch(function(err) {
@@ -175,7 +178,7 @@ Router.prototype.handleLookupRequest = function(messageId, request) {
         kind: vdl.Kind.LIST,
         elem: vdlsig.Interface.prototype._type
       });
-      res = vdl.Util.bytes2Hex(vom.encode(canonicalSignatureList));
+      res = byteUtil.bytes2Hex(vom.encode(canonicalSignatureList));
     } catch (e) {
       return Promise.reject(e);
     }
@@ -231,13 +234,13 @@ Router.prototype.handleRPCRequest = function(messageId, vdlRequest) {
   var err;
   var request;
   try {
-   request = vom.decode(vdl.Util.hex2Bytes(vdlRequest));
+   request = vom.decode(byteUtil.hex2Bytes(vdlRequest));
   } catch (e) {
     err = new Error('Failed to decode args: ' + e);
     this.sendResult(messageId, '', null, err);
     return;
   }
-  var methodName = vdl.MiscUtil.capitalize(request.method);
+  var methodName = capitalize(request.method);
 
   var server = this._servers[request.serverId];
 
@@ -271,7 +274,7 @@ Router.prototype.handleRPCRequest = function(messageId, vdlRequest) {
     this._contextMap[messageId] = call;
     this._outstandingRequestForId[messageId] = 0;
     this.incrementOutstandingRequestForId(messageId);
-    var globPattern = vdl.TypeUtil.unwrap(request.args[0]);
+    var globPattern = typeUtil.unwrap(request.args[0]);
     this.handleGlobRequest(messageId, call.suffix,
                            server, new Glob(globPattern),  call, invoker,
                            completion);
@@ -307,7 +310,7 @@ Router.prototype.handleRPCRequest = function(messageId, vdlRequest) {
     if (methodSig.inArgs[i].type.kind === vdl.Kind.ANY) {
       return arg;
     }
-    return vdl.TypeUtil.unwrap(arg);
+    return typeUtil.unwrap(arg);
   });
   var options = {
     methodName: methodName,
@@ -548,7 +551,7 @@ Router.prototype.sendResult = function(messageId, name, results, err,
       results: results,
       err: errorStruct
     });
-    var responseDataVOM = vdl.Util.bytes2Hex(vom.encode(responseData));
+    var responseDataVOM = byteUtil.bytes2Hex(vom.encode(responseData));
     this._proxy.sendRequest(responseDataVOM, Outgoing.RESPONSE, null,
         messageId);
   }

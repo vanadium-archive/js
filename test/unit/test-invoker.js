@@ -9,6 +9,7 @@ var test = require('prova');
 var Invoker = require('../../src/invocation/invoker.js');
 var Context = require('../../src/runtime/context').Context;
 var vdl = require('../../src/vdl');
+var stringify = require('../../src/vdl/stringify');
 var base = require('../vdl-out/v.io/x/ref/lib/vdl/testdata/base');
 
 function BasePartialImpl() {
@@ -140,8 +141,8 @@ test('Invoker and signature for vdl-generated base.js',
             ]
         }];
 
-        var expectedStr = vdl.Stringify(expectedSig);
-        var resultStr = vdl.Stringify(sig);
+        var expectedStr = stringify(expectedSig);
+        var resultStr = stringify(sig);
 
         t.equals(resultStr, expectedStr);
         t.end();

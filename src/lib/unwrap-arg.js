@@ -1,4 +1,5 @@
-var vdl = require('../vdl');
+var unwrap = require('../vdl/type-util').unwrap;
+var Kind = require('../vdl/kind');
 
 module.exports = unwrapArg;
 
@@ -12,8 +13,8 @@ module.exports = unwrapArg;
  * @return {*} either arg or an unwrapped arg.
  */
 function unwrapArg(arg, targetType) {
-    if (targetType.kind === vdl.Kind.ANY) {
+    if (targetType.kind === Kind.ANY) {
       return arg;
     }
-    return vdl.TypeUtil.unwrap(arg);
+    return unwrap(arg);
 }

@@ -20,6 +20,9 @@ var context = require('../runtime/context');
 var emitStreamError = require('../lib/emit-stream-error');
 var SimpleHandler = require('../proxy/simple-handler');
 var vdl = require('../vdl');
+var byteUtil = require('../vdl/byte-util');
+var unwrap = require('../vdl/type-util').unwrap;
+var uncapitalize = require('../vdl/util').uncapitalize;
 var vom = require('../vom');
 var Encoder = require('../vom/encoder');
 var ByteArrayMessageWriter = require('../vom/byte-array-message-writer');
@@ -58,7 +61,7 @@ function convertOutArg(arg, type) {
   if (!type.equals(vdl.Types.JSVALUE)) {
     canonOutArg = vdl.Canonicalize.reduce(arg, type);
   }
-  return vdl.TypeUtil.unwrap(canonOutArg);
+  return unwrap(canonOutArg);
 }
 
 // Helper function to safely convert an out argument.
@@ -184,7 +187,7 @@ OutstandingRPC.prototype.handleResponse = function(type, data) {
 OutstandingRPC.prototype.handleCompletion = function(data) {
   var response;
   try {
-    response = vom.decode(vdl.Util.hex2Bytes(data));
+    response = vom.decode(byteUtil.hex2Bytes(data));
   } catch (e) {
     this.handleError(
       new verror.InternalError(
@@ -204,7 +207,7 @@ OutstandingRPC.prototype.handleCompletion = function(data) {
 OutstandingRPC.prototype.handleStreamData = function(data) {
   if (this._def.stream) {
     try {
-      data = vom.decode(vdl.Util.hex2Bytes(data));
+      data = vom.decode(byteUtil.hex2Bytes(data));
     } catch (e) {
       this.handleError(
         new verror.InternalError(this._ctx,
@@ -277,7 +280,7 @@ OutstandingRPC.prototype.constructMessage = function() {
   for (var i = 0; i < this._args.length; i++) {
     encoder.encode(this._args[i]);
   }
-  return vdl.Util.bytes2Hex(writer.getBytes());
+  return byteUtil.bytes2Hex(writer.getBytes());
 };
 
 /**
@@ -377,7 +380,7 @@ Client.prototype.bindWithSignature = function(name, signature) {
   var boundObject = {};
 
   function bindMethod(methodSig) {
-    var method = vdl.MiscUtil.uncapitalize(methodSig.name);
+    var method = uncapitalize(methodSig.name);
 
     boundObject[method] = function(ctx /*, arg1, arg2, ..., callback*/) {
       var args = Array.prototype.slice.call(arguments, 0);
@@ -591,7 +594,7 @@ Client.prototype._sendRequest = function(ctx, message, type, cb) {
     // If the response came off the wire, we need to vdl decode the bytes.
     if (typeof args === 'string') {
       try {
-        deferred.resolve(vom.decode(vdl.Util.hex2Bytes(args)));
+        deferred.resolve(vom.decode(byteUtil.hex2Bytes(args)));
       } catch (e) {
         deferred.reject(
           new verror.InternalError(ctx, ['Failed to decode result: ', e]));

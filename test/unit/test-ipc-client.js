@@ -4,6 +4,7 @@ var context = require('../../src/runtime/context');
 var createSignatures = require('../../src/vdl/create-signatures');
 var createMockProxy = require('./mock-proxy');
 var vdl = require('../../src/vdl');
+var byteUtil = require('../../src/vdl/byte-util');
 var vom = require('../../src/vom');
 var vtrace = require('../../src/lib/vtrace');
 var app = require('../../src/gen-vdl/v.io/x/ref/services/wsprd/app');
@@ -40,7 +41,7 @@ function testContext() {
 }
 
 var mockProxy = createMockProxy(function(data, type) {
-  var decodedData = vom.decode(vdl.Util.hex2Bytes(data));
+  var decodedData = vom.decode(byteUtil.hex2Bytes(data));
   var response = new app.VeyronRPCResponse();
 
   if (decodedData instanceof app.VeyronRPCRequest &&
@@ -50,7 +51,7 @@ var mockProxy = createMockProxy(function(data, type) {
     // Take the first arg and return it in a result list.
     response.outArgs = [decodedData];
   }
-  return vdl.Util.bytes2Hex(vom.encode(response));
+  return byteUtil.bytes2Hex(vom.encode(response));
 });
 
 test('creating instances', function(assert) {

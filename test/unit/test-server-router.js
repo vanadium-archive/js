@@ -7,6 +7,7 @@ var Router = require('../../src/ipc/server-router');
 var Server = require('../../src/ipc/server');
 var Outgoing = require('../../src/proxy/message-type').Outgoing;
 var vdl = require('../../src/vdl');
+var byteUtil = require('../../src/vdl/byte-util');
 var vom = require('../../src/vom');
 var context = require('../../src/runtime/context');
 
@@ -100,7 +101,7 @@ test('Server Router Signature Lookup', function(t) {
     var data = JSON.parse(responseData);
     t.ok(data.hasOwnProperty('handle'), 'has a handle');
     t.equals(data.hasAuthorizer, true, 'has authorizer');
-    var decodedSignature = vom.decode(vdl.Util.hex2Bytes(data.signature));
+    var decodedSignature = vom.decode(byteUtil.hex2Bytes(data.signature));
     t.deepEquals(decodedSignature.val, expectedSignature, 'signature');
 
     t.end();

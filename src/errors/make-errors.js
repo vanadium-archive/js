@@ -17,7 +17,7 @@ module.exports = makeError;
  * the error constructor.
  * @returns {constructor} A constructor that can be used to create vanadium
  * errors with the given error id.
- * @memberof module:vanadium
+ * @memberof module:vanadium~errors
  */
 function makeError(id, retryCode, format, types) {
   var fname = id.split('.').pop();

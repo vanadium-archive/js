@@ -11,7 +11,7 @@ var MessageType = require('./message-type');
 var Incoming = MessageType.Incoming;
 var Outgoing = MessageType.Outgoing;
 var vLog = require('./../lib/vlog');
-var vdl = require('../vdl');
+var byteUtil = require('../vdl/byte-util');
 var vom = require('../vom');
 var unwrap = require('../vdl/type-util').unwrap;
 
@@ -59,7 +59,7 @@ Proxy.prototype.process = function(message) {
 
   var payload;
   try {
-    payload = vom.decode(vdl.Util.hex2Bytes(message.data));
+    payload = vom.decode(byteUtil.hex2Bytes(message.data));
     payload.message = unwrap(payload.message);
   } catch (e) {
     vLog.error(e);
