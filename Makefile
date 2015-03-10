@@ -89,15 +89,17 @@ JS_SRC_FILES = $(shell find src -name "*.js" | sed 's/ /\\ /')
 # string with no spaces.
 COMMON_SERVICES := "test_serviced"
 
-all: gen-vdl lint build
+all: gen-vdl lint build docs
 
-build: dist/vanadium.js dist/vanadium.min.js extension/vanadium.zip
+build: dist docs extension/vanadium.zip
 
 dist/vanadium.js: src/vanadium.js $(JS_SRC_FILES) $(NODE_MODULES_JS_FILES) | node_modules
 	$(call BROWSERIFY,$<,$@)
 
 dist/vanadium.min.js: src/vanadium.js $(JS_SRC_FILES) $(NODE_MODULES_JS_FILES) | node_modules
 	$(call BROWSERIFY-MIN,$<,$@)
+
+dist: dist/vanadium.js dist/vanadium.min.js
 
 extension/vanadium.zip: node_modules
 	$(MAKE) -C extension vanadium.zip
@@ -201,8 +203,8 @@ dependency-check: node_modules
 	dependency-check package.json --entry src/vanadium.js
 
 clean:
-	@$(RM) -fr dist/*
-	@$(RM) -fr docs/*
+	@$(RM) -fr dist
+	@$(RM) -fr docs
 	@$(RM) -fr go/bin
 	@$(RM) -fr go/pkg
 	@$(RM) -fr node_modules

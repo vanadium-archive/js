@@ -781,7 +781,7 @@ errors with the given error id.
         
             
 <dt>
-    <h4 class="name" id="~init"><span class="type-signature">&lt;inner> </span>init<span class="signature">(config)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="~init"><span class="type-signature">&lt;inner> </span>init<span class="signature">(config, <span class="optional">cb</span>)</span><span class="type-signature"> &rarr; {Promise}</span></h4>
     
     
 </dt>
@@ -811,6 +811,8 @@ errors with the given error id.
 		<th>Type</th>
 
 		
+		<th>Argument</th>
+		
 
 		
 
@@ -836,10 +838,52 @@ errors with the given error id.
             </td>
 
             
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
 
             
 
             <td class="description last">Configuration options</td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>cb</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">If provided, the callback that will be called with an
+error or the new runtime</td>
         </tr>
 
 	
@@ -889,6 +933,29 @@ errors with the given error id.
     
     
     
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    A promise that resolves to the new Runtime
+</div>
+
+
+
+<dl>
+	<dt>
+		Type
+	</dt>
+	<dd>
+		
+<span class="param-type">Promise</span>
+
+
+	</dd>
+</dl>
+
+
+        
     
     
 </dd>
