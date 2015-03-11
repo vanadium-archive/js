@@ -149,9 +149,7 @@ test('Test glob\'s callback is called when glob finishes.' +
   }
 });
 
-//TODO(aghassemi) This test is passing in browser but failing in node
-//due to a race condition (steam closing before items come in)
-test.skip('Test globbing non-existing rooted name - ' +
+test('Test globbing non-existing rooted name - ' +
   'glob(/RootedBadName.Google.tld:1234/*)', function(assert) {
 
   // increase timeout for this test as it retries bad-url until timeout.
@@ -161,7 +159,7 @@ test.skip('Test globbing non-existing rooted name - ' +
   init(config).then(function glob(rt) {
     runtime = rt;
     var namespace = rt.namespace();
-    var rpc = namespace.glob(rt.getContext().withDeadline(1000),
+    var rpc = namespace.glob(rt.getContext().withTimeout(timeouts.long),
                              '/RootedBadName.Google.tld:1234/*');
     rpc.catch(function(err) {
       // Ignore the timeout error.
