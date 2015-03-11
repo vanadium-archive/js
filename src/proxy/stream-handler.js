@@ -32,11 +32,11 @@ Handler.prototype.handleResponse = function(type, data) {
       this._stream._queueRead(data);
       return true;
     case Incoming.STREAM_CLOSE:
-      this._stream._queueRead(null);
+      this._stream._queueClose();
       return true;
     case Incoming.ERROR_RESPONSE:
       emitStreamError(this._stream, data);
-      this._stream._queueRead(null);
+      this._stream._queueClose();
       return true;
   }
 

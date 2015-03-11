@@ -3,6 +3,7 @@ var serve = require('./serve');
 var leafDispatcher = require('../../src/ipc/leaf-dispatcher');
 var Deferred = require('../../src/lib/deferred');
 var vdl = require('../../src/vdl');
+var builtins = require('../../src/vdl/builtins');
 var stringify = require('../../src/vdl/stringify');
 var TypeUtil = require('../../src/vdl/type-util');
 
@@ -118,13 +119,13 @@ var CacheServicePromises = {
 // add more test cases with types.
 
 runCache({
-  testName: 'without VDL using callbacks',
+  testName: 'without VDL (JSValue) using callbacks',
   definition: CacheService,
   name: 'foo.Cache'
 });
 
 runCache({
-  testName: 'without VDL using promises',
+  testName: 'without VDL (JSValue) using promises',
   definition: CacheServicePromises,
   name: 'foo.Cache'
 });
@@ -199,13 +200,13 @@ function runCache(options) {
 
   test(namePrefix + 'cache.multiGet()', function(t) {
     // `cache.multiGet()` returns an object that has a "stream" attribute.
-    // The way the streaming interface is implmented for cache.mutliGet()
+    // The way the streaming interface is implmented for cache.multiGet()
     // is that you use stream.write(key) to get the value of a key. The value
     // is emitted on the stream's data event. In this test there are a few
     //  steps to set this up:
     //
     // 1. Prime the cache by setting a bunch of key/values
-    // 2. Add a listener or create a stream reader to recieve the values
+    // 2. Add a listener or create a stream reader to receive the values
     // 3. Assert the values are correct
     // 4. End the stream.
     setup(options, function(err, ctx, cache, end){
@@ -231,7 +232,7 @@ function runCache(options) {
       .all(jobs)
       .then(function() {
 
-        // 2. Add a listener or create a stream reader to recieve the values
+        // 2. Add a listener or create a stream reader to receive the values
         var promise = cache.multiGet(ctx);
         var stream = promise.stream;
         var writes = 0;
@@ -345,10 +346,10 @@ var TypeService = {
           {
             name: 'struct',
             doc: 'The value should be a struct.',
-            type: {
+            type: new vdl.Type({
               kind: vdl.Kind.STRUCT,
               fields: []
-            }
+            })
           }
         ],
         outArgs: []
@@ -503,8 +504,599 @@ function runTypeService(options) {
     });
   });
 
-  // TODO(alexfandrianto): This test ensures that we can send a typed stream in
-  // JS.
+  function setup(options, cb) {
+    var dispatcher = leafDispatcher(options.definition);
+
+    serve('testing/typeService', dispatcher, function(err, res) {
+      cb(err, res.runtime.getContext(), res.service, res.end);
+    });
+  }
+}
+
+var boolListType = new vdl.Type({
+  kind: vdl.Kind.LIST,
+  elem: vdl.Types.BOOL
+});
+var numStructType = new vdl.Type({
+  kind: vdl.Kind.STRUCT,
+  fields: [
+    {
+      name: 'Number',
+      type: vdl.Types.FLOAT64
+    },
+    {
+      name: 'BigInt',
+      type: vdl.Types.INT64
+    },
+    {
+      name: 'String',
+      type: vdl.Types.STRING
+    }
+  ]
+});
+var typeListType = new vdl.Type({
+  kind: vdl.Kind.LIST,
+  elem: vdl.Types.TYPEOBJECT
+});
+
+// TODO(alexfandrianto): Add a callback version of the typed streaming service.
+// See each test case for what the service method tests.
+var TypedStreamingService = {
+  // inStreamOnly verifies that typed inStreams work properly.
+  inStreamOnly: function(ctx, numTimes, $stream) {
+    // Receive stream values numTimes
+    var numReceived = 0;
+    var def = new Deferred();
+    $stream.on('end', function() {
+      if (numReceived !== numTimes) {
+        var err = new Error('Got ' + numReceived + '. Wanted ' + numTimes);
+        def.reject(err);
+      }
+      def.resolve(numReceived);
+    });
+
+    $stream.on('error', function(e) {
+      def.reject(e);
+    });
+    $stream.on('data', function(str) {
+      if (typeof str !== 'string') {
+        def.reject(new Error('Expected a string, but got ' + str));
+      }
+      numReceived++;
+    });
+    $stream.read();
+    $stream.write('No outstream type; this cannot be sent');
+    return def.promise;
+  },
+  // outStreamOnly verifies that typed outStreams work properly.
+  outStreamOnly: function(ctx, numTimes, $stream) {
+    // Send stream values numTimes
+    var numSent = 0;
+    while (numSent < numTimes) {
+      $stream.write(numSent); // Despite sending int, we autoconvert to BigInt.
+      numSent++;
+    }
+    return numSent;
+  },
+  // bidirBoolListNegationsStream tests that bidirectional streams can send
+  // composite types back and forth, as well as modify the data items streamed.
+  bidirBoolListNegationStream: function(ctx, $stream) {
+    // Given a list of bool, send the opposite bools back.
+    var numReceived = 0;
+    var def = new Deferred();
+    $stream.on('end', function() {
+      def.resolve(numReceived);
+    });
+
+    $stream.on('error', function(e) {
+      def.reject(e);
+    });
+    $stream.on('data', function(boolList) {
+      numReceived++;
+      var oppList = boolList.map(function(b) {
+        return !b;
+      });
+      $stream.write(oppList);
+    });
+    $stream.read();
+    return def.promise;
+  },
+  // structValueStream converts a number to a struct based on that number.
+  // Ensures that custom-defined types can be sent across the stream.
+  structValueStream: function(ctx, $stream) {
+    // Given a number, send a number struct back.
+    var numReceived = 0;
+    var def = new Deferred();
+    $stream.on('end', function() {
+      def.resolve(numReceived);
+    });
+    $stream.on('error', function(e) {
+      def.reject(e);
+    });
+    $stream.on('data', function(num) {
+      numReceived++;
+      $stream.write({
+        'number': num,
+        'bigInt': vdl.BigInt.fromNativeNumber(num),
+        'string': '' + num
+      });
+    });
+    $stream.read();
+    return def.promise;
+  },
+  // anyStream tests that typed values can pass through a bidirectional stream.
+  anyStream: function(ctx, types, $stream) {
+    // Given a list of types, listen to a stream of values.
+    // Errors if any of the values received did not match their expected type.
+    // Stream those values back directly.
+    var typesReceived = [];
+    var def = new Deferred();
+    $stream.on('end', function() {
+      def.resolve(typesReceived);
+    });
+    $stream.on('error', function(e) {
+      def.reject(e);
+    });
+    $stream.on('data', function(val) {
+      // Verify that the value has no type if native, or matches, otherwise.
+      var expectedType = types[typesReceived.length];
+      if (expectedType.equals(vdl.Types.JSVALUE) && val._type !== undefined) {
+        def.reject(new Error('Native value had a type: ' +
+          JSON.stringify(val)));
+      }
+      if (!expectedType.equals(vdl.Types.JSVALUE) &&
+        !expectedType.equals(val._type)) {
+        def.reject(new Error('Value had wrong type: ' +
+          JSON.stringify(val)));
+      }
+
+      // The value had the corerct type. Write the same value back.
+      // Note: Native values lack types, so use the JSValue type instead.
+      typesReceived.push(val._type || vdl.Types.JSVALUE);
+      $stream.write(val);
+    });
+    $stream.read();
+    return def.promise;
+  },
+  _serviceDescription: {
+    methods: [
+      {
+        name: 'InStreamOnly',
+        inArgs: [
+          {
+            name: 'numTimes',
+            doc: '# of strings client must send',
+            type: vdl.Types.UINT32
+          }
+        ],
+        outArgs: [
+          {
+            name: 'numReceived',
+            doc: '# of strings received from client',
+            type: vdl.Types.UIN32
+          }
+        ],
+        inStream: {
+          type: vdl.Types.STRING
+        },
+        outStream: null
+      },
+      {
+        name: 'OutStreamOnly',
+        inArgs: [
+          {
+            name: 'numTimes',
+            doc: '# of ints that the client wants back',
+            type: vdl.Types.UINT32
+          }
+        ],
+        outArgs: [
+          {
+            name: 'numSent',
+            doc: '# of ints that service tried to send',
+            type: vdl.Types.UINT32
+          }
+        ],
+        inStream: null,
+        outStream: {
+          type: vdl.Types.INT64
+        }
+      },
+      {
+        name: 'BidirBoolListNegationStream',
+        inArgs: [],
+        outArgs: [
+          {
+            name: 'numReceived',
+            doc: '# of strings received from client',
+            type: vdl.Types.UIN32
+          }
+        ],
+        inStream: {
+          type: boolListType
+        },
+        outStream: {
+          type: boolListType
+        }
+      },
+      {
+        name: 'StructValueStream',
+        outArgs: [
+          {
+            name: 'numReceived',
+            doc: '# of strings received from client',
+            type: vdl.Types.UIN32
+          }
+        ],
+        inStream: {
+          type: vdl.Types.FLOAT64
+        },
+        outStream: {
+          type: numStructType
+        }
+      },
+      {
+        name: 'AnyStream',
+        inArgs: [
+          {
+            name: 'inTypes',
+            doc: 'list of types to be streamed from client',
+            type: typeListType
+          }
+        ],
+        outArgs: [
+          {
+            name: 'outTypes',
+            doc: 'list of types to be streamed to client',
+            type: typeListType
+          }
+        ],
+        inStream: {
+          type: vdl.Types.ANY
+        },
+        outStream: {
+          type: vdl.Types.ANY
+        }
+      }
+    ]
+  }
+};
+
+runTypedStreamingService({
+  testName: 'typed, streaming, non-async',
+  definition: TypedStreamingService,
+  name: 'foo.TypedStreamingService'
+});
+
+// options: testName, definition, name
+function runTypedStreamingService(options) {
+  var namePrefix = 'Test JS client/server ipc ' + options.testName + ' - ';
+
+  // typedStreamingService.inStreamOnly tests:
+  // - correct # of values sent to server
+  // - values received by server have correct type
+  // - outStream is null
+  // - client never gets data, even though server tries to send on outStream
+  test(namePrefix + 'typedStreamingService.inStreamOnly(...)',
+    function(t) {
+
+    setup(options, function(err, ctx, typedStreamingService, end) {
+      t.error(err, 'should not error on setup');
+
+      // The # of strings we intend to send.
+      var strList = ['asdf', ';lkj', 'qwer', 'poiu'];
+      var numStrs = strList.length;
+
+      // Prepare and run the stream test.
+      var testdata = {
+        inArg: numStrs,
+        inData: strList,
+        serviceMethod: typedStreamingService.inStreamOnly,
+        writeType: vdl.Types.STRING,
+        readType: null,
+        onResolveFunc: function(numReceived) {
+          t.equal(numReceived, numStrs,
+            'service received correct # of strings');
+          end(t);
+        },
+        onDataFunc: function(value, dataIndex) {
+          t.fail('received data from the stream: ' + JSON.stringify(value));
+        }
+      };
+      streamTest(t, ctx, testdata, end);
+    });
+  });
+
+  // This test verifies that the stream promise rejects normally.
+  // We send 4 items, but we claim to the server that we will send 6.
+  // Note: the stream also passes the same reject error to the error stream.
+  test(namePrefix + 'typedStreamingService.inStreamOnly(...) - failure',
+    function(t) {
+
+    setup(options, function(err, ctx, typedStreamingService, end) {
+      t.error(err, 'should not error on setup');
+
+      // The # of strings we intend to send.
+      var strList = ['asdf', ';lkj', 'qwer', 'poiu'];
+      var numStrs = strList.length + 2; // mismatch
+
+      // The stream will send an error on the error stream just before the
+      // Promise rejects.
+      var onErrorFunc = function(err) {
+        t.ok(err, 'should error');
+        t.ok(err.message.indexOf('Got 4. Wanted 6') !== -1,
+          'has correct error message');
+      };
+
+      // Prepare and run the stream test.
+      var testdata = {
+        inArg: numStrs,
+        inData: strList,
+        serviceMethod: typedStreamingService.inStreamOnly,
+        writeType: vdl.Types.STRING,
+        readType: null,
+        onResolveFunc: function(numReceived) {
+          t.fail('should have errored; did not send correct # of strings');
+          end(t);
+        },
+        onDataFunc: function(value, dataIndex) {
+          t.fail('received data from the stream: ' + JSON.stringify(value));
+        },
+        onErrorFunc: onErrorFunc,
+        onRejectFunc: function(err) {
+          onErrorFunc(err);
+          end(t);
+        }
+      };
+      streamTest(t, ctx, testdata, end);
+    });
+  });
+
+  // This test verifies that the client cannot send a bad type onto the stream.
+  // It also verifies that this bad value is not sent to the server.
+  // Thus, the promise rejects, and the client gets an error while attempting to
+  // write the bad value (write an int instead of a string).
+  // Note: the stream also passes the same reject error to the error stream.
+  test(namePrefix + 'typedStreamingService.inStreamOnly(...) - failure 2',
+    function(t) {
+
+    setup(options, function(err, ctx, typedStreamingService, end) {
+      t.error(err, 'should not error on setup');
+
+      // The # of strings we intend to send.
+      var strList = [6];
+      var numStrs = strList.length;
+
+      // The stream will send an error on the error stream just before the
+      // Promise rejects.
+      var onErrorFunc = function(err) {
+        t.ok(err, 'should error');
+        t.ok(err.message.indexOf('Got 0. Wanted 1') !== -1,
+          'has correct error message');
+      };
+
+      // Prepare and run the stream test.
+      var testdata = {
+        inArg: numStrs,
+        inData: strList,
+        serviceMethod: typedStreamingService.inStreamOnly,
+        writeType: vdl.Types.STRING,
+        readType: null,
+        onResolveFunc: function(numReceived) {
+          t.fail('should have errored; sent an int');
+          end(t);
+        },
+        onDataFunc: function(value, dataIndex) {
+          t.fail('received data from the stream: ' + JSON.stringify(value));
+        },
+        inDataThrowRegexp: /.*cannot convert to string.*/,
+        onErrorFunc: onErrorFunc,
+        onRejectFunc: function(err) {
+          onErrorFunc(err);
+          end(t);
+        }
+      };
+      streamTest(t, ctx, testdata, end);
+    });
+  });
+
+  // typedStreamingService.outStreamOnly tests:
+  // - correct # of values read and outputted
+  // - values received by server have the correct type
+  // - inStream is null
+  test(namePrefix + 'typedStreamingService.outStreamOnly(...)', function(t) {
+
+    setup(options, function(err, ctx, typedStreamingService, end) {
+      t.error(err, 'should not error on setup');
+
+      // The # of BigInts we want to receive and # received so far.
+      var numInts = 3;
+      var numOutStream = 0;
+
+      // Prepare and run the stream test.
+      var testdata = {
+        inArg: numInts,
+        inData: [],
+        serviceMethod: typedStreamingService.outStreamOnly,
+        writeType: null,
+        readType: vdl.Types.INT64,
+        onResolveFunc: function(numSent) {
+          t.equal(numSent, numInts, 'service knows # of values sent');
+          t.equal(numOutStream, numInts, 'service sent correct # of values');
+          end(t);
+        },
+        onDataFunc: function(value, dataIndex) {
+          t.ok(value instanceof vdl.BigInt, 'value is a BigInt');
+          numOutStream++;
+        }
+      };
+      streamTest(t, ctx, testdata, end);
+    });
+  });
+
+  // typedStreamingService.bidirBoolListNegationStream tests:
+  // - custom defined type (simple) can be sent and received properly
+  // - the values can be modified and returned (each bool is negated)
+  test(namePrefix + 'typedStreamingService.bidirBoolListNegationStream()',
+    function(t) {
+
+    setup(options, function(err, ctx, typedStreamingService, end){
+      t.error(err, 'should not error on setup');
+
+      // These are the testcases.
+      var boolLists = [
+        undefined,          // Note: undefined autoconverts to empty list.
+        [],
+        [true],
+        [false, true, true],
+        [undefined, false], // Note: undefined autoconverts to false.
+      ];
+      var expectedLists = [
+        [],
+        [],
+        [false],
+        [true, false, false],
+        [true, true]
+      ];
+
+      // Prepare and run the stream test.
+      var testdata = {
+        inArg: undefined,
+        inData: boolLists,
+        serviceMethod: typedStreamingService.bidirBoolListNegationStream,
+        writeType: boolListType,
+        readType: boolListType,
+        onResolveFunc: function(numReceived) {
+          t.deepEqual(numReceived, boolLists.length,
+            'service sent correct # of values');
+          end(t);
+        },
+        onDataFunc: function(actual, dataIndex) {
+          t.ok(Array.isArray(actual), 'value is an array');
+          t.deepEqual(actual, expectedLists[dataIndex],
+            'bools were flipped');
+        }
+      };
+      streamTest(t, ctx, testdata, end);
+    });
+  });
+
+  // typedStreamingService.structValueStream tests:
+  // - values with a named struct type can be received properly
+  test(namePrefix + 'typedStreamingService.structValueStream()', function(t) {
+    setup(options, function(err, ctx, typedStreamingService, end){
+      t.error(err, 'should not error on setup');
+
+      // These are the testcases.
+      var numbers = [
+        undefined, // Note: undefined autoconverts to 0
+        3,
+        -500000
+      ];
+      var NumStruct = vdl.Registry.lookupOrCreateConstructor(numStructType);
+      var expectedNumStructs = [
+        new NumStruct({
+          string: '0'
+        }),
+        new NumStruct({
+          number: 3,
+          bigInt: vdl.BigInt.fromNativeNumber(3),
+          string: '3'
+        }),
+        new NumStruct({
+          number: -500000,
+          bigInt: vdl.BigInt.fromNativeNumber(-500000),
+          string: '-500000'
+        })
+      ];
+
+      // Prepare and run the stream test.
+      var testdata = {
+        inArg: undefined,
+        inData: numbers,
+        serviceMethod: typedStreamingService.structValueStream,
+        writeType: vdl.Types.FLOAT64,
+        readType: numStructType,
+        onResolveFunc: function(numReceived) {
+          t.deepEqual(numReceived, numbers.length,
+            'service sent correct # of values');
+          end(t);
+        },
+        onDataFunc: function(actual, dataIndex) {
+          t.ok(actual instanceof NumStruct, 'value is a NumStruct');
+          t.deepEqual(actual, expectedNumStructs[dataIndex],
+            'number converted to NumStruct');
+        }
+      };
+      streamTest(t, ctx, testdata, end);
+    });
+  });
+
+  // typedStreamingService.anyStream tests:
+  // - the any stream succeeds in both directions
+  // - complicated types can be sent across the stream in both directions
+  // - the types received by the server match the expected types
+  // - the types received by the client match the expected types
+  test(namePrefix + 'typedStreamingService.anyStream()', function(t) {
+    setup(options, function(err, ctx, typedStreamingService, end){
+      t.error(err, 'should not error on setup');
+
+      // These are the testcases.
+      var typesSent = [
+        vdl.Types.JSVALUE,
+        vdl.Types.INT32,
+        vdl.Types.INT64,
+        vdl.Types.COMPLEX128,
+        vdl.Types.STRING,
+        vdl.Types.BOOL,
+        numStructType,
+        boolListType,
+        typeListType
+      ];
+
+      var NumStruct = vdl.Registry.lookupOrCreateConstructor(numStructType);
+      var BoolList = vdl.Registry.lookupOrCreateConstructor(boolListType);
+      var TypeList = vdl.Registry.lookupOrCreateConstructor(typeListType);
+
+      var sendList = [
+        3.14,
+        new builtins.INT32(5),
+        new builtins.INT64(-15),
+        new builtins.COMPLEX128(new vdl.Complex(5, -5)),
+        new builtins.STRING('abc'),
+        new builtins.BOOL(true),
+        new NumStruct({
+          number: -0.5
+        }),
+        new BoolList([true, true, false, false]),
+        new TypeList(typesSent)
+      ];
+
+      // Prepare and run the stream test.
+      var testdata = {
+        inArg: typesSent,
+        inData: sendList,
+        serviceMethod: typedStreamingService.anyStream,
+        writeType: vdl.Types.ANY,
+        readType: vdl.Types.ANY,
+        onResolveFunc: function(typesReceived) {
+          t.deepEqual(typesReceived, typesSent,
+          'service sent back the correct types');
+          end(t);
+        },
+        onDataFunc: function(actual, dataIndex) {
+          if (actual._type === undefined) {
+            t.ok(typesSent[dataIndex].equals(vdl.Types.JSVALUE),
+              'value is native');
+          } else {
+            t.deepEqual(actual._type, typesSent[dataIndex], 'type matches');
+          }
+          t.deepEqual(actual, sendList[dataIndex], 'received correct value');
+        }
+      };
+      streamTest(t, ctx, testdata, end);
+    });
+  });
 
   function setup(options, cb) {
     var dispatcher = leafDispatcher(options.definition);
@@ -513,4 +1105,55 @@ function runTypeService(options) {
       cb(err, res.runtime.getContext(), res.service, res.end);
     });
   }
+}
+
+/*
+ * Performs a stream test that assumes <= 1 input arg to the service method.
+ * testdata contains inArg, inData, serviceMethod, writeType, readType,
+ * onResolveFunc, onDataFunc
+ * Note: onResolveFunc and onDataFunc should end the test.
+ * Optional testdata fields: inDataThrowRegexp, onErrorFunc, and onRejectFunc;
+ * these are most useful for error test cases.
+ */
+function streamTest(t, ctx, testdata, end) {
+  // The Error function is optional; successful test cases never need it.
+  function error(err) {
+    t.error(err, 'should not error');
+    end(t);
+  }
+
+  // Determine the correct onRejectFunc and onErrorFunc handlers.
+  var onRejectFunc = testdata.onRejectFunc || error;
+  var onErrorFunc = testdata.onErrorFunc || error;
+
+  // 1. Create a stream reader/writer to receive the values
+  var promise = testdata.serviceMethod(ctx, testdata.inArg);
+  var stream = promise.stream;
+  t.deepEqual(stream.writeType, testdata.writeType, 'inStream matches type');
+  t.deepEqual(stream.readType, testdata.readType, 'outStream matches type');
+
+  // 2. Handle RPC
+  promise.then(testdata.onResolveFunc).catch(onRejectFunc);
+
+  // 3. Setup listeners for the stream. Data should be NumStructs
+  stream.on('error', onErrorFunc);
+
+  var dataIndex = 0;
+  stream.on('data', function(actual) {
+    testdata.onDataFunc(actual, dataIndex);
+    dataIndex++;
+  });
+
+  // 4. Send data through the stream.
+  for (var i = 0; i < testdata.inData.length; i++) {
+    if (testdata.inDataThrowRegexp) {
+      t.throws(stream.write.bind(stream, testdata.inData[i]),
+        testdata.inDataThrowRegexp, 'stream write throws on bad input');
+    } else {
+      stream.write(testdata.inData[i]);
+    }
+  }
+
+  // 5. End the stream.
+  stream.end();
 }

@@ -5,10 +5,13 @@
 
 var Outgoing = require('./message-type').Outgoing;
 var Duplex = require('stream').Duplex;
+var vLog = require('../lib/vlog');
 var inherits = require('inherits');
 var byteUtil = require('../vdl/byte-util');
 var vom = require('../vom');
 var fill = require('../vdl/canonicalize').fill;
+var reduce = require('../vdl/canonicalize').reduce;
+var unwrap = require('../vdl/type-util').unwrap;
 var ServerRPCReply =
   require('../gen-vdl/v.io/x/ref/services/wsprd/lib').ServerRPCReply;
 
@@ -24,13 +27,15 @@ var ServerRPCReply =
  * @param {Promise} webSocketPromise Promise of a websocket connection when
  * it's established
  * @param {boolean} isClient if set, then this is the client stream.
- * @param {vom.TypeObject} streamType Adds type info to data sent by the stream.
+ * @param {vom.TypeObject} readType Adds type info to data read from the stream.
+ * @param {vom.TypeObject} writeType Adds type info to data sent by the stream.
  */
-var Stream = function(flowId, webSocketPromise, isClient, streamType) {
+var Stream = function(flowId, webSocketPromise, isClient, readType, writeType) {
   Duplex.call(this, { objectMode: true });
   this.flowId = flowId;
   this.isClient = isClient;
-  this.streamType = streamType;
+  this.readType = readType;
+  this.writeType = writeType;
   this.webSocketPromise = webSocketPromise;
   this.onmessage = null;
 
@@ -92,15 +97,38 @@ Stream.prototype._read = function() {
 
 /**
  * Queue the object passed in for reading
+ * TODO(alexfandrianto): Is this private? We call it in other places, and it
+ * isn't overriding any of node's duplex stream functions.
  * @private
  */
 Stream.prototype._queueRead = function(object) {
+  if (!this.readType) {
+    vLog.warn('This stream cannot be read from. The service method lacks an',
+      this.isClient ? 'outStream' : 'inStream', 'type. Tried to queue', object);
+    return;
+  }
+  // Fill the read stream with the correct type.
+  var canonObj = unwrap(reduce(object, this.readType));
+  this._queueData(canonObj);
+};
+
+/**
+ * Queue the close signal onto the Duplex's queue.
+ */
+Stream.prototype._queueClose = function() {
+  this._queueData(null);
+};
+
+/**
+ * Queues the data onto the Duplex's queue.
+ */
+Stream.prototype._queueData = function(data) {
   if (this.shouldQueue) {
     // If we have run into the limit of the internal buffer,
     // update this.shouldQueue.
-    this.shouldQueue = this.push(object);
+    this.shouldQueue = this.push(data);
   } else {
-    this.wsBuffer.push(object);
+    this.wsBuffer.push(data);
   }
 };
 
@@ -113,7 +141,12 @@ Stream.prototype._queueRead = function(object) {
  * @return {boolean} Returns false if the write buffer is full.
  */
 Stream.prototype.write = function(chunk, encoding, cb) {
-  var canonChunk = fill(chunk, this.streamType);
+  if (!this.writeType) {
+    vLog.warn('This stream cannot be written to. The service method lacks an',
+      this.isClient ? 'inStream' : 'outStream', 'type. Tried to queue', chunk);
+    return;
+  }
+  var canonChunk = fill(chunk, this.writeType);
   var object = {
     id: this.flowId,
     data: byteUtil.bytes2Hex(vom.encode(canonChunk)),
