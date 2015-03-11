@@ -5,6 +5,7 @@ var extnUtils = require('../lib/extension-utils');
 module.exports = extend(require('../gen-vdl/v.io/v23/verror'), {
   makeError: require('./make-errors'),
   actions: require('./actions'),
+  VanadiumError: require('./vanadium-error'),
 });
 
 if (isBrowser) {

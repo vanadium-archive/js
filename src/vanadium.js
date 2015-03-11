@@ -20,7 +20,7 @@ var defaults = {
 
 /**
  * A module to improve cross device development.  For more details
- * see @{link https://v.io/} for more details.
+ * see @{link https://v.io/}.
  * @module vanadium
  */
 module.exports = {
