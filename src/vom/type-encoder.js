@@ -26,7 +26,7 @@ function TypeEncoder() {
   this._typeIds = {};
   // TODO(bjornick): Use the vdl output after we fix:
   // https://github.com/veyron/release-issues/issues/1109
-  this._nextId = unwrap(wiretype.WireIDFirstUserType);
+  this._nextId = unwrap(wiretype.WireIdFirstUserType);
 }
 
 /**

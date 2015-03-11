@@ -35,63 +35,63 @@ var stringList = {
 
 var bootstrapTypes = {
   ANY: {
-    id: unwrap(wiretype.WireIDAny).toNativeNumberApprox(),
+    id: unwrap(wiretype.WireIdAny).toNativeNumberApprox(),
     type: Types.ANY
   },
   BOOL: {
-    id: unwrap(wiretype.WireIDBool).toNativeNumberApprox(),
+    id: unwrap(wiretype.WireIdBool).toNativeNumberApprox(),
     type: Types.BOOL
   },
   STRING: {
-    id: unwrap(wiretype.WireIDString).toNativeNumberApprox(),
+    id: unwrap(wiretype.WireIdString).toNativeNumberApprox(),
     type: Types.STRING
   },
   BYTE: {
-    id: unwrap(wiretype.WireIDByte).toNativeNumberApprox(),
+    id: unwrap(wiretype.WireIdByte).toNativeNumberApprox(),
     type: Types.BYTE
   },
   UINT16: {
-    id: unwrap(wiretype.WireIDUint16).toNativeNumberApprox(),
+    id: unwrap(wiretype.WireIdUint16).toNativeNumberApprox(),
     type: Types.UINT16
   },
   UINT32: {
-    id: unwrap(wiretype.WireIDUint32).toNativeNumberApprox(),
+    id: unwrap(wiretype.WireIdUint32).toNativeNumberApprox(),
     type: Types.UINT32
   },
   UINT64: {
-    id: unwrap(wiretype.WireIDUint64).toNativeNumberApprox(),
+    id: unwrap(wiretype.WireIdUint64).toNativeNumberApprox(),
     type: Types.UINT64
   },
   INT16: {
-    id: unwrap(wiretype.WireIDInt16).toNativeNumberApprox(),
+    id: unwrap(wiretype.WireIdInt16).toNativeNumberApprox(),
     type: Types.INT16
   },
   INT32: {
-    id: unwrap(wiretype.WireIDInt32).toNativeNumberApprox(),
+    id: unwrap(wiretype.WireIdInt32).toNativeNumberApprox(),
     type: Types.INT32
   },
   INT64: {
-    id: unwrap(wiretype.WireIDInt64).toNativeNumberApprox(),
+    id: unwrap(wiretype.WireIdInt64).toNativeNumberApprox(),
     type: Types.INT64
   },
   FLOAT32: {
-    id: unwrap(wiretype.WireIDFloat32).toNativeNumberApprox(),
+    id: unwrap(wiretype.WireIdFloat32).toNativeNumberApprox(),
     type: Types.FLOAT32
   },
   FLOAT64: {
-    id: unwrap(wiretype.WireIDFloat64).toNativeNumberApprox(),
+    id: unwrap(wiretype.WireIdFloat64).toNativeNumberApprox(),
     type: Types.FLOAT64
   },
   COMPLEX64: {
-    id: unwrap(wiretype.WireIDComplex64).toNativeNumberApprox(),
+    id: unwrap(wiretype.WireIdComplex64).toNativeNumberApprox(),
     type: Types.COMPLEX64
   },
   COMPLEX128: {
-    id: unwrap(wiretype.WireIDComplex128).toNativeNumberApprox(),
+    id: unwrap(wiretype.WireIdComplex128).toNativeNumberApprox(),
     type: Types.COMPLEX128
   },
   LIST_BYTE: {
-    id: unwrap(wiretype.WireIDByteList).toNativeNumberApprox(),
+    id: unwrap(wiretype.WireIdByteList).toNativeNumberApprox(),
     type: {
       name: '',
       kind: Kind.LIST,
@@ -99,11 +99,11 @@ var bootstrapTypes = {
     }
   },
   TYPEOBJECT: {
-    id: unwrap(wiretype.WireIDTypeObject).toNativeNumberApprox(),
+    id: unwrap(wiretype.WireIdTypeObject).toNativeNumberApprox(),
     type: Types.TYPEOBJECT
   },
   LIST_STRING: {
-    id: unwrap(wiretype.WireIDStringList).toNativeNumberApprox(),
+    id: unwrap(wiretype.WireIdStringList).toNativeNumberApprox(),
     type: stringList
   },
 };

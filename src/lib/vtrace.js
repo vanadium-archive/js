@@ -84,7 +84,7 @@ function Node(id) {
 
 Node.prototype.record = function() {
   var record = new vdl.TraceRecord();
-  record.iD = this.id;
+  record.id = this.id;
   for (var id in this.spans) {
     if (!this.spans.hasOwnProperty(id)) {
       continue;
@@ -146,7 +146,7 @@ Store.prototype.traceRecord = function(id) {
   var node = this._nodes[key(id)];
   if (!node) {
     var record = vdl.TraceRecord();
-    record.iD = id;
+    record.id = id;
     return record;
   }
   return node.record();
@@ -181,7 +181,7 @@ Store.prototype._getSpan = function(span, force) {
   var record = node.spans[spankey];
   if (!record) {
     record = new vdl.SpanRecord();
-    record.iD = span.id;
+    record.id = span.id;
     record.parent = span.parent;
     record.name = span.name;
     node.spans[spankey] = record;
@@ -231,18 +231,18 @@ Store.prototype._annotate = function(span, msg) {
  * @param {Object} response A vtrace.Response instance.
  */
 Store.prototype.merge = function(response) {
-  if (!uniqueid.valid(response.trace.iD)) {
+  if (!uniqueid.valid(response.trace.id)) {
     return;
   }
   var force = (response.flags & vdl.CollectInMemory) !== 0;
-  var node = this._getNode(response.trace.iD, force);
+  var node = this._getNode(response.trace.id, force);
   if (!node) {
     return;
   }
   var spans = response.trace.spans;
   for (var i = 0; i < spans.length; i++) {
     var span = spans[i];
-    node.spans[key(span.iD)] = span;
+    node.spans[key(span.id)] = span;
   }
 };
 
@@ -267,7 +267,7 @@ module.exports.withNewTrace = function(ctx) {
  */
 module.exports.withContinuedTrace = function(ctx, name, request) {
   var store = ctx.value(storeKey);
-  var span = new Span(name, store, request.traceID, request.spanID);
+  var span = new Span(name, store, request.traceId, request.spanId);
   return ctx.withValue(spanKey, span);
 };
 
@@ -329,8 +329,8 @@ module.exports.request = function(ctx) {
   var store = ctx.value(storeKey);
   var span = ctx.value(spanKey);
   return vdl.Request({
-    spanID: span.id,
-    traceID: span.trace,
+    spanId: span.id,
+    traceId: span.trace,
     flags: store._flags(span.trace)
   });
 };

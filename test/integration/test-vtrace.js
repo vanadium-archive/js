@@ -52,5 +52,5 @@ test('Test using collectRegexp', function(assert) {
       assert.ok(findSpan('"cache".Get', records[0]));
       end(assert);
     });
-  });  
+  });
 });

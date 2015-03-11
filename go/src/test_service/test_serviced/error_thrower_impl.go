@@ -58,7 +58,7 @@ func (e *errorThrowerImpl) ThrowCustomStandardError(call ipc.ServerCall) error {
 	return verror.New(customError, call.Context())
 }
 
-func (e *errorThrowerImpl) ListAllBuiltInErrorIDs(_ ipc.ServerCall) ([]string, error) {
+func (e *errorThrowerImpl) ListAllBuiltInErrorIds(_ ipc.ServerCall) ([]string, error) {
 	// TODO(aghassemi) Use when we have enum for error IDs in IDL
 	// This is not used yet but the idea is to pass all error types in v23/verror to
 	// JavaScript so if a new one is added, this test would break and we add the new one to

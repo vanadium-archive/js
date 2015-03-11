@@ -33,5 +33,5 @@ type ErrorThrower interface {
     ThrowCustomStandardError() error
 
     // Lists all errors Ids available in v23/verror
-    ListAllBuiltInErrorIDs() ([]string | error)
+    ListAllBuiltInErrorIds() ([]string | error)
 }

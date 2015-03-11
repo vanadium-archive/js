@@ -36,7 +36,7 @@ type ErrorThrowerClientMethods interface {
 	// Throws custom error created by using Standard
 	ThrowCustomStandardError(*context.T, ...ipc.CallOpt) error
 	// Lists all errors Ids available in v23/verror
-	ListAllBuiltInErrorIDs(*context.T, ...ipc.CallOpt) ([]string, error)
+	ListAllBuiltInErrorIds(*context.T, ...ipc.CallOpt) ([]string, error)
 }
 
 // ErrorThrowerClientStub adds universal methods to ErrorThrowerClientMethods.
@@ -158,9 +158,9 @@ func (c implErrorThrowerClientStub) ThrowCustomStandardError(ctx *context.T, opt
 	return
 }
 
-func (c implErrorThrowerClientStub) ListAllBuiltInErrorIDs(ctx *context.T, opts ...ipc.CallOpt) (o0 []string, err error) {
+func (c implErrorThrowerClientStub) ListAllBuiltInErrorIds(ctx *context.T, opts ...ipc.CallOpt) (o0 []string, err error) {
 	var call ipc.ClientCall
-	if call, err = c.c(ctx).StartCall(ctx, c.name, "ListAllBuiltInErrorIDs", nil, opts...); err != nil {
+	if call, err = c.c(ctx).StartCall(ctx, c.name, "ListAllBuiltInErrorIds", nil, opts...); err != nil {
 		return
 	}
 	err = call.Finish(&o0)
@@ -193,7 +193,7 @@ type ErrorThrowerServerMethods interface {
 	// Throws custom error created by using Standard
 	ThrowCustomStandardError(ipc.ServerCall) error
 	// Lists all errors Ids available in v23/verror
-	ListAllBuiltInErrorIDs(ipc.ServerCall) ([]string, error)
+	ListAllBuiltInErrorIds(ipc.ServerCall) ([]string, error)
 }
 
 // ErrorThrowerServerStubMethods is the server interface containing
@@ -271,8 +271,8 @@ func (s implErrorThrowerServerStub) ThrowCustomStandardError(call ipc.ServerCall
 	return s.impl.ThrowCustomStandardError(call)
 }
 
-func (s implErrorThrowerServerStub) ListAllBuiltInErrorIDs(call ipc.ServerCall) ([]string, error) {
-	return s.impl.ListAllBuiltInErrorIDs(call)
+func (s implErrorThrowerServerStub) ListAllBuiltInErrorIds(call ipc.ServerCall) ([]string, error) {
+	return s.impl.ListAllBuiltInErrorIds(call)
 }
 
 func (s implErrorThrowerServerStub) Globber() *ipc.GlobState {
@@ -333,7 +333,7 @@ var descErrorThrower = ipc.InterfaceDesc{
 			Doc:  "// Throws custom error created by using Standard",
 		},
 		{
-			Name: "ListAllBuiltInErrorIDs",
+			Name: "ListAllBuiltInErrorIds",
 			Doc:  "// Lists all errors Ids available in v23/verror",
 			OutArgs: []ipc.ArgDesc{
 				{"", ``}, // []string

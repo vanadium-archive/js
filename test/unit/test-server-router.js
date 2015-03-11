@@ -91,7 +91,7 @@ test('Server Router Signature Lookup', function(t) {
   server.serve(inputName, inputService, options, function(){});
 
   var request = {
-    serverID: server.id,
+    serverId: server.id,
     suffix: inputName
   };
   router.handleLookupRequest(inputMessageId, request).then(function(result) {

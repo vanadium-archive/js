@@ -89,7 +89,7 @@ Router.prototype.handleAuthorizationRequest = function(messageId, request) {
     this._proxy.sendRequest(data, Outgoing.AUTHORIZATION_RESPONSE,
         null, messageId);
   }
-  var server = this._servers[request.serverID];
+  var server = this._servers[request.serverId];
   if (!server) {
     var data = JSON.stringify({
       // TODO(bjornick): Use the real context
@@ -153,7 +153,7 @@ Router.prototype.handleCaveatValidationRequest = function(messageId, request) {
 };
 
 Router.prototype.handleLookupRequest = function(messageId, request) {
-  var server = this._servers[request.serverID];
+  var server = this._servers[request.serverId];
   if (!server) {
     // TODO(bjornick): Pass in context here so we can generate useful error
     // messages.
