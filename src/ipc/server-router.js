@@ -268,8 +268,9 @@ Router.prototype.handleRPCRequest = function(messageId, vdlRequest) {
       self.sendResult(messageId, 'Glob__', null, err);
       return;
     }
+    // Glob takes no streaming input and has VDLGlobReply as output.
     stream = new Stream(messageId, this._proxy.senderPromise, false,
-      naming.VDLGlobReply.prototype._type);
+      null, naming.VDLGlobReply.prototype._type);
     this._streamMap[messageId] = stream;
     this._contextMap[messageId] = call;
     this._outstandingRequestForId[messageId] = 0;
@@ -321,8 +322,10 @@ Router.prototype.handleRPCRequest = function(messageId, vdlRequest) {
 
   this._contextMap[messageId] = options.ctx;
   if (methodIsStreaming(methodSig)) {
-    stream = new Stream(messageId, this._proxy.senderPromise, false,
-      methodSig.outStream.type);
+    var readType = (methodSig.inStream ? methodSig.inStream.type : null);
+    var writeType = (methodSig.outStream ? methodSig.outStream.type : null);
+    stream = new Stream(messageId, this._proxy.senderPromise, false, readType,
+      writeType);
     this._streamMap[messageId] = stream;
     var rpc = new StreamHandler(options.ctx, stream);
     this._proxy.addIncomingStreamHandler(messageId, rpc);

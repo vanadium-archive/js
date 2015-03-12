@@ -48,6 +48,7 @@ var OutstandingRPC = function(ctx, options, cb) {
   this._numOutParams = options.numOutParams;
   this._isStreaming = options.isStreaming || false;
   this._inStreamingType = options.inStreamingType;
+  this._outStreamingType = options.outStreamingType;
   this._cb = cb;
   this._def = null;
 };
@@ -141,8 +142,10 @@ OutstandingRPC.prototype.start = function() {
   var streamingDeferred = null;
   if (this._isStreaming) {
     streamingDeferred = new Deferred();
+    // Clients read data of type outStreamingType and write data of type
+    // inStreamingType.
     def.stream = new Stream(this._id, streamingDeferred.promise, true,
-      this._inStreamingType);
+      this._outStreamingType, this._inStreamingType);
     def.promise.stream = def.stream;
   }
 
@@ -199,7 +202,7 @@ OutstandingRPC.prototype.handleCompletion = function(data) {
 
   this._def.resolve(response.outArgs);
   if (this._def.stream) {
-    this._def.stream._queueRead(null);
+    this._def.stream._queueClose();
   }
   this._proxy.dequeue(this._id);
 };
@@ -223,14 +226,14 @@ OutstandingRPC.prototype.handleStreamData = function(data) {
 
 OutstandingRPC.prototype.handleStreamClose = function() {
   if (this._def.stream) {
-    this._def.stream._queueRead(null);
+    this._def.stream._queueClose();
   }
 };
 
 OutstandingRPC.prototype.handleError = function(err) {
   if (this._def.stream) {
     emitStreamError(this._def.stream, err);
-    this._def.stream._queueRead(null);
+    this._def.stream._queueClose();
   }
   this._def.reject(err);
   this._proxy.dequeue(this._id);
@@ -466,8 +469,8 @@ Client.prototype.bindWithSignature = function(name, signature) {
         outArgTypes: outArgTypes,
         numOutParams: methodSig.outArgs.length,
         isStreaming: isStreaming,
-        inStreamingType: inStreaming ? methodSig.inStream.type :
-          vdl.Types.JSVALUE
+        inStreamingType: inStreaming ? methodSig.inStream.type : null,
+        outStreamingType: outStreaming ? methodSig.outStream.type : null
       }, callback);
 
       return rpc.start();
