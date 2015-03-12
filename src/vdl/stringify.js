@@ -46,14 +46,19 @@ function stableCircularStringifyInternal(val, seen) {
   var keys = [];
   var values = [];
   if (val.forEach !== undefined) {
-    // The forEach prototype can be used to stringify Set and Map since
-    // they have a fixed iteration order.
+    // We have to make sure to print maps and sets in sorted key order.
+    // While Set and Map have an iteration order equivalent to their insertion
+    // order, we still want non-matching insertion orders to have matching
+    // stringify output.
     val.forEach(function(value, key) {
       keys.push(key);
+    });
+    keys.sort();
+    keys.forEach(function(key) {
       if (val instanceof Set) {
         values.push(true); // {X:true} is our desired format for set.
       } else {
-        values.push(value);
+        values.push(val.get(key));
       }
     });
   } else {

@@ -63,7 +63,7 @@ test('stableCircularStringify', function(t) {
     },
     {
       input: new Map([['a', 5], [3, 'we']]),
-      expected: '{"a":5,3:"we"}'
+      expected: '{3:"we","a":5}'
     },
     {
       input: ['x', 'y'],

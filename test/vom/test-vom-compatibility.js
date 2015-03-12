@@ -15,6 +15,7 @@ var Encoder = require('./../../src/vom/encoder.js');
 var canonicalize = require('./../../src/vdl/canonicalize.js');
 var typeCompatible = require('./../../src/vdl/type-compatible.js');
 var util = require('./../../src/vdl/byte-util.js');
+var stringify = require('./../../src/vdl/stringify.js');
 
 // Test that the received type matches the expected type.
 testdata.Tests.val.forEach(function(t) {
@@ -46,7 +47,8 @@ testdata.Tests.val.forEach(function(t, i) {
     var messageReader = new ByteArrayMessageReader(data);
     var decoder = new Decoder(messageReader, false);
     var result = decoder.decode();
-    assert.deepEqual(result, t.value, t.name + ' value comparison');
+    assert.equal(stringify(result), stringify(t.value), t.name +
+      ' value comparison');
     assert.deepEqual(result._type, t.value._type, t.name + ' type comparison');
     assert.deepEqual(result.prototype, t.value.prototype,
         t.name + ' prototype comparison');
@@ -127,8 +129,8 @@ convertTests.forEach(function(convertLists, typename) {
           var val2 = values[j];
           var convert1 = canonicalize.reduce(val1, val2._type);
 
-          assert.deepEqual(convert1, val2, name + ' converts to ' +
-            val2._type.toString());
+          assert.equal(stringify(convert1), stringify(val2), name +
+            ' converts to ' + val2._type.toString());
         }
       }
     }

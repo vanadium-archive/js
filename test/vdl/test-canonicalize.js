@@ -1259,6 +1259,14 @@ test('canonicalize conversion - success', function(t) {
     kind: Kind.LIST,
     elem: Types.STRING
   });
+  var ByteListType = new Type({
+    kind: Kind.LIST,
+    elem: Types.BYTE
+  });
+  var MyEnumType = new Type({
+    kind: Kind.ENUM,
+    labels: ['M', 'A', 'G']
+  });
   var IntSetType = new Type({
     kind: Kind.SET,
     key: Types.INT16
@@ -1267,6 +1275,37 @@ test('canonicalize conversion - success', function(t) {
     kind: Kind.MAP,
     key: Types.FLOAT32,
     elem: Types.BOOL
+  });
+  var StringSetType = new Type({
+    kind: Kind.SET,
+    key: Types.STRING
+  });
+  var StringyStructType = new Type({
+    kind: Kind.STRUCT,
+    fields: [
+      {
+        name: 'Ma',
+        type: Types.STRING
+      },
+      {
+        name: 'Bu',
+        type: ByteListType
+      },
+      {
+        name: 'Fu',
+        type: MyEnumType
+      }
+    ]
+  });
+  var StringStringMapType = new Type({
+    kind: Kind.MAP,
+    key: Types.STRING,
+    elem: Types.STRING
+  });
+  var StringAnyMapType = new Type({
+    kind: Kind.MAP,
+    key: Types.STRING,
+    elem: Types.ANY
   });
   var Byte10ArrayType = new Type({
     kind: Kind.ARRAY,
@@ -1310,14 +1349,21 @@ test('canonicalize conversion - success', function(t) {
 
   var Any = Registry.lookupOrCreateConstructor(Types.ANY);
   var AnyList = Registry.lookupOrCreateConstructor(AnyListType);
+  var Bool = Registry.lookupOrCreateConstructor(Types.BOOL);
   var Str = Registry.lookupOrCreateConstructor(Types.STRING);
   var StrList = Registry.lookupOrCreateConstructor(StringListType);
   var OptStr = Registry.lookupOrCreateConstructor(OptStringType);
   var IntSet = Registry.lookupOrCreateConstructor(IntSetType);
   var FloatBoolMap = Registry.lookupOrCreateConstructor(FloatBoolMapType);
+  var ByteList = Registry.lookupOrCreateConstructor(ByteListType);
   var Byte10Array = Registry.lookupOrCreateConstructor(Byte10ArrayType);
+  var MyEnum = Registry.lookupOrCreateConstructor(MyEnumType);
   var StructABC = Registry.lookupOrCreateConstructor(StructABCType);
   var StructCDB = Registry.lookupOrCreateConstructor(StructCDBType);
+  var StringSet = Registry.lookupOrCreateConstructor(StringSetType);
+  var StringStringMap = Registry.lookupOrCreateConstructor(StringStringMapType);
+  var StringAnyMap = Registry.lookupOrCreateConstructor(StringAnyMapType);
+  var StringyStruct = Registry.lookupOrCreateConstructor(StringyStructType);
 
   var tests = [
     {
@@ -1399,14 +1445,85 @@ test('canonicalize conversion - success', function(t) {
         c: 6
       }),
       targetType: StructABCType
+    },
+    {
+      name: 'set[string] to map[string]any',
+      inValue: new StringSet(
+        new Set(['me', 'di', 'a'])
+      ),
+      outValue: new StringAnyMap(
+        new Map([
+          ['me', new Bool(true)],
+          ['di', new Bool(true)],
+          ['a', new Bool(true)]
+        ])
+      ),
+      targetType: StringAnyMapType
+    },
+    {
+      name: 'struct with string-y fields to map[string]any',
+      inValue: new StringyStruct({
+        ma: 'Pool', // string
+        bu: 'imp',  // bytelist 105 109 112
+        fu: 'A'     // autoconverts to enum
+      }),
+      outValue: new StringAnyMap(new Map([
+        ['Ma', new Str('Pool')],
+        ['Bu', new ByteList(new Uint8Array([105, 109, 112]))],
+        ['Fu', new MyEnum('A')]
+      ])),
+      targetType: StringAnyMapType
+    },
+    {
+      name: 'struct with string-y fields to map[string]string',
+      inValue: new StringyStruct({
+        ma: 'Pool',
+        bu: 'imp',
+        fu: 'A'
+      }),
+      outValue: new StringStringMap(new Map([
+        ['Ma', 'Pool'],
+        ['Bu', 'imp'],
+        ['Fu', 'A']
+      ])),
+      targetType: StringStringMapType
+    },
+    {
+      name: 'map[string]any to struct with stringy-fields',
+      inValue: new StringAnyMap(new Map([
+        ['Ma', 'V'], // JSValue happens to be string-compatible.
+        ['Bu', new ByteList(new Uint8Array([79]))],
+        ['Fu', new MyEnum('M')]
+      ])),
+      outValue: new StringyStruct({
+        ma: 'V',
+        bu: 'O', // bytelist 79
+        fu: 'M'  // enum with M
+      }),
+      targetType: StringyStructType
+    },
+    {
+      name: 'map[string]any to set[string]',
+      inValue: new StringAnyMap(new Map([
+        ['Z', true], // JSValue that happens to be bool-compatible
+        ['o', new Bool(true)],
+        ['nga', false], // Will not appear since it's false
+        ['dine', new Bool(true)]
+      ])),
+      outValue: new StringSet(new Set([
+        'Z', 'o', 'dine'
+      ])),
+      targetType: StringSetType
     }
   ];
   for (var i = 0; i < tests.length; i++) {
     var test = tests[i];
 
+    var reduced = canonicalize.reduce(test.inValue, test.targetType);
+    var outValue = test.outValue;
     t.deepEqual(
-      canonicalize.reduce(test.inValue, test.targetType),
-      test.outValue,
+      stringify(reduced),
+      stringify(outValue),
       test.name + ' converts correctly'
     );
   }
@@ -1475,9 +1592,12 @@ test('canonicalize error', function(t) {
 
   for (var i = 0; i < tests.length; i++) {
     var test = tests[i];
+
+    var canon = canonicalize.value(test.inValue, Types.ANY, test.deepWrap);
+    var outValue = test.outValue;
     t.deepEqual(
-      canonicalize.value(test.inValue, Types.ANY, test.deepWrap),
-      test.outValue,
+      stringify(canon),
+      stringify(outValue),
       test.name);
   }
   t.end();
@@ -1521,9 +1641,12 @@ test('canonicalize time', function(t) {
 
   for (var i = 0; i < tests.length; i++) {
     var test = tests[i];
+
+    var canon = canonicalize.value(test.inValue, Types.ANY, test.deepWrap);
+    var outValue = test.outValue;
     t.deepEqual(
-      canonicalize.value(test.inValue, Types.ANY, test.deepWrap),
-      test.outValue,
+      stringify(canon),
+      stringify(outValue),
       test.name);
   }
   t.end();

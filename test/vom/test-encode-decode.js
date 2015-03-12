@@ -245,11 +245,11 @@ test('encode and decode', function(t) {
     {
       n: 'Decode(Encode(Set<String> as Object))',
       v:  {
-        'b' : true,
+        'b': true,
         'a': true
       },
       expectedOutput: {
-        val:  new Set(['b', 'a'])
+        val:  new Set(['B', 'A'])
       },
       t: {
         kind: Kind.SET,
@@ -275,8 +275,8 @@ test('encode and decode', function(t) {
       },
       expectedOutput: {
         val: new Map([
-          ['key1', 'value1'],
-          ['key2', 'value2']
+          ['Key1', 'value1'],
+          ['Key2', 'value2']
         ]),
       },
       t: {
@@ -529,8 +529,8 @@ test('encode and decode', function(t) {
     {
       n: 'Decode(Encode(Union<Map[Uint16]Uint32, List<Float64>> w/ Map))',
       v: {
-        'map': {
-          'a': 9,
+        'map': {                   // This is a native object; the fields
+          'a': 9,                  // are capitalized upon conversion to Map.
           'b': 10,
           _type: {
             kind: Kind.MAP,
@@ -562,8 +562,8 @@ test('encode and decode', function(t) {
       },
       expectedOutput: {
         'map': new Map([
-          ['a', 9],
-          ['b', 10]
+          ['A', 9],
+          ['B', 10]
         ])
       }
     },

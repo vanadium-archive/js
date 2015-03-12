@@ -383,20 +383,19 @@ function canonicalizeInternal(deepWrap, v, inType, t, seen, outValue) {
       }
       return outValue;
     case Kind.SET:
-      // Map is allowed to convert to Set, but it could fail.
-      if (v instanceof Map) {
-        v = mapToSet(v, t);
-      }
-
       // Verify that the value can be converted to an ES6 Set; return that copy.
       if (typeof v !== 'object') {
         throw makeError(v, t, 'value is not an object');
+      } else if (v instanceof Map) {
+        // Map is allowed to convert to Set, but it could fail.
+        v = mapToSet(v, t);
       } else if (!(v instanceof Set) && !Array.isArray(v)) {
         if (t.key.kind !== Kind.STRING) {
           throw makeError(v, t, 'cannot encode Object as VDL set with ' +
             'non-string key type. Use Set instead.');
         }
-        v = objectToSet(v); // v now refers to a Set instead of an Object.
+        v = objectToSet(v);       // v now refers to a Set instead of an Object.
+        inKeyType = Types.STRING; // Object keys are strings.
       }
 
       // Recurse: Validate internal keys.
@@ -408,25 +407,32 @@ function canonicalizeInternal(deepWrap, v, inType, t, seen, outValue) {
 
       return outValue;
     case Kind.MAP:
-      // Sets can always upconvert to Maps.
-      if (v instanceof Set) {
-        v = setToMap(v);
-      }
+      var useInTypeForElem = false; // Only used for struct/object => Map.
 
       // Verify that the value can be converted to an ES6 Map; return that copy.
       if ((typeof v !== 'object') || Array.isArray(v)) {
         throw makeError(v, t, 'value is not a valid Map-type');
+      } else if (v instanceof Set) {
+        // Sets can always upconvert to Maps.
+        v = setToMap(v);
+        inElemType = Types.BOOL; // Set should use bool as elem type.
       } else if (!(v instanceof Map)) {
         if (t.key.kind !== Kind.STRING) {
           throw makeError(v, t, 'cannot encode Object as VDL map with ' +
            'non-string key type. Use Map instead.');
         }
-        v = objectToMap(v); // v now refers to a Map instead of an Object.
+        v = objectToMap(v);       // v now refers to a Map instead of an Object.
+        inKeyType = Types.STRING; // Object keys are strings.
+        // inElemType might change every time though! Set a flag.
+        useInTypeForElem = true;
       }
 
       // Recurse: Validate internal keys and values.
       outValue = new Map();
       v.forEach(function(val, key) {
+        if (useInTypeForElem && inType && inType.kind === Kind.STRUCT) {
+          inElemType = lookupFieldType(inType, key);
+        }
         outValue.set(
           canonicalize(key, inKeyType, t.key, deepWrap, seen, false),
           canonicalize(val, inElemType, t.elem, deepWrap, seen, false)
@@ -678,7 +684,7 @@ function copyUnexported(value, copy) {
 function objectToSet(o) {
   var keys = Object.keys(o).filter(util.isExportedStructField);
   return keys.reduce(function(m, key) {
-    m.add(key);
+    m.add(util.capitalize(key));
     return m;
   }, new Set());
 }
@@ -687,7 +693,7 @@ function objectToSet(o) {
 function objectToMap(o) {
   var keys = Object.keys(o).filter(util.isExportedStructField);
   return keys.reduce(function(m, key) {
-    m.set(key, o[key]);
+    m.set(util.capitalize(key), o[key]);
     return m;
   }, new Map());
 }
