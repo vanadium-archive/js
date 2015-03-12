@@ -3,8 +3,9 @@ var service = require('./get-service');
 var serve = require('./serve');
 var leafDispatcher = require('../../src/ipc/leaf-dispatcher');
 var NO_TIMEOUT = require('../../src/ipc/constants').NO_TIMEOUT;
-var CancelledError = require('../../src/runtime/context').CancelledError;
+var CanceledError = require('../../src/gen-vdl/v.io/v23/verror').CanceledError;
 
+var errorId = new CanceledError(null).id;
 
 function run(ctx, err, collector, end, assert, id, runtime) {
   if (err) {
@@ -15,13 +16,13 @@ function run(ctx, err, collector, end, assert, id, runtime) {
   ctx = ctx.withTimeout(timeout);
 
   collector.neverReturn(ctx, id).catch(function(err) {
-    if (err.id !== 'CancelError') {
+    if (err.id !== errorId) {
       assert.fail(err);
     }
   });
 
   ctx.waitUntilDone().catch(function(err) {
-    assert.ok(err instanceof CancelledError);
+    assert.ok(err instanceof CanceledError);
   });
   var dctx = runtime.getContext().withTimeout(60000);
   collector.waitForStatus(dctx, id, 'running')

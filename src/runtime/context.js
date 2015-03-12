@@ -5,29 +5,17 @@
 
 var Deferred = require('../lib/deferred');
 var Promise = require('../lib/promise');
-var makeError = require('../errors/make-errors');
 var inherits = require('inherits');
 var vError = require('../gen-vdl/v.io/v23/verror');
-var actions = require('../errors/actions');
 var ContextKey = require('./context-key');
 var BigInt = require('../vdl/big-int');
 
 module.exports = {
   Context: Context,
-  CancelContext: CancelContext,
   ContextKey: ContextKey,
 };
 
-module.exports.CancelledError = makeError('CancelError', actions.NO_RETRY,
-                                          '{1:} {2:} Canceled{:_}');
-/**
- * Creates an Error object indicating that the context was manually
- * cancelled.
- * @constructor
- * @memberof module:vanadium.context
- */
-var CancelledError = module.exports.CancelledError;
-
+var CanceledError;
 /**
  * Creates a new root context.  This should be used to generate a
  * context for a new operation which is unrealted to any ongoing
@@ -106,8 +94,8 @@ Context.prototype.withValue = function(key, value) {
  * Returns a new context derived from the current context but that can
  * be cancelled.  The returned context will have two additional
  * methods cancel() which can be used to cancel the context and
- * generate a CancelledError and finish() which frees resources
- * associated with the context without generating an error.
+ * generate a module:vanadium.errors.CanceledError and finish() which frees
+ * resources associated with the context without generating an error.
  * @return {module:vanadium.context.Context} A new derived cancellable context.
  */
 Context.prototype.withCancel = function() {
@@ -250,7 +238,8 @@ CancelContext.prototype.cancel = function() {
   if (ca) {
     delete ca._children[this._id];
   }
-  this._cancel(new CancelledError(this));
+  CanceledError = require('../gen-vdl/v.io/v23/verror').CanceledError;
+  this._cancel(new CanceledError(this));
 };
 
 CancelContext.prototype.finish = function() {

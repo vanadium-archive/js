@@ -54,7 +54,7 @@ test('CancelContext.done', function(assert) {
   assert.equal(cctx.done(), true);
 
   function onerror(error) {
-    assert.ok(error instanceof context.CancelledError);
+    assert.ok(error instanceof verror.CanceledError);
   }
 });
 
@@ -84,7 +84,7 @@ test('CancelContext (parent cancellation)', function(assert) {
   assert.equal(cctx2.done(), true);
 
   function onerror(error) {
-    assert.ok(error instanceof context.CancelledError);
+    assert.ok(error instanceof verror.CanceledError);
   }
 });
 
@@ -101,7 +101,7 @@ test('CancelContext (ancestor cancellation)', function(assert) {
   assert.equal(cctx2.done(), true);
 
   function onerror(error) {
-    assert.ok(error instanceof context.CancelledError);
+    assert.ok(error instanceof verror.CanceledError);
   }
 });
 
@@ -128,7 +128,7 @@ test('DeadlineContext (parent cancellation)', function(assert) {
   assert.equal(dctx.done(), true);
 
   function onerror(error) {
-    assert.ok(error instanceof context.CancelledError);
+    assert.ok(error instanceof verror.CanceledError);
   }
 });
 
