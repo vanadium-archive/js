@@ -2400,11 +2400,6 @@ canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeStructOnlyM
   ["Key1", new vdl.BigInt(1, new Uint8Array([0x4]))],
   ["Key2", new vdl.BigInt(1, new Uint8Array([0x5]))],
   ["Key3", new vdl.BigInt(0, new Uint8Array([]))]]), true), _typeStructOnlyMap),
-canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeStructOnlyMap))(new Map([
-  ["AlsoNotAKey", new vdl.BigInt(1, new Uint8Array([0x7]))],
-  ["Key1", new vdl.BigInt(1, new Uint8Array([0x4]))],
-  ["Key2", new vdl.BigInt(1, new Uint8Array([0x5]))],
-  ["NotAKey", new vdl.BigInt(1, new Uint8Array([0x6]))]]), true), _typeStructOnlyMap),
 canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeMapOnlyStruct))({
   'key1': new vdl.BigInt(1, new Uint8Array([0x4])),
   'key2': 5,

@@ -151,13 +151,13 @@ Namespace.prototype.setRoots = function(ctx, roots) {
 };
     
       
-Namespace.prototype.setACL = function(ctx, name, acl, etag) {
-  throw new Error('Method SetACL not implemented');
+Namespace.prototype.setPermissions = function(ctx, name, acl, etag) {
+  throw new Error('Method SetPermissions not implemented');
 };
     
       
-Namespace.prototype.getACL = function(ctx, name) {
-  throw new Error('Method GetACL not implemented');
+Namespace.prototype.getPermissions = function(ctx, name) {
+  throw new Error('Method GetPermissions not implemented');
 };
     
       
@@ -359,8 +359,8 @@ Namespace.prototype._serviceDescription = {
     
       
     {
-    name: 'SetACL',
-    doc: "// SetACL sets the ACL in a node in a mount table.",
+    name: 'SetPermissions',
+    doc: "// SetPermissions sets the AccessList in a node in a mount table.",
     inArgs: [{
       name: 'name',
       doc: "",
@@ -369,7 +369,7 @@ Namespace.prototype._serviceDescription = {
     {
       name: 'acl',
       doc: "",
-      type: new access.TaggedACLMap()._type
+      type: new access.Permissions()._type
     },
     {
       name: 'etag',
@@ -385,8 +385,8 @@ Namespace.prototype._serviceDescription = {
     
       
     {
-    name: 'GetACL',
-    doc: "// GetACL returns the ACL in a node in a mount table.",
+    name: 'GetPermissions',
+    doc: "// GetPermissions returns the AccessList in a node in a mount table.",
     inArgs: [{
       name: 'name',
       doc: "",
@@ -396,7 +396,7 @@ Namespace.prototype._serviceDescription = {
     outArgs: [{
       name: 'acl',
       doc: "",
-      type: new access.TaggedACLMap()._type
+      type: new access.Permissions()._type
     },
     {
       name: 'etag',

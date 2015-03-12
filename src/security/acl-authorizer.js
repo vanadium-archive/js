@@ -1,5 +1,5 @@
 /**
- * @fileoverview The ACL authorizer
+ * @fileoverview The AccessList authorizer
  * @private
  */
 var blessingMatches = require('./blessing-matching');
@@ -10,7 +10,7 @@ module.exports = authorizer;
 
 /**
  * An access control list.
- * @typedef ACL
+ * @typedef AccessList
  * @type {Object}
  * @property {Object} in A map of blessing patterns to a list of labels that
  * the pattern is authorized for.  An example would be:
@@ -25,8 +25,8 @@ module.exports = authorizer;
  */
 
 /**
- * The ACL authorizer.
- * @param {ACL} acl The set of acls to apply.
+ * The AccessList authorizer.
+ * @param {AccessList} acl The set of acls to apply.
  * @return {Authorize} An authorizer that applies the acls.
  */
 function authorizer(acl) {
@@ -39,11 +39,11 @@ function authorizer(acl) {
     }
     var remoteNames = ctx.remoteBlessingStrings;
     if ((remoteNames === undefined || remoteNames.length === 0) &&
-         canAccessACL('', ctx.label, acl)) {
+         canAccessAccessList('', ctx.label, acl)) {
        return null;
     }
     for (var i = 0; i < remoteNames.length; i++) {
-      if (canAccessACL(remoteNames[i], ctx.label, acl)) {
+      if (canAccessAccessList(remoteNames[i], ctx.label, acl)) {
         return null;
       }
     }
@@ -54,7 +54,7 @@ function authorizer(acl) {
 
 // Returns whether name passed in has permission for the passed in
 // label.
-function canAccessACL(name, label, acl) {
+function canAccessAccessList(name, label, acl) {
   // The set of labels that are allowed for
   // the given names.
   var pattern;

@@ -20,9 +20,9 @@ var _type2 = new vdl.Type();
 var _type3 = new vdl.Type();
 var _type4 = new vdl.Type();
 var _type5 = new vdl.Type();
-var _typeACL = new vdl.Type();
+var _typeAccessList = new vdl.Type();
+var _typePermissions = new vdl.Type();
 var _typeTag = new vdl.Type();
-var _typeTaggedACLMap = new vdl.Type();
 var _typeerror = new vdl.Type();
 _type1.kind = vdl.Kind.LIST;
 _type1.name = "";
@@ -39,15 +39,15 @@ _type4.labels = ["NoRetry", "RetryConnection", "RetryRefetch", "RetryBackoff"];
 _type5.kind = vdl.Kind.LIST;
 _type5.name = "";
 _type5.elem = vdl.Types.ANY;
-_typeACL.kind = vdl.Kind.STRUCT;
-_typeACL.name = "v.io/v23/services/security/access.ACL";
-_typeACL.fields = [{name: "In", type: _type1}, {name: "NotIn", type: _type2}];
+_typeAccessList.kind = vdl.Kind.STRUCT;
+_typeAccessList.name = "v.io/v23/services/security/access.AccessList";
+_typeAccessList.fields = [{name: "In", type: _type1}, {name: "NotIn", type: _type2}];
+_typePermissions.kind = vdl.Kind.MAP;
+_typePermissions.name = "v.io/v23/services/security/access.Permissions";
+_typePermissions.elem = _typeAccessList;
+_typePermissions.key = vdl.Types.STRING;
 _typeTag.kind = vdl.Kind.STRING;
 _typeTag.name = "v.io/v23/services/security/access.Tag";
-_typeTaggedACLMap.kind = vdl.Kind.MAP;
-_typeTaggedACLMap.name = "v.io/v23/services/security/access.TaggedACLMap";
-_typeTaggedACLMap.elem = _typeACL;
-_typeTaggedACLMap.key = vdl.Types.STRING;
 _typeerror.kind = vdl.Kind.STRUCT;
 _typeerror.name = "error";
 _typeerror.fields = [{name: "Id", type: vdl.Types.STRING}, {name: "RetryCode", type: _type4}, {name: "Msg", type: vdl.Types.STRING}, {name: "ParamList", type: _type5}];
@@ -56,13 +56,13 @@ _type2.freeze();
 _type3.freeze();
 _type4.freeze();
 _type5.freeze();
-_typeACL.freeze();
+_typeAccessList.freeze();
+_typePermissions.freeze();
 _typeTag.freeze();
-_typeTaggedACLMap.freeze();
 _typeerror.freeze();
-module.exports.ACL = (vdl.Registry.lookupOrCreateConstructor(_typeACL));
+module.exports.AccessList = (vdl.Registry.lookupOrCreateConstructor(_typeAccessList));
+module.exports.Permissions = (vdl.Registry.lookupOrCreateConstructor(_typePermissions));
 module.exports.Tag = (vdl.Registry.lookupOrCreateConstructor(_typeTag));
-module.exports.TaggedACLMap = (vdl.Registry.lookupOrCreateConstructor(_typeTaggedACLMap));
 module.exports.error = (vdl.Registry.lookupOrCreateConstructor(_typeerror));
 
 
@@ -85,13 +85,13 @@ module.exports.error = (vdl.Registry.lookupOrCreateConstructor(_typeerror));
 // Errors:
 
 module.exports.TooBigError = makeError('v.io/v23/services/security/access.TooBig', actions.NO_RETRY, {
-  'en': '{1:}{2:} ACL is too big',
+  'en': '{1:}{2:} AccessList is too big',
 }, [
 ]);
 
 
-module.exports.ACLMatchError = makeError('v.io/v23/services/security/access.ACLMatch', actions.NO_RETRY, {
-  'en': '{1:}{2:} none of the valid blessings ({3}) are allowed by the ACL (rejected blessings: {4})',
+module.exports.AccessListMatchError = makeError('v.io/v23/services/security/access.AccessListMatch', actions.NO_RETRY, {
+  'en': '{1:}{2:} none of the valid blessings ({3}) are allowed by the AccessList (rejected blessings: {4})',
 }, [
   _type2,
   _type3,

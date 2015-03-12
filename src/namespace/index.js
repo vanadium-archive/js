@@ -197,27 +197,29 @@ Namespace.prototype.setRoots = function(roots, cb) {
 };
 
 /**
- * Sets the ACL on a namespace.
- * If etag is specified and is different from the current etag on the ACL, an
- * error will be returned.
- * Note that setACL will completely replace the ACL on the name.  If you want to
- * update only a part of the ACL, you must first call getACL, modify the
- * returned ACL, and then call setACL with the modified ACL.  You should use the
- * etag parameter in this case to ensure that the ACL has not been modified in
- * between read and write.
+ * Sets the AccessList on a namespace.
+ * If etag is specified and is different from the current etag on the
+ * AccessList, an error will be returned.
+ * Note that setPermissions will completely replace the AccessList on the name.
+ * If you want to update only a part of the AccessList, you must first call
+ * getPermissions, modify the returned AccessList, and then call setPermissions
+ * with the modified AccessList.  You should use the etag parameter in this case
+ * to ensure that the AccessList has not been modified in between read and write
  * @param {Context} ctx The rpc context.
- * @param {string} name name to set the ACL of
- * @params {Map} acl tagged ACL map to set on the name
- * @params {string} etag Optional etag of the ACL
+ * @param {string} name name to set the AccessList of
+ * @params {Map} acl tagged AccessList map to set on the name
+ * @params {string} etag Optional etag of the AccessList
  * @params {function} cb(err) Optional callback
- * @returns {Promise} A promise to be resolved when setACL is complete or
- * rejected when there is an error.
+ * @returns {Promise} A promise to be resolved when setPermissions is complete
+ * or rejected when there is an error.
  */
-Namespace.prototype.setACL = function(ctx, name, acl, etag, cb) {
+Namespace.prototype.setPermissions = function(ctx, name, acl, etag, cb) {
   // TODO(nlacasse): It's *very* easy to lock yourself out of a name.  If you
-  // accidentally call setACL without an Admin key you will be locked out, and
-  // all further getACL/setACL on that name will fail with just "ErrNoAccess".
-  // Should we provide an updateACL helper method that wraps getACL/setACL?
+  // accidentally call setPermissions without an Admin key you will be locked
+  // out, and all further getPermissions/setPermissions on that name will fail
+  // with just "ErrNoAccess".
+  // Should we provide an updateAccessList helper method that wraps
+  // getPermissions/setPermissions?
   // It's not clear exactly how it would work (what to overwrite, what to
   // append), but we should consider it.
   if (typeof etag === 'function') {
@@ -228,19 +230,19 @@ Namespace.prototype.setACL = function(ctx, name, acl, etag, cb) {
     etag = '';
   }
 
-  return this._namespace.setACL(ctx, name, acl, etag, cb);
+  return this._namespace.setPermissions(ctx, name, acl, etag, cb);
 };
 
 /**
- * Gets the ACL on a namespace.
+ * Gets the AccessList on a namespace.
  * @param {Context} ctx The rpc context.
- * @param {string} name name to get the ACL of
+ * @param {string} name name to get the AccessList of
  * @params {function} cb(err, acl, etag) Optional callback
- * @returns {Promise} A promise to be resolved when getACL is complete or
- * rejected when there is an error.
+ * @returns {Promise} A promise to be resolved when getPermissions is complete
+ * or rejected when there is an error.
  */
-Namespace.prototype.getACL = function(ctx, name, cb) {
-  return this._namespace.getACL(ctx, name, cb);
+Namespace.prototype.getPermissions = function(ctx, name, cb) {
+  return this._namespace.getPermissions(ctx, name, cb);
 };
 
 /**

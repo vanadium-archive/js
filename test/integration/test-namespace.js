@@ -460,7 +460,7 @@ test('Test setting and getting roots - ' +
   }
 });
 
-test('Test getACL() on non-existant name', function(assert) {
+test('Test getPermissions() on non-existant name', function(assert) {
   vanadium.init(config, function(err, rt) {
     if (err) {
       return assert.end(err);
@@ -470,15 +470,15 @@ test('Test getACL() on non-existant name', function(assert) {
     var ns = rt.namespace();
     var name = 'non/existant/name';
 
-    ns.getACL(ctx, name, function(err) {
+    ns.getPermissions(ctx, name, function(err) {
       assert.ok(err, 'should error');
       rt.close(assert.end);
     });
   });
 });
 
-test('Test setting and getting ACLs - ' +
-    'setACL(), getACL()', function(assert) {
+test('Test setting and getting AccessLists - ' +
+    'setPermissions(), getPermissions()', function(assert) {
   vanadium.init(config, function(err, rt) {
     if (err) {
       return assert.end(err);
@@ -492,40 +492,42 @@ test('Test setting and getting ACLs - ' +
 
     // TODO(nlacasse): This is the best way I found to build a tagged acl map.
     // Are there better ways?  Consider making a helper function.
-    var tam = new access.TaggedACLMap(new Map([
-      [access.Admin, new access.ACL({
+    var tam = new access.Permissions(new Map([
+      [access.Admin, new access.AccessList({
         'in': ['...'],
         'notIn': ['foo']
       })],
-      [access.Read, new access.ACL({
+      [access.Read, new access.AccessList({
         'in': ['bar/baz']
       })],
-      [access.Write, new access.ACL({
+      [access.Write, new access.AccessList({
         'notIn': ['biz/qux']
       })]
     ]));
 
-    ns.setACL(ctx, name, tam, function(err) {
+    ns.setPermissions(ctx, name, tam, function(err) {
       if (err) {
         return end(err);
       }
 
-      ns.getACL(ctx, name, function(err, gotTam, gotEtag) {
+      ns.getPermissions(ctx, name, function(err, gotTam, gotEtag) {
         if (err) {
           return end(err);
         }
 
-        assert.equal(typeof gotEtag, 'string', 'getACL returns a string etag');
+        assert.equal(typeof gotEtag, 'string',
+        'getPermissions returns a string etag');
 
-        assert.ok(gotTam, 'getACL returns a tagged acl map');
+        assert.ok(gotTam, 'getPermissions returns a tagged acl map');
         assert.deepEqual(gotTam, tam.val,
-            'getACL returns the same tagged acl map that we set');
+            'getPermissions returns the same tagged acl map that we set');
 
-        ns.setACL(ctx, name, tam, 'badEtag', function(err) {
-          assert.ok(err, 'setACL with a bad etag should error');
+        ns.setPermissions(ctx, name, tam, 'badEtag', function(err) {
+          assert.ok(err, 'setPermissions with a bad etag should error');
 
-          ns.setACL(ctx, name, tam, gotEtag, function(err) {
-            assert.error(err, 'setACL with the correct etag should not error');
+          ns.setPermissions(ctx, name, tam, gotEtag, function(err) {
+            assert.error(err,
+              'setPermissions with the correct etag should not error');
             end();
           });
         });
@@ -608,13 +610,13 @@ test('Test delete() on name with no children', function(assert) {
     var ns = rt.namespace();
     var name = 'path/to/name/with/no/children';
 
-    var tam = new access.TaggedACLMap(new Map([
-      [access.Admin, new access.ACL({
+    var tam = new access.Permissions(new Map([
+      [access.Admin, new access.AccessList({
         'in': ['...'],
       })]
     ]));
 
-    ns.setACL(ctx, name, tam, function(err) {
+    ns.setPermissions(ctx, name, tam, function(err) {
       if (err) {
         return end(err);
       }
@@ -642,22 +644,22 @@ test('Test delete() on name with children', function(assert) {
     var childName1 = nsutil.join(name, 'child1');
     var childName2 = nsutil.join(name, 'node/child2');
 
-    var tam = new access.TaggedACLMap(new Map([
-      [access.Admin, new access.ACL({
+    var tam = new access.Permissions(new Map([
+      [access.Admin, new access.AccessList({
         'in': ['...'],
       })]
     ]));
 
     // Create all three names.
-    ns.setACL(ctx, name, tam, function(err) {
+    ns.setPermissions(ctx, name, tam, function(err) {
       if (err) {
         return end(err);
       }
-      ns.setACL(ctx, childName1, tam, function(err) {
+      ns.setPermissions(ctx, childName1, tam, function(err) {
         if (err) {
           return end(err);
         }
-        ns.setACL(ctx, childName2, tam, function(err) {
+        ns.setPermissions(ctx, childName2, tam, function(err) {
           if (err) {
             return end(err);
           }
