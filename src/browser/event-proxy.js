@@ -2,7 +2,8 @@ var EE = require('eventemitter2').EventEmitter2;
 var inherits = require('inherits');
 
 var types = require('./event-proxy-message-types');
-var extnUtils = require('../lib/extension-utils');
+var extnUtils = require('./extension-utils');
+var errors = require('../errors/index');
 
 var defaultTimeout = 5000; // ms
 
@@ -38,7 +39,7 @@ function ExtensionEventProxy(timeout){
 
     // If not installed, emit ExtensionNotInstalledError.
     if (!isInstalled) {
-      proxy.emit('error', new extnUtils.ExtensionNotInstalledError());
+      proxy.emit('error', new errors.ExtensionNotInstalledError());
       return;
     }
 

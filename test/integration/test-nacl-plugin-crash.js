@@ -1,6 +1,5 @@
 var test = require('prova');
 
-var extnUtils = require('../../src/lib/extension-utils');
 var leafDispatcher = require('../../src/ipc/leaf-dispatcher');
 var serve = require('./serve');
 
@@ -38,7 +37,8 @@ test.skip('Test recovery from nacl plugin crash', function(t) {
     return t.end();
   }
 
-  var eventProxy = require('../../src/proxy/event-proxy');
+  var errors = require('../../src/errors/index');
+  var eventProxy = require('../../src/browser/event-proxy');
 
   // validate comunication first, partially because this initializes the
   // nacl plugin.
@@ -49,7 +49,7 @@ test.skip('Test recovery from nacl plugin crash', function(t) {
 
     // Handle the crash.
     runtime.once('crash', function(err) {
-      t.ok(err instanceof extnUtils.ExtensionCrashError,
+      t.ok(err instanceof errors.ExtensionCrashError,
         'Receive ExtensionCrashError object.');
 
       // Perform another communication validation.

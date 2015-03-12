@@ -7,7 +7,6 @@ var extend = require('xtend');
 var isBrowser = require('is-browser');
 
 var Deferred = require('./lib/deferred');
-var extnUtils = require('./lib/extension-utils');
 var runtime = require('./runtime');
 var vlog = require('./lib/vlog');
 
@@ -60,11 +59,11 @@ module.exports = {
 };
 
 if (isBrowser) {
-  // Add ExtensionNotInstalledError and isExtensionInstalled to exports if we
-  // are in a browser.
-  module.exports = extend(module.exports, {
-    isExtensionInstalled: extnUtils.isExtensionInstalled
-  });
+  /**
+   * Namespace for Chrome extension related exports
+   * @namespace
+   */
+  module.exports.extension = require('./browser/extension-utils');
 }
 
 /**
@@ -150,7 +149,7 @@ function init(config, cb) {
 // <-> WSPR identity flow, and respond with either an 'auth:success' message or
 // an 'auth:error' message.
 function getAccount(cb) {
-  var extensionEventProxy = require('./proxy/event-proxy');
+  var extensionEventProxy = require('./browser/event-proxy');
 
   extensionEventProxy.sendRpc('auth', null, function(err, data) {
     if (err) {

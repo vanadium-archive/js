@@ -3,9 +3,9 @@
  * @private
  */
 
-var extensionEventProxy = require('./event-proxy');
-var extnUtils = require('../lib/extension-utils');
-var Deferred = require('./../lib/deferred');
+var extensionEventProxy = require('../browser/event-proxy');
+var errors = require('../errors/index');
+var Deferred = require('../lib/deferred');
 var Proxy = require('./index');
 var random = require('../lib/random');
 var vLog = require('./../lib/vlog');
@@ -43,7 +43,7 @@ function ProxyConnection() {
 
   // rethrow crash error when proxy fails.
   this.onCrash = function(msg) {
-    self.emit('crash', new extnUtils.ExtensionCrashError(msg));
+    self.emit('crash', new errors.ExtensionCrashError(msg));
   };
 
   extensionEventProxy.on('crash', this.onCrash);

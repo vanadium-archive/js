@@ -3,7 +3,7 @@ var debug = require('debug')('background:index');
 var domready = require('domready');
 
 var AuthHandler = require('./auth-handler');
-var extnUtils = require('../../../src/lib/extension-utils');
+var extensionErrors = require('../../../src/browser/extension-errors');
 var getOrigin = require('./util').getOrigin;
 var Nacl = require('./nacl');
 
@@ -278,7 +278,7 @@ BackgroundPage.prototype.handleNaclCrash = function(msg) {
   // Notify all content scripts about the failure.
   var crashNotificationMsg = {
     type: 'crash',
-    body: new extnUtils.ExtensionCrashError(msg)
+    body: new extensionErrors.ExtensionCrashError(msg)
   };
   this.getAllPorts().forEach(function(port) {
     safePostMessage(port, crashNotificationMsg);
