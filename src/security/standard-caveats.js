@@ -12,8 +12,6 @@ function registerDefaultCaveats(registry) {
     expiryCaveatValidator);
   registry.register(vdlSecurity.MethodCaveatX,
     methodCaveatValidator);
-  registry.register(vdlSecurity.PublicKeyThirdPartyCaveatX,
-    publicKeyThirdPartyCaveatValidator);
 }
 
 
@@ -44,9 +42,4 @@ function methodCaveatValidator(secCtx, methods) {
   }
   return new vdlSecurity.MethodCaveatValidationError(secCtx.context,
     secCtx.method, methods);
-}
-
-function publicKeyThirdPartyCaveatValidator(secCtx, value) {
-  // TODO(bprosnitz) Intercept this caveat and handle in go.
-  return null;
 }
