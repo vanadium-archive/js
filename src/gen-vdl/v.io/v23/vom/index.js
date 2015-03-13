@@ -106,9 +106,25 @@ _typewireSet.freeze();
 _typewireStruct.freeze();
 _typewireType.freeze();
 _typewireUnion.freeze();
-module.exports.ControlKind = (vdl.Registry.lookupOrCreateConstructor(_typeControlKind));
+module.exports.ControlKind = {
+  NIL: canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeControlKind))('NIL', true), _typeControlKind),
+  EOF: canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeControlKind))('EOF', true), _typeControlKind),
+};
 module.exports.DumpAtom = (vdl.Registry.lookupOrCreateConstructor(_typeDumpAtom));
-module.exports.DumpKind = (vdl.Registry.lookupOrCreateConstructor(_typeDumpKind));
+module.exports.DumpKind = {
+  MAGIC: canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeDumpKind))('Magic', true), _typeDumpKind),
+  CONTROL: canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeDumpKind))('Control', true), _typeDumpKind),
+  MSG_ID: canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeDumpKind))('MsgId', true), _typeDumpKind),
+  TYPE_MSG: canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeDumpKind))('TypeMsg', true), _typeDumpKind),
+  VALUE_MSG: canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeDumpKind))('ValueMsg', true), _typeDumpKind),
+  MSG_LEN: canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeDumpKind))('MsgLen', true), _typeDumpKind),
+  TYPE_ID: canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeDumpKind))('TypeId', true), _typeDumpKind),
+  PRIM_VALUE: canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeDumpKind))('PrimValue', true), _typeDumpKind),
+  BYTE_LEN: canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeDumpKind))('ByteLen', true), _typeDumpKind),
+  VALUE_LEN: canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeDumpKind))('ValueLen', true), _typeDumpKind),
+  INDEX: canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeDumpKind))('Index', true), _typeDumpKind),
+  WIRE_TYPE_INDEX: canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeDumpKind))('WireTypeIndex', true), _typeDumpKind),
+};
 module.exports.Primitive = (vdl.Registry.lookupOrCreateConstructor(_typePrimitive));
 module.exports.typeId = (vdl.Registry.lookupOrCreateConstructor(_typetypeId));
 module.exports.wireArray = (vdl.Registry.lookupOrCreateConstructor(_typewireArray));

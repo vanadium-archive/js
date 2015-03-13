@@ -247,7 +247,11 @@ module.exports.NamedBool = (vdl.Registry.lookupOrCreateConstructor(_typeNamedBoo
 module.exports.NamedByte = (vdl.Registry.lookupOrCreateConstructor(_typeNamedByte));
 module.exports.NamedComplex128 = (vdl.Registry.lookupOrCreateConstructor(_typeNamedComplex128));
 module.exports.NamedComplex64 = (vdl.Registry.lookupOrCreateConstructor(_typeNamedComplex64));
-module.exports.NamedEnum = (vdl.Registry.lookupOrCreateConstructor(_typeNamedEnum));
+module.exports.NamedEnum = {
+  A: canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeNamedEnum))('A', true), _typeNamedEnum),
+  B: canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeNamedEnum))('B', true), _typeNamedEnum),
+  C: canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeNamedEnum))('C', true), _typeNamedEnum),
+};
 module.exports.NamedFloat32 = (vdl.Registry.lookupOrCreateConstructor(_typeNamedFloat32));
 module.exports.NamedFloat64 = (vdl.Registry.lookupOrCreateConstructor(_typeNamedFloat64));
 module.exports.NamedInt16 = (vdl.Registry.lookupOrCreateConstructor(_typeNamedInt16));

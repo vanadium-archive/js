@@ -385,10 +385,20 @@ module.exports.ADEStruct = (vdl.Registry.lookupOrCreateConstructor(_typeADEStruc
 module.exports.Array3String = (vdl.Registry.lookupOrCreateConstructor(_typeArray3String));
 module.exports.Array4String = (vdl.Registry.lookupOrCreateConstructor(_typeArray4String));
 module.exports.BDEUnion = (vdl.Registry.lookupOrCreateConstructor(_typeBDEUnion));
-module.exports.BEANum = (vdl.Registry.lookupOrCreateConstructor(_typeBEANum));
-module.exports.BRIENum = (vdl.Registry.lookupOrCreateConstructor(_typeBRIENum));
+module.exports.BEANum = {
+  BEAN: canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeBEANum))('Bean', true), _typeBEANum),
+};
+module.exports.BRIENum = {
+  GLEE: canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeBRIENum))('Glee', true), _typeBRIENum),
+  BRIE: canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeBRIENum))('Brie', true), _typeBRIENum),
+  THREE: canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeBRIENum))('Three', true), _typeBRIENum),
+};
 module.exports.ConvertGroup = (vdl.Registry.lookupOrCreateConstructor(_typeConvertGroup));
-module.exports.FOODYNum = (vdl.Registry.lookupOrCreateConstructor(_typeFOODYNum));
+module.exports.FOODYNum = {
+  BEAN: canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeFOODYNum))('Bean', true), _typeFOODYNum),
+  BRIE: canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeFOODYNum))('Brie', true), _typeFOODYNum),
+  CHERRY: canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeFOODYNum))('Cherry', true), _typeFOODYNum),
+};
 module.exports.ListString = (vdl.Registry.lookupOrCreateConstructor(_typeListString));
 module.exports.MBool = (vdl.Registry.lookupOrCreateConstructor(_typeMBool));
 module.exports.MList = (vdl.Registry.lookupOrCreateConstructor(_typeMList));
@@ -409,7 +419,11 @@ module.exports.NByteArray = (vdl.Registry.lookupOrCreateConstructor(_typeNByteAr
 module.exports.NByteSlice = (vdl.Registry.lookupOrCreateConstructor(_typeNByteSlice));
 module.exports.NComplex128 = (vdl.Registry.lookupOrCreateConstructor(_typeNComplex128));
 module.exports.NComplex64 = (vdl.Registry.lookupOrCreateConstructor(_typeNComplex64));
-module.exports.NEnum = (vdl.Registry.lookupOrCreateConstructor(_typeNEnum));
+module.exports.NEnum = {
+  A: canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeNEnum))('A', true), _typeNEnum),
+  B: canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeNEnum))('B', true), _typeNEnum),
+  C: canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeNEnum))('C', true), _typeNEnum),
+};
 module.exports.NFloat32 = (vdl.Registry.lookupOrCreateConstructor(_typeNFloat32));
 module.exports.NFloat64 = (vdl.Registry.lookupOrCreateConstructor(_typeNFloat64));
 module.exports.NInt16 = (vdl.Registry.lookupOrCreateConstructor(_typeNInt16));

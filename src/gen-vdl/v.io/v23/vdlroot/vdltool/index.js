@@ -69,7 +69,11 @@ _typeGoType.freeze();
 _typeJavaConfig.freeze();
 _typeJavascriptConfig.freeze();
 module.exports.Config = (vdl.Registry.lookupOrCreateConstructor(_typeConfig));
-module.exports.GenLanguage = (vdl.Registry.lookupOrCreateConstructor(_typeGenLanguage));
+module.exports.GenLanguage = {
+  GO: canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeGenLanguage))('Go', true), _typeGenLanguage),
+  JAVA: canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeGenLanguage))('Java', true), _typeGenLanguage),
+  JAVASCRIPT: canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeGenLanguage))('Javascript', true), _typeGenLanguage),
+};
 module.exports.GoConfig = (vdl.Registry.lookupOrCreateConstructor(_typeGoConfig));
 module.exports.GoImport = (vdl.Registry.lookupOrCreateConstructor(_typeGoImport));
 module.exports.GoType = (vdl.Registry.lookupOrCreateConstructor(_typeGoType));

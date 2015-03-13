@@ -122,6 +122,17 @@ test('named composite types', function(assert) {
   assert.end();
 });
 
+test('enum', function(assert) {
+    assert.deepEqual(base.NamedEnum.A._type, {
+      name: 'v.io/x/ref/lib/vdl/testdata/base.NamedEnum',
+      kind: Kind.ENUM,
+      labels: ['A','B','C']
+    });
+    assert.deepEqual(base.NamedEnum.A, {val:'A'});
+    assert.notDeepEqual(base.NamedEnum.A, base.NamedEnum.B);
+    assert.end();
+});
+
 // The vdl behavior in createConstructor is to set the fields to their 0-value.
 test('struct constructor', function(assert) {
   var res = new base.NamedStruct();

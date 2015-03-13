@@ -42,9 +42,9 @@ test('Validating caveats', function(t) {
   registry.register(testCaveats.CaveatThatValidates,
     function(fnCall, callSide, param) {
     t.equal(fnCall, call, 'Contexts should match');
-    t.equal(callSide._type, new vdlSecurity.CallSide('Local')._type,
+    t.equal(callSide._type, vdlSecurity.CallSide.LOCAL._type,
       'Correct callSide type');
-    t.deepEqual(callSide, new vdlSecurity.CallSide('Local'),
+    t.deepEqual(callSide, vdlSecurity.CallSide.LOCAL,
       'Correct callSide value');
     t.equal(param._type, (new testCaveats.CaveatThatValidatesData())._type,
       'Validation param has the correct type (CaveatThatValidates)');
@@ -71,7 +71,7 @@ test('Validating caveats', function(t) {
   t.doesNotThrow(function() {
       registry.validate(
               call,
-              new vdlSecurity.CallSide('Local'),
+              vdlSecurity.CallSide.LOCAL,
               caveatUtil.makeCaveat(testCaveats.CaveatThatValidates,
                          testCaveats.CaveatThatValidatesExpectedData));
     },
@@ -79,7 +79,7 @@ test('Validating caveats', function(t) {
   t.throws(function() {
       registry.validate(
               call,
-              new vdlSecurity.CallSide('Local'),
+              vdlSecurity.CallSide.LOCAL,
               caveatUtil.makeCaveat(testCaveats.CaveatDoesntValidate,
                          testCaveats.CaveatDoesntValidateExpectedData));
     },
@@ -103,7 +103,7 @@ test('Validating caveats', function(t) {
   t.throws(function() {
       registry.validate(
 	      call,
-        new vdlSecurity.CallSide('Local'),
+        vdlSecurity.CallSide.LOCAL,
         caveatUtil.makeCaveat(testCaveats.CaveatWithCollision,
                    testCaveats.CaveatWithCollisionExpectedData.val));
     },
@@ -122,7 +122,7 @@ test('Unknown caveat id', function(t) {
 
   t.throws(function() {
     registry.validate(call,
-    new vdlSecurity.CallSide('Local'),
+    vdlSecurity.CallSide.LOCAL,
     {
       id: 99,
       paramVom: null

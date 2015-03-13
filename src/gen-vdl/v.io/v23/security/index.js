@@ -126,7 +126,10 @@ _typenonce.freeze();
 _typepublicKeyDischarge.freeze();
 _typepublicKeyThirdPartyCaveat.freeze();
 module.exports.BlessingPattern = (vdl.Registry.lookupOrCreateConstructor(_typeBlessingPattern));
-module.exports.CallSide = (vdl.Registry.lookupOrCreateConstructor(_typeCallSide));
+module.exports.CallSide = {
+  LOCAL: canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeCallSide))('Local', true), _typeCallSide),
+  REMOTE: canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeCallSide))('Remote', true), _typeCallSide),
+};
 module.exports.Caveat = (vdl.Registry.lookupOrCreateConstructor(_typeCaveat));
 module.exports.CaveatDescriptor = (vdl.Registry.lookupOrCreateConstructor(_typeCaveatDescriptor));
 module.exports.Certificate = (vdl.Registry.lookupOrCreateConstructor(_typeCertificate));
