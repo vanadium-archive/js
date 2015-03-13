@@ -5,6 +5,7 @@ var vdl = require('../../../../../../../vdl');
 
 
 
+var vtrace = require('./../../../../../v23/vtrace');
 
 module.exports = {};
 
@@ -18,7 +19,7 @@ _type1.name = "";
 _type1.elem = vdl.Types.ANY;
 _typeServerRPCReply.kind = vdl.Kind.STRUCT;
 _typeServerRPCReply.name = "v.io/x/ref/services/wsprd/lib.ServerRPCReply";
-_typeServerRPCReply.fields = [{name: "Results", type: _type1}, {name: "Err", type: vdl.Types.ERROR}];
+_typeServerRPCReply.fields = [{name: "Results", type: _type1}, {name: "Err", type: vdl.Types.ERROR}, {name: "TraceResponse", type: new vtrace.Response()._type}];
 _type1.freeze();
 _typeServerRPCReply.freeze();
 module.exports.ServerRPCReply = (vdl.Registry.lookupOrCreateConstructor(_typeServerRPCReply));

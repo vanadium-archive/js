@@ -1,6 +1,8 @@
 var test = require('prova');
 var service = require('./get-service');
 var vtrace = require('../../src/lib/vtrace');
+var serve = require('./serve');
+var leafDispatcher = require('../../src/ipc/leaf-dispatcher');
 
 function findSpan(name, trace) {
   for (var i = 0; i < trace.spans.length; i++) {
@@ -51,6 +53,40 @@ test('Test using collectRegexp', function(assert) {
       assert.equals(records.length, 1);
       assert.ok(findSpan('"cache".Get', records[0]));
       end(assert);
+    });
+  });
+});
+
+var SpanService = {
+  makeSpan: function(context) {
+    context = vtrace.withNewSpan(context, 'in makeSpan');
+    vtrace.getSpan(context).finish();
+  }
+};
+
+test('Test receiving traces from a javascript server', function(assert) {
+  serve('testing/span', leafDispatcher(SpanService), function(err, res) {
+    assert.error(err);
+    var serverCtx = res.runtime.getContext();
+
+    var clientCtx = vtrace.withNewStore(serverCtx);
+    var trace = vtrace.getSpan(clientCtx).trace;
+    vtrace.forceCollect(clientCtx);
+    res.service.makeSpan(clientCtx).then(function() {
+      var record = vtrace.getStore(clientCtx).traceRecord(trace);
+      // We expect to see spans at least from:
+      // The js client.
+      assert.ok(findSpan('<jsclient>"testing/span".makeSpan', record));
+      // The wspr proxy.
+      assert.ok(findSpan('<wspr>"testing/span".MakeSpan', record));
+      // The js server.
+      assert.ok(findSpan('<jsserver>"".makeSpan', record));
+      // A custom span.
+      assert.ok(findSpan('in makeSpan', record));
+      res.end(assert);
+    }).catch(function(err) {
+      assert.error(err);
+      res.end(assert);
     });
   });
 });

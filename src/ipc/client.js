@@ -199,6 +199,7 @@ OutstandingRPC.prototype.handleCompletion = function(data) {
   }
 
   vtrace.getStore(this._ctx).merge(response.traceResponse);
+  vtrace.getSpan(this._ctx).finish();
 
   this._def.resolve(response.outArgs);
   if (this._def.stream) {
