@@ -15,31 +15,31 @@ function registerDefaultCaveats(registry) {
 }
 
 
-function constCaveatValidator(secCtx, value) {
+function constCaveatValidator(call, callSide, value) {
   if (!value) {
-    return new vdlSecurity.ConstCaveatValidationError(secCtx.context);
+    return new vdlSecurity.ConstCaveatValidationError(call.context);
   }
   return null;
 }
 
-function expiryCaveatValidator(secCtx, expiry) {
+function expiryCaveatValidator(call, callSide, expiry) {
   var now = Date.now();
   if (now > expiry.getTime()) {
-    return new vdlSecurity.ExpiryCaveatValidationError(secCtx.context,
+    return new vdlSecurity.ExpiryCaveatValidationError(call.context,
       now, expiry);
   }
   return null;
 }
 
-function methodCaveatValidator(secCtx, methods) {
-  if (!secCtx.method || methods.length === 0) {
+function methodCaveatValidator(call, callSide, methods) {
+  if (!call.method || methods.length === 0) {
     return null;
   }
   for (var i = 0; i < methods.length; i++) {
-    if (secCtx.method === methods[i]) {
+    if (call.method === methods[i]) {
       return null;
     }
   }
-  return new vdlSecurity.MethodCaveatValidationError(secCtx.context,
-    secCtx.method, methods);
+  return new vdlSecurity.MethodCaveatValidationError(call.context,
+    call.method, methods);
 }

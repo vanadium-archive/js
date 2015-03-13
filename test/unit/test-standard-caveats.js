@@ -38,7 +38,7 @@ function assertValidate(t, cavType, val, msg) {
 
   t.doesNotThrow(function() {
     t.equal(null,
-      registry.validate(secCall, cav),
+      registry.validate(secCall, new vdlSecurity.CallSide('Remote'), cav),
       msg);
   },
   undefined,
@@ -52,7 +52,7 @@ function assertDoesntValidate(t, cavType, val, msg) {
 
   var res;
   try {
-    res = registry.validate(secCall, cav);
+    res = registry.validate(secCall, new vdlSecurity.CallSide('Local'), cav);
   } catch(err) {
     res = err;
   }

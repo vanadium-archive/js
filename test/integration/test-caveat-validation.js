@@ -35,7 +35,7 @@ test('caveatValidation', function(t) {
   // caveatValidator will validate caveats iff nextCaveatValidationResult
   // is true
   var nextCaveatValidationResult = true;
-  function caveatValidator(call, data) {
+  function caveatValidator(call, callSide, data) {
     t.deepEqual(data, expectedCaveatData, 'validator receives correct data');
     if (!nextCaveatValidationResult) {
       throw new Error('Intentionally failing caveat validation');
