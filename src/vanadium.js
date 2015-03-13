@@ -34,12 +34,23 @@ module.exports = {
    * @namespace
    */
   vlog: require('./lib/vlog'),
+
+  /**
+   * Namespace of exported naming concepts
+   */
+  naming: require('./gen-vdl/v.io/v23/naming'),
+
   /**
    * Namespace of utilities for the Vanadium namespace
    * @namespace
    */
   namespaceUtil: require('./namespace/util'),
-  aclAuthorizer: require('./security/acl-authorizer'),
+
+  /**
+   * Namespace of Vanadium security
+   */
+  security: require('./security'),
+
   /**
    * Namespace for context related objects
    * @namespace
@@ -56,6 +67,8 @@ module.exports = {
    * @namespace
    */
   vom: require('./vom'),
+
+  UniqueId: require('./gen-vdl/v.io/v23/uniqueid').Id,
 };
 
 if (isBrowser) {
