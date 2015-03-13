@@ -64,13 +64,14 @@ CaveatValidatorRegistry.prototype.register = function(cavDesc, validateFn) {
  * See security/types.vdl
  * @throws Upon failure to validate, does not throw if successful.
  */
-CaveatValidatorRegistry.prototype.validate = function(secCall, caveat) {
+CaveatValidatorRegistry.prototype.validate =
+  function(secCall, callSide, caveat) {
   var validator = this.validators.get(this._makeKey(caveat.id));
   if (validator === undefined) {
     throw new vdlSecurity.CaveatNotRegisteredError(secCall.context,
       'Unknown caveat id: ' + this._makeKey(caveat.id));
   }
-  return validator.validate(secCall, vom.decode(caveat.paramVom));
+  return validator.validate(secCall, callSide, vom.decode(caveat.paramVom));
 };
 
 /**
@@ -83,10 +84,11 @@ function CaveatValidator(cavDesc, validateFn) {
   this.validateFn = validateFn;
 }
 
-CaveatValidator.prototype.validate = function(secCall, paramForValidator) {
+CaveatValidator.prototype.validate =
+  function(secCall, callSide, paramForValidator) {
   var paramType = this.cavDesc.paramType;
   var canonParam = vdl.Canonicalize.reduce(paramForValidator, paramType);
   var unwrappedParam = unwrapArg(canonParam, paramType);
 
-  return this.validateFn(secCall, unwrappedParam);
+  return this.validateFn(secCall, callSide, unwrappedParam);
 };

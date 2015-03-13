@@ -5,6 +5,7 @@ var context = require('../../src/runtime/context');
 var SecurityCall = require('../../src/security/call');
 
 var testCaveats = require('../vdl-out/javascript-test/security/caveat');
+var vdlSecurity = require('../../src/gen-vdl/v.io/v23/security');
 var caveatUtil = require('./caveat-util');
 
 function getMockSecurityCall() {
@@ -38,8 +39,13 @@ test('Validating caveats', function(t) {
   var seenCalls = [];
 
   // Register caveat validators.
-  registry.register(testCaveats.CaveatThatValidates, function(fnCall, param) {
+  registry.register(testCaveats.CaveatThatValidates,
+    function(fnCall, callSide, param) {
     t.equal(fnCall, call, 'Contexts should match');
+    t.equal(callSide._type, new vdlSecurity.CallSide('Local')._type,
+      'Correct callSide type');
+    t.deepEqual(callSide, new vdlSecurity.CallSide('Local'),
+      'Correct callSide value');
     t.equal(param._type, (new testCaveats.CaveatThatValidatesData())._type,
       'Validation param has the correct type (CaveatThatValidates)');
     t.deepEqual(param, testCaveats.CaveatThatValidatesExpectedData,
@@ -50,7 +56,8 @@ test('Validating caveats', function(t) {
     return false; // This should be ignored, but make sure it isn't treated
     // as a failed validation.
   });
-  registry.register(testCaveats.CaveatDoesntValidate, function(fnCall, param) {
+  registry.register(testCaveats.CaveatDoesntValidate,
+    function(fnCall, callSide, param) {
     t.equal(fnCall, call, 'Contexts should match');
     t.deepEqual(param, testCaveats.CaveatDoesntValidateExpectedData.val,
       'Validation param matches expectation (CaveatDoesntValidate)');
@@ -64,6 +71,7 @@ test('Validating caveats', function(t) {
   t.doesNotThrow(function() {
       registry.validate(
               call,
+              new vdlSecurity.CallSide('Local'),
               caveatUtil.makeCaveat(testCaveats.CaveatThatValidates,
                          testCaveats.CaveatThatValidatesExpectedData));
     },
@@ -71,6 +79,7 @@ test('Validating caveats', function(t) {
   t.throws(function() {
       registry.validate(
               call,
+              new vdlSecurity.CallSide('Local'),
               caveatUtil.makeCaveat(testCaveats.CaveatDoesntValidate,
                          testCaveats.CaveatDoesntValidateExpectedData));
     },
@@ -80,7 +89,8 @@ test('Validating caveats', function(t) {
 
   // Test re-registering on the same UUID. This should replace the validation
   // function.
-  registry.register(testCaveats.CaveatWithCollision, function(fnCall, param) {
+  registry.register(testCaveats.CaveatWithCollision,
+    function(fnCall, callSide, param) {
     t.equal(fnCall, call, 'Contexts should match');
     t.deepEqual(param, testCaveats.CaveatWithCollisionExpectedData.val,
       'Validation param matches expectation (CaveatWithCollision)');
@@ -93,8 +103,9 @@ test('Validating caveats', function(t) {
   t.throws(function() {
       registry.validate(
 	      call,
-              caveatUtil.makeCaveat(testCaveats.CaveatWithCollision,
-                         testCaveats.CaveatWithCollisionExpectedData.val));
+        new vdlSecurity.CallSide('Local'),
+        caveatUtil.makeCaveat(testCaveats.CaveatWithCollision,
+                   testCaveats.CaveatWithCollisionExpectedData.val));
     },
     'Validation should fail',
     'Shouldn\'t validate after validation function is changed');
@@ -110,7 +121,9 @@ test('Unknown caveat id', function(t) {
   var call = getMockSecurityCall();
 
   t.throws(function() {
-    registry.validate(call, {
+    registry.validate(call,
+    new vdlSecurity.CallSide('Local'),
+    {
       id: 99,
       paramVom: null
     });
