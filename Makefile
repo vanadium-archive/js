@@ -124,13 +124,11 @@ gen-vdl-test: JS_VDL_DIR := "$(VANADIUM_ROOT)/release/javascript/core/test/vdl-o
 gen-vdl-test: EXTRA_VDL_PATHS := "javascript-test/..." "test_service/..."
 gen-vdl-test: VDLPATH := "$(VANADIUM_ROOT)/release/javascript/core/test/vdl-in:$(VANADIUM_ROOT)/release/javascript/core/go"
 gen-vdl-test: JS_VDL_PATH_TO_CORE := "../../src"
-gen-vdl-test: clean-test-vdl gen-vdl-impl
-
-clean-test-vdl:
-	rm -rf $(JS_VDL_DIR)
+gen-vdl-test: gen-vdl-impl
 
 gen-vdl-impl:
 ifndef NOVDLGEN
+	rm -rf $(JS_VDL_DIR)
 	VDLPATH=$(VDLPATH) v23 go run $(VANADIUM_ROOT)/release/go/src/v.io/x/ref/cmd/vdl/main.go generate -lang=javascript \
 		-js_relative_path_to_core=$(JS_VDL_PATH_TO_CORE) \
 		-js_out_dir=$(JS_VDL_DIR) \
