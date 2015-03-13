@@ -36,7 +36,7 @@ func (i *invokeMethWCavIdImpl) Invoke(servCtx ipc.ServerCall, name string, cavDe
 		ParamVom: bytes,
 	}
 	p := v23.GetPrincipal(ctx)
-	other, _ := servCtx.RemoteBlessings().ForCall(servCtx)
+	other, _ := security.BlessingNames(servCtx, security.CallSideRemote)
 	sharedWithOther := p.BlessingStore().ForPeer(other...)
 
 	pWithCaveats, err := vsecurity.NewPrincipal()
