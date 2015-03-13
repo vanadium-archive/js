@@ -6,6 +6,7 @@
 var context = require('../runtime/context');
 var SecurityCall = require('../security/call');
 var inherits = require('inherits');
+var vtrace = require('../lib/vtrace');
 
 module.exports = ServerCall;
 
@@ -26,8 +27,8 @@ function ServerCall(request, controller, ctx) {
 
   if (request instanceof ServerCall) {
     this._ctx = request._ctx;
+    this._cancelable = request._cancelable;
     this.suffix = request.suffix;
-    this.name = request.name;
     this.localBlessings = request.localBlessings;
     this.remoteBlessings = request.remoteBlessings;
     this.localBlessingStrings = request.localBlessingStrings;
@@ -45,10 +46,15 @@ function ServerCall(request, controller, ctx) {
     } else {
       this._ctx = this._ctx.withCancel();
     }
+    this._cancelable = this._ctx;
     var security = new SecurityCall(request.call.securityCall,
                                        controller);
+    var spanName = '<jsserver>"'+security.suffix+'".'+request.method;
+    // TODO(mattr): We need to enforce some security on trace responses.
+    this._ctx = vtrace.withContinuedTrace(
+      this._ctx, spanName, request.call.traceRequest);
+
     this.suffix = security.suffix;
-    this.name = security.name;
     this.localBlessings = security.localBlessings;
     this.remoteBlessings = security.remoteBlessings;
     this.localBlessingStrings = security.localBlessingStrings;
@@ -72,9 +78,9 @@ ServerCall.prototype.waitUntilDone = function(callback) {
 ServerCall.prototype.value = function(key) {
   return this._ctx.value(key);
 };
-ServerCall.prototype.cancel = function() {
-  return this._ctx.cancel();
+ServerCall.prototype.cancel = function(key) {
+  return this._cancelable.cancel();
 };
-ServerCall.prototype.finish = function() {
-  return this._ctx.finish();
+ServerCall.prototype.finish = function(key) {
+  return this._cancelable.finish();
 };

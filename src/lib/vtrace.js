@@ -152,28 +152,28 @@ Store.prototype.traceRecord = function(id) {
   return node.record();
 };
 
-// _getNode get's a trace node from the store.  force
+// _getNode get's a trace node from the store.  shouldCreate
 // is either a boolean or a function that returns a boolean.
-// if force or force() is true, then we will create the node
+// if shouldCreate or shouldCreate() is true, then we will create the node
 // if it does not exist, otherwise we'll return null.
-Store.prototype._getNode = function(traceid, force) {
+Store.prototype._getNode = function(traceid, shouldCreate) {
   var k = key(traceid);
   var node = this._nodes[k];
   if (node) {
     return node;
   }
-  if (typeof force === 'function') {
-    force = force();
+  if (typeof shouldCreate === 'function') {
+    shouldCreate = shouldCreate();
   }
-  if (force) {
+  if (shouldCreate) {
     node = new Node(traceid);
     this._nodes[k] = node;
   }
   return node;
 };
 
-Store.prototype._getSpan = function(span, force) {
-  var node = this._getNode(span.trace, force);
+Store.prototype._getSpan = function(span, shouldCreate) {
+  var node = this._getNode(span.trace, shouldCreate);
   if (!node) {
     return null;
   }
@@ -234,8 +234,8 @@ Store.prototype.merge = function(response) {
   if (!uniqueid.valid(response.trace.id)) {
     return;
   }
-  var force = (response.flags & vdl.CollectInMemory) !== 0;
-  var node = this._getNode(response.trace.id, force);
+  var shouldCreate = (response.flags & vdl.CollectInMemory) !== 0;
+  var node = this._getNode(response.trace.id, shouldCreate);
   if (!node) {
     return;
   }
@@ -267,6 +267,9 @@ module.exports.withNewTrace = function(ctx) {
  */
 module.exports.withContinuedTrace = function(ctx, name, request) {
   var store = ctx.value(storeKey);
+  if (request.flags & vdl.CollectInMemory !== 0) {
+    store._getNode(request.traceId, true);
+  }
   var span = new Span(name, store, request.traceId, request.spanId);
   return ctx.withValue(spanKey, span);
 };
@@ -278,7 +281,8 @@ module.exports.withContinuedTrace = function(ctx, name, request) {
  */
 module.exports.withNewSpan = function(ctx, name) {
   var oldSpan = ctx.value(spanKey);
-  var span = new Span(name, oldSpan._store, oldSpan.trace, oldSpan.id);
+  var oldStore = ctx.value(storeKey);
+  var span = new Span(name, oldStore, oldSpan.trace, oldSpan.id);
   return ctx.withValue(spanKey, span);
 };
 
@@ -324,6 +328,7 @@ module.exports.forceCollect = function(ctx) {
 /**
  * Generate a vtrace.Request to send over the wire.
  * @param {Object} ctx A context.Context instance.
+ * @return {Object} a vtrace.Request instance.
  */
 module.exports.request = function(ctx) {
   var store = ctx.value(storeKey);
@@ -332,5 +337,19 @@ module.exports.request = function(ctx) {
     spanId: span.id,
     traceId: span.trace,
     flags: store._flags(span.trace)
+  });
+};
+
+/**
+ * Generate a vtrace.Response to send over the wire.
+ * @param {Object} ctx A context.Context instance.
+ * @return {Object} a vtrace.Response instance.
+ */
+module.exports.response = function(ctx) {
+  var store = ctx.value(storeKey);
+  var span = ctx.value(spanKey);
+  return vdl.Response({
+    flags: store._flags(span.trace),
+    trace: store.traceRecord(span.trace)
   });
 };

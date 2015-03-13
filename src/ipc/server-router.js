@@ -30,6 +30,7 @@ var ServerRPCReply =
 var CaveatValidationResponse =
   require('../gen-vdl/v.io/x/ref/services/wsprd/ipc/server').
   CaveatValidationResponse;
+var vtrace = require('../lib/vtrace');
 
 /**
  * A router that handles routing incoming requests to the right
@@ -540,6 +541,8 @@ Router.prototype.sendResult = function(messageId, name, results, err,
     delete this._contextMap[messageId];
   }
 
+  var traceResponse = vtrace.response(ctx);
+
   // If this is a streaming request, queue up the final response after all
   // the other stream requests are done.
   var stream = this._streamMap[messageId];
@@ -547,12 +550,13 @@ Router.prototype.sendResult = function(messageId, name, results, err,
     // We should probably remove the stream from the dictionary, but it's
     // not clear if there is still a reference being held elsewhere.  If there
     // isn't, then GC might prevent this final message from being sent out.
-    stream.serverClose(results, errorStruct);
+    stream.serverClose(results, errorStruct, traceResponse);
     this._proxy.dequeue(messageId);
   } else {
     var responseData = new ServerRPCReply({
       results: results,
-      err: errorStruct
+      err: errorStruct,
+      traceResponse: traceResponse
     });
     var responseDataVOM = byteUtil.bytes2Hex(vom.encode(responseData));
     this._proxy.sendRequest(responseDataVOM, Outgoing.RESPONSE, null,

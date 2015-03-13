@@ -61,13 +61,14 @@ Stream.prototype.clientClose = function() {
   Duplex.prototype.write.call(this, object);
 };
 
-Stream.prototype.serverClose = function(results, err) {
+Stream.prototype.serverClose = function(results, err, traceResponse) {
   var object = {
     id: this.flowId,
     type: Outgoing.RESPONSE,
     data: byteUtil.bytes2Hex(vom.encode(new ServerRPCReply({
       results: results,
-      err: err || null
+      err: err || null,
+      traceResponse: traceResponse
     })))
   };
   Duplex.prototype.write.call(this, object);
