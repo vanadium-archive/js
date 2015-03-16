@@ -17,7 +17,7 @@ module.exports = {
     var protocol = parseUrl(url).protocol;
     if (protocol === 'http:') {
       client = http;
-      vlog.warn('Sending insecure request to: ' + url);
+      vlog.logger.warn('Sending insecure request to: ' + url);
     } else if (protocol === 'https:') {
       client = https;
     } else {

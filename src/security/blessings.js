@@ -3,7 +3,7 @@
  * @private
  */
 
-var vLog = require('../lib/vlog');
+var vlog = require('../lib/vlog');
 
 /**
  * Blessings encapsulate the set of blessings (human-readable strings) have
@@ -33,7 +33,7 @@ Blessings.prototype.release = function(ctx) {
   this._count--;
   if (this._count === 0) {
     this._controller.unlinkJSBlessings(ctx, this._id).catch(function(err) {
-      vLog.warn('Ignoring failure while cleaning up blessings: ' + err);
+      vlog.logger.warn('Ignoring failure while cleaning up blessings: ' + err);
     });
   }
 };

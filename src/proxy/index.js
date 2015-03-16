@@ -10,7 +10,7 @@ var LRU = require('lru-cache');
 var MessageType = require('./message-type');
 var Incoming = MessageType.Incoming;
 var Outgoing = MessageType.Outgoing;
-var vLog = require('./../lib/vlog');
+var vlog = require('./../lib/vlog');
 var byteUtil = require('../vdl/byte-util');
 var vom = require('../vom');
 var unwrap = require('../vdl/type-util').unwrap;
@@ -62,7 +62,7 @@ Proxy.prototype.process = function(message) {
     payload = vom.decode(byteUtil.hex2Bytes(message.data));
     payload.message = unwrap(payload.message);
   } catch (e) {
-    vLog.error(e);
+    vlog.logger.error(e);
     if (!isServerOriginatedMessage) {
       handler.handleResponse(Incoming.ERROR_RESPONSE, message.data);
     }
@@ -74,8 +74,8 @@ Proxy.prototype.process = function(message) {
     if (!handler) {
       // TODO(bprosnitz) There is a race condition where we receive STREAM_CLOSE
       // before a method is invoked in js and see this warning.
-      vLog.warn('Dropping message for unknown invoke payload ' + payload.type +
-        ' (message id: ' + message.id + ')');
+      vlog.logger.warn('Dropping message for unknown invoke payload ' +
+        payload.type + ' (message id: ' + message.id + ')');
       return;
     }
     handler.handleRequest(message.id, payload.type, payload.message);

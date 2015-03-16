@@ -96,8 +96,8 @@ function Signature(service, desc) {
           // arguments variable and don't declare arguments.
           // TODO(bprosnitz) How would this look if we support vararg
           // in the future?
-          vlog.warn('Args of method ' + thisMethod.name + ' don\'t ' +
-                    'match descriptor');
+          vlog.logger.warn('Args of method ' + thisMethod.name + ' don\'t ' +
+                           'match descriptor');
         }
       }
 

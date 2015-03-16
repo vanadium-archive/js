@@ -5,7 +5,7 @@
 
 var Outgoing = require('./message-type').Outgoing;
 var Duplex = require('stream').Duplex;
-var vLog = require('../lib/vlog');
+var vlog = require('../lib/vlog');
 var inherits = require('inherits');
 var byteUtil = require('../vdl/byte-util');
 var vom = require('../vom');
@@ -104,8 +104,9 @@ Stream.prototype._read = function() {
  */
 Stream.prototype._queueRead = function(object) {
   if (!this.readType) {
-    vLog.warn('This stream cannot be read from. The service method lacks an',
-      this.isClient ? 'outStream' : 'inStream', 'type. Tried to queue', object);
+    vlog.logger.warn('This stream cannot be read from. The service method ' +
+      'lacks an', this.isClient ? 'outStream' : 'inStream', 'type. Tried to ' +
+      'queue', object);
     return;
   }
   // Fill the read stream with the correct type.
@@ -143,7 +144,8 @@ Stream.prototype._queueData = function(data) {
  */
 Stream.prototype.write = function(chunk, encoding, cb) {
   if (!this.writeType) {
-    vLog.warn('This stream cannot be written to. The service method lacks an',
+    vlog.logger.warn('This stream cannot be written to. The service method ' +
+      'lacks an',
       this.isClient ? 'inStream' : 'outStream', 'type. Tried to queue', chunk);
     return;
   }

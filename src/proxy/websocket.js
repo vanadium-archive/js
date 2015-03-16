@@ -5,7 +5,7 @@
 
 var WebSocket = require('ws');
 var Deferred = require('./../lib/deferred');
-var vLog = require('./../lib/vlog');
+var vlog = require('./../lib/vlog');
 var Proxy = require('./index');
 var isBrowser = require('is-browser');
 var byteUtil = require('../vdl/byte-util');
@@ -54,7 +54,7 @@ ProxyConnection.prototype.getWebSocket = function() {
   var deferred = new Deferred();
   this.currentWebSocketPromise = deferred.promise;
   websocket.onopen = function() {
-    vLog.info('Connected to wspr at', self.url);
+    vlog.logger.info('Connected to wspr at', self.url);
     deferred.resolve(websocket);
   };
   websocket.onerror = function(e) {
@@ -76,7 +76,7 @@ ProxyConnection.prototype.getWebSocket = function() {
     var error = new Error('Failed to connect to wspr at url ' + self.url +
         ': ' + e.message);
 
-    vLog.error(error);
+    vlog.logger.error(error);
     deferred.reject(error);
   };
 
@@ -85,7 +85,7 @@ ProxyConnection.prototype.getWebSocket = function() {
     try {
       message = vom.decode(byteUtil.hex2Bytes(frame.data));
     } catch (e) {
-      vLog.warn('Failed to parse ' + frame.data);
+      vlog.logger.warn('Failed to parse ' + frame.data);
       return;
     }
 

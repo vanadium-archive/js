@@ -8,7 +8,7 @@ var errors = require('../errors/index');
 var Deferred = require('../lib/deferred');
 var Proxy = require('./index');
 var random = require('../lib/random');
-var vLog = require('./../lib/vlog');
+var vlog = require('./../lib/vlog');
 var byteUtil = require('../vdl/byte-util');
 var vom = require('../vom');
 
@@ -30,7 +30,7 @@ function ProxyConnection() {
     try {
       body = vom.decode(byteUtil.hex2Bytes(msg.body));
     } catch (e) {
-      vLog.warn('Failed to parse ' + msg.body);
+      vlog.logger.warn('Failed to parse ' + msg.body);
       return;
     }
 
