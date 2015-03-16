@@ -10,7 +10,7 @@
 
 var Promise = require('../lib/promise');
 var Deferred = require('../lib/deferred');
-var vLog = require('../lib/vlog');
+var vlog = require('../lib/vlog');
 var Stream = require('../proxy/stream');
 var verror = require('../gen-vdl/v.io/v23/verror');
 var MessageType = require('../proxy/message-type');
@@ -220,7 +220,7 @@ OutstandingRPC.prototype.handleStreamData = function(data) {
     }
     this._def.stream._queueRead(data);
   } else {
-    vLog.warn('Ignoring streaming message for non-streaming flow : ' +
+    vlog.logger.warn('Ignoring streaming message for non-streaming flow : ' +
         this._id);
   }
 };
@@ -349,7 +349,7 @@ Client.prototype.bindTo = function(ctx, name, cb) {
   }
 
   client.signature(ctx, name).then(function(serviceSignature) {
-    vLog.debug('Received signature for:', name, serviceSignature);
+    vlog.logger.debug('Received signature for:', name, serviceSignature);
     def.resolve(client.bindWithSignature(name, serviceSignature));
   }).catch(function(err) {
     def.reject(err);

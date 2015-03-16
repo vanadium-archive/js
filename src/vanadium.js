@@ -30,13 +30,14 @@ module.exports = {
   errors: require('./errors'),
   init: init,
   /**
-   * Namespace of vlog
+   * Namespace for vanadium logger
    * @namespace
    */
   vlog: require('./lib/vlog'),
 
   /**
    * Namespace of exported naming concepts
+   * @namespace
    */
   naming: require('./gen-vdl/v.io/v23/naming'),
 
@@ -48,6 +49,7 @@ module.exports = {
 
   /**
    * Namespace of Vanadium security
+   * @namespace
    */
   security: require('./security'),
 

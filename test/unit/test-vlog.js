@@ -1,5 +1,5 @@
 var test = require('prova');
-var vlog = require('../../src/lib/vlog');
+var vlog = require('../../src/lib/vlog').logger;
 var Vlog = require('../../src/lib/vlog').Vlog;
 var levels = require('../../src/lib/vlog').levels;
 var methods = [

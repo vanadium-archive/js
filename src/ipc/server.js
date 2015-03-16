@@ -18,7 +18,7 @@ var Deferred = require('./../lib/deferred');
 var Promise = require('./../lib/promise');
 var asyncValidateCall = require('./async-validate-call');
 var leafDispatcher = require('./leaf-dispatcher');
-var vLog = require('./../lib/vlog');
+var vlog = require('./../lib/vlog');
 var inspector = require('./../lib/arg-inspector');
 var Invoker = require('./../invocation/invoker');
 var defaultAuthorizer = require('../security/default-authorizer');
@@ -300,7 +300,7 @@ Server.prototype._handleLookup = function(suffix) {
     result = this.dispatcher(suffix, cb);
   } catch (e) {
     def.reject(e);
-    vLog.error(e);
+    vlog.logger.error(e);
     return def.promise;
   }
 

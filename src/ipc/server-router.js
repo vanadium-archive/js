@@ -74,7 +74,7 @@ Router.prototype.handleRequest = function(messageId, type, request) {
       this.handleCaveatValidationRequest(messageId, request);
       break;
     default:
-      vlog.Error('Unknown request type ' + type);
+      vlog.logger.error('Unknown request type ' + type);
   }
 };
 
@@ -255,7 +255,7 @@ Router.prototype.handleRPCRequest = function(messageId, vdlRequest) {
 
   var invoker = server.getInvokerForHandle(request.handle);
   if (!invoker) {
-    vlog.error('No invoker found: ', request);
+    vlog.logger.error('No invoker found: ', request);
     err = new Error('No service found');
     this.sendResult(messageId, methodName, null, err);
     return;
@@ -341,7 +341,7 @@ Router.prototype.handleRPCRequest = function(messageId, vdlRequest) {
       if (err instanceof Error && err.stack !== undefined) {
         stackTrace = err.stack;
       }
-      vlog.debug('Requested method ' + methodName +
+      vlog.logger.debug('Requested method ' + methodName +
           ' threw an exception on invoke: ', err, stackTrace);
 
       // The error case has no results; only send the error.
@@ -425,7 +425,7 @@ Router.prototype.handleGlobRequest = function(messageId, name, server, glob,
           ['__glob() failed', glob, err]);
         var errReply = createGlobErrorReply(name, verr, self._appName);
         self._streamMap[messageId].write(errReply);
-        vlog.info(verr);
+        vlog.logger.info(verr);
       }
       self.decrementOutstandingRequestForId(messageId, cb);
     });
@@ -455,7 +455,7 @@ Router.prototype.handleGlobRequest = function(messageId, name, server, glob,
           '__globChildren returned a bad child', child);
         var errReply = createGlobErrorReply(name, verr, self._appName);
         self._streamMap[messageId].write(errReply);
-        vlog.info(verr);
+        vlog.logger.info(verr);
         return;
       }
 
@@ -479,7 +479,7 @@ Router.prototype.handleGlobRequest = function(messageId, name, server, glob,
         var verr = new verror.NoServersAndAuthError(context, suffix, e);
         var errReply = createGlobErrorReply(suffix, verr, self._appName);
         self._streamMap[messageId].write(errReply);
-        vlog.info(errReply);
+        vlog.logger.info(errReply);
         self.decrementOutstandingRequestForId(messageId, cb);
       });
     });
@@ -490,7 +490,7 @@ Router.prototype.handleGlobRequest = function(messageId, name, server, glob,
           '__globChildren() failed', glob, err);
         var errReply = createGlobErrorReply(name, verr, self._appName);
         this._streamMap[messageId].write(errReply);
-        vlog.info(verr);
+        vlog.logger.info(verr);
       }
       self.decrementOutstandingRequestForId(messageId, cb);
     });
@@ -577,7 +577,7 @@ Router.prototype.sendResult = function(messageId, name, results, err,
  * @return {Promise} Promise to be called when serve completes or fails.
  */
 Router.prototype.serve = function(name, server, cb) {
-  vlog.info('Serving under the name: ', name);
+  vlog.logger.info('Serving under the name: ', name);
   this._servers[server.id] = server;
   return this._controller.serve(this._rootCtx, name, server.id, cb);
 };

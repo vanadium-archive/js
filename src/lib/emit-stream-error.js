@@ -1,4 +1,4 @@
-var vLog = require('./vlog');
+var vlog = require('./vlog');
 
 module.exports = emitStreamError;
 
@@ -14,7 +14,7 @@ function emitStreamError(stream, err) {
     return;
   }
   if(stream.listeners('error').length === 0) {
-    vLog.warn('Error received on a stream but there are no error ' +
+    vlog.logger.warn('Error received on a stream but there are no error ' +
           'handlers attached to the stream', err);
   } else {
     stream.emit('error', err);
