@@ -123,7 +123,7 @@ Namespace.prototype._serviceDescription = {
     outStream: {
       name: '',
       doc: '',
-      type: new naming.VDLGlobReply()._type
+      type: new naming.GlobReply()._type
     },
     tags: []
   },
