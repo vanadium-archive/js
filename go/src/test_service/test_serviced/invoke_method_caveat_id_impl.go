@@ -23,8 +23,8 @@ func NewInvokeMethodWithCaveatedIdentityServer() test_service.InvokeMethodWithCa
 // Invoke is a method on the InvokeMethodWithCaveatedIdentity service that
 // invokes "AMethod" on the service with the provided name with an identity
 // blessed with a caveat with the provided CaveatDescriptor.
-func (i *invokeMethWCavIdImpl) Invoke(servCtx ipc.ServerCall, name string, cavDesc security.CaveatDescriptor, cavParam *vdl.Value) error {
-	ctx := servCtx.Context()
+func (i *invokeMethWCavIdImpl) Invoke(call ipc.ServerCall, name string, cavDesc security.CaveatDescriptor, cavParam *vdl.Value) error {
+	ctx := call.Context()
 
 	bytes, err := vom.Encode(cavParam)
 	if err != nil {
@@ -36,7 +36,7 @@ func (i *invokeMethWCavIdImpl) Invoke(servCtx ipc.ServerCall, name string, cavDe
 		ParamVom: bytes,
 	}
 	p := v23.GetPrincipal(ctx)
-	other, _ := security.BlessingNames(servCtx, security.CallSideRemote)
+	other, _ := security.BlessingNames(ctx, security.CallSideRemote)
 	sharedWithOther := p.BlessingStore().ForPeer(other...)
 
 	pWithCaveats, err := vsecurity.NewPrincipal()
