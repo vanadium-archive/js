@@ -21,6 +21,7 @@ var eofByte = unwrap(wiretype.WireCtrlEOF);
  * Create a type encoder to help encode types and associate already sent types
  * to their type ids.
  * @constructor
+ * @private
  */
 function TypeEncoder() {
   this._typeIds = {};

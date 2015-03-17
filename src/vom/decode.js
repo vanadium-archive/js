@@ -1,18 +1,19 @@
 var ByteArrayMessageReader = require('./byte-array-message-reader');
 var Decoder = require('./decoder');
 
-
+module.exports = decode;
 /**
- * decode - VOM decode bytes
+ * VOM decode bytes
  *
  * @param  {Uint8Array} bytes    VOM-encoded bytes
  * @param  {boolean} [deepWrap=false] true if the values on the object should
  * remain wrapped with type information deeply, false (default) to strip
  * deep type information and obtain a more usage-friendly value
  * @return {*} decoded value
+ * @memberof module:vanadium.vom
  */
-module.exports = function decode(bytes, deepWrap) {
+function decode(bytes, deepWrap) {
   var reader = new ByteArrayMessageReader(bytes);
   var decoder = new Decoder(reader, deepWrap);
   return decoder.decode();
-};
+}

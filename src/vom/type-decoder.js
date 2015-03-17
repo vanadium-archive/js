@@ -21,6 +21,7 @@ module.exports = TypeDecoder;
  * Create a TypeDecoder.
  * This holds the set of cached types and assists in decoding.
  * @constructor
+ * @private
  */
 function TypeDecoder() {
   this._definedTypes = {};
