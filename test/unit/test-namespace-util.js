@@ -1,5 +1,5 @@
 var test = require('prova');
-var names = require('../../src/namespace/util');
+var names = require('../../src/naming/util');
 var ep = '@4@tcp@127.0.0.1:22@@@@s@dev.v.io/blessing,v.io/blessing/b2@@';
 var rootedEp = '/' + ep;
 

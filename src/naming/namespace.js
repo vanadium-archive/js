@@ -7,8 +7,10 @@ var inherits = require('util').inherits;
 module.exports = Namespace;
 
 /**
- * Creates a Namespace client stub to current runtime's Namespace.
- * @param {Client} Client instance.
+ * Namespace client stub to current runtime's Namespace.
+ * Private constructor, use runtime.namespace() to create an instance.
+ * @param {Client} client Client instance.
+ * @param {module:vanadium.context.Context} rootCtx root Context.
  * @constructor
  */
 function Namespace(client, rootCtx) {
@@ -60,9 +62,9 @@ GlobStream.prototype._read = function() {
 /**
  * Glob streams all names matching pattern. If recursive is true, it also
  * returns all names below the matching ones.
- * @param {Context} ctx The rpc context.
+ * @param {module:vanadium.context.Context} ctx The rpc context.
  * @param {string} pattern Glob pattern to match
- * @param {function} cb(err, stream) Optional callback
+ * @param {function} cb(error) Optional callback
  * @return {Promise} A promise with an stream object hanging from it.
  */
 Namespace.prototype.glob = function(ctx, pattern, cb) {
@@ -78,14 +80,14 @@ Namespace.prototype.glob = function(ctx, pattern, cb) {
 
 /**
  * Mount the server object address under the object name, expiring after
- * @param {Context} ctx The rpc context.
+ * @param {module:vanadium.context.Context} ctx The rpc context.
  * @param {string} name Object name
  * @param {string} server Server object address
  * @param {integer} ttl Expiry time for the mount in milliseconds. ttl of zero
  * implies never expire.
  * @param {boolean} Optional replaceMount Whether the previous mount should
  * be replaced by the new server object address. False by default.
- * @param {function} cb(err) Optional callback
+ * @param {function} cb(error) Optional callback
  * @return {Promise} A promise to be resolved when mount is complete or rejected
  * when there is an error
  */
@@ -103,10 +105,10 @@ Namespace.prototype.mount = function(ctx, name, server, ttl, replaceMount,
 /**
  * Unmount the server object address from the object name, or if server is empty
  * unmount all server object address from the object name.
- * @param {Context} ctx The rpc context.
+ * @param {module:vanadium.context.Context} ctx The rpc context.
  * @param {string} name Object name
  * @param {string} server Server object address
- * @param {function} cb(err) Optional callback
+ * @param {function} cb(error) Optional callback
  * @return {Promise} A promise to be resolved when unmount is complete or
  * rejected when there is an error
  */
@@ -116,11 +118,11 @@ Namespace.prototype.unmount = function(ctx, name, server, cb) {
 
 /**
  * Resolve the object name into its mounted servers.
- * @param {Context} ctx The rpc context
+ * @param {module:vanadium.context.Context} ctx The rpc context
  * @param {string} name Object name
- * @param {function} cb(err, servers[]) Optional callback
- * @return {Promise} A promise to be resolved a string array of server object
- * addresses or rejected when there is an error
+ * @param {function} cb(error, string[]) Optional callback
+ * @return {Promise<string[]>} A promise to be resolved a string array of server
+ * object object addresses or rejected when there is an error
  */
 Namespace.prototype.resolve = function(ctx, name, cb) {
   return this._namespace.resolve(ctx, name, cb);
@@ -129,11 +131,11 @@ Namespace.prototype.resolve = function(ctx, name, cb) {
 /**
  * ResolveToMountTable resolves the object name into the mounttables
  * directly responsible for the name.
- * @param {Context} ctx The rpc context.
+ * @param {module:vanadium.context.Context} ctx The rpc context.
  * @param {string} name Object name
- * @param {function} cb(err, mounttables[]) Optional callback
- * @return {Promise} A promise to be resolved a string array of mounttable
- * object addresses or rejected when there is an error
+ * @param {function} cb(error, string[]) Optional callback
+ * @return {Promise<string[]>} A promise to be resolved a string array of
+ * mounttable object addresses or rejected when there is an error
  */
 Namespace.prototype.resolveToMounttable = function(ctx, name, cb) {
   return this._namespace.resolveToMT(ctx, name, cb);
@@ -142,9 +144,9 @@ Namespace.prototype.resolveToMounttable = function(ctx, name, cb) {
 /*
  * FlushCacheEntry flushes resolution information cached for the name.
  * @param {string} name Object name
- * @param {function} cb(err, anythingFlushed) Optional callback
- * @return {Promise} A promise to be resolved a boolean indicating if anything
- * was flushed or rejected when there is an error
+ * @param {function} cb(error, boolean) Optional callback
+ * @return {Promise<boolean>} A promise to be resolved a boolean indicating if
+ * anything was flushed or rejected when there is an error
  */
 Namespace.prototype.flushCacheEntry = function(name, cb) {
   return this._namespace.flushCacheEntry(this._rootCtx, name, cb);
@@ -153,7 +155,7 @@ Namespace.prototype.flushCacheEntry = function(name, cb) {
 /*
  * Disables the resolution cache when set to true and enables if false.
  * @param {boolean} disable Whether to disable or enable cache.
- * @param {function} cb(err) Optional callback
+ * @param {function} cb(error) Optional callback
  * @return {Promise} A promise to be resolved when disableCache is complete or
  * rejected when there is an error
  */
@@ -165,9 +167,9 @@ Namespace.prototype.disableCache = function(disable, cb) {
 /**
  * Returns the currently configured roots. An empty array is returned if no
  * roots are configured.
- * @param {function} cb(err, roots[]) Optional callback
- * @return {Promise} A promise to be resolved with an array of root object names
- * when getRoots is complete or rejected when there is an error
+ * @param {function} cb(error, string[]) Optional callback
+ * @return {Promise<string[]>} A promise to be resolved with an array of root
+ * object names when getRoots is complete or rejected when there is an error
  */
 Namespace.prototype.roots = function(cb) {
   return this._namespace.roots(this._rootCtx, cb);
@@ -179,8 +181,8 @@ Namespace.prototype.roots = function(cb) {
  * relative to these roots.
  * The roots will be tried in the order that they are specified in the parameter
  * list for setRoots.
- * @param {Array | varargs} roots object names for the roots
- * @param {function} cb(err) Optional callback
+ * @param {...string} roots object names for the roots
+ * @param {function} cb(error) Optional callback
  * @return {Promise} A promise to be resolved when setRoots is complete or
  * rejected when there is an error
  */
@@ -205,12 +207,12 @@ Namespace.prototype.setRoots = function(roots, cb) {
  * getPermissions, modify the returned AccessList, and then call setPermissions
  * with the modified AccessList.  You should use the etag parameter in this case
  * to ensure that the AccessList has not been modified in between read and write
- * @param {Context} ctx The rpc context.
+ * @param {module:vanadium.context.Context} ctx The rpc context.
  * @param {string} name name to set the AccessList of
- * @params {Map} acl tagged AccessList map to set on the name
- * @params {string} etag Optional etag of the AccessList
- * @params {function} cb(err) Optional callback
- * @returns {Promise} A promise to be resolved when setPermissions is complete
+ * @param {Map} acl tagged AccessList map to set on the name
+ * @param {string} etag Optional etag of the AccessList
+ * @param {function} cb(error) Optional callback
+ * @return {Promise} A promise to be resolved when setPermissions is complete
  * or rejected when there is an error.
  */
 Namespace.prototype.setPermissions = function(ctx, name, acl, etag, cb) {
@@ -235,10 +237,10 @@ Namespace.prototype.setPermissions = function(ctx, name, acl, etag, cb) {
 
 /**
  * Gets the AccessList on a namespace.
- * @param {Context} ctx The rpc context.
+ * @param {module:vanadium.context.Context} ctx The rpc context.
  * @param {string} name name to get the AccessList of
- * @params {function} cb(err, acl, etag) Optional callback
- * @returns {Promise} A promise to be resolved when getPermissions is complete
+ * @param {function} cb(error, acl, etag) Optional callback
+ * @return {Promise} A promise to be resolved when getPermissions is complete
  * or rejected when there is an error.
  */
 Namespace.prototype.getPermissions = function(ctx, name, cb) {
@@ -247,17 +249,15 @@ Namespace.prototype.getPermissions = function(ctx, name, cb) {
 
 /**
  * Deletes a name from the namespace, and possibly all names in subtree.
- * @param {Context} ctx The rpc context.
+ * @param {module:vanadium.context.Context} ctx The rpc context.
  * @param {string} name name to delete
  * @param {boolean} deleteSubtree whether to delete all decendent names in
  * subtree.  If deleteSubtree is false and the name has decendents, then the
  * deletion will fail.
- * @params {function} cb(err) Optional callback
- * @returns {Promise} A promise to be resolved when delete is complete or
+ * @param {function} cb(error) Optional callback
+ * @return {Promise} A promise to be resolved when delete is complete or
  * rejected when there is an error.
  */
 Namespace.prototype.delete = function(ctx, name, deleteSubtree, cb) {
   return this._namespace.delete(ctx, name, deleteSubtree, cb);
 };
-
-//TODO(aghassemi) Implement Unresolve after Go library makes its changes.

@@ -632,7 +632,7 @@ test('Test delete() on name with no children', function(assert) {
 });
 
 test('Test delete() on name with children', function(assert) {
-  var nsutil = vanadium.namespaceUtil;
+  var nsutil = vanadium.naming.util;
   vanadium.init(config, function(err, rt) {
     if (err) {
       return assert.end(err);
