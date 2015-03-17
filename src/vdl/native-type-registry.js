@@ -89,6 +89,7 @@ function fromWireValue(t, v) {
 
 /**
  * Returns whether this Type has a native converter registered
+ * @private
  * @param {Value} t The type
  * @returns {boolean} True iff there is native converter for this type.
  */
@@ -98,6 +99,7 @@ function hasNativeType(t) {
 
 /**
  * Returns whether this value has a wiretype converter registered
+ * @private
  * @param {*} v The object to check.
  * @returns {boolean} True iff there is wiretype converter for this
  * object.

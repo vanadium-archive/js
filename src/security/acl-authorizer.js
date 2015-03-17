@@ -26,6 +26,9 @@ module.exports = authorizer;
 
 /**
  * The AccessList authorizer.
+ * @function
+ * @memberof module:vanadium.security
+ * @name aclAuthorizer
  * @param {AccessList} acl The set of acls to apply.
  * @return {Authorize} An authorizer that applies the acls.
  */

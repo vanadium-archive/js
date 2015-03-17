@@ -12,6 +12,7 @@ module.exports = {
 
 /**
  * Copies and capitalizes the first letter of the given string.
+ * @private
  * @param {string} s The string.
  * @return {string} copy of the string with the first letter upper-cased.
  */
@@ -21,6 +22,7 @@ function capitalize(s) {
 
 /**
  * Copies and uncapitalizes the first letter of the given string.
+ * @private
  * @param {string} s The string.
  * @return {string} copy of the string with the first letter lower-cased.
  */
@@ -31,6 +33,7 @@ function uncapitalize(s) {
 /**
  * Checks if the first letter of the given string is capitalized.
  * Note: Strings starting with a special character are considered capitalized.
+ * @private
  * @param {string} s The string.
  * @return {bool} whether or not the string is capitalized.
  */
@@ -41,6 +44,7 @@ function isCapitalized(s) {
 /**
  * Returns true if the field doesn't start with '_'.
  * @param {string} field The field label of a struct.
+ * @private
  * @return {bool} whether or not the field should be exported.
  */
 function isExportedStructField(field) {
@@ -51,6 +55,7 @@ function isExportedStructField(field) {
  * Returns the key of the first defined property in the object.
  * If there were no keys, or all keys had field value undefined, then this
  * returns undefined.
+ * @private
  * @param {object} o The object
  * @return {string | undefined} The key of the first defined field in o.
  */

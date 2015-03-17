@@ -36,14 +36,27 @@ var ZERO_BIGINT = new BigInt(0, new Uint8Array());
 
 
 /**
- * Alias for canonicalizeExternal with deepWrap = false
+ * Creates a new copy of inValue that is the canonical wire format of inValue.
+ * @function
+ * @name fill
+ * @memberof module:vanadium.vdl.Canonicalize
+ * @param {*} inValue The value to convert to the wire format
+ * @param {module:vanadium.vdl.Type} t The type of inValue
+ * @return {*} The canonical wire format of inValue
  */
 function canonicalizeFill(inValue, t) {
   return canonicalizeExternal(inValue, t, true);
 }
 
 /**
- * Alias for canonicalizeExternal with deepWrap = true
+ * Creates a new copy of inValue that is the canonical in-memory format of
+ * inValue.
+ * @function
+ * @name reduce
+ * @memberof module:vanadium.vdl.Canonicalize
+ * @param {*} inValue The value to convert to the in memory format
+ * @param {module:vanadium.vdl.Type} t The type of inValue
+ * @return {*} The canonical in-format of inValue
  */
 function canonicalizeReduce(inValue, t) {
   return canonicalizeExternal(inValue, t, false);
@@ -51,6 +64,7 @@ function canonicalizeReduce(inValue, t) {
 
 /**
  * Alias for canonicalizeExternal with inValue = undefined
+ * @private
  */
 function canonicalizeZero(t, deepWrap) {
   return canonicalizeExternal(undefined, t, deepWrap);
@@ -62,7 +76,7 @@ function canonicalizeZero(t, deepWrap) {
  * If the given value is undefined, its zero-value is returned.
  * TODO(alexfandrianto): The performance is on the same order as encode, but it
  * would be a good idea to consider adding more improvements.
- *
+ * @private
  * @param {any} inValue The value to be canonicalized
  * @param {Type} t The target type
  * @param {boolean=} deepWrap Whether or not to deeply wrap. Defaults to true.
@@ -82,7 +96,7 @@ function canonicalizeExternal(inValue, t, deepWrap) {
  * Helper function for canonicalizeExternal.
  * Keeps track of a Map of old references to new references. This helps clone
  * cycles and preserve shared references.
- *
+ * @private
  * @param {any} v The value to be canonicalized
  * @param {Type} inType The inferred type of the value. This type is tracked in
  *                      order to ensure that internal any keys/elems/fields are
@@ -231,6 +245,7 @@ function canonicalize(inValue, inType, t, deepWrap, seen, isTopLevelValue) {
 /**
  * Helper function for canonicalize, which canonicalizes and validates on an
  * unwrapped value.
+ * @private
  */
 function canonicalizeInternal(deepWrap, v, inType, t, seen, outValue) {
   // Any undefined value obtains its zero-value.
@@ -520,6 +535,7 @@ function canonicalizeInternal(deepWrap, v, inType, t, seen, outValue) {
  * be a simple initializer instead of being recursive.
  * @param(Type) t The type whose zero value is needed.
  * @return {any} the corresponding zero value for the input type.
+ * @private
  */
 function zeroValue(t) {
   switch(t.kind) {
@@ -585,6 +601,7 @@ function zeroValue(t) {
  * @param {Type} type The type
  * @param {string} message The custom error message
  * @return {Error} The constructed error
+ * @private
  */
 function makeError(value, type, message) {
   return new TypeError('Value: ' + stringify(value) + ', Type: ' +
@@ -597,6 +614,7 @@ function makeError(value, type, message) {
  * @param {Type} t The type to be canonicalized
  * @return {Type} The canonicalized type
  * @throws If the type is invalid
+ * @private
  */
 function canonicalizeTypeExternal(t) {
   return canonicalizeType(t, new Map());
@@ -608,6 +626,7 @@ function canonicalizeTypeExternal(t) {
  * cycles and preserve shared references.
  * For unseen types, canonicalizeType calls canonicalize with a per-kind struct
  * representation of TypeObject.
+ * @private
  */
 function canonicalizeType(type, seen) {
   if (type === undefined) {
@@ -727,6 +746,7 @@ function mapToSet(m, t) {
  * @param {v} value The value that is passed in.  If v is a native type,
  * its constructor is used instead of looking up in the registry.
  * @return {object} The empty object with correct type
+ * @private
  */
 function getObjectWithType(t, v) {
   // Get the proper constructor from the Registry.
@@ -750,6 +770,7 @@ function getObjectWithType(t, v) {
  * @param {object} oldRef The old reference
  * @param {Type} type The type the new reference is being cached under.
  * @param {object} newRef The new reference
+ * @private
  */
 function insertIntoSeenCache(seen, oldRef, type, newRef) {
   if (!seen.has(oldRef)) {
@@ -765,6 +786,7 @@ function insertIntoSeenCache(seen, oldRef, type, newRef) {
  * @param {object} oldRef The old reference
  * @param {Type} type The type the new reference is being cached under.
  * @return {object | undefined} The cached value or undefined, if not present.
+ * @private
  */
 function getFromSeenCache(seen, oldRef, type) {
   if (seen.has(oldRef) && seen.get(oldRef).has(type)) {
@@ -785,6 +807,7 @@ function getFromSeenCache(seen, oldRef, type) {
  * Ex: nativeVal => { unwrappedValue: nativeVal, guessedType: Types.JSVALUE }
  * @param{any} v The value which may have nested ANY
  * @return{object} Object with guessedType => type and unwrappedValue => value
+ * @private
  */
 function unwrapAndGuessType(v) {
   if (v === null || v === undefined) {
@@ -807,6 +830,7 @@ function unwrapAndGuessType(v) {
  * Finds the correct struct/union field type given a field name.
  * We rely on type compatibility to ensure that only Struct has leeway.
  * Maps use their elem as the field type, while Sets use Types.BOOL.
+ * @private
  */
 function lookupFieldType(t, fieldName) {
   if (!t) {
@@ -835,6 +859,7 @@ function lookupFieldType(t, fieldName) {
  *
  * Since this contains a try/catch, it cannot be optimized and thus should not
  * be in-lined in a larger function.
+ * @private
  */
 function bigIntFromNativeNumber(v, t) {
   try {
@@ -849,6 +874,7 @@ function bigIntFromNativeNumber(v, t) {
  *
  * Since this contains a try/catch, it cannot be optimized and thus should not
  * be in-lined in a larger function.
+ * @private
  */
 function bigIntToNativeNumber(v, t) {
   try {

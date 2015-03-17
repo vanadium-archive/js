@@ -18,6 +18,7 @@ module.exports = {
 /**
  * Determines if the length should be sent in the header of a value message of
  * the specified type.
+ * @private
  * @param {Type} type The type.
  * @return {boolean} true if the length should be sent in the header of the
  * the value message or false otherwise.
@@ -47,6 +48,7 @@ function _isObject(v) {
 
 /**
  * Checks whether the given value is a typed value.
+ * @private
  * @param {any} v The potentially typed value.
  * @return {boolean} whether the value has a type attached or not.
  */
@@ -56,6 +58,7 @@ function isTyped(v) {
 
 /**
  * Checks whether the given value is a wrapped value.
+ * @private
  * @param {VomValue} v The potentially wrapped value.
  * @return {boolean} whether the value was wrapped or not.
  */
@@ -66,6 +69,7 @@ function isWrapped(v) {
 /**
  * Unwrap the value in a potentially wrapped type.
  * Note: The convention is to only wrap types once, not deeply.
+ * @private
  * @param {VomValue} v The value to be unwrapped.
  * @return {any} the unwrapped value.
  */
@@ -81,6 +85,7 @@ function unwrap(v) {
  * The constructor can be a WrappedConstructor, StructConstructor, or Type.
  * TODO(alexfandrianto): This will be removed; canonicalize will instead use the
  * registry to lookup the constructor, instead of relying on this.
+ * @private
  * @param {VomValue} v The value to be unwrapped.
  * @return {Constructor?} a constructor if v is wrapped, null otherwise.
  */
@@ -95,6 +100,7 @@ function constructorOf(v) {
 
 /**
  * Unwrap the value if the unwrapped type will be guessed on encode.
+ * @private
  * @param {VomValue} v The value to be unwrapped.
  * @return {any} the unwrapped value.
  */

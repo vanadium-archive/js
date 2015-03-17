@@ -64,6 +64,7 @@ function createStructConstructor() {
    * StructConstructor constructs struct-like values like Union and Struct.
    * Any data given to this constructor will be canonicalized.
    * Note: If val is omitted, then the 'zero-value' will be generated.
+   * @private
    * @param{object=} val The value whose fields will be copied into this object.
    * @param{boolean=} deepWrap Whether to deepWrap or not. Defaults to false.
    */
@@ -89,6 +90,7 @@ function createWrappedConstructor() {
    * WrappedConstructor constructs an object with a 'val' field.
    * Any data given to this constructor will be canonicalized.
    * Note: If val is omitted, then the 'zero-value' will be generated.
+   * @private
    * @param{object=} val The value, which will be assigned to 'val'.
    * @param{boolean=} deepWrap Whether to deepWrap or not. Defaults to false.
    */

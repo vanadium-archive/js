@@ -20,6 +20,8 @@ var canonicalize; // Must be lazily-required to avoid circular dependency.
  * Note: Sidesteps a cyclic dependency with injection. During module setup,
  * any calls to the Type constructor with a type object should also set
  * skipValidation to true.
+ * @constructor
+ * @memberof module:vanadium.vdl
  * @param {Object=} o An object whose fields match those of a TypeObject.
  * @param {boolean=} skipValidation Flag to skip validation. Defaults to false.
  */
@@ -43,6 +45,12 @@ function Type(o, skipValidation) {
 
 Type.prototype._type = new Type();
 Type.prototype._type.kind = Kind.TYPEOBJECT;
+
+/**
+ * Checks for equality
+ * @param {*} other The value to test against
+ * @return boolean True iff other equals this.
+ */
 Type.prototype.equals = function(other) {
   if (this === other) {
     return true;
@@ -79,6 +87,7 @@ Type.prototype.toString = function() {
 /**
  * Compute a unique type string that breaks cycles.
  * Note: This logic replicates that of uniqueTypeStr in type_builder.go
+ * @private
  * @param {Type} t The type whose unique type string is needed
  * @param {Array} seen A list of seen type references
  * @return {string} The string representation of the given type

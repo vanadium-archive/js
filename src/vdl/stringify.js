@@ -91,6 +91,7 @@ function stableCircularStringifyInternal(val, seen) {
  * This is necessary because JSON stringify won't handle circular types
  * properly and is not guaranteed to be stable for maps.
  * TODO(bprosnitz) Make this faster.
+ * @private
  * @param {Type} type the type object.
  * @return {string} The key.
  */

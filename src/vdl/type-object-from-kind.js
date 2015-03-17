@@ -221,6 +221,7 @@ var _unionTypeObject = new Type({
 
 /**
  * Returns the corresponding type object for a given kind.
+ * @private
  * @param {Kind} k The kind.
  * @return {TypeObject} The corresponding type object.
  */

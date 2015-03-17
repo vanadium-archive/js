@@ -17,6 +17,7 @@
 
 /**
  * Checks if the array of bytes is all zero or empty.
+ * @private
  * @param {Uint8Array} bytes the input byte array.
  * @return {boolean} true if the array is all zero or empty. false otherwise.
  */
@@ -31,6 +32,7 @@ function emptyOrAllZero(bytes) {
 
 /**
  * Checks if the array of bytes is all one bits (0xff bytes).
+ * @private
  * @param {Uint8Array} bytes the input byte array.
  * @return {boolean} true if the array is all one. false otherwise.
  */
@@ -49,6 +51,7 @@ function allOne(bytes) {
 /**
  * Shifts the bytes to the left by one bit.
  * This may mutate the input array.
+ * @private
  * @param {Uint8Array} bytes the input byte array.
  * @return the left shifted byte array.
  */
@@ -74,6 +77,7 @@ function shiftLeftOne(bytes) {
 /**
  * Shifts the bytes to the right by one bit.
  * This mutates the input array.
+ * @private
  * @param {Uint8Array} bytes the input byte array.
  * @return the right shifted byte array.
  */
@@ -89,6 +93,7 @@ function shiftRightOne(bytes) {
 
 /**
  * Computes the two's complement of the value in the byte array.
+ * @private
  * @param {Uint8Array} bytes the input byte array.
  * @return the two's complemented byte array
  */
@@ -110,6 +115,7 @@ function twosComplement(bytes) {
 /**
  * Decrements the input byte array by 1.
  * This mutates the input array.
+ * @private
  * @param {Uint8Array} bytes the input byte array.
  * @return the decremented byte array.
  */
@@ -131,6 +137,7 @@ function decrement(bytes) {
 /**
  * Increments the input byte array by 1.
  * This mutates the input array.
+ * @private
  * @param {Uint8Array} bytes the input byte array.
  * @return the incremented byte array.
  */
@@ -157,6 +164,7 @@ function increment(bytes) {
 
 /**
  * Converts the input byte array to a hex representation.
+ * @private
  * @param {Uint8Array} bytes the input byte array.
  * @return {string} a hex string representation of the input array.
  */
@@ -174,6 +182,7 @@ function bytes2Hex(arr) {
 
 /**
  * Converts the input hex string to a byte array.
+ * @private
  * @param {string} hexString the input hex string.
  * @return {Uint8Array} the byte array representation of the hex string.
  */

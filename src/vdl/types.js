@@ -9,25 +9,83 @@ var Kind = require('./kind.js');
 // TODO(bprosnitz) Should we add other helpers? Or is it better just to directly
 // create the types in js?
 
+/**
+ * Namespace of pre-defined VDL Types
+ * @namespace
+ * @memberof module:vanadium.vdl
+ */
 var Types = {
+  /**
+   * @const
+   */
   ANY: primitiveType(Kind.ANY),
+  /**
+   * @const
+   */
   BOOL: primitiveType(Kind.BOOL),
+  /**
+   * @const
+   */
   BYTE: primitiveType(Kind.BYTE),
+  /**
+   * @const
+   */
   UINT16: primitiveType(Kind.UINT16),
+  /**
+   * @const
+   */
   UINT32: primitiveType(Kind.UINT32),
+  /**
+   * @const
+   */
   UINT64: primitiveType(Kind.UINT64),
+  /**
+   * @const
+   */
   INT16: primitiveType(Kind.INT16),
+  /**
+   * @const
+   */
   INT32: primitiveType(Kind.INT32),
+  /**
+   * @const
+   */
   INT64: primitiveType(Kind.INT64),
+  /**
+   * @const
+   */
   FLOAT32: primitiveType(Kind.FLOAT32),
+  /**
+   * @const
+   */
   FLOAT64: primitiveType(Kind.FLOAT64),
+  /**
+   * @const
+   */
   COMPLEX64: primitiveType(Kind.COMPLEX64),
+  /**
+   * @const
+   */
   COMPLEX128: primitiveType(Kind.COMPLEX128),
+  /**
+   * @const
+   */
   STRING: primitiveType(Kind.STRING),
+  /**
+   * @const
+   */
   TYPEOBJECT: Type.prototype._type // So that === works for Types.TypeObject
 };
-Types['ERROR'] = defineOptionalErrorType();
-Types['JSVALUE'] = defineJSValueType();
+/**
+ * Defines the wire error format
+ * @const
+ */
+Types.ERROR = defineOptionalErrorType();
+
+/**
+ * @const
+ */
+Types.JSVALUE = defineJSValueType();
 
 module.exports = Types;
 
