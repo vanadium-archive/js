@@ -32,7 +32,7 @@ Blessings.prototype.retain = function() {
 Blessings.prototype.release = function(ctx) {
   this._count--;
   if (this._count === 0) {
-    this._controller.unlinkJSBlessings(ctx, this._id).catch(function(err) {
+    this._controller.unlinkBlessings(ctx, this._id).catch(function(err) {
       vlog.logger.warn('Ignoring failure while cleaning up blessings: ' + err);
     });
   }

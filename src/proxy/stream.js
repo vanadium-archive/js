@@ -12,8 +12,8 @@ var vom = require('../vom');
 var fill = require('../vdl/canonicalize').fill;
 var reduce = require('../vdl/canonicalize').reduce;
 var unwrap = require('../vdl/type-util').unwrap;
-var ServerRPCReply =
-  require('../gen-vdl/v.io/x/ref/services/wsprd/lib').ServerRPCReply;
+var ServerRpcReply =
+  require('../gen-vdl/v.io/x/ref/services/wsprd/lib').ServerRpcReply;
 
 /**
  * A stream that allows sending and receiving data for a streaming rpc.  If
@@ -65,7 +65,7 @@ Stream.prototype.serverClose = function(results, err, traceResponse) {
   var object = {
     id: this.flowId,
     type: Outgoing.RESPONSE,
-    data: byteUtil.bytes2Hex(vom.encode(new ServerRPCReply({
+    data: byteUtil.bytes2Hex(vom.encode(new ServerRpcReply({
       results: results,
       err: err || null,
       traceResponse: traceResponse

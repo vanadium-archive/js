@@ -42,9 +42,9 @@ function testContext() {
 
 var mockProxy = createMockProxy(function(data, type) {
   var decodedData = vom.decode(byteUtil.hex2Bytes(data));
-  var response = new app.VeyronRPCResponse();
+  var response = new app.RpcResponse();
 
-  if (decodedData instanceof app.VeyronRPCRequest &&
+  if (decodedData instanceof app.RpcRequest &&
       decodedData.method === 'Signature') {
     response.outArgs = [mockSignature];
   } else {

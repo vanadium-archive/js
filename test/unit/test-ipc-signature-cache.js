@@ -28,7 +28,7 @@ function createProxy() {
       if (decodedData.method !== 'Signature') {
         throw new Error('Unexpected method call');
       }
-      var response = new app.VeyronRPCResponse();
+      var response = new app.RpcResponse();
       response.outArgs = [freshSig];
       return byteUtil.bytes2Hex(vom.encode(response));
     }

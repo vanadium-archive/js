@@ -28,8 +28,7 @@ var Encoder = require('../vom/encoder');
 var ByteArrayMessageWriter = require('../vom/byte-array-message-writer');
 var makeError = require('../errors/make-errors');
 var actions = require('../errors/actions');
-var VanadiumRPCRequest =
-  require('../gen-vdl/v.io/x/ref/services/wsprd/app').VeyronRPCRequest;
+var RpcRequest = require('../gen-vdl/v.io/x/ref/services/wsprd/app').RpcRequest;
 var vtrace = require('../lib/vtrace');
 var ReservedSignature =
   require('../gen-vdl/v.io/v23/ipc').ReservedSignature.val;
@@ -271,7 +270,7 @@ OutstandingRPC.prototype.constructMessage = function() {
     deadline: timeout
   };
 
-  var header = new VanadiumRPCRequest(jsonMessage);
+  var header = new RpcRequest(jsonMessage);
 
   var writer = new ByteArrayMessageWriter();
   var encoder = new Encoder(writer);

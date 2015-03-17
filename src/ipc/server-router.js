@@ -25,8 +25,8 @@ var naming = require('../gen-vdl/v.io/v23/naming');
 var Glob = require('./glob');
 var GlobStream = require('./glob-stream');
 var asyncValidateCall = require('./async-validate-call');
-var ServerRPCReply =
-  require('../gen-vdl/v.io/x/ref/services/wsprd/lib').ServerRPCReply;
+var ServerRpcReply =
+  require('../gen-vdl/v.io/x/ref/services/wsprd/lib').ServerRpcReply;
 var CaveatValidationResponse =
   require('../gen-vdl/v.io/x/ref/services/wsprd/ipc/server').
   CaveatValidationResponse;
@@ -554,7 +554,7 @@ Router.prototype.sendResult = function(messageId, name, results, err,
     stream.serverClose(results, errorStruct, traceResponse);
     this._proxy.dequeue(messageId);
   } else {
-    var responseData = new ServerRPCReply({
+    var responseData = new ServerRpcReply({
       results: results,
       err: errorStruct,
       traceResponse: traceResponse

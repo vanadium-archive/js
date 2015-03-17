@@ -19,8 +19,8 @@ var _type1 = new vdl.Type();
 var _type2 = new vdl.Type();
 var _type3 = new vdl.Type();
 var _type4 = new vdl.Type();
-var _typeVeyronRPCRequest = new vdl.Type();
-var _typeVeyronRPCResponse = new vdl.Type();
+var _typeRpcRequest = new vdl.Type();
+var _typeRpcResponse = new vdl.Type();
 _type1.kind = vdl.Kind.LIST;
 _type1.name = "";
 _type1.elem = vdl.Types.ANY;
@@ -33,20 +33,20 @@ _type3.elem = vdl.Types.STRING;
 _type4.kind = vdl.Kind.LIST;
 _type4.name = "";
 _type4.elem = new signature.Interface()._type;
-_typeVeyronRPCRequest.kind = vdl.Kind.STRUCT;
-_typeVeyronRPCRequest.name = "v.io/x/ref/services/wsprd/app.VeyronRPCRequest";
-_typeVeyronRPCRequest.fields = [{name: "Name", type: vdl.Types.STRING}, {name: "Method", type: vdl.Types.STRING}, {name: "NumInArgs", type: vdl.Types.INT32}, {name: "NumOutArgs", type: vdl.Types.INT32}, {name: "IsStreaming", type: vdl.Types.BOOL}, {name: "Deadline", type: new time.WireDeadline()._type}, {name: "TraceRequest", type: new vtrace.Request()._type}];
-_typeVeyronRPCResponse.kind = vdl.Kind.STRUCT;
-_typeVeyronRPCResponse.name = "v.io/x/ref/services/wsprd/app.VeyronRPCResponse";
-_typeVeyronRPCResponse.fields = [{name: "OutArgs", type: _type1}, {name: "TraceResponse", type: new vtrace.Response()._type}];
+_typeRpcRequest.kind = vdl.Kind.STRUCT;
+_typeRpcRequest.name = "v.io/x/ref/services/wsprd/app.RpcRequest";
+_typeRpcRequest.fields = [{name: "Name", type: vdl.Types.STRING}, {name: "Method", type: vdl.Types.STRING}, {name: "NumInArgs", type: vdl.Types.INT32}, {name: "NumOutArgs", type: vdl.Types.INT32}, {name: "IsStreaming", type: vdl.Types.BOOL}, {name: "Deadline", type: new time.WireDeadline()._type}, {name: "TraceRequest", type: new vtrace.Request()._type}];
+_typeRpcResponse.kind = vdl.Kind.STRUCT;
+_typeRpcResponse.name = "v.io/x/ref/services/wsprd/app.RpcResponse";
+_typeRpcResponse.fields = [{name: "OutArgs", type: _type1}, {name: "TraceResponse", type: new vtrace.Response()._type}];
 _type1.freeze();
 _type2.freeze();
 _type3.freeze();
 _type4.freeze();
-_typeVeyronRPCRequest.freeze();
-_typeVeyronRPCResponse.freeze();
-module.exports.VeyronRPCRequest = (vdl.Registry.lookupOrCreateConstructor(_typeVeyronRPCRequest));
-module.exports.VeyronRPCResponse = (vdl.Registry.lookupOrCreateConstructor(_typeVeyronRPCResponse));
+_typeRpcRequest.freeze();
+_typeRpcResponse.freeze();
+module.exports.RpcRequest = (vdl.Registry.lookupOrCreateConstructor(_typeRpcRequest));
+module.exports.RpcResponse = (vdl.Registry.lookupOrCreateConstructor(_typeRpcResponse));
 
 
 
@@ -90,8 +90,8 @@ Controller.prototype.removeName = function(ctx, serverId, name) {
 };
     
       
-Controller.prototype.unlinkJSBlessings = function(ctx, handle) {
-  throw new Error('Method UnlinkJSBlessings not implemented');
+Controller.prototype.unlinkBlessings = function(ctx, handle) {
+  throw new Error('Method UnlinkBlessings not implemented');
 };
     
       
@@ -204,8 +204,8 @@ Controller.prototype._serviceDescription = {
     
       
     {
-    name: 'UnlinkJSBlessings',
-    doc: "// UnlinkJSBlessings removes the given blessings from the blessings store.",
+    name: 'UnlinkBlessings',
+    doc: "// UnlinkBlessings removes the given blessings from the blessings store.",
     inArgs: [{
       name: 'handle',
       doc: "",
