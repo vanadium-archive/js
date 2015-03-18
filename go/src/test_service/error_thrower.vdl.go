@@ -7,7 +7,7 @@ import (
 	// VDL system imports
 	"v.io/v23"
 	"v.io/v23/context"
-	"v.io/v23/ipc"
+	"v.io/v23/rpc"
 )
 
 // ErrorThrowerClientMethods is the client interface
@@ -16,40 +16,40 @@ import (
 // A testing interface with methods that throw various types of errors
 type ErrorThrowerClientMethods interface {
 	// Throws v23/vError.Aborted error
-	ThrowAborted(*context.T, ...ipc.CallOpt) error
+	ThrowAborted(*context.T, ...rpc.CallOpt) error
 	// Throws v23/vError.BadArg error
-	ThrowBadArg(*context.T, ...ipc.CallOpt) error
+	ThrowBadArg(*context.T, ...rpc.CallOpt) error
 	// Throws v23/vError.BadProtocol error
-	ThrowBadProtocol(*context.T, ...ipc.CallOpt) error
+	ThrowBadProtocol(*context.T, ...rpc.CallOpt) error
 	// Throws v23/vError.Internal error
-	ThrowInternal(*context.T, ...ipc.CallOpt) error
+	ThrowInternal(*context.T, ...rpc.CallOpt) error
 	// Throws v23/vError.NoAccess error
-	ThrowNoAccess(*context.T, ...ipc.CallOpt) error
+	ThrowNoAccess(*context.T, ...rpc.CallOpt) error
 	// Throws v23/vError.NoExist error
-	ThrowNoExist(*context.T, ...ipc.CallOpt) error
+	ThrowNoExist(*context.T, ...rpc.CallOpt) error
 	// Throws v23/vError.NoExistOrNoAccess error
-	ThrowNoExistOrNoAccess(*context.T, ...ipc.CallOpt) error
+	ThrowNoExistOrNoAccess(*context.T, ...rpc.CallOpt) error
 	// Throws v23/vError.Unknown error
-	ThrowUnknown(*context.T, ...ipc.CallOpt) error
+	ThrowUnknown(*context.T, ...rpc.CallOpt) error
 	// Throws normal Go error
-	ThrowGoError(*context.T, ...ipc.CallOpt) error
+	ThrowGoError(*context.T, ...rpc.CallOpt) error
 	// Throws custom error created by using Standard
-	ThrowCustomStandardError(*context.T, ...ipc.CallOpt) error
+	ThrowCustomStandardError(*context.T, ...rpc.CallOpt) error
 	// Lists all errors Ids available in v23/verror
-	ListAllBuiltInErrorIds(*context.T, ...ipc.CallOpt) ([]string, error)
+	ListAllBuiltInErrorIds(*context.T, ...rpc.CallOpt) ([]string, error)
 }
 
 // ErrorThrowerClientStub adds universal methods to ErrorThrowerClientMethods.
 type ErrorThrowerClientStub interface {
 	ErrorThrowerClientMethods
-	ipc.UniversalServiceMethods
+	rpc.UniversalServiceMethods
 }
 
 // ErrorThrowerClient returns a client stub for ErrorThrower.
-func ErrorThrowerClient(name string, opts ...ipc.BindOpt) ErrorThrowerClientStub {
-	var client ipc.Client
+func ErrorThrowerClient(name string, opts ...rpc.BindOpt) ErrorThrowerClientStub {
+	var client rpc.Client
 	for _, opt := range opts {
-		if clientOpt, ok := opt.(ipc.Client); ok {
+		if clientOpt, ok := opt.(rpc.Client); ok {
 			client = clientOpt
 		}
 	}
@@ -58,18 +58,18 @@ func ErrorThrowerClient(name string, opts ...ipc.BindOpt) ErrorThrowerClientStub
 
 type implErrorThrowerClientStub struct {
 	name   string
-	client ipc.Client
+	client rpc.Client
 }
 
-func (c implErrorThrowerClientStub) c(ctx *context.T) ipc.Client {
+func (c implErrorThrowerClientStub) c(ctx *context.T) rpc.Client {
 	if c.client != nil {
 		return c.client
 	}
 	return v23.GetClient(ctx)
 }
 
-func (c implErrorThrowerClientStub) ThrowAborted(ctx *context.T, opts ...ipc.CallOpt) (err error) {
-	var call ipc.ClientCall
+func (c implErrorThrowerClientStub) ThrowAborted(ctx *context.T, opts ...rpc.CallOpt) (err error) {
+	var call rpc.ClientCall
 	if call, err = c.c(ctx).StartCall(ctx, c.name, "ThrowAborted", nil, opts...); err != nil {
 		return
 	}
@@ -77,8 +77,8 @@ func (c implErrorThrowerClientStub) ThrowAborted(ctx *context.T, opts ...ipc.Cal
 	return
 }
 
-func (c implErrorThrowerClientStub) ThrowBadArg(ctx *context.T, opts ...ipc.CallOpt) (err error) {
-	var call ipc.ClientCall
+func (c implErrorThrowerClientStub) ThrowBadArg(ctx *context.T, opts ...rpc.CallOpt) (err error) {
+	var call rpc.ClientCall
 	if call, err = c.c(ctx).StartCall(ctx, c.name, "ThrowBadArg", nil, opts...); err != nil {
 		return
 	}
@@ -86,8 +86,8 @@ func (c implErrorThrowerClientStub) ThrowBadArg(ctx *context.T, opts ...ipc.Call
 	return
 }
 
-func (c implErrorThrowerClientStub) ThrowBadProtocol(ctx *context.T, opts ...ipc.CallOpt) (err error) {
-	var call ipc.ClientCall
+func (c implErrorThrowerClientStub) ThrowBadProtocol(ctx *context.T, opts ...rpc.CallOpt) (err error) {
+	var call rpc.ClientCall
 	if call, err = c.c(ctx).StartCall(ctx, c.name, "ThrowBadProtocol", nil, opts...); err != nil {
 		return
 	}
@@ -95,8 +95,8 @@ func (c implErrorThrowerClientStub) ThrowBadProtocol(ctx *context.T, opts ...ipc
 	return
 }
 
-func (c implErrorThrowerClientStub) ThrowInternal(ctx *context.T, opts ...ipc.CallOpt) (err error) {
-	var call ipc.ClientCall
+func (c implErrorThrowerClientStub) ThrowInternal(ctx *context.T, opts ...rpc.CallOpt) (err error) {
+	var call rpc.ClientCall
 	if call, err = c.c(ctx).StartCall(ctx, c.name, "ThrowInternal", nil, opts...); err != nil {
 		return
 	}
@@ -104,8 +104,8 @@ func (c implErrorThrowerClientStub) ThrowInternal(ctx *context.T, opts ...ipc.Ca
 	return
 }
 
-func (c implErrorThrowerClientStub) ThrowNoAccess(ctx *context.T, opts ...ipc.CallOpt) (err error) {
-	var call ipc.ClientCall
+func (c implErrorThrowerClientStub) ThrowNoAccess(ctx *context.T, opts ...rpc.CallOpt) (err error) {
+	var call rpc.ClientCall
 	if call, err = c.c(ctx).StartCall(ctx, c.name, "ThrowNoAccess", nil, opts...); err != nil {
 		return
 	}
@@ -113,8 +113,8 @@ func (c implErrorThrowerClientStub) ThrowNoAccess(ctx *context.T, opts ...ipc.Ca
 	return
 }
 
-func (c implErrorThrowerClientStub) ThrowNoExist(ctx *context.T, opts ...ipc.CallOpt) (err error) {
-	var call ipc.ClientCall
+func (c implErrorThrowerClientStub) ThrowNoExist(ctx *context.T, opts ...rpc.CallOpt) (err error) {
+	var call rpc.ClientCall
 	if call, err = c.c(ctx).StartCall(ctx, c.name, "ThrowNoExist", nil, opts...); err != nil {
 		return
 	}
@@ -122,8 +122,8 @@ func (c implErrorThrowerClientStub) ThrowNoExist(ctx *context.T, opts ...ipc.Cal
 	return
 }
 
-func (c implErrorThrowerClientStub) ThrowNoExistOrNoAccess(ctx *context.T, opts ...ipc.CallOpt) (err error) {
-	var call ipc.ClientCall
+func (c implErrorThrowerClientStub) ThrowNoExistOrNoAccess(ctx *context.T, opts ...rpc.CallOpt) (err error) {
+	var call rpc.ClientCall
 	if call, err = c.c(ctx).StartCall(ctx, c.name, "ThrowNoExistOrNoAccess", nil, opts...); err != nil {
 		return
 	}
@@ -131,8 +131,8 @@ func (c implErrorThrowerClientStub) ThrowNoExistOrNoAccess(ctx *context.T, opts 
 	return
 }
 
-func (c implErrorThrowerClientStub) ThrowUnknown(ctx *context.T, opts ...ipc.CallOpt) (err error) {
-	var call ipc.ClientCall
+func (c implErrorThrowerClientStub) ThrowUnknown(ctx *context.T, opts ...rpc.CallOpt) (err error) {
+	var call rpc.ClientCall
 	if call, err = c.c(ctx).StartCall(ctx, c.name, "ThrowUnknown", nil, opts...); err != nil {
 		return
 	}
@@ -140,8 +140,8 @@ func (c implErrorThrowerClientStub) ThrowUnknown(ctx *context.T, opts ...ipc.Cal
 	return
 }
 
-func (c implErrorThrowerClientStub) ThrowGoError(ctx *context.T, opts ...ipc.CallOpt) (err error) {
-	var call ipc.ClientCall
+func (c implErrorThrowerClientStub) ThrowGoError(ctx *context.T, opts ...rpc.CallOpt) (err error) {
+	var call rpc.ClientCall
 	if call, err = c.c(ctx).StartCall(ctx, c.name, "ThrowGoError", nil, opts...); err != nil {
 		return
 	}
@@ -149,8 +149,8 @@ func (c implErrorThrowerClientStub) ThrowGoError(ctx *context.T, opts ...ipc.Cal
 	return
 }
 
-func (c implErrorThrowerClientStub) ThrowCustomStandardError(ctx *context.T, opts ...ipc.CallOpt) (err error) {
-	var call ipc.ClientCall
+func (c implErrorThrowerClientStub) ThrowCustomStandardError(ctx *context.T, opts ...rpc.CallOpt) (err error) {
+	var call rpc.ClientCall
 	if call, err = c.c(ctx).StartCall(ctx, c.name, "ThrowCustomStandardError", nil, opts...); err != nil {
 		return
 	}
@@ -158,8 +158,8 @@ func (c implErrorThrowerClientStub) ThrowCustomStandardError(ctx *context.T, opt
 	return
 }
 
-func (c implErrorThrowerClientStub) ListAllBuiltInErrorIds(ctx *context.T, opts ...ipc.CallOpt) (o0 []string, err error) {
-	var call ipc.ClientCall
+func (c implErrorThrowerClientStub) ListAllBuiltInErrorIds(ctx *context.T, opts ...rpc.CallOpt) (o0 []string, err error) {
+	var call rpc.ClientCall
 	if call, err = c.c(ctx).StartCall(ctx, c.name, "ListAllBuiltInErrorIds", nil, opts...); err != nil {
 		return
 	}
@@ -173,31 +173,31 @@ func (c implErrorThrowerClientStub) ListAllBuiltInErrorIds(ctx *context.T, opts 
 // A testing interface with methods that throw various types of errors
 type ErrorThrowerServerMethods interface {
 	// Throws v23/vError.Aborted error
-	ThrowAborted(ipc.ServerCall) error
+	ThrowAborted(rpc.ServerCall) error
 	// Throws v23/vError.BadArg error
-	ThrowBadArg(ipc.ServerCall) error
+	ThrowBadArg(rpc.ServerCall) error
 	// Throws v23/vError.BadProtocol error
-	ThrowBadProtocol(ipc.ServerCall) error
+	ThrowBadProtocol(rpc.ServerCall) error
 	// Throws v23/vError.Internal error
-	ThrowInternal(ipc.ServerCall) error
+	ThrowInternal(rpc.ServerCall) error
 	// Throws v23/vError.NoAccess error
-	ThrowNoAccess(ipc.ServerCall) error
+	ThrowNoAccess(rpc.ServerCall) error
 	// Throws v23/vError.NoExist error
-	ThrowNoExist(ipc.ServerCall) error
+	ThrowNoExist(rpc.ServerCall) error
 	// Throws v23/vError.NoExistOrNoAccess error
-	ThrowNoExistOrNoAccess(ipc.ServerCall) error
+	ThrowNoExistOrNoAccess(rpc.ServerCall) error
 	// Throws v23/vError.Unknown error
-	ThrowUnknown(ipc.ServerCall) error
+	ThrowUnknown(rpc.ServerCall) error
 	// Throws normal Go error
-	ThrowGoError(ipc.ServerCall) error
+	ThrowGoError(rpc.ServerCall) error
 	// Throws custom error created by using Standard
-	ThrowCustomStandardError(ipc.ServerCall) error
+	ThrowCustomStandardError(rpc.ServerCall) error
 	// Lists all errors Ids available in v23/verror
-	ListAllBuiltInErrorIds(ipc.ServerCall) ([]string, error)
+	ListAllBuiltInErrorIds(rpc.ServerCall) ([]string, error)
 }
 
 // ErrorThrowerServerStubMethods is the server interface containing
-// ErrorThrower methods, as expected by ipc.Server.
+// ErrorThrower methods, as expected by rpc.Server.
 // There is no difference between this interface and ErrorThrowerServerMethods
 // since there are no streaming methods.
 type ErrorThrowerServerStubMethods ErrorThrowerServerMethods
@@ -206,21 +206,21 @@ type ErrorThrowerServerStubMethods ErrorThrowerServerMethods
 type ErrorThrowerServerStub interface {
 	ErrorThrowerServerStubMethods
 	// Describe the ErrorThrower interfaces.
-	Describe__() []ipc.InterfaceDesc
+	Describe__() []rpc.InterfaceDesc
 }
 
 // ErrorThrowerServer returns a server stub for ErrorThrower.
 // It converts an implementation of ErrorThrowerServerMethods into
-// an object that may be used by ipc.Server.
+// an object that may be used by rpc.Server.
 func ErrorThrowerServer(impl ErrorThrowerServerMethods) ErrorThrowerServerStub {
 	stub := implErrorThrowerServerStub{
 		impl: impl,
 	}
 	// Initialize GlobState; always check the stub itself first, to handle the
 	// case where the user has the Glob method defined in their VDL source.
-	if gs := ipc.NewGlobState(stub); gs != nil {
+	if gs := rpc.NewGlobState(stub); gs != nil {
 		stub.gs = gs
-	} else if gs := ipc.NewGlobState(impl); gs != nil {
+	} else if gs := rpc.NewGlobState(impl); gs != nil {
 		stub.gs = gs
 	}
 	return stub
@@ -228,70 +228,70 @@ func ErrorThrowerServer(impl ErrorThrowerServerMethods) ErrorThrowerServerStub {
 
 type implErrorThrowerServerStub struct {
 	impl ErrorThrowerServerMethods
-	gs   *ipc.GlobState
+	gs   *rpc.GlobState
 }
 
-func (s implErrorThrowerServerStub) ThrowAborted(call ipc.ServerCall) error {
+func (s implErrorThrowerServerStub) ThrowAborted(call rpc.ServerCall) error {
 	return s.impl.ThrowAborted(call)
 }
 
-func (s implErrorThrowerServerStub) ThrowBadArg(call ipc.ServerCall) error {
+func (s implErrorThrowerServerStub) ThrowBadArg(call rpc.ServerCall) error {
 	return s.impl.ThrowBadArg(call)
 }
 
-func (s implErrorThrowerServerStub) ThrowBadProtocol(call ipc.ServerCall) error {
+func (s implErrorThrowerServerStub) ThrowBadProtocol(call rpc.ServerCall) error {
 	return s.impl.ThrowBadProtocol(call)
 }
 
-func (s implErrorThrowerServerStub) ThrowInternal(call ipc.ServerCall) error {
+func (s implErrorThrowerServerStub) ThrowInternal(call rpc.ServerCall) error {
 	return s.impl.ThrowInternal(call)
 }
 
-func (s implErrorThrowerServerStub) ThrowNoAccess(call ipc.ServerCall) error {
+func (s implErrorThrowerServerStub) ThrowNoAccess(call rpc.ServerCall) error {
 	return s.impl.ThrowNoAccess(call)
 }
 
-func (s implErrorThrowerServerStub) ThrowNoExist(call ipc.ServerCall) error {
+func (s implErrorThrowerServerStub) ThrowNoExist(call rpc.ServerCall) error {
 	return s.impl.ThrowNoExist(call)
 }
 
-func (s implErrorThrowerServerStub) ThrowNoExistOrNoAccess(call ipc.ServerCall) error {
+func (s implErrorThrowerServerStub) ThrowNoExistOrNoAccess(call rpc.ServerCall) error {
 	return s.impl.ThrowNoExistOrNoAccess(call)
 }
 
-func (s implErrorThrowerServerStub) ThrowUnknown(call ipc.ServerCall) error {
+func (s implErrorThrowerServerStub) ThrowUnknown(call rpc.ServerCall) error {
 	return s.impl.ThrowUnknown(call)
 }
 
-func (s implErrorThrowerServerStub) ThrowGoError(call ipc.ServerCall) error {
+func (s implErrorThrowerServerStub) ThrowGoError(call rpc.ServerCall) error {
 	return s.impl.ThrowGoError(call)
 }
 
-func (s implErrorThrowerServerStub) ThrowCustomStandardError(call ipc.ServerCall) error {
+func (s implErrorThrowerServerStub) ThrowCustomStandardError(call rpc.ServerCall) error {
 	return s.impl.ThrowCustomStandardError(call)
 }
 
-func (s implErrorThrowerServerStub) ListAllBuiltInErrorIds(call ipc.ServerCall) ([]string, error) {
+func (s implErrorThrowerServerStub) ListAllBuiltInErrorIds(call rpc.ServerCall) ([]string, error) {
 	return s.impl.ListAllBuiltInErrorIds(call)
 }
 
-func (s implErrorThrowerServerStub) Globber() *ipc.GlobState {
+func (s implErrorThrowerServerStub) Globber() *rpc.GlobState {
 	return s.gs
 }
 
-func (s implErrorThrowerServerStub) Describe__() []ipc.InterfaceDesc {
-	return []ipc.InterfaceDesc{ErrorThrowerDesc}
+func (s implErrorThrowerServerStub) Describe__() []rpc.InterfaceDesc {
+	return []rpc.InterfaceDesc{ErrorThrowerDesc}
 }
 
 // ErrorThrowerDesc describes the ErrorThrower interface.
-var ErrorThrowerDesc ipc.InterfaceDesc = descErrorThrower
+var ErrorThrowerDesc rpc.InterfaceDesc = descErrorThrower
 
 // descErrorThrower hides the desc to keep godoc clean.
-var descErrorThrower = ipc.InterfaceDesc{
+var descErrorThrower = rpc.InterfaceDesc{
 	Name:    "ErrorThrower",
 	PkgPath: "test_service",
 	Doc:     "// A testing interface with methods that throw various types of errors",
-	Methods: []ipc.MethodDesc{
+	Methods: []rpc.MethodDesc{
 		{
 			Name: "ThrowAborted",
 			Doc:  "// Throws v23/vError.Aborted error",
@@ -335,7 +335,7 @@ var descErrorThrower = ipc.InterfaceDesc{
 		{
 			Name: "ListAllBuiltInErrorIds",
 			Doc:  "// Lists all errors Ids available in v23/verror",
-			OutArgs: []ipc.ArgDesc{
+			OutArgs: []rpc.ArgDesc{
 				{"", ``}, // []string
 			},
 		},

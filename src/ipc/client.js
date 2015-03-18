@@ -31,7 +31,7 @@ var actions = require('../errors/actions');
 var RpcRequest = require('../gen-vdl/v.io/x/ref/services/wsprd/app').RpcRequest;
 var vtrace = require('../lib/vtrace');
 var ReservedSignature =
-  require('../gen-vdl/v.io/v23/ipc').ReservedSignature.val;
+  require('../gen-vdl/v.io/v23/rpc').ReservedSignature.val;
 var Controller =
   require('../gen-vdl/v.io/x/ref/services/wsprd/app').Controller;
 var time = require('../gen-vdl/v.io/v23/vdlroot/time');

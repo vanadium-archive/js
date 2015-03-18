@@ -28,7 +28,7 @@ var asyncValidateCall = require('./async-validate-call');
 var ServerRpcReply =
   require('../gen-vdl/v.io/x/ref/services/wsprd/lib').ServerRpcReply;
 var CaveatValidationResponse =
-  require('../gen-vdl/v.io/x/ref/services/wsprd/ipc/server').
+  require('../gen-vdl/v.io/x/ref/services/wsprd/rpc/server').
   CaveatValidationResponse;
 var vtrace = require('../lib/vtrace');
 

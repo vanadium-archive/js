@@ -7,7 +7,7 @@ import (
 	// VDL system imports
 	"v.io/v23"
 	"v.io/v23/context"
-	"v.io/v23/ipc"
+	"v.io/v23/rpc"
 	"v.io/v23/vdl"
 
 	// VDL user imports
@@ -54,20 +54,20 @@ var ConditionallyValidatingTestCaveat = security.CaveatDescriptor{
 // InvokableTestMethodClientMethods is the client interface
 // containing InvokableTestMethod methods.
 type InvokableTestMethodClientMethods interface {
-	AMethod(*context.T, ...ipc.CallOpt) error
+	AMethod(*context.T, ...rpc.CallOpt) error
 }
 
 // InvokableTestMethodClientStub adds universal methods to InvokableTestMethodClientMethods.
 type InvokableTestMethodClientStub interface {
 	InvokableTestMethodClientMethods
-	ipc.UniversalServiceMethods
+	rpc.UniversalServiceMethods
 }
 
 // InvokableTestMethodClient returns a client stub for InvokableTestMethod.
-func InvokableTestMethodClient(name string, opts ...ipc.BindOpt) InvokableTestMethodClientStub {
-	var client ipc.Client
+func InvokableTestMethodClient(name string, opts ...rpc.BindOpt) InvokableTestMethodClientStub {
+	var client rpc.Client
 	for _, opt := range opts {
-		if clientOpt, ok := opt.(ipc.Client); ok {
+		if clientOpt, ok := opt.(rpc.Client); ok {
 			client = clientOpt
 		}
 	}
@@ -76,18 +76,18 @@ func InvokableTestMethodClient(name string, opts ...ipc.BindOpt) InvokableTestMe
 
 type implInvokableTestMethodClientStub struct {
 	name   string
-	client ipc.Client
+	client rpc.Client
 }
 
-func (c implInvokableTestMethodClientStub) c(ctx *context.T) ipc.Client {
+func (c implInvokableTestMethodClientStub) c(ctx *context.T) rpc.Client {
 	if c.client != nil {
 		return c.client
 	}
 	return v23.GetClient(ctx)
 }
 
-func (c implInvokableTestMethodClientStub) AMethod(ctx *context.T, opts ...ipc.CallOpt) (err error) {
-	var call ipc.ClientCall
+func (c implInvokableTestMethodClientStub) AMethod(ctx *context.T, opts ...rpc.CallOpt) (err error) {
+	var call rpc.ClientCall
 	if call, err = c.c(ctx).StartCall(ctx, c.name, "AMethod", nil, opts...); err != nil {
 		return
 	}
@@ -98,11 +98,11 @@ func (c implInvokableTestMethodClientStub) AMethod(ctx *context.T, opts ...ipc.C
 // InvokableTestMethodServerMethods is the interface a server writer
 // implements for InvokableTestMethod.
 type InvokableTestMethodServerMethods interface {
-	AMethod(ipc.ServerCall) error
+	AMethod(rpc.ServerCall) error
 }
 
 // InvokableTestMethodServerStubMethods is the server interface containing
-// InvokableTestMethod methods, as expected by ipc.Server.
+// InvokableTestMethod methods, as expected by rpc.Server.
 // There is no difference between this interface and InvokableTestMethodServerMethods
 // since there are no streaming methods.
 type InvokableTestMethodServerStubMethods InvokableTestMethodServerMethods
@@ -111,21 +111,21 @@ type InvokableTestMethodServerStubMethods InvokableTestMethodServerMethods
 type InvokableTestMethodServerStub interface {
 	InvokableTestMethodServerStubMethods
 	// Describe the InvokableTestMethod interfaces.
-	Describe__() []ipc.InterfaceDesc
+	Describe__() []rpc.InterfaceDesc
 }
 
 // InvokableTestMethodServer returns a server stub for InvokableTestMethod.
 // It converts an implementation of InvokableTestMethodServerMethods into
-// an object that may be used by ipc.Server.
+// an object that may be used by rpc.Server.
 func InvokableTestMethodServer(impl InvokableTestMethodServerMethods) InvokableTestMethodServerStub {
 	stub := implInvokableTestMethodServerStub{
 		impl: impl,
 	}
 	// Initialize GlobState; always check the stub itself first, to handle the
 	// case where the user has the Glob method defined in their VDL source.
-	if gs := ipc.NewGlobState(stub); gs != nil {
+	if gs := rpc.NewGlobState(stub); gs != nil {
 		stub.gs = gs
-	} else if gs := ipc.NewGlobState(impl); gs != nil {
+	} else if gs := rpc.NewGlobState(impl); gs != nil {
 		stub.gs = gs
 	}
 	return stub
@@ -133,29 +133,29 @@ func InvokableTestMethodServer(impl InvokableTestMethodServerMethods) InvokableT
 
 type implInvokableTestMethodServerStub struct {
 	impl InvokableTestMethodServerMethods
-	gs   *ipc.GlobState
+	gs   *rpc.GlobState
 }
 
-func (s implInvokableTestMethodServerStub) AMethod(call ipc.ServerCall) error {
+func (s implInvokableTestMethodServerStub) AMethod(call rpc.ServerCall) error {
 	return s.impl.AMethod(call)
 }
 
-func (s implInvokableTestMethodServerStub) Globber() *ipc.GlobState {
+func (s implInvokableTestMethodServerStub) Globber() *rpc.GlobState {
 	return s.gs
 }
 
-func (s implInvokableTestMethodServerStub) Describe__() []ipc.InterfaceDesc {
-	return []ipc.InterfaceDesc{InvokableTestMethodDesc}
+func (s implInvokableTestMethodServerStub) Describe__() []rpc.InterfaceDesc {
+	return []rpc.InterfaceDesc{InvokableTestMethodDesc}
 }
 
 // InvokableTestMethodDesc describes the InvokableTestMethod interface.
-var InvokableTestMethodDesc ipc.InterfaceDesc = descInvokableTestMethod
+var InvokableTestMethodDesc rpc.InterfaceDesc = descInvokableTestMethod
 
 // descInvokableTestMethod hides the desc to keep godoc clean.
-var descInvokableTestMethod = ipc.InterfaceDesc{
+var descInvokableTestMethod = rpc.InterfaceDesc{
 	Name:    "InvokableTestMethod",
 	PkgPath: "test_service",
-	Methods: []ipc.MethodDesc{
+	Methods: []rpc.MethodDesc{
 		{
 			Name: "AMethod",
 		},
@@ -165,20 +165,20 @@ var descInvokableTestMethod = ipc.InterfaceDesc{
 // InvokeMethodWithCaveatedIdentityClientMethods is the client interface
 // containing InvokeMethodWithCaveatedIdentity methods.
 type InvokeMethodWithCaveatedIdentityClientMethods interface {
-	Invoke(ctx *context.T, name string, cavDesc security.CaveatDescriptor, cavParam *vdl.Value, opts ...ipc.CallOpt) error
+	Invoke(ctx *context.T, name string, cavDesc security.CaveatDescriptor, cavParam *vdl.Value, opts ...rpc.CallOpt) error
 }
 
 // InvokeMethodWithCaveatedIdentityClientStub adds universal methods to InvokeMethodWithCaveatedIdentityClientMethods.
 type InvokeMethodWithCaveatedIdentityClientStub interface {
 	InvokeMethodWithCaveatedIdentityClientMethods
-	ipc.UniversalServiceMethods
+	rpc.UniversalServiceMethods
 }
 
 // InvokeMethodWithCaveatedIdentityClient returns a client stub for InvokeMethodWithCaveatedIdentity.
-func InvokeMethodWithCaveatedIdentityClient(name string, opts ...ipc.BindOpt) InvokeMethodWithCaveatedIdentityClientStub {
-	var client ipc.Client
+func InvokeMethodWithCaveatedIdentityClient(name string, opts ...rpc.BindOpt) InvokeMethodWithCaveatedIdentityClientStub {
+	var client rpc.Client
 	for _, opt := range opts {
-		if clientOpt, ok := opt.(ipc.Client); ok {
+		if clientOpt, ok := opt.(rpc.Client); ok {
 			client = clientOpt
 		}
 	}
@@ -187,18 +187,18 @@ func InvokeMethodWithCaveatedIdentityClient(name string, opts ...ipc.BindOpt) In
 
 type implInvokeMethodWithCaveatedIdentityClientStub struct {
 	name   string
-	client ipc.Client
+	client rpc.Client
 }
 
-func (c implInvokeMethodWithCaveatedIdentityClientStub) c(ctx *context.T) ipc.Client {
+func (c implInvokeMethodWithCaveatedIdentityClientStub) c(ctx *context.T) rpc.Client {
 	if c.client != nil {
 		return c.client
 	}
 	return v23.GetClient(ctx)
 }
 
-func (c implInvokeMethodWithCaveatedIdentityClientStub) Invoke(ctx *context.T, i0 string, i1 security.CaveatDescriptor, i2 *vdl.Value, opts ...ipc.CallOpt) (err error) {
-	var call ipc.ClientCall
+func (c implInvokeMethodWithCaveatedIdentityClientStub) Invoke(ctx *context.T, i0 string, i1 security.CaveatDescriptor, i2 *vdl.Value, opts ...rpc.CallOpt) (err error) {
+	var call rpc.ClientCall
 	if call, err = c.c(ctx).StartCall(ctx, c.name, "Invoke", []interface{}{i0, i1, i2}, opts...); err != nil {
 		return
 	}
@@ -209,11 +209,11 @@ func (c implInvokeMethodWithCaveatedIdentityClientStub) Invoke(ctx *context.T, i
 // InvokeMethodWithCaveatedIdentityServerMethods is the interface a server writer
 // implements for InvokeMethodWithCaveatedIdentity.
 type InvokeMethodWithCaveatedIdentityServerMethods interface {
-	Invoke(call ipc.ServerCall, name string, cavDesc security.CaveatDescriptor, cavParam *vdl.Value) error
+	Invoke(call rpc.ServerCall, name string, cavDesc security.CaveatDescriptor, cavParam *vdl.Value) error
 }
 
 // InvokeMethodWithCaveatedIdentityServerStubMethods is the server interface containing
-// InvokeMethodWithCaveatedIdentity methods, as expected by ipc.Server.
+// InvokeMethodWithCaveatedIdentity methods, as expected by rpc.Server.
 // There is no difference between this interface and InvokeMethodWithCaveatedIdentityServerMethods
 // since there are no streaming methods.
 type InvokeMethodWithCaveatedIdentityServerStubMethods InvokeMethodWithCaveatedIdentityServerMethods
@@ -222,21 +222,21 @@ type InvokeMethodWithCaveatedIdentityServerStubMethods InvokeMethodWithCaveatedI
 type InvokeMethodWithCaveatedIdentityServerStub interface {
 	InvokeMethodWithCaveatedIdentityServerStubMethods
 	// Describe the InvokeMethodWithCaveatedIdentity interfaces.
-	Describe__() []ipc.InterfaceDesc
+	Describe__() []rpc.InterfaceDesc
 }
 
 // InvokeMethodWithCaveatedIdentityServer returns a server stub for InvokeMethodWithCaveatedIdentity.
 // It converts an implementation of InvokeMethodWithCaveatedIdentityServerMethods into
-// an object that may be used by ipc.Server.
+// an object that may be used by rpc.Server.
 func InvokeMethodWithCaveatedIdentityServer(impl InvokeMethodWithCaveatedIdentityServerMethods) InvokeMethodWithCaveatedIdentityServerStub {
 	stub := implInvokeMethodWithCaveatedIdentityServerStub{
 		impl: impl,
 	}
 	// Initialize GlobState; always check the stub itself first, to handle the
 	// case where the user has the Glob method defined in their VDL source.
-	if gs := ipc.NewGlobState(stub); gs != nil {
+	if gs := rpc.NewGlobState(stub); gs != nil {
 		stub.gs = gs
-	} else if gs := ipc.NewGlobState(impl); gs != nil {
+	} else if gs := rpc.NewGlobState(impl); gs != nil {
 		stub.gs = gs
 	}
 	return stub
@@ -244,32 +244,32 @@ func InvokeMethodWithCaveatedIdentityServer(impl InvokeMethodWithCaveatedIdentit
 
 type implInvokeMethodWithCaveatedIdentityServerStub struct {
 	impl InvokeMethodWithCaveatedIdentityServerMethods
-	gs   *ipc.GlobState
+	gs   *rpc.GlobState
 }
 
-func (s implInvokeMethodWithCaveatedIdentityServerStub) Invoke(call ipc.ServerCall, i0 string, i1 security.CaveatDescriptor, i2 *vdl.Value) error {
+func (s implInvokeMethodWithCaveatedIdentityServerStub) Invoke(call rpc.ServerCall, i0 string, i1 security.CaveatDescriptor, i2 *vdl.Value) error {
 	return s.impl.Invoke(call, i0, i1, i2)
 }
 
-func (s implInvokeMethodWithCaveatedIdentityServerStub) Globber() *ipc.GlobState {
+func (s implInvokeMethodWithCaveatedIdentityServerStub) Globber() *rpc.GlobState {
 	return s.gs
 }
 
-func (s implInvokeMethodWithCaveatedIdentityServerStub) Describe__() []ipc.InterfaceDesc {
-	return []ipc.InterfaceDesc{InvokeMethodWithCaveatedIdentityDesc}
+func (s implInvokeMethodWithCaveatedIdentityServerStub) Describe__() []rpc.InterfaceDesc {
+	return []rpc.InterfaceDesc{InvokeMethodWithCaveatedIdentityDesc}
 }
 
 // InvokeMethodWithCaveatedIdentityDesc describes the InvokeMethodWithCaveatedIdentity interface.
-var InvokeMethodWithCaveatedIdentityDesc ipc.InterfaceDesc = descInvokeMethodWithCaveatedIdentity
+var InvokeMethodWithCaveatedIdentityDesc rpc.InterfaceDesc = descInvokeMethodWithCaveatedIdentity
 
 // descInvokeMethodWithCaveatedIdentity hides the desc to keep godoc clean.
-var descInvokeMethodWithCaveatedIdentity = ipc.InterfaceDesc{
+var descInvokeMethodWithCaveatedIdentity = rpc.InterfaceDesc{
 	Name:    "InvokeMethodWithCaveatedIdentity",
 	PkgPath: "test_service",
-	Methods: []ipc.MethodDesc{
+	Methods: []rpc.MethodDesc{
 		{
 			Name: "Invoke",
-			InArgs: []ipc.ArgDesc{
+			InArgs: []rpc.ArgDesc{
 				{"name", ``},     // string
 				{"cavDesc", ``},  // security.CaveatDescriptor
 				{"cavParam", ``}, // *vdl.Value

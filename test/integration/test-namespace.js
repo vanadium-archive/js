@@ -2,7 +2,7 @@ var test = require('prova');
 var Promise = require('../../src/lib/promise');
 
 var access = require('../../src/gen-vdl/v.io/v23/services/security/access');
-var reserved = require('../../src/gen-vdl/v.io/v23/ipc/reserved');
+var reserved = require('../../src/gen-vdl/v.io/v23/rpc/reserved');
 var config = require('./default-config');
 var MINUTE = 60 * 1000; // a minute
 var Promise = require('../../src/lib/promise');

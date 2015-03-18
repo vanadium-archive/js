@@ -134,7 +134,7 @@ ifndef NOVDLGEN
 		-js_out_dir=$(JS_VDL_DIR) \
 		v.io/x/ref/lib/vdl/testdata/... \
 		v.io/x/ref/services/wsprd/... \
-		v.io/v23/ipc/... \
+		v.io/v23/rpc/... \
 		v.io/v23/naming/... \
 		v.io/v23/verror/... \
 		v.io/v23/vom/... \

@@ -7,7 +7,7 @@ import (
 	// VDL system imports
 	"v.io/v23"
 	"v.io/v23/context"
-	"v.io/v23/ipc"
+	"v.io/v23/rpc"
 
 	// VDL user imports
 	"time"
@@ -17,21 +17,21 @@ import (
 // NativeTestClientMethods is the client interface
 // containing NativeTest methods.
 type NativeTestClientMethods interface {
-	PassTime(ctx *context.T, t time.Time, opts ...ipc.CallOpt) (time.Time, error)
-	PassError(ctx *context.T, e error, opts ...ipc.CallOpt) error
+	PassTime(ctx *context.T, t time.Time, opts ...rpc.CallOpt) (time.Time, error)
+	PassError(ctx *context.T, e error, opts ...rpc.CallOpt) error
 }
 
 // NativeTestClientStub adds universal methods to NativeTestClientMethods.
 type NativeTestClientStub interface {
 	NativeTestClientMethods
-	ipc.UniversalServiceMethods
+	rpc.UniversalServiceMethods
 }
 
 // NativeTestClient returns a client stub for NativeTest.
-func NativeTestClient(name string, opts ...ipc.BindOpt) NativeTestClientStub {
-	var client ipc.Client
+func NativeTestClient(name string, opts ...rpc.BindOpt) NativeTestClientStub {
+	var client rpc.Client
 	for _, opt := range opts {
-		if clientOpt, ok := opt.(ipc.Client); ok {
+		if clientOpt, ok := opt.(rpc.Client); ok {
 			client = clientOpt
 		}
 	}
@@ -40,18 +40,18 @@ func NativeTestClient(name string, opts ...ipc.BindOpt) NativeTestClientStub {
 
 type implNativeTestClientStub struct {
 	name   string
-	client ipc.Client
+	client rpc.Client
 }
 
-func (c implNativeTestClientStub) c(ctx *context.T) ipc.Client {
+func (c implNativeTestClientStub) c(ctx *context.T) rpc.Client {
 	if c.client != nil {
 		return c.client
 	}
 	return v23.GetClient(ctx)
 }
 
-func (c implNativeTestClientStub) PassTime(ctx *context.T, i0 time.Time, opts ...ipc.CallOpt) (o0 time.Time, err error) {
-	var call ipc.ClientCall
+func (c implNativeTestClientStub) PassTime(ctx *context.T, i0 time.Time, opts ...rpc.CallOpt) (o0 time.Time, err error) {
+	var call rpc.ClientCall
 	if call, err = c.c(ctx).StartCall(ctx, c.name, "PassTime", []interface{}{i0}, opts...); err != nil {
 		return
 	}
@@ -59,8 +59,8 @@ func (c implNativeTestClientStub) PassTime(ctx *context.T, i0 time.Time, opts ..
 	return
 }
 
-func (c implNativeTestClientStub) PassError(ctx *context.T, i0 error, opts ...ipc.CallOpt) (err error) {
-	var call ipc.ClientCall
+func (c implNativeTestClientStub) PassError(ctx *context.T, i0 error, opts ...rpc.CallOpt) (err error) {
+	var call rpc.ClientCall
 	if call, err = c.c(ctx).StartCall(ctx, c.name, "PassError", []interface{}{&i0}, opts...); err != nil {
 		return
 	}
@@ -71,12 +71,12 @@ func (c implNativeTestClientStub) PassError(ctx *context.T, i0 error, opts ...ip
 // NativeTestServerMethods is the interface a server writer
 // implements for NativeTest.
 type NativeTestServerMethods interface {
-	PassTime(call ipc.ServerCall, t time.Time) (time.Time, error)
-	PassError(call ipc.ServerCall, e error) error
+	PassTime(call rpc.ServerCall, t time.Time) (time.Time, error)
+	PassError(call rpc.ServerCall, e error) error
 }
 
 // NativeTestServerStubMethods is the server interface containing
-// NativeTest methods, as expected by ipc.Server.
+// NativeTest methods, as expected by rpc.Server.
 // There is no difference between this interface and NativeTestServerMethods
 // since there are no streaming methods.
 type NativeTestServerStubMethods NativeTestServerMethods
@@ -85,21 +85,21 @@ type NativeTestServerStubMethods NativeTestServerMethods
 type NativeTestServerStub interface {
 	NativeTestServerStubMethods
 	// Describe the NativeTest interfaces.
-	Describe__() []ipc.InterfaceDesc
+	Describe__() []rpc.InterfaceDesc
 }
 
 // NativeTestServer returns a server stub for NativeTest.
 // It converts an implementation of NativeTestServerMethods into
-// an object that may be used by ipc.Server.
+// an object that may be used by rpc.Server.
 func NativeTestServer(impl NativeTestServerMethods) NativeTestServerStub {
 	stub := implNativeTestServerStub{
 		impl: impl,
 	}
 	// Initialize GlobState; always check the stub itself first, to handle the
 	// case where the user has the Glob method defined in their VDL source.
-	if gs := ipc.NewGlobState(stub); gs != nil {
+	if gs := rpc.NewGlobState(stub); gs != nil {
 		stub.gs = gs
-	} else if gs := ipc.NewGlobState(impl); gs != nil {
+	} else if gs := rpc.NewGlobState(impl); gs != nil {
 		stub.gs = gs
 	}
 	return stub
@@ -107,45 +107,45 @@ func NativeTestServer(impl NativeTestServerMethods) NativeTestServerStub {
 
 type implNativeTestServerStub struct {
 	impl NativeTestServerMethods
-	gs   *ipc.GlobState
+	gs   *rpc.GlobState
 }
 
-func (s implNativeTestServerStub) PassTime(call ipc.ServerCall, i0 time.Time) (time.Time, error) {
+func (s implNativeTestServerStub) PassTime(call rpc.ServerCall, i0 time.Time) (time.Time, error) {
 	return s.impl.PassTime(call, i0)
 }
 
-func (s implNativeTestServerStub) PassError(call ipc.ServerCall, i0 error) error {
+func (s implNativeTestServerStub) PassError(call rpc.ServerCall, i0 error) error {
 	return s.impl.PassError(call, i0)
 }
 
-func (s implNativeTestServerStub) Globber() *ipc.GlobState {
+func (s implNativeTestServerStub) Globber() *rpc.GlobState {
 	return s.gs
 }
 
-func (s implNativeTestServerStub) Describe__() []ipc.InterfaceDesc {
-	return []ipc.InterfaceDesc{NativeTestDesc}
+func (s implNativeTestServerStub) Describe__() []rpc.InterfaceDesc {
+	return []rpc.InterfaceDesc{NativeTestDesc}
 }
 
 // NativeTestDesc describes the NativeTest interface.
-var NativeTestDesc ipc.InterfaceDesc = descNativeTest
+var NativeTestDesc rpc.InterfaceDesc = descNativeTest
 
 // descNativeTest hides the desc to keep godoc clean.
-var descNativeTest = ipc.InterfaceDesc{
+var descNativeTest = rpc.InterfaceDesc{
 	Name:    "NativeTest",
 	PkgPath: "test_service",
-	Methods: []ipc.MethodDesc{
+	Methods: []rpc.MethodDesc{
 		{
 			Name: "PassTime",
-			InArgs: []ipc.ArgDesc{
+			InArgs: []rpc.ArgDesc{
 				{"t", ``}, // time.Time
 			},
-			OutArgs: []ipc.ArgDesc{
+			OutArgs: []rpc.ArgDesc{
 				{"", ``}, // time.Time
 			},
 		},
 		{
 			Name: "PassError",
-			InArgs: []ipc.ArgDesc{
+			InArgs: []rpc.ArgDesc{
 				{"e", ``}, // error
 			},
 		},

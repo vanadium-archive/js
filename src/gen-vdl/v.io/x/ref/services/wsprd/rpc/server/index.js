@@ -39,13 +39,13 @@ _type5.kind = vdl.Kind.LIST;
 _type5.name = "";
 _type5.elem = vdl.Types.ERROR;
 _typeCaveatValidationRequest.kind = vdl.Kind.STRUCT;
-_typeCaveatValidationRequest.name = "v.io/x/ref/services/wsprd/ipc/server.CaveatValidationRequest";
+_typeCaveatValidationRequest.name = "v.io/x/ref/services/wsprd/rpc/server.CaveatValidationRequest";
 _typeCaveatValidationRequest.fields = [{name: "Call", type: _typeSecurityCall}, {name: "CallSide", type: security.CallSide.LOCAL._type}, {name: "Cavs", type: _type3}];
 _typeCaveatValidationResponse.kind = vdl.Kind.STRUCT;
-_typeCaveatValidationResponse.name = "v.io/x/ref/services/wsprd/ipc/server.CaveatValidationResponse";
+_typeCaveatValidationResponse.name = "v.io/x/ref/services/wsprd/rpc/server.CaveatValidationResponse";
 _typeCaveatValidationResponse.fields = [{name: "Results", type: _type5}];
 _typeSecurityCall.kind = vdl.Kind.STRUCT;
-_typeSecurityCall.name = "v.io/x/ref/services/wsprd/ipc/server.SecurityCall";
+_typeSecurityCall.name = "v.io/x/ref/services/wsprd/rpc/server.SecurityCall";
 _typeSecurityCall.fields = [{name: "Method", type: vdl.Types.STRING}, {name: "Suffix", type: vdl.Types.STRING}, {name: "MethodTags", type: _type1}, {name: "LocalBlessings", type: new principal.BlessingsHandle()._type}, {name: "LocalBlessingStrings", type: _type2}, {name: "RemoteBlessings", type: new principal.BlessingsHandle()._type}, {name: "RemoteBlessingStrings", type: _type2}, {name: "LocalEndpoint", type: vdl.Types.STRING}, {name: "RemoteEndpoint", type: vdl.Types.STRING}];
 _type1.freeze();
 _type2.freeze();
@@ -68,13 +68,13 @@ module.exports.SecurityCall = (vdl.Registry.lookupOrCreateConstructor(_typeSecur
 
 // Errors:
 
-module.exports.CaveatValidationTimeoutError = makeError('v.io/x/ref/services/wsprd/ipc/server.CaveatValidationTimeout', actions.NO_RETRY, {
+module.exports.CaveatValidationTimeoutError = makeError('v.io/x/ref/services/wsprd/rpc/server.CaveatValidationTimeout', actions.NO_RETRY, {
   'en': '{1:}{2:} Caveat validation has timed out',
 }, [
 ]);
 
 
-module.exports.InvalidValidationResponseFromJavascriptError = makeError('v.io/x/ref/services/wsprd/ipc/server.InvalidValidationResponseFromJavascript', actions.NO_RETRY, {
+module.exports.InvalidValidationResponseFromJavascriptError = makeError('v.io/x/ref/services/wsprd/rpc/server.InvalidValidationResponseFromJavascript', actions.NO_RETRY, {
   'en': '{1:}{2:} Invalid validation response from javascript',
 }, [
 ]);

@@ -6,7 +6,7 @@ import (
 	vsecurity "v.io/x/ref/security"
 
 	"v.io/v23"
-	"v.io/v23/ipc"
+	"v.io/v23/rpc"
 	"v.io/v23/security"
 	"v.io/v23/vdl"
 	"v.io/v23/vom"
@@ -23,7 +23,7 @@ func NewInvokeMethodWithCaveatedIdentityServer() test_service.InvokeMethodWithCa
 // Invoke is a method on the InvokeMethodWithCaveatedIdentity service that
 // invokes "AMethod" on the service with the provided name with an identity
 // blessed with a caveat with the provided CaveatDescriptor.
-func (i *invokeMethWCavIdImpl) Invoke(call ipc.ServerCall, name string, cavDesc security.CaveatDescriptor, cavParam *vdl.Value) error {
+func (i *invokeMethWCavIdImpl) Invoke(call rpc.ServerCall, name string, cavDesc security.CaveatDescriptor, cavParam *vdl.Value) error {
 	ctx := call.Context()
 
 	bytes, err := vom.Encode(cavParam)

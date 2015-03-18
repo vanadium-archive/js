@@ -3,7 +3,7 @@ package main
 import (
 	"test_service"
 	"time"
-	"v.io/v23/ipc"
+	"v.io/v23/rpc"
 )
 
 func NewNativeTest() test_service.NativeTestServerMethods {
@@ -12,10 +12,10 @@ func NewNativeTest() test_service.NativeTestServerMethods {
 
 type nativeTest struct{}
 
-func (*nativeTest) PassTime(_ ipc.ServerCall, t time.Time) (time.Time, error) {
+func (*nativeTest) PassTime(_ rpc.ServerCall, t time.Time) (time.Time, error) {
 	return t, nil
 }
 
-func (*nativeTest) PassError(_ ipc.ServerCall, e error) error {
+func (*nativeTest) PassError(_ rpc.ServerCall, e error) error {
 	return e
 }

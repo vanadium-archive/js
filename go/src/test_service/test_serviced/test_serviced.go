@@ -6,8 +6,8 @@ import (
 
 	"v.io/v23"
 	"v.io/v23/context"
-	"v.io/v23/ipc"
 	"v.io/v23/naming"
+	"v.io/v23/rpc"
 	"v.io/v23/security"
 	_ "v.io/x/ref/profiles"
 
@@ -33,30 +33,30 @@ func (sd *testServiceDispatcher) Lookup(suffix string) (interface{}, security.Au
 	authorizer := openAuthorizer{}
 
 	if strings.HasPrefix(suffix, "cache") {
-		return ipc.ReflectInvokerOrDie(sd.cache), authorizer, nil
+		return rpc.ReflectInvokerOrDie(sd.cache), authorizer, nil
 	}
 
 	if strings.HasPrefix(suffix, "errorThrower") {
-		return ipc.ReflectInvokerOrDie(sd.errorThrower), authorizer, nil
+		return rpc.ReflectInvokerOrDie(sd.errorThrower), authorizer, nil
 	}
 
 	if strings.HasPrefix(suffix, "serviceToCancel") {
-		return ipc.ReflectInvokerOrDie(sd.cancelCollector), authorizer, nil
+		return rpc.ReflectInvokerOrDie(sd.cancelCollector), authorizer, nil
 	}
 
 	if strings.HasPrefix(suffix, "native") {
 		fmt.Println("got call to native")
-		return ipc.ReflectInvokerOrDie(sd.native), authorizer, nil
+		return rpc.ReflectInvokerOrDie(sd.native), authorizer, nil
 	}
 
 	if strings.HasPrefix(suffix, "caveatedInvoker") {
-		return ipc.ReflectInvokerOrDie(sd.caveatedInvoker), authorizer, nil
+		return rpc.ReflectInvokerOrDie(sd.caveatedInvoker), authorizer, nil
 	}
 
-	return ipc.ReflectInvokerOrDie(sd.cache), authorizer, nil
+	return rpc.ReflectInvokerOrDie(sd.cache), authorizer, nil
 }
 
-func StartServer(ctx *context.T) (ipc.Server, naming.Endpoint, error) {
+func StartServer(ctx *context.T) (rpc.Server, naming.Endpoint, error) {
 	// Create a new server instance.
 	s, err := v23.NewServer(ctx)
 	if err != nil {
@@ -72,7 +72,7 @@ func StartServer(ctx *context.T) (ipc.Server, naming.Endpoint, error) {
 	}
 
 	// Create an endpoint and begin listening.
-	spec := ipc.ListenSpec{Addrs: ipc.ListenAddrs{{"ws", "127.0.0.1:0"}}}
+	spec := rpc.ListenSpec{Addrs: rpc.ListenAddrs{{"ws", "127.0.0.1:0"}}}
 	endpoints, err := s.Listen(spec)
 	if err != nil {
 		return nil, nil, fmt.Errorf("error listening to service: %v", err)

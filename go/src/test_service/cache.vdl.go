@@ -8,7 +8,7 @@ import (
 	"io"
 	"v.io/v23"
 	"v.io/v23/context"
-	"v.io/v23/ipc"
+	"v.io/v23/rpc"
 	"v.io/v23/vdl"
 )
 
@@ -42,58 +42,58 @@ func init() {
 // A Cache service mimics the memcache interface.
 type CacheClientMethods interface {
 	// Set sets a value for a key.
-	Set(ctx *context.T, key string, value *vdl.Value, opts ...ipc.CallOpt) error
+	Set(ctx *context.T, key string, value *vdl.Value, opts ...rpc.CallOpt) error
 	// Get returns the value for a key.  If the value is not found, returns
 	// a not found error.
-	Get(ctx *context.T, key string, opts ...ipc.CallOpt) (*vdl.Value, error)
+	Get(ctx *context.T, key string, opts ...rpc.CallOpt) (*vdl.Value, error)
 	// Same as Get, but casts the return argument to an byte.
-	GetAsByte(ctx *context.T, key string, opts ...ipc.CallOpt) (byte, error)
+	GetAsByte(ctx *context.T, key string, opts ...rpc.CallOpt) (byte, error)
 	// Same as Get, but casts the return argument to an int32.
-	GetAsInt32(ctx *context.T, key string, opts ...ipc.CallOpt) (int32, error)
+	GetAsInt32(ctx *context.T, key string, opts ...rpc.CallOpt) (int32, error)
 	// Same as Get, but casts the return argument to an int64.
-	GetAsInt64(ctx *context.T, key string, opts ...ipc.CallOpt) (int64, error)
+	GetAsInt64(ctx *context.T, key string, opts ...rpc.CallOpt) (int64, error)
 	// Same as Get, but casts the return argument to an uint32.
-	GetAsUint32(ctx *context.T, key string, opts ...ipc.CallOpt) (uint32, error)
+	GetAsUint32(ctx *context.T, key string, opts ...rpc.CallOpt) (uint32, error)
 	// Same as Get, but casts the return argument to an uint64.
-	GetAsUint64(ctx *context.T, key string, opts ...ipc.CallOpt) (uint64, error)
+	GetAsUint64(ctx *context.T, key string, opts ...rpc.CallOpt) (uint64, error)
 	// Same as Get, but casts the return argument to an float32.
-	GetAsFloat32(ctx *context.T, key string, opts ...ipc.CallOpt) (float32, error)
+	GetAsFloat32(ctx *context.T, key string, opts ...rpc.CallOpt) (float32, error)
 	// Same as Get, but casts the return argument to an float64.
-	GetAsFloat64(ctx *context.T, key string, opts ...ipc.CallOpt) (float64, error)
+	GetAsFloat64(ctx *context.T, key string, opts ...rpc.CallOpt) (float64, error)
 	// Same as Get, but casts the return argument to a string.
-	GetAsString(ctx *context.T, key string, opts ...ipc.CallOpt) (string, error)
+	GetAsString(ctx *context.T, key string, opts ...rpc.CallOpt) (string, error)
 	// Same as Get, but casts the return argument to a bool.
-	GetAsBool(ctx *context.T, key string, opts ...ipc.CallOpt) (bool, error)
+	GetAsBool(ctx *context.T, key string, opts ...rpc.CallOpt) (bool, error)
 	// Same as Get, but casts the return argument to an error.
-	GetAsError(ctx *context.T, key string, opts ...ipc.CallOpt) (error, error)
+	GetAsError(ctx *context.T, key string, opts ...rpc.CallOpt) (error, error)
 	// AsMap returns the full contents of the cache as a map.
-	AsMap(*context.T, ...ipc.CallOpt) (map[string]*vdl.Value, error)
+	AsMap(*context.T, ...rpc.CallOpt) (map[string]*vdl.Value, error)
 	// KeyValuePairs returns the full contents of the cache as a slice of pairs.
-	KeyValuePairs(*context.T, ...ipc.CallOpt) ([]KeyValuePair, error)
+	KeyValuePairs(*context.T, ...rpc.CallOpt) ([]KeyValuePair, error)
 	// MostRecentSet returns the key and value and the timestamp for the most
 	// recent set operation
 	// TODO(bprosnitz) support type types and change time to native time type
-	MostRecentSet(*context.T, ...ipc.CallOpt) (value KeyValuePair, time int64, err error)
+	MostRecentSet(*context.T, ...rpc.CallOpt) (value KeyValuePair, time int64, err error)
 	// KeyPage indexes into the keys (in alphanumerically sorted order) and
 	// returns the indexth page of 10 keys.
-	KeyPage(ctx *context.T, index int64, opts ...ipc.CallOpt) (KeyPageResult, error)
+	KeyPage(ctx *context.T, index int64, opts ...rpc.CallOpt) (KeyPageResult, error)
 	// Size returns the total number of entries in the cache.
-	Size(*context.T, ...ipc.CallOpt) (int64, error)
+	Size(*context.T, ...rpc.CallOpt) (int64, error)
 	// MultiGet sets up a stream that allows fetching multiple keys.
-	MultiGet(*context.T, ...ipc.CallOpt) (CacheMultiGetClientCall, error)
+	MultiGet(*context.T, ...rpc.CallOpt) (CacheMultiGetClientCall, error)
 }
 
 // CacheClientStub adds universal methods to CacheClientMethods.
 type CacheClientStub interface {
 	CacheClientMethods
-	ipc.UniversalServiceMethods
+	rpc.UniversalServiceMethods
 }
 
 // CacheClient returns a client stub for Cache.
-func CacheClient(name string, opts ...ipc.BindOpt) CacheClientStub {
-	var client ipc.Client
+func CacheClient(name string, opts ...rpc.BindOpt) CacheClientStub {
+	var client rpc.Client
 	for _, opt := range opts {
-		if clientOpt, ok := opt.(ipc.Client); ok {
+		if clientOpt, ok := opt.(rpc.Client); ok {
 			client = clientOpt
 		}
 	}
@@ -102,18 +102,18 @@ func CacheClient(name string, opts ...ipc.BindOpt) CacheClientStub {
 
 type implCacheClientStub struct {
 	name   string
-	client ipc.Client
+	client rpc.Client
 }
 
-func (c implCacheClientStub) c(ctx *context.T) ipc.Client {
+func (c implCacheClientStub) c(ctx *context.T) rpc.Client {
 	if c.client != nil {
 		return c.client
 	}
 	return v23.GetClient(ctx)
 }
 
-func (c implCacheClientStub) Set(ctx *context.T, i0 string, i1 *vdl.Value, opts ...ipc.CallOpt) (err error) {
-	var call ipc.ClientCall
+func (c implCacheClientStub) Set(ctx *context.T, i0 string, i1 *vdl.Value, opts ...rpc.CallOpt) (err error) {
+	var call rpc.ClientCall
 	if call, err = c.c(ctx).StartCall(ctx, c.name, "Set", []interface{}{i0, i1}, opts...); err != nil {
 		return
 	}
@@ -121,8 +121,8 @@ func (c implCacheClientStub) Set(ctx *context.T, i0 string, i1 *vdl.Value, opts 
 	return
 }
 
-func (c implCacheClientStub) Get(ctx *context.T, i0 string, opts ...ipc.CallOpt) (o0 *vdl.Value, err error) {
-	var call ipc.ClientCall
+func (c implCacheClientStub) Get(ctx *context.T, i0 string, opts ...rpc.CallOpt) (o0 *vdl.Value, err error) {
+	var call rpc.ClientCall
 	if call, err = c.c(ctx).StartCall(ctx, c.name, "Get", []interface{}{i0}, opts...); err != nil {
 		return
 	}
@@ -130,8 +130,8 @@ func (c implCacheClientStub) Get(ctx *context.T, i0 string, opts ...ipc.CallOpt)
 	return
 }
 
-func (c implCacheClientStub) GetAsByte(ctx *context.T, i0 string, opts ...ipc.CallOpt) (o0 byte, err error) {
-	var call ipc.ClientCall
+func (c implCacheClientStub) GetAsByte(ctx *context.T, i0 string, opts ...rpc.CallOpt) (o0 byte, err error) {
+	var call rpc.ClientCall
 	if call, err = c.c(ctx).StartCall(ctx, c.name, "GetAsByte", []interface{}{i0}, opts...); err != nil {
 		return
 	}
@@ -139,8 +139,8 @@ func (c implCacheClientStub) GetAsByte(ctx *context.T, i0 string, opts ...ipc.Ca
 	return
 }
 
-func (c implCacheClientStub) GetAsInt32(ctx *context.T, i0 string, opts ...ipc.CallOpt) (o0 int32, err error) {
-	var call ipc.ClientCall
+func (c implCacheClientStub) GetAsInt32(ctx *context.T, i0 string, opts ...rpc.CallOpt) (o0 int32, err error) {
+	var call rpc.ClientCall
 	if call, err = c.c(ctx).StartCall(ctx, c.name, "GetAsInt32", []interface{}{i0}, opts...); err != nil {
 		return
 	}
@@ -148,8 +148,8 @@ func (c implCacheClientStub) GetAsInt32(ctx *context.T, i0 string, opts ...ipc.C
 	return
 }
 
-func (c implCacheClientStub) GetAsInt64(ctx *context.T, i0 string, opts ...ipc.CallOpt) (o0 int64, err error) {
-	var call ipc.ClientCall
+func (c implCacheClientStub) GetAsInt64(ctx *context.T, i0 string, opts ...rpc.CallOpt) (o0 int64, err error) {
+	var call rpc.ClientCall
 	if call, err = c.c(ctx).StartCall(ctx, c.name, "GetAsInt64", []interface{}{i0}, opts...); err != nil {
 		return
 	}
@@ -157,8 +157,8 @@ func (c implCacheClientStub) GetAsInt64(ctx *context.T, i0 string, opts ...ipc.C
 	return
 }
 
-func (c implCacheClientStub) GetAsUint32(ctx *context.T, i0 string, opts ...ipc.CallOpt) (o0 uint32, err error) {
-	var call ipc.ClientCall
+func (c implCacheClientStub) GetAsUint32(ctx *context.T, i0 string, opts ...rpc.CallOpt) (o0 uint32, err error) {
+	var call rpc.ClientCall
 	if call, err = c.c(ctx).StartCall(ctx, c.name, "GetAsUint32", []interface{}{i0}, opts...); err != nil {
 		return
 	}
@@ -166,8 +166,8 @@ func (c implCacheClientStub) GetAsUint32(ctx *context.T, i0 string, opts ...ipc.
 	return
 }
 
-func (c implCacheClientStub) GetAsUint64(ctx *context.T, i0 string, opts ...ipc.CallOpt) (o0 uint64, err error) {
-	var call ipc.ClientCall
+func (c implCacheClientStub) GetAsUint64(ctx *context.T, i0 string, opts ...rpc.CallOpt) (o0 uint64, err error) {
+	var call rpc.ClientCall
 	if call, err = c.c(ctx).StartCall(ctx, c.name, "GetAsUint64", []interface{}{i0}, opts...); err != nil {
 		return
 	}
@@ -175,8 +175,8 @@ func (c implCacheClientStub) GetAsUint64(ctx *context.T, i0 string, opts ...ipc.
 	return
 }
 
-func (c implCacheClientStub) GetAsFloat32(ctx *context.T, i0 string, opts ...ipc.CallOpt) (o0 float32, err error) {
-	var call ipc.ClientCall
+func (c implCacheClientStub) GetAsFloat32(ctx *context.T, i0 string, opts ...rpc.CallOpt) (o0 float32, err error) {
+	var call rpc.ClientCall
 	if call, err = c.c(ctx).StartCall(ctx, c.name, "GetAsFloat32", []interface{}{i0}, opts...); err != nil {
 		return
 	}
@@ -184,8 +184,8 @@ func (c implCacheClientStub) GetAsFloat32(ctx *context.T, i0 string, opts ...ipc
 	return
 }
 
-func (c implCacheClientStub) GetAsFloat64(ctx *context.T, i0 string, opts ...ipc.CallOpt) (o0 float64, err error) {
-	var call ipc.ClientCall
+func (c implCacheClientStub) GetAsFloat64(ctx *context.T, i0 string, opts ...rpc.CallOpt) (o0 float64, err error) {
+	var call rpc.ClientCall
 	if call, err = c.c(ctx).StartCall(ctx, c.name, "GetAsFloat64", []interface{}{i0}, opts...); err != nil {
 		return
 	}
@@ -193,8 +193,8 @@ func (c implCacheClientStub) GetAsFloat64(ctx *context.T, i0 string, opts ...ipc
 	return
 }
 
-func (c implCacheClientStub) GetAsString(ctx *context.T, i0 string, opts ...ipc.CallOpt) (o0 string, err error) {
-	var call ipc.ClientCall
+func (c implCacheClientStub) GetAsString(ctx *context.T, i0 string, opts ...rpc.CallOpt) (o0 string, err error) {
+	var call rpc.ClientCall
 	if call, err = c.c(ctx).StartCall(ctx, c.name, "GetAsString", []interface{}{i0}, opts...); err != nil {
 		return
 	}
@@ -202,8 +202,8 @@ func (c implCacheClientStub) GetAsString(ctx *context.T, i0 string, opts ...ipc.
 	return
 }
 
-func (c implCacheClientStub) GetAsBool(ctx *context.T, i0 string, opts ...ipc.CallOpt) (o0 bool, err error) {
-	var call ipc.ClientCall
+func (c implCacheClientStub) GetAsBool(ctx *context.T, i0 string, opts ...rpc.CallOpt) (o0 bool, err error) {
+	var call rpc.ClientCall
 	if call, err = c.c(ctx).StartCall(ctx, c.name, "GetAsBool", []interface{}{i0}, opts...); err != nil {
 		return
 	}
@@ -211,8 +211,8 @@ func (c implCacheClientStub) GetAsBool(ctx *context.T, i0 string, opts ...ipc.Ca
 	return
 }
 
-func (c implCacheClientStub) GetAsError(ctx *context.T, i0 string, opts ...ipc.CallOpt) (o0 error, err error) {
-	var call ipc.ClientCall
+func (c implCacheClientStub) GetAsError(ctx *context.T, i0 string, opts ...rpc.CallOpt) (o0 error, err error) {
+	var call rpc.ClientCall
 	if call, err = c.c(ctx).StartCall(ctx, c.name, "GetAsError", []interface{}{i0}, opts...); err != nil {
 		return
 	}
@@ -220,8 +220,8 @@ func (c implCacheClientStub) GetAsError(ctx *context.T, i0 string, opts ...ipc.C
 	return
 }
 
-func (c implCacheClientStub) AsMap(ctx *context.T, opts ...ipc.CallOpt) (o0 map[string]*vdl.Value, err error) {
-	var call ipc.ClientCall
+func (c implCacheClientStub) AsMap(ctx *context.T, opts ...rpc.CallOpt) (o0 map[string]*vdl.Value, err error) {
+	var call rpc.ClientCall
 	if call, err = c.c(ctx).StartCall(ctx, c.name, "AsMap", nil, opts...); err != nil {
 		return
 	}
@@ -229,8 +229,8 @@ func (c implCacheClientStub) AsMap(ctx *context.T, opts ...ipc.CallOpt) (o0 map[
 	return
 }
 
-func (c implCacheClientStub) KeyValuePairs(ctx *context.T, opts ...ipc.CallOpt) (o0 []KeyValuePair, err error) {
-	var call ipc.ClientCall
+func (c implCacheClientStub) KeyValuePairs(ctx *context.T, opts ...rpc.CallOpt) (o0 []KeyValuePair, err error) {
+	var call rpc.ClientCall
 	if call, err = c.c(ctx).StartCall(ctx, c.name, "KeyValuePairs", nil, opts...); err != nil {
 		return
 	}
@@ -238,8 +238,8 @@ func (c implCacheClientStub) KeyValuePairs(ctx *context.T, opts ...ipc.CallOpt) 
 	return
 }
 
-func (c implCacheClientStub) MostRecentSet(ctx *context.T, opts ...ipc.CallOpt) (o0 KeyValuePair, o1 int64, err error) {
-	var call ipc.ClientCall
+func (c implCacheClientStub) MostRecentSet(ctx *context.T, opts ...rpc.CallOpt) (o0 KeyValuePair, o1 int64, err error) {
+	var call rpc.ClientCall
 	if call, err = c.c(ctx).StartCall(ctx, c.name, "MostRecentSet", nil, opts...); err != nil {
 		return
 	}
@@ -247,8 +247,8 @@ func (c implCacheClientStub) MostRecentSet(ctx *context.T, opts ...ipc.CallOpt) 
 	return
 }
 
-func (c implCacheClientStub) KeyPage(ctx *context.T, i0 int64, opts ...ipc.CallOpt) (o0 KeyPageResult, err error) {
-	var call ipc.ClientCall
+func (c implCacheClientStub) KeyPage(ctx *context.T, i0 int64, opts ...rpc.CallOpt) (o0 KeyPageResult, err error) {
+	var call rpc.ClientCall
 	if call, err = c.c(ctx).StartCall(ctx, c.name, "KeyPage", []interface{}{i0}, opts...); err != nil {
 		return
 	}
@@ -256,8 +256,8 @@ func (c implCacheClientStub) KeyPage(ctx *context.T, i0 int64, opts ...ipc.CallO
 	return
 }
 
-func (c implCacheClientStub) Size(ctx *context.T, opts ...ipc.CallOpt) (o0 int64, err error) {
-	var call ipc.ClientCall
+func (c implCacheClientStub) Size(ctx *context.T, opts ...rpc.CallOpt) (o0 int64, err error) {
+	var call rpc.ClientCall
 	if call, err = c.c(ctx).StartCall(ctx, c.name, "Size", nil, opts...); err != nil {
 		return
 	}
@@ -265,8 +265,8 @@ func (c implCacheClientStub) Size(ctx *context.T, opts ...ipc.CallOpt) (o0 int64
 	return
 }
 
-func (c implCacheClientStub) MultiGet(ctx *context.T, opts ...ipc.CallOpt) (ocall CacheMultiGetClientCall, err error) {
-	var call ipc.ClientCall
+func (c implCacheClientStub) MultiGet(ctx *context.T, opts ...rpc.CallOpt) (ocall CacheMultiGetClientCall, err error) {
+	var call rpc.ClientCall
 	if call, err = c.c(ctx).StartCall(ctx, c.name, "MultiGet", nil, opts...); err != nil {
 		return
 	}
@@ -324,7 +324,7 @@ type CacheMultiGetClientCall interface {
 }
 
 type implCacheMultiGetClientCall struct {
-	ipc.ClientCall
+	rpc.ClientCall
 	valRecv *vdl.Value
 	errRecv error
 }
@@ -383,90 +383,90 @@ func (c *implCacheMultiGetClientCall) Finish() (err error) {
 // A Cache service mimics the memcache interface.
 type CacheServerMethods interface {
 	// Set sets a value for a key.
-	Set(call ipc.ServerCall, key string, value *vdl.Value) error
+	Set(call rpc.ServerCall, key string, value *vdl.Value) error
 	// Get returns the value for a key.  If the value is not found, returns
 	// a not found error.
-	Get(call ipc.ServerCall, key string) (*vdl.Value, error)
+	Get(call rpc.ServerCall, key string) (*vdl.Value, error)
 	// Same as Get, but casts the return argument to an byte.
-	GetAsByte(call ipc.ServerCall, key string) (byte, error)
+	GetAsByte(call rpc.ServerCall, key string) (byte, error)
 	// Same as Get, but casts the return argument to an int32.
-	GetAsInt32(call ipc.ServerCall, key string) (int32, error)
+	GetAsInt32(call rpc.ServerCall, key string) (int32, error)
 	// Same as Get, but casts the return argument to an int64.
-	GetAsInt64(call ipc.ServerCall, key string) (int64, error)
+	GetAsInt64(call rpc.ServerCall, key string) (int64, error)
 	// Same as Get, but casts the return argument to an uint32.
-	GetAsUint32(call ipc.ServerCall, key string) (uint32, error)
+	GetAsUint32(call rpc.ServerCall, key string) (uint32, error)
 	// Same as Get, but casts the return argument to an uint64.
-	GetAsUint64(call ipc.ServerCall, key string) (uint64, error)
+	GetAsUint64(call rpc.ServerCall, key string) (uint64, error)
 	// Same as Get, but casts the return argument to an float32.
-	GetAsFloat32(call ipc.ServerCall, key string) (float32, error)
+	GetAsFloat32(call rpc.ServerCall, key string) (float32, error)
 	// Same as Get, but casts the return argument to an float64.
-	GetAsFloat64(call ipc.ServerCall, key string) (float64, error)
+	GetAsFloat64(call rpc.ServerCall, key string) (float64, error)
 	// Same as Get, but casts the return argument to a string.
-	GetAsString(call ipc.ServerCall, key string) (string, error)
+	GetAsString(call rpc.ServerCall, key string) (string, error)
 	// Same as Get, but casts the return argument to a bool.
-	GetAsBool(call ipc.ServerCall, key string) (bool, error)
+	GetAsBool(call rpc.ServerCall, key string) (bool, error)
 	// Same as Get, but casts the return argument to an error.
-	GetAsError(call ipc.ServerCall, key string) (error, error)
+	GetAsError(call rpc.ServerCall, key string) (error, error)
 	// AsMap returns the full contents of the cache as a map.
-	AsMap(ipc.ServerCall) (map[string]*vdl.Value, error)
+	AsMap(rpc.ServerCall) (map[string]*vdl.Value, error)
 	// KeyValuePairs returns the full contents of the cache as a slice of pairs.
-	KeyValuePairs(ipc.ServerCall) ([]KeyValuePair, error)
+	KeyValuePairs(rpc.ServerCall) ([]KeyValuePair, error)
 	// MostRecentSet returns the key and value and the timestamp for the most
 	// recent set operation
 	// TODO(bprosnitz) support type types and change time to native time type
-	MostRecentSet(ipc.ServerCall) (value KeyValuePair, time int64, err error)
+	MostRecentSet(rpc.ServerCall) (value KeyValuePair, time int64, err error)
 	// KeyPage indexes into the keys (in alphanumerically sorted order) and
 	// returns the indexth page of 10 keys.
-	KeyPage(call ipc.ServerCall, index int64) (KeyPageResult, error)
+	KeyPage(call rpc.ServerCall, index int64) (KeyPageResult, error)
 	// Size returns the total number of entries in the cache.
-	Size(ipc.ServerCall) (int64, error)
+	Size(rpc.ServerCall) (int64, error)
 	// MultiGet sets up a stream that allows fetching multiple keys.
 	MultiGet(CacheMultiGetServerCall) error
 }
 
 // CacheServerStubMethods is the server interface containing
-// Cache methods, as expected by ipc.Server.
+// Cache methods, as expected by rpc.Server.
 // The only difference between this interface and CacheServerMethods
 // is the streaming methods.
 type CacheServerStubMethods interface {
 	// Set sets a value for a key.
-	Set(call ipc.ServerCall, key string, value *vdl.Value) error
+	Set(call rpc.ServerCall, key string, value *vdl.Value) error
 	// Get returns the value for a key.  If the value is not found, returns
 	// a not found error.
-	Get(call ipc.ServerCall, key string) (*vdl.Value, error)
+	Get(call rpc.ServerCall, key string) (*vdl.Value, error)
 	// Same as Get, but casts the return argument to an byte.
-	GetAsByte(call ipc.ServerCall, key string) (byte, error)
+	GetAsByte(call rpc.ServerCall, key string) (byte, error)
 	// Same as Get, but casts the return argument to an int32.
-	GetAsInt32(call ipc.ServerCall, key string) (int32, error)
+	GetAsInt32(call rpc.ServerCall, key string) (int32, error)
 	// Same as Get, but casts the return argument to an int64.
-	GetAsInt64(call ipc.ServerCall, key string) (int64, error)
+	GetAsInt64(call rpc.ServerCall, key string) (int64, error)
 	// Same as Get, but casts the return argument to an uint32.
-	GetAsUint32(call ipc.ServerCall, key string) (uint32, error)
+	GetAsUint32(call rpc.ServerCall, key string) (uint32, error)
 	// Same as Get, but casts the return argument to an uint64.
-	GetAsUint64(call ipc.ServerCall, key string) (uint64, error)
+	GetAsUint64(call rpc.ServerCall, key string) (uint64, error)
 	// Same as Get, but casts the return argument to an float32.
-	GetAsFloat32(call ipc.ServerCall, key string) (float32, error)
+	GetAsFloat32(call rpc.ServerCall, key string) (float32, error)
 	// Same as Get, but casts the return argument to an float64.
-	GetAsFloat64(call ipc.ServerCall, key string) (float64, error)
+	GetAsFloat64(call rpc.ServerCall, key string) (float64, error)
 	// Same as Get, but casts the return argument to a string.
-	GetAsString(call ipc.ServerCall, key string) (string, error)
+	GetAsString(call rpc.ServerCall, key string) (string, error)
 	// Same as Get, but casts the return argument to a bool.
-	GetAsBool(call ipc.ServerCall, key string) (bool, error)
+	GetAsBool(call rpc.ServerCall, key string) (bool, error)
 	// Same as Get, but casts the return argument to an error.
-	GetAsError(call ipc.ServerCall, key string) (error, error)
+	GetAsError(call rpc.ServerCall, key string) (error, error)
 	// AsMap returns the full contents of the cache as a map.
-	AsMap(ipc.ServerCall) (map[string]*vdl.Value, error)
+	AsMap(rpc.ServerCall) (map[string]*vdl.Value, error)
 	// KeyValuePairs returns the full contents of the cache as a slice of pairs.
-	KeyValuePairs(ipc.ServerCall) ([]KeyValuePair, error)
+	KeyValuePairs(rpc.ServerCall) ([]KeyValuePair, error)
 	// MostRecentSet returns the key and value and the timestamp for the most
 	// recent set operation
 	// TODO(bprosnitz) support type types and change time to native time type
-	MostRecentSet(ipc.ServerCall) (value KeyValuePair, time int64, err error)
+	MostRecentSet(rpc.ServerCall) (value KeyValuePair, time int64, err error)
 	// KeyPage indexes into the keys (in alphanumerically sorted order) and
 	// returns the indexth page of 10 keys.
-	KeyPage(call ipc.ServerCall, index int64) (KeyPageResult, error)
+	KeyPage(call rpc.ServerCall, index int64) (KeyPageResult, error)
 	// Size returns the total number of entries in the cache.
-	Size(ipc.ServerCall) (int64, error)
+	Size(rpc.ServerCall) (int64, error)
 	// MultiGet sets up a stream that allows fetching multiple keys.
 	MultiGet(*CacheMultiGetServerCallStub) error
 }
@@ -475,21 +475,21 @@ type CacheServerStubMethods interface {
 type CacheServerStub interface {
 	CacheServerStubMethods
 	// Describe the Cache interfaces.
-	Describe__() []ipc.InterfaceDesc
+	Describe__() []rpc.InterfaceDesc
 }
 
 // CacheServer returns a server stub for Cache.
 // It converts an implementation of CacheServerMethods into
-// an object that may be used by ipc.Server.
+// an object that may be used by rpc.Server.
 func CacheServer(impl CacheServerMethods) CacheServerStub {
 	stub := implCacheServerStub{
 		impl: impl,
 	}
 	// Initialize GlobState; always check the stub itself first, to handle the
 	// case where the user has the Glob method defined in their VDL source.
-	if gs := ipc.NewGlobState(stub); gs != nil {
+	if gs := rpc.NewGlobState(stub); gs != nil {
 		stub.gs = gs
-	} else if gs := ipc.NewGlobState(impl); gs != nil {
+	} else if gs := rpc.NewGlobState(impl); gs != nil {
 		stub.gs = gs
 	}
 	return stub
@@ -497,74 +497,74 @@ func CacheServer(impl CacheServerMethods) CacheServerStub {
 
 type implCacheServerStub struct {
 	impl CacheServerMethods
-	gs   *ipc.GlobState
+	gs   *rpc.GlobState
 }
 
-func (s implCacheServerStub) Set(call ipc.ServerCall, i0 string, i1 *vdl.Value) error {
+func (s implCacheServerStub) Set(call rpc.ServerCall, i0 string, i1 *vdl.Value) error {
 	return s.impl.Set(call, i0, i1)
 }
 
-func (s implCacheServerStub) Get(call ipc.ServerCall, i0 string) (*vdl.Value, error) {
+func (s implCacheServerStub) Get(call rpc.ServerCall, i0 string) (*vdl.Value, error) {
 	return s.impl.Get(call, i0)
 }
 
-func (s implCacheServerStub) GetAsByte(call ipc.ServerCall, i0 string) (byte, error) {
+func (s implCacheServerStub) GetAsByte(call rpc.ServerCall, i0 string) (byte, error) {
 	return s.impl.GetAsByte(call, i0)
 }
 
-func (s implCacheServerStub) GetAsInt32(call ipc.ServerCall, i0 string) (int32, error) {
+func (s implCacheServerStub) GetAsInt32(call rpc.ServerCall, i0 string) (int32, error) {
 	return s.impl.GetAsInt32(call, i0)
 }
 
-func (s implCacheServerStub) GetAsInt64(call ipc.ServerCall, i0 string) (int64, error) {
+func (s implCacheServerStub) GetAsInt64(call rpc.ServerCall, i0 string) (int64, error) {
 	return s.impl.GetAsInt64(call, i0)
 }
 
-func (s implCacheServerStub) GetAsUint32(call ipc.ServerCall, i0 string) (uint32, error) {
+func (s implCacheServerStub) GetAsUint32(call rpc.ServerCall, i0 string) (uint32, error) {
 	return s.impl.GetAsUint32(call, i0)
 }
 
-func (s implCacheServerStub) GetAsUint64(call ipc.ServerCall, i0 string) (uint64, error) {
+func (s implCacheServerStub) GetAsUint64(call rpc.ServerCall, i0 string) (uint64, error) {
 	return s.impl.GetAsUint64(call, i0)
 }
 
-func (s implCacheServerStub) GetAsFloat32(call ipc.ServerCall, i0 string) (float32, error) {
+func (s implCacheServerStub) GetAsFloat32(call rpc.ServerCall, i0 string) (float32, error) {
 	return s.impl.GetAsFloat32(call, i0)
 }
 
-func (s implCacheServerStub) GetAsFloat64(call ipc.ServerCall, i0 string) (float64, error) {
+func (s implCacheServerStub) GetAsFloat64(call rpc.ServerCall, i0 string) (float64, error) {
 	return s.impl.GetAsFloat64(call, i0)
 }
 
-func (s implCacheServerStub) GetAsString(call ipc.ServerCall, i0 string) (string, error) {
+func (s implCacheServerStub) GetAsString(call rpc.ServerCall, i0 string) (string, error) {
 	return s.impl.GetAsString(call, i0)
 }
 
-func (s implCacheServerStub) GetAsBool(call ipc.ServerCall, i0 string) (bool, error) {
+func (s implCacheServerStub) GetAsBool(call rpc.ServerCall, i0 string) (bool, error) {
 	return s.impl.GetAsBool(call, i0)
 }
 
-func (s implCacheServerStub) GetAsError(call ipc.ServerCall, i0 string) (error, error) {
+func (s implCacheServerStub) GetAsError(call rpc.ServerCall, i0 string) (error, error) {
 	return s.impl.GetAsError(call, i0)
 }
 
-func (s implCacheServerStub) AsMap(call ipc.ServerCall) (map[string]*vdl.Value, error) {
+func (s implCacheServerStub) AsMap(call rpc.ServerCall) (map[string]*vdl.Value, error) {
 	return s.impl.AsMap(call)
 }
 
-func (s implCacheServerStub) KeyValuePairs(call ipc.ServerCall) ([]KeyValuePair, error) {
+func (s implCacheServerStub) KeyValuePairs(call rpc.ServerCall) ([]KeyValuePair, error) {
 	return s.impl.KeyValuePairs(call)
 }
 
-func (s implCacheServerStub) MostRecentSet(call ipc.ServerCall) (KeyValuePair, int64, error) {
+func (s implCacheServerStub) MostRecentSet(call rpc.ServerCall) (KeyValuePair, int64, error) {
 	return s.impl.MostRecentSet(call)
 }
 
-func (s implCacheServerStub) KeyPage(call ipc.ServerCall, i0 int64) (KeyPageResult, error) {
+func (s implCacheServerStub) KeyPage(call rpc.ServerCall, i0 int64) (KeyPageResult, error) {
 	return s.impl.KeyPage(call, i0)
 }
 
-func (s implCacheServerStub) Size(call ipc.ServerCall) (int64, error) {
+func (s implCacheServerStub) Size(call rpc.ServerCall) (int64, error) {
 	return s.impl.Size(call)
 }
 
@@ -572,27 +572,27 @@ func (s implCacheServerStub) MultiGet(call *CacheMultiGetServerCallStub) error {
 	return s.impl.MultiGet(call)
 }
 
-func (s implCacheServerStub) Globber() *ipc.GlobState {
+func (s implCacheServerStub) Globber() *rpc.GlobState {
 	return s.gs
 }
 
-func (s implCacheServerStub) Describe__() []ipc.InterfaceDesc {
-	return []ipc.InterfaceDesc{CacheDesc}
+func (s implCacheServerStub) Describe__() []rpc.InterfaceDesc {
+	return []rpc.InterfaceDesc{CacheDesc}
 }
 
 // CacheDesc describes the Cache interface.
-var CacheDesc ipc.InterfaceDesc = descCache
+var CacheDesc rpc.InterfaceDesc = descCache
 
 // descCache hides the desc to keep godoc clean.
-var descCache = ipc.InterfaceDesc{
+var descCache = rpc.InterfaceDesc{
 	Name:    "Cache",
 	PkgPath: "test_service",
 	Doc:     "// A Cache service mimics the memcache interface.",
-	Methods: []ipc.MethodDesc{
+	Methods: []rpc.MethodDesc{
 		{
 			Name: "Set",
 			Doc:  "// Set sets a value for a key.",
-			InArgs: []ipc.ArgDesc{
+			InArgs: []rpc.ArgDesc{
 				{"key", ``},   // string
 				{"value", ``}, // *vdl.Value
 			},
@@ -600,131 +600,131 @@ var descCache = ipc.InterfaceDesc{
 		{
 			Name: "Get",
 			Doc:  "// Get returns the value for a key.  If the value is not found, returns\n// a not found error.",
-			InArgs: []ipc.ArgDesc{
+			InArgs: []rpc.ArgDesc{
 				{"key", ``}, // string
 			},
-			OutArgs: []ipc.ArgDesc{
+			OutArgs: []rpc.ArgDesc{
 				{"", ``}, // *vdl.Value
 			},
 		},
 		{
 			Name: "GetAsByte",
 			Doc:  "// Same as Get, but casts the return argument to an byte.",
-			InArgs: []ipc.ArgDesc{
+			InArgs: []rpc.ArgDesc{
 				{"key", ``}, // string
 			},
-			OutArgs: []ipc.ArgDesc{
+			OutArgs: []rpc.ArgDesc{
 				{"", ``}, // byte
 			},
 		},
 		{
 			Name: "GetAsInt32",
 			Doc:  "// Same as Get, but casts the return argument to an int32.",
-			InArgs: []ipc.ArgDesc{
+			InArgs: []rpc.ArgDesc{
 				{"key", ``}, // string
 			},
-			OutArgs: []ipc.ArgDesc{
+			OutArgs: []rpc.ArgDesc{
 				{"", ``}, // int32
 			},
 		},
 		{
 			Name: "GetAsInt64",
 			Doc:  "// Same as Get, but casts the return argument to an int64.",
-			InArgs: []ipc.ArgDesc{
+			InArgs: []rpc.ArgDesc{
 				{"key", ``}, // string
 			},
-			OutArgs: []ipc.ArgDesc{
+			OutArgs: []rpc.ArgDesc{
 				{"", ``}, // int64
 			},
 		},
 		{
 			Name: "GetAsUint32",
 			Doc:  "// Same as Get, but casts the return argument to an uint32.",
-			InArgs: []ipc.ArgDesc{
+			InArgs: []rpc.ArgDesc{
 				{"key", ``}, // string
 			},
-			OutArgs: []ipc.ArgDesc{
+			OutArgs: []rpc.ArgDesc{
 				{"", ``}, // uint32
 			},
 		},
 		{
 			Name: "GetAsUint64",
 			Doc:  "// Same as Get, but casts the return argument to an uint64.",
-			InArgs: []ipc.ArgDesc{
+			InArgs: []rpc.ArgDesc{
 				{"key", ``}, // string
 			},
-			OutArgs: []ipc.ArgDesc{
+			OutArgs: []rpc.ArgDesc{
 				{"", ``}, // uint64
 			},
 		},
 		{
 			Name: "GetAsFloat32",
 			Doc:  "// Same as Get, but casts the return argument to an float32.",
-			InArgs: []ipc.ArgDesc{
+			InArgs: []rpc.ArgDesc{
 				{"key", ``}, // string
 			},
-			OutArgs: []ipc.ArgDesc{
+			OutArgs: []rpc.ArgDesc{
 				{"", ``}, // float32
 			},
 		},
 		{
 			Name: "GetAsFloat64",
 			Doc:  "// Same as Get, but casts the return argument to an float64.",
-			InArgs: []ipc.ArgDesc{
+			InArgs: []rpc.ArgDesc{
 				{"key", ``}, // string
 			},
-			OutArgs: []ipc.ArgDesc{
+			OutArgs: []rpc.ArgDesc{
 				{"", ``}, // float64
 			},
 		},
 		{
 			Name: "GetAsString",
 			Doc:  "// Same as Get, but casts the return argument to a string.",
-			InArgs: []ipc.ArgDesc{
+			InArgs: []rpc.ArgDesc{
 				{"key", ``}, // string
 			},
-			OutArgs: []ipc.ArgDesc{
+			OutArgs: []rpc.ArgDesc{
 				{"", ``}, // string
 			},
 		},
 		{
 			Name: "GetAsBool",
 			Doc:  "// Same as Get, but casts the return argument to a bool.",
-			InArgs: []ipc.ArgDesc{
+			InArgs: []rpc.ArgDesc{
 				{"key", ``}, // string
 			},
-			OutArgs: []ipc.ArgDesc{
+			OutArgs: []rpc.ArgDesc{
 				{"", ``}, // bool
 			},
 		},
 		{
 			Name: "GetAsError",
 			Doc:  "// Same as Get, but casts the return argument to an error.",
-			InArgs: []ipc.ArgDesc{
+			InArgs: []rpc.ArgDesc{
 				{"key", ``}, // string
 			},
-			OutArgs: []ipc.ArgDesc{
+			OutArgs: []rpc.ArgDesc{
 				{"", ``}, // error
 			},
 		},
 		{
 			Name: "AsMap",
 			Doc:  "// AsMap returns the full contents of the cache as a map.",
-			OutArgs: []ipc.ArgDesc{
+			OutArgs: []rpc.ArgDesc{
 				{"", ``}, // map[string]*vdl.Value
 			},
 		},
 		{
 			Name: "KeyValuePairs",
 			Doc:  "// KeyValuePairs returns the full contents of the cache as a slice of pairs.",
-			OutArgs: []ipc.ArgDesc{
+			OutArgs: []rpc.ArgDesc{
 				{"", ``}, // []KeyValuePair
 			},
 		},
 		{
 			Name: "MostRecentSet",
 			Doc:  "// MostRecentSet returns the key and value and the timestamp for the most\n// recent set operation\n// TODO(bprosnitz) support type types and change time to native time type",
-			OutArgs: []ipc.ArgDesc{
+			OutArgs: []rpc.ArgDesc{
 				{"value", ``}, // KeyValuePair
 				{"time", ``},  // int64
 			},
@@ -732,17 +732,17 @@ var descCache = ipc.InterfaceDesc{
 		{
 			Name: "KeyPage",
 			Doc:  "// KeyPage indexes into the keys (in alphanumerically sorted order) and\n// returns the indexth page of 10 keys.",
-			InArgs: []ipc.ArgDesc{
+			InArgs: []rpc.ArgDesc{
 				{"index", ``}, // int64
 			},
-			OutArgs: []ipc.ArgDesc{
+			OutArgs: []rpc.ArgDesc{
 				{"", ``}, // KeyPageResult
 			},
 		},
 		{
 			Name: "Size",
 			Doc:  "// Size returns the total number of entries in the cache.",
-			OutArgs: []ipc.ArgDesc{
+			OutArgs: []rpc.ArgDesc{
 				{"", ``}, // int64
 			},
 		},
@@ -778,20 +778,20 @@ type CacheMultiGetServerStream interface {
 
 // CacheMultiGetServerCall represents the context passed to Cache.MultiGet.
 type CacheMultiGetServerCall interface {
-	ipc.ServerCall
+	rpc.ServerCall
 	CacheMultiGetServerStream
 }
 
-// CacheMultiGetServerCallStub is a wrapper that converts ipc.StreamServerCall into
+// CacheMultiGetServerCallStub is a wrapper that converts rpc.StreamServerCall into
 // a typesafe stub that implements CacheMultiGetServerCall.
 type CacheMultiGetServerCallStub struct {
-	ipc.StreamServerCall
+	rpc.StreamServerCall
 	valRecv string
 	errRecv error
 }
 
-// Init initializes CacheMultiGetServerCallStub from ipc.StreamServerCall.
-func (s *CacheMultiGetServerCallStub) Init(call ipc.StreamServerCall) {
+// Init initializes CacheMultiGetServerCallStub from rpc.StreamServerCall.
+func (s *CacheMultiGetServerCallStub) Init(call rpc.StreamServerCall) {
 	s.StreamServerCall = call
 }
 
