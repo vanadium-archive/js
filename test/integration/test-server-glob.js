@@ -2,7 +2,7 @@ var test = require('prova');
 var serve = require('./serve');
 var Promise = require('../../src/lib/promise');
 var naming = require('../../src/gen-vdl/v.io/v23/naming');
-var namespaceUtil = require('../../src/namespace/util');
+var namespaceUtil = require('../../src/naming/util');
 
 var ALBUMS = [
   'public',

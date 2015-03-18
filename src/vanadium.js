@@ -19,7 +19,7 @@ var defaults = {
 
 /**
  * A module to improve cross device development.  For more details
- * see @{link https://v.io/}.
+ * see {@link https://v.io/}.
  * @module vanadium
  */
 module.exports = {
@@ -39,13 +39,7 @@ module.exports = {
    * Namespace of exported naming concepts
    * @namespace
    */
-  naming: require('./gen-vdl/v.io/v23/naming'),
-
-  /**
-   * Namespace of utilities for the Vanadium namespace
-   * @namespace
-   */
-  namespaceUtil: require('./namespace/util'),
+  naming: require('./naming'),
 
   /**
    * Namespace of Vanadium security
