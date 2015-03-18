@@ -270,9 +270,9 @@ Router.prototype.handleRPCRequest = function(messageId, vdlRequest) {
       self.sendResult(messageId, 'Glob__', null, err);
       return;
     }
-    // Glob takes no streaming input and has VDLGlobReply as output.
+    // Glob takes no streaming input and has GlobReply as output.
     stream = new Stream(messageId, this._proxy.senderPromise, false,
-      null, naming.VDLGlobReply.prototype._type);
+      null, naming.GlobReply.prototype._type);
     this._streamMap[messageId] = stream;
     this._contextMap[messageId] = call;
     this._outstandingRequestForId[messageId] = 0;
@@ -392,15 +392,15 @@ Router.prototype.invokeMethod = function(invoker, options, cb) {
 
 function createGlobReply(name) {
   name = name || '';
-  return new naming.VDLGlobReply({
-    'entry': new naming.VDLMountEntry({ name: name })
+  return new naming.GlobReply({
+    'entry': new naming.MountEntry({ name: name })
   });
 }
 
 function createGlobErrorReply(name, err, appName) {
   name = name || '';
   var convertedError = ErrorConversion.fromNativeValue(err, appName, 'glob');
-  return new naming.VDLGlobReply({
+  return new naming.GlobReply({
     'error': new naming.GlobError({ name: name, error: convertedError })
   });
 }

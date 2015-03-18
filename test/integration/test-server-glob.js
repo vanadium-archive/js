@@ -240,10 +240,10 @@ function FullGlobber() {
 }
 
 FullGlobber.prototype.__glob = function(ctx, glob, $stream) {
-    var mountEntry = new naming.VDLMountEntry({
+    var mountEntry = new naming.MountEntry({
       name: namespaceUtil.join(ctx.suffix, glob),
     });
-    $stream.write(new naming.VDLGlobReply({
+    $stream.write(new naming.GlobReply({
       entry: mountEntry
     }));
 };
@@ -306,5 +306,3 @@ test('Test mixing GlobChildren and FullGlobber', function(assert) {
   runGlobTest('testGlob/foo/bar/baz', expectedResults, dispatcher, null,
     assert);
 });
-
-
