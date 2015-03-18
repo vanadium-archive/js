@@ -15,7 +15,7 @@ var unwrap = require('../vdl/type-util').unwrap;
 var wiretype = require('../gen-vdl/v.io/v23/vom');
 var nativeTypeRegistry = require('../vdl/native-type-registry');
 
-var eofByte = unwrap(wiretype.WireCtrlEOF);
+var endByte = unwrap(wiretype.WireCtrlEnd);
 var nilByte = unwrap(wiretype.WireCtrlNil);
 
 /**
@@ -189,7 +189,7 @@ Decoder.prototype._decodeStruct = function(t, reader) {
   var obj = Object.create(Ctor.prototype);
   while (true) {
     var ctrl = reader.tryReadControlByte();
-    if (ctrl === eofByte) {
+    if (ctrl === endByte) {
       break;
     }
 

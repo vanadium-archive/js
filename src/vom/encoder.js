@@ -19,7 +19,7 @@ var BootstrapTypes = require('./bootstrap-types');
 var unwrap = require('../vdl/type-util').unwrap;
 var wiretype = require('../gen-vdl/v.io/v23/vom');
 
-var eofByte = unwrap(wiretype.WireCtrlEOF);
+var endByte = unwrap(wiretype.WireCtrlEnd);
 var nilByte = unwrap(wiretype.WireCtrlNil);
 
 require('../vdl/es6-shim');
@@ -218,7 +218,7 @@ Encoder.prototype._encodeStruct = function(v, t, writer, omitEmpty) {
   if (omitEmpty && !hasWrittenFields) {
     return false;
   }
-  writer.writeByte(eofByte);
+  writer.writeByte(endByte);
   return true;
 };
 

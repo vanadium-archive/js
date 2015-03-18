@@ -381,39 +381,39 @@ false,
 
   module.exports.FiveSquared = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.INT32))(25, true), vdl.Types.INT32);
 
-  module.exports.CTObool = vdl.Types.BOOL;
+  module.exports.CTypeObject_bool = vdl.Types.BOOL;
 
-  module.exports.CTOstring = vdl.Types.STRING;
+  module.exports.CTypeObject_string = vdl.Types.STRING;
 
-  module.exports.CTObytes = _type14;
+  module.exports.CTypeObject_bytes = _type14;
 
-  module.exports.CTObyte = vdl.Types.BYTE;
+  module.exports.CTypeObject_byte = vdl.Types.BYTE;
 
-  module.exports.CTOuint16 = vdl.Types.UINT16;
+  module.exports.CTypeObject_uint16 = vdl.Types.UINT16;
 
-  module.exports.CTOint16 = vdl.Types.INT16;
+  module.exports.CTypeObject_int16 = vdl.Types.INT16;
 
-  module.exports.CTOfloat32 = vdl.Types.FLOAT32;
+  module.exports.CTypeObject_float32 = vdl.Types.FLOAT32;
 
-  module.exports.CTOcomplex64 = vdl.Types.COMPLEX64;
+  module.exports.CTypeObject_complex64 = vdl.Types.COMPLEX64;
 
-  module.exports.CTOenum = _typeNamedEnum;
+  module.exports.CTypeObject_enum = _typeNamedEnum;
 
-  module.exports.CTOArray = _typeNamedArray;
+  module.exports.CTypeObject_Array = _typeNamedArray;
 
-  module.exports.CTOList = _type15;
+  module.exports.CTypeObject_List = _type15;
 
-  module.exports.CTOSet = _type16;
+  module.exports.CTypeObject_Set = _type16;
 
-  module.exports.CTOMap = _type17;
+  module.exports.CTypeObject_Map = _type17;
 
-  module.exports.CTOStruct = _typeScalars;
+  module.exports.CTypeObject_Struct = _typeScalars;
 
-  module.exports.CTOUnion = _typeNamedUnion;
+  module.exports.CTypeObject_Union = _typeNamedUnion;
 
-  module.exports.CTOTypeObject = vdl.Types.TYPEOBJECT;
+  module.exports.CTypeObject_TypeObject = vdl.Types.TYPEOBJECT;
 
-  module.exports.CTOAny = vdl.Types.ANY;
+  module.exports.CTypeObject_Any = vdl.Types.ANY;
 
 
 

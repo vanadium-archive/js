@@ -36,7 +36,7 @@ var RawVomReader = require('./raw-vom-reader.js');
 var unwrap = require('../vdl/type-util').unwrap;
 var wiretype = require('../gen-vdl/v.io/v23/vom');
 
-var eofByte = unwrap(wiretype.WireCtrlEOF);
+var endByte = unwrap(wiretype.WireCtrlEnd);
 
 /**
  * Looks up a type in the decoded types cache by id.
@@ -270,7 +270,7 @@ TypeDecoder.prototype._readPartialType = function(messageBytes) {
     case BootstrapTypes.unionIds.NAMED_TYPE:
       endDef:
       while (true) {
-        if (reader.tryReadControlByte() === eofByte) {
+        if (reader.tryReadControlByte() === endByte) {
           break endDef;
         }
         nextIndex = reader.readUint();
@@ -290,7 +290,7 @@ TypeDecoder.prototype._readPartialType = function(messageBytes) {
       partialType.kind = Kind.ENUM;
       endDef2:
       while (true) {
-        if (reader.tryReadControlByte() === eofByte) {
+        if (reader.tryReadControlByte() === endByte) {
           break endDef2;
         }
 
@@ -314,7 +314,7 @@ TypeDecoder.prototype._readPartialType = function(messageBytes) {
       partialType.kind = Kind.ARRAY;
       endDef3:
       while (true) {
-        if (reader.tryReadControlByte() === eofByte) {
+        if (reader.tryReadControlByte() === endByte) {
           break endDef3;
         }
         nextIndex = reader.readUint();
@@ -337,7 +337,7 @@ TypeDecoder.prototype._readPartialType = function(messageBytes) {
       partialType.kind = Kind.LIST;
       endDef4:
       while (true) {
-        if (reader.tryReadControlByte() === eofByte) {
+        if (reader.tryReadControlByte() === endByte) {
           break endDef4;
         }
         nextIndex = reader.readUint();
@@ -357,7 +357,7 @@ TypeDecoder.prototype._readPartialType = function(messageBytes) {
       partialType.kind = Kind.SET;
       endDef5:
       while (true) {
-        if (reader.tryReadControlByte() === eofByte) {
+        if (reader.tryReadControlByte() === endByte) {
           break endDef5;
         }
         nextIndex = reader.readUint();
@@ -377,7 +377,7 @@ TypeDecoder.prototype._readPartialType = function(messageBytes) {
       partialType.kind = Kind.MAP;
       endDef6:
       while (true) {
-        if (reader.tryReadControlByte() === eofByte) {
+        if (reader.tryReadControlByte() === endByte) {
           break endDef6;
         }
         nextIndex = reader.readUint();
@@ -405,7 +405,7 @@ TypeDecoder.prototype._readPartialType = function(messageBytes) {
       }
       endDef7:
       while (true) {
-        if (reader.tryReadControlByte() === eofByte) {
+        if (reader.tryReadControlByte() === endByte) {
           break endDef7;
         }
         nextIndex = reader.readUint();
@@ -419,7 +419,7 @@ TypeDecoder.prototype._readPartialType = function(messageBytes) {
               partialType.fields[i] = {};
               sfEndDef:
               while(true) {
-                if (reader.tryReadControlByte() === eofByte) {
+                if (reader.tryReadControlByte() === endByte) {
                   break sfEndDef;
                 }
                 var sfNextIndex = reader.readUint();
@@ -448,7 +448,7 @@ TypeDecoder.prototype._readPartialType = function(messageBytes) {
       partialType.kind = Kind.OPTIONAL;
       endDef9:
       while (true) {
-        if (reader.tryReadControlByte() === eofByte) {
+        if (reader.tryReadControlByte() === endByte) {
           break endDef9;
         }
         nextIndex = reader.readUint();

@@ -38,11 +38,11 @@
  * @augments module.vanadium.errors.VanadiumError
  */
 /**
- * EOFError means that the end of file has been reached.
+ * EndOfFileError means that the end of file has been reached.
  * @param {module:vanadium.context.Context} ctx The context the error was
  * created in.
  * @param {...*} params A list of parameters to include in the error message.
- * @name EOFError
+ * @name EndOfFileError
  * @constructor
  * @memberof module:vanadium.errors
  * @augments module.vanadium.errors.VanadiumError

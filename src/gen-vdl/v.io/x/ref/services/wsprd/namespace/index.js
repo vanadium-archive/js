@@ -60,8 +60,8 @@ Namespace.prototype.resolve = function(ctx, name) {
 };
     
       
-Namespace.prototype.resolveToMT = function(ctx, name) {
-  throw new Error('Method ResolveToMT not implemented');
+Namespace.prototype.resolveToMountTable = function(ctx, name) {
+  throw new Error('Method ResolveToMountTable not implemented');
 };
     
       
@@ -203,8 +203,8 @@ Namespace.prototype._serviceDescription = {
     
       
     {
-    name: 'ResolveToMT',
-    doc: "// ResolveToMt resolves a name to the address of the mounttable directly\n// hosting it.",
+    name: 'ResolveToMountTable',
+    doc: "// ResolveToMountTable resolves a name to the address of the mounttable\n// directly hosting it.",
     inArgs: [{
       name: 'name',
       doc: "",

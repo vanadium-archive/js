@@ -42,7 +42,7 @@ _type3.name = "";
 _type3.elem = _typewireField;
 _typeControlKind.kind = vdl.Kind.ENUM;
 _typeControlKind.name = "v.io/v23/vom.ControlKind";
-_typeControlKind.labels = ["NIL", "EOF"];
+_typeControlKind.labels = ["Nil", "End"];
 _typeDumpAtom.kind = vdl.Kind.STRUCT;
 _typeDumpAtom.name = "v.io/v23/vom.DumpAtom";
 _typeDumpAtom.fields = [{name: "Kind", type: _typeDumpKind}, {name: "Bytes", type: _type1}, {name: "Data", type: _typePrimitive}, {name: "Debug", type: vdl.Types.STRING}];
@@ -107,8 +107,8 @@ _typewireStruct.freeze();
 _typewireType.freeze();
 _typewireUnion.freeze();
 module.exports.ControlKind = {
-  NIL: canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeControlKind))('NIL', true), _typeControlKind),
-  EOF: canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeControlKind))('EOF', true), _typeControlKind),
+  NIL: canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeControlKind))('Nil', true), _typeControlKind),
+  END: canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeControlKind))('End', true), _typeControlKind),
 };
 module.exports.DumpAtom = (vdl.Registry.lookupOrCreateConstructor(_typeDumpAtom));
 module.exports.DumpKind = {
@@ -182,7 +182,7 @@ module.exports.wireUnion = (vdl.Registry.lookupOrCreateConstructor(_typewireUnio
 
   module.exports.WireCtrlNil = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.BYTE))(224, true), vdl.Types.BYTE);
 
-  module.exports.WireCtrlEOF = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.BYTE))(225, true), vdl.Types.BYTE);
+  module.exports.WireCtrlEnd = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.BYTE))(225, true), vdl.Types.BYTE);
 
 
 

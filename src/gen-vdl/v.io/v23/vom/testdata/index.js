@@ -25,15 +25,15 @@ var _type6 = new vdl.Type();
 var _type7 = new vdl.Type();
 var _type8 = new vdl.Type();
 var _type9 = new vdl.Type();
-var _typeABCStruct = new vdl.Type();
-var _typeADEStruct = new vdl.Type();
+var _typeAbcStruct = new vdl.Type();
+var _typeAdeStruct = new vdl.Type();
 var _typeArray3String = new vdl.Type();
 var _typeArray4String = new vdl.Type();
-var _typeBDEUnion = new vdl.Type();
-var _typeBEANum = new vdl.Type();
-var _typeBRIENum = new vdl.Type();
+var _typeBdeUnion = new vdl.Type();
+var _typeBeanEnum = new vdl.Type();
+var _typeBrieEnum = new vdl.Type();
 var _typeConvertGroup = new vdl.Type();
-var _typeFOODYNum = new vdl.Type();
+var _typeFoodEnum = new vdl.Type();
 var _typeListString = new vdl.Type();
 var _typeMBool = new vdl.Type();
 var _typeMList = new vdl.Type();
@@ -82,8 +82,8 @@ var _typeSometimesSetMap = new vdl.Type();
 var _typeStructOnlyMap = new vdl.Type();
 var _typeTestCase = new vdl.Type();
 var _typeVomdataStruct = new vdl.Type();
-var _typeXYZStruct = new vdl.Type();
-var _typeYZStruct = new vdl.Type();
+var _typeXyzStruct = new vdl.Type();
+var _typeYzStruct = new vdl.Type();
 var _typeZStruct = new vdl.Type();
 _type1.kind = vdl.Kind.LIST;
 _type1.name = "";
@@ -127,12 +127,12 @@ _type8.elem = vdl.Types.TYPEOBJECT;
 _type9.kind = vdl.Kind.LIST;
 _type9.name = "";
 _type9.elem = vdl.Types.INT32;
-_typeABCStruct.kind = vdl.Kind.STRUCT;
-_typeABCStruct.name = "v.io/v23/vom/testdata.ABCStruct";
-_typeABCStruct.fields = [{name: "A", type: vdl.Types.BOOL}, {name: "B", type: vdl.Types.STRING}, {name: "C", type: vdl.Types.INT64}];
-_typeADEStruct.kind = vdl.Kind.STRUCT;
-_typeADEStruct.name = "v.io/v23/vom/testdata.ADEStruct";
-_typeADEStruct.fields = [{name: "A", type: vdl.Types.BOOL}, {name: "D", type: vdl.Types.ANY}, {name: "E", type: vdl.Types.TYPEOBJECT}];
+_typeAbcStruct.kind = vdl.Kind.STRUCT;
+_typeAbcStruct.name = "v.io/v23/vom/testdata.AbcStruct";
+_typeAbcStruct.fields = [{name: "A", type: vdl.Types.BOOL}, {name: "B", type: vdl.Types.STRING}, {name: "C", type: vdl.Types.INT64}];
+_typeAdeStruct.kind = vdl.Kind.STRUCT;
+_typeAdeStruct.name = "v.io/v23/vom/testdata.AdeStruct";
+_typeAdeStruct.fields = [{name: "A", type: vdl.Types.BOOL}, {name: "D", type: vdl.Types.ANY}, {name: "E", type: vdl.Types.TYPEOBJECT}];
 _typeArray3String.kind = vdl.Kind.ARRAY;
 _typeArray3String.name = "v.io/v23/vom/testdata.Array3String";
 _typeArray3String.len = 3;
@@ -141,21 +141,21 @@ _typeArray4String.kind = vdl.Kind.ARRAY;
 _typeArray4String.name = "v.io/v23/vom/testdata.Array4String";
 _typeArray4String.len = 4;
 _typeArray4String.elem = vdl.Types.STRING;
-_typeBDEUnion.kind = vdl.Kind.UNION;
-_typeBDEUnion.name = "v.io/v23/vom/testdata.BDEUnion";
-_typeBDEUnion.fields = [{name: "B", type: vdl.Types.STRING}, {name: "D", type: vdl.Types.ANY}, {name: "E", type: vdl.Types.TYPEOBJECT}];
-_typeBEANum.kind = vdl.Kind.ENUM;
-_typeBEANum.name = "v.io/v23/vom/testdata.BEANum";
-_typeBEANum.labels = ["Bean"];
-_typeBRIENum.kind = vdl.Kind.ENUM;
-_typeBRIENum.name = "v.io/v23/vom/testdata.BRIENum";
-_typeBRIENum.labels = ["Glee", "Brie", "Three"];
+_typeBdeUnion.kind = vdl.Kind.UNION;
+_typeBdeUnion.name = "v.io/v23/vom/testdata.BdeUnion";
+_typeBdeUnion.fields = [{name: "B", type: vdl.Types.STRING}, {name: "D", type: vdl.Types.ANY}, {name: "E", type: vdl.Types.TYPEOBJECT}];
+_typeBeanEnum.kind = vdl.Kind.ENUM;
+_typeBeanEnum.name = "v.io/v23/vom/testdata.BeanEnum";
+_typeBeanEnum.labels = ["Bean"];
+_typeBrieEnum.kind = vdl.Kind.ENUM;
+_typeBrieEnum.name = "v.io/v23/vom/testdata.BrieEnum";
+_typeBrieEnum.labels = ["Glee", "Brie", "Three"];
 _typeConvertGroup.kind = vdl.Kind.STRUCT;
 _typeConvertGroup.name = "v.io/v23/vom/testdata.ConvertGroup";
 _typeConvertGroup.fields = [{name: "Name", type: vdl.Types.STRING}, {name: "PrimaryType", type: vdl.Types.TYPEOBJECT}, {name: "Values", type: _type13}];
-_typeFOODYNum.kind = vdl.Kind.ENUM;
-_typeFOODYNum.name = "v.io/v23/vom/testdata.FOODYNum";
-_typeFOODYNum.labels = ["Bean", "Brie", "Cherry"];
+_typeFoodEnum.kind = vdl.Kind.ENUM;
+_typeFoodEnum.name = "v.io/v23/vom/testdata.FoodEnum";
+_typeFoodEnum.labels = ["Bean", "Brie", "Cherry"];
 _typeListString.kind = vdl.Kind.LIST;
 _typeListString.name = "v.io/v23/vom/testdata.ListString";
 _typeListString.elem = vdl.Types.STRING;
@@ -298,12 +298,12 @@ _typeTestCase.fields = [{name: "Name", type: vdl.Types.STRING}, {name: "Value", 
 _typeVomdataStruct.kind = vdl.Kind.STRUCT;
 _typeVomdataStruct.name = "v.io/v23/vom/testdata.VomdataStruct";
 _typeVomdataStruct.fields = [{name: "EncodeDecodeData", type: _type13}, {name: "CompatData", type: _type7}, {name: "ConvertData", type: _type11}];
-_typeXYZStruct.kind = vdl.Kind.STRUCT;
-_typeXYZStruct.name = "v.io/v23/vom/testdata.XYZStruct";
-_typeXYZStruct.fields = [{name: "X", type: vdl.Types.BOOL}, {name: "Y", type: _typeMBool}, {name: "Z", type: vdl.Types.STRING}];
-_typeYZStruct.kind = vdl.Kind.STRUCT;
-_typeYZStruct.name = "v.io/v23/vom/testdata.YZStruct";
-_typeYZStruct.fields = [{name: "Y", type: _typeNBool}, {name: "Z", type: _typeNString}];
+_typeXyzStruct.kind = vdl.Kind.STRUCT;
+_typeXyzStruct.name = "v.io/v23/vom/testdata.XyzStruct";
+_typeXyzStruct.fields = [{name: "X", type: vdl.Types.BOOL}, {name: "Y", type: _typeMBool}, {name: "Z", type: vdl.Types.STRING}];
+_typeYzStruct.kind = vdl.Kind.STRUCT;
+_typeYzStruct.name = "v.io/v23/vom/testdata.YzStruct";
+_typeYzStruct.fields = [{name: "Y", type: _typeNBool}, {name: "Z", type: _typeNString}];
 _typeZStruct.kind = vdl.Kind.STRUCT;
 _typeZStruct.name = "v.io/v23/vom/testdata.ZStruct";
 _typeZStruct.fields = [{name: "Z", type: vdl.Types.STRING}];
@@ -320,15 +320,15 @@ _type6.freeze();
 _type7.freeze();
 _type8.freeze();
 _type9.freeze();
-_typeABCStruct.freeze();
-_typeADEStruct.freeze();
+_typeAbcStruct.freeze();
+_typeAdeStruct.freeze();
 _typeArray3String.freeze();
 _typeArray4String.freeze();
-_typeBDEUnion.freeze();
-_typeBEANum.freeze();
-_typeBRIENum.freeze();
+_typeBdeUnion.freeze();
+_typeBeanEnum.freeze();
+_typeBrieEnum.freeze();
 _typeConvertGroup.freeze();
-_typeFOODYNum.freeze();
+_typeFoodEnum.freeze();
 _typeListString.freeze();
 _typeMBool.freeze();
 _typeMList.freeze();
@@ -377,27 +377,27 @@ _typeSometimesSetMap.freeze();
 _typeStructOnlyMap.freeze();
 _typeTestCase.freeze();
 _typeVomdataStruct.freeze();
-_typeXYZStruct.freeze();
-_typeYZStruct.freeze();
+_typeXyzStruct.freeze();
+_typeYzStruct.freeze();
 _typeZStruct.freeze();
-module.exports.ABCStruct = (vdl.Registry.lookupOrCreateConstructor(_typeABCStruct));
-module.exports.ADEStruct = (vdl.Registry.lookupOrCreateConstructor(_typeADEStruct));
+module.exports.AbcStruct = (vdl.Registry.lookupOrCreateConstructor(_typeAbcStruct));
+module.exports.AdeStruct = (vdl.Registry.lookupOrCreateConstructor(_typeAdeStruct));
 module.exports.Array3String = (vdl.Registry.lookupOrCreateConstructor(_typeArray3String));
 module.exports.Array4String = (vdl.Registry.lookupOrCreateConstructor(_typeArray4String));
-module.exports.BDEUnion = (vdl.Registry.lookupOrCreateConstructor(_typeBDEUnion));
-module.exports.BEANum = {
-  BEAN: canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeBEANum))('Bean', true), _typeBEANum),
+module.exports.BdeUnion = (vdl.Registry.lookupOrCreateConstructor(_typeBdeUnion));
+module.exports.BeanEnum = {
+  BEAN: canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeBeanEnum))('Bean', true), _typeBeanEnum),
 };
-module.exports.BRIENum = {
-  GLEE: canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeBRIENum))('Glee', true), _typeBRIENum),
-  BRIE: canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeBRIENum))('Brie', true), _typeBRIENum),
-  THREE: canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeBRIENum))('Three', true), _typeBRIENum),
+module.exports.BrieEnum = {
+  GLEE: canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeBrieEnum))('Glee', true), _typeBrieEnum),
+  BRIE: canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeBrieEnum))('Brie', true), _typeBrieEnum),
+  THREE: canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeBrieEnum))('Three', true), _typeBrieEnum),
 };
 module.exports.ConvertGroup = (vdl.Registry.lookupOrCreateConstructor(_typeConvertGroup));
-module.exports.FOODYNum = {
-  BEAN: canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeFOODYNum))('Bean', true), _typeFOODYNum),
-  BRIE: canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeFOODYNum))('Brie', true), _typeFOODYNum),
-  CHERRY: canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeFOODYNum))('Cherry', true), _typeFOODYNum),
+module.exports.FoodEnum = {
+  BEAN: canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeFoodEnum))('Bean', true), _typeFoodEnum),
+  BRIE: canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeFoodEnum))('Brie', true), _typeFoodEnum),
+  CHERRY: canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeFoodEnum))('Cherry', true), _typeFoodEnum),
 };
 module.exports.ListString = (vdl.Registry.lookupOrCreateConstructor(_typeListString));
 module.exports.MBool = (vdl.Registry.lookupOrCreateConstructor(_typeMBool));
@@ -451,8 +451,8 @@ module.exports.SometimesSetMap = (vdl.Registry.lookupOrCreateConstructor(_typeSo
 module.exports.StructOnlyMap = (vdl.Registry.lookupOrCreateConstructor(_typeStructOnlyMap));
 module.exports.TestCase = (vdl.Registry.lookupOrCreateConstructor(_typeTestCase));
 module.exports.VomdataStruct = (vdl.Registry.lookupOrCreateConstructor(_typeVomdataStruct));
-module.exports.XYZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeXYZStruct));
-module.exports.YZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeYZStruct));
+module.exports.XyzStruct = (vdl.Registry.lookupOrCreateConstructor(_typeXyzStruct));
+module.exports.YzStruct = (vdl.Registry.lookupOrCreateConstructor(_typeYzStruct));
 module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 
 
@@ -2104,12 +2104,12 @@ _typeNEnum,
 ]],
   ["struct A", [
 _typeNStruct,
-_typeABCStruct,
-_typeADEStruct,
+_typeAbcStruct,
+_typeAdeStruct,
 ]],
   ["struct Z", [
-_typeXYZStruct,
-_typeYZStruct,
+_typeXyzStruct,
+_typeYzStruct,
 _typeZStruct,
 ]],
   ["typeobject", [
@@ -2117,7 +2117,7 @@ vdl.Types.TYPEOBJECT,
 ]],
   ["union B", [
 _typeNUnion,
-_typeBDEUnion,
+_typeBdeUnion,
 ]]]), true), _type7);
 
   module.exports.ConvertTests = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_type11))(new Map([
@@ -2252,12 +2252,12 @@ canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_type2))(new Uin
 },
 {
   'name': "enum (brie)",
-  'primaryType': _typeBRIENum,
+  'primaryType': _typeBrieEnum,
   'values': [
 canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.STRING))("Brie", true), vdl.Types.STRING),
 canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeNString))("Brie", true), _typeNString),
-canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeBRIENum))('Brie', true), _typeBRIENum),
-canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeFOODYNum))('Brie', true), _typeFOODYNum),
+canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeBrieEnum))('Brie', true), _typeBrieEnum),
+canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeFoodEnum))('Brie', true), _typeFoodEnum),
 canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_type2))(new Uint8Array([
 66,
 114,
@@ -2278,8 +2278,8 @@ canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeNByteArray)
   'values': [
 canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.STRING))("Bean", true), vdl.Types.STRING),
 canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeNString))("Bean", true), _typeNString),
-canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeBEANum))('Bean', true), _typeBEANum),
-canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeFOODYNum))('Bean', true), _typeFOODYNum),
+canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeBeanEnum))('Bean', true), _typeBeanEnum),
+canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeFoodEnum))('Bean', true), _typeFoodEnum),
 canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_type2))(new Uint8Array([
 66,
 101,
@@ -2300,7 +2300,7 @@ canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeNByteArray)
   'values': [
 canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.STRING))("Cherry", true), vdl.Types.STRING),
 canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeNString))("Cherry", true), _typeNString),
-canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeFOODYNum))('Cherry', true), _typeFOODYNum),
+canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeFoodEnum))('Cherry', true), _typeFoodEnum),
 canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_type2))(new Uint8Array([
 67,
 104,
@@ -2369,18 +2369,18 @@ canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeSetOnlyB2))
 },
 {
   'name': "structABC",
-  'primaryType': _typeABCStruct,
+  'primaryType': _typeAbcStruct,
   'values': [
-canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeABCStruct))({
+canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeAbcStruct))({
   'a': true,
   'b': "",
   'c': new vdl.BigInt(0, new Uint8Array([])),
-}, true), _typeABCStruct),
-canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeADEStruct))({
+}, true), _typeAbcStruct),
+canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeAdeStruct))({
   'a': true,
   'd': null,
   'e': vdl.Types.ANY,
-}, true), _typeADEStruct),
+}, true), _typeAdeStruct),
 canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeNStruct))({
   'a': true,
   'b': "",
@@ -2389,18 +2389,18 @@ canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeNStruct))({
 ],
 },
 {
-  'name': "structYZ",
-  'primaryType': _typeYZStruct,
+  'name': "structYz",
+  'primaryType': _typeYzStruct,
   'values': [
-canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeXYZStruct))({
+canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeXyzStruct))({
   'x': false,
   'y': false,
   'z': "ahoy",
-}, true), _typeXYZStruct),
-canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeYZStruct))({
+}, true), _typeXyzStruct),
+canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeYzStruct))({
   'y': false,
   'z': "ahoy",
-}, true), _typeYZStruct),
+}, true), _typeYzStruct),
 canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeZStruct))({
   'z': "ahoy",
 }, true), _typeZStruct),
@@ -2476,15 +2476,15 @@ vdl.Types.ANY,
 ]],
   ["union", [
 {
-  'name': "BDEUnion",
-  'primaryType': _typeBDEUnion,
+  'name': "BdeUnion",
+  'primaryType': _typeBdeUnion,
   'values': [
-canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeBDEUnion))({ "b": "bde" }, true), _typeBDEUnion),
+canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeBdeUnion))({ "b": "bde" }, true), _typeBdeUnion),
 canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeNUnion))({ "b": "bde" }, true), _typeNUnion),
 ],
 },
 {
-  'name': "BDEUnion fail",
+  'name': "BdeUnion fail",
   'primaryType': _typeNUnion,
   'values': [
 canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeNUnion))({ "a": true }, true), _typeNUnion),

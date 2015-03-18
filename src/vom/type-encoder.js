@@ -15,7 +15,7 @@ var RawVomWriter = require('./raw-vom-writer.js');
 var unwrap = require('../vdl/type-util').unwrap;
 var wiretype = require('../gen-vdl/v.io/v23/vom');
 
-var eofByte = unwrap(wiretype.WireCtrlEOF);
+var endByte = unwrap(wiretype.WireCtrlEnd);
 
 /**
  * Create a type encoder to help encode types and associate already sent types
@@ -133,7 +133,7 @@ TypeEncoder.prototype._encodeWireType = function(messageWriter, type, typeId) {
       }
       rawWriter.writeUint(1);
       rawWriter.writeUint(kindToBootstrapType(type.kind).id);
-      rawWriter.writeByte(eofByte);
+      rawWriter.writeByte(endByte);
       break;
     case Kind.OPTIONAL:
       elemId = this.encodeType(messageWriter, type.elem);
@@ -144,7 +144,7 @@ TypeEncoder.prototype._encodeWireType = function(messageWriter, type, typeId) {
       }
       rawWriter.writeUint(1);
       rawWriter.writeUint(elemId);
-      rawWriter.writeByte(eofByte);
+      rawWriter.writeByte(endByte);
       break;
     case Kind.ENUM:
       rawWriter.writeUint(BootstrapTypes.unionIds.ENUM_TYPE);
@@ -157,7 +157,7 @@ TypeEncoder.prototype._encodeWireType = function(messageWriter, type, typeId) {
       for (i = 0; i < type.labels.length; i++) {
         rawWriter.writeString(type.labels[i]);
       }
-      rawWriter.writeByte(eofByte);
+      rawWriter.writeByte(endByte);
       break;
     case Kind.ARRAY:
       elemId = this.encodeType(messageWriter, type.elem);
@@ -170,7 +170,7 @@ TypeEncoder.prototype._encodeWireType = function(messageWriter, type, typeId) {
       rawWriter.writeUint(elemId);
       rawWriter.writeUint(2);
       rawWriter.writeUint(type.len);
-      rawWriter.writeByte(eofByte);
+      rawWriter.writeByte(endByte);
       break;
     case Kind.LIST:
       elemId = this.encodeType(messageWriter, type.elem);
@@ -181,7 +181,7 @@ TypeEncoder.prototype._encodeWireType = function(messageWriter, type, typeId) {
       }
       rawWriter.writeUint(1);
       rawWriter.writeUint(elemId);
-      rawWriter.writeByte(eofByte);
+      rawWriter.writeByte(endByte);
       break;
     case Kind.SET:
       keyId = this.encodeType(messageWriter, type.key);
@@ -192,7 +192,7 @@ TypeEncoder.prototype._encodeWireType = function(messageWriter, type, typeId) {
       }
       rawWriter.writeUint(1);
       rawWriter.writeUint(keyId);
-      rawWriter.writeByte(eofByte);
+      rawWriter.writeByte(endByte);
       break;
     case Kind.MAP:
       keyId = this.encodeType(messageWriter, type.key);
@@ -206,7 +206,7 @@ TypeEncoder.prototype._encodeWireType = function(messageWriter, type, typeId) {
       rawWriter.writeUint(keyId);
       rawWriter.writeUint(2);
       rawWriter.writeUint(elemId);
-      rawWriter.writeByte(eofByte);
+      rawWriter.writeByte(endByte);
       break;
     case Kind.STRUCT:
     case Kind.UNION:
@@ -235,9 +235,9 @@ TypeEncoder.prototype._encodeWireType = function(messageWriter, type, typeId) {
         rawWriter.writeString(field.name);
         rawWriter.writeUint(1);
         rawWriter.writeUint(field.id);
-        rawWriter.writeByte(eofByte);
+        rawWriter.writeByte(endByte);
       }
-      rawWriter.writeByte(eofByte);
+      rawWriter.writeByte(endByte);
       break;
     default:
       throw new Error('encodeWireType with unknown kind: ' + type.kind);

@@ -41,8 +41,8 @@ module.exports.NotImplementedError = makeError('v.io/v23/verror.NotImplemented',
 ]);
 
 
-module.exports.EOFError = makeError('v.io/v23/verror.EOF', actions.NO_RETRY, {
-  'en': '{1:}{2:} EOF{:_}',
+module.exports.EndOfFileError = makeError('v.io/v23/verror.EndOfFile', actions.NO_RETRY, {
+  'en': '{1:}{2:} End of file{:_}',
 }, [
 ]);
 

@@ -138,7 +138,7 @@ Namespace.prototype.resolve = function(ctx, name, cb) {
  * mounttable object addresses or rejected when there is an error
  */
 Namespace.prototype.resolveToMounttable = function(ctx, name, cb) {
-  return this._namespace.resolveToMT(ctx, name, cb);
+  return this._namespace.resolveToMountTable(ctx, name, cb);
 };
 
 /*
