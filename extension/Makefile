@@ -121,6 +121,13 @@ build-test: build-test/html build-test/images build-test/manifest.json build-tes
 gen-vdl: $(WSPRD_PATH)/channel/channel.vdl $(WSPRD_PATH)/browspr/browspr.vdl $(WSPRD_PATH)/account/account.vdl
 	v23 go run $(VANADIUM_ROOT)/release/go/src/v.io/x/ref/cmd/vdl/main.go \
 	generate -lang=javascript -js_out_dir="$(VANADIUM_ROOT)/release/javascript/core/extension/vdl" -js_relative_path_to_core=../../src $(dir $^)
+	# TODO(bjornick): We build the vdlroot stuff with a different set of command line options because the package
+	# path does not equal the directory path of the source file.  This is not ideal, but bjornick and toddw will
+	# discuss how to fix this later.
+	v23 go run $(VANADIUM_ROOT)/release/go/src/v.io/x/ref/cmd/vdl/main.go generate -lang=javascript \
+					-js_relative_path_to_core=../../../../../src \
+					-js_out_dir="$(VANADIUM_ROOT)/release/javascript/core/extension/vdl" \
+					$(VANADIUM_ROOT)/release/go/src/v.io/v23/vdlroot/...
 
 example-server: example/index.bundle.js
 	static "example" -H '{"Cache-Control": "no-cache, must-revalidate"}'
