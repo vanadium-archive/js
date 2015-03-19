@@ -18,7 +18,6 @@ var Incoming = MessageType.Incoming;
 var Outgoing = MessageType.Outgoing;
 var context = require('../runtime/context');
 var emitStreamError = require('../lib/emit-stream-error');
-var SimpleHandler = require('../proxy/simple-handler');
 var vdl = require('../vdl');
 var byteUtil = require('../vdl/byte-util');
 var unwrap = require('../vdl/type-util').unwrap;
@@ -562,56 +561,6 @@ Client.prototype.remoteBlessings = function(ctx, name, method, cb) {
   }
 
   return this._controller.remoteBlessings(ctx, name, method, cb);
-};
-
-/*
- * Helper method to make a request through the proxy and decode the response.
- * @param {Context} A context.
- * @param {object} message message to send to proxy.
- * @param {string} type type of message to send to proxy.
- * @param {function} [cb] if given, this function will be called on
- * completion. The first argument will be an error if there is
- * one, and the second argument will be the vdl-decoded proxy response.
- * @return {Promise} Promise that will be resolved with the vdl-decoded proxy
- * response or rejected with an error if there is one.
- */
-Client.prototype._sendRequest = function(ctx, message, type, cb) {
-  var proxy = this._proxyConnection;
-
-  var deferred = new Deferred(cb);
-
-  // Require first arg to be a Context
-  if (! (ctx instanceof context.Context)) {
-    var err = new Error('First argument must be a Context object.');
-    deferred.reject(err);
-    return deferred.promise;
-  }
-
-  var reqDef = new Deferred();
-  reqDef.promise.then(function(args) {
-    // If the response came off the wire, we need to vdl decode the bytes.
-    if (typeof args === 'string') {
-      try {
-        deferred.resolve(vom.decode(byteUtil.hex2Bytes(args)));
-      } catch (e) {
-        deferred.reject(
-          new verror.InternalError(ctx, ['Failed to decode result: ', e]));
-      }
-    } else {
-      deferred.resolve(args[0]);
-    }
-  }).catch(function(err) {
-    deferred.reject(err);
-  });
-
-  var id = proxy.nextId();
-  var handler = new SimpleHandler(ctx, reqDef, proxy, id);
-  var messageJSON = JSON.stringify(message);
-
-  proxy.cancelFromContext(ctx, id);
-  proxy.sendRequest(messageJSON, type, handler, id);
-
-  return deferred.promise;
 };
 
 /**
