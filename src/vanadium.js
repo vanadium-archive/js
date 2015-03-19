@@ -69,7 +69,8 @@ module.exports = {
 
 if (isBrowser) {
   /**
-   * Namespace for Chrome extension related exports
+   * Namespace for Chrome extension related exports.
+   * This is only available in browser environment and will not exist in NodeJS.
    * @namespace
    */
   module.exports.extension = require('./browser/extension-utils');

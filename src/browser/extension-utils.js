@@ -4,15 +4,18 @@ var extend = require('xtend');
 var Deferred = require('../lib/deferred');
 var consts = require('./extension-consts');
 
-
 module.exports = {
   isExtensionInstalled: isExtensionInstalled,
   promptUserToInstallExtension: promptUserToInstallExtension
 };
 
-// isExtensionInstalled checks if the Vanadium extension is installed by making
-// a request to a web accessible image.
-// See http://stackoverflow.com/questions/8042548
+/**
+ * Checks if the Vanadium extension is installed or not.
+ * @param cb (error, boolean) Optional callback
+ * @return {Promise.<boolean>} Promise that will be resolved with a boolean or
+ * rejected with an error if there is one.
+ * @memberof module:vanadium.extension
+ */
 function isExtensionInstalled(cb) {
   var def = new Deferred(cb);
 
@@ -42,9 +45,19 @@ function isExtensionInstalled(cb) {
   return def.promise;
 }
 
-// promptUserToInstallExtension prompts the user to install the extension and
-// reloads the page when extension is installed.
-// Some styling attributes such as colors and font can be specifies via options.
+/**
+ * Prompts the user to install the extension and reloads the page when extension
+ * is installed. Some styling attributes such as colors and font can be
+ * specified via options.
+ * @param {object} options Styling options for prompt.
+ * @param {string} [options.linkColor=#00838F] Link color.
+ * @param {string} [options.buttonColor=#00838F] Button color.
+ * @param {string} [options.titleColor=#00838F] Title color.
+ * @param {string} [options.fontSize=18px] Font size.
+ * @param {string} [options.fontFamily='Roboto', sans-serif] Font family.
+ * @param {string} [options.titleFontSize=24px] Font size for title text.
+ * @memberof module:vanadium.extension
+ */
 function promptUserToInstallExtension(options) {
   var defaults = {
     linkColor: '#00838F',

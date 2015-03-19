@@ -1,6 +1,3 @@
-// TODO(toddw), TODO(aghassemi): The VDL prefix for these types might be going
-// away soon
-
 /**
  * MountFlag is a bit mask of options to the mount call.
  * @name MountFlag
@@ -26,31 +23,28 @@
  */
 
 /**
- * VDLMountedServer represents a server mounted on a specific name.
- * @name VDLMountedServer
+ * MountedServer represents a server mounted on a specific name.
+ * @name MountedServer
  * @constructor
  * @param {Object} mountedServer
  * @param {string} mountedServer.server Server is the OA that's mounted.
  * @param {string[]} mountedServer.blessingPatterns Patterns that match the set
  * of blessings presented by the server listening on the above object address.
- * The type of this field would ideally be security.BlessingPattern,
- * but the resulting cyclic dependency between the security and naming
- * packages precludes that.
- * @param {integer} mountedServer.TTL TTL is the remaining time (in seconds)
- * before the mount entry expires.
+ * @param {integer} mountedServer.deadline deadline before the mount entry
+ * expires.
  * @memberof module:vanadium.naming
  */
 
 /**
- * VDLMountEntry represents a given name mounted in the mounttable.
- * @name VDLMountEntry
+ * MountEntry represents a given name mounted in the mounttable.
+ * @name MountEntry
  * @constructor
  * @param {Object} mountEntry
  * @param {string} mountEntry.name Name is the mounted name.
- * @param {module:vanadium.naming.VDLMountedServer[]} mountEntry.servers Servers
+ * @param {module:vanadium.naming.MountedServer[]} mountEntry.servers Servers
  * (if present) specifies the mounted names.
- * @param {boolean} mountEntry.MT MT is true if the servers represent mount
- * tables
+ * @param {boolean} mountEntry.servesMountTable servesMountTable is true if the
+ * servers represent mount tables.
  * @memberof module:vanadium.naming
  */
 
@@ -67,12 +61,12 @@
  */
 
  /**
- * VDLGlobReply is the data type of the chan returned by Glob__.
+ * GlobReply is the data type of the chan returned by Glob__.
  * It is a union type of MountEntry and GlobError
- * @name VDLGlobReply
+ * @name GlobReply
  * @constructor
  * @param {Object} globReply
- * @param {module:vanadium.naming.VDLMountEntry} globReply.entry
+ * @param {module:vanadium.naming.MountEntry} globReply.entry
  * @param {module:vanadium.naming.GlobError} globReply.error
  * @memberof module:vanadium.naming
  */
