@@ -9,27 +9,11 @@ var context = require('../runtime/context');
 module.exports = authorizer;
 
 /**
- * An access control list.
- * @typedef AccessList
- * @type {Object}
- * @property {Object} in A map of blessing patterns to a list of labels that
- * the pattern is authorized for.  An example would be:
- * {
- *   'foo/bar': [Read, Write],
- *   'foo': [Read, Write, Admin],
- * }
- * This means that any 'foo/bar' has access to the read/write acces and foo
- * has read, write, and admin access.
- * @property {Object} notIn A map of principala patterns to a list of labels
- * they are disallowed for.
- */
-
-/**
  * The AccessList authorizer.
  * @function
  * @memberof module:vanadium.security
  * @name aclAuthorizer
- * @param {AccessList} acl The set of acls to apply.
+ * @param {module:vanadium.security.AccessList} acl The set of acls to apply.
  * @return {Authorize} An authorizer that applies the acls.
  */
 function authorizer(acl) {

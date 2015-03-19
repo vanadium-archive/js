@@ -38,14 +38,15 @@ CaveatValidatorRegistry.prototype._makeKey = function(bytes) {
 
 /**
  * @callback ValidationFunction
- * @param {SecurityContext} The security context.
+ * @param {SecurityCall} call The security call.
  * @param {*} param Validation-function specific parameter.
- * @throws Upon failure to validate, does not throw if successful.
+ * @throws Error Upon failure to validate, does not throw if successful.
  */
 
 /**
  * Register a caveat validation function
- * @param {CaveatDescriptor} cavDesc The caveat description.
+ * @param {module:vanadium.security.CaveatDescriptor} cavDesc The caveat
+ * description.
  * See security/types.vdl
  * @param {ValidationFunction} validateFn The validation function.
  * e.g. function validateCaveatA(param) { ...
@@ -60,9 +61,9 @@ CaveatValidatorRegistry.prototype.register = function(cavDesc, validateFn) {
 /**
  * Perform validation on a caveat.
  * @param {SecurityCall} secCall The context.
- * @param {Caveat} caveat The caveat to validate.
+ * @param {*} caveat The caveat to validate.
  * See security/types.vdl
- * @throws Upon failure to validate, does not throw if successful.
+ * @throws Error Upon failure to validate, does not throw if successful.
  */
 CaveatValidatorRegistry.prototype.validate =
   function(secCall, caveat) {

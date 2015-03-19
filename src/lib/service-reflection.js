@@ -11,7 +11,7 @@ module.exports = {
 /**
  * isPublicMethod - Test wether a key on a service object is a valid method
  * that should be refelcetd.
- *
+ * @private
  * @param  {String} key - The attribute key to test on the service object.
  * @param  {Object} service - The service object.
  * @return {Boolean} valid - Wether or not the method should be reflected.
