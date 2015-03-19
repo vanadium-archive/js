@@ -29,6 +29,34 @@ test('Test vanadium.init({authenticate: true}) gives runtime with account name',
   });
 });
 
+test('Test config logLevel INFO sets the vlog logLevel', function(t) {
+  var c = extend({logLevel: vanadium.vlog.levels.INFO }, config);
+
+  vanadium.init(c, function(err, rt) {
+    if (err) {
+      t.error(err);
+      return t.end(err);
+    }
+
+    t.equal(vanadium.vlog.logger.level, vanadium.vlog.levels.INFO);
+    rt.close(t.end);
+  });
+});
+
+test('Test config logLevel ERROR sets the vlog logLevel', function(t) {
+  var c = extend({logLevel: vanadium.vlog.levels.ERROR }, config);
+
+  vanadium.init(c, function(err, rt) {
+    if (err) {
+      t.error(err);
+      return t.end(err);
+    }
+
+    t.equal(vanadium.vlog.logger.level, vanadium.vlog.levels.ERROR);
+    rt.close(t.end);
+  });
+});
+
 test('Test vanadium.init({authenticate: false}) gives runtime ' +
     'with unknown name', function(t) {
 
