@@ -270,7 +270,12 @@ Server.prototype._handleLookupResult = function(object) {
     throw new InvokeOnNonInvoker(this._rootCtx);
   }
   object._handle = this._handle;
-  object.invoker = new Invoker(object.service);
+  try {
+    object.invoker = new Invoker(object.service);
+  } catch(e) {
+    vlog.logger.error('lookup failed', e);
+    return e;
+  }
   this.serviceObjectHandles[object._handle] = object;
   this._handle++;
   return null;
