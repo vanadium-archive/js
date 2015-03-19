@@ -10,8 +10,8 @@ var RawVomWriter = require('./raw-vom-writer.js');
 
 /**
  * Create a VOM message writer that writes to a byte array.
- * @private
  * @constructor
+ * @memberof module:vanadium.vom
  */
 function ByteArrayMessageWriter() {
   this.rawWriter = new RawVomWriter();
@@ -20,6 +20,7 @@ function ByteArrayMessageWriter() {
 
 /**
  * Write a value message.
+ * @private
  * @param {number} typeId The type ID of the message.
  * @param {boolean} sendLength true if the message length should be sent in the
  * header, false otherwise.
@@ -39,6 +40,7 @@ ByteArrayMessageWriter.prototype.writeValueMessage = function(
 
 /**
  * Write a type message.
+ * @private
  * @param {number} typeId The type ID to define.
  * @param {Uint8Array} message The body of the type description message.
  */
@@ -53,6 +55,7 @@ ByteArrayMessageWriter.prototype.writeTypeMessage = function(typeId, message) {
 
 /**
  * Get the written bytes.
+ * @private
  * @return {Uint8Array} The bytes that were written.
  */
 ByteArrayMessageWriter.prototype.getBytes = function() {

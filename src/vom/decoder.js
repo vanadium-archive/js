@@ -23,8 +23,11 @@ var nilByte = unwrap(wiretype.WireCtrlNil);
  * Decode has the option of returning a deeply-wrapped object, or an object only
  * wrapped at the top-level.
  *
- * @param {MessageReader} The message reader.
+ * @param {module:vanadium.vom.ByteArrayMessageReader} reader The message
+ * reader.
  * @param {boolean=} deepWrap Whether to deeply wrap. Defaults to false.
+ * @memberof module:vanadium.vom
+ * @constructor
  */
 function Decoder(messageReader, deepWrap) {
   this._messageReader = messageReader;

@@ -11,9 +11,9 @@ var TypeUtil = require('../vdl/type-util.js');
 
 /**
  * Create a VOM message reader backed by a byte array.
- * @private
  * @param {Uint8Array} bytes The byte array.
  * @constructor
+ * @memberof module:vanadium.vom
  */
 function ByteArrayMessageReader(bytes) {
   this.rawReader = new RawVomReader(bytes);
@@ -25,6 +25,7 @@ function ByteArrayMessageReader(bytes) {
 
 /**
  * Get the the type of the next value message.
+ * @private
  * @param {TypeDecoder} typeDecoder The current type decoder.
  * @return {Type} The type of the next message or null if the stream has ended.
  */

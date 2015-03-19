@@ -26,8 +26,10 @@ require('../vdl/es6-shim');
 
 /**
  * Create an encoder that writes to the specified message writer.
- * @param {MessageWriter} messageWriter The message writer to write to.
+ * @param {module:vanadium.vom.ByteArrayMessageWriter} messageWriter The
+ * message writer to write to.
  * @constructor
+ * @memberof module:vanadium.vom
  */
 function Encoder(messageWriter) {
   this._messageWriter = messageWriter;
@@ -36,8 +38,8 @@ function Encoder(messageWriter) {
 
 /**
  * Encodes a value.
- * @param {any} val The value to encode
- * @param {Type} type The type of the value.
+ * @param {*} val The value to encode
+ * @param {module:vanadium.vdl.Type} type The type of the value.
  */
 Encoder.prototype.encode = function(val, type) {
   if (type === undefined) {
