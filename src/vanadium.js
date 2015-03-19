@@ -91,7 +91,7 @@ function init(config, cb) {
   config = extend(defaults, config);
 
   if (config.logLevel) {
-    vlog.level = config.logLevel;
+    vlog.logger.level = config.logLevel;
   }
 
   var runtimeOpts = {

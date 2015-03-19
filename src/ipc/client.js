@@ -441,6 +441,7 @@ Client.prototype.bindWithSignature = function(name, signature) {
 
         }
       } catch(err) {
+        vlog.logger.error('rpc failed - invalid arg(s)', err);
         if (callback) {
           return callback(err);
         } else {
