@@ -11,7 +11,7 @@ var runtime = require('./runtime');
 var vlog = require('./lib/vlog');
 
 var defaults = {
-  appName: 'webapp',
+  appName: 'untitled webapp',
   authenticate: isBrowser,
   logLevel: vlog.level,
   wspr: process.env.WSPR || (isBrowser ? null : 'http://localhost:8124')
