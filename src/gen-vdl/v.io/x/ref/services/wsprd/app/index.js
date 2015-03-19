@@ -19,32 +19,48 @@ var _type1 = new vdl.Type();
 var _type2 = new vdl.Type();
 var _type3 = new vdl.Type();
 var _type4 = new vdl.Type();
+var _type5 = new vdl.Type();
+var _type6 = new vdl.Type();
+var _typeRpcCallOption = new vdl.Type();
 var _typeRpcRequest = new vdl.Type();
 var _typeRpcResponse = new vdl.Type();
 _type1.kind = vdl.Kind.LIST;
 _type1.name = "";
-_type1.elem = vdl.Types.ANY;
+_type1.elem = _typeRpcCallOption;
 _type2.kind = vdl.Kind.LIST;
 _type2.name = "";
-_type2.elem = new security.Caveat()._type;
+_type2.elem = new security.BlessingPattern()._type;
 _type3.kind = vdl.Kind.LIST;
 _type3.name = "";
-_type3.elem = vdl.Types.STRING;
+_type3.elem = vdl.Types.ANY;
 _type4.kind = vdl.Kind.LIST;
 _type4.name = "";
-_type4.elem = new signature.Interface()._type;
+_type4.elem = new security.Caveat()._type;
+_type5.kind = vdl.Kind.LIST;
+_type5.name = "";
+_type5.elem = vdl.Types.STRING;
+_type6.kind = vdl.Kind.LIST;
+_type6.name = "";
+_type6.elem = new signature.Interface()._type;
+_typeRpcCallOption.kind = vdl.Kind.UNION;
+_typeRpcCallOption.name = "v.io/x/ref/services/wsprd/app.RpcCallOption";
+_typeRpcCallOption.fields = [{name: "AllowedServersPolicy", type: _type2}, {name: "RetryTimeout", type: new time.Duration()._type}];
 _typeRpcRequest.kind = vdl.Kind.STRUCT;
 _typeRpcRequest.name = "v.io/x/ref/services/wsprd/app.RpcRequest";
-_typeRpcRequest.fields = [{name: "Name", type: vdl.Types.STRING}, {name: "Method", type: vdl.Types.STRING}, {name: "NumInArgs", type: vdl.Types.INT32}, {name: "NumOutArgs", type: vdl.Types.INT32}, {name: "IsStreaming", type: vdl.Types.BOOL}, {name: "Deadline", type: new time.WireDeadline()._type}, {name: "TraceRequest", type: new vtrace.Request()._type}];
+_typeRpcRequest.fields = [{name: "Name", type: vdl.Types.STRING}, {name: "Method", type: vdl.Types.STRING}, {name: "NumInArgs", type: vdl.Types.INT32}, {name: "NumOutArgs", type: vdl.Types.INT32}, {name: "IsStreaming", type: vdl.Types.BOOL}, {name: "Deadline", type: new time.WireDeadline()._type}, {name: "TraceRequest", type: new vtrace.Request()._type}, {name: "CallOptions", type: _type1}];
 _typeRpcResponse.kind = vdl.Kind.STRUCT;
 _typeRpcResponse.name = "v.io/x/ref/services/wsprd/app.RpcResponse";
-_typeRpcResponse.fields = [{name: "OutArgs", type: _type1}, {name: "TraceResponse", type: new vtrace.Response()._type}];
+_typeRpcResponse.fields = [{name: "OutArgs", type: _type3}, {name: "TraceResponse", type: new vtrace.Response()._type}];
 _type1.freeze();
 _type2.freeze();
 _type3.freeze();
 _type4.freeze();
+_type5.freeze();
+_type6.freeze();
+_typeRpcCallOption.freeze();
 _typeRpcRequest.freeze();
 _typeRpcResponse.freeze();
+module.exports.RpcCallOption = (vdl.Registry.lookupOrCreateConstructor(_typeRpcCallOption));
 module.exports.RpcRequest = (vdl.Registry.lookupOrCreateConstructor(_typeRpcRequest));
 module.exports.RpcResponse = (vdl.Registry.lookupOrCreateConstructor(_typeRpcResponse));
 
@@ -230,7 +246,7 @@ Controller.prototype._serviceDescription = {
     {
       name: 'caveats',
       doc: "",
-      type: _type2
+      type: _type4
     },
     {
       name: 'durationMs',
@@ -303,7 +319,7 @@ Controller.prototype._serviceDescription = {
     outArgs: [{
       name: '',
       doc: "",
-      type: _type3
+      type: _type5
     },
     ],
     inStream: null,
@@ -324,7 +340,7 @@ Controller.prototype._serviceDescription = {
     outArgs: [{
       name: '',
       doc: "",
-      type: _type4
+      type: _type6
     },
     ],
     inStream: null,

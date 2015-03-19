@@ -8,32 +8,33 @@
  *  @private
  */
 
-var Promise = require('../lib/promise');
-var Deferred = require('../lib/deferred');
-var vlog = require('../lib/vlog');
-var Stream = require('../proxy/stream');
-var verror = require('../gen-vdl/v.io/v23/verror');
-var MessageType = require('../proxy/message-type');
-var Incoming = MessageType.Incoming;
-var Outgoing = MessageType.Outgoing;
-var context = require('../runtime/context');
-var emitStreamError = require('../lib/emit-stream-error');
-var vdl = require('../vdl');
-var byteUtil = require('../vdl/byte-util');
-var unwrap = require('../vdl/type-util').unwrap;
-var uncapitalize = require('../vdl/util').uncapitalize;
-var vom = require('../vom');
-var Encoder = require('../vom/encoder');
-var ByteArrayMessageWriter = require('../vom/byte-array-message-writer');
-var makeError = require('../errors/make-errors');
 var actions = require('../errors/actions');
-var RpcRequest = require('../gen-vdl/v.io/x/ref/services/wsprd/app').RpcRequest;
-var vtrace = require('../lib/vtrace');
-var ReservedSignature =
-  require('../gen-vdl/v.io/v23/rpc').ReservedSignature.val;
+var ByteArrayMessageWriter = require('../vom/byte-array-message-writer');
+var byteUtil = require('../vdl/byte-util');
 var Controller =
   require('../gen-vdl/v.io/x/ref/services/wsprd/app').Controller;
+var context = require('../runtime/context');
+var Deferred = require('../lib/deferred');
+var emitStreamError = require('../lib/emit-stream-error');
+var Encoder = require('../vom/encoder');
+var Incoming = require('../proxy/message-type').Incoming;
+var makeError = require('../errors/make-errors');
+var Outgoing = require('../proxy/message-type').Outgoing;
+var Promise = require('../lib/promise');
+var ReservedSignature =
+  require('../gen-vdl/v.io/v23/rpc').ReservedSignature.val;
+var RpcCallOption =
+  require('../gen-vdl/v.io/x/ref/services/wsprd/app').RpcCallOption;
+var RpcRequest = require('../gen-vdl/v.io/x/ref/services/wsprd/app').RpcRequest;
+var Stream = require('../proxy/stream');
 var time = require('../gen-vdl/v.io/v23/vdlroot/time');
+var uncapitalize = require('../vdl/util').uncapitalize;
+var unwrap = require('../vdl/type-util').unwrap;
+var vdl = require('../vdl');
+var verror = require('../gen-vdl/v.io/v23/verror');
+var vlog = require('../lib/vlog');
+var vom = require('../vom');
+var vtrace = require('../lib/vtrace');
 
 var OutstandingRPC = function(ctx, options, cb) {
   this._ctx = ctx;
@@ -47,6 +48,7 @@ var OutstandingRPC = function(ctx, options, cb) {
   this._isStreaming = options.isStreaming || false;
   this._inStreamingType = options.inStreamingType;
   this._outStreamingType = options.outStreamingType;
+  this._callOptions = options.callOptions;
   this._cb = cb;
   this._def = null;
 };
@@ -266,7 +268,8 @@ OutstandingRPC.prototype.constructMessage = function() {
     numOutArgs: this._numOutParams || 0,
     isStreaming: this._isStreaming,
     traceRequest: vtrace.request(this._ctx),
-    deadline: timeout
+    deadline: timeout,
+    callOptions: this._callOptions
   };
 
   var header = new RpcRequest(jsonMessage);
@@ -403,6 +406,16 @@ Client.prototype.bindWithSignature = function(name, signature) {
         }
       }
 
+      // Remove ClientCallOptions from args and build array of callOptions.
+      var callOptions = [];
+      args = args.filter(function(arg) {
+        if (arg instanceof ClientCallOptions) {
+          callOptions = callOptions.concat(arg._toRpcCallOptions());
+          return false;
+        }
+        return true;
+      });
+
       ctx = vtrace.withNewSpan(ctx, '<jsclient>"'+name+'".'+method);
 
       if (args.length !== methodSig.inArgs.length) {
@@ -470,7 +483,8 @@ Client.prototype.bindWithSignature = function(name, signature) {
         numOutParams: methodSig.outArgs.length,
         isStreaming: isStreaming,
         inStreamingType: inStreaming ? methodSig.inStream.type : null,
-        outStreamingType: outStreaming ? methodSig.outStream.type : null
+        outStreamingType: outStreaming ? methodSig.outStream.type : null,
+        callOptions: callOptions
       }, callback);
 
       return rpc.start();
@@ -533,7 +547,7 @@ Client.prototype.signature = function(ctx, name, cb) {
   return deferred.promise;
 };
 
-/*
+/**
  * Returns the remote blessings of a server at the given name.
  * @param {Context} A context.
  * @param {string} name the vanadium name of the service to get the remote
@@ -562,6 +576,59 @@ Client.prototype.remoteBlessings = function(ctx, name, method, cb) {
   }
 
   return this._controller.remoteBlessings(ctx, name, method, cb);
+};
+
+/**
+ * Create a ClientCallOptions object.
+ *
+ * Client call options can be passed to a service method and are used to
+ * configure the RPC call.  They are not passed to the Vanadium RPC service.
+ *
+ * Currently the only supported key is 'allowedServersPolicy'.
+ *
+ * @param {Object} opts map of call options.
+ * @param {string[]} opts.allowedServersPolicy Array of blessing patterns that
+ * the allowed server must match in order for the RPC to be initiated.
+ */
+Client.prototype.callOptions = function(opts) {
+  // TODO(nlacasse): Support other CallOption types.
+  var allowedOptions = ['allowedServersPolicy'];
+
+  // Validate opts.
+  var keys = Object.keys(opts);
+  keys.forEach(function(key) {
+    if (allowedOptions.indexOf(key) < 0) {
+      throw new verror.BadArgError(null, 'Invalid call option ' + key);
+    }
+  });
+
+  return new ClientCallOptions(opts);
+};
+
+/**
+ * Constructor for ClientCallOptions object.
+ * @constructor
+ * @private
+ * @param {Object} opts call options.
+ */
+function ClientCallOptions(opts) {
+  this.opts = opts;
+}
+
+/**
+ * Convert ClientCallOptions object to array of RpcCallOption VDL values.
+ * @private
+ * @return {Array} Array of RpcCallOption VDL values.
+ */
+ClientCallOptions.prototype._toRpcCallOptions = function() {
+  var rpcCallOptions = [];
+  var keys = Object.keys(this.opts);
+  keys.forEach(function(key) {
+    var opt = {};
+    opt[key] = this.opts[key];
+    rpcCallOptions.push(new RpcCallOption(opt));
+  }, this);
+  return rpcCallOptions;
 };
 
 /**
