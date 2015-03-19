@@ -22,7 +22,7 @@ function Principal(ctx, controller) {
  * @param {String} extension: the extension for the blessing.
  * @param {Number} duration: the duration of the blessing in milliseconds.
  * @param {Array} caveats: an array of Cavaeats to restrict the blessing.
- * @papram {function} cb an optional callback that will return the blessing
+ * @param {function} cb an optional callback that will return the blessing
  * @return {Promise} a promise that will be resolved with the blessing
  */
 Principal.prototype.bless = function(blessings, extension, duration, caveats,

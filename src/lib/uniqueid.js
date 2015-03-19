@@ -13,6 +13,7 @@ var currentSequence = 0;
 
 /**
  * Generate a new random uniqueid.Id.
+ * @private
  * @return {Object} A new random uniqueid.Id.
  */
 function random() {
@@ -36,6 +37,7 @@ function random() {
 
 /**
  * Returns true if the given uniqueid.Id is valid.
+ * @private
  * @param {Object} A uniqueid.Id instance.
  * @return {bool} true if the given uniqueid.Id is valid.
  */
@@ -54,6 +56,7 @@ function valid(id) {
 
 /**
  * Returns a hexidecimal string representation of the given uniqueid.Id.
+ * @private
  * @param {Object} id A uniqueid.Id instance.
  * @return {string} A hexidecimal string.
  */
@@ -63,6 +66,7 @@ function toHexString(id) {
 
 /**
  * Creates a uniqeid.Id instance from its hexidecimal string representation.
+ * @private
  * @param {string} s A hexidecimal string.
  * @return {Object} A uniqueid.Id instance.
  */
