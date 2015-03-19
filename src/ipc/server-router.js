@@ -115,11 +115,11 @@ Router.prototype.handleAuthorizationRequest = function(messageId, request) {
   });
 };
 
-Router.prototype._validateChain = function(secCall, callSide, cavs) {
+Router.prototype._validateChain = function(secCall, cavs) {
   var promises = new Array(cavs.length);
   for (var j = 0; j < cavs.length; j++) {
     var boundFn = this._caveatRegistry.validate.bind(this._caveatRegistry);
-    promises[j] = asyncValidateCall(boundFn, secCall, callSide, cavs[j]);
+    promises[j] = asyncValidateCall(boundFn, secCall, cavs[j]);
   }
   return Promise.all(promises).then(function(results) {
     return undefined;
@@ -138,8 +138,7 @@ Router.prototype.handleCaveatValidationRequest = function(messageId, request) {
   var resultPromises = new Array(request.cavs.length);
   var secCall = new SecurityCall(request.call);
   for (var i = 0; i < request.cavs.length; i++) {
-    resultPromises[i] = this._validateChain(secCall, request.callSide,
-      request.cavs[i]);
+    resultPromises[i] = this._validateChain(secCall, request.cavs[i]);
   }
   var self = this;
   Promise.all(resultPromises).then(function(results) {

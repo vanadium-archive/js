@@ -15,14 +15,14 @@ function registerDefaultCaveats(registry) {
 }
 
 
-function constCaveatValidator(call, callSide, value) {
+function constCaveatValidator(call, value) {
   if (!value) {
     return new vdlSecurity.ConstCaveatValidationError(call.context);
   }
   return null;
 }
 
-function expiryCaveatValidator(call, callSide, expiry) {
+function expiryCaveatValidator(call, expiry) {
   var now = Date.now();
   if (now > expiry.getTime()) {
     return new vdlSecurity.ExpiryCaveatValidationError(call.context,
@@ -31,7 +31,7 @@ function expiryCaveatValidator(call, callSide, expiry) {
   return null;
 }
 
-function methodCaveatValidator(call, callSide, methods) {
+function methodCaveatValidator(call, methods) {
   if (!call.method || methods.length === 0) {
     return null;
   }
