@@ -152,7 +152,8 @@ test('Test serving a JS service under multiple names - ' +
       return server.removeName('bedroom/tv');
     })
     .then(function bindToRemovedSecondName() {
-      return client.bindTo(ctx, 'bedroom/tv')
+      var shortCtx = runtime.getContext().withTimeout(100);
+      return client.bindTo(shortCtx, 'bedroom/tv')
       .then(function verifyRemovedSecondName(a) {
         assert.fail('should not be able to bind to a removed name');
         runtime.close(assert.end);

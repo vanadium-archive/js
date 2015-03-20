@@ -50,11 +50,10 @@ test('Test binding to a non-existing name - ' +
     assert.error(err);
 
     var client = runtime.newClient();
-    var ctx = runtime.getContext();
+    var ctx = runtime.getContext().withTimeout(100);
     client.bindTo(ctx, 'does-not/exist', function(err, service) {
       assert.ok(err instanceof Error);
 
-      assert.ok(err instanceof vanadium.errors.NoServersError);
       runtime.close(assert.end);
     });
   });
@@ -69,7 +68,7 @@ test('Test binding to a non-existing name - ' +
   .then(function(runtime) {
     rt = runtime;
     var client = rt.newClient();
-    var ctx = rt.getContext();
+    var ctx = runtime.getContext().withTimeout(100);
     return client.bindTo(ctx, 'does-not/exist');
   })
   .then(function(service) {
@@ -77,7 +76,6 @@ test('Test binding to a non-existing name - ' +
     rt.close(assert.end);
   }, function(err) {
     assert.ok(err instanceof Error);
-    assert.ok(err instanceof vanadium.errors.NoServersError);
     rt.close(assert.end);
   })
   .catch(function(err) {

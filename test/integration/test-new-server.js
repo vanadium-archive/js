@@ -74,7 +74,8 @@ test('Test running several JS servers concurrently and under multiple ' +
     return fooServer.stop();
   })
   .then(function validateFooWasStopped() {
-    return fooStub.foo(ctx)
+    var shortCtx = runtime.getContext().withTimeout(100);
+    return fooStub.foo(shortCtx)
       .then(function() {
         assert.fail('should have failed to call foo() after stop');
       }, function(err) {
@@ -101,7 +102,8 @@ test('Test running several JS servers concurrently and under multiple ' +
     return barServer.stop();
   })
   .then(function validateBarWasStopped() {
-    return barStub.bar(ctx)
+    var shortCtx = runtime.getContext().withTimeout(100);
+    return barStub.bar(shortCtx)
       .then(function() {
         assert.fail('should have failed to call bar() after stop');
       }, function(err) {

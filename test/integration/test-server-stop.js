@@ -16,7 +16,8 @@ test('Test stopping a JS service - ' +
     res.server.stop(function(err) {
       assert.error(err);
 
-      res.service.foo(res.runtime.getContext(), function(err, result) {
+      var ctx = res.runtime.getContext().withTimeout(100);
+      res.service.foo(ctx, function(err, result) {
         assert.ok(err, 'should fail');
         res.end(assert);
       });
@@ -30,7 +31,7 @@ test('Test stopping a JS service - ' +
   serve(name, dispatcher, function(err, res) {
     assert.error(err);
 
-    var ctx = res.runtime.getContext();
+    var ctx = res.runtime.getContext().withTimeout(100);
     res.server.stop()
     .then(function() {
       return res.service.foo(ctx);
