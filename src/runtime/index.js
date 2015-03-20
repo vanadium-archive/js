@@ -28,6 +28,7 @@ module.exports = {
  * Initialize a Vanadium Runtime.
  * Runtime exposes entry points to create servers, client, blessing and other
  * parts of the Vanadium functionality.
+ * @private
  */
 function init(options, cb) {
   var def = new Deferred(cb);
@@ -60,15 +61,20 @@ function init(options, cb) {
   return def.promise;
 }
 
-/*
- * Vanadium Runtime constructor.
- * Runtime exposes entry points to create servers, client, blessing and other
- * parts of the Vanadium functionality.
+/**
+ * Runtime exposes entry points to create servers, client, namespace client and
+ * other parts of the Vanadium functionality.
  *
- * Runtime is also an EventEmitter:
- *    Event: 'crash'
+ * <p>This constructor should not be used directly, instead use
+ * [vanadium.init]{@link module:vanadium.init}</p>
+ *
+ * <p>Runtime is also an EventEmitter:</p>
+ * <p>
+ *    Event: 'crash':
  *    Emitted when the runtime crashes in an unexpected way. Recovery from
  *    crash event requires restarting the application.
+ * </p>
+ * @constructor
  */
 function Runtime(options) {
   if (!(this instanceof Runtime)) {
@@ -91,20 +97,12 @@ function Runtime(options) {
 inherits(Runtime, EE);
 
 /**
- * Closes the underlying websocket connection.
+ * Closes the runtime, freeing all the related resources and stopping and
+ * unpublishing all the servers created in the runtime.
  *
- * @example
- *
- * runtime.close(function(err, code, message){
- *   if (err) throw err;
- *   console.log('code: %s, message: %s', code, message)
- * });
- *
- * @param {Function} [cb] - Gets called once the underlying
- * websocket is closed. Arguments: error, code, message.
- *
- * @see {@link http://goo.gl/6nC1xs|WS Event: "close"}
- *
+ * @param {Function} [cb] Gets called once the runtime is closed.
+ * @returns {Promise} Promise that will be resolved or rejected when runtime is
+ * closed.
  */
 Runtime.prototype.close = function(cb) {
   return this
@@ -113,12 +111,8 @@ Runtime.prototype.close = function(cb) {
 };
 
 /**
- * Creates a new server instance.
- *
- * Although runtime comes with a default server instance that methods such as
- * runtime.serve(), runtime.stop(), etc... operate on, a new server instance
- * can also be created using this newServer() method.
- * @see Server
+ * Creates a new [server]{@link Server} instance.<br>
+ * Server allows one to create, publish and stop Vanadium services.
  * @return {Server} A server instance.
  */
 Runtime.prototype.newServer = function() {
@@ -126,12 +120,8 @@ Runtime.prototype.newServer = function() {
 };
 
 /**
- * Creates a new client instance.
- *
- * Although runtime comes with a default client instance that methods such as
- * runtime.bindTo() operate on, a new client instance can also be created using
- * this newClient() method.
- * @see Client
+ * Creates a new [client]{@link Client} instance.<br>
+ * Client allows one to bind to Vanadium names and call methods on them.
  * @return {Client} A Client instance.
  */
 Runtime.prototype.newClient = function() {
@@ -139,9 +129,14 @@ Runtime.prototype.newClient = function() {
 };
 
 /**
- * Returns the root runtime context
- * @see Context
- * @return {Context} The root runtime context.
+ * Returns the root runtime [context]{@link module:vanadium.context.Context}<br>
+ * Context objects provide a number of features such as
+ * ability to provide configuration for requests such as timeout durations,
+ * tracing across requests for debugging, etc...<br>
+ * In order to provide these facilities context objects are required as the
+ * first parameter for client calls and also for requests that are incoming
+ * to servers.
+ * @return {module:vanadium.context.Context} The root runtime context.
  */
 Runtime.prototype.getContext = function() {
   if (this._rootCtx) {
@@ -159,8 +154,9 @@ Runtime.prototype.getContext = function() {
 };
 
 /**
- * Returns the pre-configured Namespace that is created
- * when the Runtime is initialized.
+ * Returns a [namespace]{@link Namespace} client.
+ * Namespace client enables interactions with the Vanadium namespace such as
+ * globbing, mounting, setting permissions and other name related operations.
  * @return {Namespace} A namespace client instance.
  */
 Runtime.prototype.namespace = function() {
@@ -173,12 +169,13 @@ Runtime.prototype.namespace = function() {
  * TODO(bjornick): This should probably produce a Principal and not Blessings,
  * but we don't have Principal store yet. This is mostly used for tests anyway.
  * Create new Blessings
+ * @private
  * @param {String} extension Extension for the Blessings .
  * @param {function} [cb] If provided a callback that will be called with the
  * new Blessings.
  * @return {Promise} A promise that resolves to the new Blessings
  */
-Runtime.prototype.newBlessings = function(extension, cb) {
+Runtime.prototype._newBlessings = function(extension, cb) {
   var def = new Deferred(cb);
   var ctx = this.getContext();
   var controller = this._controller;
@@ -195,6 +192,7 @@ Runtime.prototype.newBlessings = function(extension, cb) {
 /**
  * Get or creates a new proxy connection
  * @return {ProxyConnection} A proxy connection
+ * @private
  */
 Runtime.prototype._getProxyConnection = function() {
   if (this._proxyConnection) {
@@ -221,6 +219,7 @@ Runtime.prototype._getProxyConnection = function() {
 /**
  * Get or creates a router
  * @return {ServerRouter} A router
+ * @private
  */
 Runtime.prototype._getRouter = function() {
   if (!this._router) {
