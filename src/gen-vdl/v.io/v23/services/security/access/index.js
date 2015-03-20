@@ -74,8 +74,17 @@ module.exports.TooBigError = makeError('v.io/v23/services/security/access.TooBig
 ]);
 
 
+module.exports.NoPermissionsError = makeError('v.io/v23/services/security/access.NoPermissions', actions.NO_RETRY, {
+  'en': '{1:}{2:} {3} does not have {5} access (rejected blessings: {4})',
+}, [
+  _type2,
+  _type3,
+  vdl.Types.STRING,
+]);
+
+
 module.exports.AccessListMatchError = makeError('v.io/v23/services/security/access.AccessListMatch', actions.NO_RETRY, {
-  'en': '{1:}{2:} none of the valid blessings ({3}) are allowed by the AccessList (rejected blessings: {4})',
+  'en': '{1:}{2:} {3} does not match the access list (rejected blessings: {4})',
 }, [
   _type2,
   _type3,

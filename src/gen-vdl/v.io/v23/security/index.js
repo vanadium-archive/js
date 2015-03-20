@@ -24,7 +24,6 @@ var _type5 = new vdl.Type();
 var _type6 = new vdl.Type();
 var _type7 = new vdl.Type();
 var _typeBlessingPattern = new vdl.Type();
-var _typeCallSide = new vdl.Type();
 var _typeCaveat = new vdl.Type();
 var _typeCaveatDescriptor = new vdl.Type();
 var _typeCertificate = new vdl.Type();
@@ -61,9 +60,6 @@ _type7.name = "";
 _type7.elem = _typeCertificate;
 _typeBlessingPattern.kind = vdl.Kind.STRING;
 _typeBlessingPattern.name = "v.io/v23/security.BlessingPattern";
-_typeCallSide.kind = vdl.Kind.ENUM;
-_typeCallSide.name = "v.io/v23/security.CallSide";
-_typeCallSide.labels = ["Local", "Remote"];
 _typeCaveat.kind = vdl.Kind.STRUCT;
 _typeCaveat.name = "v.io/v23/security.Caveat";
 _typeCaveat.fields = [{name: "Id", type: new uniqueid.Id()._type}, {name: "ParamVom", type: _type2}];
@@ -111,7 +107,6 @@ _type5.freeze();
 _type6.freeze();
 _type7.freeze();
 _typeBlessingPattern.freeze();
-_typeCallSide.freeze();
 _typeCaveat.freeze();
 _typeCaveatDescriptor.freeze();
 _typeCertificate.freeze();
@@ -126,10 +121,6 @@ _typenonce.freeze();
 _typepublicKeyDischarge.freeze();
 _typepublicKeyThirdPartyCaveat.freeze();
 module.exports.BlessingPattern = (vdl.Registry.lookupOrCreateConstructor(_typeBlessingPattern));
-module.exports.CallSide = {
-  LOCAL: canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeCallSide))('Local', true), _typeCallSide),
-  REMOTE: canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeCallSide))('Remote', true), _typeCallSide),
-};
 module.exports.Caveat = (vdl.Registry.lookupOrCreateConstructor(_typeCaveat));
 module.exports.CaveatDescriptor = (vdl.Registry.lookupOrCreateConstructor(_typeCaveatDescriptor));
 module.exports.Certificate = (vdl.Registry.lookupOrCreateConstructor(_typeCertificate));

@@ -123,6 +123,23 @@
  * @augments module:vanadium.errors.VanadiumError
  */
 /**
+ * Error that means that no blessings have access to the specified access tag
+ * (e.g. No Read Access or No Admin Access)
+ * @name NoPermissionsError
+ * @memberof module:vanadium.security
+ * @constructor
+ * @param {module:vanadium.context.Context} ctx The context the error was
+ * created in.
+ * @param {array} validBlessings A list of strings that represent valid
+ * blessings
+ * @param {array} rejectedBlessings A list of blessings that are rejected.
+ * The array has [RejectedBlessings]
+ * @param {module:vanadium.security.Tag} tag Access tag.
+ * {@link module:vanadium.security.RjectedBlessings}.
+ * @param {...*} params A list of parameters to include in the error message.
+ * @augments module:vanadium.errors.VanadiumError
+ */
+/**
  * A descriptor that is used to associate a caveat validation function (
  * addressed by a globally unique identifier) and the data needed by the
  * validation function.
