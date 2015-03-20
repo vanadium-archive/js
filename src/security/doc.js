@@ -147,7 +147,7 @@
  * @memberof module:vanadium.security
  * @constructor
  * @param {object} descriptor The descriptor
- * @param {module:vanadium.UniqueId} descriptor.id The unique id for the
+ * @param {module:vanadium.uniqueId.Id.Id} descriptor.id The unique id for the
  * caveat validation funciton
  * @param {module:vanadium.vdl.Type} descriptor.paramType The type of
  * the data that will be passed into the function.
@@ -194,7 +194,7 @@
  * @constructor
  * @param {module:vanadium.context.Context} ctx The context the error was
  * created in.
- * @param {module:vanadium.UniqueId} id The id not registered.
+ * @param {module:vanadium.uniqueId.Id} id The id not registered.
  * @param {...*} params A list of parameters to include in the error message.
  * @augments module:vanadium.errors.VanadiumError
  */
@@ -205,7 +205,8 @@
  * @constructor
  * @param {module:vanadium.context.Context} ctx The context the error was
  * created in.
- * @param {module:vanadium.UniqueId} id The id of the caveat with the problem.
+ * @param {module:vanadium.uniqueId.Id} id The id of the caveat with the
+ * problem.
  * @param {...*} params A list of parameters to include in the error message.
  * @augments module:vanadium.errors.VanadiumError
  */
@@ -217,7 +218,8 @@
  * @constructor
  * @param {module:vanadium.context.Context} ctx The context the error was
  * created in.
- * @param {module:vanadium.UniqueId} id The id of the caveat with the problem.
+ * @param {module:vanadium.uniqueId.Id} id The id of the caveat with the
+ * problem.
  * @param {module:vanadium.vdl.Type} got The type passed in
  * @param {module:vanadium.vdl.Type} want The type passed expected.
  * @param {...*} params A list of parameters to include in the error message.
@@ -230,7 +232,8 @@
  * @constructor
  * @param {module:vanadium.context.Context} ctx The context the error was
  * created in.
- * @param {module:vanadium.UniqueId} id The id of the caveat with the problem.
+ * @param {module:vanadium.uniqueId.Id} id The id of the caveat with the
+ * problem.
  * @param {module:vanadium.vdl.Type} got The type of the caveat data.
  * @param {...*} params A list of parameters to include in the error message.
  * @augments module:vanadium.errors.VanadiumError

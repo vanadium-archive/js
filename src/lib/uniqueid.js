@@ -12,9 +12,9 @@ var currentRandom;
 var currentSequence = 0;
 
 /**
- * Generate a new random uniqueid.Id.
- * @private
- * @return {Object} A new random uniqueid.Id.
+ * Generate a new random uniqueId.Id.
+ * @return {module:vanadium.uniqueId.Id} A new random uniqueId.Id.
+ * @memberof module:vanadium.uniqueId
  */
 function random() {
   var out = new vdl.Id();
@@ -37,9 +37,9 @@ function random() {
 
 /**
  * Returns true if the given uniqueid.Id is valid.
- * @private
- * @param {Object} A uniqueid.Id instance.
- * @return {bool} true if the given uniqueid.Id is valid.
+ * @param {module:vanadium.uniqueId.Id} A uniqueId.Id instance.
+ * @return {bool} true if the given uniqueId.Id is valid.
+ * @memberof module:vanadium.uniqueId
  */
 function valid(id) {
   id = typeutil.unwrap(id);
@@ -56,9 +56,9 @@ function valid(id) {
 
 /**
  * Returns a hexidecimal string representation of the given uniqueid.Id.
- * @private
- * @param {Object} id A uniqueid.Id instance.
+ * @param {module:vanadium.uniqueId.Id} id A uniqueId.Id instance.
  * @return {string} A hexidecimal string.
+ * @memberof module:vanadium.uniqueId
  */
 function toHexString(id) {
   return byteUtil.bytes2Hex(typeutil.unwrap(id));
@@ -66,9 +66,9 @@ function toHexString(id) {
 
 /**
  * Creates a uniqeid.Id instance from its hexidecimal string representation.
- * @private
  * @param {string} s A hexidecimal string.
- * @return {Object} A uniqueid.Id instance.
+ * @return {module:vanadium.uniqueId.Id} A uniqueId.Id instance.
+ * @memberof module:vanadium.uniqueId
  */
 function fromHexString(s) {
   return new vdl.Id(byteUtil.hex2Bytes(s));
@@ -78,5 +78,16 @@ module.exports = {
   random: random,
   valid: valid,
   toHexString: toHexString,
-  fromHexString: fromHexString
+  fromHexString: fromHexString,
+  /**
+   * An Id is a likely globally unique identifier.<br>
+   * Instances can be created by using helpers methods
+   * on {@link module:vanadium.uniqueId} such as
+   * [random()]{@link module:vanadium.uniqueId.random}
+   * @name Id
+   * @param {Uint8Array} bytes 16-byte array
+   * @constructor
+   * @memberof module:vanadium.uniqueId
+   */
+  Id: vdl
 };

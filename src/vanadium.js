@@ -36,7 +36,7 @@ module.exports = {
   vlog: require('./lib/vlog'),
 
   /**
-   * Namespace of exported naming concepts
+   * Namespace for naming related exports
    * @namespace
    */
   naming: require('./naming'),
@@ -53,7 +53,7 @@ module.exports = {
    */
   context: require('./runtime/context'),
   /**
-   * Nmespace for all VDL related exports
+   * Namespace for all VDL related exports
    * @namespace
    */
   vdl: require('./vdl'),
@@ -64,7 +64,11 @@ module.exports = {
    */
   vom: require('./vom'),
 
-  UniqueId: require('./gen-vdl/v.io/v23/uniqueid').Id,
+  /**
+   * Namespace for utilities related to creating unique ids.
+   * @namespace
+   */
+  uniqueId: require('./lib/uniqueid'),
 };
 
 if (isBrowser) {
