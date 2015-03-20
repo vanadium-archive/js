@@ -77,11 +77,12 @@ if (isBrowser) {
 }
 
 /**
- * Creates a Vanadium runtime.
+ * Creates a Vanadium [runtime]{@link Runtime}.
  * @param {Object} config Configuration options
  * @param {function} [cb] If provided, the callback that will be called with an
  * error or the new runtime
- * @return {Promise} A promise that resolves to the new Runtime
+ * @return {Promise.<Runtime>} A promise that resolves to the new Runtime
+ * @memberof module:vanadium
  */
 function init(config, cb) {
   if (typeof config === 'function') {

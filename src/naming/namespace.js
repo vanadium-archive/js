@@ -7,10 +7,9 @@ var inherits = require('util').inherits;
 module.exports = Namespace;
 
 /**
- * Namespace client stub to current runtime's Namespace.
- * Private constructor, use runtime.namespace() to create an instance.
- * @param {Client} client Client instance.
- * @param {module:vanadium.context.Context} rootCtx root Context.
+ * Namespace client to current runtime's Namespace.
+ * <p>This constructor should not be used directly, instead use
+ * [runtime.namespace]{@link Runtime#namespace}</p>
  * @constructor
  */
 function Namespace(client, rootCtx) {

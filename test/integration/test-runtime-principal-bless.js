@@ -151,7 +151,7 @@ function newBlessings(extension, callback) {
       return callback(err);
     }
 
-    runtime.newBlessings(extension, function(err, blessings) {
+    runtime._newBlessings(extension, function(err, blessings) {
       callback(err, blessings, runtime);
     });
   });
