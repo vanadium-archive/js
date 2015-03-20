@@ -13,7 +13,7 @@
  * created in.
  * @param {...*} params A list of parameters to include in the error message.
  * @memberof module:vanadium.errors
- * @augments module.vanadium.errors.VanadiumError
+ * @augments module:vanadium.errors.VanadiumError
  */
 /**
  * InternalError represent an internal error.  Like UnknownErrors more specific
@@ -24,7 +24,7 @@
  * created in.
  * @param {...*} params A list of parameters to include in the error message.
  * @memberof module:vanadium.errors
- * @augments module.vanadium.errors.VanadiumError
+ * @augments module:vanadium.errors.VanadiumError
  */
 /**
  * NotImplementedError means that the remote end does implement the method
@@ -35,7 +35,7 @@
  * @name NotImplementedError
  * @constructor
  * @memberof module:vanadium.errors
- * @augments module.vanadium.errors.VanadiumError
+ * @augments module:vanadium.errors.VanadiumError
  */
 /**
  * EndOfFileError means that the end of file has been reached.
@@ -45,7 +45,7 @@
  * @name EndOfFileError
  * @constructor
  * @memberof module:vanadium.errors
- * @augments module.vanadium.errors.VanadiumError
+ * @augments module:vanadium.errors.VanadiumError
  */
 /**
  * BadArgError means that the arguments to an operation are invalid.
@@ -55,7 +55,7 @@
  * @name BadArgError
  * @constructor
  * @memberof module:vanadium.errors
- * @augments module.vanadium.errors.VanadiumError
+ * @augments module:vanadium.errors.VanadiumError
  */
 /**
  * BadEtagError means that the etag presented by the client was out of date or
@@ -67,7 +67,7 @@
  * @name BadEtagError
  * @constructor
  * @memberof module:vanadium.errors
- * @augments module.vanadium.errors.VanadiumError
+ * @augments module:vanadium.errors.VanadiumError
  */
 /**
  * ExistError means that the requested item already exists; typically returned
@@ -78,7 +78,7 @@
  * @name ExistError
  * @constructor
  * @memberof module:vanadium.errors
- * @augments module.vanadium.errors.VanadiumError
+ * @augments module:vanadium.errors.VanadiumError
  */
 /**
  * NoExistError means that the requested item does not exist.
@@ -88,7 +88,7 @@
  * @name NoExistError
  * @constructor
  * @memberof module:vanadium.errors
- * @augments module.vanadium.errors.VanadiumError
+ * @augments module:vanadium.errors.VanadiumError
  */
 /**
  * NoExistOrNoAccessError means that the requested item does not exist or
@@ -100,7 +100,7 @@
  * @name NoExistOrNoAccessError
  * @constructor
  * @memberof module:vanadium.errors
- * @augments module.vanadium.errors.VanadiumError
+ * @augments module:vanadium.errors.VanadiumError
  */
 /**
  * NoServersError means that the servers returned for a given name are
@@ -111,7 +111,7 @@
  * @name NoServersError
  * @constructor
  * @memberof module:vanadium.errors
- * @augments module.vanadium.errors.VanadiumError
+ * @augments module:vanadium.errors.VanadiumError
  */
 /**
  * NotTrustedError means that the client does not trust the server.
@@ -121,7 +121,7 @@
  * @name NotTrustedError
  * @constructor
  * @memberof module:vanadium.errors
- * @augments module.vanadium.errors.VanadiumError
+ * @augments module:vanadium.errors.VanadiumError
  */
 /**
  * NoAccessError means that the server doesn't authorize the client.
@@ -131,7 +131,7 @@
  * @name NotAccessError
  * @constructor
  * @memberof module:vanadium.errors
- * @augments module.vanadium.errors.VanadiumError
+ * @augments module:vanadium.errors.VanadiumError
  */
 /**
  * NoServersAndAuth means that either there were no usable servers, the client
@@ -144,7 +144,7 @@
  * @name NoServersAndAuthError
  * @constructor
  * @memberof module:vanadium.errors
- * @augments module.vanadium.errors.VanadiumError
+ * @augments module:vanadium.errors.VanadiumError
  */
 /**
  * AbortedError means that the operation was aborted.
@@ -154,7 +154,7 @@
  * @name AbortedError
  * @constructor
  * @memberof module:vanadium.errors
- * @augments module.vanadium.errors.VanadiumError
+ * @augments module:vanadium.errors.VanadiumError
  */
 /**
  * BadProtocolError means the operation failed because of a protocol or codec
@@ -165,7 +165,7 @@
  * @name BadProtocolError
  * @constructor
  * @memberof module:vanadium.errors
- * @augments module.vanadium.errors.VanadiumError
+ * @augments module:vanadium.errors.VanadiumError
  */
 /**
  * CanceledError means the operation was not completed because it was
@@ -176,7 +176,7 @@
  * @name CanceledError
  * @constructor
  * @memberof module:vanadium.errors
- * @augments module.vanadium.errors.VanadiumError
+ * @augments module:vanadium.errors.VanadiumError
  */
 /**
  * TimeoutError means that the operation timed out.
@@ -186,5 +186,5 @@
  * @name TimeoutError
  * @constructor
  * @memberof module:vanadium.errors
- * @augments module.vanadium.errors.VanadiumError
+ * @augments module:vanadium.errors.VanadiumError
  */
