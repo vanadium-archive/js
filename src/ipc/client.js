@@ -284,9 +284,10 @@ OutstandingRPC.prototype.constructMessage = function() {
 };
 
 /**
- * Client for the vanadium service.
+ * Client for the vanadium service.  To create a client, use
+ * [Runtime#newClient]{@link Runtime#newClient}
+ *
  * @constructor
- * @param {Object} proxyConnection Vanadium proxy client
  */
 function Client(proxyConnection) {
   if (!(this instanceof Client)) {
@@ -306,10 +307,11 @@ var IncorrectArgCount = makeError(
   'arguments. Expected format: {5}({6})');
 
 /**
- * Performs client side binding of a remote service to a native JavaScript
- * stub object.
+ * <p>Performs client side binding of a remote service to a native JavaScript
+ * stub object.</p>
  *
  * Usage:
+ * <pre>
  * runtime.bindTo(context, 'Service/Name').then(function(service) {
  *    service.fooMethod(fooArgs).then(function(methodCallResult) {
  *      // Do stuff with results.
@@ -319,8 +321,8 @@ var IncorrectArgCount = makeError(
  * }).catch(function(err) {
  *     // Binding to Service/Name failed.
  * });
- *
- * @param {Context} A context.
+ * </pre>
+ * @param {module:vanadium.context.Context} ctx A context.
  * @param {string} name the vanadium name of the service to bind to.
  * @param {function} [cb] if given, this function will be called on
  * completion of the bind.  The first argument will be an error if there is
@@ -360,16 +362,18 @@ Client.prototype.bindTo = function(ctx, name, cb) {
 };
 
 /**
- * Performs client side binding of a remote service to a native JavaScript
- * stub object when you already have the service signature.
+ * <p>Performs client side binding of a remote service to a native JavaScript
+ * stub object when you already have the service signature.</p>
  *
  * Usage:
+ * <pre>
  * var service = runtime.bindWithSignature('Service/Name', signature);
  * service.fooMethod(fooArgs).then(function(methodCallResult) {
  *   // Do stuff with results.
  * }).catch(function(err) {
  *   // Calling fooMethod failed.
  * });
+ * </pre>
  *
  * @param {string} name the vanadium name of the service to bind to.
  * @param {Object} signature the service signature of a veryon service.
@@ -508,7 +512,7 @@ Client.prototype.bindWithSignature = function(name, signature) {
 
 /**
  * Returns the object signatures for a given object name.
- * @param {Context} A context.
+ * @param {module:vanadium.context.Context} ctx A context.
  * @param {string} name the vanadium name of the service to bind to.
  * @param {function} [cb] if given, this function will be called on
  * completion. The first argument will be an error if there is
@@ -549,7 +553,7 @@ Client.prototype.signature = function(ctx, name, cb) {
 
 /**
  * Returns the remote blessings of a server at the given name.
- * @param {Context} A context.
+ * @param {module:vanadium.context.Context} ctx A context.
  * @param {string} name the vanadium name of the service to get the remote
  * blessings of.
  * @param {string} [method] the name of the rpc method that will be started in

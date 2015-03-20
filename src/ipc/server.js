@@ -31,7 +31,8 @@ var nextServerID = 1; // The ID for the next server.
 // the constructor
 /**
  * Represents a vanadium server which allows registration of services that can
- * be invoked remotely via RPCs. This constructor should not be used directly.
+ * be invoked remotely via RPCs. This constructor should not be used directly,
+ * instead use [Runtime#newServer]{@Runtime#newServer}
  * @class
  */
 function Server(router) {
@@ -69,11 +70,11 @@ function Server(router) {
  * authorizer to authorize access to it.</p>
  *
  * <p>To serve names of the form "mymedia/*" make the calls:</p>
- * <code>
+ * <pre>
  * serve("mymedia", serviceObject, { // optional authorizer
  *   authorizer: serviceAuthorizer
  * });
- * </code>
+ * </pre>
  * <p>If name is an empty string, no attempt will made to publish that
  * name to a mount table. It is an error to call {@link Server#serve|serve}
  * if either {@link Server#serveDispatcher|serveDispatcher} or
@@ -162,9 +163,9 @@ Server.prototype.serve = function(name, serviceObject, options, cb) {
  *
  * <p>To serve names of the form "mymedia/*" make the calls: </p>
  *
- * <code>
+ * <pre>
  * serve("mymedia", dispatcher);
- * </code>
+ * </pre>
  *
  * <p>If name is an empty string, no attempt will made to publish that
  * name to a mount table. </p>

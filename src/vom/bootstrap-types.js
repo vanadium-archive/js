@@ -123,6 +123,7 @@ for (var key in bootstrapTypes) {
 
 /**
  * Type to ID finds the bootstrap id for a type.
+ * @private
  * @param {Type} type The type to search for.
  * @return {number} The bootstrap id or undefined if no boostrap type is found.
  */
@@ -132,6 +133,7 @@ function typeToId(type) {
 
 /**
  * ID to type looks up the boostrap type for a given ID.
+ * @private
  * @param {number} id The id of the boostrap type.
  * @return {Type} The bootstrap type or undefined if no boostrap type is found.
  */

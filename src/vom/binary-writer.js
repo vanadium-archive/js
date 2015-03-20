@@ -93,6 +93,7 @@ BinaryWriter.prototype.seekBack = function(pos) {
 
 /**
  * Computes the smallest power of 2 to make current exceed target.
+ * @private
  * @param {number} current, must be positive
  * @param {number} target
  * @return {number} smallest power of 2, where current * power >= target
