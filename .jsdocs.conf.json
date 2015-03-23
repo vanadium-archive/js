@@ -1,0 +1,6 @@
+{
+  "templates": {
+    "theme": "flatly",
+    "inverseNav" : true
+  }
+}
