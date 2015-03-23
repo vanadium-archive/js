@@ -4,10 +4,12 @@ var Kind = require('./kind.js');
 var Type = require('./type.js');
 require('./es6-shim');
 
-/*
- * The Registry singleton maps types to corresponding constructors.
+/**
+ * The Registry maps types to corresponding constructors.
  * These constructors convert a given value to a a vom-typed object.
- * There is no support for removing added constructors.
+ * There is no support for removing added constructors.<br>
+ *
+ * @constructor
  */
 function Registry() {
   this._builtinTypes = this._getBuiltinTypes();
@@ -57,7 +59,10 @@ Registry.prototype._lookupConstructor = function(type) {
   return null;
 };
 
-// Lookup a constructor or if it isn't found, create a new one and register it.
+/**
+ * Lookup a constructor or if it isn't found, create a new one and register it.
+ * @param {module:vanadium.vdl.Type} type Type
+ */
 Registry.prototype.lookupOrCreateConstructor = function(type) {
   if (!(type instanceof Type)) {
     type = new Type(type);

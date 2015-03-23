@@ -13,13 +13,24 @@ module.exports = {
   /**
    * Type registry that contains a mapping of vdl types
    * to constructors
+   * @property {Registry}
    * @memberof module:vanadium.vdl
    */
   Registry: require('./registry'),
   Type: require('./type'),
 };
 
+/**
+ * @namespace
+ * @name signature
+ * @memberof module:vanadium.vdl
+ */
 module.exports.signature = require('../gen-vdl/v.io/v23/vdlroot/signature');
+/**
+ * @namespace
+ * @name time
+ * @memberof module:vanadium.vdl
+ */
 module.exports.time = require('../gen-vdl/v.io/v23/vdlroot/time');
 
 require('./es6-shim.js'); // If necessary, adds ES6 Map, Set, etc.
