@@ -14,7 +14,7 @@
  * @memberof module:vanadium.naming
  */
 
- /**
+/**
  * MT means that the target server is a mount table.
  * @name MT
  * @constant

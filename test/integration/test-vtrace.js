@@ -1,6 +1,6 @@
 var test = require('prova');
 var service = require('./get-service');
-var vtrace = require('../../src/lib/vtrace');
+var vtrace = require('../../src/vtrace');
 var serve = require('./serve');
 var leafDispatcher = require('../../src/ipc/leaf-dispatcher');
 

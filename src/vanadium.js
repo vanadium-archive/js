@@ -25,7 +25,7 @@ var defaults = {
 module.exports = {
   init: init,
   /**
-   * Error namespace
+   * Error namespace.
    * @namespace
    */
   errors: require('./errors'),
@@ -35,36 +35,36 @@ module.exports = {
    */
   rpc: require('./ipc'),
   /**
-   * Namespace for vanadium logger
+   * Namespace for vanadium logger.
    * @namespace
    */
   vlog: require('./lib/vlog'),
 
   /**
-   * Namespace for naming related exports
+   * Namespace for naming related exports.
    * @namespace
    */
   naming: require('./naming'),
 
   /**
-   * Namespace of Vanadium security
+   * Namespace of Vanadium security.
    * @namespace
    */
   security: require('./security'),
 
   /**
-   * Namespace for context related objects
+   * Namespace for context related objects.
    * @namespace
    */
   context: require('./runtime/context'),
   /**
-   * Namespace for all VDL related exports
+   * Namespace for all VDL related exports.
    * @namespace
    */
   vdl: require('./vdl'),
 
   /**
-   * Namespace for vom related exports
+   * Namespace for vom related exports.
    * @namespace
    */
   vom: require('./vom'),
@@ -74,6 +74,12 @@ module.exports = {
    * @namespace
    */
   uniqueId: require('./lib/uniqueid'),
+
+  /**
+   * Namespace for vtrace related functions and types.
+   * @namespace
+   */
+  vtrace: require('./vtrace')
 };
 
 if (isBrowser) {

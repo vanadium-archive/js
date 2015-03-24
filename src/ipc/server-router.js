@@ -30,7 +30,7 @@ var ServerRpcReply =
 var CaveatValidationResponse =
   require('../gen-vdl/v.io/x/ref/services/wsprd/rpc/server').
   CaveatValidationResponse;
-var vtrace = require('../lib/vtrace');
+var vtrace = require('../vtrace');
 
 /**
  * A router that handles routing incoming requests to the right

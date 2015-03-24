@@ -6,7 +6,7 @@
 var context = require('../runtime/context');
 var SecurityCall = require('../security/call');
 var inherits = require('inherits');
-var vtrace = require('../lib/vtrace');
+var vtrace = require('../vtrace');
 
 module.exports = ServerCall;
 

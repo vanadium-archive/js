@@ -4,7 +4,7 @@
  * @private
  */
 
-var uniqueid = require('./uniqueid');
+var uniqueid = require('../lib/uniqueid');
 var context = require('../runtime/context');
 var vdl = require('../gen-vdl/v.io/v23/vtrace');
 
@@ -15,6 +15,19 @@ var second = 1000;
 var minute = 60 * second;
 var hour = 60 * minute;
 var indentStep = '    ';
+
+module.exports = {
+  withNewTrace: withNewTrace,
+  withContinuedTrace: withContinuedTrace,
+  withNewSpan: withNewSpan,
+  withNewStore: withNewStore,
+  getSpan: getSpan,
+  getStore: getStore,
+  forceCollect: forceCollect,
+  formatTraces: formatTraces,
+  request: request,
+  response: response
+};
 
 /**
  * Create a map key from a uniqueid.Id.
@@ -102,8 +115,9 @@ Node.prototype.record = function() {
 
 // TODO(mattr): Support filtering.  Right now this store records everything.
 /**
+ * Private constructor. Use {@link module:vanadium.vtrace.getStore} <br>
  * A vtrace Store.
- * A Store is responsable for saving traces for later reporting and analysis.
+ * A Store is responsible for saving traces for later reporting and analysis.
  * @constructor
  */
 function Store() {
@@ -129,7 +143,8 @@ Store.prototype._flags = function(id) {
 
 /**
  * Returns vtrace.TraceRecord instances for all traces recorded by the store.
- * @return {Array} An array of vtrace.TraceRecord instances.
+ * @return {Array<module:vanadium.vtrace.TraceRecord>} An array of
+ * vtrace.TraceRecord instances.
  */
 Store.prototype.traceRecords = function() {
   var out = [];
@@ -144,8 +159,8 @@ Store.prototype.traceRecords = function() {
 
 /**
  * Returns a vtrace.TraceRecord for the given trace id.
- * @param {Object} id A uniqueid.Id instance.
- * @return {Array} A vtrace.TraceRecord instance.
+ * @param {module:vanadium.uniqueId.Id} id A uniqueid.Id instance.
+ * @return {module:vanadium.vtrace.TraceRecord} a vtrace.TraceRecord instance.
  */
 Store.prototype.traceRecord = function(id) {
   var node = this._nodes[key(id)];
@@ -235,9 +250,9 @@ Store.prototype._now = function() {
 };
 
 /**
- * Merges a vtrace.Response into the store, adding information on the
+ * Merges a response into the store, adding information on the
  * Span in contains into the local database.
- * @param {Object} response A vtrace.Response instance.
+ * @param {Response} response A {@link Response} instance.
  */
 Store.prototype.merge = function(response) {
   if (!uniqueid.valid(response.trace.id)) {
@@ -259,87 +274,104 @@ Store.prototype.merge = function(response) {
  * Creates a new Span that represents the beginning of a new trace
  * and attaches it to a new context derived from ctx.  This should be used
  * when starting operations unrelated to other ongoing traces.
- * @param {Object} ctx A context.Context instance to derive a new context from.
- * @return {Object} A new context with a new Span attached.
+ * @param {module:vanadium.context.Context} ctx A context.Context instance
+ * to derive a new context from.
+ * @return {module:vanadium.context.Context} A new context with a new Span
+ * attached.
+ * @memberof module:vanadium.vtrace
  */
-module.exports.withNewTrace = function(ctx) {
+function withNewTrace(ctx) {
   return ctx.withValue(spanKey, new Span('', ctx.value(storeKey)));
-};
+}
 
 /**
  * Creates a new Span that continues a trace represented in request.
  * The new Span will be attached to the returned context.
- * @param {Object} ctx A context.Context instance to derive a new context from.
+ * @param {module:vanadium.context.Context} ctx A context.Context instance to
+ * derive a new context from.
  * @param {string} name The name of the new Span.
- * @param {Object} request A vtrace.Request instance.
- * @return {Object} A new context with a new Span attached.
+ * @param {Request} request A [Request] instance.
+ * @return {module:vanadium.context.Context} A new context with a new Span
+ * attached.
+ * @memberof module:vanadium.vtrace
  */
-module.exports.withContinuedTrace = function(ctx, name, request) {
+function withContinuedTrace(ctx, name, request) {
   var store = ctx.value(storeKey);
   if (request.flags & vdl.CollectInMemory !== 0) {
     store._getNode(request.traceId, true);
   }
   var span = new Span(name, store, request.traceId, request.spanId);
   return ctx.withValue(spanKey, span);
-};
+}
 
 /**
  * Creates a new Span that continues the trace attached to ctx.
- * @param {Object} ctx A context.Context instance to derive a new context from.
- * @return {Object} A new context with a new Span attached.
+ * @param {module:vanadium.context.Context} ctx A context.Context instance to
+ * derive a new context from.
+ * @param {string} name The name of the new Span.
+ * @return {module:vanadium.context.Context} A new context with a new Span
+ * attached.
+ * @memberof module:vanadium.vtrace
  */
-module.exports.withNewSpan = function(ctx, name) {
+function withNewSpan(ctx, name) {
   var oldSpan = ctx.value(spanKey);
   var oldStore = ctx.value(storeKey);
   var span = new Span(name, oldStore, oldSpan.trace, oldSpan.id);
   return ctx.withValue(spanKey, span);
-};
+}
 
 /**
  * Return the Span attached to ctx.
- * @param {Object} ctx A context.Context instance.
- * @return {Object} A Span instance.
+ * @param {module:vanadium.context.Context} ctx A context.Context instance.
+ * @return {module:vanadium.vtrace.SpanRecord} A Span instance.
+ * @memberof module:vanadium.vtrace
  */
-module.exports.getSpan = function(ctx) {
+function getSpan(ctx) {
   return ctx.value(spanKey);
-};
+}
 
 /**
  * Creates a new Store and returns a new context derived from ctx with the
  * store attached.
- * @param {Object} ctx A context.Context instance to derive a new context from.
- * @return {Object} A new context with a new Store attached.
+ * @param {module:vanadium.context.Context} ctx A context.Context instance to
+ * derive a new context from.
+ * @return {module:vanadium.context.Context} A new context with a new Store
+ * attached.
+ * @memberof module:vanadium.vtrace
  */
-module.exports.withNewStore = function(ctx) {
+function withNewStore(ctx) {
   var store = new Store();
   return ctx.withValue(storeKey, store);
-};
+}
 
 /**
  * Return the Store attached to ctx.
- * @param {Object} ctx A context.Context instance.
- * @return {Object} A Store instance.
+ * @param {module:vanadium.context.Context} ctx A context.Context instance.
+ * @return {Store} A {@link Store} instance.
+ * @memberof module:vanadium.vtrace
  */
-module.exports.getStore = function(ctx) {
+function getStore(ctx) {
   return ctx.value(storeKey);
-};
+}
 
 /**
  * Force collection of the current trace.
- * @param {Object} ctx A context.Context instance.
+ * @param {module:vanadium.context.Context} ctx A context.Context instance.
+ * @memberof module:vanadium.vtrace
  */
-module.exports.forceCollect = function(ctx) {
+function forceCollect(ctx) {
   var store = ctx.value(storeKey);
   var span = ctx.value(spanKey);
   store._getNode(span.trace, true);
-};
+}
 
 /**
- * Generate a vtrace.Request to send over the wire.
- * @param {Object} ctx A context.Context instance.
- * @return {Object} a vtrace.Request instance.
+ * Generate a {@link Request} to send over the wire.
+ * @param {module:vanadium.context.Context} ctx A context.Context instance.
+ * @return {Request} a {@link Request} instance.
+ * @memberof module:vanadium.vtrace
  */
-module.exports.request = function(ctx) {
+function request(ctx) {
   var store = ctx.value(storeKey);
   var span = ctx.value(spanKey);
   return vdl.Request({
@@ -347,21 +379,22 @@ module.exports.request = function(ctx) {
     traceId: span.trace,
     flags: store._flags(span.trace)
   });
-};
+}
 
 /**
- * Generate a vtrace.Response to send over the wire.
- * @param {Object} ctx A context.Context instance.
- * @return {Object} a vtrace.Response instance.
+ * Generate a {@link Response} to send over the wire.
+ * @param {module:vanadium.context.Context} ctx A context.Context instance.
+ * @return {Response} a {@link Response} response instance.
+ * @memberof module:vanadium.vtrace
  */
-module.exports.response = function(ctx) {
+function response(ctx) {
   var store = ctx.value(storeKey);
   var span = ctx.value(spanKey);
   return vdl.Response({
     flags: store._flags(span.trace),
     trace: store.traceRecord(span.trace)
   });
-};
+}
 
 // Returns true if the given date is the zero date, by the definition of VDL.
 function isZeroDate(d) {
@@ -536,10 +569,11 @@ function formatTrace(record) {
 
 /**
  * Return a string representation of a trace (or array of traces).
- * @param {Array} traces An array of TraceRecord.
+ * @param {Array<module:vanadium.vtrace.TraceRecord>} traces Trace records.
  * @return {string} a human friendly string representation of the trace.
+ * @memberof module:vanadium.vtrace
  */
-module.exports.formatTraces = function(traces) {
+function formatTraces(traces) {
   if (!Array.isArray(traces)) {
     traces = [traces];
   }
@@ -551,4 +585,4 @@ module.exports.formatTraces = function(traces) {
     out += formatTrace(traces[r]);
   }
   return out;
-};
+}

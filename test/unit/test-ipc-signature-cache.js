@@ -12,7 +12,7 @@ var Client = require('../../src/ipc/client.js');
 var byteUtil = require('../../src/vdl/byte-util');
 var vom = require('../../src/vom');
 var app = require('../../src/gen-vdl/v.io/x/ref/services/wsprd/app');
-var vtrace = require('../../src/lib/vtrace');
+var vtrace = require('../../src/vtrace');
 var vdlsig = require('../../src/gen-vdl/v.io/v23/vdlroot/signature');
 
 var freshSig = [ new vdlsig.Interface({ doc: 'fresh signature' }) ];

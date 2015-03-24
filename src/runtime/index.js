@@ -16,7 +16,7 @@ var Deferred = require('../lib/deferred');
 var vlog = require('../lib/vlog');
 var context = require('./context');
 var SharedContextKeys = require('./shared-context-keys');
-var vtrace = require('../lib/vtrace');
+var vtrace = require('../vtrace');
 var Controller =
   require('../gen-vdl/v.io/x/ref/services/wsprd/app').Controller;
 

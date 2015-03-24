@@ -34,7 +34,7 @@ var vdl = require('../vdl');
 var verror = require('../gen-vdl/v.io/v23/verror');
 var vlog = require('../lib/vlog');
 var vom = require('../vom');
-var vtrace = require('../lib/vtrace');
+var vtrace = require('../vtrace');
 
 var OutstandingRPC = function(ctx, options, cb) {
   this._ctx = ctx;
