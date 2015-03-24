@@ -23,12 +23,17 @@ var defaults = {
  * @module vanadium
  */
 module.exports = {
+  init: init,
   /**
    * Error namespace
    * @namespace
    */
   errors: require('./errors'),
-  init: init,
+  /**
+   * Namespace for rpc related exports
+   * @namespace
+   */
+  rpc: require('./ipc'),
   /**
    * Namespace for vanadium logger
    * @namespace
