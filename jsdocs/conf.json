@@ -1,6 +1,7 @@
 {
   "templates": {
     "theme": "flatly",
-    "inverseNav" : true
+    "inverseNav" : true,
+    "footer" : false
   }
 }
