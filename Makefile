@@ -212,7 +212,7 @@ clean:
 	$(MAKE) -C extension clean
 
 docs: $(JS_SRC_FILES) | node_modules
-	jsdoc $^ --configure ./.jsdocs.conf.json  --template node_modules/ink-docstrap/template --destination $@
+	jsdoc $^ --readme ./jsdocs/index.md --configure ./jsdocs/conf.json  --template node_modules/ink-docstrap/template --destination $@
 
 # staging-docs
 #
