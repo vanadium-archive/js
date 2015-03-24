@@ -2,6 +2,8 @@
  * @fileoverview Handles auth requests to Nacl.
  */
 
+var _ = require('lodash');
+
 var getOrigin = require('./util').getOrigin;
 var random = require('../../../src/lib/random');
 
@@ -227,6 +229,10 @@ AuthHandler.prototype.handleFinishAuth = function(caveatsPort, msg) {
         account: webappPort.account
       });
     });
+};
+
+AuthHandler.prototype.getAllPorts = function() {
+  return _.values(this._ports);
 };
 
 // Convert an Error object into a bare Object with the same properties.  We do

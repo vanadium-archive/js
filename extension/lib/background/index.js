@@ -258,6 +258,8 @@ BackgroundPage.prototype.getAllPorts = function() {
   _.forEach(this.ports, function(portArray) {
     ports = ports.concat(portArray);
   });
+  // Add ports in use by the auth handler.
+  ports = ports.concat(this.authHandler.getAllPorts());
   // Sort the ports array so that _.uniq can use a faster search algorithm.
   ports = _.sortBy(ports);
   // The second argument to _.uniq is whether the array is sorted.
