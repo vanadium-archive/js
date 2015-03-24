@@ -11,6 +11,11 @@ var vdl = require('../gen-vdl/v.io/v23/vtrace');
 var spanKey = context.ContextKey();
 var storeKey = context.ContextKey();
 
+var second = 1000;
+var minute = 60 * second;
+var hour = 60 * minute;
+var indentStep = '    ';
+
 /**
  * Create a map key from a uniqueid.Id.
  * @private
@@ -47,7 +52,7 @@ function Span(name, store, trace, parent) {
 
   if (trace === undefined && parent === undefined) {
     parent = uniqueid.random();
-    trace = uniqueid.random();
+    trace = parent;
   }
   Object.defineProperty(this, 'parent', {
     writable: false,
@@ -196,7 +201,7 @@ Store.prototype._start = function(span) {
     return re && re.test(span.name);
   });
   if (record) {
-    record.start = new Date();
+    record.start = store._now();
   }
 };
 
@@ -207,7 +212,7 @@ Store.prototype._finish = function(span) {
     return re && re.test(span.name);
   });
   if (record) {
-    record.end = new Date();
+    record.end = store._now();
   }
 };
 
@@ -219,10 +224,14 @@ Store.prototype._annotate = function(span, msg) {
   });
   if (record) {
     var annotation = new vdl.Annotation();
-    annotation.when = new Date();
+    annotation.when = store._now();
     annotation.message = msg;
     record.annotations.push(annotation);
   }
+};
+
+Store.prototype._now = function() {
+  return new Date();
 };
 
 /**
@@ -352,4 +361,194 @@ module.exports.response = function(ctx) {
     flags: store._flags(span.trace),
     trace: store.traceRecord(span.trace)
   });
+};
+
+// Returns true if the given date is the zero date, by the definition of VDL.
+function isZeroDate(d) {
+  return d.getTime() === 0;
+}
+
+function Tree(span) {
+  this._span = span;
+  this._children = [];
+}
+
+function buildTree(record) {
+  var t;
+  var tid;
+  var root;
+  var earliest = new Date(0);
+  var traceKey = key(record.id);
+
+  var trees = {};
+  record.spans.forEach(function(span) {
+    // We want to find the lowest valid (non-zero) timestamp in the trace.
+    // If we have a non-zero timestamp, save it if it's the earliest (or
+    // this is the first valid timestamp we've seen).
+    if (!isZeroDate(span.start)) {
+      if (isZeroDate(earliest) || span.start < earliest) {
+        earliest = span.start;
+      }
+    }
+    tid = key(span.id);
+    t = trees[tid];
+    if (!t) {
+      t = new Tree(span);
+      trees[tid] = t;
+    }
+
+    var parentKey = key(span.parent);
+    if (parentKey === traceKey) {
+      root = t;
+    } else {
+      var parent = trees[parentKey];
+      if (!parent) {
+        parent = new Tree();
+        trees[parentKey] = parent;
+      }
+      parent._children.push(t);
+    }
+  });
+
+  // Sort the children of each node in start time order, and the
+  // annotations in time order.
+  for (tid in trees) {
+    if (!trees.hasOwnProperty(tid)) {
+      continue;
+    }
+    t = trees[tid];
+    t._children.sort(function(a, b) {
+      return a.start - b.start;
+    });
+    if (t._span && t._span.annotations) {
+      t._span.annotations.sort(function(a, b) {
+        return a.when - b.when;
+      });
+    }
+  }
+
+  // If we didn't find the root of the trace, create a stand-in.
+  if (!root) {
+    root = new Tree(new vdl.SpanRecord({
+      name: 'Missing Root Span',
+      start: earliest
+    }));
+  }
+
+  // Find all nodes that have no span.  These represent missing data
+  // in the tree.  We invent fake "missing" spans to represent
+  // (perhaps several) layers of missing spans.  Then we add these as
+  // children of the root.
+  var missing = [];
+  for (tid in trees) {
+    if (!trees.hasOwnProperty(tid)) {
+      continue;
+    }
+    t = trees[tid];
+    if (!t._span) {
+      t._span = new vdl.SpanRecord({
+        name: 'Missing Data'
+      });
+      missing.push(t);
+    }
+  }
+  root._children = root._children.concat(missing);
+  root._children.sort(function(a, b) {
+    return a.start - b.start;
+  });
+  return root;
+}
+
+function formatDelta(when, start) {
+  if (isZeroDate(when)) {
+    return '??';
+  }
+  var out = '';
+  var delta = when - start;
+  if (delta === 0) {
+    return '0s';
+  }
+  if (delta < second) {
+    return delta + 'ms';
+  }
+  if (delta > hour) {
+    var hours = Math.floor(delta / hour);
+    delta -= hours * hour;
+    out += hours + 'h';
+  }
+  if (delta > minute) {
+    var minutes = Math.floor(delta / minute);
+    delta -= minutes * minute;
+    out += minutes + 'm';
+  }
+  out += (delta / 1000) + 's';
+  return out;
+}
+
+
+function formatTime(when) {
+  if (isZeroDate(when)) {
+    return '??';
+  }
+  return when.toISOString();
+}
+
+function formatAnnotations(annotations, traceStart, indent) {
+  var out = '';
+  for (var a = 0; a < annotations.length; a++) {
+    var annotation = annotations[a];
+    out += indent + '@' + formatDelta(annotation.when, traceStart);
+    out += ' ' + annotation.message + '\n';
+  }
+  return out;
+}
+
+function formatTree(tree, traceStart, indent) {
+  var span = tree._span;
+  var out = indent + 'Span - ' + span.name;
+  out += ' [id: ' + key(span.id).slice(24);
+  out += ' parent: ' + key(span.parent).slice(24) + ']';
+  out += ' (' + formatDelta(span.start, traceStart);
+  out += ', ' + formatDelta(span.end, traceStart) + ')\n';
+
+  indent += indentStep;
+  out += formatAnnotations(span.annotations, traceStart, indent);
+  for (var c = 0; c < tree._children.length; c++) {
+    out += formatTree(tree._children[c], traceStart, indent);
+  }
+  return out;
+}
+
+function formatTrace(record) {
+  var root = buildTree(record);
+  if (!root) {
+    return null;
+  }
+  var span = root._span;
+  var out = 'Trace - ' + key(record.id);
+  out += ' (' + formatTime(span.start) + ', ' + formatTime(span.end) + ')\n';
+  out += formatAnnotations(span.annotations, span.start, indentStep);
+  for (var c = 0; c < root._children.length; c++) {
+    out += formatTree(root._children[c], span.start, indentStep);
+  }
+  return out;
+}
+
+/**
+ * Return a string representation of a trace (or array of traces).
+ * @param {Array} traces An array of TraceRecord.
+ * @return {string} a human friendly string representation of the trace.
+ */
+module.exports.formatTraces = function(traces) {
+  if (!Array.isArray(traces)) {
+    traces = [traces];
+  }
+  if (traces.length === 0) {
+    return '';
+  }
+  var out = 'Vtrace traces:\n';
+  for (var r = 0; r < traces.length; r++) {
+    out += formatTrace(traces[r]);
+  }
+  return out;
 };

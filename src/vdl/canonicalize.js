@@ -255,7 +255,7 @@ function canonicalizeInternal(deepWrap, v, inType, t, seen, outValue) {
     // The deepWrap flag affects whether the zero value needs internal wrapping.
     // Without it, the zero value is correct.
     if (!deepWrap) {
-      return zero;
+      return TypeUtil.unwrap(canonicalize(zero, inType, t, false, seen, false));
     }
 
     // Otherwise, canonicalize but remove the top-level wrapping.
