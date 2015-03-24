@@ -228,6 +228,28 @@ module.exports.publicKeyThirdPartyCaveat = (vdl.Registry.lookupOrCreateConstruct
   'paramType': _typepublicKeyThirdPartyCaveat,
 }, true), _typeCaveatDescriptor);
 
+  module.exports.PeerBlessingsCaveat = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeCaveatDescriptor))({
+  'id': new Uint8Array([
+5,
+119,
+248,
+86,
+76,
+142,
+95,
+254,
+255,
+142,
+43,
+31,
+77,
+109,
+128,
+0,
+]),
+  'paramType': _type4,
+}, true), _typeCaveatDescriptor);
+
   module.exports.NoExtension = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeBlessingPattern))("$", true), _typeBlessingPattern);
 
   module.exports.AllPrincipals = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeBlessingPattern))("...", true), _typeBlessingPattern);
@@ -313,10 +335,18 @@ module.exports.MethodCaveatValidationError = makeError('v.io/v23/security.Method
 ]);
 
 
-module.exports.UntrustedRootError = makeError('v.io/v23/security.UntrustedRoot', actions.NO_RETRY, {
-  'en': '{1:}{2:} {3}: root not trusted',
+module.exports.PeerBlessingsCaveatValidationError = makeError('v.io/v23/security.PeerBlessingsCaveatValidation', actions.NO_RETRY, {
+  'en': '{1:}{2:} patterns in peer blessings caveat {4} not matched by the peer {3}',
 }, [
-  vdl.Types.STRING,
+  _type3,
+  _type4,
+]);
+
+
+module.exports.UnrecognizedRootError = makeError('v.io/v23/security.UnrecognizedRoot', actions.NO_RETRY, {
+  'en': '{1:}{2:} unrecognized root certificate{:3}',
+}, [
+  vdl.Types.ERROR,
 ]);
 
 

@@ -21,6 +21,8 @@
  * @memberof module:vanadium.security
  */
 /**
+ * AccessList represents an Access Control List - a set of blessings that
+ * should be granted access.
  * @name AccessList
  * @constructor
  * @param {object} acl The value to construct from
@@ -44,8 +46,6 @@
  * 'alice/friend/carol', etc, but NOT to a principal that presents
  * 'alice/friend/bob or 'alice/friend/bob/spouse' etc.
  * @memberof module:vanadium.security
- * AccessList represents an Access Control List - a set of blessings that
- * should be granted access.
  */
 /**
  * Permissions maps string tags to [AccessList]
@@ -188,6 +188,16 @@
  * @memberof module:vanadium.security
  */
 /**
+ * PeerBlessingsCaveat represents a caveat that validates iff the peer being
+ * communicated with (local end of the call) has a blessing name matching at
+ * least one of the patterns in the list. An empty list implies that the caveat
+ * is invalid.
+ * @name PeerBlessingsCaveat
+ * @type module:vanadium.security.CaveatDescriptor
+ * @const
+ * @memberof module:vanadium.security
+ */
+/**
  * An error that means that no caveat has been registered
  * @name CaveatNotRegisteredError
  * @memberof module:vanadium.security
@@ -277,6 +287,20 @@
  * An error that means that the [MethodCaveat]
  * {@link module:vanadium.security.MethodCaveatX} failed to validate.
  * @name MethodCaveatValidationError
+ * @memberof module:vanadium.security
+ * @constructor
+ * @param {module:vanadium.context.Context} ctx The context the error was
+ * created in.
+ * @param {string} method The method that was being invoked.
+ * @param {array<string>} validMethods The methods that are allowed by
+ * the caveat.
+ * @param {...*} params A list of parameters to include in the error message.
+ * @augments module:vanadium.errors.VanadiumError
+ */
+/**
+ * An error that means that the [PeerBlessingsCaveat]
+ * {@link module:vanadium.security.PeerBlessingsCaveat} failed to validate.
+ * @name PeerBlessingsCaveatValidationError
  * @memberof module:vanadium.security
  * @constructor
  * @param {module:vanadium.context.Context} ctx The context the error was
