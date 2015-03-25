@@ -17,7 +17,7 @@ var vlog = require('./lib/vlog');
 var defaults = {
   appName: 'untitled webapp',
   authenticate: isBrowser,
-  logLevel: vlog.level,
+  logLevel: vlog.levels.ERROR,
   wspr: process.env.WSPR || (isBrowser ? null : 'http://localhost:8124')
 };
 
