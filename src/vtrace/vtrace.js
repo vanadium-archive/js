@@ -396,9 +396,10 @@ function response(ctx) {
   });
 }
 
+var zeroMs = Date.parse('0001-01-01');
 // Returns true if the given date is the zero date, by the definition of VDL.
 function isZeroDate(d) {
-  return d.getTime() === 0;
+  return d.getTime() === zeroMs;
 }
 
 function Tree(span) {
@@ -410,7 +411,7 @@ function buildTree(record) {
   var t;
   var tid;
   var root;
-  var earliest = new Date(0);
+  var earliest = new Date(zeroMs);
   var traceKey = key(record.id);
 
   var trees = {};
@@ -466,6 +467,8 @@ function buildTree(record) {
       name: 'Missing Root Span',
       start: earliest
     }));
+  } else if (isZeroDate(root._span.start)) {
+    root._span.start = earliest;
   }
 
   // Find all nodes that have no span.  These represent missing data
@@ -499,7 +502,11 @@ function formatDelta(when, start) {
   var out = '';
   var delta = when - start;
   if (delta === 0) {
-    return '0s';
+    return '0';
+  }
+  if (delta < 0) {
+    out += '-';
+    delta = -delta;
   }
   if (delta < second) {
     return delta + 'ms';
