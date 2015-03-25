@@ -5,10 +5,15 @@
 var registry = require('../vdl/native-type-registry');
 var vdl = require('../vdl');
 var Time = require('../gen-vdl/v.io/v23/vdlroot/time').Time;
+var typeutil = require('../vdl/type-util');
 
 var timeType = Time.prototype._type;
 registry.registerFromNativeValue(Date, toDateWireValue, timeType);
 registry.registerFromWireValue(timeType, fromDateWireValue);
+
+// The javascript epoch is 1970, but in VDL it's the year 1.
+var nativeEpochConversion = Math.floor(Date.parse('0001-01-01')/1000);
+var epochConversion = vdl.BigInt.fromNativeNumber(nativeEpochConversion);
 
 function fromDateWireValue(v) {
   v = v || {};
@@ -17,20 +22,21 @@ function fromDateWireValue(v) {
   }
   var seconds;
   if (v.seconds) {
-    if (v.seconds instanceof vdl.BigInt) {
+    var unwrapped = typeutil.unwrap(v.seconds);
+    if (unwrapped instanceof vdl.BigInt) {
       // TODO(bprosnitz) We should always have big int once we canonicalize
       // before calling this.
-      seconds = v.seconds.toNativeNumberApprox();
+      seconds = unwrapped.add(epochConversion).toNativeNumberApprox();
     } else {
-      seconds = v.seconds;
+      seconds = unwrapped + nativeEpochConversion;
     }
   } else {
-    seconds = new vdl.BigInt(0, new Uint8Array());
+    seconds = nativeEpochConversion;
   }
   // TODO(bprosnitz) Remove the undefined cases because they
   // shouldn't be required after canonicalized is changed to canonicalized the
   // input before passing to this function.
-  var nanos = v.nanos || 0;
+  var nanos = typeutil.unwrap(v.nanos) || 0;
   var epochInMillis = seconds * 1000 +
     nanos / 1000000;
 
@@ -40,9 +46,8 @@ function fromDateWireValue(v) {
 
 function toDateWireValue(v) {
   var time = v.getTime();
-  var seconds = Math.floor(time / 1000);
-  var nanos = Math.floor((time - seconds * 1000) * 1000000);
-  var f = new Time({ seconds: vdl.BigInt.fromNativeNumber(seconds),
-                         nanos: nanos}, true);
-  return f;
+  var jssecs = Math.floor(time / 1000);
+  var nanos = (time - jssecs * 1000) * 1000000;
+  var vdlsecs = vdl.BigInt.fromNativeNumber(jssecs).subtract(epochConversion);
+  return new Time({seconds: vdlsecs, nanos: nanos}, true);
 }

@@ -90,10 +90,12 @@ test('Expiry caveat is validated correctly using native Date',
 
 function toDateWireType(v) {
   var time = v.getTime();
-  var seconds = Math.floor(time / 1000);
-  var nanos = Math.floor((time - seconds * 1000) * 1000000);
-  var f = new Time({ seconds: vdl.BigInt.fromNativeNumber(seconds),
-                         nano: nanos}, true);
+  var seconds = vdl.BigInt.fromNativeNumber(Math.floor(time / 1000));
+  // Convert epochs.
+  seconds = seconds.subtract(vdl.BigInt.fromNativeNumber(
+    Math.floor(Date.parse('0001-01-01')/1000)));
+  var nanos = (time % 1000) * 1000000;
+  var f = new Time({ seconds: seconds, nano: nanos}, true);
   return f;
 }
 

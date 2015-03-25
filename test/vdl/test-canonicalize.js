@@ -1609,9 +1609,10 @@ test('canonicalize error', function(t) {
 
 test('canonicalize time', function(t) {
   var d = new Date(1999,11,30,23,59,59);
+  var conv = Date.parse('0001-01-01') / 1000;
   var millis = d.getTime();
   var timeStruct = new Time({
-    seconds: millis / 1000,
+    seconds: millis / 1000 - conv,
     nanos: 0,
   }, true);
 

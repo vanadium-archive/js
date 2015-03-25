@@ -11,6 +11,8 @@ var ByteArrayMessageReader = require(
 var Encoder = require('./../../src/vom/encoder');
 var Decoder = require('./../../src/vom/decoder');
 var Time = require('../../src/gen-vdl/v.io/v23/vdlroot/time').Time;
+var vdl = require('../../src/vdl');
+var registry = require('../../src/vdl/native-type-registry');
 require('../../src/vom/native-types'); // Register native types.
 
 var expectedDate = new Date(1999, 9, 9, 9, 9, 999);
@@ -28,7 +30,7 @@ function encodeDecodeDate(encodeType) {
 }
 
 // TODO(bprosnitz) Implement native type guessing and enable this test.
-test('test encoding and decoding javascript date without type',
+test('date - test encoding and decoding without type',
   function(t) {
   var result = encodeDecodeDate();
   t.ok(result instanceof Date, 'Decoded date should be a date object');
@@ -37,11 +39,44 @@ test('test encoding and decoding javascript date without type',
   t.end();
 });
 
-test('test encoding and decoding javascript date with type',
+test('date - test encoding and decoding with type',
   function(t) {
   var result = encodeDecodeDate(Time.prototype._type);
   t.ok(result instanceof Date, 'Decoded date should be a date object');
   t.equal(result.getTime(), expectedDate.getTime(),
     'Should decode to the expected date');
+  t.end();
+});
+
+test('date - test fromWireValue', function(t) {
+  var tests = [
+    {expected: '0001-01-01'},
+    {seconds: 0, nanos: 0, expected: '0001-01-01'},
+    {nanos: 0, expected: '0001-01-01'},
+    {seconds: 0, expected: '0001-01-01'},
+    {seconds: vdl.BigInt.fromNativeNumber(0), nanos: 0, expected: '0001-01-01'},
+    {nanos: 123000000, expected: '0001-01-01T00:00:00.123Z'},
+    {seconds: 10, nanos: 345000000, expected: '0001-01-01T00:00:10.345Z'}
+  ];
+  tests.forEach(function(test) {
+    var date = registry.fromWireValue(
+      Time.prototype._type, test);
+    t.equal(date.getTime(), Date.parse(test.expected), test.expected);
+  });
+  t.end();
+});
+
+test('date - test toWireValue', function(t) {
+  var tests = [
+    {seconds: 0, nanos: 0, date: '0001-01-01'},
+    {seconds: 0, nanos: 123000000, date: '0001-01-01T00:00:00.123Z'},
+    {seconds: 10, nanos: 345000000, date: '0001-01-01T00:00:10.345Z'},
+    {seconds: 62135596800, nanos: 0, date: '1970-01-01'}
+  ];
+  tests.forEach(function(test) {
+    var time = registry.fromNativeValue(new Date(test.date));
+    t.equal(time.seconds.val.toNativeNumberApprox(), test.seconds, test.date);
+    t.equal(time.nanos.val, test.nanos, test.date);
+  });
   t.end();
 });
