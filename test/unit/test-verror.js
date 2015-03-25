@@ -14,7 +14,7 @@ errors.forEach(function(name) {
 
     assert.ok(Ctor(new Context()) instanceof Ctor, 'should not require "new"'); // jshint ignore:line
     assert.ok(err instanceof Ctor, 'should be instanceof ' + name);
-    assert.ok(err instanceof VanadiumError, 'should be instanceof VeyronError');
+    assert.ok(err instanceof VanadiumError, 'should be instanceof VanadiumError'); // jshint ignore:line
     assert.ok(err instanceof Error, 'should be instanceof Error');
     assert.ok(err.stack, 'should have err.stack');
     assert.end();
