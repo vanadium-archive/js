@@ -1,3 +1,7 @@
+// Copyright 2015 The Vanadium Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file.
+
 var createConstructor = require('./create-constructor.js');
 var typeObjectFromKind = require('./type-object-from-kind.js');
 var Kind = require('./kind.js');

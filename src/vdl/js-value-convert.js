@@ -1,3 +1,7 @@
+// Copyright 2015 The Vanadium Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file.
+
 /**
  * @fileoverview Converts native JavaScript values to and from JSValue
  * The outputted JSValues are not necessarily canonical, nor in the same form.

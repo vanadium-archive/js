@@ -1,3 +1,7 @@
+// Copyright 2015 The Vanadium Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file.
+
 var test = require('prova');
 var names = require('../../src/naming/util');
 var ep = '@4@tcp@127.0.0.1:22@@@@s@dev.v.io/blessing,v.io/blessing/b2@@';

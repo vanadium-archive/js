@@ -1,3 +1,7 @@
+// Copyright 2015 The Vanadium Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file.
+
 var vdl = require('../gen-vdl/v.io/x/ref/services/wsprd/namespace');
 var time = require('../gen-vdl/v.io/v23/vdlroot/time');
 var emitStreamError = require('../lib/emit-stream-error');

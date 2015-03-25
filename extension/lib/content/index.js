@@ -1,3 +1,7 @@
+// Copyright 2015 The Vanadium Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file.
+
 var debug = require('debug')('content-script:index');
 var random = require('../../../src/lib/random');
 var pageEventProxy = require('./event-proxy');

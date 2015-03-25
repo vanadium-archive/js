@@ -1,3 +1,7 @@
+// Copyright 2015 The Vanadium Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file.
+
 // This file defines a async calling convention intended to be used by
 // authorization and validation calls.
 // The semantics with respect to non-thenable return values differ from
