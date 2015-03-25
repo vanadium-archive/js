@@ -18,7 +18,6 @@
   "permissions": [
     "<all_urls>",
     "identity",
-    "storage",
     "unlimitedStorage"
   ],
   "web_accessible_resources": [

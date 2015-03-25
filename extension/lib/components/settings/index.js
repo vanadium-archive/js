@@ -9,7 +9,6 @@ var h = mercury.h;
 var xtend = require('xtend');
 
 var setting = require('./setting');
-var storage = require('../../storage');
 
 // Temporary method of dealing with CSS
 var fs = require('fs');
@@ -55,29 +54,22 @@ function render(settings) {
   ]);
 }
 
-function create(settingsObj) {
+function create() {
   debug('initializing');
 
-  settingsObj = settingsObj || defaults;
+  var settingsObj = defaults;
 
   var state = mercury.varhash({});
 
   if (process.env.EXTENSION_SETTINGS) {
-    // Load the settings from the environment variable, and don't sync with
-    // storage.
+    // Load the settings from the environment variable.
     var envSettings;
     try {
       envSettings = JSON.parse(process.env.EXTENSION_SETTINGS);
     } catch(e) {
-      throw new Error('Could not parse settings from environment:', e);
+      throw new Error('Could not parse settings from environment: ', e);
     }
     settingsObj = xtend(settingsObj, envSettings);
-  } else {
-    // Async load settings from storage.
-    loadFromStorage(state);
-
-    // Store any changes in storage.
-    state(sendToStorage);
   }
 
   hydrateState(state, settingsObj);
@@ -91,34 +83,6 @@ function create(settingsObj) {
 function hydrateState(state, obj) {
   _.forEach(obj, function(value, key) {
     state.put(key, setting(key, value, defaults[key]).state);
-  });
-}
-
-// Turn the state varhash into a bare object.
-function dehydrateState(state) {
-  var obj = {};
-  _.forEach(state, function(value, key) {
-    obj[key] = value.value;
-  });
-  return obj;
-}
-
-// Load the state varhash from storage.
-function loadFromStorage(state) {
-  storage.get('settings', function(err, settings) {
-    if (err) {
-      console.error(err);
-    }
-    hydrateState(state, settings);
-  });
-}
-
-// Send the state varhash to storage.
-function sendToStorage(state) {
-  storage.set('settings', dehydrateState(state), function(err) {
-    if (err) {
-      return console.error(err);
-    }
   });
 }
 
