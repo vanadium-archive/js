@@ -98,15 +98,35 @@ function fromNativeValue(err, appName, operation) {
         Types.ANY);
     }
 
-    if (res._argTypes) {
-      // The first two arguments, if they exist are strings
-      for (var i = 0; i < res._argTypes.length; i++) {
-        if (i + 2 >= paramList.length) {
-          break;
+    var argTypes = res._argTypes || [];
+    // The first two arguments, if they exist are strings
+    for (var i = 2; i < paramList.length; i++) {
+      var argType = argTypes[i-2];
+
+      // Do our best to guess the type. This avoids revealing JSValue in our
+      // errors when sending native value parameters. Note: This is very hacky.
+      // TODO(alexfandrianto): We need to do this because other languages will
+      // print out the JSValue when they get it as an ANY. The resulting errors
+      // are quite unreadable. If we guess string, number, or bool, then at
+      // least they will receive something they know how to print. The cost to
+      // us is that these parameters will become wrapped upon decode.
+      // Issue: https://github.com/veyron/release-issues/issues/1560
+      if (!argType) {
+        if (typeof paramList[i] === 'string') {
+          argType = Types.STRING;
+        } else if (typeof paramList[i] === 'boolean') {
+          argType = Types.BOOL;
+        } else if (typeof paramList[i] === 'number') {
+          argType = Types.FLOAT64;
         }
-        paramList[i + 2] = canonicalize.fill(
-          canonicalize.fill(paramList[i + 2], res._argTypes[i]),
-          Types.ANY);
+      }
+
+      // If the arg has a type, canonicalize.
+      if (argType) {
+        paramList[i] = canonicalize.fill(
+          canonicalize.reduce(paramList[i], argType),
+          Types.ANY
+        );
       }
     }
     return res;

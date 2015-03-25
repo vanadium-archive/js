@@ -33,7 +33,8 @@ test('Test PassError of Go native service', function(assert) {
     if (err) {
       return end(assert);
     }
-    var e = new E(null);
+    var e = new E(null, 'extra string', 4, false);
+    var expectedMessage = 'app op: RandomError: extra string 4 false';
     native.passError(ctx, e, function(err, result) {
       // Bluebird adds __stackCleaned__ as part of its processing but it
       // doesn't show up in the vom decoded message, so we can't do a
@@ -42,10 +43,17 @@ test('Test PassError of Go native service', function(assert) {
       assert.equal(e.retryCode, err.retryCode);
       assert.equal(e.msg, err.msg);
       assert.equal(e.message, err.message);
+      assert.equal(e.msg, expectedMessage);
+      assert.equal(e.message, expectedMessage);
       // The decoded error has the paramList values wrapped, since the
-      // paramList is an list of any.  The error passed into the call
+      // paramList is a list of any.  The error passed into the call
       // does not have that wrapping.  We add the wrapping to e to make sure
       // the decoded error has the wrapped paramlist.
+      // Note: 'extra string', 4, and false are native values. They would
+      // normally be converted to JSValue since the paramList is []any. However,
+      // they are specifically guessed to be string, number, and bool in order
+      // to avoid revealing JSValue to other languages in the common case.
+      // https://github.com/veyron/release-issues/issues/1560
       e.paramList = e.paramList.map(function (v) { return { val: v }; });
       assert.deepEqual(e.paramList, err.paramList);
       end(assert);
