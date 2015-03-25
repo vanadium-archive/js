@@ -115,7 +115,7 @@ Runner.prototype._setup = function(cb) {
         runner.env = extend(runner.env, {
           IDENTITYD: vars.TEST_IDENTITYD_NAME + '/google',
           IDENTITYD_BLESSING_URL:
-              vars.TEST_IDENTITYD_HTTP_ADDR + '/blessing-root',
+              vars.TEST_IDENTITYD_HTTP_ADDR + '/auth/blessing-root',
           NAMESPACE_ROOT: vars.MT_NAME,
           PROXY_ADDR: vars.PROXY_NAME,
           WSPR_ADDR: vars.WSPR_ADDR

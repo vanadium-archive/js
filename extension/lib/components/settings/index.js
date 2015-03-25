@@ -20,7 +20,7 @@ module.exports.render = render;
 
 var defaults = {
   identityd: 'identity/dev.v.io/root/google',
-  identitydBlessingUrl: 'https://auth.dev.v.io:8125/blessing-root',
+  identitydBlessingUrl: 'https://dev.v.io/auth/blessing-root',
   namespaceRoot: '/ns.dev.v.io:8101',
   proxy: 'proxy',
   logLevel: '0',
