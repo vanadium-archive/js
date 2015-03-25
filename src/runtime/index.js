@@ -105,9 +105,11 @@ inherits(Runtime, EE);
  * closed.
  */
 Runtime.prototype.close = function(cb) {
-  return this
-    ._getProxyConnection()
-    .close(cb);
+  var router = this._getRouter();
+  var proxy = this._getProxyConnection();
+  return router.cleanup().then(function() {
+      return proxy.close(cb);
+  });
 };
 
 /**

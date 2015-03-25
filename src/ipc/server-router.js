@@ -619,18 +619,43 @@ Router.prototype.stopServer = function(server, cb) {
   var self = this;
 
   return this._controller.stop(this._rootCtx, server.id)
-    .then(function(result) {
+    .then(function() {
       delete self._servers[server.id];
       if (cb) {
-        cb(null, result);
+        cb(null);
       }
-      return result;
     }, function(err) {
       if (cb) {
         cb(err);
       }
       return Promise.reject(err);
     });
+};
+
+/**
+ * Stops all servers managed by this router.
+ * @private
+ * @param {function} [cb] If provided, the function will be called on
+ * completion. The only argument is an error if there was one.
+ * @return {Promise} Promise to be called when all servers are stopped.
+ */
+Router.prototype.cleanup = function(cb) {
+  var promises = [];
+  var servers = this._servers;
+  for (var id in servers) {
+    if (servers.hasOwnProperty(id)) {
+      promises.push(this.stopServer(servers[id]));
+    }
+  }
+  return Promise.all(promises).then(function() {
+    if (cb) {
+      cb(null);
+    }
+  }, function(err) {
+    if (cb) {
+      cb(err);
+    }
+  });
 };
 
 module.exports = Router;
