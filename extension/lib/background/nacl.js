@@ -122,23 +122,6 @@ Nacl.prototype._sendQueuedMessages = function() {
 };
 
 Nacl.prototype.getBlessingRoot = function(url, cb) {
-  // TODO(nlacasse): Currently the identity server has a self-signed cert, so we
-  // can't make an XHR to it to request the identity root.  Hence, I've just
-  // hard-coded the root value for hostnames that match "v.io".  Once we have a
-  // real cert for the identity server, this should go away, and the superagent
-  // code below should be used for every url.
-  var hostname = require('url').parse(url).hostname;
-  if ((/v\.io$/).test(hostname)) {
-    console.log('Using hard-coded blessing root to connect to ' + url);
-    var vanadiumTestRoot = {
-      names: ['dev.v.io/root'],
-      publicKey: 'MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE9iRjaFDoGJI9tarUwWqIW31' +
-        'ti72krThkYByn1v9Lf89D9VA0Mg2oUL7FDDM7qxjZcVM1ktM_W4tBfMVuRZmVCA=='
-    };
-
-    return process.nextTick(cb.bind(null, null, vanadiumTestRoot));
-  }
-
   console.log('Requesting blessing root from ' + url);
   var request = require('superagent');
   request
