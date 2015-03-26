@@ -24,7 +24,6 @@ module.exports = {
 registry.registerFromNativeValue(Error, fromNativeValue, Types.ERROR.elem);
 // We register both the optional and the concrete type for the error depending
 // on what gets sent on the wire.
-registry.registerFromWireValue(Types.ERROR, fromWireValue);
 registry.registerFromWireValue(Types.ERROR.elem, fromWireValue);
 
 var unknown = (new verror.UnknownError(null));
@@ -141,14 +140,17 @@ function fromNativeValue(err, appName, operation) {
   }
   var message = '';
 
+  var errID = err.id || unknown.id;
+  var errRetryCode = err.retryCode || unknown.retryCode;
+
   if (err instanceof Error) {
     message = err.message;
 
     paramList = ['app', 'call'];
   } else if (err !== undefined && err !== null) {
-    paramList = [appName, operation, err + ''];
-    message = defaultCatalog.format(
-      defaultLanguage, unknown.id, paramList);
+    paramList = unwrap(err.paramList) || [appName, operation, err + ''];
+    message = err.message || err.msg || defaultCatalog.format(
+      defaultLanguage, errID, paramList);
   }
 
   if (!paramList[0] && appName) {
@@ -162,7 +164,15 @@ function fromNativeValue(err, appName, operation) {
   var args = paramList.slice(0);
   // Add a null context to the front of the args.
   args.unshift(null);
-  var e = new verror.UnknownError(args);
+
+  // Pick the correct Error Constructor. If there isn't one, use Unknown.
+  var EConstructor = errorMap[errID] || verror.UnknownError;
+  var e = new EConstructor(args);
+
+  // Fill the remaining error parameters. By using new on an Error, we will have
+  // a stack trace. Add the correct id, retryCode, message, etc.
+  e.id = errID;
+  e.retryCode = errRetryCode;
   e.resetArgs.apply(e, paramList);
   e.message = message;
   e.msg = message;

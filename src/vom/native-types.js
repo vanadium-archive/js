@@ -45,9 +45,12 @@ function fromDateWireValue(v) {
 }
 
 function toDateWireValue(v) {
-  var time = v.getTime();
-  var jssecs = Math.floor(time / 1000);
-  var nanos = (time - jssecs * 1000) * 1000000;
-  var vdlsecs = vdl.BigInt.fromNativeNumber(jssecs).subtract(epochConversion);
-  return new Time({seconds: vdlsecs, nanos: nanos}, true);
+  if (v instanceof Date) {
+    var time = v ? v.getTime() : 0;
+    var jssecs = Math.floor(time / 1000);
+    var nanos = (time - jssecs * 1000) * 1000000;
+    var vdlsecs = vdl.BigInt.fromNativeNumber(jssecs).subtract(epochConversion);
+    return new Time({seconds: vdlsecs, nanos: nanos}, true);
+  }
+  return v;
 }

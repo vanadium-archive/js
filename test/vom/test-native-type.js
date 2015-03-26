@@ -74,7 +74,8 @@ test('date - test toWireValue', function(t) {
     {seconds: 62135596800, nanos: 0, date: '1970-01-01'}
   ];
   tests.forEach(function(test) {
-    var time = registry.fromNativeValue(new Date(test.date));
+    var time = registry.fromNativeValue(Time.prototype._type,
+      new Date(test.date));
     t.equal(time.seconds.val.toNativeNumberApprox(), test.seconds, test.date);
     t.equal(time.nanos.val, test.nanos, test.date);
   });

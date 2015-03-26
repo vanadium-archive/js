@@ -125,6 +125,11 @@ function canonicalize(inValue, inType, t, deepWrap, seen, isTopLevelValue) {
   if (isJSValue) {
     inValue = jsValueConvert.fromNative(inValue);
   }
+  // Special case Native Value. Convert the inValue to its wire form.
+  var isNative = nativeTypeRegistry.hasNativeType(t);
+  if (isNative) {
+    inValue = nativeTypeRegistry.fromNativeValue(t, inValue);
+  }
 
   // Check for type convertibility; fail early if the types are incompatible.
   if (!typeCompatible(inType, t)) {
@@ -147,22 +152,6 @@ function canonicalize(inValue, inType, t, deepWrap, seen, isTopLevelValue) {
   if (t.kind === Kind.TYPEOBJECT) {
     return canonicalizeType(inValue, seen);
   }
-
-  // TODO(bprosnitz) We need to canonicalize (without native conversion) before
-  // passing inValue to fromWireType.
-  if (!deepWrap) {
-    inValue = nativeTypeRegistry.fromWireValue(t, inValue);
-  } else if (inValue !== undefined && inValue !== null) {
-    inValue = nativeTypeRegistry.fromNativeValue(inValue);
-  }
-
-  // If we have a true native that doesn't have vdl fields in it (i.e. Date),
-  // then we can stop canonicalizing.  Other "natives" like VandiumError have
-  // nested fields that need to be canonicalized.
-  if (nativeTypeRegistry.isNative(inValue) && !TypeUtil.isTyped(inValue)) {
-    return inValue;
-  }
-
 
   // The outValue is an object associated with a constructor based on its type.
   // We pre-allocate wrapped values and add them to seen so that they can be
@@ -230,7 +219,12 @@ function canonicalize(inValue, inType, t, deepWrap, seen, isTopLevelValue) {
   // TODO(bjornick): We should make this go away when we fix:
   // https://github.com/veyron/release-issues/issues/1279
   if (canonValue instanceof Error) {
-    Object.defineProperty(canonValue, 'message', { value: canonValue.msg });
+    if (!canonValue.message) {
+      Object.defineProperty(canonValue, 'message', { value: canonValue.msg });
+    }
+    if (!canonValue.stack) {
+      Object.defineProperty(canonValue, 'stack', { value: inValue.stack });
+    }
   }
   // Non-structLike types may need to wrap the clone with a wrapper constructor.
   if (needsWrap && outValue !== null && outValue._wrappedType) {
@@ -241,6 +235,10 @@ function canonicalize(inValue, inType, t, deepWrap, seen, isTopLevelValue) {
   // Special case JSValue. If !deepWrap, convert the canonValue to native form.
   if (isJSValue && !deepWrap) {
     return jsValueConvert.toNative(canonValue);
+  }
+  // Special case Native Value. If !deepWrap, return to native form.
+  if (isNative && !deepWrap) {
+    return nativeTypeRegistry.fromWireValue(t, canonValue);
   }
 
   return canonValue;
@@ -285,8 +283,7 @@ function canonicalizeInternal(deepWrap, v, inType, t, seen, outValue) {
       if (v === null) {
         return null;
       }
-      return canonicalize(v, inElemType, t.elem, deepWrap, seen,
-        false);
+      return canonicalize(v, inElemType, t.elem, deepWrap, seen, false);
     case Kind.BOOL:
       // Verify the value is a boolean.
       if (typeof v !== 'boolean') {
@@ -757,7 +754,7 @@ function getObjectWithType(t, v) {
   Registry = Registry || require('./registry.js');
   var Constructor = Registry.lookupOrCreateConstructor(t);
 
-  if (nativeTypeRegistry.isNative(v)) {
+  if (v && nativeTypeRegistry.hasNativeType(t)) {
     Constructor = v.constructor;
   }
 

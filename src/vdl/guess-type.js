@@ -28,9 +28,9 @@ function guessType(val) {
     return val._type;
   }
 
-  var nativeType = nativeTypeRegistry.lookupNativeToWireConverter(val);
+  var nativeType = nativeTypeRegistry.lookupNativeToType(val);
   if (nativeType) {
-    return nativeType.type;
+    return nativeType;
   }
 
   return Types.JSVALUE;
