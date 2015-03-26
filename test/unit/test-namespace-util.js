@@ -160,3 +160,33 @@ test('names.splitAddressName(name)', function(assert) {
 
   assert.end();
 });
+
+test('names.blessingNamesFromAddress(addr)', function(assert) {
+  var tests = [
+    // Valid v4 endpoints
+    ['@4@tcp@127.0.0.1:22@@@@s@@@', ['']],
+    ['@4@tcp@127.0.0.1:22@@@@s@dev.v.io/services/mounttabled@@',
+      ['dev.v.io/services/mounttabled']],
+    ['@4@tcp@127.0.0.1:22@@@@s@dev.v.io/services/mounttabled,foo/bar,batman@dccomics.com/car@@',  // jshint ignore:line
+      ['dev.v.io/services/mounttabled', 'foo/bar', 'batman@dccomics.com/car']],
+    // Well-formed endpoints of old versions.
+    ['@2@tcp@127.0.0.1:21@@@@@', []],
+    ['@3@tcp@127.0.0.1:21@@@@m@@', []],
+    // Host:port endpoints
+    ['ns.dev.v.io:8101', []],
+    ['(dev.v.io/service/mounttabled)@ns.dev.v.io:8101',
+      ['dev.v.io/service/mounttabled']],
+    // Invalid strings:
+    // invalid endpoints since they do not end in @@.
+    ['@4@tcp@127.0.0.1:22@@@@s@dev.v.io/', []],
+    ['@4@tcp@127.0.0.1:22@@@@s@dev.v.io', []],
+    // malformed version number
+    ['@4c@tcp@127.0.0.1:22@@@@s@foo@@', []],
+    ['@-4@tcp@127.0.0.1:22@@@@s@foo@@', []],
+  ];
+  tests.forEach(function(t) {
+    assert.deepEqual(names.blessingNamesFromAddress(t[0]), t[1]);
+  });
+  assert.end();
+});
+

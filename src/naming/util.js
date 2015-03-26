@@ -21,7 +21,8 @@ module.exports = {
   isRooted: isRooted,
   basename: basename,
   stripBasename: stripBasename,
-  splitAddressName: splitAddressName
+  splitAddressName: splitAddressName,
+  blessingNamesFromAddress: blessingNamesFromAddress,
 };
 
 /**
@@ -65,6 +66,73 @@ function join(parts) {
  */
 function isRooted(name) {
   return name[0] === '/';
+}
+
+/**
+ * blessingNamesFromAddress extracts the blessing names of the server with the
+ * provided address (endpoint).
+ *
+ * TODO(nlacasse): Should we have a full fledged object parallel to
+ * naming.Endpoint in Go? Because this parsing is really really shabby!
+ *
+ * @param {string} address String representation of the server address (aka
+ * endpoint).
+ * @return {...string} Blessing names extracted from address, or an empty list
+ * if none could be extracted.
+ * @memberof module:vanadium.naming.util
+ */
+function blessingNamesFromAddress(addr) {
+  var epversion = endpointVersion(addr);
+  if (isNaN(epversion)) {
+    // Not a well formed endpoint string.
+    // Might be in "host:port" format, if so extract blessing names from that.
+    // Format: [(<blessing name>)]@host:port
+    var open = addr.indexOf('(');
+    var close = addr.indexOf(')');
+    if (open === 0 && close > 0 && addr.indexOf('@') === (close+1)) {
+      return addr.substr(1, close-1).split(',');
+    }
+    return [];
+  }
+  if (epversion < 4) {
+    // Versions less than 4 do not support blessing names in the endpoint.
+    return [];
+  }
+  if (epversion > 4) {
+    // This code needs to be updated.
+    throw new Error('endpoint version '+epversion+' not supported');
+  }
+  var start = 0;
+  // blessing names are the 7th field!
+  for (var i = 0; i < 7; i++) {
+    start = addr.indexOf('@', start+1);
+  }
+  return addr.substr(start+1, addr.length-start-3).split(',');
+}
+
+function endpointVersion(addr) {
+  // Poor approximation of a well-formed endpoint string.
+  // Format described in
+  // the Go library documentation for v.io/v23/naming.Endpoint.  Must be at
+  // least 7 characters (shortest valid endpoint is: @1@@@@@)
+  if (addr.length < 7) {
+    return NaN;
+  }
+  // Must start with an '@' and end with an '@@'
+  if (addr.indexOf('@') !== 0) {
+    return NaN;
+  }
+  if (addr.lastIndexOf('@@') !== (addr.length - 2)) {
+    return NaN;
+  }
+  return parseWholeNumber(addr.split('@')[1]);
+}
+
+function parseWholeNumber(value) {
+  if (/^\d+$/.test(value)) {
+    return Number(value);
+  }
+  return NaN;
 }
 
 /**
