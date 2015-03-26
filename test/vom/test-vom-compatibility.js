@@ -54,6 +54,8 @@ testdata.Tests.val.forEach(function(t, i) {
     assert.equal(stringify(result), stringify(t.value), t.name +
       ' value comparison');
     assert.deepEqual(result._type, t.value._type, t.name + ' type comparison');
+    assert.deepEqual(result._type.toString(), t.typeString,
+      t.name + ' type string ok');
     assert.deepEqual(result.prototype, t.value.prototype,
         t.name + ' prototype comparison');
 
