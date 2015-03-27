@@ -90,29 +90,6 @@ AuthHandler.prototype.associateAccount =
 
 // Pop up a new tab asking the user to chose their caveats.
 AuthHandler.prototype.getCaveats = function(account, origin, port) {
-  // TODO(nlacasse): For now, we are bypassing the caveats page because it isn't
-  // up-to-date with the identity server's caveats page, leading to a confusing
-  // user experience.  Instead, we just associate the account with a 3-month
-  // expiration caveat.  We should fix the caveats page and then re-enable it by
-  // getting rid of the if-block below.
-  var skipCaveatsPage = true;
-  if (skipCaveatsPage) {
-    var caveats = [{
-      type: 'ExpiryCaveat',
-      args: '' + 3 * 30 * 24 + 'h' // 3 Months
-    }];
-    this.associateAccount(account, origin, caveats, function(err) {
-      if (err) {
-        return sendErrorToContentScript('auth', port, err);
-      }
-      port.postMessage({
-        type: 'auth:success',
-        account: account
-      });
-    });
-    return;
-  }
-
   // Store the account name and a random salt on the port.
   port.account = account;
   port.authState = random.hex();
@@ -203,6 +180,11 @@ AuthHandler.prototype.handleFinishAuth = function(caveatsPort, msg) {
 
   var webappPort = this._ports[msg.webappId];
   delete this._ports[msg.webappId];
+
+  if (msg.cancel) {
+    return sendErrorToContentScript('auth', webappPort,
+        new Error('User declined to bless origin.'));
+  }
 
   if (!webappPort || msg.authState !== webappPort.authState) {
     return console.error('Port not authorized.');

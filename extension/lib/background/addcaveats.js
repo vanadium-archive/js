@@ -7,18 +7,27 @@ var url = require('url');
 
 var params = url.parse(document.URL, true).query;
 
-// TODO(nlacasse, suharshs): Bring this page up-to-date with the functionality
-// of the add-caveats page on the identity server.  At the very least, we need
-// to not allow users to submit the form without entering a caveat.
-
 domready(function() {
   document.getElementById('submit-caveats').addEventListener('click',
-    sendCaveats);
-  document.getElementById('header').innerText =
-    'Select caveat on the blessing for webapp: ' + params.origin;
+    function() {
+      sendCaveats(false);
+    });
+  document.getElementById('header').innerText = params.origin;
+  // If the origin is not https, display a warning to the user.
+  if (params.origin.indexOf('https') !== 0) {
+    document.getElementById('warning').innerText = 'WARNING: ' + params.origin +
+      ' is not secure (not https). Your communication is subject to ' +
+      'man-in-the-middle attacks, and Vanadium\'s security model may be ' +
+      'compromised.';
+  }
+
+  // Setup the cancel button.
+  document.getElementById('cancel').addEventListener('click', function() {
+    sendCaveats(true);
+  });
 
   if (process.env.TEST_CAVEATS) {
-    // Set the value of the exipry caveat and submit the form.
+    // Set the value of the expiry caveat and submit the form.
     document.getElementById('ExpiryCaveat').value = process.env.TEST_CAVEATS;
     sendCaveats();
   }
@@ -26,11 +35,16 @@ domready(function() {
 
 var caveatNames = ['ExpiryCaveat', 'MethodCaveat'];
 
-function sendCaveats() {
+function sendCaveats(cancel) {
   var caveats = [];
   for (var i = 0; i < caveatNames.length; i++) {
     var caveatArgs = document.getElementById(caveatNames[i]).value;
-    if (caveatArgs) {
+    if (caveatNames[i] === 'ExpiryCaveat' && !caveatArgs) {
+      caveats.push({
+        type: 'ExpiryCaveat',
+        args: '240h'
+      });
+    } else if (caveatArgs) {
       caveats.push({
         type: caveatNames[i],
         args: caveatArgs
@@ -43,7 +57,8 @@ function sendCaveats() {
     webappId: parseInt(params.webappId),
     origin: params.origin,
     caveats: caveats,
-    authState: params.authState
+    authState: params.authState,
+    cancel: cancel
   });
   backgroundPort.disconnect();
 }
