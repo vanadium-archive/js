@@ -55,6 +55,52 @@ test('signature', function(t) {
         pkgPath: '',
         methods: [
           {
+            name: 'NamedFunction',
+            doc: '',
+            inArgs: [
+              {
+                name: 'x',
+                doc: '',
+                type: vdl.Types.JSVALUE
+              },
+              {
+                name: 'y',
+                doc: '',
+                type: vdl.Types.JSVALUE
+              },
+              {
+                name: 'z',
+                doc: '',
+                type: vdl.Types.JSVALUE
+              }
+            ],
+            outArgs: [
+              {
+                name: '',
+                doc: '',
+                type: vdl.Types.JSVALUE
+              }
+            ],
+            inStream: null,
+            outStream: null,
+            tags: []
+          },
+          {
+            name: 'NoArgsFunction',
+            doc: '',
+            inArgs: [],
+            outArgs: [
+              {
+                name: '',
+                doc: '',
+                type: vdl.Types.JSVALUE
+              }
+            ],
+            inStream: null,
+            outStream: null,
+            tags: []
+          },
+          {
             name: 'NonPrototypeFunction',
             doc: '',
             inArgs: [
@@ -86,52 +132,6 @@ test('signature', function(t) {
               doc: '',
               type: vdl.Types.JSVALUE
             },
-            tags: []
-          },
-          {
-            name: 'NoArgsFunction',
-            doc: '',
-            inArgs: [],
-            outArgs: [
-              {
-                name: '',
-                doc: '',
-                type: vdl.Types.JSVALUE
-              }
-            ],
-            inStream: null,
-            outStream: null,
-            tags: []
-          },
-          {
-            name: 'NamedFunction',
-            doc: '',
-            inArgs: [
-              {
-                name: 'x',
-                doc: '',
-                type: vdl.Types.JSVALUE
-              },
-              {
-                name: 'y',
-                doc: '',
-                type: vdl.Types.JSVALUE
-              },
-              {
-                name: 'z',
-                doc: '',
-                type: vdl.Types.JSVALUE
-              }
-            ],
-            outArgs: [
-              {
-                name: '',
-                doc: '',
-                type: vdl.Types.JSVALUE
-              }
-            ],
-            inStream: null,
-            outStream: null,
             tags: []
           },
         ]
@@ -245,6 +245,57 @@ test('signature', function(t) {
         ],
         methods: [
           {
+            name: 'NamedFunction',
+            doc: 'NamedFunctionDoc',
+            inArgs: [
+              {
+                name: 'x',
+                doc: 'xDoc',
+                type: vdl.Types.UINT32
+              },
+              {
+                name: 'y',
+                doc: 'yDoc',
+                type: vdl.Types.STRING
+              },
+              {
+                name: 'z',
+                doc: 'zDoc',
+                type: vdl.Types.STRING
+              }
+            ],
+            outArgs: [
+              {
+                name: '',
+                doc: '',
+                type: vdl.Types.JSVALUE
+              }
+            ],
+            inStream: null,
+            outStream: null,
+            tags: []
+          },
+          {
+            name: 'NoArgsFunction',
+            doc: 'NoArgsFunctionDoc',
+            inArgs: [],
+            outArgs: [
+              {
+                name: 'first',
+                doc: 'firstDoc',
+                type: vdl.Types.INT16
+              },
+              {
+                name: 'second',
+                doc: 'secondDoc',
+                type: vdl.Types.STRING
+              }
+            ],
+            inStream: null,
+            outStream: null,
+            tags: []
+          },
+          {
             name: 'NonPrototypeFunction',
             doc: 'NonPrototypeFunctionDoc',
             inArgs: [
@@ -281,57 +332,6 @@ test('signature', function(t) {
                 val: 'aTag',
               }
             ]
-          },
-          {
-            name: 'NoArgsFunction',
-            doc: 'NoArgsFunctionDoc',
-            inArgs: [],
-            outArgs: [
-              {
-                name: 'first',
-                doc: 'firstDoc',
-                type: vdl.Types.INT16
-              },
-              {
-                name: 'second',
-                doc: 'secondDoc',
-                type: vdl.Types.STRING
-              }
-            ],
-            inStream: null,
-            outStream: null,
-            tags: []
-          },
-          {
-            name: 'NamedFunction',
-            doc: 'NamedFunctionDoc',
-            inArgs: [
-              {
-                name: 'x',
-                doc: 'xDoc',
-                type: vdl.Types.UINT32
-              },
-              {
-                name: 'y',
-                doc: 'yDoc',
-                type: vdl.Types.STRING
-              },
-              {
-                name: 'z',
-                doc: 'zDoc',
-                type: vdl.Types.STRING
-              }
-            ],
-            outArgs: [
-              {
-                name: '',
-                doc: '',
-                type: vdl.Types.JSVALUE
-              }
-            ],
-            inStream: null,
-            outStream: null,
-            tags: []
           },
         ]
       }
@@ -386,6 +386,37 @@ test('signature', function(t) {
         pkgPath: '',
         methods: [
           {
+            name: 'NamedFunction',
+            doc: '',
+            inArgs: [
+              {
+                name: 'x',
+                doc: '',
+                type: vdl.Types.INT16
+              },
+              {
+                name: 'SIGNATURENAME',
+                doc: '',
+                type: vdl.Types.INT16
+              },
+              {
+                name: 'z',
+                doc: '',
+                type: vdl.Types.INT16
+              }
+            ],
+            outArgs: [
+              {
+                name: '',
+                doc: '',
+                type: vdl.Types.JSVALUE
+              }
+            ],
+            inStream: null,
+            outStream: null,
+            tags: []
+          },
+          {
             name: 'NonPrototypeFunction',
             doc: '',
             inArgs: [
@@ -419,37 +450,6 @@ test('signature', function(t) {
             },
             tags: []
           },
-          {
-            name: 'NamedFunction',
-            doc: '',
-            inArgs: [
-              {
-                name: 'x',
-                doc: '',
-                type: vdl.Types.INT16
-              },
-              {
-                name: 'SIGNATURENAME',
-                doc: '',
-                type: vdl.Types.INT16
-              },
-              {
-                name: 'z',
-                doc: '',
-                type: vdl.Types.INT16
-              }
-            ],
-            outArgs: [
-              {
-                name: '',
-                doc: '',
-                type: vdl.Types.JSVALUE
-              }
-            ],
-            inStream: null,
-            outStream: null,
-            tags: []
-          }
         ]
       }
     }
