@@ -1,3 +1,5 @@
+
+
 // Copyright 2015 The Vanadium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
@@ -348,8 +350,9 @@ module.exports.PeerBlessingsCaveatValidationError = makeError('v.io/v23/security
 
 
 module.exports.UnrecognizedRootError = makeError('v.io/v23/security.UnrecognizedRoot', actions.NO_RETRY, {
-  'en': '{1:}{2:} unrecognized root certificate{:3}',
+  'en': '{1:}{2:} unrecognized public key {3} in root certificate{:4}',
 }, [
+  vdl.Types.STRING,
   vdl.Types.ERROR,
 ]);
 
