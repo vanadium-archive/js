@@ -203,8 +203,10 @@ function defineJSValueType() {
   ];
 
   // Define the rest of EmptyStruct
+  // Add a name, since VDL does not allow unnamed, empty structs.
   EmptyStruct.kind = Kind.STRUCT;
   EmptyStruct.fields = [];
+  EmptyStruct.name = 'EmptyStruct';
 
   // Define the rest of ByteList
   ByteList.kind = Kind.LIST;
