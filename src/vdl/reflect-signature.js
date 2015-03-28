@@ -77,4 +77,12 @@ function ReflectSignature(service) {
     // Add this method's signature to it's service signature
     signature.methods.push(methodSignature);
   }
+
+  // Sort all the signatures by method name.
+  signature.methods.sort(function(methodSig, methodSig2) {
+    if (methodSig.name === methodSig2.name) {
+      return 0;
+    }
+    return methodSig.name < methodSig2.name ? -1 : 1;
+  });
 }

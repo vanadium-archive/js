@@ -29,18 +29,6 @@ test('create signatures with no description', function(t) {
     embeds: [],
     methods: [{
       doc: '',
-      name: 'NoArgsFunction',
-      inStream: null,
-      outStream: null,
-      inArgs: [],
-      outArgs: [{
-        name: '',
-        doc: '',
-        'type': vdl.Types.JSVALUE
-      }],
-      tags: []
-    }, {
-      doc: '',
       name: 'NamedFunction',
       inStream: null,
       outStream: null,
@@ -63,7 +51,19 @@ test('create signatures with no description', function(t) {
         type: vdl.Types.JSVALUE
       }],
       tags: []
-    },{
+    }, {
+      doc: '',
+      name: 'NoArgsFunction',
+      inStream: null,
+      outStream: null,
+      inArgs: [],
+      outArgs: [{
+        name: '',
+        doc: '',
+        'type': vdl.Types.JSVALUE
+      }],
+      tags: []
+    }, {
       doc: '',
       name: 'StreamingFunction',
       inArgs: [],
@@ -99,14 +99,6 @@ test('create signatures with full description', function(t) {
     doc: 'TestServiceDoc',
     embeds: [],
     methods: [{
-      name: 'NoArgsFunction',
-      doc: 'NoArgsDoc',
-      inArgs: [],
-      outArgs: [],
-      inStream: null,
-      outStream: null,
-      tags: []
-    }, {
       name: 'NamedFunction',
       doc: 'NamedFunctionDoc',
       inArgs: [{
@@ -131,6 +123,14 @@ test('create signatures with full description', function(t) {
         doc: 'errDoc',
         type: vdl.Types.ERROR
       }],
+      inStream: null,
+      outStream: null,
+      tags: []
+    }, {
+      name: 'NoArgsFunction',
+      doc: 'NoArgsDoc',
+      inArgs: [],
+      outArgs: [],
       inStream: null,
       outStream: null,
       tags: []
