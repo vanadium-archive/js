@@ -1,37 +1,89 @@
 <!doctype html>
 <html>
-
 <head>
-  <meta charset="UTF-8">
-  <title>Blessings: Select caveats</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css">
+  <meta
+     name="viewport"
+     content="width=device-width,
+              initial-scale=1,
+              maximum-scale=1,
+              user-scalable=no,
+              minimal-ui">
+  <meta
+     name="apple-mobile-web-app-capable"
+     content="yes">
+
+  <meta
+     name="apple-mobile-web-app-status-bar-style"
+     content="black">
+
+
+  <!--TODO(suharshs,nlacasse): Consider bundling all external assets inside the extension.-->
+  <link href='http://fonts.googleapis.com/css?family=Source+Code+Pro:400,500|Roboto:500,400italic,300,500italic,300italic,400'
+    rel='stylesheet'
+    type='text/css'>
+  <link rel="stylesheet" href="https://staging.v.io/identity.css">
+
+  <link rel="apple-touch-icon" sizes="57x57" href="https://staging.v.io/favicons/apple-touch-icon-57x57.png">
+  <link rel="apple-touch-icon" sizes="114x114" href="https://staging.v.io/favicons/apple-touch-icon-114x114.png">
+  <link rel="apple-touch-icon" sizes="72x72" href="https://staging.v.io/favicons/apple-touch-icon-72x72.png">
+  <link rel="apple-touch-icon" sizes="144x144" href="https://staging.v.io/favicons/apple-touch-icon-144x144.png">
+  <link rel="apple-touch-icon" sizes="60x60" href="https://staging.v.io/favicons/apple-touch-icon-60x60.png">
+  <link rel="apple-touch-icon" sizes="120x120" href="https://staging.v.io/favicons/apple-touch-icon-120x120.png">
+  <link rel="apple-touch-icon" sizes="76x76" href="https://staging.v.io/favicons/apple-touch-icon-76x76.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="https://staging.v.io/favicons/apple-touch-icon-152x152.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="https://staging.v.io/favicons/apple-touch-icon-180x180.png">
+  <link rel="icon" type="image/png" href="https://staging.v.io/favicons/favicon-192x192.png" sizes="192x192">
+  <link rel="icon" type="image/png" href="https://staging.v.io/favicons/favicon-160x160.png" sizes="160x160">
+  <link rel="icon" type="image/png" href="https://staging.v.io/favicons/favicon-96x96.png" sizes="96x96">
+  <link rel="icon" type="image/png" href="https://staging.v.io/favicons/favicon-16x16.png" sizes="16x16">
+  <link rel="icon" type="image/png" href="https://staging.v.io/favicons/favicon-32x32.png" sizes="32x32">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="msapplication-TileImage" content="https://staging.v.io/favicons/mstile-144x144.png">
+
   <script src="/js/addcaveats.js"></script>
+  <title>Blessings: Select Caveats</title>
 </head>
 
-<body class="container">
-  <h2 id="header"></h2>
-  <form class="form-horizontal" method="POST" name="input" role="form">
-    <div class="row">
-      <div class="col-md-2">
-        <label>Expiry</label>
-      </div>
-      <div class="col-md-8">
-        <input type="text" id="ExpiryCaveat" class="form-control" placeholder="i.e. 2h45m. Valid time units are ns, us (or µs), ms, s, m, h." value="240h">
-      </div>
-    </div>
-    <br/>
-    <div class="row">
-      <div class="col-md-2">
-        <label>Method</label>
-      </div>
-      <div class="col-md-8">
-        <input type="text" id="MethodCaveat" class="form-control" placeholder="Comma-separated method names.">
-      </div>
-    </div>
-    <br/>
-    <button id="submit-caveats" class="btn btn-lg btn-primary btn-block" type="submit">Bless</button>
-  </form>
-</body>
+<body class="default-layout">
 
+<header>
+  <nav class="left">
+    <a href="#" class="logo">Vanadium</a>
+  </nav>
+
+  <nav class="main">
+    <a href="#">Select Caveats</a>
+  </nav>
+
+  <nav class="right">
+    <a id="header" href="#"></a>
+  </nav>
+</header>
+
+<main style="max-width: 80%; margin-left: 10px;">
+  <h3 id="warning"></h3>
+  <span>Add restrictions on the use of the blessing</span>
+    <div class="grid">
+      <div class="cell">
+        <label>Expires in</label>
+        <input type="text" id="ExpiryCaveat" placeholder="i.e. 2h45m. Valid time units are ns, us (or µs), ms, s, m, h. Defaults to 240h.">
+      </div>
+    </div>
+    <div class="grid">
+      <div class="cell">
+        <label>Restricted to methods</label>
+        <input type="text" id="MethodCaveat" placeholder="Comma-separated method names.">
+      </div>
+    </div>
+  <br/>
+  <div class="grid">
+    <button id="submit-caveats" class="cell button-passive" type="submit">Bless</button>
+    <button id="cancel" class="cell button-passive">Cancel</button>
+    <div class="cell"></div>
+    <div class="cell"></div>
+  </div>
+  </form>
+</main>
+
+</body>
 </html>
