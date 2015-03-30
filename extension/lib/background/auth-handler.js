@@ -69,7 +69,18 @@ AuthHandler.prototype.createAccount = function(cb) {
       return cb(err);
     }
 
-    ah._channel.performRpc('auth:create-account', {token: token}, cb);
+    // If getAccessToken returns an empty token we shouldn't send it to the
+    // identity server. Instead we directly pass an error to the callback which
+    // will purge the cache and try again.
+    if (!token) {
+      return cb(new Error('getAccessToken returned an empty token.'), null,
+        token);
+    }
+
+    ah._channel.performRpc('auth:create-account', {token: token},
+      function(err, createdAccount) {
+        cb(err, createdAccount, token);
+      });
   });
 };
 
@@ -136,13 +147,26 @@ AuthHandler.prototype.handleAuthMessage = function(port) {
 
     if (!accounts || accounts.length === 0) {
       // No account exists.  Create one and then call getCaveats.
-      ah.createAccount(function(err, createdAccount) {
+      var retry = true;
+      var createAccountCallback = function(err, createdAccount, token) {
         if (err) {
+          // If the token we received from chrome.identity.getAuthToken failed
+          // to authenticate for the identity server, it may because that the
+          // cached token has expired.
+          // So, we remove the token from the cache and retry once.
+          // TODO(suharshs,nlacasse): Filter by a more specific set of errors.
+          if (retry && token) {
+            retry = false;
+            return chrome.identity.removeCachedAuthToken(token, function(){
+              ah.createAccount(createAccountCallback);
+            });
+          }
           return sendErrorToContentScript('auth', port, err);
         }
-
         ah.getCaveats(createdAccount, origin, port);
-      });
+      };
+
+      ah.createAccount(createAccountCallback);
     } else {
       // At least one account already exists. Use the first one.
       var account = accounts[0];
