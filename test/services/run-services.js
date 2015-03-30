@@ -97,9 +97,9 @@ Runner.prototype._setup = function(cb) {
     if (err) {
       return runner.emit('error', err);
     }
-    runner.env.VEYRON_CREDENTIALS = path.resolve('tmp/test-credentials');
+    runner.env.V23_CREDENTIALS = path.resolve('tmp/test-credentials');
     service('principal')
-      .exec('create -overwrite ' + runner.env.VEYRON_CREDENTIALS + ' test',
+      .exec('create -overwrite ' + runner.env.V23_CREDENTIALS + ' test',
 	          function(err, stdout, stderr) {
               if (err) {
                 return runner.emit('error', err);
@@ -116,7 +116,7 @@ Runner.prototype._setup = function(cb) {
           IDENTITYD: vars.TEST_IDENTITYD_NAME + '/google',
           IDENTITYD_BLESSING_URL:
               vars.TEST_IDENTITYD_HTTP_ADDR + '/auth/blessing-root',
-          NAMESPACE_ROOT: vars.MT_NAME,
+          V23_NAMESPACE: vars.MT_NAME,
           PROXY_ADDR: vars.PROXY_NAME,
           WSPR_ADDR: vars.WSPR_ADDR
         });

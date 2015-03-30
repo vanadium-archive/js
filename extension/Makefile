@@ -94,7 +94,7 @@ build-test/js/addcaveats.js: lib/background/addcaveats.js $(JS_FILES) node_modul
 	$(call BROWSERIFY-TEST,$<,$@)
 
 # The EXTENSION_SETTINGS env variable is used by the extension to set the default settings variables.
-build-test/js: export EXTENSION_SETTINGS := {"namespaceRoot": "$(NAMESPACE_ROOT)",\
+build-test/js: export EXTENSION_SETTINGS := {"namespaceRoot": "$(V23_NAMESPACE)",\
                                              "proxy": "test/proxy",\
                                              "identityd": "$(IDENTITYD)",\
                                              "identitydBlessingUrl": "$(IDENTITYD_BLESSING_URL)",\
