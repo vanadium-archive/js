@@ -154,7 +154,7 @@ Invoker.prototype.invoke = function(name, args, injections, cb) {
   var errorContext = injections.context || new context.Context();
   if (!method) {
     message = format('Method "%s"', name);
-    err = new verror.NoExistError(errorContext, [message]);
+    err = new verror.NoExistError(errorContext, message);
 
     cb(err);
     return;
@@ -163,12 +163,12 @@ Invoker.prototype.invoke = function(name, args, injections, cb) {
     internalMethodSignatures[name];
   if (!methodSig) {
     cb(verror.InternalError(errorContext,
-                            ['Missing method signature for method ' + name]));
+                            'Missing method signature for method ' + name));
   }
 
   if (!injections.context) {
     message = 'Can not call invoker.invoke(...) without a context injection';
-    err = verror.InternalError(errorContext, [message]);
+    err = verror.InternalError(errorContext, message);
     cb(err);
     return;
   }
@@ -180,7 +180,7 @@ Invoker.prototype.invoke = function(name, args, injections, cb) {
     var template = 'Expected %d arguments but got "%s"';
 
     message = format(template, arity, args.join(', '));
-    err = new verror.BadArgError(errorContext, [message]);
+    err = new verror.BadArgError(errorContext, message);
     cb(err);
     return;
   }
@@ -200,6 +200,8 @@ Invoker.prototype.invoke = function(name, args, injections, cb) {
   // in the results array. If too few args are provided, the array
   // is padded with undefined values. If too many args are provided,
   // they are thrown out.
+  // TODO(alexfandrianto): The promise case doesn't do this padding though.
+  // Instead, it throws a verror.InternalError for the wrong # of results.
   function injectedCb(err /*, args */) {
     var res = Array.prototype.slice.call(arguments, 1,
       1 + methodSig.outArgs.length);
@@ -260,7 +262,7 @@ Invoker.prototype.invoke = function(name, args, injections, cb) {
         if (!Array.isArray(res)) {
           throw new verror.InternalError(
             errorContext,
-            ['Expected multiple out arguments to be returned in an array.']);
+            'Expected multiple out arguments to be returned in an array.');
         }
         resAsArray = res;
         break;
@@ -271,8 +273,8 @@ Invoker.prototype.invoke = function(name, args, injections, cb) {
       // internationalized.
       throw new verror.InternalError(
         errorContext,
-        ['Expected', methodSig.outArgs.length, 'results, but got',
-        resAsArray.length]);
+        'Expected', methodSig.outArgs.length, 'results, but got',
+        resAsArray.length);
     }
     cb(null, resAsArray);
   })

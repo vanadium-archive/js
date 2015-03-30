@@ -110,13 +110,14 @@ OutstandingRPC.prototype.start = function() {
   }
 
   var def = new Deferred(cb);
+  var ctx = this._ctx;
 
   if (!this._cb) {
     // If we are using a promise, strip single args out of the arg array.
     // e.g. [ arg1 ] -> arg1
     def.promise = def.promise.then(function(args) {
       if (!Array.isArray(args)) {
-        throw new verror.InternalError(
+        throw new verror.InternalError(ctx,
           'Internal error: incorrectly formatted out args in client');
       }
 
@@ -186,7 +187,7 @@ OutstandingRPC.prototype.handleResponse = function(type, data) {
     default:
       this.handleError(
           new verror.InternalError(
-            this._ctx, ['Recieved unknown response type from wspr']));
+            this._ctx, 'Received unknown response type from wspr'));
       break;
   }
 };
@@ -197,8 +198,7 @@ OutstandingRPC.prototype.handleCompletion = function(data) {
     response = vom.decode(byteUtil.hex2Bytes(data));
   } catch (e) {
     this.handleError(
-      new verror.InternalError(
-        this._ctx, ['Failed to decode result: ', e]));
+      new verror.InternalError(this._ctx, 'Failed to decode result: ', e));
       return;
   }
 
@@ -218,8 +218,7 @@ OutstandingRPC.prototype.handleStreamData = function(data) {
       data = vom.decode(byteUtil.hex2Bytes(data));
     } catch (e) {
       this.handleError(
-        new verror.InternalError(this._ctx,
-                                 ['Failed to decode result: ', e]));
+        new verror.InternalError(this._ctx, 'Failed to decode result: ', e));
         return;
     }
     this._def.stream._queueRead(data);
@@ -441,11 +440,19 @@ Client.prototype.bindWithSignature = function(name, signature) {
         //       console.error('invalid number of arguments')
         //     })
         //
-        var errArgs = [ methodSig.name,
-                        Array.prototype.slice.call(arguments, 1),
-                        methodSig.name,
-                        expectedArgs ];
-        err = new IncorrectArgCount(ctx, errArgs);
+
+        // The given arguments exclude the ctx and (optional) cb.
+        var givenArgs = Array.prototype.slice.call(arguments, 1);
+        if (typeof givenArgs[givenArgs.length - 1] === 'function') {
+          givenArgs.pop();
+        }
+        err = new IncorrectArgCount(
+          ctx,
+          methodSig.name,
+          givenArgs,
+          methodSig.name,
+          expectedArgs
+        );
         if (callback) {
           return callback(err);
         } else {

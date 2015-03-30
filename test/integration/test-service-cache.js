@@ -96,6 +96,9 @@ test('Test get() with invalid key of Go sample cache service - ' +
 
     cache.get(ctx, 'is not a thing', function(err, value) {
       assert.ok(err instanceof NoExistError, 'should error');
+      assert.ok(err.message, 'test_serviced:"cache".Get: ' +
+        'Does not exist: is not a thing');
+      console.log(err);
       end(assert);
     });
   });
@@ -117,6 +120,8 @@ test('Test get() with invalid key of Go sample cache service - ' +
     })
     .catch(function(err) {
       assert.ok(err instanceof NoExistError, 'should error');
+      assert.ok(err.message, 'test_serviced:"cache".Get: ' +
+        'Does not exist: really not a thing');
       end(assert);
     });
   });
@@ -131,6 +136,7 @@ test('Test calling a non-existing method of Go sample cache service - ' +
     }
 
     assert.throws(function() {
+      // The cache stub doesn't have this method.
       cache.notEvenAThing('whatever');
     });
 

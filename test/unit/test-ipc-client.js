@@ -183,7 +183,7 @@ test('Test that service.method() fails without a context - using callbacks',
     assert.error(err);
 
     service.tripleArgMethod(3, 'X', null, function(err, result) {
-      assert.ok(err);
+      assert.ok(err, 'should error');
       assert.notOk(result);
       assert.end();
     });
@@ -204,7 +204,7 @@ test('Test that service.method() fails without a context - using promises',
         assert.fail('should not succeed');
         assert.end();
       }, function(err) {
-        assert.ok(err);
+        assert.ok(err, 'should error');
         assert.end();
       })
       .catch(assert.end);
@@ -270,6 +270,9 @@ test('service.method() - callback error', function(assert) {
 
   function onmethod(err, result) {
     assert.ok(err, 'should error');
+    assert.equal(err.message,
+      'app:op: Client RPC call TripleArgMethod(3,X) had an incorrect ' +
+      'number of arguments. Expected format: TripleArgMethod(a,b,c)');
     assert.notOk(result, 'should not have results');
     assert.end();
   }
@@ -285,7 +288,11 @@ test('service.method() - promise error', function(assert) {
     .then(function(result) {
       assert.fail('should not succeed');
     }, function(err) {
-      assert.ok(err);
+      assert.ok(err, 'should error');
+      assert.equal(err.message,
+        'app:op: Client RPC call TripleArgMethod(3,X) had an incorrect ' +
+        'number of arguments. Expected format: TripleArgMethod(a,b,c)'
+      );
       assert.end();
     })
     .catch(assert.end);
@@ -326,7 +333,7 @@ test('client.signature(name, callback) - no context', function(assert) {
   var client = new Client(mockProxy);
 
   client.signature('service-name', function(err, sigs) {
-    assert.ok(err);
+    assert.ok(err, 'should error');
     assert.notOk(sigs);
     assert.end();
   });
@@ -340,7 +347,7 @@ test('var promise = client.signature(name) - no context', function(assert) {
       assert.fail('should not succeed');
       assert.end();
   }).catch(function(err) {
-    assert.ok(err);
+    assert.ok(err, 'should error');
     assert.end();
   });
 });

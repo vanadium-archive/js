@@ -7,6 +7,7 @@ var serve = require('./serve');
 var Promise = require('../../src/lib/promise');
 var naming = require('../../src/gen-vdl/v.io/v23/naming');
 var namespaceUtil = require('../../src/naming/util');
+var verror = require('../../src/gen-vdl/v.io/v23/verror');
 
 var ALBUMS = [
   'public',
@@ -130,6 +131,9 @@ function runGlobTest(pattern, expectedResults, dispatcher, expectedErrors,
       hadErrors = true;
       assert.ok(errItem.error instanceof Error);
       assert.ok(typeof errItem.name === 'string');
+
+      // The tests are setup to error based on name, which is this glob error.
+      assert.ok(errItem.error instanceof verror.NoServersAndAuthError);
       globErrors.push(errItem.name);
     });
 
@@ -151,8 +155,8 @@ function runGlobTest(pattern, expectedResults, dispatcher, expectedErrors,
   });
 }
 
-test('Test globbing all decedents of root - GlobChildren - glob(testGlob/...)',
-  function(assert) {
+test('Test globbing all descendants of root - GlobChildren - ' +
+  'glob(testGlob/...)', function(assert) {
   var expectedResults = ALBUMS.map(function(s) { return 'testGlob/' + s; });
   // We need to push testGlob twice because we get one entry from the
   // mountable and the next entry from the glob method.  This is expected
@@ -163,7 +167,7 @@ test('Test globbing all decedents of root - GlobChildren - glob(testGlob/...)',
   runChildrenGlobTest('testGlob/...', expectedResults, null, assert);
 });
 
-test('Test globbing all decedents of a child - GlobChildren - ' +
+test('Test globbing all descendants of a child - GlobChildren - ' +
   ' glob(testGlob/private/...)',
   function(assert) {
   var expectedResults = [
@@ -252,7 +256,7 @@ FullGlobber.prototype.__glob = function(ctx, glob, $stream) {
     }));
 };
 
-test('Test globbing all decedents of root - FullGlobber - glob(testGlob/...)',
+test('Test globbing all descendants of root - FullGlobber - glob(testGlob/...)',
   function(assert) {
   var expectedResults = [
     'testGlob',
@@ -266,7 +270,7 @@ test('Test globbing all decedents of root - FullGlobber - glob(testGlob/...)',
   runGlobTest('testGlob/...', expectedResults, dispatcher, null, assert);
 });
 
-test('Test globbing all decedents of a child - FullGlobber - ' +
+test('Test globbing all descendants of a child - FullGlobber - ' +
   'glob(testGlob/bar/...)', function(assert) {
   var expectedResults = [
     'testGlob/bar/...',
