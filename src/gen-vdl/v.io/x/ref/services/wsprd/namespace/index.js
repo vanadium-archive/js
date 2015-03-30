@@ -13,7 +13,7 @@ var vdl = require('../../../../../../../vdl');
 
 var time = require('./../../../../../v23/vdlroot/time');
 var naming = require('./../../../../../v23/naming');
-var access = require('./../../../../../v23/services/security/access');
+var access = require('./../../../../../v23/security/access');
 
 module.exports = {};
 
