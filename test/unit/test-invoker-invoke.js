@@ -608,6 +608,70 @@ test('invoker.invoke(...) - Error: Empty args expected', function(t) {
   }
 });
 
+// TODO(alexfandrianto): The callback case fills the missing outArgs with
+// undefined instead of throwing an error, so it isn't tested.
+test('invoker.invoke(...) - Error: More outArgs expected [promise]',
+  function(t) {
+
+  var context = new Context();
+
+  invoke({
+    service: {
+      fiveOutArgMethod: notEnoughOutArgs,
+      _serviceDescription: _fiveOutArgSig
+    },
+    name: 'FiveOutArgMethod',
+    args: [ 'a', 'b', 'c', 'd' ],
+    injections: {
+      context: context
+    }
+  }, function(err, results) {
+    console.log(results);
+    t.ok(err instanceof verror.InternalError, 'should error');
+    t.equal(err.message,
+      'app:op: Internal error: ' +
+      'Expected 5 results, but got 4');
+    t.end();
+  });
+
+  // Hoisted into the service object above.
+  function notEnoughOutArgs(ctx, a, b, c, d) {
+    return [ a, b, c, d ]; // needs 5, not 4
+  }
+});
+
+// TODO(alexfandrianto): The callback service method implementation throws out
+// any extra return arguments, so it isn't tested.
+test('invoker.invoke(...) - Error: Fewer outArgs expected [promise]',
+  function(t) {
+
+  var context = new Context();
+
+  invoke({
+    service: {
+      fiveOutArgMethod: notEnoughOutArgs,
+      _serviceDescription: _fiveOutArgSig
+    },
+    name: 'FiveOutArgMethod',
+    args: [ 'a', 'b', 'c', 'd' ],
+    injections: {
+      context: context
+    }
+  }, function(err, results) {
+    console.log(results);
+    t.ok(err instanceof verror.InternalError, 'should error');
+    t.equal(err.message,
+      'app:op: Internal error: ' +
+      'Expected 5 results, but got 6');
+    t.end();
+  });
+
+  // Hoisted into the service object above.
+  function notEnoughOutArgs(ctx, a, b, c, d) {
+    return [ a, b, c, d, d, d ]; // needs 5, not 6
+  }
+});
+
 // Helper for boilerplate around `invoker.invoke(...)` test setup:
 function invoke(options, cb) {
   var service = options.service;

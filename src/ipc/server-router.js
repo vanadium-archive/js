@@ -89,7 +89,7 @@ Router.prototype.handleAuthorizationRequest = function(messageId, request) {
     JSON.stringify({
       // TODO(bjornick): Use the real context
       err: new verror.InternalError(this._rootCtx,
-                                    ['Failed to decode ', e])
+                                    'Failed to decode ', e)
     });
     this._proxy.sendRequest(data, Outgoing.AUTHORIZATION_RESPONSE,
         null, messageId);
@@ -98,7 +98,7 @@ Router.prototype.handleAuthorizationRequest = function(messageId, request) {
   if (!server) {
     var data = JSON.stringify({
       // TODO(bjornick): Use the real context
-      err: new verror.ExistsError(this._rootCtx, ['unknown server'])
+      err: new verror.ExistsError(this._rootCtx, 'unknown server')
     });
     this._proxy.sendRequest(data, Outgoing.AUTHORIZATION_RESPONSE,
         null, messageId);
@@ -163,7 +163,7 @@ Router.prototype.handleLookupRequest = function(messageId, request) {
     // TODO(bjornick): Pass in context here so we can generate useful error
     // messages.
     var data = JSON.stringify({
-      err: new verror.NoExistError(this._rootCtx, ['unknown server'])
+      err: new verror.NoExistError(this._rootCtx, 'unknown server')
     });
     this._proxy.sendRequest(data, Outgoing.LOOKUP_RESPONSE,
         null, messageId);
@@ -305,7 +305,7 @@ Router.prototype.handleRPCRequest = function(messageId, vdlRequest) {
   });
   if (methodSig === undefined) {
     err = new verror.NoExistError(
-      call, ['Requested method', methodName, 'not found on']);
+      call, 'Requested method', methodName, 'not found on');
     this.sendResult(messageId, methodName, null, err);
     return;
   }
@@ -425,7 +425,7 @@ Router.prototype.handleGlobRequest = function(messageId, name, server, glob,
     this.invokeMethod(invoker, options, function(err, results) {
       if (err) {
         var verr = new verror.InternalError(context,
-          ['__glob() failed', glob, err]);
+          '__glob() failed', glob, err);
         var errReply = createGlobErrorReply(name, verr, self._appName);
         self._streamMap[messageId].write(errReply);
         vlog.logger.info(verr);
