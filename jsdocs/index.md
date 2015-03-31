@@ -9,7 +9,7 @@ Vanadium.
 all the public functions and types grouped in logical namespaces.
 
 
-[Runtime](./module-vanadium-runtime.html) as returned by the
+[Runtime](./Runtime.html) as returned by the
 [init](module-vanadium.html#.init) function, is one of the main
 types that includes functions for creating servers and clients.
 ```
