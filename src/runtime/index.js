@@ -153,6 +153,7 @@ Runtime.prototype.getContext = function() {
   if (this._language) {
     ctx = ctx.withValue(SharedContextKeys.LANG_KEY, this._language);
   }
+  ctx = ctx.withValue(SharedContextKeys.RUNTIME, this);
   ctx = vtrace.withNewStore(ctx);
   ctx = vtrace.withNewTrace(ctx);
   this._rootCtx = ctx;

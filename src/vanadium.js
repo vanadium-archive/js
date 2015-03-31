@@ -9,6 +9,7 @@
 
 var extend = require('xtend');
 var isBrowser = require('is-browser');
+var SharedContextKeys = require('./runtime/shared-context-keys');
 
 var Deferred = require('./lib/deferred');
 var runtime = require('./runtime');
@@ -83,7 +84,9 @@ module.exports = {
    * Namespace for vtrace related functions and types.
    * @namespace
    */
-  vtrace: require('./vtrace')
+  vtrace: require('./vtrace'),
+
+  runtimeForContext: runtimeForContext,
 };
 
 if (isBrowser) {
@@ -94,7 +97,15 @@ if (isBrowser) {
    */
   module.exports.extension = require('./browser/extension-utils');
 }
-
+/**
+ * Gets the {@link Runtime} for a given [Context]
+ * {@link module:vanadium.context.Context}
+ * @param {module:vanadium.context.Context} ctx The context
+ * @return {Runtime} the runtime for the context
+ */
+function runtimeForContext(ctx) {
+  return ctx.value(SharedContextKeys.RUNTIME);
+}
 /**
  * Creates a Vanadium [runtime]{@link Runtime}.
  * @param {Object} config Configuration options
