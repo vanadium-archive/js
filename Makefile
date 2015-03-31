@@ -229,12 +229,12 @@ docs: $(JS_SRC_FILES) | node_modules
 #     make staging-docs
 #
 # This will sync the docs directory to the private Google Storage bucket
-# gs://staging.jsdoc.v.io which gets automatically updated to the nginx
+# gs://jsdoc.staging.v.io which gets automatically updated to the nginx
 # front-end servers. Currently all static content is protected by OAuth.
 .PHONY: staging-docs
 staging-docs: docs
 	gcloud config set project vanadium-staging
-	gsutil -m rsync -d -r ./docs gs://staging.jsdoc.v.io
+	gsutil -m rsync -d -r ./docs gs://jsdoc.staging.v.io
 
 node_modules: package.json  check-that-npm-is-in-path
 ifndef NONPMUPDATE
