@@ -12,7 +12,7 @@ var PassThrough = require('stream').PassThrough;
 var fs = require('fs');
 
 var VANADIUM_ROOT = process.env.VANADIUM_ROOT;
-var VEYRON_BINS = [
+var VANADIUM_BINS = [
   path.join(VANADIUM_ROOT, 'release/javascript/core/go/bin'),
   path.join(VANADIUM_ROOT, 'release/javascript/core/nacl/scripts')
 ];
@@ -21,7 +21,7 @@ var DEFAULT_FLAGS = {
   log_dir: path.resolve('tmp/log')  // jshint ignore:line
 };
 
-process.env.PATH += ':' + VEYRON_BINS.join(':');
+process.env.PATH += ':' + VANADIUM_BINS.join(':');
 
 module.exports = Service;
 
