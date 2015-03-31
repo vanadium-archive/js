@@ -34,8 +34,8 @@ We'll start it on port 9002.
 
 The proxyd allows nodes to communicate regardless of network topology.
 
-We have to pass it the location of the mountable in an environment variable
-called NAMESPACE_ROOT.
+We have to pass it the location of the mountable via the
+--veyron.namespace.root flag.
 
     $ proxyd --veyron.namespace.root=/localhost:9002 --address=:9001
 
@@ -46,8 +46,8 @@ called NAMESPACE_ROOT.
 The WSPR proxy allows JavaScript to make Veyron RPC calls, and manages
 identities in a secure manner.
 
-We must tell WSPRD about the mountable using the NAMESPACE_ROOT env variable,
-and we pass in the location of the proxy with the '--veyron.proxy' flag.
+We must tell WSPRD about the mountable using the '--veyron.namespace.root'
+flag, and we pass in the location of the proxy with the '--veyron.proxy' flag.
 
 Lastly, WSPR needs an initial identity.  You can generate one of these by running:
 

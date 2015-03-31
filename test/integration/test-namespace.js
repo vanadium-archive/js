@@ -15,7 +15,7 @@ var timeouts = require('./timeouts');
 var vanadium = require('../../');
 var verror = vanadium.errors;
 
-var namespaceRoot = process.env.NAMESPACE_ROOT;
+var namespaceRoot = process.env.V23_NAMESPACE;
 var PREFIX = 'namespace-testing/';
 
 test('Test globbing children - glob(' + PREFIX + '*)', function(assert) {
