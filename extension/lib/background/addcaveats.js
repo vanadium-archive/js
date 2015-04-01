@@ -33,7 +33,9 @@ domready(function() {
   }
 });
 
-var caveatNames = ['ExpiryCaveat', 'MethodCaveat'];
+// We only currently support Expiry because other caveats don't make sense to
+// the end user and Revocation is not yet supported in WSPR.
+var caveatNames = ['ExpiryCaveat'];
 
 function sendCaveats(cancel) {
   var caveats = [];

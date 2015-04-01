@@ -41,7 +41,7 @@
   <meta name="msapplication-TileImage" content="https://staging.v.io/favicons/mstile-144x144.png">
 
   <script src="/js/addcaveats.js"></script>
-  <title>Blessings: Select Caveats</title>
+  <title>Request for Blessings</title>
 </head>
 
 <body class="default-layout">
@@ -52,7 +52,7 @@
   </nav>
 
   <nav class="main">
-    <a href="#">Select Caveats</a>
+    <a href="#">Grants for Blessings</a>
   </nav>
 
   <nav class="right">
@@ -62,27 +62,18 @@
 
 <main style="max-width: 80%; margin-left: 10px;">
   <h3 id="warning"></h3>
-  <span>Add restrictions on the use of the blessing</span>
-    <div class="grid">
-      <div class="cell">
-        <label>Expires in</label>
+    <!--TODO(suharshs,nlacasse,aghasemi): We can remove this hidden css class to allow the user to select specific caveats.-->
+    <span>Allow access for 10 days.</span>
+    <div class="hidden">
         <input type="text" id="ExpiryCaveat" placeholder="i.e. 2h45m. Valid time units are ns, us (or µs), ms, s, m, h. Defaults to 240h.">
-      </div>
-    </div>
-    <div class="grid">
-      <div class="cell">
-        <label>Restricted to methods</label>
-        <input type="text" id="MethodCaveat" placeholder="Comma-separated method names.">
-      </div>
     </div>
   <br/>
   <div class="grid">
-    <button id="submit-caveats" class="cell button-passive" type="submit">Bless</button>
-    <button id="cancel" class="cell button-passive">Cancel</button>
+    <button id="submit-caveats" class="cell button-passive" type="submit">Allow</button>
+    <button id="cancel" class="cell button-passive">Deny</button>
     <div class="cell"></div>
     <div class="cell"></div>
   </div>
-  </form>
 </main>
 
 </body>
