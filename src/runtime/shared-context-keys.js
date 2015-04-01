@@ -20,3 +20,5 @@ module.exports.LANG_KEY = new ContextKey();
  * @private
  */
 module.exports.OP = new ContextKey();
+
+module.exports.RUNTIME = new ContextKey();
