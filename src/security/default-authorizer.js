@@ -8,23 +8,23 @@ var context = require('./../runtime/context');
 
 module.exports = authorizer;
 
-function authorizer(ctx) {
+function authorizer(ctx, cb) {
   if (ctx.localBlessings.publicKey === ctx.remoteBlessings.publicKey) {
-    return null;
+    return cb();
   }
   var matchesLocal = ctx.localBlessingStrings.some(function(l) {
     return blessingMatches(l, ctx.remoteBlessingStrings);
   });
   if (matchesLocal) {
-    return null;
+    return cb();
   }
 
   var matchesRemote = ctx.remoteBlessingStrings.some(function(l) {
     return blessingMatches(l, ctx.localBlessingStrings);
   });
   if (matchesRemote) {
-    return null;
+    return cb();
   }
-  return new vError.NoAccessError(new context.Context(),
-                                  ['authorization failed']);
+  return cb(new vError.NoAccessError(new context.Context(),
+                                  ['authorization failed']));
 }

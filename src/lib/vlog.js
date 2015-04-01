@@ -38,7 +38,7 @@ var levels = {
   INFO : 4
 };
 var defaults = {
-  level: levels.NOLOG,
+  level: levels.NOLOG, // Typically set through the default in vanadium.js
   console: console
 };
 

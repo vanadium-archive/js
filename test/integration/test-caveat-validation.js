@@ -44,7 +44,6 @@ test('caveatValidation', function(t) {
     if (!nextCaveatValidationResult) {
       throw new Error('Intentionally failing caveat validation');
     }
-    return null;
   }
 
   // Serve a service providing aMethod().

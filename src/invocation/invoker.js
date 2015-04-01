@@ -16,7 +16,8 @@ var capitalize = require('../vdl/util').capitalize;
 var isCapitalized = require('../vdl/util').isCapitalized;
 var format = require('format');
 var context = require('../runtime/context');
-var ArgInspector = require('../lib/arg-inspector');
+var asyncCall = require('../lib/async-call');
+var InspectableFunction = require('../lib/inspectable-function');
 
 // Method signatures for internal methods that are not present in actual
 // signatures.
@@ -63,19 +64,27 @@ function Invoker(service) {
     var capitalizedMethodName = capitalize(key);
     var method = service[key];
 
+    var inspectableFn = new InspectableFunction(method);
+    // Check whether the number of args reported by javascript (method.length)
+    // and the number of args retrieved from fn.toString() are the same.
+    // This usually differs if the method is a native method.
+    if (inspectableFn.names.length !== method.length) {
+      throw new Error('Function "' + key + '" can not be inspected. ' +
+        'This is usually because it is a native method or bind is used.');
+    }
+
     invoker._methods[capitalizedMethodName] = {
       name: capitalizedMethodName,
-      fn: method,
-      args: new ArgInspector(method)
+      fn: inspectableFn
     };
   }
 
 
-  var args;
+  var fn;
   if (typeof service.__glob === 'function') {
-    args = new ArgInspector(service.__glob);
-    if (args.filteredNames.length !== 1 ||
-        args.names.indexOf('$stream') === -1) {
+    fn = new InspectableFunction(service.__glob);
+    if (fn.filteredNames.length !== 1 ||
+        fn.names.indexOf('$stream') === -1) {
       // TODO(bjornick): Throw a verror of appropriate type.
       throw new Error(
         '__glob needs to take in a string and be streaming');
@@ -83,15 +92,14 @@ function Invoker(service) {
 
     this._methods.__glob = {
       name: '__glob',
-      fn: service.__glob,
-      args: args
+      fn: fn
     };
   }
 
   if (typeof service.__globChildren === 'function') {
-    args = new ArgInspector(service.__globChildren);
-    if (args.filteredNames.length !== 0 ||
-        args.names.indexOf('$stream') === -1 ) {
+    fn = new InspectableFunction(service.__globChildren);
+    if (fn.filteredNames.length !== 0 ||
+        fn.names.indexOf('$stream') === -1 ) {
       // TODO(bjornick): Throw a verror of appropriate type.
       throw new Error(
         '__globChildren needs to take in no args and be streaming');
@@ -99,8 +107,7 @@ function Invoker(service) {
 
     this._methods.__globChildren = {
       name: '__globChildren',
-      fn: service.__globChildren,
-      args: args
+      fn: fn
     };
   }
 }
@@ -149,7 +156,6 @@ Invoker.prototype.invoke = function(name, args, injections, cb) {
   var err;
 
   var invoker = this;
-  var service = invoker._service;
   var method = invoker._methods[name];
   var errorContext = injections.context || new context.Context();
   if (!method) {
@@ -173,7 +179,7 @@ Invoker.prototype.invoke = function(name, args, injections, cb) {
     return;
   }
 
-  var arity = method.args.arity();
+  var arity = method.fn.arity();
 
   // Check argument arity against the method's declared arity
   if (args.length !== arity) {
@@ -191,96 +197,16 @@ Invoker.prototype.invoke = function(name, args, injections, cb) {
   // context goes in front
   clonedArgs.unshift(injections.context);
 
-  // injectedCb converts from a call of form:
-  //    injectedCb(err, a, b, c)
-  // to
-  //    cb(err, [a, b, c])
-  //
-  // The call to cb() is always has the correct number of elements
-  // in the results array. If too few args are provided, the array
-  // is padded with undefined values. If too many args are provided,
-  // they are thrown out.
-  // TODO(alexfandrianto): The promise case doesn't do this padding though.
-  // Instead, it throws a verror.InternalError for the wrong # of results.
-  function injectedCb(err /*, args */) {
-    var res = Array.prototype.slice.call(arguments, 1,
-      1 + methodSig.outArgs.length);
-    var paddingNeeded = methodSig.outArgs.length - res.length;
-    var paddedRes = res.concat(new Array(paddingNeeded));
-    cb(err, paddedRes);
-  }
-  // callback at the end of the arg list
-  clonedArgs.push(injectedCb);
-
   // splice in stream
   if (injections.stream) {
-    var start = method.args.position('$stream');
+    var start = method.fn.position('$stream');
     var deleteCount = 0;
 
     clonedArgs.splice(start, deleteCount, injections.stream);
   }
 
-  var results;
-
-  try {
-    results = method.fn.apply(service, clonedArgs);
-  } catch (e) {
-    // This might be a good place to throw if there was a developer error
-    // service side...
-    cb(wrapError(e));
-    return;
-  }
-
-  // No need to carry on if the method didn't return anythig.
-  //
-  // NOTE: It's possible to get falsey return values (false, empty string) so
-  // always check for results === undefined.
-  if (results === undefined && method.args.hasCallback()) {
-    return;
-  }
-
-  // Use Promise.resolve to to handle thenable (promises) and null checking
-  Promise
-  .resolve(results)
-  .then(function (res) {
-    // We expect:
-    // 0 args - return; // NOT return [];
-    // 1 args - return a; // NOT return [a];
-    // 2 args - return [a, b] ;
-    //
-    // Convert the results to always be in array style:
-    // [], [a], [a, b], etc
-    var resAsArray;
-    switch (methodSig.outArgs.length) {
-      case 0:
-        resAsArray = [];
-        break;
-      case 1:
-        resAsArray = [res];
-        break;
-      default:
-        if (!Array.isArray(res)) {
-          throw new verror.InternalError(
-            errorContext,
-            'Expected multiple out arguments to be returned in an array.');
-        }
-        resAsArray = res;
-        break;
-    }
-    if (resAsArray.length !== methodSig.outArgs.length) {
-      // -1 on outArgs.length ignores error
-      // TODO(bjornick): Generate a real verror for this so it can
-      // internationalized.
-      throw new verror.InternalError(
-        errorContext,
-        'Expected', methodSig.outArgs.length, 'results, but got',
-        resAsArray.length);
-    }
-    cb(null, resAsArray);
-  })
-  .catch(function error(err) {
-    cb(wrapError(err));
-  });
+  asyncCall(injections.context, invoker._service, method.fn,
+    methodSig.outArgs.length, clonedArgs, cb);
 };
 
 /**
@@ -298,21 +224,6 @@ Invoker.prototype.signature = function() {
   return this._signature;
 };
 
-/**
- * Wrap an error so that it is always of type Error.
- * This is used in cases where values are known to be errors even if they
- * are not of error type such as if they are thrown or rejected.
- * @private
- * @param {Error} err The error or other value.
- * @return {Error} An error or type Error.
- */
-function wrapError(err) {
-  if (!(err instanceof Error)) {
-    return new Error(err);
-  } else {
-    return err;
-  }
-}
 
 /**
  * returns whether the function <name> is invokable.

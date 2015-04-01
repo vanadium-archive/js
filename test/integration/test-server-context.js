@@ -11,7 +11,7 @@ var dispatcher = leafDispatcher({
   getSuffix: function(ctx) {
     return ctx.suffix;
   },
-  getContext: function(ctx, callback) {
+  getContext: function(ctx) {
     return ctx;
   },
   getArgs: function(ctx, a, b, c, $stream, cb) {

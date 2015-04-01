@@ -14,6 +14,8 @@ var byteUtil = require('../vdl/byte-util');
 var standardCaveats = require('./standard-caveat-validators');
 var vdlSecurity = require('../gen-vdl/v.io/v23/security');
 var unwrapArg = require('../lib/unwrap-arg');
+var InspectableFunction = require('../lib/inspectable-function');
+var asyncCall = require('../lib/async-call');
 
 module.exports = CaveatValidatorRegistry;
 
@@ -64,19 +66,21 @@ CaveatValidatorRegistry.prototype.register = function(cavDesc, validateFn) {
 
 /**
  * Perform validation on a caveat.
- * @param {SecurityCall} secCall The context.
+ * @param {module:vanadium.context.Context} ctx The context.
+ * @param {module:vanadium.security.SecurityCall} secCall The security call.
  * @param {*} caveat The caveat to validate.
+ * @param {Function} [cb] Callback after validation is complete.
  * See security/types.vdl
  * @throws Error Upon failure to validate, does not throw if successful.
  */
 CaveatValidatorRegistry.prototype.validate =
-  function(secCall, caveat) {
+  function(ctx, secCall, caveat, cb) {
   var validator = this.validators.get(this._makeKey(caveat.id));
   if (validator === undefined) {
-    throw new vdlSecurity.CaveatNotRegisteredError(secCall.context,
-      'Unknown caveat id: ' + this._makeKey(caveat.id));
+    return cb(new vdlSecurity.CaveatNotRegisteredError(secCall.context,
+      'Unknown caveat id: ' + this._makeKey(caveat.id)));
   }
-  return validator.validate(secCall, vom.decode(caveat.paramVom));
+  return validator.validate(ctx, secCall, vom.decode(caveat.paramVom), cb);
 };
 
 /**
@@ -89,11 +93,15 @@ function CaveatValidator(cavDesc, validateFn) {
   this.validateFn = validateFn;
 }
 
+/**
+ * @private
+ */
 CaveatValidator.prototype.validate =
-  function(secCall, paramForValidator) {
+  function(ctx, secCall, paramForValidator, cb) {
   var paramType = this.cavDesc.paramType;
   var canonParam = vdl.Canonicalize.reduce(paramForValidator, paramType);
   var unwrappedParam = unwrapArg(canonParam, paramType);
 
-  return this.validateFn(secCall, unwrappedParam);
+  var inspectableFn = new InspectableFunction(this.validateFn);
+  asyncCall(ctx, null, inspectableFn, 0, [secCall, unwrappedParam], cb);
 };

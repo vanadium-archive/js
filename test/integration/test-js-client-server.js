@@ -60,10 +60,11 @@ var CacheService = {
     });
     $stream.read();
   },
-  doNothingStream: function(ctx, $stream) {
+  doNothingStream: function(ctx, $stream, cb) {
+    cb(null);
   },
-  nonAsyncFunction: function(ctx) {
-    return 'RESULT';
+  nonAsyncFunction: function(ctx, cb) {
+    cb(null, 'RESULT');
   }
 };
 
@@ -118,9 +119,6 @@ var CacheServicePromises = {
     return 'RESULT';
   }
 };
-
-// TODO(bprosnitz) After we make it simpler to provide VDL type information,
-// add more test cases with types.
 
 runCache({
   testName: 'without VDL (JSValue) using callbacks',
@@ -573,14 +571,14 @@ var TypedStreamingService = {
     return def.promise;
   },
   // outStreamOnly verifies that typed outStreams work properly.
-  outStreamOnly: function(ctx, numTimes, $stream) {
+  outStreamOnly: function(ctx, numTimes, $stream, cb) {
     // Send stream values numTimes
     var numSent = 0;
     while (numSent < numTimes) {
       $stream.write(numSent); // Despite sending int, we autoconvert to BigInt.
       numSent++;
     }
-    return numSent;
+    return cb(null, numSent);
   },
   // bidirBoolListNegationsStream tests that bidirectional streams can send
   // composite types back and forth, as well as modify the data items streamed.

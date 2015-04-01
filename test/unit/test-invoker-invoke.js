@@ -253,7 +253,7 @@ test('invoker.invoke(...) - promise - shortnames', function(t) {
     t.end();
   });
 
-  function promiseShortNames(ctx, cb) {
+  function promiseShortNames(ctx) {
     var promise = new Promise(function(resolve, reject) {
       resolve('shortNameResult');
     });
@@ -409,7 +409,7 @@ test('invoker.invoke(...) - return value - no arg method', function(t) {
     t.end();
   });
 
-  function returnNoArgMethod(context, callback) {
+  function returnNoArgMethod(context) {
     return context;
   }
 });
@@ -430,7 +430,7 @@ test('invoker.invoke(...) - promise - no arg method', function(t) {
     t.end();
   });
 
-  function promiseNoArgMethod(context, callback) {
+  function promiseNoArgMethod(context) {
     var promise = new Promise(function(resolve, reject) {
       process.nextTick(function() {
         resolve(context);
@@ -670,6 +670,17 @@ test('invoker.invoke(...) - Error: Fewer outArgs expected [promise]',
   function notEnoughOutArgs(ctx, a, b, c, d) {
     return [ a, b, c, d, d, d ]; // needs 5, not 6
   }
+});
+
+test('new Invoker(...) - Error: Cannot inspect', function(t) {
+  t.throws(function() {
+    return new Invoker({
+      boundFn: function(){}.bind()
+    });
+  },
+  null,
+  'Expected to throw when constructed with bound function.');
+  t.end();
 });
 
 // Helper for boilerplate around `invoker.invoke(...)` test setup:

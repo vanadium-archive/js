@@ -58,7 +58,7 @@ var ConditionallyValidatingTestCaveat = security.CaveatDescriptor{
 // InvokableTestMethodClientMethods is the client interface
 // containing InvokableTestMethod methods.
 type InvokableTestMethodClientMethods interface {
-	AMethod(*context.T, ...rpc.CallOpt) error
+	AMethod(*context.T, ...rpc.CallOpt) (string, error)
 }
 
 // InvokableTestMethodClientStub adds universal methods to InvokableTestMethodClientMethods.
@@ -90,19 +90,19 @@ func (c implInvokableTestMethodClientStub) c(ctx *context.T) rpc.Client {
 	return v23.GetClient(ctx)
 }
 
-func (c implInvokableTestMethodClientStub) AMethod(ctx *context.T, opts ...rpc.CallOpt) (err error) {
+func (c implInvokableTestMethodClientStub) AMethod(ctx *context.T, opts ...rpc.CallOpt) (o0 string, err error) {
 	var call rpc.ClientCall
 	if call, err = c.c(ctx).StartCall(ctx, c.name, "AMethod", nil, opts...); err != nil {
 		return
 	}
-	err = call.Finish()
+	err = call.Finish(&o0)
 	return
 }
 
 // InvokableTestMethodServerMethods is the interface a server writer
 // implements for InvokableTestMethod.
 type InvokableTestMethodServerMethods interface {
-	AMethod(rpc.ServerCall) error
+	AMethod(rpc.ServerCall) (string, error)
 }
 
 // InvokableTestMethodServerStubMethods is the server interface containing
@@ -140,7 +140,7 @@ type implInvokableTestMethodServerStub struct {
 	gs   *rpc.GlobState
 }
 
-func (s implInvokableTestMethodServerStub) AMethod(call rpc.ServerCall) error {
+func (s implInvokableTestMethodServerStub) AMethod(call rpc.ServerCall) (string, error) {
 	return s.impl.AMethod(call)
 }
 
@@ -162,6 +162,9 @@ var descInvokableTestMethod = rpc.InterfaceDesc{
 	Methods: []rpc.MethodDesc{
 		{
 			Name: "AMethod",
+			OutArgs: []rpc.ArgDesc{
+				{"", ``}, // string
+			},
 		},
 	},
 }

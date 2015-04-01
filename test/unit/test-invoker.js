@@ -24,9 +24,11 @@ BasePartialImpl.prototype.methodA3 = function(context, $stream, a) {
 };
 
 BasePartialImpl.prototype.methodA4 = function(context, $stream, a) {
+  return;
 };
 
-BasePartialImpl.prototype.methodB1 = function(context, a, b) {
+BasePartialImpl.prototype.methodB1 = function(context, a, b, cb) {
+  cb(null);
 };
 
 test('Invoker and signature for vdl-generated base.js',

@@ -20,7 +20,8 @@
 
 var Deferred = require('./../lib/deferred');
 var Promise = require('./../lib/promise');
-var asyncValidateCall = require('./async-validate-call');
+var asyncCall = require('../lib/async-call');
+var InspectableFunction = require('../lib/inspectable-function');
 var leafDispatcher = require('./leaf-dispatcher');
 var vlog = require('./../lib/vlog');
 var inspector = require('./../lib/arg-inspector');
@@ -259,7 +260,17 @@ Server.prototype.handleAuthorization = function(handle, request) {
     authorizer = handler.authorizer;
   }
 
-  return asyncValidateCall(authorizer, request);
+  var def = new Deferred();
+  var inspectableAuthorizer = new InspectableFunction(authorizer);
+  asyncCall(this._rootCtx, null, inspectableAuthorizer, 0, [request],
+    function(err) {
+    if (err) {
+      def.reject(err);
+      return;
+    }
+    def.resolve();
+  });
+  return def.promise;
 };
 
 var InvokeOnNonInvoker = makeError(

@@ -21,6 +21,7 @@ var ServerCall = require('./server-call');
 var vdl = require('../vdl');
 var byteUtil = require('../vdl/byte-util');
 var typeUtil = require('../vdl/type-util');
+var Deferred = require('../lib/deferred');
 var capitalize = require('../vdl/util').capitalize;
 var vom = require('../vom');
 var vdlsig = require('../gen-vdl/v.io/v23/vdlroot/signature');
@@ -28,7 +29,6 @@ var namespaceUtil = require('../naming/util');
 var naming = require('../gen-vdl/v.io/v23/naming');
 var Glob = require('./glob');
 var GlobStream = require('./glob-stream');
-var asyncValidateCall = require('./async-validate-call');
 var ServerRpcReply =
   require('../gen-vdl/v.io/x/ref/services/wsprd/lib').ServerRpcReply;
 var CaveatValidationResponse =
@@ -122,8 +122,15 @@ Router.prototype.handleAuthorizationRequest = function(messageId, request) {
 Router.prototype._validateChain = function(secCall, cavs) {
   var promises = new Array(cavs.length);
   for (var j = 0; j < cavs.length; j++) {
-    var boundFn = this._caveatRegistry.validate.bind(this._caveatRegistry);
-    promises[j] = asyncValidateCall(boundFn, secCall, cavs[j]);
+    var def = new Deferred();
+    this._caveatRegistry.validate(this._rootCtx, secCall, cavs[j],
+      function(err) {
+        if (err) {
+          return def.reject(err);
+        }
+        def.resolve();
+    }); // jshint ignore:line
+    promises[j] = def.promise;
   }
   return Promise.all(promises).then(function(results) {
     return undefined;

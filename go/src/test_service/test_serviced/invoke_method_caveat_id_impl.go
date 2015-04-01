@@ -5,6 +5,7 @@
 package main
 
 import (
+	"fmt"
 	"test_service"
 
 	vsecurity "v.io/x/ref/security"
@@ -63,5 +64,12 @@ func (i *invokeMethWCavIdImpl) Invoke(call rpc.ServerCall, name string, cavDesc 
 		return err
 	}
 
-	return client.AMethod(ctxWithCaveats)
+	str, err := client.AMethod(ctxWithCaveats)
+	if err != nil {
+		return err
+	}
+	if str != "aResult" {
+		return fmt.Errorf("Got wrong result %q", str)
+	}
+	return nil
 }

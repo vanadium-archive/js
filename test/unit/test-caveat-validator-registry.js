@@ -37,6 +37,7 @@ function getMockSecurityCall() {
 test('Validating caveats', function(t) {
   var registry = new CaveatValidatorRegistry();
   var call = getMockSecurityCall();
+  var ctx = context.Context();
 
   // Keep track of the validation calls when they happen.
   var seenCalls = [];
@@ -52,8 +53,7 @@ test('Validating caveats', function(t) {
 
     seenCalls.push('validate');
 
-    return false; // This should be ignored, but make sure it isn't treated
-    // as a failed validation.
+    return Promise.resolve();
   });
   registry.register(testCaveats.CaveatDoesntValidate,
     function(fnCall, param) {
@@ -67,64 +67,83 @@ test('Validating caveats', function(t) {
   });
 
   // Make calls to validate(), providing caveats.
-  t.doesNotThrow(function() {
+  registry.validate(
+    ctx,
+    call,
+    caveats.createCaveat(testCaveats.CaveatThatValidates,
+      testCaveats.CaveatThatValidatesExpectedData),
+    function(err) {
+      t.notOk(err, 'Should validate');
       registry.validate(
-              call,
-              caveats.createCaveat(testCaveats.CaveatThatValidates,
-                         testCaveats.CaveatThatValidatesExpectedData));
-    },
-    'Should validate');
-  t.throws(function() {
-      registry.validate(
-              call,
-              caveats.createCaveat(testCaveats.CaveatDoesntValidate,
-                         testCaveats.CaveatDoesntValidateExpectedData));
-    },
-    'Validation should fail',
-    'Shouldn\'t validate');
+        ctx,
+        call,
+        caveats.createCaveat(testCaveats.CaveatDoesntValidate,
+          testCaveats.CaveatDoesntValidateExpectedData),
+        function(err) {
+          t.ok(err, 'Shouldn\'t validate');
 
+          // Test re-registering on the same UUID. This should replace the
+          // validation function.
+          registry.register(testCaveats.CaveatWithCollision,
+            function(fnCall, param, cb) {
+            t.equal(fnCall, call, 'Contexts should match');
+            t.deepEqual(param, testCaveats.CaveatWithCollisionExpectedData.val,
+              'Validation param matches expectation (CaveatWithCollision)');
 
-  // Test re-registering on the same UUID. This should replace the validation
-  // function.
-  registry.register(testCaveats.CaveatWithCollision,
-    function(fnCall, param) {
-    t.equal(fnCall, call, 'Contexts should match');
-    t.deepEqual(param, testCaveats.CaveatWithCollisionExpectedData.val,
-      'Validation param matches expectation (CaveatWithCollision)');
+            seenCalls.push('collision');
 
-    seenCalls.push('collision');
-
-    throw new Error('Validation should fail when this is thrown');
-  });
-
-  t.throws(function() {
-      registry.validate(
-	      call,
-        caveats.createCaveat(testCaveats.CaveatWithCollision,
-                   testCaveats.CaveatWithCollisionExpectedData.val));
-    },
-    'Validation should fail',
-    'Shouldn\'t validate after validation function is changed');
-
-  t.deepEqual(seenCalls, ['validate', 'not validate', 'collision'],
-    'All validation functions are called in the right order.');
-
-  t.end();
+            cb(new Error('Validation should fail when this is thrown'));
+            });
+          registry.validate(
+            ctx,
+            call,
+            caveats.createCaveat(testCaveats.CaveatWithCollision,
+                       testCaveats.CaveatWithCollisionExpectedData.val),
+            function(err) {
+              t.ok(err,
+                'Still shouldn\'t validate after validation function changes');
+                t.deepEqual(seenCalls,
+                  ['validate', 'not validate', 'collision'],
+                  'All validation functions are called in the right order.');
+              t.end();
+            });
+        });
+    });
 });
 
 test('Unknown caveat id', function(t) {
   var registry = new CaveatValidatorRegistry();
   var call = getMockSecurityCall();
+  var ctx = context.Context();
+  registry.validate(ctx, call,
+  {
+    id: 99,
+    paramVom: null
+  }, function(err) {
+    t.ok(err, 'Got an error');
+    t.ok((''+err).indexOf('Unknown caveat id'),
+      'Expected unknown caveat error');
+    t.end();
+  });
+});
 
-  t.throws(function() {
-    registry.validate(call,
-    {
-      id: 99,
-      paramVom: null
-    });
-  },
-  'Unknown caveat id',
-  'Should throw due to unknown caveat id');
+test('Returning error in validation function fails due to more than expected ' +
+  'out args', function(t) {
+  var registry = new CaveatValidatorRegistry();
+  var call = getMockSecurityCall();
+  var ctx = context.Context();
 
-  t.end();
+  registry.register(testCaveats.CaveatDoesntValidate,
+    function(fnCall, param) {
+    return new Error('This error shouldn\'t be returned');
+  });
+  registry.validate(ctx, call,
+    caveats.createCaveat(testCaveats.CaveatDoesntValidate,
+      testCaveats.CaveatDoesntValidateExpectedData), function(err) {
+    t.ok(err, 'Got an error');
+    t.ok((''+err).indexOf(
+      'Non-undefined value returned from function with 0 out args') !== -1,
+      'Error due to non-undefined value returned from 0-arg function');
+    t.end();
+  });
 });

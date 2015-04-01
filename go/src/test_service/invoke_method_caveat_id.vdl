@@ -10,7 +10,7 @@ import (
 )
 
 type InvokableTestMethod interface {
-    AMethod() error
+    AMethod() (string | error)
 }
 
 type InvokeMethodWithCaveatedIdentity interface {

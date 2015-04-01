@@ -59,7 +59,13 @@ function ReflectSignature(service) {
     };
 
     var argInspector = new ArgInspector(method);
-
+    // Check whether the number of args reported by javascript (method.length)
+    // and the number of args retrieved from fn.toString() are the same.
+    // This usually differs if the method is a native method.
+    if (argInspector.names.length !== method.length) {
+      throw new Error('Function "' + key + '" can not be inspected. ' +
+        'This is usually because it is a native method or bind is used.');
+    }
     if (!argInspector.hasContext()) {
       var message = format('Service method "%s" is missing the required ' +
         '`context` object as the first argument in its definition. ' +

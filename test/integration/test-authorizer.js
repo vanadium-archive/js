@@ -8,16 +8,17 @@ var Deferred = require('../../src/lib/deferred');
 
 var service = {
   call: function(ctx, arg) {
-    return 1;
+    return Promise.resolve(1);
   }
 };
 
-function createDispatcher(authorizer, tags) {
-  function auth($context, cb) {
+
+function createPromiseDispatcher(authorizer, tags) {
+  function auth($context) {
     if ($context.method === '__Signature') {
       return null;
     }
-    return authorizer($context, cb);
+    return authorizer($context);
   }
   var desc = {
     methods: [
@@ -28,7 +29,7 @@ function createDispatcher(authorizer, tags) {
     ]
   };
   service._serviceDescription = desc;
-  return function authDispatcher(suffix) {
+  return function callbackDispatcher(suffix) {
     return {
       service: service,
       authorizer: auth,
@@ -36,11 +37,12 @@ function createDispatcher(authorizer, tags) {
   };
 }
 
+
 function testErrorCase(assert, authorizer) {
   serve({
     name: 'authorizerTestService',
     autoBind: false,
-    dispatcher: createDispatcher(authorizer)
+    dispatcher: createPromiseDispatcher(authorizer)
   }, function(err, res) {
     if (err) {
       return assert.end(err);
@@ -63,25 +65,9 @@ function testErrorCase(assert, authorizer) {
   });
 }
 
-test('Test errors are properly returned - synchronous', function(assert) {
-  testErrorCase(assert, function (ctx) {
-    return new Error('unauthorized');
-  });
-});
-
-test('Test errors are properly returned - authorizer(ctx, cb)',
+test('Test errors are properly returned',
 function(assert) {
-  testErrorCase(assert, function(ctx, cb) {
-    function reject() {
-      cb(new Error('unauthorized'));
-    }
-    setTimeout(reject, 0);
-  });
-});
-
-test('Test errors are properly returned - var promise = authorizer(ctx)',
-function(assert) {
-  testErrorCase(assert, function (ctx) {
+  testErrorCase(assert, function (ctx, cb) {
     var def = new Deferred();
     function reject() {
       def.reject(new Error('unauthorized'));
@@ -91,11 +77,35 @@ function(assert) {
   });
 });
 
+function createCallbackDispatcher(authorizer, tags) {
+  function auth($context, cb) {
+    if ($context.method === '__Signature') {
+      cb(null);
+    }
+    authorizer($context, cb);
+  }
+  var desc = {
+    methods: [
+      {
+        name: 'Call',
+        tags: tags
+      }
+    ]
+  };
+  service._serviceDescription = desc;
+  return function callbackDispatcher(suffix) {
+    return {
+      service: service,
+      authorizer: auth,
+    };
+  };
+}
+
 function testSuccessCase(assert, authorizer, tags) {
   serve({
     name: 'authorizerTestService',
     autoBind: false,
-    dispatcher: createDispatcher(authorizer, tags)
+    dispatcher: createCallbackDispatcher(authorizer, tags)
   }, function(err, res) {
     if (err) {
       return assert.end(err);
@@ -114,38 +124,25 @@ function testSuccessCase(assert, authorizer, tags) {
 }
 
 
-test('Test successes are handled - authorizer(ctx, cb)', function(assert) {
+test('Test successes are handled', function(assert) {
   testSuccessCase(assert, function (ctx, cb) {
     process.nextTick(cb.bind(null, null));
-  });
-});
-
-test('Test successes are handled - ' +
-  'var promise = authorizer(ctx)', function(assert) {
-  testSuccessCase(assert, function (ctx) {
-    var def = new Deferred();
-    function resolve() {
-      def.resolve();
-    }
-    setTimeout(resolve, 0);
-    return def.promise;
   });
 });
 
 test('Test proper context is passed to authorizer', function(assert) {
   var defaultBlessingRegex = require('./default-blessing-regex');
 
-  testSuccessCase(assert, function (ctx) {
+  testSuccessCase(assert, function (ctx, cb) {
     if (!defaultBlessingRegex.test(ctx.remoteBlessingStrings[0])) {
-      return new Error('unknown remote blessings ' +
-        ctx.remoteBlessingStrings);
+      return cb(new Error('unknown remote blessings ' +
+        ctx.remoteBlessingStrings));
     } else if (!defaultBlessingRegex.test(ctx.localBlessingStrings[0])) {
-      return new Error('unknown local blessings ' +
-        ctx.localBlessingStrings);
+      cb(new Error('unknown local blessings ' + ctx.localBlessingStrings));
     } else if (ctx.method !== 'call') {
-      return new Error('wrong method ' + ctx.method);
+      return cb(new Error('wrong method ' + ctx.method));
     } else if (ctx.suffix !== 'auth') {
-      return new Error('wrong suffix ' + ctx.suffix);
+      return cb(new Error('wrong suffix ' + ctx.suffix));
     }
     // TODO(bjornick): Fix the endpoint format
     // } else if (ctx.remoteEndpoint === endpoint ||
@@ -156,15 +153,15 @@ test('Test proper context is passed to authorizer', function(assert) {
     //   return new Error('bad endpoint ' + ctx.localEndpoint);
     // }
 
-    return null;
+    cb();
   });
 });
 
 test('Test passing in labels', function(assert) {
-  testSuccessCase(assert, function(ctx) {
+  testSuccessCase(assert, function(ctx, cb) {
     if (ctx.methodTags[0] !== 'foo') {
-      return new Error('wrong label ' + ctx.label);
+      return cb(new Error('wrong label ' + ctx.label));
     }
-    return null;
+    return cb();
   }, ['foo']);
 });

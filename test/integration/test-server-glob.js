@@ -67,7 +67,7 @@ function createAuthorizer(disallowed) {
         return new Error('disallowed');
       }
     }
-    return null;
+    return;
   };
 }
 
@@ -282,6 +282,7 @@ test('Test globbing all descendants of a child - FullGlobber - ' +
   }
   runGlobTest('testGlob/bar/...', expectedResults, dispatcher, null, assert);
 });
+
 
 function ChildGlobber(children) {
   this.children = children;
