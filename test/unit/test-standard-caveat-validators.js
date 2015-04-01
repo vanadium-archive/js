@@ -5,8 +5,7 @@
 var test = require('prova');
 var CaveatValidatorRegistry =
   require('../../src/security/caveat-validator-registry');
-var caveatUtil = require('./caveat-util');
-var vdlSecurity = require('../../src/gen-vdl/v.io/v23/security');
+var caveats = require('../../src/security/caveats');
 var context = require('../../src/runtime/context');
 var SecurityCall = require('../../src/security/call');
 var VanadiumError = require('../../src/errors/vanadium-error');
@@ -35,10 +34,9 @@ function getMockSecurityCall() {
   context.Context());
 }
 
-function assertValidate(t, cavType, val, msg) {
+function assertValidate(t, cav, msg) {
   var registry = new CaveatValidatorRegistry();
   var secCall = getMockSecurityCall();
-  var cav = caveatUtil.makeCaveat(cavType, val);
 
   t.doesNotThrow(function() {
     t.equal(null,
@@ -49,10 +47,9 @@ function assertValidate(t, cavType, val, msg) {
   msg);
 }
 
-function assertDoesntValidate(t, cavType, val, msg) {
+function assertDoesntValidate(t, cav, msg) {
   var registry = new CaveatValidatorRegistry();
   var secCall = getMockSecurityCall();
-  var cav = caveatUtil.makeCaveat(cavType, val);
 
   var res;
   try {
@@ -64,11 +61,18 @@ function assertDoesntValidate(t, cavType, val, msg) {
 }
 
 test('Const caveat is validated correctly', function(t) {
-  assertValidate(t, vdlSecurity.ConstCaveat,
-    true, 'const caveat should validate with true param');
+  assertValidate(t, caveats.createConstCaveat(true),
+    'const caveat should validate with true param');
 
-  assertDoesntValidate(t, vdlSecurity.ConstCaveat,
-    false, 'const caveat should not validate with false param');
+  assertDoesntValidate(t, caveats.createConstCaveat(false),
+    'const caveat should not validate with false param');
+
+  t.end();
+});
+
+test('Unconstrained use is validated correctly', function(t) {
+  assertValidate(t, caveats.unconstrainedUseCaveat,
+    'unconstrained use caveat should validate');
 
   t.end();
 });
@@ -78,12 +82,12 @@ test('Expiry caveat is validated correctly using native Date',
   var now = Date.now();
   var oneHour = 1*60*60*1000;
   var theFuture = new Date(now + oneHour);
-  assertValidate(t, vdlSecurity.ExpiryCaveatX,
-    theFuture, 'expiry caveat should validate when expiry is in the future');
+  assertValidate(t, caveats.createExpiryCaveat(theFuture),
+    'expiry caveat should validate when expiry is in the future');
 
   var thePast = new Date(now - oneHour);
-  assertDoesntValidate(t, vdlSecurity.ExpiryCaveatX,
-    thePast, 'expiry caveat should not validate after expiration');
+  assertDoesntValidate(t, caveats.createExpiryCaveat(thePast),
+    'expiry caveat should not validate after expiration');
 
   t.end();
 });
@@ -104,29 +108,29 @@ test('Expiry caveat is validated correctly using vdl Time', function(t) {
   var oneHour = 1*60*60*1000;
   var theFuture = new Date(now + oneHour);
   var theFutureTime = toDateWireType(theFuture);
-  assertValidate(t, vdlSecurity.ExpiryCaveatX, theFutureTime,
+  assertValidate(t, caveats.createExpiryCaveat(theFutureTime),
     'expiry caveat should validate when expiry is in the future');
 
   var thePast = new Date(now - oneHour);
   var thePastTime = toDateWireType(thePast);
-  assertDoesntValidate(t, vdlSecurity.ExpiryCaveatX,
-    thePastTime, 'expiry caveat should not validate after expiration');
+  assertDoesntValidate(t, caveats.createExpiryCaveat(thePastTime),
+    'expiry caveat should not validate after expiration');
 
   t.end();
 });
 
 test('Method caveat is validated correctly', function(t) {
-  assertValidate(t, vdlSecurity.MethodCaveatX,
-    [], 'empty method list always validates');
+  assertValidate(t, caveats.createMethodCaveat([]),
+    'empty method list always validates');
 
-  assertValidate(t, vdlSecurity.MethodCaveatX,
-    ['aMethod'], 'method list with just matching method validates');
+  assertValidate(t, caveats.createMethodCaveat(['aMethod']),
+    'method list with just matching method validates');
 
-  assertValidate(t, vdlSecurity.MethodCaveatX,
-    ['Z', 'aMethod', 'X'], 'method list including matching method validates');
+  assertValidate(t, caveats.createMethodCaveat(['Z', 'aMethod', 'X']),
+    'method list including matching method validates');
 
-  assertDoesntValidate(t, vdlSecurity.MethodCaveatX,
-    ['OtherMethod1', 'OtherMethod2'],
+  assertDoesntValidate(t,
+    caveats.createMethodCaveat(['OtherMethod1', 'OtherMethod2']),
     'method list with without matching method fails to validate');
 
   t.end();

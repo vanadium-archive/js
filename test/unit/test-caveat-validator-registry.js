@@ -7,9 +7,9 @@ var CaveatValidatorRegistry =
   require('../../src/security/caveat-validator-registry');
 var context = require('../../src/runtime/context');
 var SecurityCall = require('../../src/security/call');
+var caveats = require('../../src/security/caveats');
 
 var testCaveats = require('../vdl-out/javascript-test/security/caveat');
-var caveatUtil = require('./caveat-util');
 
 function getMockSecurityCall() {
   return new SecurityCall({
@@ -70,14 +70,14 @@ test('Validating caveats', function(t) {
   t.doesNotThrow(function() {
       registry.validate(
               call,
-              caveatUtil.makeCaveat(testCaveats.CaveatThatValidates,
+              caveats.createCaveat(testCaveats.CaveatThatValidates,
                          testCaveats.CaveatThatValidatesExpectedData));
     },
     'Should validate');
   t.throws(function() {
       registry.validate(
               call,
-              caveatUtil.makeCaveat(testCaveats.CaveatDoesntValidate,
+              caveats.createCaveat(testCaveats.CaveatDoesntValidate,
                          testCaveats.CaveatDoesntValidateExpectedData));
     },
     'Validation should fail',
@@ -100,7 +100,7 @@ test('Validating caveats', function(t) {
   t.throws(function() {
       registry.validate(
 	      call,
-        caveatUtil.makeCaveat(testCaveats.CaveatWithCollision,
+        caveats.createCaveat(testCaveats.CaveatWithCollision,
                    testCaveats.CaveatWithCollisionExpectedData.val));
     },
     'Validation should fail',

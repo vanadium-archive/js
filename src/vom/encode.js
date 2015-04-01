@@ -10,12 +10,13 @@ module.exports = encode;
  * VOM encode a value
  *
  * @param  {*} v value to encode
+ * @param {Type=} t optional type to convert to
  * @return {Uint8Array} encoded bytes
  * @memberof module:vanadium.vom
  */
-function encode(v) {
+function encode(v, t) {
   var writer = new ByteArrayMessageWriter();
   var encoder = new Encoder(writer);
-  encoder.encode(v);
+  encoder.encode(v, t);
   return writer.getBytes();
 }

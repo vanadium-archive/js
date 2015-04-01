@@ -9,7 +9,6 @@
 
 var Deferred = require('../lib/deferred');
 var Blessings = require('./blessings');
-var time = require('../gen-vdl/v.io/v23/vdlroot/time');
 
 /**
  * Principal represents an entity capable of making or receiving RPCs.
@@ -21,37 +20,83 @@ function Principal(ctx, controller) {
 }
 
 /**
- * Blesses the blessings's public key with the given caveats.
- * @param {Blessings} blessings: a blessing on the public key to bless.
+ * Bless binds extensions of blessings held by this principal to
+ * another principal (represented by its public key).
+ * @param {Context} ctx: The context
+ * @param {PublicKey} publicKey: The public key to bless
+ * @param {BlessingsHandle} blessingsHandle: Handle to the blessings
  * @param {String} extension: the extension for the blessing.
- * @param {Number} duration: the duration of the blessing in milliseconds.
- * @param {Array} caveats: an array of Cavaeats to restrict the blessing.
- * @param {function} cb an optional callback that will return the blessing
+ * @param {...Caveat} caveats: an array of Cavaeats to restrict the blessing.
+ * @param {function} cb: an optional callback that will return the blessing
  * @return {Promise} a promise that will be resolved with the blessing
  */
-Principal.prototype.bless = function(blessings, extension, duration, caveats,
-                                     cb) {
+Principal.prototype.bless = function(ctx, publicKey, blessingsHandle,
+  extension, firstCaveat /*, ...moreCaveats, cb*/) {
+  // Extract the callback.
+  var cb;
+  var args = Array.prototype.slice.call(arguments);
+  if (args.length > 0 &&
+    typeof args[args.length - 1] === 'function') {
+    cb = args[args.length - 1];
+    args.pop();
+  }
+
   var def = new Deferred(cb);
-  if (!(blessings instanceof Blessings)) {
-    def.reject(new Error('blessings should be of type Blessings'));
+
+  // We must have at least one caveat.
+  if (typeof firstCaveat !== 'object') {
+    def.reject('At least one caveat must be specified. To bless without ' +
+    'adding restrictions, use UnconstrainedUseCaveat');
     return def.promise;
   }
 
-  var vdlDuration = new time.Duration({
-    seconds: Math.floor(duration / 1000),
-    nanos: (duration % 1000) * 1000000
+  var caveats = args.slice(4);
+
+  this._controller.bless.call(this._controller, ctx, publicKey,
+    blessingsHandle, extension, caveats)
+  .then(function(res) {
+    var publicKey = res[0];
+    var handle = res[1];
+    def.resolve(new Blessings(handle, publicKey, this._controller));
+  }).catch(function(err) {
+    def.reject(err);
   });
 
-  var controller = this._controller;
-  controller.blessPublicKey(
-    this._ctx, blessings._id, caveats, vdlDuration, extension,
-    function(err, id, key) {
-      if (err !== null) {
-        def.reject(err);
-      } else {
-        def.resolve(new Blessings(id, key, controller));
-      }
-    });
+  return def.promise;
+};
+
+/**
+ * Bless binds extensions of blessings held by this principal to
+ * another principal (represented by its public key).
+ * @param {Context} ctx: The context
+ * @param {String} name: the name for the blessing.
+ * @param {...Caveat} caveats: an array of Cavaeats to restrict the blessing.
+ * @param {function} cb: an optional callback that will return the blessing
+ * @return {Promise} a promise that will be resolved with the blessing
+ */
+Principal.prototype.blessSelf = function(ctx, name /*, ...caveats, cb*/) {
+  // Extract the callback.
+  var cb;
+  var args = Array.prototype.slice.call(arguments);
+  if (args.length > 0 &&
+    typeof args[args.length - 1] === 'function') {
+    cb = args[args.length - 1];
+    args.pop();
+  }
+
+  var def = new Deferred(cb);
+
+  var caveats = args.slice(2);
+
+  this._controller.blessSelf.call(this._controller, ctx, name, caveats)
+  .then(function(res) {
+    var publicKey = res[0];
+    var handle = res[1];
+    def.resolve(new Blessings(handle, publicKey, this._controller));
+  }).catch(function(err) {
+    def.reject(err);
+  });
+
   return def.promise;
 };
 

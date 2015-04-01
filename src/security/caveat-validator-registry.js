@@ -11,7 +11,7 @@
 var vdl = require('../vdl');
 var vom = require('../vom');
 var byteUtil = require('../vdl/byte-util');
-var standardCaveats = require('./standard-caveats');
+var standardCaveats = require('./standard-caveat-validators');
 var vdlSecurity = require('../gen-vdl/v.io/v23/security');
 var unwrapArg = require('../lib/unwrap-arg');
 

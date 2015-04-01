@@ -15,7 +15,6 @@ var Client = require('../ipc/client');
 var Namespace = require('../naming/namespace');
 var CaveatValidatorRegistry = require('../security/caveat-validator-registry');
 var Principal = require('../security/principal');
-var Blessings = require('../security/blessings');
 var Deferred = require('../lib/deferred');
 var vlog = require('../lib/vlog');
 var context = require('./context');
@@ -170,30 +169,6 @@ Runtime.prototype.namespace = function() {
   this._ns = this._ns || new Namespace(this.newClient(),
     this.getContext());
   return this._ns;
-};
-
-/**
- * TODO(bjornick): This should probably produce a Principal and not Blessings,
- * but we don't have Principal store yet. This is mostly used for tests anyway.
- * Create new Blessings
- * @private
- * @param {String} extension Extension for the Blessings .
- * @param {function} [cb] If provided a callback that will be called with the
- * new Blessings.
- * @return {Promise} A promise that resolves to the new Blessings
- */
-Runtime.prototype._newBlessings = function(extension, cb) {
-  var def = new Deferred(cb);
-  var ctx = this.getContext();
-  var controller = this._controller;
-  controller.createBlessings(ctx, extension, function(err, id, key) {
-    if (err !== null) {
-      def.reject(err);
-    } else {
-      def.resolve(new Blessings(id, key, controller));
-    }
-  });
-  return def.promise;
 };
 
 /**
