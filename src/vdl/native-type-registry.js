@@ -9,15 +9,18 @@ module.exports = {
   registerFromWireValue: registerFromWireValue,
   hasNativeType: hasNativeType,
   isNative: isNative,
-  lookupNativeToWireConverter: lookupNativeToWireConverter,
+  lookupNativeToType: lookupNativeToType
 };
 
 require('./es6-shim');
 
-// A map from constructor to a function that will
-// generate the wire type for an instance of this
-// constructor.
-var nativeToWire = new Map();
+// A map from vdl type string to a function that produces
+// a wire type from the vdl value.
+var nativeToWire = {};
+
+// A map from native constructor to vdl type string.
+// Used to determine the type of a native value.
+var nativeToType = new Map();
 
 // A map from vdl type string to a function that produces
 // a native type from the vdl value.
@@ -43,7 +46,8 @@ function registerFromWireValue(t, f) {
  * @param {Type} type The wiretype fo the native value.
  */
 function registerFromNativeValue(constructor, f, t) {
-  nativeToWire.set(constructor, { converter: f, type: t });
+  nativeToWire[t.toString()] = f;
+  nativeToType.set(constructor, t);
 }
 
 /**
@@ -53,17 +57,17 @@ function registerFromNativeValue(constructor, f, t) {
  * @returns {object} The wiretype respresentation of the object.  If
  * no conversion happened, v is returned.
  */
-function fromNativeValue(v) {
-  var transform = lookupNativeToWireConverter(v);
+function fromNativeValue(t, v) {
+  var transform = nativeToWire[t.toString()];
   if (transform) {
-    return transform.converter(v);
+    return transform(v);
   }
   return v;
 }
 
-function lookupNativeToWireConverter(v) {
+function lookupNativeToType(v) {
   var result = null;
-  nativeToWire.forEach(function(wire, native) {
+  nativeToType.forEach(function(wire, native) {
     if (result === null && v instanceof native) {
       result = wire;
     }
@@ -112,5 +116,5 @@ function isNative(v) {
   if (v === undefined || v === null) {
     return false;
   }
-  return !!lookupNativeToWireConverter(v);
+  return !!lookupNativeToType(v);
 }

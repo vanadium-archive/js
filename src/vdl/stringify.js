@@ -19,6 +19,9 @@ function stableCircularStringifyInternal(val, seen) {
   if (typeof val === 'string') {
     return '"' + val.replace(/\"/, '\\"') + '"';
   }
+  if (val instanceof Date) {
+    return val.toString();
+  }
 
   var i;
   if (seen.has(val)) {

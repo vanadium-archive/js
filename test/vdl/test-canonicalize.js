@@ -14,7 +14,6 @@ var Kind = require('./../../src/vdl/kind.js');
 var Registry = require('./../../src/vdl/registry.js');
 var Type = require('./../../src/vdl/type.js');
 var Types = require('./../../src/vdl/types.js');
-var TypeUtil = require('../../src/vdl/type-util');
 var canonicalize = require('./../../src/vdl/canonicalize.js');
 var stringify = require('./../../src/vdl/stringify.js');
 require('../../src/vom/native-types');
@@ -181,7 +180,7 @@ test('canonicalize JSValue - basic functionality', function(t) {
 
     // The input canonicalizes to the expected output.
     var output = canonicalize.reduce(input, type);
-    t.deepEqual(output, expected, name);
+    t.deepEqual(output, expected, name + ' - canon match');
 
     // Canonicalize is idempotent.
     var output2 = canonicalize.reduce(output, type);
@@ -197,11 +196,11 @@ test('canonicalize JSValue - basic functionality', function(t) {
 
     // DeepWrap(output) === outputDeep
     var outputToDeep = canonicalize.fill(output, type);
-    t.deepEqual(outputToDeep, outputDeep, ' - shallow to deep');
+    t.deepEqual(outputToDeep, outputDeep, name + ' - shallow to deep');
 
     // Unwrap(outputDeep) === output
     var outputDeepToShallow = canonicalize.reduce(outputDeep, type);
-    t.deepEqual(outputDeepToShallow, output, ' - deep to shallow');
+    t.deepEqual(outputDeepToShallow, output, name + ' - deep to shallow');
 
 
     // The type of the deep output must match. (Shallow lacks type.)
@@ -789,44 +788,45 @@ test('canonicalize struct - basic functionality', function(t) {
   ];
 
   for (var i = 0; i < tests.length; i++) {
-    // TODO(alexfandrianto): This test logic matches the Union test logic.
-    // It would be nice to move to its own function.
-    var name = tests[i].name;
-    var input = tests[i].inputObject;
-    var fields = tests[i].inputFields;
-    var expected = tests[i].outputObject;
-    var expectedDeep = tests[i].outputObjectDeep;
     var type = new Type({
       kind: Kind.STRUCT,
-      fields: fields
+      fields: tests[i].inputFields
     });
-
-    // The input object and its fields canonicalize to the expected output.
-    var output = canonicalize.reduce(input, type);
-    t.deepEqual(output, expected, name);
-
-    // Canonicalize is idempotent.
-    var output2 = canonicalize.reduce(output, type);
-    t.deepEqual(output2, output, name + ' - idempotent');
-
-    // The deep wrapped output should also match the expected deep output.
-    var outputDeep = canonicalize.fill(input, type);
-    t.deepEqual(outputDeep, expectedDeep, name + ' - deep');
-
-    // This is also idempotent.
-    var outputDeep2 = canonicalize.fill(outputDeep, type);
-    t.deepEqual(outputDeep2, outputDeep, name + ' - deep idempotent');
-
-    // DeepWrap(output) === outputDeep
-    var outputToDeep = canonicalize.fill(output, type);
-    t.deepEqual(outputToDeep, outputDeep, ' - shallow to deep');
-
-    // Unwrap(outputDeep) === output
-    var outputDeepToShallow = canonicalize.reduce(outputDeep, type);
-    t.deepEqual(outputDeepToShallow, output, ' - deep to shallow');
+    runNativeWireTest(tests[i], type, t);
   }
   t.end();
 });
+
+function runNativeWireTest(test, type, t) {
+  var name = test.name;
+  var input = test.inputObject;
+  var expected = test.outputObject;
+  var expectedDeep = test.outputObjectDeep;
+
+  // The input object and its fields canonicalize to the expected output.
+  var output = canonicalize.reduce(input, type);
+  t.deepEqual(output, expected, name);
+
+  // Canonicalize is idempotent.
+  var output2 = canonicalize.reduce(output, type);
+  t.deepEqual(output2, output, name + ' - idempotent');
+
+  // The deep wrapped output should also match the expected deep output.
+  var outputDeep = canonicalize.fill(input, type);
+  t.deepEqual(outputDeep, expectedDeep, name + ' - deep');
+
+  // This is also idempotent.
+  var outputDeep2 = canonicalize.fill(outputDeep, type);
+  t.deepEqual(outputDeep2, outputDeep, name + ' - deep idempotent');
+
+  // DeepWrap(output) === outputDeep
+  var outputToDeep = canonicalize.fill(output, type);
+  t.deepEqual(outputToDeep, outputDeep, ' - shallow to deep');
+
+  // Unwrap(outputDeep) === output
+  var outputDeepToShallow = canonicalize.reduce(outputDeep, type);
+  t.deepEqual(outputDeepToShallow, output, ' - deep to shallow');
+}
 
 test('canonicalize union - basic functionality', function(t) {
   var tests = [
@@ -969,39 +969,11 @@ test('canonicalize union - basic functionality', function(t) {
   ];
 
   for (var i = 0; i < tests.length; i++) {
-    var name = tests[i].name;
-    var input = tests[i].inputObject;
-    var fields = tests[i].inputFields;
-    var expected = tests[i].outputObject;
-    var expectedDeep = tests[i].outputObjectDeep;
     var type = new Type({
       kind: Kind.UNION,
-      fields: fields
+      fields: tests[i].inputFields
     });
-
-    // The input object and its fields canonicalize to the expected output.
-    var output = canonicalize.reduce(input, type);
-    t.deepEqual(output, expected, name);
-
-    // Canonicalize is idempotent.
-    var output2 = canonicalize.reduce(output, type);
-    t.deepEqual(output2, output, name + ' - idempotent');
-
-    // The deep wrapped output should also match the expected deep output.
-    var outputDeep = canonicalize.fill(input, type);
-    t.deepEqual(outputDeep, expectedDeep, name + ' - deep');
-
-    // This is also idempotent.
-    var outputDeep2 = canonicalize.fill(outputDeep, type);
-    t.deepEqual(outputDeep2, outputDeep, name + ' - deep idempotent');
-
-    // DeepWrap(output) === outputDeep
-    var outputToDeep = canonicalize.fill(output, type);
-    t.deepEqual(outputToDeep, outputDeep, ' - shallow to deep');
-
-    // Unwrap(outputDeep) === output
-    var outputDeepToShallow = canonicalize.reduce(outputDeep, type);
-    t.deepEqual(outputDeepToShallow, output, ' - deep to shallow');
+    runNativeWireTest(tests[i], type, t);
   }
   t.end();
 });
@@ -1553,7 +1525,7 @@ test('canonicalize error', function(t) {
     return { val: v };
   });
 
-  var VerrorConstructor = Registry.lookupOrCreateConstructor(Types.ERROR);
+  var VerrorConstructor = Registry.lookupOrCreateConstructor(Types.ERROR.elem);
   var Str = Registry.lookupOrCreateConstructor(Types.STRING);
   var Int32 = Registry.lookupOrCreateConstructor(Types.INT32);
 
@@ -1570,34 +1542,52 @@ test('canonicalize error', function(t) {
     msg: 'My awesome message!!!',
     paramList: [new Str('app'), new Str('op'), new Str('foo'), new Int32(32)]
   }, true);
+
   // When we convert from native type to wire type we transfer the _
-  wrappedMessageWithLangId.val._langId = 'en-US';
-  var tests = [{
-    name: 'err, deepWrap = false',
-    inValue: err,
-    deepWrap: false,
-    outValue: err,
-  }, {
-    name: 'err, deepWrap = true',
-    inValue: err,
-    deepWrap: true,
-    outValue: TypeUtil.unwrap(wrappedMessageWithLangId),
-  }, {
-    name: 'wrappedMessage, deepWrap = false',
-    inValue: wrappedMessage,
-    deepWrap: false,
-    outValue: { val: wrappedErr },
-  }, {
-    name: 'wrappedMessage, deepWrap = true',
-    inValue: wrappedMessage,
-    deepWrap: true,
-    outValue: { val: wrappedMessage },
-  }];
+  wrappedMessageWithLangId._langId = 'en-US';
+  var tests = [
+    {
+      name: 'err, deepWrap = false',
+      inValue: err,
+      deepWrap: false,
+      outValue: { val: wrappedErr }, // any(error)
+    }, {
+      name: 'err, deepWrap = true',
+      inValue: err,
+      deepWrap: true,
+      outValue: { val: wrappedMessageWithLangId }, // any(error) deep
+    }, {
+      name: 'wrappedMessage, deepWrap = false',
+      inValue: wrappedMessage,
+      deepWrap: false,
+      outValue: { val: wrappedErr }, // any(error)
+    }, {
+      name: 'wrappedMessage, deepWrap = true',
+      inValue: wrappedMessage,
+      deepWrap: true,
+      outValue: { val: wrappedMessage }, // any(error) deep
+    },
+    {
+      name: '?err, deepWrap = false',
+      inValue: err,
+      type: Types.ERROR,
+      deepWrap: false,
+      outValue: { val: wrappedErr } // optional(error)
+    },
+    {
+      name: '?err, deepWrap = true',
+      inValue: err,
+      type: Types.ERROR,
+      deepWrap: true,
+      outValue: { val: wrappedMessageWithLangId } // optional(error) deep
+    }
+  ];
 
   for (var i = 0; i < tests.length; i++) {
     var test = tests[i];
 
-    var canon = canonicalize.value(test.inValue, Types.ANY, test.deepWrap);
+    var type = test.type || Types.ANY;
+    var canon = canonicalize.value(test.inValue, type, test.deepWrap);
     var outValue = test.outValue;
     t.deepEqual(
       stringify(canon),
@@ -1607,7 +1597,7 @@ test('canonicalize error', function(t) {
   t.end();
 });
 
-test('canonicalize time', function(t) {
+test('canonicalize time (to any)', function(t) {
   var d = new Date(1999,11,30,23,59,59);
   var conv = Date.parse('0001-01-01') / 1000;
   var millis = d.getTime();
@@ -1627,7 +1617,7 @@ test('canonicalize time', function(t) {
     name: 'date deepWrap = false',
     inValue: d,
     deepWrap: false,
-    outValue: d
+    outValue: { val: d }
   }, {
     name: 'time.Time deepWrap = true',
     inValue: timeStruct,
@@ -1653,6 +1643,169 @@ test('canonicalize time', function(t) {
       stringify(canon),
       stringify(outValue),
       test.name);
+  }
+  t.end();
+});
+
+// Tests the combination of native and vdl values.
+test('canonicalize native and vdl', function(t) {
+  var TimeType = Time.prototype._type;
+  var TimeArray = new Type({
+    kind: Kind.ARRAY,
+    elem: TimeType,
+    len: 3
+  });
+  var TimeErrStruct = new Type({
+    kind: Kind.STRUCT,
+    fields: [
+      {
+        name: 'Time',
+        type: TimeType
+      },
+      {
+        name: 'Err',
+        type: Types.ERROR
+      }
+    ]
+  });
+
+  // The canonical error (input) and its wrapped paramList form.
+  var CanonError = makeError(
+    'cerrID',
+    actions.RETRY_BACKOFF,
+    'Canonical Error',
+    [ Types.STRING, Types.INT32 ]
+  );
+  var cError = new CanonError(null, 'blue', -1); // no ctx, string, int32
+  var cErrorN = cError.clone(); // The reduced cError params should be wrapped.
+  cErrorN.paramList = cError.paramList.map(function(p) {
+    return { val: p };
+  });
+
+  // Additional constants
+  var MILLI_TO_NANO = 1000*1000;
+  var zeroDateOffset = Date.parse('0001-01-01');
+
+  var tests = [
+    {
+      name: 'TimeArray',
+      type: TimeArray,
+      inputObject: [
+        new Date(zeroDateOffset),
+        new Date(zeroDateOffset+100),
+        new Date(zeroDateOffset-2001)
+      ],
+      outputObject: {
+        val: [
+          new Date(zeroDateOffset),
+          new Date(zeroDateOffset+100),
+          new Date(zeroDateOffset-2001)
+        ]
+      },
+      outputObjectDeep: {
+        val: [
+          {
+            seconds: { val: BigInt.fromNativeNumber(0) },
+            nanos: { val: 0 }
+          },
+          {
+            seconds: { val: BigInt.fromNativeNumber(0) },
+            nanos: { val: 100*MILLI_TO_NANO }
+          },
+          {
+            seconds: { val: BigInt.fromNativeNumber(-3) },
+            nanos: { val: 999*MILLI_TO_NANO }
+          }
+        ]
+      }
+    },
+    {
+      name: 'TimeArray (empty)',
+      type: TimeArray,
+      inputObject: undefined,
+      outputObject: {
+        val: [new Date(zeroDateOffset), new Date(zeroDateOffset),
+        new Date(zeroDateOffset)]
+      },
+      outputObjectDeep: {
+        val: [
+          {
+            seconds: { val: BigInt.fromNativeNumber(0) },
+            nanos: { val: 0 }
+          },
+          {
+            seconds: { val: BigInt.fromNativeNumber(0) },
+            nanos: { val: 0 }
+          },
+          {
+            seconds: { val: BigInt.fromNativeNumber(0) },
+            nanos: { val: 0 }
+          },
+        ]
+      }
+    },
+    {
+      name: 'TimeErrStruct (empty)',
+      type: TimeErrStruct,
+      inputObject: undefined,
+      outputObject: {
+        time: new Date(zeroDateOffset),
+        err: null,
+      },
+      outputObjectDeep: {
+        time: {
+          seconds: { val: BigInt.fromNativeNumber(0) },
+          nanos: { val: 0 }
+        },
+        err: { val: null }
+      }
+    },
+    {
+      name: 'TimeErrStruct',
+      type: TimeErrStruct,
+      inputObject: {
+        time: new Date(zeroDateOffset+4024),
+        err: cError
+      },
+      outputObject: {
+        time: new Date(zeroDateOffset+4024),
+        err: cErrorN
+      },
+      outputObjectDeep: {
+        time: {
+          seconds: { val: BigInt.fromNativeNumber(4) },
+          nanos: { val: 24 * MILLI_TO_NANO }
+        },
+        err: { // optional error
+           val: { // error
+            _langId: 'en-US',
+            id: { val: 'cerrID' },
+            retryCode: { val: actions.RETRY_BACKOFF },
+            msg: { val: 'Canonical Error' },
+            paramList: {
+              val: [
+                { // any(string)
+                  val: { val: 'app' }
+                },
+                { // any(string)
+                  val: { val: 'op' }
+                },
+                { // any(string)
+                  val: { val: 'blue' }
+                },
+                { // any(int32)
+                  val: { val: -1 }
+                }
+              ]
+            }
+          }
+        }
+      }
+    }
+  ];
+
+  for (var i = 0; i < tests.length; i++) {
+    runNativeWireTest(tests[i], tests[i].type, t);
   }
   t.end();
 });
