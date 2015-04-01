@@ -12,36 +12,40 @@ var Blessings = require('../../src/security/blessings');
 var SharedContextKeys = require('../../src/runtime/shared-context-keys');
 
 test('Test bless self without Caveat', function(t) {
+  var rt;
   vanadium.init(config, function(err, runtime) {
     if (err) {
       t.end(err);
     }
 
+    rt = runtime;
+
     runtime.principal.blessSelf(runtime.getContext(), 'ext')
     .then(function(blessings) {
       t.ok(blessings instanceof Blessings, 'Got blessings');
-      t.end();
+      rt.close(t.end);
     }).catch(function(err) {
-      t.end(err);
+      t.error(err);
+      rt.close(t.end);
     });
   });
 });
 
 test('Test bless self with Caveat', function(t) {
+  var rt;
   vanadium.init(config, function(err, runtime) {
     if (err) {
       t.end(err);
     }
 
+    rt = runtime;
+
     runtime.principal.blessSelf(runtime.getContext(), 'ext',
       caveats.createExpiryCaveat(new Date()),
       function(err, blessings) {
-      if (err) {
-        t.end(err);
-        return;
-      }
+      t.error(err);
       t.ok(blessings instanceof Blessings, 'Got blessings');
-      t.end();
+      rt.close(t.end);
     });
   });
 });
@@ -62,12 +66,13 @@ test('Test bless without Caveat from server', function(t) {
   serve('testing/blessnocav', leafDispatcher(service),
     function(err, res) {
       if (err) {
-        t.end(err);
+        res.end(t, err);
         return;
       }
 
       res.service.method(res.runtime.getContext(), function(err) {
-        t.end(err);
+        t.error(err);
+        res.end(t);
       });
   });
 });
@@ -91,14 +96,15 @@ test('Test bless with Caveat from server', function(t) {
   serve('testing/blessnocav', leafDispatcher(service),
     function(err, res) {
       if (err) {
-        t.end(err);
+        res.end(t, err);
         return;
       }
 
       rt = res.runtime;
 
       res.service.method(res.runtime.getContext(), function(err) {
-        t.end(err);
+        t.error(err);
+        res.end(t);
       });
   });
 });
