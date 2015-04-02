@@ -28,16 +28,16 @@ The mountable is where your fortune service will be mounted. It's kind of like D
 
 We'll start it on port 9002.
 
-    $ mounttabled --veyron.tcp.address=:9002
+    $ mounttabled --v23.tcp.address=:9002
 
 ### Proxyd
 
 The proxyd allows nodes to communicate regardless of network topology.
 
 We have to pass it the location of the mountable via the
---veyron.namespace.root flag.
+--v23.namespace.root flag.
 
-    $ proxyd --veyron.namespace.root=/localhost:9002 --address=:9001
+    $ proxyd --v23.namespace.root=/localhost:9002 --address=:9001
 
 ## Running in NodeJS
 
@@ -46,21 +46,21 @@ We have to pass it the location of the mountable via the
 The WSPR proxy allows JavaScript to make Veyron RPC calls, and manages
 identities in a secure manner.
 
-We must tell WSPRD about the mountable using the '--veyron.namespace.root'
-flag, and we pass in the location of the proxy with the '--veyron.proxy' flag.
+We must tell WSPRD about the mountable using the '--v23.namespace.root'
+flag, and we pass in the location of the proxy with the '--v23.proxy' flag.
 
 Lastly, WSPR needs an initial identity.  You can generate one of these by running:
 
-    $ principal --veyron.credentials="$HOME"/veyron_credentials seekblessings
+    $ principal --v23.credentials="$HOME"/veyron_credentials seekblessings
 
 Then click "Bless".
 
 Finally, we can start WSPR like so:
 
     $ wsprd --v=1 --alsologtostderr=true \
-        --veyron.proxy=/localhost:9001 --port 8124 \
-        --veyron.credentials="$HOME"/veyron_credentials \
-        --veyron.namespace.root=/localhost:9002
+        --v23.proxy=/localhost:9001 --port 8124 \
+        --v23.credentials="$HOME"/veyron_credentials \
+        --v23.namespace.root=/localhost:9002
 
 ### Run the server:
 

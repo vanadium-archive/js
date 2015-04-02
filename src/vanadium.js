@@ -149,8 +149,8 @@ function init(config, cb) {
   }
   if (config.wspr && (config.namespaceRoots || config.proxy)) {
     return def.reject(new Error('Cannot set config.namespaceRoots or ' +
-          'config.proxy when using wspr.  Use --veyron.namespace.root ' +
-          'and --veyron.proxy flags to wsprd.'));
+          'config.proxy when using wspr.  Use --v23.namespace.root ' +
+          'and --v23.proxy flags to wsprd.'));
   }
 
   // If the user has set config.authenticate to true, get an authenticated
