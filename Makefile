@@ -130,8 +130,8 @@ gen-vdl-impl:
 ifndef NOVDLGEN
 	rm -rf $(JS_VDL_DIR)
 	VDLPATH=$(VDLPATH) v23 go run $(VANADIUM_ROOT)/release/go/src/v.io/x/ref/cmd/vdl/main.go generate -lang=javascript \
-		-js_relative_path_to_core=$(JS_VDL_PATH_TO_CORE) \
-		-js_out_dir=$(JS_VDL_DIR) \
+		-js-relative-path-to-core=$(JS_VDL_PATH_TO_CORE) \
+		-js-out-dir=$(JS_VDL_DIR) \
 		v.io/x/ref/lib/vdl/testdata/... \
 		v.io/x/ref/services/wsprd/... \
 		v.io/v23/rpc/... \
@@ -143,8 +143,8 @@ ifndef NOVDLGEN
 	# path does not equal the directory path of the source file.  This is not ideal, but bjornick and toddw will
 	# discuss how to fix this later.
 	VDLPATH=$(VDLPATH) v23 go run $(VANADIUM_ROOT)/release/go/src/v.io/x/ref/cmd/vdl/main.go generate -lang=javascript \
-					-js_relative_path_to_core=../../../$(JS_VDL_PATH_TO_CORE) \
-					-js_out_dir=$(JS_VDL_DIR) \
+					-js-relative-path-to-core=../../../$(JS_VDL_PATH_TO_CORE) \
+					-js-out-dir=$(JS_VDL_DIR) \
 					$(VANADIUM_ROOT)/release/go/src/v.io/v23/vdlroot/...
 endif
 
