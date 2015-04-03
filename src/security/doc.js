@@ -315,4 +315,18 @@
  * @param {...*} params A list of parameters to include in the error message.
  * @augments module:vanadium.errors.VanadiumError
  */
+/**
+ * An error that means a remote principal is not authorized by a local principal
+ * @name AuthorizationFailedError
+ * @memberof module:vanadium.security
+ * @constructor
+ * @param {module:vanadium.context.Context} ctx The context the error was
+ * created in.
+ * @param {array<string>} Remote blessings
+ * @param {array<module:vanadium.security.RejectedBlessing>} Remote rejected
+ * blessing
+ * @param {array<string>} Local blessings
+ * @param {...*} params A list of parameters to include in the error message.
+ * @augments module:vanadium.errors.VanadiumError
+ */
 

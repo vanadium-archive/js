@@ -27,6 +27,7 @@ var _type4 = new vdl.Type();
 var _type5 = new vdl.Type();
 var _type6 = new vdl.Type();
 var _type7 = new vdl.Type();
+var _type8 = new vdl.Type();
 var _typeBlessingPattern = new vdl.Type();
 var _typeCaveat = new vdl.Type();
 var _typeCaveatDescriptor = new vdl.Type();
@@ -62,6 +63,9 @@ _type6.elem = _type7;
 _type7.kind = vdl.Kind.LIST;
 _type7.name = "";
 _type7.elem = _typeCertificate;
+_type8.kind = vdl.Kind.LIST;
+_type8.name = "";
+_type8.elem = _typeRejectedBlessing;
 _typeBlessingPattern.kind = vdl.Kind.STRING;
 _typeBlessingPattern.name = "v.io/v23/security.BlessingPattern";
 _typeCaveat.kind = vdl.Kind.STRUCT;
@@ -110,6 +114,7 @@ _type4.freeze();
 _type5.freeze();
 _type6.freeze();
 _type7.freeze();
+_type8.freeze();
 _typeBlessingPattern.freeze();
 _typeCaveat.freeze();
 _typeCaveatDescriptor.freeze();
@@ -352,6 +357,15 @@ module.exports.UnrecognizedRootError = makeError('v.io/v23/security.Unrecognized
 }, [
   vdl.Types.STRING,
   vdl.Types.ERROR,
+]);
+
+
+module.exports.AuthorizationFailedError = makeError('v.io/v23/security.AuthorizationFailed', actions.NO_RETRY, {
+  'en': '{1:}{2:} principal with blessings {3} (rejected {4}) is not authorized by principal with blessings {5}',
+}, [
+  _type3,
+  _type8,
+  _type3,
 ]);
 
 
