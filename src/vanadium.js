@@ -49,11 +49,6 @@ module.exports = {
    * @namespace
    */
   security: require('./security'),
-
-  /**
-   * Namespace for context related objects.
-   * @namespace
-   */
   context: require('./runtime/context'),
   /**
    * Namespace for all VDL related exports.
@@ -73,10 +68,6 @@ module.exports = {
    */
   uniqueId: require('./lib/uniqueid'),
 
-  /**
-   * Namespace for vtrace related functions and types.
-   * @namespace
-   */
   vtrace: require('./vtrace'),
 
   runtimeForContext: runtimeForContext,

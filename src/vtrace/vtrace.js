@@ -2,12 +2,6 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-/**
- * @fileoverview Vtrace implements cross process debug tracing.
- * TODO(mattr): Write up usage docs once the implementation is further along.
- * @private
- */
-
 var uniqueid = require('../lib/uniqueid');
 var context = require('../runtime/context');
 var vdl = require('../gen-vdl/v.io/v23/vtrace');
@@ -44,14 +38,17 @@ function key(id) {
 }
 
 /**
- * A vtrace Span.
- * A Span represents a named span of time, it has a beginning and and
- * end.  Spans can contain annotations wich mark specific moments.
+ * @summary A Span represents a named span of time.
+ * @description
+ * <p>Private constructor, use {@link module:vanadium.vtrace.getSpan}.</p>
+ * Spans have a beginning and can contain annotations which mark
+ * specific moments.
  * @constructor
  * @param {string} name The name of the Span.
  * @param {Object} store A vtrace Store instance.
  * @param {Object} trace A uniqueid.Id instance identifying the trace.
  * @param {Object} parent A uniqueid.Id instance identifying this Spans parent.
+ * @memberof module:vanadium.vtrace
  */
 function Span(name, store, trace, parent) {
   if (!(this instanceof Span)) {
@@ -119,6 +116,8 @@ Node.prototype.record = function() {
 
 // TODO(mattr): Support filtering.  Right now this store records everything.
 /**
+ * @summary Store collects the information of interesting traces in memory.
+ * @description
  * Private constructor. Use {@link module:vanadium.vtrace.getStore} <br>
  * A vtrace Store.
  * A Store is responsible for saving traces for later reporting and analysis.

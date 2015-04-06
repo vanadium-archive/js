@@ -3,8 +3,76 @@
 // license that can be found in the LICENSE file.
 
 /**
- * @fileoverview Vanadium Context
- * @private
+ * @summary Namespace context defines an interface to carry
+ * data that crosses API boundaries.
+ *
+ * @description
+ * <p>Namespace context defines an interface to carry data that
+ * crosses API boundaries. The context carries deadlines and
+ * cancellation as well as other arbitrary values.</p>
+ *
+ * <p>Application code receives contexts in two main ways:
+ * <ol>
+ * <li>The runtime returned from vanadium.init() has a getContext() method.
+ * This context will generally be used for stand-alone client programs.</li>
+ * <li>The first parameter to every Vanadium server method implementation
+ * is a Context.</li>
+ * </ol></p>
+ *
+ * <p>Once you have a context you can derive further contexts to
+ * change settings.  for example to adjust a deadline you might do:
+ * </p>
+ * <pre>
+ *    vanadium.init(function(err, runtime) {
+ *      var ctx = runtime.getContext();
+ *      // We'll use cacheCtx to lookup data in memcache
+ *      // if it takes more than a second to get data from
+ *      // memcache we should just skip the cache and perform
+ *      // the slow operation.
+ *      var cacheCtx = context.withTimeout(ctx, 1000);
+ *      fetchDataFromMemcache(cachCtx, key, function(err) {
+ *        if (err) {
+ *          // Here we use the original ctx, not the derived cacheCtx
+ *          // so we aren't constrained by the 1 second timeout.
+ *          recomputeData(ctx);
+ *        }
+ *      });
+ *    });
+ * </pre>
+ *
+ * <p>Contexts form a tree where derived contexts are children of the
+ * contexts from which they were derived.  Children inherit all the
+ * properties of their parent except for the property being replaced
+ * (the deadline in the example above).</p>
+ *
+ * <p>Contexts are extensible.  The value/withValue methods allow you to attach
+ * new information to the context and extend its capabilities.
+ * In the same way we derive new contexts via the 'With' family of functions
+ * you can create functions to attach new data:</p>
+ *
+ * <pre>
+ *    function Auth() {
+ *      // Construct my Auth object.
+ *    }
+ *
+ *    var authKey = vanadium.context.ContextKey();
+ *
+ *    function setAuth(parent, auth) {
+ *      return parent.withValue(authKey, auth);
+ *    }
+ *
+ *    function getAuth(ctx) {
+ *        return ctx.value(authKey);
+ *    }
+ * </pre>
+ *
+ * Note that all keys are of type ContextKey to prevent collisions.
+ * By keeping your key unexported you can control how and when the
+ * attached data changes.  For example you can ensure that only data
+ * of the correct type is attached.
+ * @namespace
+ * @name context
+ * @memberof module:vanadium
  */
 
 var Deferred = require('../lib/deferred');
@@ -21,9 +89,13 @@ module.exports = {
 
 var CanceledError;
 /**
- * Creates a new root context.  This should be used to generate a
- * context for a new operation which is unrealted to any ongoing
- * activity.
+ * @summary A Context carries deadlines, cancellation and data across API
+ * boundaries.
+ * @description
+ * Generally application code should not call this constructor to
+ * create contexts.  Instead it should call runtime.getContext() or
+ * use the context supplied as the first argument to server method
+ * implementations.
  * @constructor
  * @memberof module:vanadium.context
  */
