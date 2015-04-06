@@ -17,6 +17,7 @@ var ByteUtil = require('../vdl/byte-util.js');
 /**
  * RawVomReader reads VOM primitive values (numbers, strings, bools) from a
  * provided Uint8Array.
+ * @private
  * @param {Uint8Array} arr The array to read from.
  * @constructor
  */

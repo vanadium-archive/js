@@ -6,18 +6,18 @@
  * A file for JSDocs for vdl generated files in security
  */
 /**
- * BlessingPattern is a pattern that is matched by specific blessings.
- *
- * A pattern can either be a blessing (slash-separated human-readable string)
+ * @summary BlessingPattern is a pattern that is matched by specific blessings.
+ * @description
+ * <p>A pattern can either be a blessing (slash-separated human-readable string)
  * or a blessing ending in "/$". A pattern ending in "/$" is matched exactly
  * by the blessing specified by the pattern string with the "/$" suffix
  * stripped out. For example, the pattern "a/b/c/$" is matched by exactly by the
- * blessing "a/b/c".
+ * blessing "a/b/c".</p>
  *
- * A pattern not ending in "/$" is more permissive, and is also matched by
+ * <p>A pattern not ending in "/$" is more permissive, and is also matched by
  * blessings that are extensions of the pattern (including the pattern itself).
  * For example, the pattern "a/b/c" is matched by the blessings "a/b/c",
- * "a/b/c/x", "a/b/c/x/y", etc.
+ * "a/b/c/x", "a/b/c/x/y", etc.</p>
  *
  * @name BlessingPattern
  * @constructor
@@ -25,8 +25,8 @@
  * @memberof module:vanadium.security
  */
 /**
- * AccessList represents an Access Control List - a set of blessings that
- * should be granted access.
+ * @summary AccessList represents an Access Control List - a set of blessings
+ * that should be granted access.
  * @name AccessList
  * @constructor
  * @param {object} acl The value to construct from
@@ -36,34 +36,40 @@
  * <p>For example:</p>
  * <code>
  *    in: ['alice/family']
- * </code>
+ * </code><p>
  * grants access to a principal that presents at least one of 'alice/family',
- * 'alice/family/friend', 'alice/family/friend/spouse', etc.
+ * 'alice/family/friend', 'alice/family/friend/spouse', etc.</p>
  * @param {array} acl.notNin <p>An array of strings that denotes the set of
  * blessings (and their delegates) that have been explicitly blacklisted
  * from the in set.
  * <p>For example:</p>
  * <code>
  *    in: ['alice/friend'], notIn: ['alice/friend/bob']
- * </code>
+ * </code><p>
  * grants access to a principal that presents at least one of 'alice/friend',
  * 'alice/friend/carol', etc, but NOT to a principal that presents
- * 'alice/friend/bob or 'alice/friend/bob/spouse' etc.
+ * 'alice/friend/bob or 'alice/friend/bob/spouse' etc.</p>
  * @memberof module:vanadium.security
  */
+/*jshint ignore:start*/
 /**
- * Permissions maps string tags to [AccessList]
- * {@link module:vanadium.security.AccessList} specifying the blessings
- * required to invoke methods with that tag
+ * @summary Permissions maps string tags to
+ * [AccessList]{@link module:vanadium.security.AccessList}
+ * specifying the blessings required to invoke methods with that tag.
+ * @description
+ * <p>These tags are meant to add a layer of interposition between the set of users
+ * (blessings, specifically) and the set of methods, much like "Roles" do in
+ * [Role Based Access Control]{@link (http://en.wikipedia.org/wiki/Role-based_access_control)}.
  * @name Permissions
  * @constructor
  * @param {map} permissions An ES6 Map of string tags to AccessLists
  * @memberof module:vanadium.security
  */
+/*jshint ignore:end*/
 /**
- * Tag is used to associate methods with an [AccessList]
- * {@link module:vandiume.security.AccessList} in [Permissions]
- * {@link module:vanadium.security.Permissions}.
+ * Tag is used to associate methods with an
+ * [AccessList]{@link module:vanadium.security.AccessList} in
+ * [Permissions]{@link module:vanadium.security.Permissions}.
  * @name Tag
  * @constructor
  * @param {string} val The value of the tag
@@ -322,11 +328,29 @@
  * @constructor
  * @param {module:vanadium.context.Context} ctx The context the error was
  * created in.
- * @param {array<string>} Remote blessings
- * @param {array<module:vanadium.security.RejectedBlessing>} Remote rejected
- * blessing
- * @param {array<string>} Local blessings
+ * @param {array<string>} remoteBlessings Remote blessings
+ * @param {array<module:vanadium.security.RejectedBlessing>} rejectedBlessings
+ * Remote rejected blessing
+ * @param {array<string>} localBlessings Local blessings
  * @param {...*} params A list of parameters to include in the error message.
  * @augments module:vanadium.errors.VanadiumError
  */
-
+/**
+ * A function that returns an error if the operation is not authorized.
+ * @callback Authorize
+ * @param {module:vanadium.security.SecurityCall} context The context of the
+ * rpc.
+ * @param {module:vanadium.security.Authorize~callback} cb The callback to
+ * call with the result if the rpc is asynchronous.  This can be ignored
+ * if the Authorizer returns a promise or the result.
+ * @return {Promise|Error} Either an error that occurred (or null if there was
+ * no error) or a Promise that will be resolved if the authorization succeeded
+ * and rejected if it failed.
+ * @memberof module:vanadium.security
+ */
+/**
+ * Callback passed into Authorize
+ * @callback Authorize~callback
+ * @param {Error} err If set, the reason that the authorization failed.
+ * @memberof module:vanadium.security
+ */

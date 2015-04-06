@@ -7,7 +7,8 @@ var Decoder = require('./decoder');
 
 module.exports = decode;
 /**
- * VOM decode bytes
+ * Decode VOM-decodes the given data into the provided value using a new
+ * instance of a VOM decoder.
  *
  * @param  {Uint8Array} bytes    VOM-encoded bytes
  * @param  {boolean} [deepWrap=false] true if the values on the object should

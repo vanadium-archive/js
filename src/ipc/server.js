@@ -62,11 +62,11 @@ function Server(router) {
 
 /**
  * @typedef ServeOptions
- * annotations to the functions exported by the functions.  This is generally
- * created by running the vdl compiler.
- * @property {Authorize} authorizer An Authorizer that will handle the
- * authorization for the method call.  If null, then the default strict
- * authorizer will be used.
+ * ServeOptions is a set of options that are passed to the
+ * [serve]{@link Server#serve}.
+ * @property {module:vanadium.security.Authorize} authorizer An Authorizer
+ * that will handle the authorization for the method call.  If null, then the
+ * default strict authorizer will be used.
  */
 
 /**
@@ -142,23 +142,6 @@ Server.prototype.serve = function(name, serviceObject, options, cb) {
  * @param {object} object The object that will handle the method call
  */
 
-/**
- * Callback passed into Authorize
- * @callback Authorize-callback
- * @param {Error} err If set, the reason that the authorization failed.
- */
-
-/**
- * A function that returns an error if the operation is not authorized
- * @callback Authorize
- * @param {SecurityContext} context Rhe context of the rpc.
- * @param {Authorize-callback} cb The callback to call with the result if
- * the rpc is asynchronous.  This can be ignored if the Authorizer returns
- * a promise or the result.
- * @return {Promise|Error} Either an error that occurred (or null if there was
- * no error) or a Promise that will be resolved if the authorization succeeded
- * and rejected if it failed.
- */
 /**
  * <p>ServeDispatcher associates dispatcher with the portion of the mount
  * table's name space for which name is a prefix, by publishing the

@@ -40,24 +40,12 @@ module.exports = {
 
   naming: require('./naming'),
 
-  /**
-   * Namespace of Vanadium security.
-   * @namespace
-   */
   security: require('./security'),
   context: require('./runtime/context'),
   vdl: require('./vdl'),
 
-  /**
-   * Namespace for vom related exports.
-   * @namespace
-   */
   vom: require('./vom'),
 
-  /**
-   * Namespace for utilities related to creating unique ids.
-   * @namespace
-   */
   uniqueId: require('./lib/uniqueid'),
 
   vtrace: require('./vtrace'),

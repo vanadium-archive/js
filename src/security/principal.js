@@ -11,7 +11,12 @@ var Deferred = require('../lib/deferred');
 var Blessings = require('./blessings');
 
 /**
- * Principal represents an entity capable of making or receiving RPCs.
+ * @summary Principal represents an entity capable of making or receiving RPCs.
+ * @description <p>Principal represents an entity capable of making or receiving
+ * RPCs. Principals have a unique (public, private) key pair, have blessings
+ * bound to them and can bless other principals.</p>.
+ * <p>This constructor should not be used explicitly.  Instead, use
+ * {@link Runtime#principal}
  * @constructor
  */
 function Principal(ctx, controller) {
@@ -20,8 +25,15 @@ function Principal(ctx, controller) {
 }
 
 /**
- * Bless binds extensions of blessings held by this principal to
- * another principal (represented by its public key).
+ * <p>Bless binds extensions of blessings held by this principal to
+ * another principal (represented by its public key).</p>
+ *
+ * <p>For example, a principal with the blessings "google/alice"
+ * and "v23/alice" can bind the blessings "google/alice/friend"
+ * and "v23/alice/friend" to another principal using:</p>
+ * <pre>
+ * bless(ctx, <other public key>, <google/alice, v23/alice>, 'friend', ...)
+ * </pre>
  * @param {Context} ctx: The context
  * @param {PublicKey} publicKey: The public key to bless
  * @param {BlessingsHandle} blessingsHandle: Handle to the blessings
@@ -66,8 +78,7 @@ Principal.prototype.bless = function(ctx, publicKey, blessingsHandle,
 };
 
 /**
- * Bless binds extensions of blessings held by this principal to
- * another principal (represented by its public key).
+ * BlessSelf creates a blessing with the provided name for this principal.
  * @param {Context} ctx: The context
  * @param {String} name: the name for the blessing.
  * @param {...Caveat} caveats: an array of Cavaeats to restrict the blessing.

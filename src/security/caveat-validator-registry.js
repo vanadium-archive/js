@@ -22,8 +22,9 @@ module.exports = CaveatValidatorRegistry;
 /**
  * CaveatValidatorRegistry is a registry for caveats.
  * It enables registration of caveat validation functions and provides
- * provides functionality to perform validation given UUIDs
- * @private
+ * provides functionality to perform validation given UUIDs. This constructor
+ * should not be invoked directly, but rather the
+ * [singleton]{@link Runtime.caveatRegistry} on {@link Runtime} should be used.
  * @constructor
  */
 function CaveatValidatorRegistry() {
@@ -43,8 +44,10 @@ CaveatValidatorRegistry.prototype._makeKey = function(bytes) {
 };
 
 /**
- * @callback ValidationFunction
- * @param {SecurityCall} call The security call.
+ * @callback CaveatValidationFunction
+ * A function to validate caveats on {@link Blessings}
+ * @param {module:vanadium.security.SecurityCall} call The security call.
+ * @memberof module:vanadium.security
  * @param {*} param Validation-function specific parameter.
  * @throws Error Upon failure to validate, does not throw if successful.
  */
@@ -54,7 +57,7 @@ CaveatValidatorRegistry.prototype._makeKey = function(bytes) {
  * @param {module:vanadium.security.CaveatDescriptor} cavDesc The caveat
  * description.
  * See security/types.vdl
- * @param {ValidationFunction} validateFn The validation function.
+ * @param {CaveatValidationFunction} validateFn The validation function.
  * e.g. function validateCaveatA(param) { ...
  */
 CaveatValidatorRegistry.prototype.register = function(cavDesc, validateFn) {
@@ -72,6 +75,7 @@ CaveatValidatorRegistry.prototype.register = function(cavDesc, validateFn) {
  * @param {Function} [cb] Callback after validation is complete.
  * See security/types.vdl
  * @throws Error Upon failure to validate, does not throw if successful.
+ * @private
  */
 CaveatValidatorRegistry.prototype.validate =
   function(ctx, secCall, caveat, cb) {

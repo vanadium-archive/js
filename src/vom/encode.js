@@ -7,8 +7,7 @@ var Encoder = require('./encoder');
 
 module.exports = encode;
 /**
- * VOM encode a value
- *
+ * Encode encodes the provided value using a new instance of an Encoder.
  * @param  {*} v value to encode
  * @param {Type=} t optional type to convert to
  * @return {Uint8Array} encoded bytes

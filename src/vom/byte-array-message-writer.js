@@ -59,7 +59,6 @@ ByteArrayMessageWriter.prototype.writeTypeMessage = function(typeId, message) {
 
 /**
  * Get the written bytes.
- * @private
  * @return {Uint8Array} The bytes that were written.
  */
 ByteArrayMessageWriter.prototype.getBytes = function() {

@@ -8,6 +8,19 @@
  * @private
  */
 
+/**
+ * @summary Namespace uniqueId defines functions that are likely to generate
+ * globally unique identifiers.
+ * @description <p>Namespace uniqueId defines functions that are likely to
+ * generate globally unique identifiers. We want to be able to generate many
+ * Ids quickly, so we make a time/space tradeoff. We reuse the same random data
+ * many times with a counter appended. Note: these Ids are NOT useful as a
+ * security mechanism as they will be predictable.</p>
+ * @namespace
+ * @name uniqueId
+ * @memberof module:vanadium
+ */
+
 var typeutil = require('../vdl/type-util');
 var vdl = require('../gen-vdl/v.io/v23/uniqueid');
 var byteUtil = require('../vdl/byte-util');
@@ -84,10 +97,11 @@ module.exports = {
   toHexString: toHexString,
   fromHexString: fromHexString,
   /**
-   * An Id is a likely globally unique identifier.<br>
-   * Instances can be created by using helpers methods
-   * on {@link module:vanadium.uniqueId} such as
-   * [random()]{@link module:vanadium.uniqueId.random}
+   * @summary An Id is a likely globally unique identifier.
+   * @description
+   * <p>An Id is a likely globally unique identifier.</p>
+   * <p>Use [random]{@link module:vanadium.uniqueId.random} to
+   * create a new one</p>
    * @name Id
    * @param {Uint8Array} bytes 16-byte array
    * @constructor

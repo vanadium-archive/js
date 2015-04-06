@@ -29,7 +29,8 @@ var nilByte = unwrap(wiretype.WireCtrlNil);
 require('../vdl/es6-shim');
 
 /**
- * Create an encoder that writes to the specified message writer.
+ * Create an encoder that manages the transmission and marshaling of typed
+ * values to the other side of a connection.
  * @param {module:vanadium.vom.ByteArrayMessageWriter} messageWriter The
  * message writer to write to.
  * @constructor

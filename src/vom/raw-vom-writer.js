@@ -18,6 +18,7 @@ var ByteUtil = require('../vdl/byte-util.js');
  * RawVomWriter writes VOM primitive values (numbers, strings, bools) to a
  * buffer.
  * @constructor
+ * @private
  */
 function RawVomWriter() {
   this._writer = new BinaryWriter();

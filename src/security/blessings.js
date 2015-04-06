@@ -10,8 +10,14 @@
 var vlog = require('../lib/vlog');
 
 /**
- * Blessings encapsulate the set of blessings (human-readable strings) have
- * been bound to a principal in a specific context.
+ * @summary Blessings encapsulates all cryptographic operations
+ * required to prove that a set of (human-readable) blessing names are
+ * bound to a principal in a specific call.
+ * @description <p> Blessings encapsulates all cryptographic operations
+ * required to prove that a set of (human-readable) blessing names are
+ * bound to a principal in a specific call.</p>
+ * <p>Blessings objects are meant to be presented to other principals to
+ * authenticate and authorize actions.</p>
  * @constructor
  */
 function Blessings(id, key, controller) {
