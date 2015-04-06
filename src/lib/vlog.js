@@ -3,15 +3,18 @@
 // license that can be found in the LICENSE file.
 
 /**
- * @fileoverview A lightweight logging framework for JavaScript to be used
- * in place of console so that we can persist the logs if needed and turn
- * logging off at different levels.
- * @private
- */
+ * @summary Namespace vlog defines and implements logging interfaces.
+ * @description
+ * <p>Namespace vlog defines and implements logging interfaces.</p>
+ *
+ * @namespace
+ * @name vlog
+ * @memberof module:vanadium
+*/
 
 var extend = require('xtend');
 /**
- * The log levels used to configure the vanadium logger
+ * The log levels used to configure the vanadium logger.
  * @namespace
  * @memberof module:vanadium.vlog
  */
@@ -43,12 +46,12 @@ var defaults = {
 };
 
 /**
- * The Vanadium logger
+ * @summary Private Constructor. Use
+ * [vanadium.vlog.logger]{@link module:vanadium.vlog.logger} as an instance.
+ *
  * @memberof module:vanadium.vlog
  * @constructor
- * @param {object} options The options to configure the logger with.  This
- * object has two fields, level which is one of the [log level constants]{@link
- * module:vanadium.vlog.level} and console which is the console to write to.
+ * @inner
  */
 var Vlog = function(options) {
   if (!(this instanceof Vlog)) { return new Vlog(options); }
@@ -130,9 +133,9 @@ Vlog.prototype._write = function(level, args) {
 
 module.exports = {
   /**
-   * Default logger
+   * Default logger instance.
    * @memberof module:vanadium.vlog
-   * @type {module:vanadium.vlog.Vlog}
+   * @type {module:vanadium.vlog~Vlog}
    */
   logger: new Vlog(),
   Vlog: Vlog,

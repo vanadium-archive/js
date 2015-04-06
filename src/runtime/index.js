@@ -163,7 +163,7 @@ Runtime.prototype.getContext = function() {
  * Returns a [namespace]{@link Namespace} client.
  * Namespace client enables interactions with the Vanadium namespace such as
  * globbing, mounting, setting permissions and other name related operations.
- * @return {Namespace} A namespace client instance.
+ * @return {module:vanadium.naming~Namespace} A namespace client instance.
  */
 Runtime.prototype.namespace = function() {
   this._ns = this._ns || new Namespace(this.newClient(),

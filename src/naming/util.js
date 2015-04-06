@@ -9,12 +9,6 @@
  * @private
  */
 
-/**
- * Utility helpers for manipulating vanadium names.
- * @namespace util
- * @memberof module:vanadium.naming
- */
-
 module.exports = {
   clean: clean,
   join: join,
@@ -29,7 +23,7 @@ module.exports = {
  * Normalizes a name by collapsing multiple slashes and removing any
  * trailing slashes.
  * @param {string} name The vanadium name.
- * @memberof module:vanadium.naming.util
+ * @memberof module:vanadium.naming
  */
 function clean(name) {
   return _removeTailSlash(_squashMultipleSlashes(name));
@@ -45,7 +39,7 @@ function clean(name) {
  * @param {...string} parts Either a single array that contains the strings
  * to join or a variable number of string arguments that will be joined.
  * @return {string} A joined string
- * @memberof module:vanadium.naming.util
+ * @memberof module:vanadium.naming
  */
 function join(parts) {
   if (Array.isArray(parts)) {
@@ -62,7 +56,7 @@ function join(parts) {
  * Determines if a name is rooted, that is beginning with a single '/'.
  * @param {string} name The vanadium name.
  * @return {boolean} True if the name is rooted, false otherwise.
- * @memberof module:vanadium.naming.util
+ * @memberof module:vanadium.naming
  */
 function isRooted(name) {
   return name[0] === '/';
@@ -79,7 +73,7 @@ function isRooted(name) {
  * endpoint).
  * @return {...string} Blessing names extracted from address, or an empty list
  * if none could be extracted.
- * @memberof module:vanadium.naming.util
+ * @memberof module:vanadium.naming
  */
 function blessingNamesFromAddress(addr) {
   var epversion = endpointVersion(addr);
@@ -145,7 +139,7 @@ function parseWholeNumber(value) {
  *      {address: string, suffix: string}
  * @param {string} name The vanadium name.
  * @return {Object.<string, string>}
- * @memberof module:vanadium.naming.util
+ * @memberof module:vanadium.naming
  */
 function splitAddressName(name) {
   name = clean(name);
@@ -195,7 +189,7 @@ function splitAddressName(name) {
  * Gets the basename of the given vanadium name.
  * @param {string} name The vanadium name.
  * @return {string} The basename of the given name
- * @memberof module:vanadium.naming.util
+ * @memberof module:vanadium.naming
  */
 function basename(name) {
   name = clean(name);
@@ -211,7 +205,7 @@ function basename(name) {
  * Retrieves the parent of the given name.
  * @param {string} name The vanadium name.
  * @return {string | null} The parent's name or null, if there isn't one.
- * @memberof module:vanadium.naming.util
+ * @memberof module:vanadium.naming
  */
 function stripBasename(name) {
   name = clean(name);

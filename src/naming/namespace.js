@@ -11,10 +11,15 @@ var inherits = require('util').inherits;
 module.exports = Namespace;
 
 /**
- * Namespace client to current runtime's Namespace.
- * <p>This constructor should not be used directly, instead use
- * [runtime.namespace]{@link Runtime#namespace}</p>
+ * @summary Private Constructor. Use
+ * [runtime.namespace]{@link Runtime#namespace} to get an instance.
+ *
+ * @description
+ * <p>Namespace defines the APIs for resolving, globbing and managing names.</p>
+ *
  * @constructor
+ * @inner
+ * @memberof module:vanadium.naming
  */
 function Namespace(client, rootCtx) {
   this._namespace = client.bindWithSignature(

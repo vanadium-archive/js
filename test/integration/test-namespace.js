@@ -636,7 +636,6 @@ test('Test delete() on name with no children', function(assert) {
 });
 
 test('Test delete() on name with children', function(assert) {
-  var nsutil = vanadium.naming.util;
   vanadium.init(config, function(err, rt) {
     if (err) {
       return assert.end(err);
@@ -645,8 +644,8 @@ test('Test delete() on name with children', function(assert) {
     var ctx = rt.getContext();
     var ns = rt.namespace();
     var name = 'path/to/name/with/children';
-    var childName1 = nsutil.join(name, 'child1');
-    var childName2 = nsutil.join(name, 'node/child2');
+    var childName1 = vanadium.naming.join(name, 'child1');
+    var childName2 = vanadium.naming.join(name, 'node/child2');
 
     var tam = new access.Permissions(new Map([
       [access.Admin, new access.AccessList({

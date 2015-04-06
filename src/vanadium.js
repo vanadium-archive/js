@@ -39,16 +39,9 @@ module.exports = {
    * @namespace
    */
   rpc: require('./ipc'),
-  /**
-   * Namespace for vanadium logger.
-   * @namespace
-   */
+
   vlog: require('./lib/vlog'),
 
-  /**
-   * Namespace for naming related exports.
-   * @namespace
-   */
   naming: require('./naming'),
 
   /**
