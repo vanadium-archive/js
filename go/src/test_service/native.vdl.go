@@ -32,31 +32,17 @@ type NativeTestClientStub interface {
 }
 
 // NativeTestClient returns a client stub for NativeTest.
-func NativeTestClient(name string, opts ...rpc.BindOpt) NativeTestClientStub {
-	var client rpc.Client
-	for _, opt := range opts {
-		if clientOpt, ok := opt.(rpc.Client); ok {
-			client = clientOpt
-		}
-	}
-	return implNativeTestClientStub{name, client}
+func NativeTestClient(name string) NativeTestClientStub {
+	return implNativeTestClientStub{name}
 }
 
 type implNativeTestClientStub struct {
-	name   string
-	client rpc.Client
-}
-
-func (c implNativeTestClientStub) c(ctx *context.T) rpc.Client {
-	if c.client != nil {
-		return c.client
-	}
-	return v23.GetClient(ctx)
+	name string
 }
 
 func (c implNativeTestClientStub) PassTime(ctx *context.T, i0 time.Time, opts ...rpc.CallOpt) (o0 time.Time, err error) {
 	var call rpc.ClientCall
-	if call, err = c.c(ctx).StartCall(ctx, c.name, "PassTime", []interface{}{i0}, opts...); err != nil {
+	if call, err = v23.GetClient(ctx).StartCall(ctx, c.name, "PassTime", []interface{}{i0}, opts...); err != nil {
 		return
 	}
 	err = call.Finish(&o0)
@@ -65,7 +51,7 @@ func (c implNativeTestClientStub) PassTime(ctx *context.T, i0 time.Time, opts ..
 
 func (c implNativeTestClientStub) PassError(ctx *context.T, i0 error, opts ...rpc.CallOpt) (err error) {
 	var call rpc.ClientCall
-	if call, err = c.c(ctx).StartCall(ctx, c.name, "PassError", []interface{}{&i0}, opts...); err != nil {
+	if call, err = v23.GetClient(ctx).StartCall(ctx, c.name, "PassError", []interface{}{&i0}, opts...); err != nil {
 		return
 	}
 	err = call.Finish()

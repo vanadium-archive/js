@@ -50,31 +50,17 @@ type ErrorThrowerClientStub interface {
 }
 
 // ErrorThrowerClient returns a client stub for ErrorThrower.
-func ErrorThrowerClient(name string, opts ...rpc.BindOpt) ErrorThrowerClientStub {
-	var client rpc.Client
-	for _, opt := range opts {
-		if clientOpt, ok := opt.(rpc.Client); ok {
-			client = clientOpt
-		}
-	}
-	return implErrorThrowerClientStub{name, client}
+func ErrorThrowerClient(name string) ErrorThrowerClientStub {
+	return implErrorThrowerClientStub{name}
 }
 
 type implErrorThrowerClientStub struct {
-	name   string
-	client rpc.Client
-}
-
-func (c implErrorThrowerClientStub) c(ctx *context.T) rpc.Client {
-	if c.client != nil {
-		return c.client
-	}
-	return v23.GetClient(ctx)
+	name string
 }
 
 func (c implErrorThrowerClientStub) ThrowAborted(ctx *context.T, opts ...rpc.CallOpt) (err error) {
 	var call rpc.ClientCall
-	if call, err = c.c(ctx).StartCall(ctx, c.name, "ThrowAborted", nil, opts...); err != nil {
+	if call, err = v23.GetClient(ctx).StartCall(ctx, c.name, "ThrowAborted", nil, opts...); err != nil {
 		return
 	}
 	err = call.Finish()
@@ -83,7 +69,7 @@ func (c implErrorThrowerClientStub) ThrowAborted(ctx *context.T, opts ...rpc.Cal
 
 func (c implErrorThrowerClientStub) ThrowBadArg(ctx *context.T, opts ...rpc.CallOpt) (err error) {
 	var call rpc.ClientCall
-	if call, err = c.c(ctx).StartCall(ctx, c.name, "ThrowBadArg", nil, opts...); err != nil {
+	if call, err = v23.GetClient(ctx).StartCall(ctx, c.name, "ThrowBadArg", nil, opts...); err != nil {
 		return
 	}
 	err = call.Finish()
@@ -92,7 +78,7 @@ func (c implErrorThrowerClientStub) ThrowBadArg(ctx *context.T, opts ...rpc.Call
 
 func (c implErrorThrowerClientStub) ThrowBadProtocol(ctx *context.T, opts ...rpc.CallOpt) (err error) {
 	var call rpc.ClientCall
-	if call, err = c.c(ctx).StartCall(ctx, c.name, "ThrowBadProtocol", nil, opts...); err != nil {
+	if call, err = v23.GetClient(ctx).StartCall(ctx, c.name, "ThrowBadProtocol", nil, opts...); err != nil {
 		return
 	}
 	err = call.Finish()
@@ -101,7 +87,7 @@ func (c implErrorThrowerClientStub) ThrowBadProtocol(ctx *context.T, opts ...rpc
 
 func (c implErrorThrowerClientStub) ThrowInternal(ctx *context.T, opts ...rpc.CallOpt) (err error) {
 	var call rpc.ClientCall
-	if call, err = c.c(ctx).StartCall(ctx, c.name, "ThrowInternal", nil, opts...); err != nil {
+	if call, err = v23.GetClient(ctx).StartCall(ctx, c.name, "ThrowInternal", nil, opts...); err != nil {
 		return
 	}
 	err = call.Finish()
@@ -110,7 +96,7 @@ func (c implErrorThrowerClientStub) ThrowInternal(ctx *context.T, opts ...rpc.Ca
 
 func (c implErrorThrowerClientStub) ThrowNoAccess(ctx *context.T, opts ...rpc.CallOpt) (err error) {
 	var call rpc.ClientCall
-	if call, err = c.c(ctx).StartCall(ctx, c.name, "ThrowNoAccess", nil, opts...); err != nil {
+	if call, err = v23.GetClient(ctx).StartCall(ctx, c.name, "ThrowNoAccess", nil, opts...); err != nil {
 		return
 	}
 	err = call.Finish()
@@ -119,7 +105,7 @@ func (c implErrorThrowerClientStub) ThrowNoAccess(ctx *context.T, opts ...rpc.Ca
 
 func (c implErrorThrowerClientStub) ThrowNoExist(ctx *context.T, opts ...rpc.CallOpt) (err error) {
 	var call rpc.ClientCall
-	if call, err = c.c(ctx).StartCall(ctx, c.name, "ThrowNoExist", nil, opts...); err != nil {
+	if call, err = v23.GetClient(ctx).StartCall(ctx, c.name, "ThrowNoExist", nil, opts...); err != nil {
 		return
 	}
 	err = call.Finish()
@@ -128,7 +114,7 @@ func (c implErrorThrowerClientStub) ThrowNoExist(ctx *context.T, opts ...rpc.Cal
 
 func (c implErrorThrowerClientStub) ThrowNoExistOrNoAccess(ctx *context.T, opts ...rpc.CallOpt) (err error) {
 	var call rpc.ClientCall
-	if call, err = c.c(ctx).StartCall(ctx, c.name, "ThrowNoExistOrNoAccess", nil, opts...); err != nil {
+	if call, err = v23.GetClient(ctx).StartCall(ctx, c.name, "ThrowNoExistOrNoAccess", nil, opts...); err != nil {
 		return
 	}
 	err = call.Finish()
@@ -137,7 +123,7 @@ func (c implErrorThrowerClientStub) ThrowNoExistOrNoAccess(ctx *context.T, opts 
 
 func (c implErrorThrowerClientStub) ThrowUnknown(ctx *context.T, opts ...rpc.CallOpt) (err error) {
 	var call rpc.ClientCall
-	if call, err = c.c(ctx).StartCall(ctx, c.name, "ThrowUnknown", nil, opts...); err != nil {
+	if call, err = v23.GetClient(ctx).StartCall(ctx, c.name, "ThrowUnknown", nil, opts...); err != nil {
 		return
 	}
 	err = call.Finish()
@@ -146,7 +132,7 @@ func (c implErrorThrowerClientStub) ThrowUnknown(ctx *context.T, opts ...rpc.Cal
 
 func (c implErrorThrowerClientStub) ThrowGoError(ctx *context.T, opts ...rpc.CallOpt) (err error) {
 	var call rpc.ClientCall
-	if call, err = c.c(ctx).StartCall(ctx, c.name, "ThrowGoError", nil, opts...); err != nil {
+	if call, err = v23.GetClient(ctx).StartCall(ctx, c.name, "ThrowGoError", nil, opts...); err != nil {
 		return
 	}
 	err = call.Finish()
@@ -155,7 +141,7 @@ func (c implErrorThrowerClientStub) ThrowGoError(ctx *context.T, opts ...rpc.Cal
 
 func (c implErrorThrowerClientStub) ThrowCustomStandardError(ctx *context.T, opts ...rpc.CallOpt) (err error) {
 	var call rpc.ClientCall
-	if call, err = c.c(ctx).StartCall(ctx, c.name, "ThrowCustomStandardError", nil, opts...); err != nil {
+	if call, err = v23.GetClient(ctx).StartCall(ctx, c.name, "ThrowCustomStandardError", nil, opts...); err != nil {
 		return
 	}
 	err = call.Finish()
@@ -164,7 +150,7 @@ func (c implErrorThrowerClientStub) ThrowCustomStandardError(ctx *context.T, opt
 
 func (c implErrorThrowerClientStub) ListAllBuiltInErrorIds(ctx *context.T, opts ...rpc.CallOpt) (o0 []string, err error) {
 	var call rpc.ClientCall
-	if call, err = c.c(ctx).StartCall(ctx, c.name, "ListAllBuiltInErrorIds", nil, opts...); err != nil {
+	if call, err = v23.GetClient(ctx).StartCall(ctx, c.name, "ListAllBuiltInErrorIds", nil, opts...); err != nil {
 		return
 	}
 	err = call.Finish(&o0)

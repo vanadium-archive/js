@@ -94,31 +94,17 @@ type CacheClientStub interface {
 }
 
 // CacheClient returns a client stub for Cache.
-func CacheClient(name string, opts ...rpc.BindOpt) CacheClientStub {
-	var client rpc.Client
-	for _, opt := range opts {
-		if clientOpt, ok := opt.(rpc.Client); ok {
-			client = clientOpt
-		}
-	}
-	return implCacheClientStub{name, client}
+func CacheClient(name string) CacheClientStub {
+	return implCacheClientStub{name}
 }
 
 type implCacheClientStub struct {
-	name   string
-	client rpc.Client
-}
-
-func (c implCacheClientStub) c(ctx *context.T) rpc.Client {
-	if c.client != nil {
-		return c.client
-	}
-	return v23.GetClient(ctx)
+	name string
 }
 
 func (c implCacheClientStub) Set(ctx *context.T, i0 string, i1 *vdl.Value, opts ...rpc.CallOpt) (err error) {
 	var call rpc.ClientCall
-	if call, err = c.c(ctx).StartCall(ctx, c.name, "Set", []interface{}{i0, i1}, opts...); err != nil {
+	if call, err = v23.GetClient(ctx).StartCall(ctx, c.name, "Set", []interface{}{i0, i1}, opts...); err != nil {
 		return
 	}
 	err = call.Finish()
@@ -127,7 +113,7 @@ func (c implCacheClientStub) Set(ctx *context.T, i0 string, i1 *vdl.Value, opts 
 
 func (c implCacheClientStub) Get(ctx *context.T, i0 string, opts ...rpc.CallOpt) (o0 *vdl.Value, err error) {
 	var call rpc.ClientCall
-	if call, err = c.c(ctx).StartCall(ctx, c.name, "Get", []interface{}{i0}, opts...); err != nil {
+	if call, err = v23.GetClient(ctx).StartCall(ctx, c.name, "Get", []interface{}{i0}, opts...); err != nil {
 		return
 	}
 	err = call.Finish(&o0)
@@ -136,7 +122,7 @@ func (c implCacheClientStub) Get(ctx *context.T, i0 string, opts ...rpc.CallOpt)
 
 func (c implCacheClientStub) GetAsByte(ctx *context.T, i0 string, opts ...rpc.CallOpt) (o0 byte, err error) {
 	var call rpc.ClientCall
-	if call, err = c.c(ctx).StartCall(ctx, c.name, "GetAsByte", []interface{}{i0}, opts...); err != nil {
+	if call, err = v23.GetClient(ctx).StartCall(ctx, c.name, "GetAsByte", []interface{}{i0}, opts...); err != nil {
 		return
 	}
 	err = call.Finish(&o0)
@@ -145,7 +131,7 @@ func (c implCacheClientStub) GetAsByte(ctx *context.T, i0 string, opts ...rpc.Ca
 
 func (c implCacheClientStub) GetAsInt32(ctx *context.T, i0 string, opts ...rpc.CallOpt) (o0 int32, err error) {
 	var call rpc.ClientCall
-	if call, err = c.c(ctx).StartCall(ctx, c.name, "GetAsInt32", []interface{}{i0}, opts...); err != nil {
+	if call, err = v23.GetClient(ctx).StartCall(ctx, c.name, "GetAsInt32", []interface{}{i0}, opts...); err != nil {
 		return
 	}
 	err = call.Finish(&o0)
@@ -154,7 +140,7 @@ func (c implCacheClientStub) GetAsInt32(ctx *context.T, i0 string, opts ...rpc.C
 
 func (c implCacheClientStub) GetAsInt64(ctx *context.T, i0 string, opts ...rpc.CallOpt) (o0 int64, err error) {
 	var call rpc.ClientCall
-	if call, err = c.c(ctx).StartCall(ctx, c.name, "GetAsInt64", []interface{}{i0}, opts...); err != nil {
+	if call, err = v23.GetClient(ctx).StartCall(ctx, c.name, "GetAsInt64", []interface{}{i0}, opts...); err != nil {
 		return
 	}
 	err = call.Finish(&o0)
@@ -163,7 +149,7 @@ func (c implCacheClientStub) GetAsInt64(ctx *context.T, i0 string, opts ...rpc.C
 
 func (c implCacheClientStub) GetAsUint32(ctx *context.T, i0 string, opts ...rpc.CallOpt) (o0 uint32, err error) {
 	var call rpc.ClientCall
-	if call, err = c.c(ctx).StartCall(ctx, c.name, "GetAsUint32", []interface{}{i0}, opts...); err != nil {
+	if call, err = v23.GetClient(ctx).StartCall(ctx, c.name, "GetAsUint32", []interface{}{i0}, opts...); err != nil {
 		return
 	}
 	err = call.Finish(&o0)
@@ -172,7 +158,7 @@ func (c implCacheClientStub) GetAsUint32(ctx *context.T, i0 string, opts ...rpc.
 
 func (c implCacheClientStub) GetAsUint64(ctx *context.T, i0 string, opts ...rpc.CallOpt) (o0 uint64, err error) {
 	var call rpc.ClientCall
-	if call, err = c.c(ctx).StartCall(ctx, c.name, "GetAsUint64", []interface{}{i0}, opts...); err != nil {
+	if call, err = v23.GetClient(ctx).StartCall(ctx, c.name, "GetAsUint64", []interface{}{i0}, opts...); err != nil {
 		return
 	}
 	err = call.Finish(&o0)
@@ -181,7 +167,7 @@ func (c implCacheClientStub) GetAsUint64(ctx *context.T, i0 string, opts ...rpc.
 
 func (c implCacheClientStub) GetAsFloat32(ctx *context.T, i0 string, opts ...rpc.CallOpt) (o0 float32, err error) {
 	var call rpc.ClientCall
-	if call, err = c.c(ctx).StartCall(ctx, c.name, "GetAsFloat32", []interface{}{i0}, opts...); err != nil {
+	if call, err = v23.GetClient(ctx).StartCall(ctx, c.name, "GetAsFloat32", []interface{}{i0}, opts...); err != nil {
 		return
 	}
 	err = call.Finish(&o0)
@@ -190,7 +176,7 @@ func (c implCacheClientStub) GetAsFloat32(ctx *context.T, i0 string, opts ...rpc
 
 func (c implCacheClientStub) GetAsFloat64(ctx *context.T, i0 string, opts ...rpc.CallOpt) (o0 float64, err error) {
 	var call rpc.ClientCall
-	if call, err = c.c(ctx).StartCall(ctx, c.name, "GetAsFloat64", []interface{}{i0}, opts...); err != nil {
+	if call, err = v23.GetClient(ctx).StartCall(ctx, c.name, "GetAsFloat64", []interface{}{i0}, opts...); err != nil {
 		return
 	}
 	err = call.Finish(&o0)
@@ -199,7 +185,7 @@ func (c implCacheClientStub) GetAsFloat64(ctx *context.T, i0 string, opts ...rpc
 
 func (c implCacheClientStub) GetAsString(ctx *context.T, i0 string, opts ...rpc.CallOpt) (o0 string, err error) {
 	var call rpc.ClientCall
-	if call, err = c.c(ctx).StartCall(ctx, c.name, "GetAsString", []interface{}{i0}, opts...); err != nil {
+	if call, err = v23.GetClient(ctx).StartCall(ctx, c.name, "GetAsString", []interface{}{i0}, opts...); err != nil {
 		return
 	}
 	err = call.Finish(&o0)
@@ -208,7 +194,7 @@ func (c implCacheClientStub) GetAsString(ctx *context.T, i0 string, opts ...rpc.
 
 func (c implCacheClientStub) GetAsBool(ctx *context.T, i0 string, opts ...rpc.CallOpt) (o0 bool, err error) {
 	var call rpc.ClientCall
-	if call, err = c.c(ctx).StartCall(ctx, c.name, "GetAsBool", []interface{}{i0}, opts...); err != nil {
+	if call, err = v23.GetClient(ctx).StartCall(ctx, c.name, "GetAsBool", []interface{}{i0}, opts...); err != nil {
 		return
 	}
 	err = call.Finish(&o0)
@@ -217,7 +203,7 @@ func (c implCacheClientStub) GetAsBool(ctx *context.T, i0 string, opts ...rpc.Ca
 
 func (c implCacheClientStub) GetAsError(ctx *context.T, i0 string, opts ...rpc.CallOpt) (o0 error, err error) {
 	var call rpc.ClientCall
-	if call, err = c.c(ctx).StartCall(ctx, c.name, "GetAsError", []interface{}{i0}, opts...); err != nil {
+	if call, err = v23.GetClient(ctx).StartCall(ctx, c.name, "GetAsError", []interface{}{i0}, opts...); err != nil {
 		return
 	}
 	err = call.Finish(&o0)
@@ -226,7 +212,7 @@ func (c implCacheClientStub) GetAsError(ctx *context.T, i0 string, opts ...rpc.C
 
 func (c implCacheClientStub) AsMap(ctx *context.T, opts ...rpc.CallOpt) (o0 map[string]*vdl.Value, err error) {
 	var call rpc.ClientCall
-	if call, err = c.c(ctx).StartCall(ctx, c.name, "AsMap", nil, opts...); err != nil {
+	if call, err = v23.GetClient(ctx).StartCall(ctx, c.name, "AsMap", nil, opts...); err != nil {
 		return
 	}
 	err = call.Finish(&o0)
@@ -235,7 +221,7 @@ func (c implCacheClientStub) AsMap(ctx *context.T, opts ...rpc.CallOpt) (o0 map[
 
 func (c implCacheClientStub) KeyValuePairs(ctx *context.T, opts ...rpc.CallOpt) (o0 []KeyValuePair, err error) {
 	var call rpc.ClientCall
-	if call, err = c.c(ctx).StartCall(ctx, c.name, "KeyValuePairs", nil, opts...); err != nil {
+	if call, err = v23.GetClient(ctx).StartCall(ctx, c.name, "KeyValuePairs", nil, opts...); err != nil {
 		return
 	}
 	err = call.Finish(&o0)
@@ -244,7 +230,7 @@ func (c implCacheClientStub) KeyValuePairs(ctx *context.T, opts ...rpc.CallOpt) 
 
 func (c implCacheClientStub) MostRecentSet(ctx *context.T, opts ...rpc.CallOpt) (o0 KeyValuePair, o1 int64, err error) {
 	var call rpc.ClientCall
-	if call, err = c.c(ctx).StartCall(ctx, c.name, "MostRecentSet", nil, opts...); err != nil {
+	if call, err = v23.GetClient(ctx).StartCall(ctx, c.name, "MostRecentSet", nil, opts...); err != nil {
 		return
 	}
 	err = call.Finish(&o0, &o1)
@@ -253,7 +239,7 @@ func (c implCacheClientStub) MostRecentSet(ctx *context.T, opts ...rpc.CallOpt) 
 
 func (c implCacheClientStub) KeyPage(ctx *context.T, i0 int64, opts ...rpc.CallOpt) (o0 KeyPageResult, err error) {
 	var call rpc.ClientCall
-	if call, err = c.c(ctx).StartCall(ctx, c.name, "KeyPage", []interface{}{i0}, opts...); err != nil {
+	if call, err = v23.GetClient(ctx).StartCall(ctx, c.name, "KeyPage", []interface{}{i0}, opts...); err != nil {
 		return
 	}
 	err = call.Finish(&o0)
@@ -262,7 +248,7 @@ func (c implCacheClientStub) KeyPage(ctx *context.T, i0 int64, opts ...rpc.CallO
 
 func (c implCacheClientStub) Size(ctx *context.T, opts ...rpc.CallOpt) (o0 int64, err error) {
 	var call rpc.ClientCall
-	if call, err = c.c(ctx).StartCall(ctx, c.name, "Size", nil, opts...); err != nil {
+	if call, err = v23.GetClient(ctx).StartCall(ctx, c.name, "Size", nil, opts...); err != nil {
 		return
 	}
 	err = call.Finish(&o0)
@@ -271,7 +257,7 @@ func (c implCacheClientStub) Size(ctx *context.T, opts ...rpc.CallOpt) (o0 int64
 
 func (c implCacheClientStub) MultiGet(ctx *context.T, opts ...rpc.CallOpt) (ocall CacheMultiGetClientCall, err error) {
 	var call rpc.ClientCall
-	if call, err = c.c(ctx).StartCall(ctx, c.name, "MultiGet", nil, opts...); err != nil {
+	if call, err = v23.GetClient(ctx).StartCall(ctx, c.name, "MultiGet", nil, opts...); err != nil {
 		return
 	}
 	ocall = &implCacheMultiGetClientCall{ClientCall: call}
