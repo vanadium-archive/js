@@ -29,10 +29,6 @@ var defaults = {
  */
 module.exports = {
   init: init,
-  /**
-   * Error namespace.
-   * @namespace
-   */
   errors: require('./errors'),
   /**
    * Namespace for rpc related exports
@@ -55,10 +51,6 @@ module.exports = {
    * @namespace
    */
   context: require('./runtime/context'),
-  /**
-   * Namespace for all VDL related exports.
-   * @namespace
-   */
   vdl: require('./vdl'),
 
   /**
