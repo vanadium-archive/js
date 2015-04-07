@@ -1,5 +1,5 @@
-PATH := node_modules/.bin:${VANADIUM_ROOT}/environment/cout/node/bin:$(PATH)
-WSPR_ROOT := $(VANADIUM_ROOT)/release/go/src/v.io/x/ref/services/wspr
+PATH := node_modules/.bin:${V23_ROOT}/environment/cout/node/bin:$(PATH)
+WSPR_ROOT := $(V23_ROOT)/release/go/src/v.io/x/ref/services/wspr
 SHELL := /bin/bash -e -o pipefail
 .DEFAULT_GOAL := all
 
@@ -20,7 +20,7 @@ define COMPILE-NACL-PLUGIN
 	GOARCH=amd64p32 \
 	GOOS=nacl \
 	GOROOT= \
-	v23 xgo --target_go=$(VANADIUM_ROOT)/environment/go_ppapi/bin/go amd64p32-nacl build -o $2 $1
+	v23 xgo --target_go=$(V23_ROOT)/environment/go_ppapi/bin/go amd64p32-nacl build -o $2 $1
 endef
 
 all: vanadium.zip
@@ -55,7 +55,7 @@ build/nacl/main.nmf: nacl
 	mkdir -p $(dir $@)
 	cp -r nacl/main.nmf $@
 
-build/nacl/main-64.nexe: $(VANADIUM_ROOT)/release/go/src/v.io/x/ref/services/wspr/browsprd/main_nacl.go
+build/nacl/main-64.nexe: $(V23_ROOT)/release/go/src/v.io/x/ref/services/wspr/browsprd/main_nacl.go
 	$(call COMPILE-NACL-PLUGIN,$<,$@)
 
 build/nacl: build/nacl/main.nmf build/nacl/main-64.nexe
@@ -119,15 +119,15 @@ build-test/nacl: build-test/nacl/main.nmf build-test/nacl/main-64.nexe
 build-test: build-test/html build-test/images build-test/manifest.json build-test/js build-test/nacl
 
 gen-vdl: $(WSPR_ROOT)/internal/channel/channel.vdl $(WSPR_ROOT)/internal/browspr/browspr.vdl $(WSPR_ROOT)/internal/account/account.vdl
-	v23 go run $(VANADIUM_ROOT)/release/go/src/v.io/x/ref/cmd/vdl/main.go \
-	generate -lang=javascript -js-out-dir="$(VANADIUM_ROOT)/release/javascript/core/extension/vdl" -js-relative-path-to-core=../../src $(dir $^)
+	v23 go run $(V23_ROOT)/release/go/src/v.io/x/ref/cmd/vdl/main.go \
+	generate -lang=javascript -js-out-dir="$(V23_ROOT)/release/javascript/core/extension/vdl" -js-relative-path-to-core=../../src $(dir $^)
 	# TODO(bjornick): We build the vdlroot stuff with a different set of command line options because the package
 	# path does not equal the directory path of the source file.  This is not ideal, but bjornick and toddw will
 	# discuss how to fix this later.
-	v23 go run $(VANADIUM_ROOT)/release/go/src/v.io/x/ref/cmd/vdl/main.go generate -lang=javascript \
+	v23 go run $(V23_ROOT)/release/go/src/v.io/x/ref/cmd/vdl/main.go generate -lang=javascript \
 					-js-relative-path-to-core=../../../../../src \
-					-js-out-dir="$(VANADIUM_ROOT)/release/javascript/core/extension/vdl" \
-					$(VANADIUM_ROOT)/release/go/src/v.io/v23/vdlroot/...
+					-js-out-dir="$(V23_ROOT)/release/javascript/core/extension/vdl" \
+					$(V23_ROOT)/release/go/src/v.io/v23/vdlroot/...
 
 example-server: example/index.bundle.js
 	static "example" -H '{"Cache-Control": "no-cache, must-revalidate"}'
