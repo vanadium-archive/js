@@ -33,24 +33,25 @@ test('allow same public key access with no other acls', function(assert) {
   assert.end();
 });
 
-test('full suite of go tests', function(assert) {
+// Test that ACL Authorizers can be created via a Map.
+test('full suite of go tests - map', function(assert) {
   var acl = new Map();
-  acl.set(unwrap(access.Read), {
+  acl.set(access.Read, {
     in: ['server/alice', 'server/che/$', '...'],
     notIn: []
   });
 
-  acl.set(unwrap(access.Write), {
+  acl.set(access.Write, {
     in: ['server/alice', 'server/che/$', 'server/che'],
     notIn: [ 'server/che/friend' ]
   });
 
-  acl.set(unwrap(access.Admin), {
+  acl.set(access.Admin, {
     in: ['server/alice/$'],
     notIn: []
   });
 
-  acl.set(unwrap(access.Debug), {
+  acl.set(access.Debug, {
     in: ['server/alice/$', 'server/bob'],
     notIn: []
   });
@@ -68,6 +69,89 @@ test('full suite of go tests', function(assert) {
     '': [access.Read],
   };
 
+  checkExpectations(auth, expectations, assert);
+  assert.end();
+});
+
+// Test that ACL Authorizers can be created via an object.
+test('full suite of go tests - object', function(assert) {
+  var acl = {};
+  acl[unwrap(access.Read)] = {
+    in: ['server/alice', 'server/che/$', '...'],
+    notIn: []
+  };
+  acl[unwrap(access.Write)] = {
+    in: ['server/alice', 'server/che/$', 'server/che'],
+    notIn: [ 'server/che/friend' ]
+  };
+  acl[unwrap(access.Admin)] = {
+    in: ['server/alice/$'],
+    notIn: []
+  };
+  acl[unwrap(access.Debug)] = {
+    in: ['server/alice/$', 'server/bob'],
+    notIn: []
+  };
+
+  var auth = aclAuthorizer(acl, access.Tag);
+  var expectations = {
+    'alice': [access.Read],
+    'bob': [access.Read],
+    'che': [access.Read],
+    'server/alice': [access.Read, access.Write, access.Admin, access.Debug],
+    'server/bob': [access.Read, access.Debug],
+    'server/alice/friend': [access.Read, access.Write],
+    'server/che': [access.Read, access.Write],
+    'server/che/friend': [access.Read],
+    '': [access.Read],
+  };
+
+  checkExpectations(auth, expectations, assert);
+  assert.end();
+});
+
+// Test that ACL Authorizers can be created via access.Permissions object.
+test('full suite of go tests - Permissions', function(assert) {
+  var acl = new Map();
+  acl.set(access.Read, {
+    in: ['server/alice', 'server/che/$', '...'],
+    notIn: []
+  });
+
+  acl.set(access.Write, {
+    in: ['server/alice', 'server/che/$', 'server/che'],
+    notIn: [ 'server/che/friend' ]
+  });
+
+  acl.set(access.Admin, {
+    in: ['server/alice/$'],
+    notIn: []
+  });
+
+  acl.set(access.Debug, {
+    in: ['server/alice/$', 'server/bob'],
+    notIn: []
+  });
+  var permissions = new access.Permissions(acl);
+
+  var auth = aclAuthorizer(permissions, access.Tag);
+  var expectations = {
+    'alice': [access.Read],
+    'bob': [access.Read],
+    'che': [access.Read],
+    'server/alice': [access.Read, access.Write, access.Admin, access.Debug],
+    'server/bob': [access.Read, access.Debug],
+    'server/alice/friend': [access.Read, access.Write],
+    'server/che': [access.Read, access.Write],
+    'server/che/friend': [access.Read],
+    '': [access.Read],
+  };
+
+  checkExpectations(auth, expectations, assert);
+  assert.end();
+});
+
+function checkExpectations(auth, expectations, assert) {
   for (var name in expectations) {
     if (!expectations.hasOwnProperty(name)) {
       continue;
@@ -96,8 +180,7 @@ test('full suite of go tests', function(assert) {
       }
     }
   }
-  assert.end();
-});
+}
 
 test('tags of different types', function(assert) {
   var MyTag = createConstructor({
@@ -130,7 +213,7 @@ test('tags of different types', function(assert) {
   assert.end();
 });
 
-test('no tags of a type', function(assert) {
+test('no tags of a type - error', function(assert) {
   var MyTag = createConstructor({
     kind: kind.STRING,
     name: 'MyTag'
@@ -159,7 +242,7 @@ test('no tags of a type', function(assert) {
   assert.end();
 });
 
-test('multiple tags of a type', function(assert) {
+test('multiple tags of a type - error', function(assert) {
   var ctx = {
     localBlessings: {
       publicKey: 'me',
@@ -180,5 +263,23 @@ test('multiple tags of a type', function(assert) {
   var err = tagAuthorizer(ctx);
   assert.ok(err !== null);
   assert.equal(err.id, 'v.io/v23/security/access.errMultipleMethodTags');
+  assert.end();
+});
+
+test('bad acl maps - throws', function(assert) {
+  assert.throws(function() {
+    aclAuthorizer(null, access.Tag);
+  }, 'cannot construct aclAuthorizer with null acl map');
+  assert.throws(function() {
+    aclAuthorizer([access.Read, access.Write], access.Tag);
+  }, 'cannot construct aclAuthorizer with an array acl map');
+  assert.throws(function() {
+    aclAuthorizer(new Map([
+      [1, {
+        in: ['server/alice']
+      }],
+    ]), access.Tag);
+  }, 'cannot construct aclAuthorizer with non-string tag acl map');
+
   assert.end();
 });

@@ -9,8 +9,9 @@ var blessingMatches = require('./blessing-matching');
 var unwrap = require('../vdl/type-util').unwrap;
 var makeError = require('../errors/make-errors');
 var actions = require('../errors/actions');
-var NoPermissionsError =
-  require('../gen-vdl/v.io/v23/security/access').NoPermissionsError;
+var vdlAccess = require('../gen-vdl/v.io/v23/security/access');
+var NoPermissionsError = vdlAccess.NoPermissionsError;
+var Permissions = vdlAccess.Permissions;
 
 module.exports = authorizer;
 var pkgPath = 'v.io/v23/security/access';
@@ -31,11 +32,14 @@ var NoTagsError = makeError(
  * @function
  * @memberof module:vanadium.security
  * @name aclAuthorizer
- * @param {module:vanadium.security.AccessList} acl The set of acls to apply.
+ * @param {module:vanadium.security.Permissions} acls The set of acls to apply.
  * @param {constructor} type The type of tags that this authorizer understands.
  * @return {Authorize} An authorizer that applies the acls.
  */
-function authorizer(acl, type) {
+function authorizer(acls, type) {
+  // Force the acls to have the correct Permissions format.
+  var permissions = unwrap(new Permissions(acls));
+
   return function authorize(ctx) {
     // If the remoteBlessings is ourselves (i.e a self rpc), then we
     // always authorize.
@@ -58,7 +62,7 @@ function authorizer(acl, type) {
     }
 
     var key = unwrap(tags[0]);
-    var lists = acl.get(key);
+    var lists = permissions.get(key);
     if (!lists || !canAccess(ctx.remoteBlessingStrings, lists.in,
                                 lists.notIn)) {
       return new NoPermissionsError(null, ctx.remoteBlessingStrings, [], key);
