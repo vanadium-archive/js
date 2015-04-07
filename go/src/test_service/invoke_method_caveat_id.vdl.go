@@ -68,31 +68,17 @@ type InvokableTestMethodClientStub interface {
 }
 
 // InvokableTestMethodClient returns a client stub for InvokableTestMethod.
-func InvokableTestMethodClient(name string, opts ...rpc.BindOpt) InvokableTestMethodClientStub {
-	var client rpc.Client
-	for _, opt := range opts {
-		if clientOpt, ok := opt.(rpc.Client); ok {
-			client = clientOpt
-		}
-	}
-	return implInvokableTestMethodClientStub{name, client}
+func InvokableTestMethodClient(name string) InvokableTestMethodClientStub {
+	return implInvokableTestMethodClientStub{name}
 }
 
 type implInvokableTestMethodClientStub struct {
-	name   string
-	client rpc.Client
-}
-
-func (c implInvokableTestMethodClientStub) c(ctx *context.T) rpc.Client {
-	if c.client != nil {
-		return c.client
-	}
-	return v23.GetClient(ctx)
+	name string
 }
 
 func (c implInvokableTestMethodClientStub) AMethod(ctx *context.T, opts ...rpc.CallOpt) (o0 string, err error) {
 	var call rpc.ClientCall
-	if call, err = c.c(ctx).StartCall(ctx, c.name, "AMethod", nil, opts...); err != nil {
+	if call, err = v23.GetClient(ctx).StartCall(ctx, c.name, "AMethod", nil, opts...); err != nil {
 		return
 	}
 	err = call.Finish(&o0)
@@ -182,31 +168,17 @@ type InvokeMethodWithCaveatedIdentityClientStub interface {
 }
 
 // InvokeMethodWithCaveatedIdentityClient returns a client stub for InvokeMethodWithCaveatedIdentity.
-func InvokeMethodWithCaveatedIdentityClient(name string, opts ...rpc.BindOpt) InvokeMethodWithCaveatedIdentityClientStub {
-	var client rpc.Client
-	for _, opt := range opts {
-		if clientOpt, ok := opt.(rpc.Client); ok {
-			client = clientOpt
-		}
-	}
-	return implInvokeMethodWithCaveatedIdentityClientStub{name, client}
+func InvokeMethodWithCaveatedIdentityClient(name string) InvokeMethodWithCaveatedIdentityClientStub {
+	return implInvokeMethodWithCaveatedIdentityClientStub{name}
 }
 
 type implInvokeMethodWithCaveatedIdentityClientStub struct {
-	name   string
-	client rpc.Client
-}
-
-func (c implInvokeMethodWithCaveatedIdentityClientStub) c(ctx *context.T) rpc.Client {
-	if c.client != nil {
-		return c.client
-	}
-	return v23.GetClient(ctx)
+	name string
 }
 
 func (c implInvokeMethodWithCaveatedIdentityClientStub) Invoke(ctx *context.T, i0 string, i1 security.CaveatDescriptor, i2 *vdl.Value, opts ...rpc.CallOpt) (err error) {
 	var call rpc.ClientCall
-	if call, err = c.c(ctx).StartCall(ctx, c.name, "Invoke", []interface{}{i0, i1, i2}, opts...); err != nil {
+	if call, err = v23.GetClient(ctx).StartCall(ctx, c.name, "Invoke", []interface{}{i0, i1, i2}, opts...); err != nil {
 		return
 	}
 	err = call.Finish()

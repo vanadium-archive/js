@@ -35,6 +35,8 @@ var CaveatValidationResponse =
   require('../gen-vdl/v.io/x/ref/services/wsprd/rpc/server').
   CaveatValidationResponse;
 var vtrace = require('../vtrace');
+var lib =
+  require('../gen-vdl/v.io/x/ref/services/wsprd/lib');
 
 /**
  * A router that handles routing incoming requests to the right
@@ -58,6 +60,7 @@ var Router = function(proxy, appName, rootCtx, controller, caveatRegistry) {
   proxy.addIncomingHandler(Incoming.AUTHORIZATION_REQUEST, this);
   proxy.addIncomingHandler(Incoming.CANCEL, this);
   proxy.addIncomingHandler(Incoming.CAVEAT_VALIDATION_REQUEST, this);
+  proxy.addIncomingHandler(Incoming.LOG_MESSAGE, this);
 };
 
 Router.prototype.handleRequest = function(messageId, type, request) {
@@ -76,6 +79,15 @@ Router.prototype.handleRequest = function(messageId, type, request) {
       break;
     case Incoming.CAVEAT_VALIDATION_REQUEST:
       this.handleCaveatValidationRequest(messageId, request);
+      break;
+    case Incoming.LOG_MESSAGE:
+      if (request.level !==  lib.LogLevel.INFO) {
+        vlog.logger.info(request.message);
+      } else if (request.level !== lib.LogLevel.ERROR) {
+        vlog.logger.error(request.message);
+      } else {
+        vlog.logger.error('unknown log level ' + request.level);
+      }
       break;
     default:
       vlog.logger.error('Unknown request type ' + type);

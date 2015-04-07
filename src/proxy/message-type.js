@@ -27,6 +27,7 @@ module.exports = {
     LOOKUP_REQUEST: 5, // A request to perform a dispatcher lookup.
     AUTHORIZATION_REQUEST: 6,  // A request to authorize an rpc.
     CANCEL: 7, // A request to cancel a previously invoked JS method.
-    CAVEAT_VALIDATION_REQUEST: 8 // A request to validate a set of caveats
+    CAVEAT_VALIDATION_REQUEST: 8, // A request to validate a set of caveats
+    LOG_MESSAGE: 9  // A request to log a message.
   }
 };

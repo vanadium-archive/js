@@ -34,31 +34,17 @@ type CancelCollectorClientStub interface {
 }
 
 // CancelCollectorClient returns a client stub for CancelCollector.
-func CancelCollectorClient(name string, opts ...rpc.BindOpt) CancelCollectorClientStub {
-	var client rpc.Client
-	for _, opt := range opts {
-		if clientOpt, ok := opt.(rpc.Client); ok {
-			client = clientOpt
-		}
-	}
-	return implCancelCollectorClientStub{name, client}
+func CancelCollectorClient(name string) CancelCollectorClientStub {
+	return implCancelCollectorClientStub{name}
 }
 
 type implCancelCollectorClientStub struct {
-	name   string
-	client rpc.Client
-}
-
-func (c implCancelCollectorClientStub) c(ctx *context.T) rpc.Client {
-	if c.client != nil {
-		return c.client
-	}
-	return v23.GetClient(ctx)
+	name string
 }
 
 func (c implCancelCollectorClientStub) NeverReturn(ctx *context.T, i0 int64, opts ...rpc.CallOpt) (err error) {
 	var call rpc.ClientCall
-	if call, err = c.c(ctx).StartCall(ctx, c.name, "NeverReturn", []interface{}{i0}, opts...); err != nil {
+	if call, err = v23.GetClient(ctx).StartCall(ctx, c.name, "NeverReturn", []interface{}{i0}, opts...); err != nil {
 		return
 	}
 	err = call.Finish()
@@ -67,7 +53,7 @@ func (c implCancelCollectorClientStub) NeverReturn(ctx *context.T, i0 int64, opt
 
 func (c implCancelCollectorClientStub) WaitForStatus(ctx *context.T, i0 int64, i1 string, opts ...rpc.CallOpt) (o0 int64, err error) {
 	var call rpc.ClientCall
-	if call, err = c.c(ctx).StartCall(ctx, c.name, "WaitForStatus", []interface{}{i0, i1}, opts...); err != nil {
+	if call, err = v23.GetClient(ctx).StartCall(ctx, c.name, "WaitForStatus", []interface{}{i0, i1}, opts...); err != nil {
 		return
 	}
 	err = call.Finish(&o0)
