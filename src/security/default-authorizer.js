@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-var blessingMatches = require('./blessing-matching');
+var blessingMatches = require('./access/blessing-matching');
 var vError = require('./../gen-vdl/v.io/v23/verror');
 var context = require('./../runtime/context');
 

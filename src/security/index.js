@@ -70,7 +70,6 @@
 var extend = require('xtend');
 
 module.exports = extend(
-  require('../gen-vdl/v.io/v23/security'),
-  require('../gen-vdl/v.io/v23/security/access'), {
-  aclAuthorizer: require('./acl-authorizer')
+  require('../gen-vdl/v.io/v23/security'),{
+  access: require('./access'),
 });

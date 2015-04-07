@@ -4,7 +4,7 @@
 
 
 var test = require('prova');
-var aclAuthorizer = require('../../src/security/acl-authorizer');
+var aclAuthorizer = require('../../src/security/access/acl-authorizer');
 var access = require('../../src/gen-vdl/v.io/v23/security/access');
 var unwrap = require('../../src/vdl/type-util').unwrap;
 var createConstructor = require('../../src/vdl/create-constructor');

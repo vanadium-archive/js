@@ -6,10 +6,10 @@
  * @private
  */
 var blessingMatches = require('./blessing-matching');
-var unwrap = require('../vdl/type-util').unwrap;
-var makeError = require('../errors/make-errors');
-var actions = require('../errors/actions');
-var vdlAccess = require('../gen-vdl/v.io/v23/security/access');
+var unwrap = require('../../vdl/type-util').unwrap;
+var makeError = require('../../errors/make-errors');
+var actions = require('../../errors/actions');
+var vdlAccess = require('../../gen-vdl/v.io/v23/security/access');
 var NoPermissionsError = vdlAccess.NoPermissionsError;
 var Permissions = vdlAccess.Permissions;
 

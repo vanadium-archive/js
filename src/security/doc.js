@@ -25,133 +25,8 @@
  * @memberof module:vanadium.security
  */
 /**
- * @summary AccessList represents an Access Control List - a set of blessings
- * that should be granted access.
- * @name AccessList
- * @constructor
- * @param {object} acl The value to construct from
- * @param {array} acl.in <p>An array of [BlessingPatterns]{@link
- * module:vanadium.security.BlessingPatterns}/strings that denotes the set
- * of blessings that should be granted access, unless blacklisted by notIn.</p>
- * <p>For example:</p>
- * <code>
- *    in: ['alice/family']
- * </code><p>
- * grants access to a principal that presents at least one of 'alice/family',
- * 'alice/family/friend', 'alice/family/friend/spouse', etc.</p>
- * @param {array} acl.notNin <p>An array of strings that denotes the set of
- * blessings (and their delegates) that have been explicitly blacklisted
- * from the in set.
- * <p>For example:</p>
- * <code>
- *    in: ['alice/friend'], notIn: ['alice/friend/bob']
- * </code><p>
- * grants access to a principal that presents at least one of 'alice/friend',
- * 'alice/friend/carol', etc, but NOT to a principal that presents
- * 'alice/friend/bob or 'alice/friend/bob/spouse' etc.</p>
- * @memberof module:vanadium.security
- */
-/*jshint ignore:start*/
-/**
- * @summary Permissions maps string tags to
- * [AccessList]{@link module:vanadium.security.AccessList}
- * specifying the blessings required to invoke methods with that tag.
- * @description
- * <p>These tags are meant to add a layer of interposition between the set of users
- * (blessings, specifically) and the set of methods, much like "Roles" do in
- * [Role Based Access Control]{@link (http://en.wikipedia.org/wiki/Role-based_access_control)}.
- * @name Permissions
- * @constructor
- * @param {map} permissions An ES6 Map of string tags to AccessLists
- * @memberof module:vanadium.security
- */
-/*jshint ignore:end*/
-/**
- * Tag is used to associate methods with an
- * [AccessList]{@link module:vanadium.security.AccessList} in
- * [Permissions]{@link module:vanadium.security.Permissions}.
- * @name Tag
- * @constructor
- * @param {string} val The value of the tag
- * @memberof module:vanadium.security
- */
-/**
- * Used for operations that require privileged access for object
- * administration.
- * @name Admin
- * @type module:vanadium.security.Tag
- * @memberof module:vanadium.security
- */
-/**
- * Used for operations that return debugging information about the object
- * @name Debug
- * @type module:vanadium.security.Tag
- * @memberof module:vanadium.security
- */
-/**
- * Used for operations that do not mutate the state of the object
- * @name Read
- * @type module:vanadium.security.Tag
- * @memberof module:vanadium.security
- */
-/**
- * Used for operations that mutate the state of the object.
- * @name Write
- * @type module:vanadium.security.Tag
- * @memberof module:vanadium.security
- */
-/**
- * Used for operations that involve namespace navigation
- * @name Resolve
- * @type module:vanadium.security.Tag
- * @memberof module:vanadium.security
- */
-/**
- * Error that means the [AccessList]
- * {@link module:vanadium.security.AccessList} is too big.
- * @name TooBigError
- * @memberof module:vanadium.security
- * @constructor
- * @param {module:vanadium.context.Context} ctx The context the error was
- * created in.
- * @param {...*} params A list of parameters to include in the error message.
- * @augments module:vanadium.errors.VanadiumError
- */
-/**
- * Error that means that no blessings matched patterns in the access list.
- * @name AccessListMatchError
- * @memberof module:vanadium.security
- * @constructor
- * @param {module:vanadium.context.Context} ctx The context the error was
- * created in.
- * @param {array} validBlessings A list of strings that represent valid
- * blessings
- * @param {array} rejectedBlessings A list of blessings that are rejected.
- * The array has [RejectedBlessings]
- * {@link module:vanadium.security.RjectedBlessings}.
- * @param {...*} params A list of parameters to include in the error message.
- * @augments module:vanadium.errors.VanadiumError
- */
-/**
- * Error that means that no blessings have access to the specified access tag
- * (e.g. No Read Access or No Admin Access)
- * @name NoPermissionsError
- * @memberof module:vanadium.security
- * @constructor
- * @param {module:vanadium.context.Context} ctx The context the error was
- * created in.
- * @param {array} validBlessings A list of strings that represent valid
- * blessings
- * @param {array} rejectedBlessings A list of blessings that are rejected.
- * The array has [RejectedBlessings]
- * @param {module:vanadium.security.Tag} tag Access tag.
- * {@link module:vanadium.security.RjectedBlessings}.
- * @param {...*} params A list of parameters to include in the error message.
- * @augments module:vanadium.errors.VanadiumError
- */
-/**
- * A descriptor that is used to associate a caveat validation function (
- * addressed by a globally unique identifier) and the data needed by the
+ * @summary A descriptor that is used to associate a caveat validation function
+ * (addressed by a globally unique identifier) and the data needed by the
  * validation function.
  * @name CaveatDescriptor
  * @memberof module:vanadium.security
@@ -163,7 +38,7 @@
  * the data that will be passed into the function.
  */
 /**
- * An explanation of why a blessing failed validation.
+ * @summary An explanation of why a blessing failed validation.
  * @name RejectedBlessing
  * @memberof module:vanadium.security
  * @constructor
@@ -208,7 +83,7 @@
  * @memberof module:vanadium.security
  */
 /**
- * An error that means that no caveat has been registered
+ * @summary An error that means that no caveat has been registered
  * @name CaveatNotRegisteredError
  * @memberof module:vanadium.security
  * @constructor
@@ -219,7 +94,7 @@
  * @augments module:vanadium.errors.VanadiumError
  */
 /**
- * An error that means that the caveat cannot have a param type of any.
+ * @summary An error that means that the caveat cannot have a param type of any.
  * @name CaveatParamAnyError
  * @memberof module:vanadium.security
  * @constructor
@@ -231,9 +106,9 @@
  * @augments module:vanadium.errors.VanadiumError
  */
 /**
- * An error that means that the type of the passed in data does not match
- * the type expected by the descriptor.
- * @name CaveatParamTypeMismatch
+ * @summary An error that means that the type of the passed in data does not
+ * match the type expected by the descriptor.
+ * @name CaveatParamTypeMismatchError
  * @memberof module:vanadium.security
  * @constructor
  * @param {module:vanadium.context.Context} ctx The context the error was
@@ -246,7 +121,7 @@
  * @augments module:vanadium.errors.VanadiumError
  */
 /**
- * An error that means that the param type could not be encoded.
+ * @summary An error that means that the param type could not be encoded.
  * @name CaveatParamCodingError
  * @memberof module:vanadium.security
  * @constructor
@@ -259,7 +134,7 @@
  * @augments module:vanadium.errors.VanadiumError
  */
 /**
- * An error that means that the caveat didn't validate.
+ * @summary An error that means that the caveat didn't validate.
  * @name CaveatValidationError
  * @memberof module:vanadium.security
  * @constructor
@@ -270,7 +145,7 @@
  * @augments module:vanadium.errors.VanadiumError
  */
 /**
- * An error that means that the [ConstCaveat]
+ * @summary An error that means that the [ConstCaveat]
  * {@link module:vanadium.security.ConstCaveat} failed to validate.
  * @name ConstCaveatValidationError
  * @memberof module:vanadium.security
@@ -281,7 +156,7 @@
  * @augments module:vanadium.errors.VanadiumError
  */
 /**
- * An error that means that the [ExpiryType]
+ * @summary An error that means that the [ExpiryType]
  * {@link module:vanadium.security.ExpiryCaveatX} failed to validate.
  * @name ExpiryCaveatValidationError
  * @memberof module:vanadium.security
@@ -294,7 +169,7 @@
  * @augments module:vanadium.errors.VanadiumError
  */
 /**
- * An error that means that the [MethodCaveat]
+ * @summary An error that means that the [MethodCaveat]
  * {@link module:vanadium.security.MethodCaveatX} failed to validate.
  * @name MethodCaveatValidationError
  * @memberof module:vanadium.security
@@ -308,7 +183,7 @@
  * @augments module:vanadium.errors.VanadiumError
  */
 /**
- * An error that means that the [PeerBlessingsCaveat]
+ * @summary An error that means that the [PeerBlessingsCaveat]
  * {@link module:vanadium.security.PeerBlessingsCaveat} failed to validate.
  * @name PeerBlessingsCaveatValidationError
  * @memberof module:vanadium.security
@@ -322,7 +197,8 @@
  * @augments module:vanadium.errors.VanadiumError
  */
 /**
- * An error that means a remote principal is not authorized by a local principal
+ * @summary An error that means a remote principal is not authorized by a local
+ * principal
  * @name AuthorizationFailedError
  * @memberof module:vanadium.security
  * @constructor
