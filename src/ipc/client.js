@@ -16,7 +16,7 @@ var actions = require('../errors/actions');
 var ByteArrayMessageWriter = require('../vom/byte-array-message-writer');
 var byteUtil = require('../vdl/byte-util');
 var Controller =
-  require('../gen-vdl/v.io/x/ref/services/wsprd/app').Controller;
+  require('../gen-vdl/v.io/x/ref/services/wspr/internal/app').Controller;
 var context = require('../runtime/context');
 var Deferred = require('../lib/deferred');
 var emitStreamError = require('../lib/emit-stream-error');
@@ -28,8 +28,9 @@ var Promise = require('../lib/promise');
 var ReservedSignature =
   require('../gen-vdl/v.io/v23/rpc').ReservedSignature.val;
 var RpcCallOption =
-  require('../gen-vdl/v.io/x/ref/services/wsprd/app').RpcCallOption;
-var RpcRequest = require('../gen-vdl/v.io/x/ref/services/wsprd/app').RpcRequest;
+  require('../gen-vdl/v.io/x/ref/services/wspr/internal/app').RpcCallOption;
+var RpcRequest =
+  require('../gen-vdl/v.io/x/ref/services/wspr/internal/app').RpcRequest;
 var Stream = require('../proxy/stream');
 var time = require('../gen-vdl/v.io/v23/vdlroot/time');
 var uncapitalize = require('../vdl/util').uncapitalize;

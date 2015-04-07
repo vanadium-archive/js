@@ -133,7 +133,7 @@ ifndef NOVDLGEN
 		-js-relative-path-to-core=$(JS_VDL_PATH_TO_CORE) \
 		-js-out-dir=$(JS_VDL_DIR) \
 		v.io/x/ref/lib/vdl/testdata/... \
-		v.io/x/ref/services/wsprd/... \
+		v.io/x/ref/services/wspr/... \
 		v.io/v23/rpc/... \
 		v.io/v23/naming/... \
 		v.io/v23/verror/... \

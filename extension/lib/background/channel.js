@@ -8,9 +8,9 @@
 
 var vom = require('../../../src/vom');
 var channelVdl =
-  require('../../vdl/v.io/x/ref/services/wsprd/channel');
+  require('../../vdl/v.io/x/ref/services/wspr/internal/channel');
 var browsprVdl =
-  require('../../vdl/v.io/x/ref/services/wsprd/browspr');
+  require('../../vdl/v.io/x/ref/services/wspr/internal/browspr');
 
 module.exports = RpcChannel;
 

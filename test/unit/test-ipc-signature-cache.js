@@ -15,7 +15,7 @@ var Outgoing = require('../../src/proxy/message-type').Outgoing;
 var Client = require('../../src/ipc/client.js');
 var byteUtil = require('../../src/vdl/byte-util');
 var vom = require('../../src/vom');
-var app = require('../../src/gen-vdl/v.io/x/ref/services/wsprd/app');
+var app = require('../../src/gen-vdl/v.io/x/ref/services/wspr/internal/app');
 var vtrace = require('../../src/vtrace');
 var vdlsig = require('../../src/gen-vdl/v.io/v23/vdlroot/signature');
 

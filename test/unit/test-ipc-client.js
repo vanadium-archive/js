@@ -11,7 +11,7 @@ var vdl = require('../../src/vdl');
 var byteUtil = require('../../src/vdl/byte-util');
 var vom = require('../../src/vom');
 var vtrace = require('../../src/vtrace');
-var app = require('../../src/gen-vdl/v.io/x/ref/services/wsprd/app');
+var app = require('../../src/gen-vdl/v.io/x/ref/services/wspr/internal/app');
 
 var mockService = {
   tripleArgMethod: function(ctx, a, b, c) {},

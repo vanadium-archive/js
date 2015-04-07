@@ -30,13 +30,13 @@ var naming = require('../gen-vdl/v.io/v23/naming');
 var Glob = require('./glob');
 var GlobStream = require('./glob-stream');
 var ServerRpcReply =
-  require('../gen-vdl/v.io/x/ref/services/wsprd/lib').ServerRpcReply;
+  require('../gen-vdl/v.io/x/ref/services/wspr/internal/lib').ServerRpcReply;
 var CaveatValidationResponse =
-  require('../gen-vdl/v.io/x/ref/services/wsprd/rpc/server').
+  require('../gen-vdl/v.io/x/ref/services/wspr/internal/rpc/server').
   CaveatValidationResponse;
 var vtrace = require('../vtrace');
 var lib =
-  require('../gen-vdl/v.io/x/ref/services/wsprd/lib');
+  require('../gen-vdl/v.io/x/ref/services/wspr/internal/lib');
 
 /**
  * A router that handles routing incoming requests to the right

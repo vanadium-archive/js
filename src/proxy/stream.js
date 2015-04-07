@@ -17,7 +17,7 @@ var fill = require('../vdl/canonicalize').fill;
 var reduce = require('../vdl/canonicalize').reduce;
 var unwrap = require('../vdl/type-util').unwrap;
 var ServerRpcReply =
-  require('../gen-vdl/v.io/x/ref/services/wsprd/lib').ServerRpcReply;
+  require('../gen-vdl/v.io/x/ref/services/wspr/internal/lib').ServerRpcReply;
 
 /**
  * A stream that allows sending and receiving data for a streaming rpc.  If

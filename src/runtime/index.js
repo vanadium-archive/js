@@ -21,7 +21,7 @@ var context = require('./context');
 var SharedContextKeys = require('./shared-context-keys');
 var vtrace = require('../vtrace');
 var Controller =
-  require('../gen-vdl/v.io/x/ref/services/wsprd/app').Controller;
+  require('../gen-vdl/v.io/x/ref/services/wspr/internal/app').Controller;
 
 module.exports = {
   init: init

@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-var vdl = require('../gen-vdl/v.io/x/ref/services/wsprd/namespace');
+var vdl = require('../gen-vdl/v.io/x/ref/services/wspr/internal/namespace');
 var time = require('../gen-vdl/v.io/v23/vdlroot/time');
 var emitStreamError = require('../lib/emit-stream-error');
 var Readable = require('stream').Readable;
