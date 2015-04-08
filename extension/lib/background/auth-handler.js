@@ -157,8 +157,21 @@ AuthHandler.prototype.handleAuthMessage = function(port) {
           // TODO(suharshs,nlacasse): Filter by a more specific set of errors.
           if (retry && token) {
             retry = false;
-            return chrome.identity.removeCachedAuthToken(token, function(){
+            return chrome.identity.removeCachedAuthToken({
+              'token': token
+            }, function(){
               ah.createAccount(createAccountCallback);
+            });
+          } else if (retry) {
+            // If the token was not returned from getAuthToken, force the logout
+            // of the user and try again.
+            // This usually happens when a user has changed their password from
+            // a different browser instance and the current browser isn't logged
+            // into their new account.
+            return chrome.identity.launchWebAuthFlow({
+              'url': 'https://accounts.google.com/logout'
+            }, function(tokenUrl) {
+              ah.createdAccount(createAccountCallback);
             });
           }
           return sendErrorToContentScript('auth', port, err);
