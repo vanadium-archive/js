@@ -30,7 +30,7 @@ module.exports = {
 /*
  * Initialize a Vanadium Runtime.
  * Runtime exposes entry points to create servers, client, blessing and other
- * parts of the Vanadium functionality.
+ * Vanadium functionality.
  * @private
  */
 function init(options, cb) {
@@ -67,7 +67,7 @@ function init(options, cb) {
 /**
  * @summary
  * Runtime exposes entry points to create servers, client, namespace client and
- * other parts of the Vanadium functionality.
+ * other Vanadium functionality.
  * @Description
  * <p>This constructor should not be used directly, instead use
  * [vanadium.init]{@link module:vanadium.init}</p>
