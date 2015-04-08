@@ -8,7 +8,7 @@ import (
 	"fmt"
 	"test_service"
 
-	vsecurity "v.io/x/ref/security"
+	vsecurity "v.io/x/ref/lib/security"
 
 	"v.io/v23"
 	"v.io/v23/rpc"
