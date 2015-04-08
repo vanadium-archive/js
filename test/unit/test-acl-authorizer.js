@@ -9,13 +9,16 @@ var access = require('../../src/gen-vdl/v.io/v23/security/access');
 var unwrap = require('../../src/vdl/type-util').unwrap;
 var createConstructor = require('../../src/vdl/create-constructor');
 var kind = require('../../src/vdl/kind');
+var Context = require('../../src/runtime/context').Context;
+var contextWithSecurityCall =
+  require('../../src/security/context').contextWithSecurityCall;
 
 require('es6-shim');
-
+var rootCtx = new Context();
 var allTags = [
   access.Admin, access.Debug, access.Read, access.Write, access.Resolve];
 test('allow same public key access with no other acls', function(assert) {
-  var ctx = {
+  var call = {
     localBlessings: {
       publicKey: 'me',
     },
@@ -26,7 +29,8 @@ test('allow same public key access with no other acls', function(assert) {
 
   var auth = aclAuthorizer({}, access.Tag);
   allTags.forEach(function(t) {
-    ctx.methodTags = [t];
+    call.methodTags = [t];
+    var ctx = contextWithSecurityCall(rootCtx, call);
     assert.equal(auth(ctx), null);
   });
 
@@ -156,7 +160,7 @@ function checkExpectations(auth, expectations, assert) {
     if (!expectations.hasOwnProperty(name)) {
       continue;
     }
-    var ctx = {
+    var call = {
       localBlessings: {
         publicKey: 'me',
       },
@@ -170,7 +174,8 @@ function checkExpectations(auth, expectations, assert) {
     for (var j = 0; j < allTags.length; j++) {
       var tag = allTags[j];
       var shouldErr = exp.indexOf(tag) === -1;
-      ctx.methodTags = [tag];
+      call.methodTags = [tag];
+      var ctx = contextWithSecurityCall(rootCtx, call);
       var err = auth(ctx);
       if (shouldErr) {
         assert.ok(err !== null, 'name: ' + name + ', tag: ' + tag);
@@ -188,7 +193,7 @@ test('tags of different types', function(assert) {
     name: 'MyTag'
   });
   var myAdmin = new MyTag('Admin');
-  var ctx = {
+  var call = {
     localBlessings: {
       publicKey: 'me',
     },
@@ -204,7 +209,8 @@ test('tags of different types', function(assert) {
     notIn: []
   });
   var tagAuthorizer = aclAuthorizer(acl, access.Tag);
-  ctx.methodTags = [myAdmin, access.Resolve];
+  call.methodTags = [myAdmin, access.Resolve];
+  var ctx = contextWithSecurityCall(rootCtx, call);
   var err = tagAuthorizer(ctx);
   assert.ok(err !== null);
   assert.ok(err instanceof access.NoPermissionsError);
@@ -219,7 +225,7 @@ test('no tags of a type - error', function(assert) {
     name: 'MyTag'
   });
   var myAdmin = new MyTag('Admin');
-  var ctx = {
+  var call = {
     localBlessings: {
       publicKey: 'me',
     },
@@ -235,7 +241,8 @@ test('no tags of a type - error', function(assert) {
     notIn: []
   });
   var tagAuthorizer = aclAuthorizer(acl, access.Tag);
-  ctx.methodTags = [myAdmin];
+  call.methodTags = [myAdmin];
+  var ctx = contextWithSecurityCall(rootCtx, call);
   var err = tagAuthorizer(ctx);
   assert.ok(err !== null);
   assert.equal(err.id, 'v.io/v23/security/access.errNoMethodTags');
@@ -243,7 +250,7 @@ test('no tags of a type - error', function(assert) {
 });
 
 test('multiple tags of a type - error', function(assert) {
-  var ctx = {
+  var call = {
     localBlessings: {
       publicKey: 'me',
     },
@@ -259,7 +266,8 @@ test('multiple tags of a type - error', function(assert) {
     notIn: []
   });
   var tagAuthorizer = aclAuthorizer(acl, access.Tag);
-  ctx.methodTags = [access.Resolve, access.Debug];
+  call.methodTags = [access.Resolve, access.Debug];
+  var ctx = contextWithSecurityCall(rootCtx, call);
   var err = tagAuthorizer(ctx);
   assert.ok(err !== null);
   assert.equal(err.id, 'v.io/v23/security/access.errMultipleMethodTags');

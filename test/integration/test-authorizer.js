@@ -5,6 +5,9 @@
 var test = require('prova');
 var serve = require('./serve');
 var Deferred = require('../../src/lib/deferred');
+var getSecurityCallFromContext =
+  require('../../src/security/context').getSecurityCallFromContext;
+
 
 var service = {
   call: function(ctx, arg) {
@@ -134,23 +137,24 @@ test('Test proper context is passed to authorizer', function(assert) {
   var defaultBlessingRegex = require('./default-blessing-regex');
 
   testSuccessCase(assert, function (ctx, cb) {
-    if (!defaultBlessingRegex.test(ctx.remoteBlessingStrings[0])) {
+    var call = getSecurityCallFromContext(ctx);
+    if (!defaultBlessingRegex.test(call.remoteBlessingStrings[0])) {
       return cb(new Error('unknown remote blessings ' +
-        ctx.remoteBlessingStrings));
-    } else if (!defaultBlessingRegex.test(ctx.localBlessingStrings[0])) {
-      cb(new Error('unknown local blessings ' + ctx.localBlessingStrings));
-    } else if (ctx.method !== 'call') {
-      return cb(new Error('wrong method ' + ctx.method));
-    } else if (ctx.suffix !== 'auth') {
-      return cb(new Error('wrong suffix ' + ctx.suffix));
+        call.remoteBlessingStrings));
+    } else if (!defaultBlessingRegex.test(call.localBlessingStrings[0])) {
+      cb(new Error('unknown local blessings ' + call.localBlessingStrings));
+    } else if (call.method !== 'call') {
+      return cb(new Error('wrong method ' + call.method));
+    } else if (call.suffix !== 'auth') {
+      return cb(new Error('wrong suffix ' + call.suffix));
     }
     // TODO(bjornick): Fix the endpoint format
-    // } else if (ctx.remoteEndpoint === endpoint ||
-    //     !ctx.remoteEndpoint) {
-    //   return new Error('bad endpoint ' + ctx.remoteEndpoint);
-    // } else if  (ctx.localEndpoint !== endpoint ||
-    //     !ctx.localEndpoint) {
-    //   return new Error('bad endpoint ' + ctx.localEndpoint);
+    // } else if (call.remoteEndpoint === endpoint ||
+    //     !call.remoteEndpoint) {
+    //   return new Error('bad endpoint ' + call.remoteEndpoint);
+    // } else if  (call.localEndpoint !== endpoint ||
+    //     !call.localEndpoint) {
+    //   return new Error('bad endpoint ' + call.localEndpoint);
     // }
 
     cb();
@@ -159,8 +163,9 @@ test('Test proper context is passed to authorizer', function(assert) {
 
 test('Test passing in labels', function(assert) {
   testSuccessCase(assert, function(ctx, cb) {
-    if (ctx.methodTags[0] !== 'foo') {
-      return cb(new Error('wrong label ' + ctx.label));
+    var call = getSecurityCallFromContext(ctx);
+    if (call.methodTags[0] !== 'foo') {
+      return cb(new Error('wrong label ' + call.label));
     }
     return cb();
   }, ['foo']);

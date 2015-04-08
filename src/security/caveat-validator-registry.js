@@ -46,7 +46,7 @@ CaveatValidatorRegistry.prototype._makeKey = function(bytes) {
 /**
  * @callback CaveatValidationFunction
  * A function to validate caveats on {@link Blessings}
- * @param {module:vanadium.security.SecurityCall} call The security call.
+ * @param {module:vanadium.context.Context} ctx The context of the call.
  * @memberof module:vanadium.security
  * @param {*} param Validation-function specific parameter.
  * @throws Error Upon failure to validate, does not throw if successful.
@@ -78,13 +78,13 @@ CaveatValidatorRegistry.prototype.register = function(cavDesc, validateFn) {
  * @private
  */
 CaveatValidatorRegistry.prototype.validate =
-  function(ctx, secCall, caveat, cb) {
+  function(ctx, caveat, cb) {
   var validator = this.validators.get(this._makeKey(caveat.id));
   if (validator === undefined) {
-    return cb(new vdlSecurity.CaveatNotRegisteredError(secCall.context,
+    return cb(new vdlSecurity.CaveatNotRegisteredError(ctx,
       'Unknown caveat id: ' + this._makeKey(caveat.id)));
   }
-  return validator.validate(ctx, secCall, vom.decode(caveat.paramVom), cb);
+  return validator.validate(ctx, vom.decode(caveat.paramVom), cb);
 };
 
 /**
@@ -100,12 +100,11 @@ function CaveatValidator(cavDesc, validateFn) {
 /**
  * @private
  */
-CaveatValidator.prototype.validate =
-  function(ctx, secCall, paramForValidator, cb) {
+CaveatValidator.prototype.validate = function(ctx, paramForValidator, cb) {
   var paramType = this.cavDesc.paramType;
   var canonParam = vdl.Canonicalize.reduce(paramForValidator, paramType);
   var unwrappedParam = unwrapArg(canonParam, paramType);
 
   var inspectableFn = new InspectableFunction(this.validateFn);
-  asyncCall(ctx, null, inspectableFn, 0, [secCall, unwrappedParam], cb);
+  asyncCall(ctx, null, inspectableFn, 0, [ctx, unwrappedParam], cb);
 };

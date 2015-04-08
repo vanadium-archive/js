@@ -235,10 +235,11 @@ Server.prototype.getInvokerForHandle = function(handle) {
  * Handles the authorization for an RPC.
  * @private
  * @param {Number} handle The handle for the authorizer
- * @param {object} request The call of the authorization
+ * @param {module:vanadium.context.Context} ctx The ctx of the
+ * call.
  * @return {Promise} a promise that will be fulfilled with the result.
  */
-Server.prototype.handleAuthorization = function(handle, request) {
+Server.prototype.handleAuthorization = function(handle, ctx) {
   var handler = this.serviceObjectHandles[handle];
   var authorizer = defaultAuthorizer;
   if (handler && handler.authorizer) {
@@ -247,7 +248,7 @@ Server.prototype.handleAuthorization = function(handle, request) {
 
   var def = new Deferred();
   var inspectableAuthorizer = new InspectableFunction(authorizer);
-  asyncCall(this._rootCtx, null, inspectableAuthorizer, 0, [request],
+  asyncCall(ctx, null, inspectableAuthorizer, 0, [ctx],
     function(err) {
     if (err) {
       def.reject(err);

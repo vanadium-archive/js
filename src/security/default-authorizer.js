@@ -4,27 +4,28 @@
 
 var blessingMatches = require('./access/blessing-matching');
 var vError = require('./../gen-vdl/v.io/v23/verror');
-var context = require('./../runtime/context');
+var getSecurityCallFromContext =
+  require('./context').getSecurityCallFromContext;
 
 module.exports = authorizer;
 
 function authorizer(ctx, cb) {
-  if (ctx.localBlessings.publicKey === ctx.remoteBlessings.publicKey) {
+  var call = getSecurityCallFromContext(ctx);
+  if (call.localBlessings.publicKey === call.remoteBlessings.publicKey) {
     return cb();
   }
-  var matchesLocal = ctx.localBlessingStrings.some(function(l) {
-    return blessingMatches(l, ctx.remoteBlessingStrings);
+  var matchesLocal = call.localBlessingStrings.some(function(l) {
+    return blessingMatches(l, call.remoteBlessingStrings);
   });
   if (matchesLocal) {
     return cb();
   }
 
-  var matchesRemote = ctx.remoteBlessingStrings.some(function(l) {
-    return blessingMatches(l, ctx.localBlessingStrings);
+  var matchesRemote = call.remoteBlessingStrings.some(function(l) {
+    return blessingMatches(l, call.localBlessingStrings);
   });
   if (matchesRemote) {
     return cb();
   }
-  return cb(new vError.NoAccessError(new context.Context(),
-                                  ['authorization failed']));
+  return cb(new vError.NoAccessError(ctx, 'authorization failed'));
 }
