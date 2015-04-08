@@ -37,6 +37,8 @@ var CaveatValidationResponse =
 var vtrace = require('../vtrace');
 var lib =
   require('../gen-vdl/v.io/x/ref/services/wspr/internal/lib');
+var contextWithSecurityCall =
+  require('../security/context').contextWithSecurityCall;
 
 /**
  * A router that handles routing incoming requests to the right
@@ -118,7 +120,8 @@ Router.prototype.handleAuthorizationRequest = function(messageId, request) {
   }
   var router = this;
   var securityCall = new SecurityCall(request.call, this._controller);
-  server.handleAuthorization(request.handle, securityCall).then(function() {
+  var ctx = contextWithSecurityCall(this._rootCtx, securityCall);
+  server.handleAuthorization(request.handle, ctx).then(function() {
     router._proxy.sendRequest('{}', Outgoing.AUTHORIZATION_RESPONSE, null,
         messageId);
   }).catch(function(e) {
@@ -131,11 +134,11 @@ Router.prototype.handleAuthorizationRequest = function(messageId, request) {
   });
 };
 
-Router.prototype._validateChain = function(secCall, cavs) {
+Router.prototype._validateChain = function(ctx, cavs) {
   var promises = new Array(cavs.length);
   for (var j = 0; j < cavs.length; j++) {
     var def = new Deferred();
-    this._caveatRegistry.validate(this._rootCtx, secCall, cavs[j],
+    this._caveatRegistry.validate(ctx, cavs[j],
       function(err) {
         if (err) {
           return def.reject(err);
@@ -160,8 +163,9 @@ Router.prototype._validateChain = function(secCall, cavs) {
 Router.prototype.handleCaveatValidationRequest = function(messageId, request) {
   var resultPromises = new Array(request.cavs.length);
   var secCall = new SecurityCall(request.call);
+  var ctx = contextWithSecurityCall(this._rootCtx, secCall);
   for (var i = 0; i < request.cavs.length; i++) {
-    resultPromises[i] = this._validateChain(secCall, request.cavs[i]);
+    resultPromises[i] = this._validateChain(ctx, request.cavs[i]);
   }
   var self = this;
   Promise.all(resultPromises).then(function(results) {
@@ -488,7 +492,8 @@ Router.prototype.handleGlobRequest = function(messageId, name, server, glob,
       var nextInvoker;
       server._handleLookup(suffix).then(function(value) {
         nextInvoker = value.invoker;
-        return server.handleAuthorization(value._handle, ctx);
+        var secCtx = contextWithSecurityCall(ctx, ctx);
+        return server.handleAuthorization(value._handle, secCtx);
       }).then(function() {
         var match = glob.matchInitialSegment(child);
         if (match.match) {

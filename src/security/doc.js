@@ -214,7 +214,7 @@
 /**
  * A function that returns an error if the operation is not authorized.
  * @callback Authorize
- * @param {module:vanadium.security.SecurityCall} context The context of the
+ * @param {module:vanadium.context.Context} context The context of the
  * rpc.
  * @param {module:vanadium.security.Authorize~callback} cb The callback to
  * call with the result if the rpc is asynchronous.  This can be ignored

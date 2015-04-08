@@ -11,6 +11,8 @@ var context = require('../../src/runtime/context');
 var SecurityCall = require('../../src/security/call');
 var Time = require('../../src/gen-vdl/v.io/v23/vdlroot/time').Time;
 var vdl = require('../../src/vdl');
+var contextWithSecurityCall =
+  require('../../src/security/context').contextWithSecurityCall;
 
 function getMockSecurityCall() {
   return new SecurityCall({
@@ -38,9 +40,9 @@ function assertValidation(t, cavType, val, cb) {
   var registry = new CaveatValidatorRegistry();
   var secCall = getMockSecurityCall();
   var cav = caveats.createCaveat(cavType, val);
-  var ctx = context.Context();
+  var ctx = contextWithSecurityCall(context.Context(), secCall);
 
-  registry.validate(ctx, secCall, cav, cb);
+  registry.validate(ctx, cav, cb);
 }
 
 test('Const caveat is validated correctly', function(t) {

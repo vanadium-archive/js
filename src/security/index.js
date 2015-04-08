@@ -72,4 +72,5 @@ var extend = require('xtend');
 module.exports = extend(
   require('../gen-vdl/v.io/v23/security'),{
   access: require('./access'),
+  getSecurityCallFromContext: require('./context').getSecurityCallFromContext,
 });

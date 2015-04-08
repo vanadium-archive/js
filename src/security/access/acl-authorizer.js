@@ -12,6 +12,8 @@ var actions = require('../../errors/actions');
 var vdlAccess = require('../../gen-vdl/v.io/v23/security/access');
 var NoPermissionsError = vdlAccess.NoPermissionsError;
 var Permissions = vdlAccess.Permissions;
+var getSecurityCallFromContext =
+  require('../context').getSecurityCallFromContext;
 
 module.exports = authorizer;
 var pkgPath = 'v.io/v23/security/access';
@@ -41,31 +43,32 @@ function authorizer(acls, type) {
   var permissions = unwrap(new Permissions(acls));
 
   return function authorize(ctx) {
+    var call = getSecurityCallFromContext(ctx);
     // If the remoteBlessings is ourselves (i.e a self rpc), then we
     // always authorize.
-    if (ctx.localBlessings && ctx.remoteBlessings &&
-        ctx.localBlessings.publicKey === ctx.remoteBlessings.publicKey) {
+    if (call.localBlessings && call.remoteBlessings &&
+        call.localBlessings.publicKey === call.remoteBlessings.publicKey) {
       return null;
     }
-    var tags = ctx.methodTags.filter(function(t) {
+    var tags = call.methodTags.filter(function(t) {
       return t instanceof type;
     });
     if (tags.length > 1) {
-      return new MultipleTagsError(null, ctx.suffix, ctx.methods, type._type,
-                                   ctx.methodTags);
+      return new MultipleTagsError(ctx, call.suffix, call.methods, type._type,
+                                   call.methodTags);
     }
 
     if (tags.length === 0) {
-      return new NoTagsError(null, ctx.suffix, ctx.methods, type._type,
-                             ctx.methodTags);
+      return new NoTagsError(ctx, call.suffix, call.methods, type._type,
+                             call.methodTags);
 
     }
 
     var key = unwrap(tags[0]);
     var lists = permissions.get(key);
-    if (!lists || !canAccess(ctx.remoteBlessingStrings, lists.in,
+    if (!lists || !canAccess(call.remoteBlessingStrings, lists.in,
                                 lists.notIn)) {
-      return new NoPermissionsError(null, ctx.remoteBlessingStrings, [], key);
+      return new NoPermissionsError(ctx, call.remoteBlessingStrings, [], key);
     }
     return null;
   };

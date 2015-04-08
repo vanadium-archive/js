@@ -3,6 +3,8 @@
 // license that can be found in the LICENSE file.
 
 var vdlSecurity = require('../gen-vdl/v.io/v23/security');
+var getSecurityCallFromContext =
+  require('../../src/security/context').getSecurityCallFromContext;
 
 // Register the default caveats from the security package.
 module.exports = {
@@ -19,23 +21,24 @@ function registerDefaultCaveats(registry) {
 }
 
 
-function constCaveatValidator(call, value, cb) {
+function constCaveatValidator(ctx, value, cb) {
   if (!value) {
-    return cb(new vdlSecurity.ConstCaveatValidationError(call.context));
+    return cb(new vdlSecurity.ConstCaveatValidationError(ctx));
   }
   cb();
 }
 
-function expiryCaveatValidator(call, expiry, cb) {
+function expiryCaveatValidator(ctx, expiry, cb) {
   var now = Date.now();
   if (now > expiry.getTime()) {
-    return cb(new vdlSecurity.ExpiryCaveatValidationError(call.context,
+    return cb(new vdlSecurity.ExpiryCaveatValidationError(ctx,
       now, expiry));
   }
   cb();
 }
 
-function methodCaveatValidator(call, methods, cb) {
+function methodCaveatValidator(ctx, methods, cb) {
+  var call = getSecurityCallFromContext(ctx);
   if (!call.method || methods.length === 0) {
     return cb();
   }

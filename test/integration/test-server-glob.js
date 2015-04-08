@@ -8,6 +8,9 @@ var Promise = require('../../src/lib/promise');
 var naming = require('../../src/gen-vdl/v.io/v23/naming');
 var namespaceUtil = require('../../src/naming/util');
 var verror = require('../../src/gen-vdl/v.io/v23/verror');
+var getSecurityCallFromContext =
+  require('../../src/security/context').getSecurityCallFromContext;
+
 
 var ALBUMS = [
   'public',
@@ -61,9 +64,10 @@ function createNodes(files) {
 }
 
 function createAuthorizer(disallowed) {
-  return function(context) {
+  return function(ctx) {
+    var call = getSecurityCallFromContext(ctx);
     for (var i = 0; i < disallowed.length; i++) {
-      if (context.suffix === disallowed[i]) {
+      if (call.suffix === disallowed[i]) {
         return new Error('disallowed');
       }
     }
