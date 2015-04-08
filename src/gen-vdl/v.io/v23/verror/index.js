@@ -63,8 +63,8 @@ module.exports.BadStateError = makeError('v.io/v23/verror.BadState', actions.NO_
 ]);
 
 
-module.exports.BadEtagError = makeError('v.io/v23/verror.BadEtag', actions.NO_RETRY, {
-  'en': '{1:}{2:} Etag is out of date',
+module.exports.BadVersionError = makeError('v.io/v23/verror.BadVersion', actions.NO_RETRY, {
+  'en': '{1:}{2:} Version is out of date',
 }, [
 ]);
 
@@ -138,8 +138,3 @@ module.exports.TimeoutError = makeError('v.io/v23/verror.Timeout', actions.NO_RE
 
 
 // Services:
-
-   
- 
-
-
