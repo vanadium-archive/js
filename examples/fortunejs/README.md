@@ -18,7 +18,7 @@ The fortune example uses npm to manage dependencies.  Install the dependencies w
 You will need to run two services to get a fortune: mountabled, proxyd.  To run
 in nodejs, you will also need to run the wspr service.
 
-These commands all expect that $VANADIUM_ROOT/release/go/bin is in your path, and
+These commands all expect that $V23_ROOT/release/go/bin is in your path, and
 that you have installed all the veyron services.  See the "Developing Veyron"
 document for instructions on how to do this.
 

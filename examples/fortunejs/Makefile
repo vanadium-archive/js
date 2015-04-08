@@ -1,4 +1,4 @@
-PATH:=$(VANADIUM_ROOT)/environment/cout/node/bin:./node_modules/.bin:$(PATH)
+PATH:=$(V23_ROOT)/environment/cout/node/bin:./node_modules/.bin:$(PATH)
 
 .DEFAULT_GOAL := all
 
