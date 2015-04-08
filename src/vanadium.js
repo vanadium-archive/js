@@ -30,26 +30,15 @@ var defaults = {
 module.exports = {
   init: init,
   errors: require('./errors'),
-  /**
-   * Namespace for rpc related exports
-   * @namespace
-   */
   rpc: require('./ipc'),
-
   vlog: require('./lib/vlog'),
-
   naming: require('./naming'),
-
   security: require('./security'),
   context: require('./runtime/context'),
   vdl: require('./vdl'),
-
   vom: require('./vom'),
-
   uniqueId: require('./lib/uniqueid'),
-
   vtrace: require('./vtrace'),
-
   runtimeForContext: runtimeForContext,
 };
 
@@ -62,20 +51,21 @@ if (isBrowser) {
   module.exports.extension = require('./browser/extension-utils');
 }
 /**
- * Gets the {@link Runtime} for a given [Context]
- * {@link module:vanadium.context.Context}
+ * Gets the [Runtime]{@link module:vanadium~Runtime} for a given
+ * [Context]{@link module:vanadium.context.Context}
  * @param {module:vanadium.context.Context} ctx The context
- * @return {Runtime} the runtime for the context
+ * @return {module:vanadium~Runtime} the runtime for the context
  */
 function runtimeForContext(ctx) {
   return ctx.value(SharedContextKeys.RUNTIME);
 }
 /**
- * Creates a Vanadium [runtime]{@link Runtime}.
+ * Creates a Vanadium [runtime]{@link module:vanadium~Runtime}.
  * @param {Object} config Configuration options
  * @param {function} [cb] If provided, the callback that will be called with an
  * error or the new runtime
- * @return {Promise.<Runtime>} A promise that resolves to the new Runtime
+ * @return {Promise.<module:vanadium~Runtime>} A promise that resolves to the
+ * new Runtime
  * @memberof module:vanadium
  */
 function init(config, cb) {

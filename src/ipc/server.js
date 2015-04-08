@@ -32,13 +32,15 @@ var makeError = require('../errors/make-errors');
 
 var nextServerID = 1; // The ID for the next server.
 
-// TODO(bjornick): Figure out how to get jsdoc to not generate comments for
-// the constructor
 /**
- * Represents a vanadium server which allows registration of services that can
- * be invoked remotely via RPCs. This constructor should not be used directly,
- * instead use [Runtime#newServer]{@Runtime#newServer}
- * @class
+ * @summary
+ * Server defines the interface for managing a collection of services.
+ * @description
+ * <p>Private Constructor, use
+ * [Runtime#newServer]{@link module:vanadium~Runtime#newServer}</p>
+ * @inner
+ * @constructor
+ * @memberof module:vanadium.rpc
  */
 function Server(router) {
   if (!(this instanceof Server)) {

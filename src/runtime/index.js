@@ -65,9 +65,10 @@ function init(options, cb) {
 }
 
 /**
+ * @summary
  * Runtime exposes entry points to create servers, client, namespace client and
  * other parts of the Vanadium functionality.
- *
+ * @Description
  * <p>This constructor should not be used directly, instead use
  * [vanadium.init]{@link module:vanadium.init}</p>
  *
@@ -77,6 +78,8 @@ function init(options, cb) {
  *    Emitted when the runtime crashes in an unexpected way. Recovery from
  *    crash event requires restarting the application.
  * </p>
+ * @inner
+ * @memberof module:vanadium
  * @constructor
  */
 function Runtime(options) {

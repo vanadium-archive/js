@@ -2,11 +2,6 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-/*
- * @fileoverview The server context is a subclass of context that has
- * extra information about the state of a server call.
- */
-
 var context = require('../runtime/context');
 var SecurityCall = require('../security/call');
 var inherits = require('inherits');
@@ -14,15 +9,39 @@ var vtrace = require('../vtrace');
 
 module.exports = ServerCall;
 
-/*
+/**
+ * @summary
  * A ServerCall is a context.Context subclass that includes additional
  * information about an ongoing server call.
+ * @description
+ * <p>Private Constructor, an instance of ServerCall is passed to every service
+ * method as the first argument.</p>
+ * @inner
  * @constructor
- * @param request An rpc request object or a ServerCall to clone from.
- * @param controller A Controller instance.  This is only needed if the
- * first arg is not a ServerCall.
- * @param call A context.Context object to derive this new context from.
- * This is only needed if the first arg is not a ServerCall.
+ *
+ * @property {string} suffix Suffix returns the object name suffix for the
+ * request.
+ *
+ * @property {string} localEndpoint LocalEndpoint returns the Endpoint at the
+ * local end of communication.
+ *
+ * @property {string} remoteEndpoint RemoteEndpoint returns the Endpoint at the
+ * remote end of communication.
+ *
+ * @property {Blessings} localBlessings LocalBlessings returns the blessings
+ * (bound to the local end)provided to the remote end for authentication.
+ *
+ * @property {Blessings} remoteBlessings RemoteBlessings returns the blessings
+ * (bound to the remote end)provided to the local end during authentication.
+ *
+ * @property {string} localBlessingStrings String version of localBlessings.
+ *
+ * @property {string} remoteBlessingStrings String version of remoteBlessings.
+ *
+ * @property {*} methodTags The tags attached to the method,
+ * interface specification in VDL.
+ *
+ * @memberof module:vanadium.rpc
  */
 function ServerCall(request, controller, ctx) {
   if (!(this instanceof ServerCall)) {

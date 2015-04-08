@@ -288,10 +288,15 @@ OutstandingRPC.prototype.constructMessage = function() {
 };
 
 /**
- * Client for the vanadium service.  To create a client, use
- * [Runtime#newClient]{@link Runtime#newClient}
+ * @summary Client represents the interface for making RPC calls.
+ * There may be multiple outstanding Calls associated with a single Client.
  *
+ * @description
+ * <p>Private Constructor, use
+ * [Runtime#newClient]{@link module:vanadium~Runtime#newClient}</p>
+ * @inner
  * @constructor
+ * @memberof module:vanadium.rpc
  */
 function Client(proxyConnection) {
   if (!(this instanceof Client)) {

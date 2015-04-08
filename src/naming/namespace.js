@@ -11,11 +11,13 @@ var inherits = require('util').inherits;
 module.exports = Namespace;
 
 /**
- * @summary Private Constructor. Use
- * [runtime.namespace]{@link Runtime#namespace} to get an instance.
+ * @summary
+ * Namespace defines the APIs for resolving, globbing and managing names.
  *
  * @description
- * <p>Namespace defines the APIs for resolving, globbing and managing names.</p>
+ * <p>Private Constructor. Use
+ * [runtime.namespace]{@link module:vanadium~Runtime#namespace} to get an
+ * instance.</p>
  *
  * @constructor
  * @inner
