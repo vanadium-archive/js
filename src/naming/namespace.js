@@ -210,22 +210,23 @@ Namespace.prototype.setRoots = function(roots, cb) {
 
 /**
  * Sets the AccessList on a namespace.
- * If etag is specified and is different from the current etag on the
+ * If version is specified and is different from the current version on the
  * AccessList, an error will be returned.
  * Note that setPermissions will completely replace the AccessList on the name.
  * If you want to update only a part of the AccessList, you must first call
  * getPermissions, modify the returned AccessList, and then call setPermissions
- * with the modified AccessList.  You should use the etag parameter in this case
- * to ensure that the AccessList has not been modified in between read and write
+ * with the modified AccessList. You should use the version parameter in this
+ * case to ensure that the AccessList has not been modified in between read and
+ * write.
  * @param {module:vanadium.context.Context} ctx The rpc context.
  * @param {string} name name to set the AccessList of
  * @param {Map} acl tagged AccessList map to set on the name
- * @param {string} etag Optional etag of the AccessList
+ * @param {string} version Optional version of the AccessList
  * @param {function} cb(error) Optional callback
  * @return {Promise} A promise to be resolved when setPermissions is complete
  * or rejected when there is an error.
  */
-Namespace.prototype.setPermissions = function(ctx, name, acl, etag, cb) {
+Namespace.prototype.setPermissions = function(ctx, name, acl, version, cb) {
   // TODO(nlacasse): It's *very* easy to lock yourself out of a name.  If you
   // accidentally call setPermissions without an Admin key you will be locked
   // out, and all further getPermissions/setPermissions on that name will fail
@@ -234,22 +235,22 @@ Namespace.prototype.setPermissions = function(ctx, name, acl, etag, cb) {
   // getPermissions/setPermissions?
   // It's not clear exactly how it would work (what to overwrite, what to
   // append), but we should consider it.
-  if (typeof etag === 'function') {
-    cb = etag;
-    etag = '';
+  if (typeof version === 'function') {
+    cb = version;
+    version = '';
   }
-  if (typeof etag === 'undefined') {
-    etag = '';
+  if (typeof version === 'undefined') {
+    version = '';
   }
 
-  return this._namespace.setPermissions(ctx, name, acl, etag, cb);
+  return this._namespace.setPermissions(ctx, name, acl, version, cb);
 };
 
 /**
  * Gets the AccessList on a namespace.
  * @param {module:vanadium.context.Context} ctx The rpc context.
  * @param {string} name name to get the AccessList of
- * @param {function} cb(error, acl, etag) Optional callback
+ * @param {function} cb(error, acl, version) Optional callback
  * @return {Promise} A promise to be resolved when getPermissions is complete
  * or rejected when there is an error.
  */

@@ -514,24 +514,24 @@ test('Test setting and getting AccessLists - ' +
         return end(err);
       }
 
-      ns.getPermissions(ctx, name, function(err, gotTam, gotEtag) {
+      ns.getPermissions(ctx, name, function(err, gotTam, gotVersion) {
         if (err) {
           return end(err);
         }
 
-        assert.equal(typeof gotEtag, 'string',
-        'getPermissions returns a string etag');
+        assert.equal(typeof gotVersion, 'string',
+        'getPermissions returns a string version');
 
         assert.ok(gotTam, 'getPermissions returns a tagged acl map');
         assert.deepEqual(gotTam, tam.val,
             'getPermissions returns the same tagged acl map that we set');
 
-        ns.setPermissions(ctx, name, tam, 'badEtag', function(err) {
-          assert.ok(err, 'setPermissions with a bad etag should error');
+        ns.setPermissions(ctx, name, tam, 'wrongVersion', function(err) {
+          assert.ok(err, 'setPermissions with a bad version should error');
 
-          ns.setPermissions(ctx, name, tam, gotEtag, function(err) {
+          ns.setPermissions(ctx, name, tam, gotVersion, function(err) {
             assert.error(err,
-              'setPermissions with the correct etag should not error');
+              'setPermissions with the correct version should not error');
             end();
           });
         });

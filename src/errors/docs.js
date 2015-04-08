@@ -76,13 +76,15 @@
  * @augments module:vanadium.errors.VanadiumError
  */
 /**
- * BadEtagError means the etag presented by the client was out of date or
- * otherwise invalid, likely because some other request caused the etag at the
- * server to change. The client should get a fresh etag and try again.
+ * BadVersion means the version presented by the client (e.g. to a service
+ * that supports content-hash-based caching or atomic read-modify-write) was
+ * out of date or otherwise invalid, likely because some other request caused
+ * the version at the server to change. The client should get a fresh version
+ * and try again.
  * @param {module:vanadium.context.Context} ctx The context the error was
  * created in.
  * @param {...*} params A list of parameters to include in the error message.
- * @name BadEtagError
+ * @name BadVersionError
  * @constructor
  * @memberof module:vanadium.errors
  * @augments module:vanadium.errors.VanadiumError
