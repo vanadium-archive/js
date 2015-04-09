@@ -98,7 +98,6 @@ test('Test get() with invalid key of Go sample cache service - ' +
       assert.ok(err instanceof NoExistError, 'should error');
       assert.ok(err.message, 'test_serviced:"cache".Get: ' +
         'Does not exist: is not a thing');
-      console.log(err);
       end(assert);
     });
   });

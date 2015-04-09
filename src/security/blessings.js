@@ -20,11 +20,11 @@ var vlog = require('../lib/vlog');
  * authenticate and authorize actions.</p>
  * @constructor
  */
-function Blessings(id, key, controller) {
+function Blessings(id, publicKey, controller) {
   this._id = id;
   this._count = 1;
   this._controller = controller;
-  this._key = key;
+  this.publicKey = publicKey;
 }
 
 /**
@@ -51,7 +51,7 @@ Blessings.prototype.release = function(ctx) {
 Blessings.prototype.toJSON = function() {
   return {
     id: this._id,
-    key: this._key,
+    publicKey: this.publicKey,
   };
 };
 

@@ -626,7 +626,6 @@ test('invoker.invoke(...) - Error: More outArgs expected [promise]',
       context: context
     }
   }, function(err, results) {
-    console.log(results);
     t.ok(err instanceof verror.InternalError, 'should error');
     t.equal(err.message,
       'app:op: Internal error: ' +
@@ -658,7 +657,6 @@ test('invoker.invoke(...) - Error: Fewer outArgs expected [promise]',
       context: context
     }
   }, function(err, results) {
-    console.log(results);
     t.ok(err instanceof verror.InternalError, 'should error');
     t.equal(err.message,
       'app:op: Internal error: ' +

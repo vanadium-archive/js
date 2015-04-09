@@ -44,22 +44,22 @@ function authorizer(acls, type) {
 
   return function authorize(ctx) {
     var call = getSecurityCallFromContext(ctx);
-    // If the remoteBlessings is ourselves (i.e a self rpc), then we
-    // always authorize.
-    if (call.localBlessings && call.remoteBlessings &&
+    // If the remoteBlessings has a public key, and it refers to ourselves
+    // (i.e a self rpc), then we always authorize.
+    if (call.remoteBlessings.publicKey &&
         call.localBlessings.publicKey === call.remoteBlessings.publicKey) {
-      return null;
+      return;
     }
     var tags = call.methodTags.filter(function(t) {
       return t instanceof type;
     });
     if (tags.length > 1) {
-      return new MultipleTagsError(ctx, call.suffix, call.methods, type._type,
+      throw new MultipleTagsError(ctx, call.suffix, call.method, type._type,
                                    call.methodTags);
     }
 
     if (tags.length === 0) {
-      return new NoTagsError(ctx, call.suffix, call.methods, type._type,
+      throw new NoTagsError(ctx, call.suffix, call.method, type._type,
                              call.methodTags);
 
     }
@@ -68,9 +68,9 @@ function authorizer(acls, type) {
     var lists = permissions.get(key);
     if (!lists || !canAccess(call.remoteBlessingStrings, lists.in,
                                 lists.notIn)) {
-      return new NoPermissionsError(ctx, call.remoteBlessingStrings, [], key);
+      throw new NoPermissionsError(ctx, call.remoteBlessingStrings, [], key);
     }
-    return null;
+    return;
   };
 }
 

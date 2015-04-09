@@ -5,6 +5,7 @@
 
 var test = require('prova');
 var aclAuthorizer = require('../../src/security/access/acl-authorizer');
+var Blessings = require('../../src/security/blessings');
 var access = require('../../src/gen-vdl/v.io/v23/security/access');
 var unwrap = require('../../src/vdl/type-util').unwrap;
 var createConstructor = require('../../src/vdl/create-constructor');
@@ -19,23 +20,29 @@ var allTags = [
   access.Admin, access.Debug, access.Read, access.Write, access.Resolve];
 test('allow same public key access with no other acls', function(assert) {
   var call = {
-    localBlessings: {
-      publicKey: 'me',
-    },
-    remoteBlessings: {
-      publicKey: 'me',
-    },
+    localBlessings: new Blessings(undefined, 'me', undefined),
+    remoteBlessings: new Blessings(undefined, 'me', undefined)
   };
 
   var auth = aclAuthorizer({}, access.Tag);
   allTags.forEach(function(t) {
     call.methodTags = [t];
     var ctx = contextWithSecurityCall(rootCtx, call);
-    assert.equal(auth(ctx), null);
+    assert.error(auth(ctx), 'should not error');
   });
 
   assert.end();
 });
+
+// Helper function to convert the thrown error into a returned error.
+function tryAuthorize(ctx, auth) {
+  try {
+    auth(ctx);
+    return null;
+  } catch(e) {
+    return e;
+  }
+}
 
 // Test that ACL Authorizers can be created via a Map.
 test('full suite of go tests - map', function(assert) {
@@ -176,7 +183,7 @@ function checkExpectations(auth, expectations, assert) {
       var shouldErr = exp.indexOf(tag) === -1;
       call.methodTags = [tag];
       var ctx = contextWithSecurityCall(rootCtx, call);
-      var err = auth(ctx);
+      var err = tryAuthorize(ctx, auth);
       if (shouldErr) {
         assert.ok(err !== null, 'name: ' + name + ', tag: ' + tag);
         assert.ok(err instanceof access.NoPermissionsError);
@@ -194,12 +201,8 @@ test('tags of different types', function(assert) {
   });
   var myAdmin = new MyTag('Admin');
   var call = {
-    localBlessings: {
-      publicKey: 'me',
-    },
-    remoteBlessings: {
-      publicKey: 'otherkey',
-    },
+    localBlessings: new Blessings(undefined, 'me', undefined),
+    remoteBlessings: new Blessings(undefined, 'otherKey', undefined),
     remoteBlessingStrings: ['server/alice', 'server/bob/friend'],
   };
 
@@ -211,11 +214,13 @@ test('tags of different types', function(assert) {
   var tagAuthorizer = aclAuthorizer(acl, access.Tag);
   call.methodTags = [myAdmin, access.Resolve];
   var ctx = contextWithSecurityCall(rootCtx, call);
-  var err = tagAuthorizer(ctx);
+  var err = tryAuthorize(ctx, tagAuthorizer);
+
   assert.ok(err !== null);
   assert.ok(err instanceof access.NoPermissionsError);
+
   var myTagAuthorizer = aclAuthorizer(acl, MyTag);
-  assert.equal(myTagAuthorizer(ctx), null);
+  assert.error(myTagAuthorizer(ctx), 'should not error');
   assert.end();
 });
 
@@ -226,12 +231,8 @@ test('no tags of a type - error', function(assert) {
   });
   var myAdmin = new MyTag('Admin');
   var call = {
-    localBlessings: {
-      publicKey: 'me',
-    },
-    remoteBlessings: {
-      publicKey: 'otherkey',
-    },
+    localBlessings: new Blessings(undefined, 'me', undefined),
+    remoteBlessings: new Blessings(undefined, 'otherKey', undefined),
     remoteBlessingStrings: ['server/alice', 'server/bob/friend'],
   };
 
@@ -243,7 +244,8 @@ test('no tags of a type - error', function(assert) {
   var tagAuthorizer = aclAuthorizer(acl, access.Tag);
   call.methodTags = [myAdmin];
   var ctx = contextWithSecurityCall(rootCtx, call);
-  var err = tagAuthorizer(ctx);
+  var err = tryAuthorize(ctx, tagAuthorizer);
+
   assert.ok(err !== null);
   assert.equal(err.id, 'v.io/v23/security/access.errNoMethodTags');
   assert.end();
@@ -251,12 +253,8 @@ test('no tags of a type - error', function(assert) {
 
 test('multiple tags of a type - error', function(assert) {
   var call = {
-    localBlessings: {
-      publicKey: 'me',
-    },
-    remoteBlessings: {
-      publicKey: 'otherkey',
-    },
+    localBlessings: new Blessings(undefined, 'me', undefined),
+    remoteBlessings: new Blessings(undefined, 'otherKey', undefined),
     remoteBlessingStrings: ['server/alice', 'server/bob/friend'],
   };
 
@@ -268,7 +266,8 @@ test('multiple tags of a type - error', function(assert) {
   var tagAuthorizer = aclAuthorizer(acl, access.Tag);
   call.methodTags = [access.Resolve, access.Debug];
   var ctx = contextWithSecurityCall(rootCtx, call);
-  var err = tagAuthorizer(ctx);
+  var err = tryAuthorize(ctx, tagAuthorizer);
+
   assert.ok(err !== null);
   assert.equal(err.id, 'v.io/v23/security/access.errMultipleMethodTags');
   assert.end();

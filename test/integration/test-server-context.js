@@ -28,7 +28,7 @@ var dispatcher = leafDispatcher({
 
 var expectedContext = {
   suffix: 'suf',
-  remoteBlessings: {}
+  methodTags: []
 };
 
 function contains(actual, expected, assert) {

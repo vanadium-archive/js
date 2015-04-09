@@ -7,6 +7,8 @@ var serve = require('./serve');
 var Deferred = require('../../src/lib/deferred');
 var getSecurityCallFromContext =
   require('../../src/security/context').getSecurityCallFromContext;
+var aclAuthorizer = require('../../src/security/access/acl-authorizer');
+var access = require('../../src/gen-vdl/v.io/v23/security/access');
 
 
 var service = {
@@ -41,11 +43,13 @@ function createPromiseDispatcher(authorizer, tags) {
 }
 
 
-function testErrorCase(assert, authorizer) {
+function testErrorCase(assert, authorizer, tags, isPromise) {
   serve({
     name: 'authorizerTestService',
     autoBind: false,
-    dispatcher: createPromiseDispatcher(authorizer)
+    dispatcher: isPromise ?
+      createPromiseDispatcher(authorizer, tags) :
+      createCallbackDispatcher(authorizer, tags)
   }, function(err, res) {
     if (err) {
       return assert.end(err);
@@ -77,7 +81,7 @@ function(assert) {
     }
     setTimeout(reject, 0);
     return def.promise;
-  });
+  }, [], true);
 });
 
 function createCallbackDispatcher(authorizer, tags) {
@@ -104,11 +108,13 @@ function createCallbackDispatcher(authorizer, tags) {
   };
 }
 
-function testSuccessCase(assert, authorizer, tags) {
+function testSuccessCase(assert, authorizer, tags, isPromise) {
   serve({
     name: 'authorizerTestService',
     autoBind: false,
-    dispatcher: createCallbackDispatcher(authorizer, tags)
+    dispatcher: isPromise ?
+      createPromiseDispatcher(authorizer, tags) :
+      createCallbackDispatcher(authorizer, tags)
   }, function(err, res) {
     if (err) {
       return assert.end(err);
@@ -118,9 +124,10 @@ function testSuccessCase(assert, authorizer, tags) {
     client.bindTo(ctx, 'authorizerTestService/auth').then(function(service) {
       return service.call(ctx, 'foo');
     }).then(function() {
+      assert.pass('RPC resolved');
       res.end(assert);
     }).catch(function(err) {
-      assert.error(err);
+      assert.fail('RPC rejected with error:' + err.toString());
       res.end(assert);
     });
   });
@@ -169,4 +176,50 @@ test('Test passing in labels', function(assert) {
     }
     return cb();
   }, ['foo']);
+});
+
+var acls = {
+  foo: {
+    in: ['...']
+  },
+  bar: {}
+};
+var tagAclAuthorizer = aclAuthorizer(acls, access.Tag);
+
+
+test('Test ACLAuthorizer (public key) - success', function(assert) {
+  var tagBar = new access.Tag('Bar');
+
+  // Passes because we reuse the same public key, despite the tag not being ok.
+  testSuccessCase(assert, tagAclAuthorizer, [tagBar], true);
+});
+
+test('Test ACLAuthorizer (tag) - success', function(assert) {
+  var tagFoo = new access.Tag('Foo');
+
+  function diffPublicKeyAclAuthorizer(ctx) {
+    var call = getSecurityCallFromContext(ctx);
+    // get rid of public key, just for this example
+    call.remoteBlessings.publicKey = '';
+    tagAclAuthorizer(ctx);
+  }
+
+  // Everyone is allowed via the Foo tag.
+  testSuccessCase(assert, diffPublicKeyAclAuthorizer, [tagFoo], true);
+});
+
+
+
+test('Test ACLAuthorizer (tag) - failure', function(assert) {
+  var tagBar = new access.Tag('Bar');
+
+  function diffPublicKeyAclAuthorizer(ctx) {
+    var call = getSecurityCallFromContext(ctx);
+    // get rid of public key, just for this example to demonstrate failure
+    call.remoteBlessings.publicKey = '';
+    tagAclAuthorizer(ctx);
+  }
+
+  // Nobody is allowed via the Bar tag.
+  testErrorCase(assert, diffPublicKeyAclAuthorizer, [tagBar], true);
 });

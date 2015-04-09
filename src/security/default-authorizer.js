@@ -10,8 +10,11 @@ var getSecurityCallFromContext =
 module.exports = authorizer;
 
 function authorizer(ctx, cb) {
+  // If the remoteBlessings has a public key, and it refers to ourselves
+  // (i.e a self rpc), then we always authorize.
   var call = getSecurityCallFromContext(ctx);
-  if (call.localBlessings.publicKey === call.remoteBlessings.publicKey) {
+  if (call.remoteBlessings.publicKey &&
+    call.localBlessings.publicKey === call.remoteBlessings.publicKey) {
     return cb();
   }
   var matchesLocal = call.localBlessingStrings.some(function(l) {
