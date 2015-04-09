@@ -23,10 +23,23 @@ var defaults = {
 };
 
 /**
- * A module to improve cross device development. For more details
- * see {@link https://v.io/}.
+ * <p>Module vanadium defines the [Runtime]{@link module:vanadium~Runtime}
+ * interface of the public Vanadium API
+ * and its sub namespaces define the entire Vanadium public API.
+ * It also defines the [init]{@link module:vanadium.init}
+ * method which is used to initialize a
+ * [runtime]{@link module:vanadium~Runtime} instance.</p>
+ * <p>Once we reach a '1.0' version these public APIs will be stable over
+ * an extended period and changes to them will be carefully managed to ensure
+ * backward compatibility.</p>
+ * <p>The current release is '0.1' and although we will do our best to maintain
+ * backwards compatibility we can't guarantee that until we reach the '1.0'
+ * milestone.
+ * For more details about the Vanadium project,
+ * please visit {@link https://v.io}.</p>
  * @module vanadium
- */
+*/
+
 module.exports = {
   init: init,
   errors: require('./errors'),
