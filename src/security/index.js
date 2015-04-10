@@ -10,7 +10,8 @@
  *
  * <p>The primitives and APIs defined in this package enable bi-directional,
  * end-to-end authentication between communicating parties; authorization based
- * on that authentication and a database of access rights (AccessLists); and
+ * on that authentication and a database of access rights
+ * ([AccessLists]{@link module:vanadium.security.access.AccessList}); and
  * secrecy and integrity of all communication.</p>
  *
  * <p>In addition to authorization based on AccessLists, vanadium supports

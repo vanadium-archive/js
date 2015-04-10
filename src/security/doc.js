@@ -21,6 +21,7 @@
  *
  * @name BlessingPattern
  * @constructor
+ * @property {string} val The blessing pattern
  * @param {string} pattern The pattern
  * @memberof module:vanadium.security
  */
@@ -30,6 +31,10 @@
  * validation function.
  * @name CaveatDescriptor
  * @memberof module:vanadium.security
+ * @property {module:vanadium.uniqueId.Id.Id} id The uniqe id for the caveat
+ * validation function
+ * @property {module:vanadium.vdl.Type} paramType The type of
+ * the data that will be passed into the function.
  * @constructor
  * @param {object} descriptor The descriptor
  * @param {module:vanadium.uniqueId.Id.Id} descriptor.id The unique id for the
@@ -41,6 +46,9 @@
  * @summary An explanation of why a blessing failed validation.
  * @name RejectedBlessing
  * @memberof module:vanadium.security
+ * @property {string} blessing The blessing that failed validation.
+ * @property {module:vanadium.error.VanadiumError} inValue.err The err that
+ * occured
  * @constructor
  * @param {object} inValue
  * @param {string} inValue.blessing The blessing that failed validation.
@@ -145,8 +153,9 @@
  * @augments module:vanadium.errors.VanadiumError
  */
 /**
- * @summary An error that means that the [ConstCaveat]
- * {@link module:vanadium.security.ConstCaveat} failed to validate.
+ * @summary An error that means that the
+ * [ConstCaveat]{@link module:vanadium.security.ConstCaveat}
+ * failed to validate.
  * @name ConstCaveatValidationError
  * @memberof module:vanadium.security
  * @constructor
@@ -156,8 +165,9 @@
  * @augments module:vanadium.errors.VanadiumError
  */
 /**
- * @summary An error that means that the [ExpiryType]
- * {@link module:vanadium.security.ExpiryCaveatX} failed to validate.
+ * @summary An error that means that the
+ * [ExpiryType]{@link module:vanadium.security.ExpiryCaveatX} failed to
+ * validate.
  * @name ExpiryCaveatValidationError
  * @memberof module:vanadium.security
  * @constructor
@@ -169,8 +179,9 @@
  * @augments module:vanadium.errors.VanadiumError
  */
 /**
- * @summary An error that means that the [MethodCaveat]
- * {@link module:vanadium.security.MethodCaveatX} failed to validate.
+ * @summary An error that means that the
+ * [MethodCaveat]{@link module:vanadium.security.MethodCaveatX} failed to
+ * validate.
  * @name MethodCaveatValidationError
  * @memberof module:vanadium.security
  * @constructor
@@ -183,8 +194,9 @@
  * @augments module:vanadium.errors.VanadiumError
  */
 /**
- * @summary An error that means that the [PeerBlessingsCaveat]
- * {@link module:vanadium.security.PeerBlessingsCaveat} failed to validate.
+ * @summary An error that means that the
+ * [PeerBlessingsCaveat]{@link module:vanadium.security.PeerBlessingsCaveat}
+ * failed to validate.
  * @name PeerBlessingsCaveatValidationError
  * @memberof module:vanadium.security
  * @constructor
