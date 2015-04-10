@@ -17,8 +17,8 @@
  * @param {module:vanadium.context.Context} ctx The context the error was
  * created in.
  * @param {...*} params A list of parameters to include in the error message.
- * @memberof module:vanadium.errors
- * @augments module:vanadium.errors.VanadiumError
+ * @memberof module:vanadium.verror
+ * @augments module:vanadium.verror.VanadiumError
  */
 /**
  * InternalError means an internal error has occurred.  A more specific error
@@ -28,8 +28,8 @@
  * @param {module:vanadium.context.Context} ctx The context the error was
  * created in.
  * @param {...*} params A list of parameters to include in the error message.
- * @memberof module:vanadium.errors
- * @augments module:vanadium.errors.VanadiumError
+ * @memberof module:vanadium.verror
+ * @augments module:vanadium.verror.VanadiumError
  */
 /**
  * NotImplementedError means that the request type is valid but that the method
@@ -39,8 +39,8 @@
  * @param {...*} params A list of parameters to include in the error message.
  * @name NotImplementedError
  * @constructor
- * @memberof module:vanadium.errors
- * @augments module:vanadium.errors.VanadiumError
+ * @memberof module:vanadium.verror
+ * @augments module:vanadium.verror.VanadiumError
  */
 /**
  * EndOfFileError means the end-of-file has been reached; more generally, no
@@ -50,8 +50,8 @@
  * @param {...*} params A list of parameters to include in the error message.
  * @name EndOfFileError
  * @constructor
- * @memberof module:vanadium.errors
- * @augments module:vanadium.errors.VanadiumError
+ * @memberof module:vanadium.verror
+ * @augments module:vanadium.verror.VanadiumError
  */
 /**
  * BadArgError means the arguments to an operation are invalid or incorrectly
@@ -61,8 +61,8 @@
  * @param {...*} params A list of parameters to include in the error message.
  * @name BadArgError
  * @constructor
- * @memberof module:vanadium.errors
- * @augments module:vanadium.errors.VanadiumError
+ * @memberof module:vanadium.verror
+ * @augments module:vanadium.verror.VanadiumError
  */
 /**
  * BadStateError means an operation was attempted on an object while the object
@@ -72,8 +72,8 @@
  * @param {...*} params A list of parameters to include in the error message.
  * @name BadStateError
  * @constructor
- * @memberof module:vanadium.errors
- * @augments module:vanadium.errors.VanadiumError
+ * @memberof module:vanadium.verror
+ * @augments module:vanadium.verror.VanadiumError
  */
 /**
  * BadVersion means the version presented by the client (e.g. to a service
@@ -86,8 +86,8 @@
  * @param {...*} params A list of parameters to include in the error message.
  * @name BadVersionError
  * @constructor
- * @memberof module:vanadium.errors
- * @augments module:vanadium.errors.VanadiumError
+ * @memberof module:vanadium.verror
+ * @augments module:vanadium.verror.VanadiumError
  */
 /**
  * ExistError means that the requested item already exists; typically returned
@@ -97,8 +97,8 @@
  * @param {...*} params A list of parameters to include in the error message.
  * @name ExistError
  * @constructor
- * @memberof module:vanadium.errors
- * @augments module:vanadium.errors.VanadiumError
+ * @memberof module:vanadium.verror
+ * @augments module:vanadium.verror.VanadiumError
  */
 /**
  * NoExistError means that the requested item does not exist; typically returned
@@ -108,8 +108,8 @@
  * @param {...*} params A list of parameters to include in the error message.
  * @name NoExistError
  * @constructor
- * @memberof module:vanadium.errors
- * @augments module:vanadium.errors.VanadiumError
+ * @memberof module:vanadium.verror
+ * @augments module:vanadium.verror.VanadiumError
  */
 /**
  * NoExistOrNoAccessError means that either the requested item does not exist,
@@ -120,8 +120,8 @@
  * @param {...*} params A list of parameters to include in the error message.
  * @name NoExistOrNoAccessError
  * @constructor
- * @memberof module:vanadium.errors
- * @augments module:vanadium.errors.VanadiumError
+ * @memberof module:vanadium.verror
+ * @augments module:vanadium.verror.VanadiumError
  */
 /**
  * NoServersError means a name was resolved to unusable or inaccessible servers.
@@ -130,8 +130,8 @@
  * @param {...*} params A list of parameters to include in the error message.
  * @name NoServersError
  * @constructor
- * @memberof module:vanadium.errors
- * @augments module:vanadium.errors.VanadiumError
+ * @memberof module:vanadium.verror
+ * @augments module:vanadium.verror.VanadiumError
  */
 /**
  * NoAccessError means the server does not authorize the client for access.
@@ -140,8 +140,8 @@
  * @param {...*} params A list of parameters to include in the error message.
  * @name NotAccessError
  * @constructor
- * @memberof module:vanadium.errors
- * @augments module:vanadium.errors.VanadiumError
+ * @memberof module:vanadium.verror
+ * @augments module:vanadium.verror.VanadiumError
  */
 /**
  * NotTrustedError means the client does not trust the server.
@@ -150,8 +150,8 @@
  * @param {...*} params A list of parameters to include in the error message.
  * @name NotTrustedError
  * @constructor
- * @memberof module:vanadium.errors
- * @augments module:vanadium.errors.VanadiumError
+ * @memberof module:vanadium.verror
+ * @augments module:vanadium.verror.VanadiumError
  */
 /**
  * NoServersAndAuthError means the client cannot use any servers, because of
@@ -163,8 +163,8 @@
  * @param {...*} params A list of parameters to include in the error message.
  * @name NoServersAndAuthError
  * @constructor
- * @memberof module:vanadium.errors
- * @augments module:vanadium.errors.VanadiumError
+ * @memberof module:vanadium.verror
+ * @augments module:vanadium.verror.VanadiumError
  */
 /**
  * AbortedError means that an operation was not completed because it was aborted
@@ -175,8 +175,8 @@
  * @param {...*} params A list of parameters to include in the error message.
  * @name AbortedError
  * @constructor
- * @memberof module:vanadium.errors
- * @augments module:vanadium.errors.VanadiumError
+ * @memberof module:vanadium.verror
+ * @augments module:vanadium.verror.VanadiumError
  */
 /**
  * BadProtocolError means that an operation was not completed because of a
@@ -186,8 +186,8 @@
  * @param {...*} params A list of parameters to include in the error message.
  * @name BadProtocolError
  * @constructor
- * @memberof module:vanadium.errors
- * @augments module:vanadium.errors.VanadiumError
+ * @memberof module:vanadium.verror
+ * @augments module:vanadium.verror.VanadiumError
  */
 /**
  * CanceledError means the operation was not completed because it was explicitly
@@ -197,8 +197,8 @@
  * @param {...*} params A list of parameters to include in the error message.
  * @name CanceledError
  * @constructor
- * @memberof module:vanadium.errors
- * @augments module:vanadium.errors.VanadiumError
+ * @memberof module:vanadium.verror
+ * @augments module:vanadium.verror.VanadiumError
  */
 /**
  * TimeoutError means that an operation was not completed before the time
@@ -208,6 +208,6 @@
  * @param {...*} params A list of parameters to include in the error message.
  * @name TimeoutError
  * @constructor
- * @memberof module:vanadium.errors
- * @augments module:vanadium.errors.VanadiumError
+ * @memberof module:vanadium.verror
+ * @augments module:vanadium.verror.VanadiumError
  */

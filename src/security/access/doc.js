@@ -104,7 +104,7 @@
  * @param {module:vanadium.context.Context} ctx The context the error was
  * created in.
  * @param {...*} params A list of parameters to include in the error message.
- * @augments module:vanadium.errors.VanadiumError
+ * @augments module:vanadium.verror.VanadiumError
  */
 /**
  * @summary Error that means that no blessings matched patterns in the
@@ -120,7 +120,7 @@
  * The array has [RejectedBlessings]
  * {@link module:vanadium.security.RejectedBlessings}.
  * @param {...*} params A list of parameters to include in the error message.
- * @augments module:vanadium.errors.VanadiumError
+ * @augments module:vanadium.verror.VanadiumError
  */
 /**
  * @summary Error that means that no blessings have access to the specified
@@ -137,5 +137,5 @@
  * @param {module:vanadium.security.access.Tag} tag Access tag.
  * {@link module:vanadium.security.RejectedBlessings}.
  * @param {...*} params A list of parameters to include in the error message.
- * @augments module:vanadium.errors.VanadiumError
+ * @augments module:vanadium.verror.VanadiumError
  */

@@ -6,7 +6,7 @@ var test = require('prova');
 var vanadium = require('../../');
 var Deferred = require('../../src/lib/deferred');
 var serve = require('./serve');
-var leafDispatcher = require('../../src/ipc/leaf-dispatcher');
+var leafDispatcher = require('../../src/rpc/leaf-dispatcher');
 var message = 'failure';
 
 testStandardErrors();
@@ -138,7 +138,7 @@ function testNonStandardErrors() {
           // assert.equal(err.message, 'Unknown exception.');
           // TODO(bprosnitz) Change back to
           // assert.deepEquals(err.idAction, vanadium.errors.IdActions);
-          assert.ok(err instanceof vanadium.errors.UnknownError,
+          assert.ok(err instanceof vanadium.verror.UnknownError,
             'error ids match');
           assert.ok(err.stack, 'error has a stack');
           res.end(assert);

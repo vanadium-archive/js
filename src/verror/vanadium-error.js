@@ -15,7 +15,7 @@ module.exports = VanadiumError;
  * be used directly, but all vanadium errors should inherit from
  * VanadiumError.
  * @constructor
- * @memberof module:vanadium.errors
+ * @memberof module:vanadium.verror
  * @param {string} id The errorId for the error
  * @param {string} retryCode The retry behavior for this error
  * @param {module:vanadium.context.Context} ctx The context the error was

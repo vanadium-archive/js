@@ -99,7 +99,7 @@
  * created in.
  * @param {module:vanadium.uniqueId.Id} id The id not registered.
  * @param {...*} params A list of parameters to include in the error message.
- * @augments module:vanadium.errors.VanadiumError
+ * @augments module:vanadium.verror.VanadiumError
  */
 /**
  * @summary An error that means that the caveat cannot have a param type of any.
@@ -111,7 +111,7 @@
  * @param {module:vanadium.uniqueId.Id} id The id of the caveat with the
  * problem.
  * @param {...*} params A list of parameters to include in the error message.
- * @augments module:vanadium.errors.VanadiumError
+ * @augments module:vanadium.verror.VanadiumError
  */
 /**
  * @summary An error that means that the type of the passed in data does not
@@ -126,7 +126,7 @@
  * @param {module:vanadium.vdl.Type} got The type passed in
  * @param {module:vanadium.vdl.Type} want The type passed expected.
  * @param {...*} params A list of parameters to include in the error message.
- * @augments module:vanadium.errors.VanadiumError
+ * @augments module:vanadium.verror.VanadiumError
  */
 /**
  * @summary An error that means that the param type could not be encoded.
@@ -139,7 +139,7 @@
  * problem.
  * @param {module:vanadium.vdl.Type} got The type of the caveat data.
  * @param {...*} params A list of parameters to include in the error message.
- * @augments module:vanadium.errors.VanadiumError
+ * @augments module:vanadium.verror.VanadiumError
  */
 /**
  * @summary An error that means that the caveat didn't validate.
@@ -150,7 +150,7 @@
  * created in.
  * @param {module:vanadium.error.VanadiumError} err The error that occured.
  * @param {...*} params A list of parameters to include in the error message.
- * @augments module:vanadium.errors.VanadiumError
+ * @augments module:vanadium.verror.VanadiumError
  */
 /**
  * @summary An error that means that the
@@ -162,7 +162,7 @@
  * @param {module:vanadium.context.Context} ctx The context the error was
  * created in.
  * @param {...*} params A list of parameters to include in the error message.
- * @augments module:vanadium.errors.VanadiumError
+ * @augments module:vanadium.verror.VanadiumError
  */
 /**
  * @summary An error that means that the
@@ -176,7 +176,7 @@
  * @param {date} expiry The time the caveat expires
  * @param {date} now The current time
  * @param {...*} params A list of parameters to include in the error message.
- * @augments module:vanadium.errors.VanadiumError
+ * @augments module:vanadium.verror.VanadiumError
  */
 /**
  * @summary An error that means that the
@@ -191,7 +191,7 @@
  * @param {array<string>} validMethods The methods that are allowed by
  * the caveat.
  * @param {...*} params A list of parameters to include in the error message.
- * @augments module:vanadium.errors.VanadiumError
+ * @augments module:vanadium.verror.VanadiumError
  */
 /**
  * @summary An error that means that the
@@ -206,7 +206,7 @@
  * @param {array<string>} validMethods The methods that are allowed by
  * the caveat.
  * @param {...*} params A list of parameters to include in the error message.
- * @augments module:vanadium.errors.VanadiumError
+ * @augments module:vanadium.verror.VanadiumError
  */
 /**
  * @summary An error that means a remote principal is not authorized by a local
@@ -221,7 +221,7 @@
  * Remote rejected blessing
  * @param {array<string>} localBlessings Local blessings
  * @param {...*} params A list of parameters to include in the error message.
- * @augments module:vanadium.errors.VanadiumError
+ * @augments module:vanadium.verror.VanadiumError
  */
 /**
  * A function that returns an error if the operation is not authorized.

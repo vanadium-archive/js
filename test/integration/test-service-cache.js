@@ -4,7 +4,7 @@
 
 var test = require('prova');
 var vanadium = require('../../');
-var NoExistError = vanadium.errors.NoExistError;
+var NoExistError = vanadium.verror.NoExistError;
 var config = require('./default-config');
 var service = require('./get-service');
 var Promise = require('bluebird');

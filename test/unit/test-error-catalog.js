@@ -3,7 +3,7 @@
 // license that can be found in the LICENSE file.
 
 var test = require('prova');
-var Catalog = require('../../src/errors/catalog');
+var Catalog = require('../../src/verror/catalog');
 
 test('set and lookup', function(assert) {
   var catalog = new Catalog();

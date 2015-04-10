@@ -7,7 +7,7 @@
  * @private
  */
 
-var VanadiumError = require('./../errors/vanadium-error');
+var VanadiumError = require('./../verror/vanadium-error');
 var defaultLanguage = require('./../runtime/default-language');
 var defaultCatalog = require('./../runtime/default-catalog');
 var verror = require('../gen-vdl/v.io/v23/verror');

@@ -6,7 +6,7 @@ var test = require('prova');
 
 var config = require('./default-config');
 var defaultBlessingRegex = require('./default-blessing-regex');
-var leafDispatcher = require('../../src/ipc/leaf-dispatcher');
+var leafDispatcher = require('../../src/rpc/leaf-dispatcher');
 var serve = require('./serve');
 var vanadium = require('../../');
 

@@ -3,7 +3,7 @@
 // license that can be found in the LICENSE file.
 
 var test = require('prova');
-var Client = require('../../src/ipc/client.js');
+var Client = require('../../src/rpc/client.js');
 var context = require('../../src/runtime/context');
 var createSignatures = require('../../src/vdl/create-signatures');
 var createMockProxy = require('./mock-proxy');

@@ -5,7 +5,7 @@
 var test = require('prova');
 var serve = require('./serve');
 var vdl = require('../../src/vdl');
-var leafDispatcher = require('../../src/ipc/leaf-dispatcher');
+var leafDispatcher = require('../../src/rpc/leaf-dispatcher');
 
 var testService = require('../vdl-out/test_service');
 

@@ -6,7 +6,7 @@ var test = require('prova');
 var base = require('../vdl-out/v.io/x/ref/lib/vdl/testdata/base');
 var context = require('../../src/runtime/context');
 var SharedContextKeys = require('../../src/runtime/shared-context-keys');
-var actions = require('../../src/errors/actions');
+var actions = require('../../src/verror/actions');
 
 var Kind = require('../../src/vdl').Kind;
 var Types = require('../../src/vdl').Types;

@@ -7,8 +7,8 @@
  */
 var blessingMatches = require('./blessing-matching');
 var unwrap = require('../../vdl/type-util').unwrap;
-var makeError = require('../../errors/make-errors');
-var actions = require('../../errors/actions');
+var makeError = require('../../verror/make-errors');
+var actions = require('../../verror/actions');
 var vdlAccess = require('../../gen-vdl/v.io/v23/security/access');
 var NoPermissionsError = vdlAccess.NoPermissionsError;
 var Permissions = vdlAccess.Permissions;

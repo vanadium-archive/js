@@ -6,7 +6,7 @@ var test = require('prova');
 var service = require('./get-service');
 var vtrace = require('../../src/vtrace');
 var serve = require('./serve');
-var leafDispatcher = require('../../src/ipc/leaf-dispatcher');
+var leafDispatcher = require('../../src/rpc/leaf-dispatcher');
 
 function findSpan(name, trace) {
   for (var i = 0; i < trace.spans.length; i++) {
