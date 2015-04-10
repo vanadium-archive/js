@@ -9,6 +9,7 @@
 
 var Deferred = require('../lib/deferred');
 var Blessings = require('./blessings');
+var verror = require('../gen-vdl/v.io/v23/verror');
 
 /**
  * @summary Principal represents an entity capable of making or receiving RPCs.
@@ -34,15 +35,15 @@ function Principal(ctx, controller) {
  * <pre>
  * bless(ctx, <other public key>, <google/alice, v23/alice>, 'friend', ...)
  * </pre>
- * @param {Context} ctx: The context
- * @param {PublicKey} publicKey: The public key to bless
- * @param {BlessingsHandle} blessingsHandle: Handle to the blessings
- * @param {String} extension: the extension for the blessing.
- * @param {...Caveat} caveats: an array of Cavaeats to restrict the blessing.
- * @param {function} cb: an optional callback that will return the blessing
+ * @param {module:vanadium.context.Context} ctx The context
+ * @param {PublicKey} publicKey The public key to bless
+ * @param {Blessings} blessing The blessings
+ * @param {String} extension the extension for the blessing.
+ * @param {...Caveat} caveats an array of Cavaeats to restrict the blessing.
+ * @param {function} cb an optional callback that will return the blessing
  * @return {Promise} a promise that will be resolved with the blessing
  */
-Principal.prototype.bless = function(ctx, publicKey, blessingsHandle,
+Principal.prototype.bless = function(ctx, publicKey, blessings,
   extension, firstCaveat /*, ...moreCaveats, cb*/) {
   // Extract the callback.
   var cb;
@@ -65,7 +66,7 @@ Principal.prototype.bless = function(ctx, publicKey, blessingsHandle,
   var caveats = args.slice(4);
 
   this._controller.bless.call(this._controller, ctx, publicKey,
-    blessingsHandle, extension, caveats)
+    blessings._id, extension, caveats)
   .then(function(res) {
     var publicKey = res[0];
     var handle = res[1];
@@ -79,10 +80,10 @@ Principal.prototype.bless = function(ctx, publicKey, blessingsHandle,
 
 /**
  * BlessSelf creates a blessing with the provided name for this principal.
- * @param {Context} ctx: The context
- * @param {String} name: the name for the blessing.
- * @param {...Caveat} caveats: an array of Cavaeats to restrict the blessing.
- * @param {function} cb: an optional callback that will return the blessing
+ * @param {module:vanadium.context.Context} ctx The context
+ * @param {String} name the name for the blessing.
+ * @param {...Caveat} caveats an array of Cavaeats to restrict the blessing.
+ * @param {function} cb an optional callback that will return the blessing
  * @return {Promise} a promise that will be resolved with the blessing
  */
 Principal.prototype.blessSelf = function(ctx, name /*, ...caveats, cb*/) {
@@ -109,6 +110,40 @@ Principal.prototype.blessSelf = function(ctx, name /*, ...caveats, cb*/) {
   });
 
   return def.promise;
+};
+
+/**
+ * Put to blessing store puts a blessing in the blessing store.
+ * @param {module:vanadium.context.Context} ctx The context
+ * @param {Blessings} blessings The blessings object
+ * @param {string} pattern The blessing match pattern.
+ * @param {function} cb an optional callback that will return the blessing
+ * handle
+ * @return {Promise} a promise that will be resolved with the blessing handle
+ */
+Principal.prototype.putToBlessingStore = function(
+  ctx, blessings, pattern, cb) {
+  var def;
+  if (blessings === undefined) {
+    def = new Deferred(cb);
+    def.reject(new verror.InternalError(this._ctx,
+      'Blessings handle not specified'));
+    return def.promise;
+  }
+  if (pattern === undefined) {
+    def = new Deferred(cb);
+    def.reject(new verror.InternalError(this._ctx,
+      'Pattern not specified'));
+    return def.promise;
+  }
+
+  return this._controller.putToBlessingStore.call(this._controller,
+    ctx, blessings._id, pattern, cb).then(function(res) {
+      if (!res) {
+        return res;
+      }
+      return new Blessings(res.handle, res.publicKey, this._controller);
+    });
 };
 
 module.exports = Principal;

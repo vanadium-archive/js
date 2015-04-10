@@ -55,9 +55,9 @@ test('Test bless without Caveat from server', function(t) {
     method: function(ctx, cb) {
       var rt = ctx._ctx.value(SharedContextKeys.RUNTIME);
       var remoteKey = ctx.remoteBlessings.publicKey;
-      rt.principal.bless(remoteKey, ctx.localBlessings,
+      rt.principal.bless(ctx, remoteKey, ctx.localBlessings,
        'ext', function(err) {
-         t.ok(err, 'Expected error');
+         t.ok(err, 'Expected at least one caveat must be specfied error');
          cb();
        });
     }
@@ -78,16 +78,15 @@ test('Test bless without Caveat from server', function(t) {
 });
 
 test('Test bless with Caveat from server', function(t) {
-  var rt; // TODO This is bad. Rt should be retrieved from ctx.
-
   var service = {
     method: function(ctx, cb) {
       var rt = ctx._ctx.value(SharedContextKeys.RUNTIME);
       var remoteKey = ctx.remoteBlessings.publicKey;
-      rt.principal.bless(remoteKey, ctx.localBlessings,
-       'ext', caveats.createExpiryCaveat(new Date()),
-       caveats.createConstCaveat(true), function(err) {
-         t.ok(err, 'Expected error');
+      rt.principal.bless(ctx, remoteKey, ctx.localBlessings,
+       'ext', caveats.createExpiryCaveat(new Date(Date.now() - 1000)),
+       caveats.createConstCaveat(true), function(err, blessing) {
+         t.notOk(err, 'No error expected during bless');
+         t.ok(blessing instanceof Blessings, 'Got blessing');
          cb();
        });
     }
@@ -100,8 +99,6 @@ test('Test bless with Caveat from server', function(t) {
         return;
       }
 
-      rt = res.runtime;
-
       res.service.method(res.runtime.getContext(), function(err) {
         t.error(err);
         res.end(t);
@@ -109,4 +106,34 @@ test('Test bless with Caveat from server', function(t) {
   });
 });
 
-// TODO(bprosnitz) Add tests of blessing from client with granter
+test('Test put to blessing store', function(t) {
+  vanadium.init(config, function(err, runtime) {
+    if (err) {
+      t.end(err);
+    }
+
+    runtime.principal.blessSelf(runtime.getContext(), 'ext')
+    .then(function(blessings) {
+      t.ok(blessings instanceof Blessings, 'Got blessings');
+      t.ok(blessings._id > 0, 'Should get non-zero blessings');
+
+      runtime.principal.putToBlessingStore(runtime.getContext(),
+        blessings, 'fake/remote/pattern').then(function(oldBlessing) {
+          t.equal(oldBlessing, null,
+            'Should get null (no previous handle) for pattern not in store');
+          return runtime.principal.putToBlessingStore(runtime.getContext(),
+            blessings, 'fake/remote/pattern');
+        }).then(function(firstBlessing) {
+          t.equal(firstBlessing._id, blessings._id,
+            'Should get handle of first blessing back');
+          runtime.close(t.end);
+        }).catch(function(err) {
+          t.notOk(err, 'Shouldn\'t get error putting to blessing store');
+          runtime.close(t.end);
+        });
+    }).catch(function(err) {
+      t.error(err);
+      runtime.close(t.end);
+    });
+  });
+});

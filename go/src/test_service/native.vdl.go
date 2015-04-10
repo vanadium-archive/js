@@ -41,20 +41,12 @@ type implNativeTestClientStub struct {
 }
 
 func (c implNativeTestClientStub) PassTime(ctx *context.T, i0 time.Time, opts ...rpc.CallOpt) (o0 time.Time, err error) {
-	var call rpc.ClientCall
-	if call, err = v23.GetClient(ctx).StartCall(ctx, c.name, "PassTime", []interface{}{i0}, opts...); err != nil {
-		return
-	}
-	err = call.Finish(&o0)
+	err = v23.GetClient(ctx).Call(ctx, c.name, "PassTime", []interface{}{i0}, []interface{}{&o0}, opts...)
 	return
 }
 
 func (c implNativeTestClientStub) PassError(ctx *context.T, i0 error, opts ...rpc.CallOpt) (err error) {
-	var call rpc.ClientCall
-	if call, err = v23.GetClient(ctx).StartCall(ctx, c.name, "PassError", []interface{}{&i0}, opts...); err != nil {
-		return
-	}
-	err = call.Finish()
+	err = v23.GetClient(ctx).Call(ctx, c.name, "PassError", []interface{}{&i0}, nil, opts...)
 	return
 }
 

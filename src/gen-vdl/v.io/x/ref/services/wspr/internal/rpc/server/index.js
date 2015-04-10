@@ -84,6 +84,12 @@ module.exports.InvalidValidationResponseFromJavascriptError = makeError('v.io/x/
 ]);
 
 
+module.exports.ServerStoppedError = makeError('v.io/x/ref/services/wspr/internal/rpc/server.ServerStopped', actions.RETRY_BACKOFF, {
+  'en': '{1:}{2:} Server has been stopped',
+}, [
+]);
+
+
 
 
 // Services:

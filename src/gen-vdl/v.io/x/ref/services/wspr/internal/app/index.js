@@ -26,6 +26,7 @@ var _type3 = new vdl.Type();
 var _type4 = new vdl.Type();
 var _type5 = new vdl.Type();
 var _type6 = new vdl.Type();
+var _type7 = new vdl.Type();
 var _typeRpcCallOption = new vdl.Type();
 var _typeRpcRequest = new vdl.Type();
 var _typeRpcResponse = new vdl.Type();
@@ -41,12 +42,15 @@ _type3.elem = vdl.Types.ANY;
 _type4.kind = vdl.Kind.LIST;
 _type4.name = "";
 _type4.elem = new security.Caveat()._type;
-_type5.kind = vdl.Kind.LIST;
+_type5.kind = vdl.Kind.OPTIONAL;
 _type5.name = "";
-_type5.elem = vdl.Types.STRING;
+_type5.elem = new principal.JsBlessings()._type;
 _type6.kind = vdl.Kind.LIST;
 _type6.name = "";
-_type6.elem = new signature.Interface()._type;
+_type6.elem = vdl.Types.STRING;
+_type7.kind = vdl.Kind.LIST;
+_type7.name = "";
+_type7.elem = new signature.Interface()._type;
 _typeRpcCallOption.kind = vdl.Kind.UNION;
 _typeRpcCallOption.name = "v.io/x/ref/services/wspr/internal/app.RpcCallOption";
 _typeRpcCallOption.fields = [{name: "AllowedServersPolicy", type: _type2}, {name: "RetryTimeout", type: new time.Duration()._type}];
@@ -62,6 +66,7 @@ _type3.freeze();
 _type4.freeze();
 _type5.freeze();
 _type6.freeze();
+_type7.freeze();
 _typeRpcCallOption.freeze();
 _typeRpcRequest.freeze();
 _typeRpcResponse.freeze();
@@ -123,6 +128,11 @@ Controller.prototype.bless = function(ctx, publicKey, blessingHandle, extension,
       
 Controller.prototype.blessSelf = function(ctx, name, caveats) {
   throw new Error('Method BlessSelf not implemented');
+};
+    
+      
+Controller.prototype.putToBlessingStore = function(ctx, blessingHandle, pattern) {
+  throw new Error('Method PutToBlessingStore not implemented');
 };
     
       
@@ -313,6 +323,32 @@ Controller.prototype._serviceDescription = {
     
       
     {
+    name: 'PutToBlessingStore',
+    doc: "// PutToBlessingStore puts the specified blessing to the blessing store under the provided pattern.",
+    inArgs: [{
+      name: 'blessingHandle',
+      doc: "",
+      type: new principal.BlessingsHandle()._type
+    },
+    {
+      name: 'pattern',
+      doc: "",
+      type: new security.BlessingPattern()._type
+    },
+    ],
+    outArgs: [{
+      name: '',
+      doc: "",
+      type: _type5
+    },
+    ],
+    inStream: null,
+    outStream: null,
+    tags: []
+  },
+    
+      
+    {
     name: 'RemoteBlessings',
     doc: "// RemoteBlessings fetches the remote blessings for a given name and method.",
     inArgs: [{
@@ -329,7 +365,7 @@ Controller.prototype._serviceDescription = {
     outArgs: [{
       name: '',
       doc: "",
-      type: _type5
+      type: _type6
     },
     ],
     inStream: null,
@@ -350,7 +386,7 @@ Controller.prototype._serviceDescription = {
     outArgs: [{
       name: '',
       doc: "",
-      type: _type6
+      type: _type7
     },
     ],
     inStream: null,

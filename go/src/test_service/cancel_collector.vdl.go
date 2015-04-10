@@ -43,20 +43,12 @@ type implCancelCollectorClientStub struct {
 }
 
 func (c implCancelCollectorClientStub) NeverReturn(ctx *context.T, i0 int64, opts ...rpc.CallOpt) (err error) {
-	var call rpc.ClientCall
-	if call, err = v23.GetClient(ctx).StartCall(ctx, c.name, "NeverReturn", []interface{}{i0}, opts...); err != nil {
-		return
-	}
-	err = call.Finish()
+	err = v23.GetClient(ctx).Call(ctx, c.name, "NeverReturn", []interface{}{i0}, nil, opts...)
 	return
 }
 
 func (c implCancelCollectorClientStub) WaitForStatus(ctx *context.T, i0 int64, i1 string, opts ...rpc.CallOpt) (o0 int64, err error) {
-	var call rpc.ClientCall
-	if call, err = v23.GetClient(ctx).StartCall(ctx, c.name, "WaitForStatus", []interface{}{i0, i1}, opts...); err != nil {
-		return
-	}
-	err = call.Finish(&o0)
+	err = v23.GetClient(ctx).Call(ctx, c.name, "WaitForStatus", []interface{}{i0, i1}, []interface{}{&o0}, opts...)
 	return
 }
 

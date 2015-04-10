@@ -59,101 +59,57 @@ type implErrorThrowerClientStub struct {
 }
 
 func (c implErrorThrowerClientStub) ThrowAborted(ctx *context.T, opts ...rpc.CallOpt) (err error) {
-	var call rpc.ClientCall
-	if call, err = v23.GetClient(ctx).StartCall(ctx, c.name, "ThrowAborted", nil, opts...); err != nil {
-		return
-	}
-	err = call.Finish()
+	err = v23.GetClient(ctx).Call(ctx, c.name, "ThrowAborted", nil, nil, opts...)
 	return
 }
 
 func (c implErrorThrowerClientStub) ThrowBadArg(ctx *context.T, opts ...rpc.CallOpt) (err error) {
-	var call rpc.ClientCall
-	if call, err = v23.GetClient(ctx).StartCall(ctx, c.name, "ThrowBadArg", nil, opts...); err != nil {
-		return
-	}
-	err = call.Finish()
+	err = v23.GetClient(ctx).Call(ctx, c.name, "ThrowBadArg", nil, nil, opts...)
 	return
 }
 
 func (c implErrorThrowerClientStub) ThrowBadProtocol(ctx *context.T, opts ...rpc.CallOpt) (err error) {
-	var call rpc.ClientCall
-	if call, err = v23.GetClient(ctx).StartCall(ctx, c.name, "ThrowBadProtocol", nil, opts...); err != nil {
-		return
-	}
-	err = call.Finish()
+	err = v23.GetClient(ctx).Call(ctx, c.name, "ThrowBadProtocol", nil, nil, opts...)
 	return
 }
 
 func (c implErrorThrowerClientStub) ThrowInternal(ctx *context.T, opts ...rpc.CallOpt) (err error) {
-	var call rpc.ClientCall
-	if call, err = v23.GetClient(ctx).StartCall(ctx, c.name, "ThrowInternal", nil, opts...); err != nil {
-		return
-	}
-	err = call.Finish()
+	err = v23.GetClient(ctx).Call(ctx, c.name, "ThrowInternal", nil, nil, opts...)
 	return
 }
 
 func (c implErrorThrowerClientStub) ThrowNoAccess(ctx *context.T, opts ...rpc.CallOpt) (err error) {
-	var call rpc.ClientCall
-	if call, err = v23.GetClient(ctx).StartCall(ctx, c.name, "ThrowNoAccess", nil, opts...); err != nil {
-		return
-	}
-	err = call.Finish()
+	err = v23.GetClient(ctx).Call(ctx, c.name, "ThrowNoAccess", nil, nil, opts...)
 	return
 }
 
 func (c implErrorThrowerClientStub) ThrowNoExist(ctx *context.T, opts ...rpc.CallOpt) (err error) {
-	var call rpc.ClientCall
-	if call, err = v23.GetClient(ctx).StartCall(ctx, c.name, "ThrowNoExist", nil, opts...); err != nil {
-		return
-	}
-	err = call.Finish()
+	err = v23.GetClient(ctx).Call(ctx, c.name, "ThrowNoExist", nil, nil, opts...)
 	return
 }
 
 func (c implErrorThrowerClientStub) ThrowNoExistOrNoAccess(ctx *context.T, opts ...rpc.CallOpt) (err error) {
-	var call rpc.ClientCall
-	if call, err = v23.GetClient(ctx).StartCall(ctx, c.name, "ThrowNoExistOrNoAccess", nil, opts...); err != nil {
-		return
-	}
-	err = call.Finish()
+	err = v23.GetClient(ctx).Call(ctx, c.name, "ThrowNoExistOrNoAccess", nil, nil, opts...)
 	return
 }
 
 func (c implErrorThrowerClientStub) ThrowUnknown(ctx *context.T, opts ...rpc.CallOpt) (err error) {
-	var call rpc.ClientCall
-	if call, err = v23.GetClient(ctx).StartCall(ctx, c.name, "ThrowUnknown", nil, opts...); err != nil {
-		return
-	}
-	err = call.Finish()
+	err = v23.GetClient(ctx).Call(ctx, c.name, "ThrowUnknown", nil, nil, opts...)
 	return
 }
 
 func (c implErrorThrowerClientStub) ThrowGoError(ctx *context.T, opts ...rpc.CallOpt) (err error) {
-	var call rpc.ClientCall
-	if call, err = v23.GetClient(ctx).StartCall(ctx, c.name, "ThrowGoError", nil, opts...); err != nil {
-		return
-	}
-	err = call.Finish()
+	err = v23.GetClient(ctx).Call(ctx, c.name, "ThrowGoError", nil, nil, opts...)
 	return
 }
 
 func (c implErrorThrowerClientStub) ThrowCustomStandardError(ctx *context.T, opts ...rpc.CallOpt) (err error) {
-	var call rpc.ClientCall
-	if call, err = v23.GetClient(ctx).StartCall(ctx, c.name, "ThrowCustomStandardError", nil, opts...); err != nil {
-		return
-	}
-	err = call.Finish()
+	err = v23.GetClient(ctx).Call(ctx, c.name, "ThrowCustomStandardError", nil, nil, opts...)
 	return
 }
 
 func (c implErrorThrowerClientStub) ListAllBuiltInErrorIds(ctx *context.T, opts ...rpc.CallOpt) (o0 []string, err error) {
-	var call rpc.ClientCall
-	if call, err = v23.GetClient(ctx).StartCall(ctx, c.name, "ListAllBuiltInErrorIds", nil, opts...); err != nil {
-		return
-	}
-	err = call.Finish(&o0)
+	err = v23.GetClient(ctx).Call(ctx, c.name, "ListAllBuiltInErrorIds", nil, []interface{}{&o0}, opts...)
 	return
 }
 
