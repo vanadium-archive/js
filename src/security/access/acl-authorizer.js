@@ -32,11 +32,13 @@ var NoTagsError = makeError(
 /**
  * The AccessList authorizer.
  * @function
- * @memberof module:vanadium.security
+ * @memberof module:vanadium.security.access
  * @name aclAuthorizer
- * @param {module:vanadium.security.Permissions} acls The set of acls to apply.
+ * @param {module:vanadium.security.access.Permissions} acls The set of acls
+ * to apply.
  * @param {constructor} type The type of tags that this authorizer understands.
- * @return {Authorize} An authorizer that applies the acls.
+ * @return {module:vanadium.security.Authorize} An authorizer that applies
+ * the acls.
  */
 function authorizer(acls, type) {
   // Force the acls to have the correct Permissions format.

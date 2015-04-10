@@ -10,8 +10,7 @@
  * that should be granted access.
  * @name AccessList
  * @constructor
- * @param {object} acl The value to construct from
- * @param {array} acl.in <p>An array of [BlessingPatterns]{@link
+ * @property {array} in <p>An array of [BlessingPatterns]{@link
  * module:vanadium.security.BlessingPatterns}/strings that denotes the set
  * of blessings that should be granted access, unless blacklisted by notIn.</p>
  * <p>For example:</p>
@@ -20,7 +19,7 @@
  * </code><p>
  * grants access to a principal that presents at least one of 'alice/family',
  * 'alice/family/friend', 'alice/family/friend/spouse', etc.</p>
- * @param {array} acl.notNin <p>An array of strings that denotes the set of
+ * @property {array} notIn <p>An array of strings that denotes the set of
  * blessings (and their delegates) that have been explicitly blacklisted
  * from the in set.
  * <p>For example:</p>
@@ -30,6 +29,13 @@
  * grants access to a principal that presents at least one of 'alice/friend',
  * 'alice/friend/carol', etc, but NOT to a principal that presents
  * 'alice/friend/bob or 'alice/friend/bob/spouse' etc.</p>
+ * @param {object} acl The value to construct from
+ * @param {array} acl.in An array of [BlessingPatterns]{@link
+ * module:vanadium.security.BlessingPatterns}/strings that denotes the set
+ * of blessings that should be granted access, unless blacklisted by notIn.
+ * @param {array} acl.notNin <p>An array of strings that denotes the set of
+ * blessings (and their delegates) that have been explicitly blacklisted
+ * from the in set.
  * @memberof module:vanadium.security.access
  */
 /*jshint ignore:start*/
@@ -41,6 +47,8 @@
  * <p>These tags are meant to add a layer of interposition between the set of users
  * (blessings, specifically) and the set of methods, much like "Roles" do in
  * [Role Based Access Control]{@link (http://en.wikipedia.org/wiki/Role-based_access_control)}.
+ * @property {map} val An ES6 map of string tags to
+ * [AccessList]{@link module:vanadium.security.access.AccessList}
  * @name Permissions
  * @constructor
  * @param {map} permissions An ES6 Map of string tags to AccessLists

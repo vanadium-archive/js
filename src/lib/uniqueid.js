@@ -102,6 +102,7 @@ module.exports = {
    * <p>An Id is a likely globally unique identifier.</p>
    * <p>Use [random]{@link module:vanadium.uniqueId.random} to
    * create a new one</p>
+   * @property {Uint8array} val 16-byte array
    * @name Id
    * @param {Uint8Array} bytes 16-byte array
    * @constructor
