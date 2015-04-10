@@ -7,7 +7,7 @@ var inherits = require('inherits');
 
 var types = require('./event-proxy-message-types');
 var extnUtils = require('./extension-utils');
-var errors = require('../errors/index');
+var errors = require('../verror/index');
 
 var defaultTimeout = 5000; // ms
 

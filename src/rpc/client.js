@@ -12,7 +12,7 @@
  *  @private
  */
 
-var actions = require('../errors/actions');
+var actions = require('../verror/actions');
 var ByteArrayMessageWriter = require('../vom/byte-array-message-writer');
 var byteUtil = require('../vdl/byte-util');
 var Controller =
@@ -22,7 +22,7 @@ var Deferred = require('../lib/deferred');
 var emitStreamError = require('../lib/emit-stream-error');
 var Encoder = require('../vom/encoder');
 var Incoming = require('../proxy/message-type').Incoming;
-var makeError = require('../errors/make-errors');
+var makeError = require('../verror/make-errors');
 var Outgoing = require('../proxy/message-type').Outgoing;
 var Promise = require('../lib/promise');
 var ReservedSignature =

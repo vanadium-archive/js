@@ -3,7 +3,7 @@
 // license that can be found in the LICENSE file.
 
 var test = require('prova');
-var verror = require('../../').errors;
+var verror = require('../../').verror;
 var Invoker = require('../../src/invocation/invoker.js');
 var Context = require('../../src/runtime/context').Context;
 var Promise = require('../../src/lib/promise');

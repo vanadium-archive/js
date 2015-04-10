@@ -4,7 +4,7 @@
 
 var test = require('prova');
 var serve = require('./serve');
-var leafDispatcher = require('../../src/ipc/leaf-dispatcher');
+var leafDispatcher = require('../../src/rpc/leaf-dispatcher');
 
 // Services that handles anything in a/b/* where b is the service name
 var dispatcher = leafDispatcher({

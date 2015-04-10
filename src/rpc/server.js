@@ -27,8 +27,8 @@ var vlog = require('./../lib/vlog');
 var inspector = require('./../lib/arg-inspector');
 var Invoker = require('./../invocation/invoker');
 var defaultAuthorizer = require('../security/default-authorizer');
-var actions = require('./../errors/actions');
-var makeError = require('../errors/make-errors');
+var actions = require('./../verror/actions');
+var makeError = require('../verror/make-errors');
 
 var nextServerID = 1; // The ID for the next server.
 

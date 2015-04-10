@@ -4,7 +4,7 @@
 
 var test = require('prova');
 var serve = require('./serve');
-var leafDispatcher = require('../../src/ipc/leaf-dispatcher');
+var leafDispatcher = require('../../src/rpc/leaf-dispatcher');
 var Deferred = require('../../src/lib/deferred');
 var vdl = require('../../src/vdl');
 var builtins = require('../../src/vdl/builtins');

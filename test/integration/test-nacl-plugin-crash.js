@@ -4,7 +4,7 @@
 
 var test = require('prova');
 
-var leafDispatcher = require('../../src/ipc/leaf-dispatcher');
+var leafDispatcher = require('../../src/rpc/leaf-dispatcher');
 var serve = require('./serve');
 
 // Test serving and making an RPC call.
@@ -41,7 +41,7 @@ test.skip('Test recovery from nacl plugin crash', function(t) {
     return t.end();
   }
 
-  var errors = require('../../src/errors/index');
+  var errors = require('../../src/verror/index');
   var eventProxy = require('../../src/browser/event-proxy');
 
   // validate comunication first, partially because this initializes the

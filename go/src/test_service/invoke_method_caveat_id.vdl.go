@@ -77,11 +77,7 @@ type implInvokableTestMethodClientStub struct {
 }
 
 func (c implInvokableTestMethodClientStub) AMethod(ctx *context.T, opts ...rpc.CallOpt) (o0 string, err error) {
-	var call rpc.ClientCall
-	if call, err = v23.GetClient(ctx).StartCall(ctx, c.name, "AMethod", nil, opts...); err != nil {
-		return
-	}
-	err = call.Finish(&o0)
+	err = v23.GetClient(ctx).Call(ctx, c.name, "AMethod", nil, []interface{}{&o0}, opts...)
 	return
 }
 
@@ -177,11 +173,7 @@ type implInvokeMethodWithCaveatedIdentityClientStub struct {
 }
 
 func (c implInvokeMethodWithCaveatedIdentityClientStub) Invoke(ctx *context.T, i0 string, i1 security.CaveatDescriptor, i2 *vdl.Value, opts ...rpc.CallOpt) (err error) {
-	var call rpc.ClientCall
-	if call, err = v23.GetClient(ctx).StartCall(ctx, c.name, "Invoke", []interface{}{i0, i1, i2}, opts...); err != nil {
-		return
-	}
-	err = call.Finish()
+	err = v23.GetClient(ctx).Call(ctx, c.name, "Invoke", []interface{}{i0, i1, i2}, nil, opts...)
 	return
 }
 

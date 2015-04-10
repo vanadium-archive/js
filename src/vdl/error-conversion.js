@@ -3,7 +3,7 @@
 // license that can be found in the LICENSE file.
 
 var errorMap = require('./../runtime/error-map');
-var VanadiumError = require('./../errors/vanadium-error');
+var VanadiumError = require('./../verror/vanadium-error');
 var defaultLanguage = require('./../runtime/default-language');
 var defaultCatalog = require('./../runtime/default-catalog');
 var unwrap = require('./type-util').unwrap;

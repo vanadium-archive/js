@@ -170,7 +170,7 @@ Context.prototype.withValue = function(key, value) {
  * Returns a new context derived from the current context but that can
  * be cancelled.  The returned context will have two additional
  * methods cancel() which can be used to cancel the context and
- * generate a module:vanadium.errors.CanceledError and finish() which frees
+ * generate a module:vanadium.verror.CanceledError and finish() which frees
  * resources associated with the context without generating an error.
  * @return {module:vanadium.context.Context} A new derived cancellable context.
  */

@@ -6,7 +6,7 @@ var test = require('prova');
 
 var config = require('./default-config');
 var vanadium = require('../../');
-var verror = vanadium.errors;
+var verror = vanadium.verror;
 
 function end(t, rt, err) {
   t.error(err);

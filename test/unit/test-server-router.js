@@ -7,8 +7,8 @@
  */
 
 var test = require('prova');
-var Router = require('../../src/ipc/server-router');
-var Server = require('../../src/ipc/server');
+var Router = require('../../src/rpc/server-router');
+var Server = require('../../src/rpc/server');
 var Outgoing = require('../../src/proxy/message-type').Outgoing;
 var vdl = require('../../src/vdl');
 var byteUtil = require('../../src/vdl/byte-util');

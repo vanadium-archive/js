@@ -16,7 +16,7 @@ module.exports = {
  * This is only available in browser environment and will not exist in NodeJS.
  * @name ExtensionCrashError
  * @constructor
- * @memberof module:vanadium.errors
+ * @memberof module:vanadium.verror
  * @extends Error
  */
 function ExtensionCrashError(message) {
@@ -34,7 +34,7 @@ inherits(ExtensionCrashError, Error);
  * This is only available in browser environment and will not exist in NodeJS.
  * @name ExtensionNotInstalledError
  * @constructor
- * @memberof module:vanadium.errors
+ * @memberof module:vanadium.verror
  * @extends Error
  */
 function ExtensionNotInstalledError(message) {

@@ -37,82 +37,82 @@ _type1.freeze();
 
 // Services:
 
-
-
+  
+    
 function Namespace(){}
 module.exports.Namespace = Namespace
 
-
-
+    
+      
 Namespace.prototype.glob = function(ctx, pattern) {
   throw new Error('Method Glob not implemented');
 };
-
-
+    
+      
 Namespace.prototype.mount = function(ctx, name, server, ttl, replace) {
   throw new Error('Method Mount not implemented');
 };
-
-
+    
+      
 Namespace.prototype.unmount = function(ctx, name, server) {
   throw new Error('Method Unmount not implemented');
 };
-
-
+    
+      
 Namespace.prototype.resolve = function(ctx, name) {
   throw new Error('Method Resolve not implemented');
 };
-
-
+    
+      
 Namespace.prototype.resolveToMountTable = function(ctx, name) {
   throw new Error('Method ResolveToMountTable not implemented');
 };
-
-
+    
+      
 Namespace.prototype.flushCacheEntry = function(ctx, name) {
   throw new Error('Method FlushCacheEntry not implemented');
 };
-
-
+    
+      
 Namespace.prototype.disableCache = function(ctx, disable) {
   throw new Error('Method DisableCache not implemented');
 };
-
-
+    
+      
 Namespace.prototype.roots = function(ctx) {
   throw new Error('Method Roots not implemented');
 };
-
-
+    
+      
 Namespace.prototype.setRoots = function(ctx, roots) {
   throw new Error('Method SetRoots not implemented');
 };
-
-
+    
+      
 Namespace.prototype.setPermissions = function(ctx, name, acl, version) {
   throw new Error('Method SetPermissions not implemented');
 };
-
-
+    
+      
 Namespace.prototype.getPermissions = function(ctx, name) {
   throw new Error('Method GetPermissions not implemented');
 };
-
-
+    
+      
 Namespace.prototype.delete = function(ctx, name, deleteSubtree) {
   throw new Error('Method Delete not implemented');
 };
+     
 
-
-
+    
 Namespace.prototype._serviceDescription = {
   name: 'Namespace',
   pkgPath: 'v.io/x/ref/services/wspr/internal/namespace',
   doc: "",
   embeds: [],
   methods: [
-
-
+    
+      
     {
     name: 'Glob',
     doc: "// Run a glob query and stream the results.",
@@ -131,8 +131,8 @@ Namespace.prototype._serviceDescription = {
     },
     tags: []
   },
-
-
+    
+      
     {
     name: 'Mount',
     doc: "// Mount mounts a server under the given name.",
@@ -162,8 +162,8 @@ Namespace.prototype._serviceDescription = {
     outStream: null,
     tags: []
   },
-
-
+    
+      
     {
     name: 'Unmount',
     doc: "// Unmount removes an existing mount point.",
@@ -183,8 +183,8 @@ Namespace.prototype._serviceDescription = {
     outStream: null,
     tags: []
   },
-
-
+    
+      
     {
     name: 'Resolve',
     doc: "// Resolve resolves a name to an address.",
@@ -204,8 +204,8 @@ Namespace.prototype._serviceDescription = {
     outStream: null,
     tags: []
   },
-
-
+    
+      
     {
     name: 'ResolveToMountTable',
     doc: "// ResolveToMountTable resolves a name to the address of the mounttable\n// directly hosting it.",
@@ -225,8 +225,8 @@ Namespace.prototype._serviceDescription = {
     outStream: null,
     tags: []
   },
-
-
+    
+      
     {
     name: 'FlushCacheEntry',
     doc: "// FlushCacheEntry removes the namespace cache entry for a given name.",
@@ -246,8 +246,8 @@ Namespace.prototype._serviceDescription = {
     outStream: null,
     tags: []
   },
-
-
+    
+      
     {
     name: 'DisableCache',
     doc: "// DisableCache disables the naming cache.",
@@ -262,8 +262,8 @@ Namespace.prototype._serviceDescription = {
     outStream: null,
     tags: []
   },
-
-
+    
+      
     {
     name: 'Roots',
     doc: "// Roots returns the addresses of the current mounttable roots.",
@@ -278,8 +278,8 @@ Namespace.prototype._serviceDescription = {
     outStream: null,
     tags: []
   },
-
-
+    
+      
     {
     name: 'SetRoots',
     doc: "// SetRoots sets the current mounttable roots.",
@@ -294,8 +294,8 @@ Namespace.prototype._serviceDescription = {
     outStream: null,
     tags: []
   },
-
-
+    
+      
     {
     name: 'SetPermissions',
     doc: "// SetPermissions sets the AccessList in a node in a mount table.",
@@ -320,8 +320,8 @@ Namespace.prototype._serviceDescription = {
     outStream: null,
     tags: []
   },
-
-
+    
+      
     {
     name: 'GetPermissions',
     doc: "// GetPermissions returns the AccessList in a node in a mount table.",
@@ -346,8 +346,8 @@ Namespace.prototype._serviceDescription = {
     outStream: null,
     tags: []
   },
-
-
+    
+      
     {
     name: 'Delete',
     doc: "// Delete deletes the name from the mounttable and, if requested, any subtree.",
@@ -367,6 +367,11 @@ Namespace.prototype._serviceDescription = {
     outStream: null,
     tags: []
   },
-
+     
   ]
 };
+
+   
+ 
+
+

@@ -3,7 +3,7 @@
 // license that can be found in the LICENSE file.
 
 var test = require('prova');
-var formatError = require('../../src/errors/format');
+var formatError = require('../../src/verror/format');
 
 function expectFormatParams(t, format, expected) {
   var args = Array.prototype.slice.call(arguments).splice(3);

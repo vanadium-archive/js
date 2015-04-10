@@ -11,7 +11,7 @@
  * created in.
  * @param {...*} params A list of parameters to include in the error message.
  * @memberof module:vanadium.rpc.reserved
- * @augments module:vanadium.errors.VanadiumError
+ * @augments module:vanadium.verror.VanadiumError
  */
 /**
  * GlobMatchesOmitted indicates that some of the Glob results might
@@ -22,7 +22,7 @@
  * created in.
  * @param {...*} params A list of parameters to include in the error message.
  * @memberof module:vanadium.rpc.reserved
- * @augments module:vanadium.errors.VanadiumError
+ * @augments module:vanadium.verror.VanadiumError
  */
 /**
  * GlobNotImplemented indicates that Glob is not implemented by the object.
@@ -32,5 +32,5 @@
  * created in.
  * @param {...*} params A list of parameters to include in the error message.
  * @memberof module:vanadium.rpc.reserved
- * @augments module:vanadium.errors.VanadiumError
+ * @augments module:vanadium.verror.VanadiumError
  */

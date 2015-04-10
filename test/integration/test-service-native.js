@@ -4,8 +4,8 @@
 
 var test = require('prova');
 var service = require('./get-service');
-var makeError = require('../../src/errors/make-errors');
-var actions = require('../../src/errors/actions');
+var makeError = require('../../src/verror/make-errors');
+var actions = require('../../src/verror/actions');
 
 var E = makeError('randomPrefix.verror', actions.NO_RETRY,
                   '{1} {2}: RandomError: {_}');

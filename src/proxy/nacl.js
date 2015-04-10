@@ -8,7 +8,7 @@
  */
 
 var extensionEventProxy = require('../browser/event-proxy');
-var errors = require('../errors/index');
+var errors = require('../verror/index');
 var Deferred = require('../lib/deferred');
 var Proxy = require('./index');
 var random = require('../lib/random');

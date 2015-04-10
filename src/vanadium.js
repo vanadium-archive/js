@@ -42,8 +42,8 @@ var defaults = {
 
 module.exports = {
   init: init,
-  errors: require('./errors'),
-  rpc: require('./ipc'),
+  verror: require('./verror'),
+  rpc: require('./rpc'),
   vlog: require('./lib/vlog'),
   naming: require('./naming'),
   security: require('./security'),

@@ -18,8 +18,8 @@ var canonicalize = require('./../../src/vdl/canonicalize.js');
 var stringify = require('./../../src/vdl/stringify.js');
 require('../../src/vom/native-types');
 var Time = require('../../src/gen-vdl/v.io/v23/vdlroot/time').Time;
-var makeError = require('../../src/errors/make-errors');
-var actions = require('../../src/errors/actions');
+var makeError = require('../../src/verror/make-errors');
+var actions = require('../../src/verror/actions');
 
 // A helper function that shallow copies an object into an object with the
 // JSValue prototype. It makes the test cases a lot more readable.
