@@ -20,7 +20,7 @@ define COMPILE-NACL-PLUGIN
 	GOARCH=amd64p32 \
 	GOOS=nacl \
 	GOROOT= \
-	v23 xgo --target_go=$(V23_ROOT)/environment/go_ppapi/bin/go amd64p32-nacl build -o $2 $1
+	v23 xgo --target-go=$(V23_ROOT)/environment/go_ppapi/bin/go amd64p32-nacl build -o $2 $1
 endef
 
 all: vanadium.zip
