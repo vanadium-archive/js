@@ -226,7 +226,7 @@ test('Test mounting and unmounting - ' +
         return server.serve(initialName, {});
       })
       .then(function() {
-        return wait(initialName, runtime);
+        return waitForPublish(initialName, runtime);
       })
       .then(function resolve() {
         return namespace.resolve(ctx, initialName);
@@ -235,7 +235,7 @@ test('Test mounting and unmounting - ' +
         return namespace.mount(ctx, secondaryName, expectedServerAddress,
           MINUTE);
       }).then(function() {
-        return wait(initialName, runtime);
+        return waitForPublish(initialName, runtime);
       }).then(function resolve() {
         return namespace.resolve(ctx, secondaryName);
       }).then(function validate(resolveResult) {
@@ -244,7 +244,7 @@ test('Test mounting and unmounting - ' +
       }).then(function unmount() {
         return namespace.unmount(ctx, secondaryName);
       }).then(function() {
-        return wait(secondaryName, runtime, true);
+        return waitForUnpublish(secondaryName, runtime);
       }).then(function resolve() {
         namespace.resolve(ctx, secondaryName, function cb(err) {
           assert.ok(err, 'no resolving after unmount()');
@@ -595,7 +595,7 @@ test('Test delete() unmounts a name', function(assert) {
           return end(err);
         }
       }).then(function() {
-        return wait(name, rt);
+        return waitForPublish(name, rt);
       }).then(function resolveOnce() {
         return ns.resolve(ctx, name);
       }).then(function validateResolvedEp(gotEps) {
@@ -753,7 +753,7 @@ function init(config) {
     })
     .then(function waitUntilAllNamesPublished() {
       var resolveRequests = SAMPLE_NAMESPACE.map(function(name) {
-        return wait(PREFIX + name, runtime);
+        return waitForPublish(PREFIX + name, runtime);
       });
       return Promise.all(resolveRequests);
     })
@@ -763,11 +763,19 @@ function init(config) {
 
 }
 
+function waitForPublish(name, runtime) {
+  return wait(name, runtime, false);
+}
+
+function waitForUnpublish(name, runtime) {
+  return wait(name, runtime, true);
+}
+
 // Helper function that waits until name is published or unpublished,
 // it checks every 100ms for a total of 50 tries before failing.
 function wait(name, runtime, waitForUnpublish) {
   var WAIT_TIME = 100;
-  var MAX_NUM_TRIES = 50;
+  var MAX_TRIES = 50;
   return new Promise(function(resolve, reject) {
     var ns = runtime.namespace();
     var count = 0;
@@ -785,7 +793,7 @@ function wait(name, runtime, waitForUnpublish) {
         }
         if (continueLoop) {
           count++;
-          if (count === MAX_NUM_TRIES) {
+          if (count === MAX_TRIES) {
             var verb = waitForUnpublish ? 'unpublished' : 'published';
             reject(
               new Error('Timed out waiting for ' + name + ' to be ' + verb)
