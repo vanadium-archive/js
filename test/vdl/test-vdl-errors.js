@@ -69,7 +69,7 @@ test('var struct = ec.fromNativeValue(err)', function(assert) {
   var expectedError = new verror.UnknownError(null);
   expectedError.message = message;
   expectedError.msg = message;
-  expectedError.paramList = ['app', 'call'];
+  expectedError.paramList = ['app', 'call', message];
   assert.deepEqual(struct, expectedError);
   assert.end();
 });
