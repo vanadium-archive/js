@@ -3,7 +3,7 @@ WSPR_ROOT := $(V23_ROOT)/release/go/src/v.io/x/ref/services/wspr
 SHELL := /bin/bash -e -o pipefail
 .DEFAULT_GOAL := all
 
-JS_FILES = $(shell find lib -name "*.js" -o -name "*.css")
+JS_FILES = $(shell find src -name "*.js" -o -name "*.css")
 
 define BROWSERIFY
 	mkdir -p $(dir $2)
@@ -37,16 +37,16 @@ build/manifest.json: manifest.json
 	mkdir -p build
 	cp manifest.json build
 
-build/js/background.js: lib/background/index.js $(JS_FILES) gen-vdl node_modules
+build/js/background.js: src/background/index.js $(JS_FILES) gen-vdl node_modules
 	$(call BROWSERIFY,$<,$@)
 
-build/js/content.js: lib/content/index.js $(JS_FILES) node_modules
+build/js/content.js: src/content/index.js $(JS_FILES) node_modules
 	$(call BROWSERIFY,$<,$@)
 
-build/js/options.js: lib/background/options.js $(JS_FILES) node_modules
+build/js/options.js: src/background/options.js $(JS_FILES) node_modules
 	$(call BROWSERIFY,$<,$@)
 
-build/js/addcaveats.js: lib/background/addcaveats.js $(JS_FILES) node_modules
+build/js/addcaveats.js: src/background/addcaveats.js $(JS_FILES) node_modules
 	$(call BROWSERIFY,$<,$@)
 
 build/js: build/js/background.js build/js/content.js build/js/options.js build/js/addcaveats.js
@@ -81,16 +81,16 @@ build-test/manifest.json: manifest.json
 	cp manifest.json build-test
 	patch build-test/manifest.json < manifest-test.json.patch # Adds "key" as first line.
 
-build-test/js/background.js: lib/background/index.js $(JS_FILES) gen-vdl node_modules
+build-test/js/background.js: src/background/index.js $(JS_FILES) gen-vdl node_modules
 	$(call BROWSERIFY-TEST,$<,$@)
 
-build-test/js/content.js: lib/content/index.js $(JS_FILES) node_modules
+build-test/js/content.js: src/content/index.js $(JS_FILES) node_modules
 	$(call BROWSERIFY-TEST,$<,$@)
 
-build-test/js/options.js: lib/background/options.js $(JS_FILES) node_modules
+build-test/js/options.js: src/background/options.js $(JS_FILES) node_modules
 	$(call BROWSERIFY-TEST,$<,$@)
 
-build-test/js/addcaveats.js: lib/background/addcaveats.js $(JS_FILES) node_modules
+build-test/js/addcaveats.js: src/background/addcaveats.js $(JS_FILES) node_modules
 	$(call BROWSERIFY-TEST,$<,$@)
 
 # The EXTENSION_SETTINGS env variable is used by the extension to set the default settings variables.
@@ -136,10 +136,10 @@ example/index.bundle.js: example/index.js node_modules
 	browserify $< --transform brfs --global-transform envify --debug --outfile $@
 
 lint: node_modules
-	jshint lib/ example/index.js
+	jshint src/ example/index.js
 
 dependency-check: node_modules
-	dependency-check package.json --entry lib/background/index.js --entry lib/content/index.js
+	dependency-check package.json --entry src/background/index.js --entry src/content/index.js
 
 clean:
 	@$(RM) -fr node_modules npm-debug.log
