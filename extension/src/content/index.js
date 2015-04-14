@@ -3,8 +3,9 @@
 // license that can be found in the LICENSE file.
 
 var debug = require('debug')('content-script:index');
-var random = require('../../../src/lib/random');
+
 var pageEventProxy = require('./event-proxy');
+var random = require('../../../src/lib/random');
 
 // Port to communicate with background js.
 var backgroundPort = chrome.runtime.connect();
@@ -20,6 +21,21 @@ var pageToBackground = {};
 // are invalid. We will block any further messages.
 var invalidated = false;
 
+// Whitelist of message types to allow from the web app.
+var messageTypeWhitelist = [
+  'auth',
+  'browsprCleanup',
+  'browsprMsg',
+  'createInstance'
+];
+if (process.env.ALLOW_INTENTIONAL_CRASH) {
+  messageTypeWhitelist.push('intentionallyPanic');
+}
+
+function isAllowedMessage(type) {
+  return messageTypeWhitelist.indexOf(type) >= 0;
+}
+
 // Forward messages from the webApp to the background page.
 pageEventProxy.onAny(function(body) {
   if (invalidated && !process.env.ALLOW_INTENTIONAL_CRASH) {
@@ -32,6 +48,13 @@ pageEventProxy.onAny(function(body) {
   // type of the event.
   var type = this.event;
   debug('content script received message of type', type, 'from page:', body);
+
+  if (!isAllowedMessage(type)) {
+    var err = new Error('Ignoring message with unknown type: ' + type);
+    console.error(err);
+    pageEventProxy.send('error', { message: err.message });
+    return;
+  }
 
   // Swap the instanceId with a generated one.
   if (body && body.instanceId) {
