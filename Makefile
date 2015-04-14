@@ -1,5 +1,6 @@
 PATH := node_modules/.bin:${V23_ROOT}/environment/cout/node/bin:$(PATH)
 
+NODE_BIN := $(V23_ROOT)/release/javascript/core/node_modules/.bin
 GOPATH := $(V23_ROOT)/release/javascript/core/go
 VDLPATH := $(GOPATH)
 GOBIN := $(V23_ROOT)/release/javascript/core/go/bin
@@ -211,8 +212,44 @@ clean:
 	@$(RM) -fr xunit.xml
 	$(MAKE) -C extension clean
 
-docs: $(JS_SRC_FILES) | node_modules
-	jsdoc $^ --readme ./jsdocs/index.md --configure ./jsdocs/conf.json  --template node_modules/ink-docstrap/template --destination $@
+DOCSTRAP_LOC:= node_modules/ink-docstrap
+docs: $(JS_SRC_FILES) jsdocs/docstrap-template/compiled/site.vanadium.css | node_modules
+	# Copy our compiled style template
+	cp -f jsdocs/docstrap-template/compiled/site.vanadium.css ${DOCSTRAP_LOC}/template/static/styles
+	# Build the docs
+	jsdoc $^ --readme ./jsdocs/index.md --configure ./jsdocs/conf.json --template ${DOCSTRAP_LOC}/template --destination $@
+
+# docs-template
+#
+# Builds the custom Vanadium jsdocs template and rebuilds the docs with it.
+# It does so by copying the LESS files we have in jsdocs/styles to docstrap
+# and rebuilding the compiled style file by following the "Customization"
+# steps: https://github.com/terryweiss/docstrap#customizing-docstrap
+# After the build is done, it copies back the compiled style file to our
+# folder so it can be checked in and used later.
+docs-template: node_modules node_modules/ink-docstrap/node_modules/grunt node_modules/ink-docstrap/bower_components
+	# Copy our raw LESS style assets to docstrap
+	cp -f jsdocs/docstrap-template/styles/*.* ${DOCSTRAP_LOC}/styles
+	# Rebuilt the styles
+	cd ${DOCSTRAP_LOC}; ${NODE_BIN}/grunt less
+	# Copy back the compiled style file from docstrap
+	cp -f ${DOCSTRAP_LOC}/template/static/styles/site.cosmo.css jsdocs/docstrap-template/compiled/site.vanadium.css
+	# Rebuild docs
+	make docs
+
+node_modules/ink-docstrap/node_modules/grunt:
+	cd ${DOCSTRAP_LOC}; npm install
+
+node_modules/ink-docstrap/bower_components:
+	cd ${DOCSTRAP_LOC}; ${NODE_BIN}/bower install
+
+# serve-docs
+#
+# Serve the docs at http://localhost:8020.
+serve-docs: docs
+	static docs -p 8020
+
+.PHONY: docs-template serve-docs
 
 # staging-docs
 #
