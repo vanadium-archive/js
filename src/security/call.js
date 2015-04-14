@@ -20,6 +20,11 @@ function Call(call, controller) {
   this.remoteBlessings = new Blessings(call.remoteBlessings.handle,
                                        call.remoteBlessings.publicKey,
                                        controller);
+  if (call.grantedBlessings) {
+    this.grantedBlessings = new Blessings(call.grantedBlessings.handle,
+                                          call.grantedBlessings.publicKey,
+                                          controller);
+  }
   this.localBlessingStrings = call.localBlessingStrings;
   this.remoteBlessingStrings = call.remoteBlessingStrings;
   // TODO(bjornick): Create endpoints.

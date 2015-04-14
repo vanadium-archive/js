@@ -45,6 +45,7 @@ var JsBlessings =
 var WireBlessings =
   require('../gen-vdl/v.io/v23/security').WireBlessings;
 
+
 /**
  * A router that handles routing incoming requests to the right
  * server

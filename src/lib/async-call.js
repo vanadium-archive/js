@@ -58,7 +58,7 @@ function asyncCall(ctx, self, fn, numOutArgs, args, inputCb) {
   try {
     result = fn.apply(self, args);
   } catch (err) {
-    logger.error('Caught error: ', result);
+    logger.error('Caught error: ', err);
     callOnceCb(wrapError(err));
     return;
   }
@@ -81,7 +81,7 @@ function asyncCall(ctx, self, fn, numOutArgs, args, inputCb) {
     switch (numOutArgs) {
       case 0:
         if (res !== undefined) {
-          return asyncFailedCb(new verror.InternalError(ctx, 
+          return asyncFailedCb(new verror.InternalError(ctx,
             'Non-undefined value returned from function with 0 out args'));
         }
         resAsArray = [];

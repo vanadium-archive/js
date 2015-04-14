@@ -10,6 +10,7 @@ var leafDispatcher = require('../../src/rpc/leaf-dispatcher');
 var serve = require('./serve');
 var Blessings = require('../../src/security/blessings');
 var SharedContextKeys = require('../../src/runtime/shared-context-keys');
+var context = require('../../src/security/context');
 
 test('Test bless self without Caveat', function(t) {
   var rt;
@@ -92,7 +93,7 @@ test('Test bless with Caveat from server', function(t) {
     }
   };
 
-  serve('testing/blessnocav', leafDispatcher(service),
+  serve('testing/blesscav', leafDispatcher(service),
     function(err, res) {
       if (err) {
         res.end(t, err);
@@ -105,6 +106,53 @@ test('Test bless with Caveat from server', function(t) {
       });
   });
 });
+
+test('Test bless without Caveat from client (with Granter)', function(t) {
+  var expectedBlessing;
+
+  var service = {
+    method: function(ctx) {
+      t.ok(ctx.grantedBlessings, 'Expect to get granted blessing');
+      t.equal(ctx.grantedBlessings._id, expectedBlessing._id,
+        'Expect to get blessing that was granted.');
+      return 'aResponse';
+    }
+  };
+
+  serve('testing/clientblessgranter', leafDispatcher(service),
+    function(err, res) {
+      if (err) {
+        t.end(err);
+        return;
+      }
+
+      var client = res.runtime.newClient();
+      var fiveSecondsInFuture = new Date(Date.now() + 5000);
+      var granterCalled = false;
+      var granterOption = client.callOption({
+        useGranter: function(ctx, cb) {
+          var call = context.getSecurityCallFromContext(ctx);
+          granterCalled = true;
+          res.runtime.principal.bless(res.runtime.getContext(),
+            call.remoteBlessings.publicKey,
+            call.localBlessings,
+            'ext',
+            caveats.createExpiryCaveat(fiveSecondsInFuture),
+            function(err, blessing) {
+              expectedBlessing = blessing;
+              cb(err, blessing);
+            });
+        }
+      });
+
+      res.service.method(res.runtime.getContext(), granterOption, function(err){
+        t.ok(granterCalled, 'Granter should be called');
+        t.error(err);
+        res.runtime.close(t.end);
+      });
+    });
+});
+
 
 test('Test put to blessing store', function(t) {
   vanadium.init(config, function(err, runtime) {

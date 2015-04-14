@@ -11,7 +11,9 @@ var actions = require('../../../../../../../../../verror/actions');
 
 
 
+var time = require('./../../../../../../../v23/vdlroot/time');
 var security = require('./../../../../../../../v23/security');
+var vtrace = require('./../../../../../../../v23/vtrace');
 var principal = require('./../../principal');
 
 module.exports = {};
@@ -24,9 +26,12 @@ var _type2 = new vdl.Type();
 var _type3 = new vdl.Type();
 var _type4 = new vdl.Type();
 var _type5 = new vdl.Type();
+var _type6 = new vdl.Type();
 var _typeCaveatValidationRequest = new vdl.Type();
 var _typeCaveatValidationResponse = new vdl.Type();
 var _typeSecurityCall = new vdl.Type();
+var _typeServerRpcRequest = new vdl.Type();
+var _typeServerRpcRequestCall = new vdl.Type();
 _type1.kind = vdl.Kind.LIST;
 _type1.name = "";
 _type1.elem = vdl.Types.ANY;
@@ -42,6 +47,9 @@ _type4.elem = new security.Caveat()._type;
 _type5.kind = vdl.Kind.LIST;
 _type5.name = "";
 _type5.elem = vdl.Types.ERROR;
+_type6.kind = vdl.Kind.OPTIONAL;
+_type6.name = "";
+_type6.elem = new principal.JsBlessings()._type;
 _typeCaveatValidationRequest.kind = vdl.Kind.STRUCT;
 _typeCaveatValidationRequest.name = "v.io/x/ref/services/wspr/internal/rpc/server.CaveatValidationRequest";
 _typeCaveatValidationRequest.fields = [{name: "Call", type: _typeSecurityCall}, {name: "Cavs", type: _type3}];
@@ -51,17 +59,28 @@ _typeCaveatValidationResponse.fields = [{name: "Results", type: _type5}];
 _typeSecurityCall.kind = vdl.Kind.STRUCT;
 _typeSecurityCall.name = "v.io/x/ref/services/wspr/internal/rpc/server.SecurityCall";
 _typeSecurityCall.fields = [{name: "Method", type: vdl.Types.STRING}, {name: "Suffix", type: vdl.Types.STRING}, {name: "MethodTags", type: _type1}, {name: "LocalBlessings", type: new principal.JsBlessings()._type}, {name: "LocalBlessingStrings", type: _type2}, {name: "RemoteBlessings", type: new principal.JsBlessings()._type}, {name: "RemoteBlessingStrings", type: _type2}, {name: "LocalEndpoint", type: vdl.Types.STRING}, {name: "RemoteEndpoint", type: vdl.Types.STRING}];
+_typeServerRpcRequest.kind = vdl.Kind.STRUCT;
+_typeServerRpcRequest.name = "v.io/x/ref/services/wspr/internal/rpc/server.ServerRpcRequest";
+_typeServerRpcRequest.fields = [{name: "ServerId", type: vdl.Types.UINT32}, {name: "Handle", type: vdl.Types.INT32}, {name: "Method", type: vdl.Types.STRING}, {name: "Args", type: _type1}, {name: "Call", type: _typeServerRpcRequestCall}];
+_typeServerRpcRequestCall.kind = vdl.Kind.STRUCT;
+_typeServerRpcRequestCall.name = "v.io/x/ref/services/wspr/internal/rpc/server.ServerRpcRequestCall";
+_typeServerRpcRequestCall.fields = [{name: "SecurityCall", type: _typeSecurityCall}, {name: "Deadline", type: new time.WireDeadline()._type}, {name: "TraceRequest", type: new vtrace.Request()._type}, {name: "GrantedBlessings", type: _type6}];
 _type1.freeze();
 _type2.freeze();
 _type3.freeze();
 _type4.freeze();
 _type5.freeze();
+_type6.freeze();
 _typeCaveatValidationRequest.freeze();
 _typeCaveatValidationResponse.freeze();
 _typeSecurityCall.freeze();
+_typeServerRpcRequest.freeze();
+_typeServerRpcRequestCall.freeze();
 module.exports.CaveatValidationRequest = (vdl.Registry.lookupOrCreateConstructor(_typeCaveatValidationRequest));
 module.exports.CaveatValidationResponse = (vdl.Registry.lookupOrCreateConstructor(_typeCaveatValidationResponse));
 module.exports.SecurityCall = (vdl.Registry.lookupOrCreateConstructor(_typeSecurityCall));
+module.exports.ServerRpcRequest = (vdl.Registry.lookupOrCreateConstructor(_typeServerRpcRequest));
+module.exports.ServerRpcRequestCall = (vdl.Registry.lookupOrCreateConstructor(_typeServerRpcRequestCall));
 
 
 

@@ -4,6 +4,7 @@
 
 var context = require('../runtime/context');
 var SecurityCall = require('../security/call');
+var Blessings = require('../security/blessings');
 var inherits = require('inherits');
 var vtrace = require('../vtrace');
 
@@ -56,6 +57,7 @@ function ServerCall(request, controller, ctx) {
     this.remoteBlessings = request.remoteBlessings;
     this.localBlessingStrings = request.localBlessingStrings;
     this.remoteBlessingStrings = request.remoteBlessingStrings;
+    this.grantedBlessings = request.grantedBlessings;
     this.localEndpoint = request.localEndpoint;
     this.remoteEndpoint = request.remoteEndpoint;
     this.methodTags = request.methodTags;
@@ -82,6 +84,12 @@ function ServerCall(request, controller, ctx) {
     this.remoteBlessings = security.remoteBlessings;
     this.localBlessingStrings = security.localBlessingStrings;
     this.remoteBlessingStrings = security.remoteBlessingStrings;
+    if (request.call.grantedBlessings) {
+      this.grantedBlessings = new Blessings(
+        request.call.grantedBlessings.handle,
+        request.call.grantedBlessings.publicKey,
+        controller);
+    }
     this.localEndpoint = security.localEndpoint;
     this.remoteEndpoint = security.remoteEndpoint;
     this.methodTags = security.methodTags;

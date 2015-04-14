@@ -16,7 +16,8 @@ module.exports = {
     LOOKUP_RESPONSE: 11, // Response from a lookup call to Javacript.
     AUTHORIZATION_RESPONSE: 12, // Response from an authorization call to JS.
     CANCEL: 17, // Cancel an ongoing JS initiated call.
-    CAVEAT_VALIDATION_RESPONSE: 21 // Response to a caveat validation request.
+    CAVEAT_VALIDATION_RESPONSE: 21, // Response to a caveat validation request.
+    GRANTER_RESPONSE: 22 // Response from a granter
   },
   Incoming: {
     INVOKE_REQUEST: 3, // Request to invoke a method on a JS server.
@@ -28,6 +29,7 @@ module.exports = {
     AUTHORIZATION_REQUEST: 6,  // A request to authorize an rpc.
     CANCEL: 7, // A request to cancel a previously invoked JS method.
     CAVEAT_VALIDATION_REQUEST: 8, // A request to validate a set of caveats
-    LOG_MESSAGE: 9  // A request to log a message.
+    LOG_MESSAGE: 9,  // A request to log a message.
+    GRANTER_REQUEST: 10 // A request to call a granter
   }
 };

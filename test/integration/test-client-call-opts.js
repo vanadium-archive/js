@@ -21,10 +21,10 @@ test('Test passing valid options to client.callOption()', function(t) {
 
     var client = rt.newClient();
 
-    var opts = client.callOptions({ });
+    var opts = client.callOption({ });
     t.ok(opts, 'with no options should succeed');
 
-    opts = client.callOptions({
+    opts = client.callOption({
       allowedServersPolicy: ['foo']
     });
     t.ok(opts, 'with allowedOptions should succeed');
@@ -42,7 +42,7 @@ test('Test passing invalid options to client.callOption()', function(t) {
     var client = rt.newClient();
 
     t.throws(function() {
-      client.callOptions({
+      client.callOption({
         invalid: 'key'
       });
     },
@@ -50,7 +50,7 @@ test('Test passing invalid options to client.callOption()', function(t) {
     ' with one invalid option should throw BadArgError');
 
     t.throws(function() {
-      client.callOptions({
+      client.callOption({
         allowedServersPolicy: ['foo'],
         'invalid': 'key'
       });
@@ -77,11 +77,11 @@ test('Test passing allowedServersPolicy that matches server blessings',
         return end(t, rt, err);
       }
 
-      var callOpts = client.callOptions({
+      var callOpt = client.callOption({
         allowedServersPolicy: ['test']
       });
 
-      cache.set(ctx, 'foo', 'bar', callOpts, function(err) {
+      cache.set(ctx, 'foo', 'bar', callOpt, function(err) {
         end(t, rt, err);
       });
     });
@@ -103,11 +103,11 @@ test('Test passing allowedServersPolicy that does not match server blessings',
         return end(t, rt, err);
       }
 
-      var callOpts = client.callOptions({
+      var callOpt = client.callOption({
         allowedServersPolicy: ['bad/blessings']
       });
 
-      cache.set(ctx, 'foo', 'bar', callOpts, function(err) {
+      cache.set(ctx, 'foo', 'bar', callOpt, function(err) {
         t.ok(err, 'should error');
         end(t, rt);
       });

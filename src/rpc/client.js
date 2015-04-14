@@ -39,6 +39,7 @@ var vdl = require('../vdl');
 var verror = require('../gen-vdl/v.io/v23/verror');
 var vlog = require('../lib/vlog');
 var vom = require('../vom');
+var SharedContextKeys = require('../runtime/shared-context-keys');
 var vtrace = require('../vtrace');
 var Blessings = require('../security/blessings');
 var JsBlessings =
@@ -441,8 +442,9 @@ Client.prototype.bindWithSignature = function(name, signature) {
       // Remove ClientCallOptions from args and build array of callOptions.
       var callOptions = [];
       args = args.filter(function(arg) {
-        if (arg instanceof ClientCallOptions) {
-          callOptions = callOptions.concat(arg._toRpcCallOptions());
+        if (arg instanceof ClientCallOption) {
+          callOptions = callOptions.concat(
+            arg._toRpcCallOption(ctx, client._proxyConnection));
           return false;
         }
         return true;
@@ -619,7 +621,7 @@ Client.prototype.remoteBlessings = function(ctx, name, method, cb) {
 };
 
 /**
- * Create a ClientCallOptions object.
+ * Create a ClientCallOption object.
  *
  * Client call options can be passed to a service method and are used to
  * configure the RPC call.  They are not passed to the Vanadium RPC service.
@@ -630,9 +632,9 @@ Client.prototype.remoteBlessings = function(ctx, name, method, cb) {
  * @param {string[]} opts.allowedServersPolicy Array of blessing patterns that
  * the allowed server must match in order for the RPC to be initiated.
  */
-Client.prototype.callOptions = function(opts) {
+Client.prototype.callOption = function(opts) {
   // TODO(nlacasse): Support other CallOption types.
-  var allowedOptions = ['allowedServersPolicy'];
+  var allowedOptions = ['allowedServersPolicy', 'useGranter'];
 
   // Validate opts.
   var keys = Object.keys(opts);
@@ -642,30 +644,38 @@ Client.prototype.callOptions = function(opts) {
     }
   });
 
-  return new ClientCallOptions(opts);
+  return new ClientCallOption(opts);
 };
 
 /**
- * Constructor for ClientCallOptions object.
+ * Constructor for ClientCallOption object.
  * @constructor
  * @private
  * @param {Object} opts call options.
  */
-function ClientCallOptions(opts) {
+function ClientCallOption(opts) {
   this.opts = opts;
 }
 
 /**
- * Convert ClientCallOptions object to array of RpcCallOption VDL values.
+ * Convert ClientCallOption object to array of RpcCallOption VDL values.
  * @private
  * @return {Array} Array of RpcCallOption VDL values.
  */
-ClientCallOptions.prototype._toRpcCallOptions = function() {
+ClientCallOption.prototype._toRpcCallOption = function(ctx, proxy) {
   var rpcCallOptions = [];
   var keys = Object.keys(this.opts);
   keys.forEach(function(key) {
     var opt = {};
-    opt[key] = this.opts[key];
+    if (key === 'useGranter') {
+      var runtime = ctx.value(SharedContextKeys.RUNTIME);
+      var granterRouter = runtime._getGranterRouter();
+      var fn = this.opts[key];
+      var granterId = granterRouter.addGranter(fn);
+      opt[key] = granterId;
+    } else {
+      opt[key] = this.opts[key];
+    }
     rpcCallOptions.push(new RpcCallOption(opt));
   }, this);
   return rpcCallOptions;

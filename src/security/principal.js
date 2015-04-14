@@ -65,12 +65,13 @@ Principal.prototype.bless = function(ctx, publicKey, blessings,
 
   var caveats = args.slice(4);
 
-  this._controller.bless.call(this._controller, ctx, publicKey,
+  var controller = this._controller;
+  this._controller.bless.call(controller, ctx, publicKey,
     blessings._id, extension, caveats)
   .then(function(res) {
     var publicKey = res[0];
     var handle = res[1];
-    def.resolve(new Blessings(handle, publicKey, this._controller));
+    def.resolve(new Blessings(handle, publicKey, controller));
   }).catch(function(err) {
     def.reject(err);
   });

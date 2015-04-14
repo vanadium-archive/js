@@ -11,6 +11,7 @@ var isBrowser = require('is-browser');
 var inherits = require('inherits');
 var Server = require('../rpc/server');
 var ServerRouter = require('../rpc/server-router');
+var GranterRouter = require('../rpc/granter-router');
 var Client = require('../rpc/client');
 var Namespace = require('../naming/namespace');
 var CaveatValidatorRegistry = require('../security/caveat-validator-registry');
@@ -218,4 +219,18 @@ Runtime.prototype._getRouter = function() {
       this.caveatRegistry);
   }
   return this._router;
+};
+
+/**
+ * Get or creates a granter router
+ * @return {GranterRouter} A granter router
+ * @private
+ */
+Runtime.prototype._getGranterRouter = function() {
+  if (!this._granterRouter) {
+    this._granterRouter = new GranterRouter(
+      this._getProxyConnection(),
+      this.getContext());
+  }
+  return this._granterRouter;
 };
