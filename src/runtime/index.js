@@ -15,7 +15,6 @@ var Client = require('../rpc/client');
 var Namespace = require('../naming/namespace');
 var CaveatValidatorRegistry = require('../security/caveat-validator-registry');
 var Principal = require('../security/principal');
-var Deferred = require('../lib/deferred');
 var vlog = require('../lib/vlog');
 var context = require('./context');
 var SharedContextKeys = require('./shared-context-keys');
@@ -34,34 +33,37 @@ module.exports = {
  * @private
  */
 function init(options, cb) {
-  var def = new Deferred(cb);
+  var rt = new Runtime(options);
+  var promise = Promise.resolve(rt);
 
-  if (!isBrowser) {
-    // In node we can just return the runtime.  No more initialization is
-    // necessary.
-    process.nextTick(function() {
-      def.resolve(new Runtime(options));
+  if (isBrowser) {
+    // In the browser, we must create the app instance in browspr.  We send
+    // along the namespaceRoots and proxy, if they have been provided.  If they
+    // are empty, the defaults from the extension options page will be used.
+    var settings = {
+      namespaceRoots: options.namespaceRoots || [],
+      proxy: options.proxy || ''
+    };
+
+    promise = promise.then(function(rt) {
+      return rt._getProxyConnection().createInstance(settings);
+    }).then(function() {
+      return rt;
     });
-    return def.promise;
   }
 
-  // In the browser, we must create the app instance in browspr.  We send along
-  // the namespaceRoots and proxy, if they have been provided.  If they are
-  // empty, the defaults from the extension options page will be used.
-  var settings = {
-    namespaceRoots: options.namespaceRoots || [],
-    proxy: options.proxy || ''
-  };
-
-  var rt = new Runtime(options);
-  rt._getProxyConnection().createInstance(settings, function(err) {
-    if (err) {
-      return def.reject(err);
-    }
-    def.resolve(rt);
+  promise = promise.then(function() {
+    return rt.principal._loadDefaultBlessings();
+  }).then(function() {
+    return rt;
   });
 
-  return def.promise;
+  promise.then(function(rt) {
+    cb(null, rt);
+  }, function(err) {
+    cb(err);
+  });
+  return promise;
 }
 
 /**

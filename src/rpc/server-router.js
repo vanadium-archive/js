@@ -39,6 +39,11 @@ var lib =
   require('../gen-vdl/v.io/x/ref/services/wspr/internal/lib');
 var contextWithSecurityCall =
   require('../security/context').contextWithSecurityCall;
+var Blessings = require('../security/blessings');
+var JsBlessings =
+  require('../gen-vdl/v.io/x/ref/services/wspr/internal/principal').JsBlessings;
+var WireBlessings =
+  require('../gen-vdl/v.io/v23/security').WireBlessings;
 
 /**
  * A router that handles routing incoming requests to the right
@@ -339,7 +344,12 @@ Router.prototype.handleRPCRequest = function(messageId, vdlRequest) {
     if (methodSig.inArgs[i].type.kind === vdl.Kind.ANY) {
       return arg;
     }
-    return typeUtil.unwrap(arg);
+    var unwrapped = typeUtil.unwrap(arg);
+    if (unwrapped instanceof JsBlessings) {
+      return new Blessings(unwrapped.handle, unwrapped.publicKey,
+                           self._controller);
+    }
+    return unwrapped;
   });
   var options = {
     methodName: methodName,
@@ -378,7 +388,11 @@ Router.prototype.handleRPCRequest = function(messageId, vdlRequest) {
 
     // Has results; associate the types of the outArgs.
     var canonResults = results.map(function(result, i) {
-      return vdl.Canonicalize.fill(result, methodSig.outArgs[i].type);
+      var t = methodSig.outArgs[i].type;
+      if (t.equals(WireBlessings.prototype._type)) {
+        return result;
+      }
+      return vdl.Canonicalize.fill(result, t);
     });
     self.sendResult(messageId, methodName, canonResults, undefined,
                     methodSig.outArgs.length);
@@ -571,6 +585,12 @@ Router.prototype.sendResult = function(messageId, name, results, err,
 
   var traceResponse = vtrace.response(ctx);
 
+  // Convert any Blessings to JsBlessings
+  for (var i = 0; i < results.length; ++i) {
+    if (results[i] instanceof Blessings) {
+      results[i] = results[i].convertToJsBlessings();
+    }
+  }
   // If this is a streaming request, queue up the final response after all
   // the other stream requests are done.
   var stream = this._streamMap[messageId];

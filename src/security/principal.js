@@ -36,9 +36,9 @@ function Principal(ctx, controller) {
  * bless(ctx, <other public key>, <google/alice, v23/alice>, 'friend', ...)
  * </pre>
  * @param {module:vanadium.context.Context} ctx The context
- * @param {PublicKey} publicKey The public key to bless
+ * @param {string} publicKey The base64 encoded public key to bless
  * @param {Blessings} blessing The blessings
- * @param {String} extension the extension for the blessing.
+ * @param {string} extension the extension for the blessing.
  * @param {...Caveat} caveats an array of Cavaeats to restrict the blessing.
  * @param {function} cb an optional callback that will return the blessing
  * @return {Promise} a promise that will be resolved with the blessing
@@ -139,11 +139,15 @@ Principal.prototype.putToBlessingStore = function(
 
   return this._controller.putToBlessingStore.call(this._controller,
     ctx, blessings._id, pattern, cb).then(function(res) {
-      if (!res) {
-        return res;
-      }
-      return new Blessings(res.handle, res.publicKey, this._controller);
+      return res;
     });
 };
 
+Principal.prototype._loadDefaultBlessings = function() {
+  var self = this;
+  return this._controller.getDefaultBlessings(this._ctx).
+    then(function(res) {
+      self.defaultBlessings = res;
+  });
+};
 module.exports = Principal;

@@ -40,9 +40,15 @@ var verror = require('../gen-vdl/v.io/v23/verror');
 var vlog = require('../lib/vlog');
 var vom = require('../vom');
 var vtrace = require('../vtrace');
+var Blessings = require('../security/blessings');
+var JsBlessings =
+  require('../gen-vdl/v.io/x/ref/services/wspr/internal/principal').JsBlessings;
+var SharedContextKeys = require('../runtime/shared-context-keys');
+
 
 var OutstandingRPC = function(ctx, options, cb) {
   this._ctx = ctx;
+  this._controller = ctx.value(SharedContextKeys.RUNTIME)._controller;
   this._proxy = options.proxy;
   this._id = -1;
   this._name = options.name;
@@ -59,14 +65,22 @@ var OutstandingRPC = function(ctx, options, cb) {
 };
 
 // Helper function to convert an out argument to the given type.
-function convertOutArg(arg, type) {
+function convertOutArg(arg, type, controller) {
   var canonOutArg = arg;
+  var unwrappedArg = unwrap(arg);
+  if (unwrappedArg instanceof JsBlessings) {
+    var res =
+      new Blessings(unwrappedArg.handle, unwrappedArg.publicKey, controller);
+    res.retain();
+    return res;
+  }
 
   // There's no protection against bad out args if it's a JSValue.
   // Otherwise, convert to the out arg type to ensure type correctness.
   if (!type.equals(vdl.Types.JSVALUE)) {
     canonOutArg = vdl.Canonicalize.reduce(arg, type);
   }
+
   return unwrap(canonOutArg);
 }
 
@@ -82,6 +96,7 @@ function convertOutArgSafe(arg, type) {
 
 OutstandingRPC.prototype.start = function() {
   this._id = this._proxy.nextId();
+  var self = this;
 
   var cb;
   var outArgTypes = this._outArgTypes;
@@ -95,7 +110,7 @@ OutstandingRPC.prototype.start = function() {
 
       // Each out argument should also be unwrapped. (results was []any)
       results = results ? results.map(function(res, i) {
-        var errOrArg = convertOutArgSafe(res, outArgTypes[i]);
+        var errOrArg = convertOutArgSafe(res, outArgTypes[i], self._controller);
         if (errOrArg[0] && !err) {
           err = errOrArg[0];
         }
@@ -124,7 +139,7 @@ OutstandingRPC.prototype.start = function() {
 
       // Each out argument should also be unwrapped. (args was []any)
       var unwrappedArgs = args.map(function(outArg, i) {
-        return convertOutArg(outArg, outArgTypes[i]);
+        return convertOutArg(outArg, outArgTypes[i], self._controller);
       });
 
       // We expect:
@@ -282,7 +297,11 @@ OutstandingRPC.prototype.constructMessage = function() {
   var encoder = new Encoder(writer);
   encoder.encode(header);
   for (var i = 0; i < this._args.length; i++) {
-    encoder.encode(this._args[i]);
+    var o = this._args[i];
+    if (o instanceof Blessings) {
+      o = o.convertToJsBlessings();
+    }
+    encoder.encode(o);
   }
   return byteUtil.bytes2Hex(writer.getBytes());
 };

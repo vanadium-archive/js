@@ -97,13 +97,6 @@ test('Test binding when proxy Url is invalid - ' +
   vanadium.init({ wspr: 'http://bad-address.tld' }, onruntime);
 
   function onruntime(err, runtime) {
-    assert.error(err);
-    var client = runtime.newClient();
-    var ctx = runtime.getContext();
-    client.bindTo(ctx, 'test_service/cache', onservice);
-  }
-
-  function onservice(err, service) {
     assert.ok(err instanceof Error);
     assert.end();
   }
@@ -116,21 +109,12 @@ test('Test binding when wspr Url is invalid - ' +
   }
 
   vanadium
-  .init({ wspr: 'http://bad-address.tld' })
-  .then(bindTo)
-  .catch(assert.end);
-
-
-  function bindTo(runtime) {
-    var ctx = runtime.getContext();
-    return runtime.newClient()
-    .bindTo(ctx, 'test_service/cache')
-    .then(noop, function(err) {
-      assert.ok(err instanceof Error);
-      assert.end();
-    })
-    .catch(assert.end);
-  }
+  .init({ wspr: 'http://bad-address.tld' }).
+  then(function() {
+    assert.error('should not have succeeded');
+    assert.end();
+  }, function(err) {
+    assert.ok(err instanceof Error);
+    assert.end();
+  });
 });
-
-function noop() {}

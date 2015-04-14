@@ -9,7 +9,6 @@
 
 var extend = require('xtend');
 var isBrowser = require('is-browser');
-var SharedContextKeys = require('./runtime/shared-context-keys');
 
 var Deferred = require('./lib/deferred');
 var runtime = require('./runtime');
@@ -52,7 +51,7 @@ module.exports = {
   vom: require('./vom'),
   uniqueId: require('./lib/uniqueid'),
   vtrace: require('./vtrace'),
-  runtimeForContext: runtimeForContext,
+  runtimeForContext: require('./runtime/runtime-from-context'),
 };
 
 if (isBrowser) {
@@ -62,15 +61,6 @@ if (isBrowser) {
    * @namespace
    */
   module.exports.extension = require('./browser/extension-utils');
-}
-/**
- * Gets the [Runtime]{@link module:vanadium~Runtime} for a given
- * [Context]{@link module:vanadium.context.Context}
- * @param {module:vanadium.context.Context} ctx The context
- * @return {module:vanadium~Runtime} the runtime for the context
- */
-function runtimeForContext(ctx) {
-  return ctx.value(SharedContextKeys.RUNTIME);
 }
 /**
  * Creates a Vanadium [runtime]{@link module:vanadium~Runtime}.

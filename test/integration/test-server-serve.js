@@ -50,13 +50,8 @@ test('Test serving a JS service when proxy Url is invalid - '+
   }
 
   vanadium.init({ wspr: 'http://bad-address.tld' }, function(err, runtime) {
-    assert.error(err);
-
-    var server = runtime.newServer();
-    server.serve('livingroom/tv', service, function(err) {
-      assert.ok(err instanceof Error, 'should fail');
-      runtime.close(assert.end);
-    });
+    assert.ok(err);
+    assert.end();
   });
 });
 
@@ -67,21 +62,8 @@ test('Test serving a JS service when proxy Url is invalid - '+
   }
 
   vanadium.init({ wspr: 'http://bad-address.tld' }, function(err, runtime) {
-    assert.error(err);
-
-    var server = runtime.newServer();
-    server
-    .serve('livingroom/tv', service)
-    .then(function() {
-      assert.fail('should have errored');
-    },function(err) {
-      assert.ok(err instanceof Error, 'should fail');
-      runtime.close(assert.end);
-    })
-    .catch(function(err) {
-      assert.error(err);
-      runtime.close(assert.end);
-    });
+    assert.ok(err);
+    assert.end();
   });
 });
 

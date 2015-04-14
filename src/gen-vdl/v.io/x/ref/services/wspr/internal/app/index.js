@@ -144,6 +144,11 @@ Controller.prototype.remoteBlessings = function(ctx, name, method) {
 Controller.prototype.signature = function(ctx, name) {
   throw new Error('Method Signature not implemented');
 };
+    
+      
+Controller.prototype.getDefaultBlessings = function(ctx) {
+  throw new Error('Method GetDefaultBlessings not implemented');
+};
      
 
     
@@ -387,6 +392,22 @@ Controller.prototype._serviceDescription = {
       name: '',
       doc: "",
       type: _type7
+    },
+    ],
+    inStream: null,
+    outStream: null,
+    tags: []
+  },
+    
+      
+    {
+    name: 'GetDefaultBlessings',
+    doc: "// GetDefaultBlessings fetches the default blessings for the principal of the controller.",
+    inArgs: [],
+    outArgs: [{
+      name: '',
+      doc: "",
+      type: _type5
     },
     ],
     inStream: null,

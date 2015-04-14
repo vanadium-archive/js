@@ -7,6 +7,11 @@ var byteUtil = require('../vdl/byte-util');
 var vom = require('../vom');
 var emitStreamError = require('../lib/emit-stream-error');
 var vError = require('../gen-vdl/v.io/v23/verror');
+var SharedContextKeys = require('../runtime/shared-context-keys');
+var Blessings = require('../security/blessings');
+var JsBlessings =
+  require('../gen-vdl/v.io/x/ref/services/wspr/internal/principal').JsBlessings;
+
 
 module.exports = Handler;
 
@@ -19,6 +24,8 @@ module.exports = Handler;
 function Handler(ctx, stream) {
   this._ctx = ctx;
   this._stream = stream;
+  this._controller = ctx.value(SharedContextKeys.RUNTIME)._controller;
+  this._pendingBlessings = [];
 }
 
 Handler.prototype.handleResponse = function(type, data) {
@@ -29,16 +36,21 @@ Handler.prototype.handleResponse = function(type, data) {
       } catch (e) {
         emitStreamError(this._stream,
           new vError.InternalError(this._ctx,
-                                   ['Failed to decode result: ', e]));
+                                   'Failed to decode result: ', e));
         return true;
       }
-
+      if (data instanceof JsBlessings) {
+        data = new Blessings(data.handle, data.publicKey, this._controller);
+        data.retain();
+      }
       this._stream._queueRead(data);
       return true;
     case Incoming.STREAM_CLOSE:
+      this.cleanupBlessings();
       this._stream._queueClose();
       return true;
     case Incoming.ERROR_RESPONSE:
+      this.cleanupBlessings();
       emitStreamError(this._stream, data);
       this._stream._queueClose();
       return true;
@@ -46,4 +58,10 @@ Handler.prototype.handleResponse = function(type, data) {
 
   // can't handle the given type
   return false;
+};
+
+Handler.prototype.cleanupBlessings = function() {
+  for (var i = 0; i < this._pendingBlessings; i++) {
+    this._pendingBlessings[i].release();
+  }
 };

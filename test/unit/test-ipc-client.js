@@ -12,6 +12,7 @@ var byteUtil = require('../../src/vdl/byte-util');
 var vom = require('../../src/vom');
 var vtrace = require('../../src/vtrace');
 var app = require('../../src/gen-vdl/v.io/x/ref/services/wspr/internal/app');
+var SharedContextKeys = require('../../src/runtime/shared-context-keys');
 
 var mockService = {
   tripleArgMethod: function(ctx, a, b, c) {},
@@ -36,11 +37,15 @@ var mockServiceDescs = [
 ];
 
 var mockSignature = createSignatures(mockService, mockServiceDescs);
+var mockRuntime = {
+  _controller: null,
+};
 
 function testContext() {
   var ctx = new context.Context();
   ctx = vtrace.withNewStore(ctx);
   ctx = vtrace.withNewTrace(ctx);
+  ctx = ctx.withValue(SharedContextKeys.RUNTIME, mockRuntime);
   return ctx;
 }
 

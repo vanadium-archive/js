@@ -7,7 +7,10 @@
  * structures across networks, languages and storage systems.
  * @description
  * <p> Namespace vom implements Vanadium Object Marshaling, a serialization
- * protocol.  Vom is used in Vanadium to enable interchange of user-defined data
+ * protocol.</p>
+ * <p>For the concept doc see {@link https://staging.v.io/concepts/vom.html}
+ * </p>
+ * <p>Vom is used in Vanadium to enable interchange of user-defined data
  * structures across networks, languages and storage systems.</p>
  *
  * <p>VOM supports the same types and compatibility rules supported by

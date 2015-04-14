@@ -16,6 +16,7 @@ var vom = require('../vom');
 var fill = require('../vdl/canonicalize').fill;
 var reduce = require('../vdl/canonicalize').reduce;
 var unwrap = require('../vdl/type-util').unwrap;
+var Blessings = require('../security/blessings');
 var ServerRpcReply =
   require('../gen-vdl/v.io/x/ref/services/wspr/internal/lib').ServerRpcReply;
 
@@ -24,15 +25,8 @@ var ServerRpcReply =
  * onmessage is set and a function, it will be called whenever there is data on.
  * the stream. The stream implements the promise api.  When the rpc is complete,
  * the stream will be fulfilled.  If there is an error, then the stream will be
- * rejected.
+ * rejected.  This constructor should not be directly called.
  * @constructor
- *
- * @param {number} flowId flow id
- * @param {Promise} webSocketPromise Promise of a websocket connection when
- * it's established
- * @param {boolean} isClient if set, then this is the client stream.
- * @param {vom.TypeObject} readType Adds type info to data read from the stream.
- * @param {vom.TypeObject} writeType Adds type info to data sent by the stream.
  */
 var Stream = function(flowId, webSocketPromise, isClient, readType, writeType) {
   Duplex.call(this, { objectMode: true });
@@ -152,6 +146,9 @@ Stream.prototype.write = function(chunk, encoding, cb) {
       'lacks an',
       this.isClient ? 'inStream' : 'outStream', 'type. Tried to queue', chunk);
     return;
+  }
+  if (chunk instanceof Blessings) {
+    chunk = chunk.convertToJsBlessings();
   }
   var canonChunk = fill(chunk, this.writeType);
   var object = {

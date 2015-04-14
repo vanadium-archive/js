@@ -8,6 +8,8 @@
  */
 
 var vlog = require('../lib/vlog');
+var JsBlessings =
+  require('../gen-vdl/v.io/x/ref/services/wspr/internal/principal').JsBlessings;
 
 /**
  * @summary Blessings encapsulates all cryptographic operations
@@ -53,6 +55,13 @@ Blessings.prototype.toJSON = function() {
     id: this._id,
     publicKey: this.publicKey,
   };
+};
+
+Blessings.prototype.convertToJsBlessings = function() {
+  return new JsBlessings({
+    handle: this._id,
+    publicKey: this.publicKey
+  }, true);
 };
 
 module.exports = Blessings;

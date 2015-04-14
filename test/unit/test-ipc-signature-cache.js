@@ -18,6 +18,7 @@ var vom = require('../../src/vom');
 var app = require('../../src/gen-vdl/v.io/x/ref/services/wspr/internal/app');
 var vtrace = require('../../src/vtrace');
 var vdlsig = require('../../src/gen-vdl/v.io/v23/vdlroot/signature');
+var SharedContextKeys = require('../../src/runtime/shared-context-keys');
 
 var freshSig = [ new vdlsig.Interface({ doc: 'fresh signature' }) ];
 var cachedSig = [ new vdlsig.Interface({ doc: 'cached signature'}) ];
@@ -40,10 +41,15 @@ function createProxy() {
   }, CACHE_TTL);
 }
 
+var mockRuntime = {
+  _controller: null,
+};
+
 function testContext() {
   var ctx = new context.Context();
   ctx = vtrace.withNewStore(ctx);
   ctx = vtrace.withNewTrace(ctx);
+  ctx = ctx.withValue(SharedContextKeys.RUNTIME, mockRuntime);
   return ctx;
 }
 
