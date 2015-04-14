@@ -1,0 +1,195 @@
+@import "../bower_components/bootstrap/less/bootstrap.less";
+@import "variables.less";
+@import "bootswatch.less";
+
+@headerHeight: 62px;
+
+#main {
+  margin-top : @headerHeight;
+}
+
+.navbar-fixed-top {
+  .navbar-inner {
+	padding-left  : 20px;
+	padding-right : 20px;
+  }
+
+}
+
+.navbar .brand {
+  padding-left: 50px;
+  background-image: url(https://v.io/icons/logo.svg);
+  background-repeat: no-repeat;
+  background-position: left center;
+  background-size: 40px;
+  margin-left: -10px;
+}
+
+a {
+  text-decoration: none !important;
+}
+
+.navbar {
+  box-shadow: rgba(0, 0, 0, 0.30) 0px 2px 5px 0px;
+  .dropdown-menu {
+	padding          : 20px;
+	max-height       : 400px;
+	overflow         : auto;
+	width            : 400px;
+	background-color : @navbarInverseBackground;
+	a, a:visited {
+	  color : @navbarInverseLinkColor;
+	}
+	a:hover {
+	  color            : @navbarInverseLinkColorHover;
+	  background : none;
+	}
+	a:active {
+	  color            : @navbarInverseLinkColorActive;
+	  background : none;
+	}
+	a {
+	  padding-left  : 0;
+	  padding-right : 5px;
+	  font-weight   : 500;
+	  font-size     : 115%;
+	}
+  }
+
+}
+
+#toc a {
+  background       :none !important;
+  color            : @textColor;
+}
+
+#toc {
+  position   : fixed;
+  top        : @headerHeight;
+  width      : 29%;
+  max-height : 82%;
+  overflow   : auto;
+  .border-radius(5px);
+  border     : 1px @grayLighter solid;
+  padding    : 5px;
+
+  .toc-active a {
+  	background-color : transparent;
+  	color            : @linkColor;
+  	.border-radius(3px);
+
+  }
+}
+
+
+.toc-h1 {
+  margin-left  : 2px;
+  margin-right : 2px;
+}
+
+.toc-h2 {
+  margin-left  : 7px;
+  margin-right : 7px;
+}
+
+.toc-h3 {
+  margin-left  : 14px;
+  margin-right : 7px;
+}
+
+.toc-h4 {
+  margin-left  : 21px;
+  margin-right : 7px;
+}
+
+.copyright {
+  font-size  : 90%;
+  text-align : center;
+  color      : @navbarInverseBackground;
+  width      : 100%;
+  display    : block;
+}
+
+.jsdoc-message {
+  font-size  : 90%;
+  text-align : center;
+  color      : @navbarInverseBackground;
+  width      : 100%;
+  display    : block;
+}
+
+h3.name, h4.name {
+  font-size: 1.6em;
+  color: @brand-secondary-800;
+  margin-top: 30px;
+}
+
+.page-title {
+  font-size      : 220%;
+  color          : @navbarInverseBackground;
+  padding-top    : 10px;
+  padding-bottom : 7px;
+  display        : block;
+}
+
+footer {
+  border-top  : 1px solid  @navbarInverseBackgroundHighlight;
+  padding-top : 15px;
+}
+
+code {
+  font-weight: bold;
+  font-size        : 1em;
+  background       : none;
+  border           : none;
+  color            : @brand-secondary-800;
+}
+
+.buffered-name {
+  padding-top : @headerHeight;
+  margin-top  : -@headerHeight;
+}
+
+.member-collapsed {
+  background-color : @navbarInverseBackground;
+  color            : @navbarInverseText;
+}
+
+.member-open {
+  background-color : inherit;
+  color            : inherit;
+}
+
+.member {
+  .transition(background-color 0.5s linear);
+  .transition(color 0.5s linear);
+  .border-radius(5px);
+  padding : 3px;
+  margin-top:5px;
+  margin-bottom:5px;
+
+
+}
+.member-name{
+  padding-top: 100px !important;
+  margin-top: -100px !important;
+}
+
+
+.sunlight-highlighted {
+  margin           : 0;
+  line-height      : auto;
+  word-break       : normal;
+  word-wrap        : normal;
+  white-space      : pre;
+  background-color : transparent;
+  border           : none;
+}
+
+.sunlight-line-number-margin {
+  border-radius : 0;
+  border-width  : 0 1px 0 0;
+  font-size     : 12px;
+  line-height   : 15px;
+  padding       : 12px 4px !important;
+}
