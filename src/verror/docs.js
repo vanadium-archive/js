@@ -154,19 +154,6 @@
  * @augments module:vanadium.verror.VanadiumError
  */
 /**
- * NoServersAndAuthError means the client cannot use any servers, because of
- * either NotTrusted or NoAccess errors.  Typically returned when the
- * distinction between trust and inaccessibility should be hidden to preserve
- * privacy.
- * @param {module:vanadium.context.Context} ctx The context the error was
- * created in.
- * @param {...*} params A list of parameters to include in the error message.
- * @name NoServersAndAuthError
- * @constructor
- * @memberof module:vanadium.verror
- * @augments module:vanadium.verror.VanadiumError
- */
-/**
  * AbortedError means that an operation was not completed because it was aborted
  * by the receiver.  A more specific error should be used if it would help the
  * caller decide how to proceed.

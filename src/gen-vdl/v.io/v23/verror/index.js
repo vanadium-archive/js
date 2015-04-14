@@ -81,6 +81,18 @@ module.exports.NoExistError = makeError('v.io/v23/verror.NoExist', actions.NO_RE
 ]);
 
 
+module.exports.UnknownMethodError = makeError('v.io/v23/verror.UnknownMethod', actions.NO_RETRY, {
+  'en': '{1:}{2:} Method does not exist{:_}',
+}, [
+]);
+
+
+module.exports.UnknownSuffixError = makeError('v.io/v23/verror.UnknownSuffix', actions.NO_RETRY, {
+  'en': '{1:}{2:} Suffix does not exist{:_}',
+}, [
+]);
+
+
 module.exports.NoExistOrNoAccessError = makeError('v.io/v23/verror.NoExistOrNoAccess', actions.NO_RETRY, {
   'en': '{1:}{2:} Does not exist or access denied{:_}',
 }, [
@@ -101,12 +113,6 @@ module.exports.NoAccessError = makeError('v.io/v23/verror.NoAccess', actions.RET
 
 module.exports.NotTrustedError = makeError('v.io/v23/verror.NotTrusted', actions.RETRY_REFETCH, {
   'en': '{1:}{2:} Client does not trust server{:_}',
-}, [
-]);
-
-
-module.exports.NoServersAndAuthError = makeError('v.io/v23/verror.NoServersAndAuth', actions.RETRY_REFETCH, {
-  'en': '{1:}{2:} Has no usable servers and is either not trusted or access was denied{:_}',
 }, [
 ]);
 

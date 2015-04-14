@@ -137,7 +137,7 @@ function runGlobTest(pattern, expectedResults, dispatcher, expectedErrors,
       assert.ok(typeof errItem.name === 'string');
 
       // The tests are setup to error based on name, which is this glob error.
-      assert.ok(errItem.error instanceof verror.NoServersAndAuthError);
+      assert.ok(errItem.error instanceof verror.NoServersError);
       globErrors.push(errItem.name);
     });
 

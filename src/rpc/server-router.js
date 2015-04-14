@@ -503,7 +503,7 @@ Router.prototype.handleGlobRequest = function(messageId, name, server, glob,
           self.decrementOutstandingRequestForId(messageId, cb);
         }
       }).catch(function(e) {
-        var verr = new verror.NoServersAndAuthError(context, suffix, e);
+        var verr = new verror.NoServersError(context, suffix, e);
         var errReply = createGlobErrorReply(suffix, verr, self._appName);
         self._streamMap[messageId].write(errReply);
         vlog.logger.info(errReply);
