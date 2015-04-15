@@ -8,6 +8,7 @@
  */
 var EE = require('eventemitter2').EventEmitter2;
 var isBrowser = require('is-browser');
+var Deferred = require('../lib/deferred');
 var inherits = require('inherits');
 var Server = require('../rpc/server');
 var ServerRouter = require('../rpc/server-router');
@@ -47,9 +48,14 @@ function init(options, cb) {
     };
 
     promise = promise.then(function(rt) {
-      return rt._getProxyConnection().createInstance(settings);
-    }).then(function() {
-      return rt;
+      var def = new Deferred();
+      rt._getProxyConnection().createInstance(settings, function(err) {
+        if (err) {
+          return def.reject(err);
+        }
+        def.resolve(rt);
+      });
+      return def.promise;
     });
   }
 
