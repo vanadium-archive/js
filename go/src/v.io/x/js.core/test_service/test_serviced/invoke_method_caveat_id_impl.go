@@ -6,15 +6,14 @@ package main
 
 import (
 	"fmt"
-	"test_service"
-
-	vsecurity "v.io/x/ref/lib/security"
 
 	"v.io/v23"
 	"v.io/v23/rpc"
 	"v.io/v23/security"
 	"v.io/v23/vdl"
 	"v.io/v23/vom"
+	"v.io/x/js.core/test_service"
+	vsecurity "v.io/x/ref/lib/security"
 )
 
 type invokeMethWCavIdImpl struct{}

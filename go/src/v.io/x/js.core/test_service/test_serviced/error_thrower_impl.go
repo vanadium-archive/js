@@ -9,8 +9,7 @@ import (
 
 	"v.io/v23/rpc"
 	"v.io/v23/verror"
-
-	"test_service"
+	"v.io/x/js.core/test_service"
 )
 
 // NewErrorThrower returns a new implementation of ErrorThrowerServerMethods.

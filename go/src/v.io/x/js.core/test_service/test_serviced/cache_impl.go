@@ -13,8 +13,7 @@ import (
 	"v.io/v23/rpc"
 	"v.io/v23/vdl"
 	"v.io/v23/verror"
-
-	"test_service"
+	"v.io/x/js.core/test_service"
 )
 
 const pkgPath = "release/javascript/core/test_service/test_serviced"

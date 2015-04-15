@@ -9,8 +9,7 @@ import (
 	"time"
 
 	"v.io/v23/rpc"
-
-	"test_service"
+	"v.io/x/js.core/test_service"
 )
 
 type callStatus int

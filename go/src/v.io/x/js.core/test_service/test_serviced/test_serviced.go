@@ -13,9 +13,8 @@ import (
 	"v.io/v23/naming"
 	"v.io/v23/rpc"
 	"v.io/v23/security"
+	"v.io/x/js.core/test_service"
 	_ "v.io/x/ref/profiles"
-
-	"test_service"
 )
 
 // openAuthorizer allows RPCs from all clients.

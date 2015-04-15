@@ -122,7 +122,7 @@ var CancelCollectorDesc rpc.InterfaceDesc = descCancelCollector
 // descCancelCollector hides the desc to keep godoc clean.
 var descCancelCollector = rpc.InterfaceDesc{
 	Name:    "CancelCollector",
-	PkgPath: "test_service",
+	PkgPath: "v.io/x/js.core/test_service",
 	Doc:     "// CancelCollector is a test interface for use in testing cancellation and deadlines.",
 	Methods: []rpc.MethodDesc{
 		{

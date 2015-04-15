@@ -5,9 +5,10 @@
 package main
 
 import (
-	"test_service"
 	"time"
+
 	"v.io/v23/rpc"
+	"v.io/x/js.core/test_service"
 )
 
 func NewNativeTest() test_service.NativeTestServerMethods {

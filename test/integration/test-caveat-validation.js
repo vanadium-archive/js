@@ -7,7 +7,7 @@ var serve = require('./serve');
 var vdl = require('../../src/vdl');
 var leafDispatcher = require('../../src/rpc/leaf-dispatcher');
 
-var testService = require('../vdl-out/test_service');
+var testService = require('../vdl-out/v.io/x/js.core/test_service');
 
 // Service to be invoked
 function aServiceDef() {

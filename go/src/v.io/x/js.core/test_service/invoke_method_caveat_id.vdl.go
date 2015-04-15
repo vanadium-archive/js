@@ -25,7 +25,7 @@ type TestCaveatData struct {
 }
 
 func (TestCaveatData) __VDLReflect(struct {
-	Name string "test_service.TestCaveatData"
+	Name string "v.io/x/js.core/test_service.TestCaveatData"
 }) {
 }
 
@@ -140,7 +140,7 @@ var InvokableTestMethodDesc rpc.InterfaceDesc = descInvokableTestMethod
 // descInvokableTestMethod hides the desc to keep godoc clean.
 var descInvokableTestMethod = rpc.InterfaceDesc{
 	Name:    "InvokableTestMethod",
-	PkgPath: "test_service",
+	PkgPath: "v.io/x/js.core/test_service",
 	Methods: []rpc.MethodDesc{
 		{
 			Name: "AMethod",
@@ -236,7 +236,7 @@ var InvokeMethodWithCaveatedIdentityDesc rpc.InterfaceDesc = descInvokeMethodWit
 // descInvokeMethodWithCaveatedIdentity hides the desc to keep godoc clean.
 var descInvokeMethodWithCaveatedIdentity = rpc.InterfaceDesc{
 	Name:    "InvokeMethodWithCaveatedIdentity",
-	PkgPath: "test_service",
+	PkgPath: "v.io/x/js.core/test_service",
 	Methods: []rpc.MethodDesc{
 		{
 			Name: "Invoke",

@@ -20,7 +20,7 @@ import (
 type KeyPageResult [10]string
 
 func (KeyPageResult) __VDLReflect(struct {
-	Name string "test_service.KeyPageResult"
+	Name string "v.io/x/js.core/test_service.KeyPageResult"
 }) {
 }
 
@@ -31,7 +31,7 @@ type KeyValuePair struct {
 }
 
 func (KeyValuePair) __VDLReflect(struct {
-	Name string "test_service.KeyValuePair"
+	Name string "v.io/x/js.core/test_service.KeyValuePair"
 }) {
 }
 
@@ -508,7 +508,7 @@ var CacheDesc rpc.InterfaceDesc = descCache
 // descCache hides the desc to keep godoc clean.
 var descCache = rpc.InterfaceDesc{
 	Name:    "Cache",
-	PkgPath: "test_service",
+	PkgPath: "v.io/x/js.core/test_service",
 	Doc:     "// A Cache service mimics the memcache interface.",
 	Methods: []rpc.MethodDesc{
 		{

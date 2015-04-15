@@ -235,7 +235,7 @@ var ErrorThrowerDesc rpc.InterfaceDesc = descErrorThrower
 // descErrorThrower hides the desc to keep godoc clean.
 var descErrorThrower = rpc.InterfaceDesc{
 	Name:    "ErrorThrower",
-	PkgPath: "test_service",
+	PkgPath: "v.io/x/js.core/test_service",
 	Doc:     "// A testing interface with methods that throw various types of errors",
 	Methods: []rpc.MethodDesc{
 		{

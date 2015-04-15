@@ -114,7 +114,7 @@ var NativeTestDesc rpc.InterfaceDesc = descNativeTest
 // descNativeTest hides the desc to keep godoc clean.
 var descNativeTest = rpc.InterfaceDesc{
 	Name:    "NativeTest",
-	PkgPath: "test_service",
+	PkgPath: "v.io/x/js.core/test_service",
 	Methods: []rpc.MethodDesc{
 		{
 			Name: "PassTime",
