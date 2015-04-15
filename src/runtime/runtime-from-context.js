@@ -10,6 +10,7 @@ module.exports = runtimeForContext;
  * [Context]{@link module:vanadium.context.Context}
  * @param {module:vanadium.context.Context} ctx The context
  * @return {module:vanadium~Runtime} the runtime for the context
+ * @memberof module:vanadium
  */
 function runtimeForContext(ctx) {
   return ctx.value(SharedContextKeys.RUNTIME);

@@ -21,6 +21,8 @@ var JsBlessings =
  * <p>Blessings objects are meant to be presented to other principals to
  * authenticate and authorize actions.</p>
  * @constructor
+ * @memberof module:vanadium.security
+ * @inner
  */
 function Blessings(id, publicKey, controller) {
   this._id = id;

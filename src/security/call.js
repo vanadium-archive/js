@@ -9,6 +9,24 @@
 var Blessings = require('./blessings.js');
 module.exports = Call;
 
+/**
+ * @summary Call defines the state available for authorizing a principal.
+ * @name SecurityCall
+ * @property {string} method The method being invoked
+ * @property {string} suffix The object name suffix of the request
+ * @property {module:vanadium.security~Blessings} localBlessings The blessings
+ * bound to the local end.
+ * @property {string} localBlessingStrings The validated names for the local
+ * end.
+ * @property {module:vanadium.security~Blessings} remoteBlessings The blessings
+ * bound to the remote end.
+ * @property {string} remoteBlessingStrings The validated names for the remote
+ * end.
+ * @property {string} localEndpoint The endpoint string for the local end
+ * @property {string} remoteEndpoint The endpoint string for the remote end
+ * @inner
+ * @memberof module:vanadium.security
+ */
 function Call(call, controller) {
   this.method = call.method;
   this.suffix = call.suffix;

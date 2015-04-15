@@ -12,13 +12,22 @@ var Blessings = require('./blessings');
 var verror = require('../gen-vdl/v.io/v23/verror');
 
 /**
+ * A callback that is called with either an error or a
+ * [Blessings]{@link module:vanadium~Blessings} object.
+ * @callback Blessings~cb
+ * @param {Error} err If set, the error that occured
+ * @param {module:vanadium.security~Blessings} blessings The blessings result.
+ */
+/**
  * @summary Principal represents an entity capable of making or receiving RPCs.
  * @description <p>Principal represents an entity capable of making or receiving
  * RPCs. Principals have a unique (public, private) key pair, have blessings
  * bound to them and can bless other principals.</p>.
  * <p>This constructor should not be used explicitly.  Instead, use
- * {@link Runtime#principal}
+ * {@link module:vanadium~Runtime#principal}
  * @constructor
+ * @inner
+ * @memberof module:vanadium.security
  */
 function Principal(ctx, controller) {
   this._controller = controller;
@@ -36,11 +45,12 @@ function Principal(ctx, controller) {
  * bless(ctx, <other public key>, <google/alice, v23/alice>, 'friend', ...)
  * </pre>
  * @param {module:vanadium.context.Context} ctx The context
- * @param {string} publicKey The base64 encoded public key to bless
- * @param {Blessings} blessing The blessings
+ * @param {string} publicKey The public key to bless
+ * @param {module:vanadium.security~Blessings} blessing The blessings
  * @param {string} extension the extension for the blessing.
- * @param {...Caveat} caveats an array of Cavaeats to restrict the blessing.
- * @param {function} cb an optional callback that will return the blessing
+ * @param {...module:vanadium.security.Caveat} caveats an array of Cavaeats to
+ * restrict the blessing.
+ * @param {Blessings~cb} cb an optional callback that will return the blessing
  * @return {Promise} a promise that will be resolved with the blessing
  */
 Principal.prototype.bless = function(ctx, publicKey, blessings,
@@ -82,9 +92,10 @@ Principal.prototype.bless = function(ctx, publicKey, blessings,
 /**
  * BlessSelf creates a blessing with the provided name for this principal.
  * @param {module:vanadium.context.Context} ctx The context
- * @param {String} name the name for the blessing.
- * @param {...Caveat} caveats an array of Cavaeats to restrict the blessing.
- * @param {function} cb an optional callback that will return the blessing
+ * @param {string} name the name for the blessing.
+ * @param {...module:vanadium.security.Caveat} caveats an array of Cavaeats to
+ * restrict the blessing.
+ * @param {Blessings~cb} cb an optional callback that will return the blessing
  * @return {Promise} a promise that will be resolved with the blessing
  */
 Principal.prototype.blessSelf = function(ctx, name /*, ...caveats, cb*/) {
@@ -116,9 +127,9 @@ Principal.prototype.blessSelf = function(ctx, name /*, ...caveats, cb*/) {
 /**
  * Put to blessing store puts a blessing in the blessing store.
  * @param {module:vanadium.context.Context} ctx The context
- * @param {Blessings} blessings The blessings object
+ * @param {module:vanadium.security~Blessings} blessings The blessings object
  * @param {string} pattern The blessing match pattern.
- * @param {function} cb an optional callback that will return the blessing
+ * @param {Blessings~cb} cb an optional callback that will return the blessing
  * handle
  * @return {Promise} a promise that will be resolved with the blessing handle
  */

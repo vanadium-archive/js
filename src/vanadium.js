@@ -63,12 +63,20 @@ if (isBrowser) {
   module.exports.extension = require('./browser/extension-utils');
 }
 /**
+ * Callback passed into the {@link module:vanadium.init} that will be
+ * called when the initialization has finished.
+ * @callback init~cb
+ * @param {Error?} err If set, the error that occurred during
+ * {@link module:vanadium.init}
+ * @param {module:vandium~Runtime} rt The runtime that was constructed.
+ */
+/**
  * Creates a Vanadium [runtime]{@link module:vanadium~Runtime}.
  * @param {Object} config Configuration options
- * @param {function} [cb] If provided, the callback that will be called with an
+ * @param {init~cb} [cb] If provided, the callback that will be called with an
  * error or the new runtime
  * @return {Promise.<module:vanadium~Runtime>} A promise that resolves to the
- * new Runtime
+ * new Runtime.
  * @memberof module:vanadium
  */
 function init(config, cb) {

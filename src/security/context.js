@@ -11,11 +11,12 @@ module.exports = {
 
 /**
  * Returns the
- * [SecurityCall]{@link SecurityCall} from the
+ * [SecurityCall]{@link module:vanadium.security~SecurityCall} from the
  * [Context]{@link module:vanadium.context.Context}
- * @param {@link module:vanadium.context.Context} ctx The context
- * @return {@link SecurityCall} The security call on the context or
- * null if there is no security context
+ * @param {module:vanadium.context.Context} ctx The context
+ * @return {module:vanadium.security~SecurityCall} The security call on the
+ * context or null if there is no security context
+ * @memberof module:vanadium.security
  */
 function getSecurityCallFromContext(ctx) {
   return ctx.value(securityCallKey);

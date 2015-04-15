@@ -74,4 +74,8 @@ module.exports = extend(
   require('../gen-vdl/v.io/v23/security'),{
   access: require('./access'),
   getSecurityCallFromContext: require('./context').getSecurityCallFromContext,
+  createExpiryCaveat: require('./caveats').createExpiryCaveats,
+  createMethodCaveat: require('./caveats').createMethodCaveats,
+  unconstrainedUse: require('./caveats').unconstrainedUse,
+  createCaveat: require('./caveats').createCaveat,
 });

@@ -81,6 +81,23 @@
  * @memberof module:vanadium.security
  */
 /**
+ * @summary Caveat is a condition on the validity of a blessing/discharge.
+ * @description These conditions are provided when asking a principal to create
+ * a blessing/discharge and are verified when extracting blessings.
+ * @name Caveat
+ * @memberof module:vanadium.security
+ * @constructor
+ * @property {module:vanadium.uniqueId.Id} id The identifier of the caveat
+ * caveat validation function
+ * @property {uint8array} paramVom The vom encoded bytes of the parameters to
+ * be provided to the validation function.
+ * @param {object} o The json object to construct the caveat from.
+ * @param {module:vanadium.uniqueId.Id} o.id The identifier of the caveat
+ * caveat validation function
+ * @param {uint8array} o.paramVom The vom encoded bytes of the parameters to
+ * be provided to the validation function.
+ */
+/**
  * PeerBlessingsCaveat represents a caveat that validates iff the peer being
  * communicated with (local end of the call) has a blessing name matching at
  * least one of the patterns in the list. An empty list implies that the caveat
@@ -230,10 +247,10 @@
  * rpc.
  * @param {module:vanadium.security.Authorize~callback} cb The callback to
  * call with the result if the rpc is asynchronous.  This can be ignored
- * if the Authorizer returns a promise or the result.
- * @return {Promise|Error} Either an error that occurred (or null if there was
- * no error) or a Promise that will be resolved if the authorization succeeded
- * and rejected if it failed.
+ * if the Authorizer returns a promise.
+ * @return {Promise} A Promise that will be resolved if the authorization
+ * succeeded and rejected if it failed.  If no promise is returned, then
+ * the callback must be called.
  * @memberof module:vanadium.security
  */
 /**

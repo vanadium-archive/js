@@ -20,12 +20,15 @@ var asyncCall = require('../lib/async-call');
 module.exports = CaveatValidatorRegistry;
 
 /**
- * CaveatValidatorRegistry is a registry for caveats.
+ * @summary CaveatValidatorRegistry is a registry for caveats.
+ * @description
  * It enables registration of caveat validation functions and provides
  * provides functionality to perform validation given UUIDs. This constructor
  * should not be invoked directly, but rather the
  * [singleton]{@link Runtime.caveatRegistry} on {@link Runtime} should be used.
  * @constructor
+ * @inner
+ * @memberof module:vanadium.security
  */
 function CaveatValidatorRegistry() {
   this.validators = new Map();
@@ -49,7 +52,7 @@ CaveatValidatorRegistry.prototype._makeKey = function(bytes) {
  * @param {module:vanadium.context.Context} ctx The context of the call.
  * @memberof module:vanadium.security
  * @param {*} param Validation-function specific parameter.
- * @throws Error Upon failure to validate, does not throw if successful.
+ * @throws Error upon failure to validate, does not throw if successful.
  */
 
 /**
@@ -57,7 +60,8 @@ CaveatValidatorRegistry.prototype._makeKey = function(bytes) {
  * @param {module:vanadium.security.CaveatDescriptor} cavDesc The caveat
  * description.
  * See security/types.vdl
- * @param {CaveatValidationFunction} validateFn The validation function.
+ * @param {module:vanadium.security.CaveatValidationFunction} validateFn
+ * The validation function.
  * e.g. function validateCaveatA(param) { ...
  */
 CaveatValidatorRegistry.prototype.register = function(cavDesc, validateFn) {

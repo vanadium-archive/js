@@ -60,8 +60,8 @@ test('createConstCaveat', function(t) {
   t.end();
 });
 
-test('unconstrainedUseCaveat', function(t) {
-  var unCon = caveats.unconstrainedUseCaveat;
+test('createUnconstrainedUseCaveat', function(t) {
+  var unCon = caveats.unconstrainedUse;
   t.deepEqual(unCon.id, vdlSecurity.ConstCaveat.id, 'Correct id');
   t.deepEqual(vom.decode(unCon.paramVom), {val: true}, 'Correct data');
   t.equal(unCon._type, (new vdlSecurity.Caveat())._type, 'Correct type');
