@@ -12,7 +12,10 @@ domready(function() {
     function() {
       sendCaveats(false);
     });
-  document.getElementById('header').innerText = params.origin;
+  var originElems = document.getElementsByClassName('origin');
+  for (var i = 0; i < originElems.length; i++) {
+    originElems[i].innerText = params.origin;
+  }
   // If the origin is not https, display a warning to the user.
   if (params.origin.indexOf('https') !== 0) {
     document.getElementById('warning').innerText = 'WARNING: ' + params.origin +
