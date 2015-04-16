@@ -8,6 +8,7 @@ import (
 	"fmt"
 
 	"v.io/v23"
+	"v.io/v23/context"
 	"v.io/v23/rpc"
 	"v.io/v23/security"
 	"v.io/v23/vdl"
@@ -27,9 +28,7 @@ func NewInvokeMethodWithCaveatedIdentityServer() test_service.InvokeMethodWithCa
 // Invoke is a method on the InvokeMethodWithCaveatedIdentity service that
 // invokes "AMethod" on the service with the provided name with an identity
 // blessed with a caveat with the provided CaveatDescriptor.
-func (i *invokeMethWCavIdImpl) Invoke(call rpc.ServerCall, name string, cavDesc security.CaveatDescriptor, cavParam *vdl.Value) error {
-	ctx := call.Context()
-
+func (i *invokeMethWCavIdImpl) Invoke(ctx *context.T, _ rpc.ServerCall, name string, cavDesc security.CaveatDescriptor, cavParam *vdl.Value) error {
 	bytes, err := vom.Encode(cavParam)
 	if err != nil {
 		return err

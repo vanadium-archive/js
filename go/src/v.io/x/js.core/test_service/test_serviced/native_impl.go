@@ -7,6 +7,7 @@ package main
 import (
 	"time"
 
+	"v.io/v23/context"
 	"v.io/v23/rpc"
 	"v.io/x/js.core/test_service"
 )
@@ -17,10 +18,10 @@ func NewNativeTest() test_service.NativeTestServerMethods {
 
 type nativeTest struct{}
 
-func (*nativeTest) PassTime(_ rpc.ServerCall, t time.Time) (time.Time, error) {
+func (*nativeTest) PassTime(_ *context.T, _ rpc.ServerCall, t time.Time) (time.Time, error) {
 	return t, nil
 }
 
-func (*nativeTest) PassError(_ rpc.ServerCall, e error) error {
+func (*nativeTest) PassError(_ *context.T, _ rpc.ServerCall, e error) error {
 	return e
 }

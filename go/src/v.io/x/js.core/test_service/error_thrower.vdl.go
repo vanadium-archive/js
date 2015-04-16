@@ -119,27 +119,27 @@ func (c implErrorThrowerClientStub) ListAllBuiltInErrorIds(ctx *context.T, opts 
 // A testing interface with methods that throw various types of errors
 type ErrorThrowerServerMethods interface {
 	// Throws v23/vError.Aborted error
-	ThrowAborted(rpc.ServerCall) error
+	ThrowAborted(*context.T, rpc.ServerCall) error
 	// Throws v23/vError.BadArg error
-	ThrowBadArg(rpc.ServerCall) error
+	ThrowBadArg(*context.T, rpc.ServerCall) error
 	// Throws v23/vError.BadProtocol error
-	ThrowBadProtocol(rpc.ServerCall) error
+	ThrowBadProtocol(*context.T, rpc.ServerCall) error
 	// Throws v23/vError.Internal error
-	ThrowInternal(rpc.ServerCall) error
+	ThrowInternal(*context.T, rpc.ServerCall) error
 	// Throws v23/vError.NoAccess error
-	ThrowNoAccess(rpc.ServerCall) error
+	ThrowNoAccess(*context.T, rpc.ServerCall) error
 	// Throws v23/vError.NoExist error
-	ThrowNoExist(rpc.ServerCall) error
+	ThrowNoExist(*context.T, rpc.ServerCall) error
 	// Throws v23/vError.NoExistOrNoAccess error
-	ThrowNoExistOrNoAccess(rpc.ServerCall) error
+	ThrowNoExistOrNoAccess(*context.T, rpc.ServerCall) error
 	// Throws v23/vError.Unknown error
-	ThrowUnknown(rpc.ServerCall) error
+	ThrowUnknown(*context.T, rpc.ServerCall) error
 	// Throws normal Go error
-	ThrowGoError(rpc.ServerCall) error
+	ThrowGoError(*context.T, rpc.ServerCall) error
 	// Throws custom error created by using Standard
-	ThrowCustomStandardError(rpc.ServerCall) error
+	ThrowCustomStandardError(*context.T, rpc.ServerCall) error
 	// Lists all errors Ids available in v23/verror
-	ListAllBuiltInErrorIds(rpc.ServerCall) ([]string, error)
+	ListAllBuiltInErrorIds(*context.T, rpc.ServerCall) ([]string, error)
 }
 
 // ErrorThrowerServerStubMethods is the server interface containing
@@ -177,48 +177,48 @@ type implErrorThrowerServerStub struct {
 	gs   *rpc.GlobState
 }
 
-func (s implErrorThrowerServerStub) ThrowAborted(call rpc.ServerCall) error {
-	return s.impl.ThrowAborted(call)
+func (s implErrorThrowerServerStub) ThrowAborted(ctx *context.T, call rpc.ServerCall) error {
+	return s.impl.ThrowAborted(ctx, call)
 }
 
-func (s implErrorThrowerServerStub) ThrowBadArg(call rpc.ServerCall) error {
-	return s.impl.ThrowBadArg(call)
+func (s implErrorThrowerServerStub) ThrowBadArg(ctx *context.T, call rpc.ServerCall) error {
+	return s.impl.ThrowBadArg(ctx, call)
 }
 
-func (s implErrorThrowerServerStub) ThrowBadProtocol(call rpc.ServerCall) error {
-	return s.impl.ThrowBadProtocol(call)
+func (s implErrorThrowerServerStub) ThrowBadProtocol(ctx *context.T, call rpc.ServerCall) error {
+	return s.impl.ThrowBadProtocol(ctx, call)
 }
 
-func (s implErrorThrowerServerStub) ThrowInternal(call rpc.ServerCall) error {
-	return s.impl.ThrowInternal(call)
+func (s implErrorThrowerServerStub) ThrowInternal(ctx *context.T, call rpc.ServerCall) error {
+	return s.impl.ThrowInternal(ctx, call)
 }
 
-func (s implErrorThrowerServerStub) ThrowNoAccess(call rpc.ServerCall) error {
-	return s.impl.ThrowNoAccess(call)
+func (s implErrorThrowerServerStub) ThrowNoAccess(ctx *context.T, call rpc.ServerCall) error {
+	return s.impl.ThrowNoAccess(ctx, call)
 }
 
-func (s implErrorThrowerServerStub) ThrowNoExist(call rpc.ServerCall) error {
-	return s.impl.ThrowNoExist(call)
+func (s implErrorThrowerServerStub) ThrowNoExist(ctx *context.T, call rpc.ServerCall) error {
+	return s.impl.ThrowNoExist(ctx, call)
 }
 
-func (s implErrorThrowerServerStub) ThrowNoExistOrNoAccess(call rpc.ServerCall) error {
-	return s.impl.ThrowNoExistOrNoAccess(call)
+func (s implErrorThrowerServerStub) ThrowNoExistOrNoAccess(ctx *context.T, call rpc.ServerCall) error {
+	return s.impl.ThrowNoExistOrNoAccess(ctx, call)
 }
 
-func (s implErrorThrowerServerStub) ThrowUnknown(call rpc.ServerCall) error {
-	return s.impl.ThrowUnknown(call)
+func (s implErrorThrowerServerStub) ThrowUnknown(ctx *context.T, call rpc.ServerCall) error {
+	return s.impl.ThrowUnknown(ctx, call)
 }
 
-func (s implErrorThrowerServerStub) ThrowGoError(call rpc.ServerCall) error {
-	return s.impl.ThrowGoError(call)
+func (s implErrorThrowerServerStub) ThrowGoError(ctx *context.T, call rpc.ServerCall) error {
+	return s.impl.ThrowGoError(ctx, call)
 }
 
-func (s implErrorThrowerServerStub) ThrowCustomStandardError(call rpc.ServerCall) error {
-	return s.impl.ThrowCustomStandardError(call)
+func (s implErrorThrowerServerStub) ThrowCustomStandardError(ctx *context.T, call rpc.ServerCall) error {
+	return s.impl.ThrowCustomStandardError(ctx, call)
 }
 
-func (s implErrorThrowerServerStub) ListAllBuiltInErrorIds(call rpc.ServerCall) ([]string, error) {
-	return s.impl.ListAllBuiltInErrorIds(call)
+func (s implErrorThrowerServerStub) ListAllBuiltInErrorIds(ctx *context.T, call rpc.ServerCall) ([]string, error) {
+	return s.impl.ListAllBuiltInErrorIds(ctx, call)
 }
 
 func (s implErrorThrowerServerStub) Globber() *rpc.GlobState {

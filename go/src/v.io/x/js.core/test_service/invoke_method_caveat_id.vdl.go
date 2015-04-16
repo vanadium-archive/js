@@ -84,7 +84,7 @@ func (c implInvokableTestMethodClientStub) AMethod(ctx *context.T, opts ...rpc.C
 // InvokableTestMethodServerMethods is the interface a server writer
 // implements for InvokableTestMethod.
 type InvokableTestMethodServerMethods interface {
-	AMethod(rpc.ServerCall) (string, error)
+	AMethod(*context.T, rpc.ServerCall) (string, error)
 }
 
 // InvokableTestMethodServerStubMethods is the server interface containing
@@ -122,8 +122,8 @@ type implInvokableTestMethodServerStub struct {
 	gs   *rpc.GlobState
 }
 
-func (s implInvokableTestMethodServerStub) AMethod(call rpc.ServerCall) (string, error) {
-	return s.impl.AMethod(call)
+func (s implInvokableTestMethodServerStub) AMethod(ctx *context.T, call rpc.ServerCall) (string, error) {
+	return s.impl.AMethod(ctx, call)
 }
 
 func (s implInvokableTestMethodServerStub) Globber() *rpc.GlobState {
@@ -180,7 +180,7 @@ func (c implInvokeMethodWithCaveatedIdentityClientStub) Invoke(ctx *context.T, i
 // InvokeMethodWithCaveatedIdentityServerMethods is the interface a server writer
 // implements for InvokeMethodWithCaveatedIdentity.
 type InvokeMethodWithCaveatedIdentityServerMethods interface {
-	Invoke(call rpc.ServerCall, name string, cavDesc security.CaveatDescriptor, cavParam *vdl.Value) error
+	Invoke(ctx *context.T, call rpc.ServerCall, name string, cavDesc security.CaveatDescriptor, cavParam *vdl.Value) error
 }
 
 // InvokeMethodWithCaveatedIdentityServerStubMethods is the server interface containing
@@ -218,8 +218,8 @@ type implInvokeMethodWithCaveatedIdentityServerStub struct {
 	gs   *rpc.GlobState
 }
 
-func (s implInvokeMethodWithCaveatedIdentityServerStub) Invoke(call rpc.ServerCall, i0 string, i1 security.CaveatDescriptor, i2 *vdl.Value) error {
-	return s.impl.Invoke(call, i0, i1, i2)
+func (s implInvokeMethodWithCaveatedIdentityServerStub) Invoke(ctx *context.T, call rpc.ServerCall, i0 string, i1 security.CaveatDescriptor, i2 *vdl.Value) error {
+	return s.impl.Invoke(ctx, call, i0, i1, i2)
 }
 
 func (s implInvokeMethodWithCaveatedIdentityServerStub) Globber() *rpc.GlobState {

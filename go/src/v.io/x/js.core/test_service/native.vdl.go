@@ -53,8 +53,8 @@ func (c implNativeTestClientStub) PassError(ctx *context.T, i0 error, opts ...rp
 // NativeTestServerMethods is the interface a server writer
 // implements for NativeTest.
 type NativeTestServerMethods interface {
-	PassTime(call rpc.ServerCall, t time.Time) (time.Time, error)
-	PassError(call rpc.ServerCall, e error) error
+	PassTime(ctx *context.T, call rpc.ServerCall, t time.Time) (time.Time, error)
+	PassError(ctx *context.T, call rpc.ServerCall, e error) error
 }
 
 // NativeTestServerStubMethods is the server interface containing
@@ -92,12 +92,12 @@ type implNativeTestServerStub struct {
 	gs   *rpc.GlobState
 }
 
-func (s implNativeTestServerStub) PassTime(call rpc.ServerCall, i0 time.Time) (time.Time, error) {
-	return s.impl.PassTime(call, i0)
+func (s implNativeTestServerStub) PassTime(ctx *context.T, call rpc.ServerCall, i0 time.Time) (time.Time, error) {
+	return s.impl.PassTime(ctx, call, i0)
 }
 
-func (s implNativeTestServerStub) PassError(call rpc.ServerCall, i0 error) error {
-	return s.impl.PassError(call, i0)
+func (s implNativeTestServerStub) PassError(ctx *context.T, call rpc.ServerCall, i0 error) error {
+	return s.impl.PassError(ctx, call, i0)
 }
 
 func (s implNativeTestServerStub) Globber() *rpc.GlobState {

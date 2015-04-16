@@ -305,45 +305,45 @@ func (c *implCacheMultiGetClientCall) Finish() (err error) {
 // A Cache service mimics the memcache interface.
 type CacheServerMethods interface {
 	// Set sets a value for a key.
-	Set(call rpc.ServerCall, key string, value *vdl.Value) error
+	Set(ctx *context.T, call rpc.ServerCall, key string, value *vdl.Value) error
 	// Get returns the value for a key.  If the value is not found, returns
 	// a not found error.
-	Get(call rpc.ServerCall, key string) (*vdl.Value, error)
+	Get(ctx *context.T, call rpc.ServerCall, key string) (*vdl.Value, error)
 	// Same as Get, but casts the return argument to an byte.
-	GetAsByte(call rpc.ServerCall, key string) (byte, error)
+	GetAsByte(ctx *context.T, call rpc.ServerCall, key string) (byte, error)
 	// Same as Get, but casts the return argument to an int32.
-	GetAsInt32(call rpc.ServerCall, key string) (int32, error)
+	GetAsInt32(ctx *context.T, call rpc.ServerCall, key string) (int32, error)
 	// Same as Get, but casts the return argument to an int64.
-	GetAsInt64(call rpc.ServerCall, key string) (int64, error)
+	GetAsInt64(ctx *context.T, call rpc.ServerCall, key string) (int64, error)
 	// Same as Get, but casts the return argument to an uint32.
-	GetAsUint32(call rpc.ServerCall, key string) (uint32, error)
+	GetAsUint32(ctx *context.T, call rpc.ServerCall, key string) (uint32, error)
 	// Same as Get, but casts the return argument to an uint64.
-	GetAsUint64(call rpc.ServerCall, key string) (uint64, error)
+	GetAsUint64(ctx *context.T, call rpc.ServerCall, key string) (uint64, error)
 	// Same as Get, but casts the return argument to an float32.
-	GetAsFloat32(call rpc.ServerCall, key string) (float32, error)
+	GetAsFloat32(ctx *context.T, call rpc.ServerCall, key string) (float32, error)
 	// Same as Get, but casts the return argument to an float64.
-	GetAsFloat64(call rpc.ServerCall, key string) (float64, error)
+	GetAsFloat64(ctx *context.T, call rpc.ServerCall, key string) (float64, error)
 	// Same as Get, but casts the return argument to a string.
-	GetAsString(call rpc.ServerCall, key string) (string, error)
+	GetAsString(ctx *context.T, call rpc.ServerCall, key string) (string, error)
 	// Same as Get, but casts the return argument to a bool.
-	GetAsBool(call rpc.ServerCall, key string) (bool, error)
+	GetAsBool(ctx *context.T, call rpc.ServerCall, key string) (bool, error)
 	// Same as Get, but casts the return argument to an error.
-	GetAsError(call rpc.ServerCall, key string) (error, error)
+	GetAsError(ctx *context.T, call rpc.ServerCall, key string) (error, error)
 	// AsMap returns the full contents of the cache as a map.
-	AsMap(rpc.ServerCall) (map[string]*vdl.Value, error)
+	AsMap(*context.T, rpc.ServerCall) (map[string]*vdl.Value, error)
 	// KeyValuePairs returns the full contents of the cache as a slice of pairs.
-	KeyValuePairs(rpc.ServerCall) ([]KeyValuePair, error)
+	KeyValuePairs(*context.T, rpc.ServerCall) ([]KeyValuePair, error)
 	// MostRecentSet returns the key and value and the timestamp for the most
 	// recent set operation
 	// TODO(bprosnitz) support type types and change time to native time type
-	MostRecentSet(rpc.ServerCall) (value KeyValuePair, time int64, err error)
+	MostRecentSet(*context.T, rpc.ServerCall) (value KeyValuePair, time int64, err error)
 	// KeyPage indexes into the keys (in alphanumerically sorted order) and
 	// returns the indexth page of 10 keys.
-	KeyPage(call rpc.ServerCall, index int64) (KeyPageResult, error)
+	KeyPage(ctx *context.T, call rpc.ServerCall, index int64) (KeyPageResult, error)
 	// Size returns the total number of entries in the cache.
-	Size(rpc.ServerCall) (int64, error)
+	Size(*context.T, rpc.ServerCall) (int64, error)
 	// MultiGet sets up a stream that allows fetching multiple keys.
-	MultiGet(CacheMultiGetServerCall) error
+	MultiGet(*context.T, CacheMultiGetServerCall) error
 }
 
 // CacheServerStubMethods is the server interface containing
@@ -352,45 +352,45 @@ type CacheServerMethods interface {
 // is the streaming methods.
 type CacheServerStubMethods interface {
 	// Set sets a value for a key.
-	Set(call rpc.ServerCall, key string, value *vdl.Value) error
+	Set(ctx *context.T, call rpc.ServerCall, key string, value *vdl.Value) error
 	// Get returns the value for a key.  If the value is not found, returns
 	// a not found error.
-	Get(call rpc.ServerCall, key string) (*vdl.Value, error)
+	Get(ctx *context.T, call rpc.ServerCall, key string) (*vdl.Value, error)
 	// Same as Get, but casts the return argument to an byte.
-	GetAsByte(call rpc.ServerCall, key string) (byte, error)
+	GetAsByte(ctx *context.T, call rpc.ServerCall, key string) (byte, error)
 	// Same as Get, but casts the return argument to an int32.
-	GetAsInt32(call rpc.ServerCall, key string) (int32, error)
+	GetAsInt32(ctx *context.T, call rpc.ServerCall, key string) (int32, error)
 	// Same as Get, but casts the return argument to an int64.
-	GetAsInt64(call rpc.ServerCall, key string) (int64, error)
+	GetAsInt64(ctx *context.T, call rpc.ServerCall, key string) (int64, error)
 	// Same as Get, but casts the return argument to an uint32.
-	GetAsUint32(call rpc.ServerCall, key string) (uint32, error)
+	GetAsUint32(ctx *context.T, call rpc.ServerCall, key string) (uint32, error)
 	// Same as Get, but casts the return argument to an uint64.
-	GetAsUint64(call rpc.ServerCall, key string) (uint64, error)
+	GetAsUint64(ctx *context.T, call rpc.ServerCall, key string) (uint64, error)
 	// Same as Get, but casts the return argument to an float32.
-	GetAsFloat32(call rpc.ServerCall, key string) (float32, error)
+	GetAsFloat32(ctx *context.T, call rpc.ServerCall, key string) (float32, error)
 	// Same as Get, but casts the return argument to an float64.
-	GetAsFloat64(call rpc.ServerCall, key string) (float64, error)
+	GetAsFloat64(ctx *context.T, call rpc.ServerCall, key string) (float64, error)
 	// Same as Get, but casts the return argument to a string.
-	GetAsString(call rpc.ServerCall, key string) (string, error)
+	GetAsString(ctx *context.T, call rpc.ServerCall, key string) (string, error)
 	// Same as Get, but casts the return argument to a bool.
-	GetAsBool(call rpc.ServerCall, key string) (bool, error)
+	GetAsBool(ctx *context.T, call rpc.ServerCall, key string) (bool, error)
 	// Same as Get, but casts the return argument to an error.
-	GetAsError(call rpc.ServerCall, key string) (error, error)
+	GetAsError(ctx *context.T, call rpc.ServerCall, key string) (error, error)
 	// AsMap returns the full contents of the cache as a map.
-	AsMap(rpc.ServerCall) (map[string]*vdl.Value, error)
+	AsMap(*context.T, rpc.ServerCall) (map[string]*vdl.Value, error)
 	// KeyValuePairs returns the full contents of the cache as a slice of pairs.
-	KeyValuePairs(rpc.ServerCall) ([]KeyValuePair, error)
+	KeyValuePairs(*context.T, rpc.ServerCall) ([]KeyValuePair, error)
 	// MostRecentSet returns the key and value and the timestamp for the most
 	// recent set operation
 	// TODO(bprosnitz) support type types and change time to native time type
-	MostRecentSet(rpc.ServerCall) (value KeyValuePair, time int64, err error)
+	MostRecentSet(*context.T, rpc.ServerCall) (value KeyValuePair, time int64, err error)
 	// KeyPage indexes into the keys (in alphanumerically sorted order) and
 	// returns the indexth page of 10 keys.
-	KeyPage(call rpc.ServerCall, index int64) (KeyPageResult, error)
+	KeyPage(ctx *context.T, call rpc.ServerCall, index int64) (KeyPageResult, error)
 	// Size returns the total number of entries in the cache.
-	Size(rpc.ServerCall) (int64, error)
+	Size(*context.T, rpc.ServerCall) (int64, error)
 	// MultiGet sets up a stream that allows fetching multiple keys.
-	MultiGet(*CacheMultiGetServerCallStub) error
+	MultiGet(*context.T, *CacheMultiGetServerCallStub) error
 }
 
 // CacheServerStub adds universal methods to CacheServerStubMethods.
@@ -422,76 +422,76 @@ type implCacheServerStub struct {
 	gs   *rpc.GlobState
 }
 
-func (s implCacheServerStub) Set(call rpc.ServerCall, i0 string, i1 *vdl.Value) error {
-	return s.impl.Set(call, i0, i1)
+func (s implCacheServerStub) Set(ctx *context.T, call rpc.ServerCall, i0 string, i1 *vdl.Value) error {
+	return s.impl.Set(ctx, call, i0, i1)
 }
 
-func (s implCacheServerStub) Get(call rpc.ServerCall, i0 string) (*vdl.Value, error) {
-	return s.impl.Get(call, i0)
+func (s implCacheServerStub) Get(ctx *context.T, call rpc.ServerCall, i0 string) (*vdl.Value, error) {
+	return s.impl.Get(ctx, call, i0)
 }
 
-func (s implCacheServerStub) GetAsByte(call rpc.ServerCall, i0 string) (byte, error) {
-	return s.impl.GetAsByte(call, i0)
+func (s implCacheServerStub) GetAsByte(ctx *context.T, call rpc.ServerCall, i0 string) (byte, error) {
+	return s.impl.GetAsByte(ctx, call, i0)
 }
 
-func (s implCacheServerStub) GetAsInt32(call rpc.ServerCall, i0 string) (int32, error) {
-	return s.impl.GetAsInt32(call, i0)
+func (s implCacheServerStub) GetAsInt32(ctx *context.T, call rpc.ServerCall, i0 string) (int32, error) {
+	return s.impl.GetAsInt32(ctx, call, i0)
 }
 
-func (s implCacheServerStub) GetAsInt64(call rpc.ServerCall, i0 string) (int64, error) {
-	return s.impl.GetAsInt64(call, i0)
+func (s implCacheServerStub) GetAsInt64(ctx *context.T, call rpc.ServerCall, i0 string) (int64, error) {
+	return s.impl.GetAsInt64(ctx, call, i0)
 }
 
-func (s implCacheServerStub) GetAsUint32(call rpc.ServerCall, i0 string) (uint32, error) {
-	return s.impl.GetAsUint32(call, i0)
+func (s implCacheServerStub) GetAsUint32(ctx *context.T, call rpc.ServerCall, i0 string) (uint32, error) {
+	return s.impl.GetAsUint32(ctx, call, i0)
 }
 
-func (s implCacheServerStub) GetAsUint64(call rpc.ServerCall, i0 string) (uint64, error) {
-	return s.impl.GetAsUint64(call, i0)
+func (s implCacheServerStub) GetAsUint64(ctx *context.T, call rpc.ServerCall, i0 string) (uint64, error) {
+	return s.impl.GetAsUint64(ctx, call, i0)
 }
 
-func (s implCacheServerStub) GetAsFloat32(call rpc.ServerCall, i0 string) (float32, error) {
-	return s.impl.GetAsFloat32(call, i0)
+func (s implCacheServerStub) GetAsFloat32(ctx *context.T, call rpc.ServerCall, i0 string) (float32, error) {
+	return s.impl.GetAsFloat32(ctx, call, i0)
 }
 
-func (s implCacheServerStub) GetAsFloat64(call rpc.ServerCall, i0 string) (float64, error) {
-	return s.impl.GetAsFloat64(call, i0)
+func (s implCacheServerStub) GetAsFloat64(ctx *context.T, call rpc.ServerCall, i0 string) (float64, error) {
+	return s.impl.GetAsFloat64(ctx, call, i0)
 }
 
-func (s implCacheServerStub) GetAsString(call rpc.ServerCall, i0 string) (string, error) {
-	return s.impl.GetAsString(call, i0)
+func (s implCacheServerStub) GetAsString(ctx *context.T, call rpc.ServerCall, i0 string) (string, error) {
+	return s.impl.GetAsString(ctx, call, i0)
 }
 
-func (s implCacheServerStub) GetAsBool(call rpc.ServerCall, i0 string) (bool, error) {
-	return s.impl.GetAsBool(call, i0)
+func (s implCacheServerStub) GetAsBool(ctx *context.T, call rpc.ServerCall, i0 string) (bool, error) {
+	return s.impl.GetAsBool(ctx, call, i0)
 }
 
-func (s implCacheServerStub) GetAsError(call rpc.ServerCall, i0 string) (error, error) {
-	return s.impl.GetAsError(call, i0)
+func (s implCacheServerStub) GetAsError(ctx *context.T, call rpc.ServerCall, i0 string) (error, error) {
+	return s.impl.GetAsError(ctx, call, i0)
 }
 
-func (s implCacheServerStub) AsMap(call rpc.ServerCall) (map[string]*vdl.Value, error) {
-	return s.impl.AsMap(call)
+func (s implCacheServerStub) AsMap(ctx *context.T, call rpc.ServerCall) (map[string]*vdl.Value, error) {
+	return s.impl.AsMap(ctx, call)
 }
 
-func (s implCacheServerStub) KeyValuePairs(call rpc.ServerCall) ([]KeyValuePair, error) {
-	return s.impl.KeyValuePairs(call)
+func (s implCacheServerStub) KeyValuePairs(ctx *context.T, call rpc.ServerCall) ([]KeyValuePair, error) {
+	return s.impl.KeyValuePairs(ctx, call)
 }
 
-func (s implCacheServerStub) MostRecentSet(call rpc.ServerCall) (KeyValuePair, int64, error) {
-	return s.impl.MostRecentSet(call)
+func (s implCacheServerStub) MostRecentSet(ctx *context.T, call rpc.ServerCall) (KeyValuePair, int64, error) {
+	return s.impl.MostRecentSet(ctx, call)
 }
 
-func (s implCacheServerStub) KeyPage(call rpc.ServerCall, i0 int64) (KeyPageResult, error) {
-	return s.impl.KeyPage(call, i0)
+func (s implCacheServerStub) KeyPage(ctx *context.T, call rpc.ServerCall, i0 int64) (KeyPageResult, error) {
+	return s.impl.KeyPage(ctx, call, i0)
 }
 
-func (s implCacheServerStub) Size(call rpc.ServerCall) (int64, error) {
-	return s.impl.Size(call)
+func (s implCacheServerStub) Size(ctx *context.T, call rpc.ServerCall) (int64, error) {
+	return s.impl.Size(ctx, call)
 }
 
-func (s implCacheServerStub) MultiGet(call *CacheMultiGetServerCallStub) error {
-	return s.impl.MultiGet(call)
+func (s implCacheServerStub) MultiGet(ctx *context.T, call *CacheMultiGetServerCallStub) error {
+	return s.impl.MultiGet(ctx, call)
 }
 
 func (s implCacheServerStub) Globber() *rpc.GlobState {
