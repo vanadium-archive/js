@@ -4,6 +4,7 @@
 
 var extend = require('xtend');
 var isBrowser = require('is-browser');
+var parallel = require('run-parallel');
 var test = require('prova');
 
 var config = require('./default-config');
@@ -29,6 +30,37 @@ test('Test vanadium.init({authenticate: true}) gives runtime with account name',
     t.ok(rt.accountName, 'runtime has accountName property');
     t.ok(typeof rt.accountName === 'string', 'rt.accountName is string');
     t.ok(rt.accountName.length > 0, 'rt.accountName has length > 0');
+    t.end();
+  });
+});
+
+test('Test vanadium.init({authenticate: true}) twice gives two runtimes',
+    function(t) {
+
+  if (!isBrowser) {
+    return t.end();
+  }
+
+  var c = extend({authenticate: true}, config);
+
+  function vanadiumInit(cb) {
+    vanadium.init(c, cb);
+  }
+
+  parallel([vanadiumInit, vanadiumInit], function(err, runtimes) {
+    if (err) {
+      t.error(err);
+      t.end();
+      return;
+    }
+
+    runtimes.forEach(function(rt) {
+      t.ok(rt, 'runtime exists');
+      t.ok(rt.accountName, 'runtime has accountName property');
+      t.ok(typeof rt.accountName === 'string', 'rt.accountName is string');
+      t.ok(rt.accountName.length > 0, 'rt.accountName has length > 0');
+    });
+
     t.end();
   });
 });

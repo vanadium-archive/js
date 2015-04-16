@@ -101,6 +101,16 @@ AuthHandler.prototype.associateAccount =
 
 // Pop up a new tab asking the user to chose their caveats.
 AuthHandler.prototype.getCaveats = function(account, origin, port) {
+  var tabId = port.sender.tab.id;
+  if (this._ports[tabId]) {
+    // Authorization is already in progress. Do nothing.
+    console.log('Authorization is already in progress for tab: ' + tabId);
+    return;
+  }
+
+  // Store the port by its tab id.
+  this._ports[tabId] = port;
+
   // Store the account name and a random salt on the port.
   port.account = account;
   port.authState = random.hex();
@@ -128,8 +138,6 @@ AuthHandler.prototype.handleAuthMessage = function(port) {
   port.postMessage({
     type: 'auth:received'
   });
-
-  this._ports[port.sender.tab.id] = port;
 
   var origin;
   try {
