@@ -218,23 +218,33 @@ AuthHandler.prototype.handleFinishAuth = function(caveatsPort, msg) {
   var webappPort = this._ports[msg.webappId];
   delete this._ports[msg.webappId];
 
-  if (msg.cancel) {
-    return sendErrorToContentScript('auth', webappPort,
-        new Error('User declined to bless origin.'));
-  }
-
-  if (!webappPort || msg.authState !== webappPort.authState) {
-    return console.error('Port not authorized.');
-  }
-
-  if (!webappPort.account) {
-    return sendErrorToContentScript('auth', webappPort,
-        new Error('No port.account.'));
+  if (!webappPort) {
+    return console.error('No webapp port found.');
   }
 
   // Switch back to the last active tab.
   if (webappPort.currentTabId) {
     chrome.tabs.update(webappPort.currentTabId, {active: true});
+  }
+
+  if (msg.cancel) {
+    return sendErrorToContentScript('auth', webappPort,
+        new Error('User declined to bless origin.'));
+  }
+
+  if (msg.origin !== getOrigin(webappPort.sender.url)) {
+    return sendErrorToContentScript('auth', webappPort,
+        new Error('Invalid origin.'));
+  }
+
+  if (msg.authState !== webappPort.authState) {
+    return sendErrorToContentScript('auth', webappPort,
+        new Error('Port not authorized.'));
+  }
+
+  if (!webappPort.account) {
+    return sendErrorToContentScript('auth', webappPort,
+        new Error('No port.account.'));
   }
 
   if (!msg.caveats || msg.caveats.length === 0) {
