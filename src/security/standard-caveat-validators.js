@@ -29,8 +29,8 @@ function constCaveatValidator(ctx, value, cb) {
 }
 
 function expiryCaveatValidator(ctx, expiry, cb) {
-  var now = Date.now();
-  if (now > expiry.getTime()) {
+  var now = new Date();
+  if (now.getTime() > expiry.getTime()) {
     return cb(new vdlSecurity.ExpiryCaveatValidationError(ctx,
       now, expiry));
   }
