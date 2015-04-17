@@ -20,7 +20,7 @@ import (
 // openAuthorizer allows RPCs from all clients.
 type openAuthorizer struct{}
 
-func (openAuthorizer) Authorize(*context.T) error {
+func (openAuthorizer) Authorize(*context.T, security.Call) error {
 	return nil
 }
 
