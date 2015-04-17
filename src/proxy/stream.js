@@ -27,6 +27,8 @@ var ServerRpcReply =
  * the stream will be fulfilled.  If there is an error, then the stream will be
  * rejected.  This constructor should not be directly called.
  * @constructor
+ * @inner
+ * @memberof module:vanadium.rpc
  */
 var Stream = function(flowId, webSocketPromise, isClient, readType, writeType) {
   Duplex.call(this, { objectMode: true });

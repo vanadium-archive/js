@@ -12,8 +12,9 @@ require('./es6-shim');
  * The Registry maps types to corresponding constructors.
  * These constructors convert a given value to a a vom-typed object.
  * There is no support for removing added constructors.<br>
- *
  * @constructor
+ * @inner
+ * @memberof module:vanadium.vdl
  */
 function Registry() {
   this._builtinTypes = this._getBuiltinTypes();

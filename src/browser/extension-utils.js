@@ -2,6 +2,15 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
+/**
+ * @summary Namespace extenstion defines Chrome extension related exports.
+ * @description Namespace extenstion defines Chrome extension related exports.
+ * This is only available in browser environment and will not exist in NodeJS.
+ * @namespace
+ * @name extension
+ * @memberof module:vanadium
+ */
+
 var domready = require('domready');
 var extend = require('xtend');
 

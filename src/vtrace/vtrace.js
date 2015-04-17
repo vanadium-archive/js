@@ -49,6 +49,7 @@ function key(id) {
  * @param {Object} trace A uniqueid.Id instance identifying the trace.
  * @param {Object} parent A uniqueid.Id instance identifying this Spans parent.
  * @memberof module:vanadium.vtrace
+ * @inner
  */
 function Span(name, store, trace, parent) {
   if (!(this instanceof Span)) {
@@ -114,7 +115,6 @@ Node.prototype.record = function() {
   return record;
 };
 
-// TODO(mattr): Support filtering.  Right now this store records everything.
 /**
  * @summary Store collects the information of interesting traces in memory.
  * @description
@@ -122,6 +122,8 @@ Node.prototype.record = function() {
  * A vtrace Store.
  * A Store is responsible for saving traces for later reporting and analysis.
  * @constructor
+ * @inner
+ * @memberof module:vanadium.vtrace
  */
 function Store() {
   if (!(this instanceof Store)) {
@@ -132,6 +134,12 @@ function Store() {
   this._nodes = {};
 }
 
+/**
+ * Filters the information collected by the Store
+ * @param {string} regexp The regular expression that must
+ * be matched by the span name in order for that span to be
+ * collected
+ */
 Store.prototype.setCollectRegexp = function(regexp) {
   this._collectRegexp = new RegExp(regexp);
 };
@@ -161,7 +169,8 @@ Store.prototype.traceRecords = function() {
 };
 
 /**
- * Returns a vtrace.TraceRecord for the given trace id.
+ * Returns a [TraceRecord]{@link module:vanadium.vtrace.TraceRecord} for
+ * the given trace id.
  * @param {module:vanadium.uniqueId.Id} id A uniqueid.Id instance.
  * @return {module:vanadium.vtrace.TraceRecord} a vtrace.TraceRecord instance.
  */
@@ -255,7 +264,8 @@ Store.prototype._now = function() {
 /**
  * Merges a response into the store, adding information on the
  * Span in contains into the local database.
- * @param {Response} response A {@link Response} instance.
+ * @param {module:vanadium.vtraceResponse} response A
+ * [Response]{@link module.vanadium.vtraceResponse} instance.
  */
 Store.prototype.merge = function(response) {
   if (!uniqueid.valid(response.trace.id)) {
@@ -274,9 +284,10 @@ Store.prototype.merge = function(response) {
 };
 
 /**
- * Creates a new Span that represents the beginning of a new trace
- * and attaches it to a new context derived from ctx.  This should be used
- * when starting operations unrelated to other ongoing traces.
+ * Creates a new [Span]{@link module:vanadium.vtrace~Span} that represents
+ * the beginning of a new trace and attaches it to a new context derived from
+ * ctx.  This should be used when starting operations unrelated to other
+ * ongoing traces.
  * @param {module:vanadium.context.Context} ctx A context.Context instance
  * to derive a new context from.
  * @return {module:vanadium.context.Context} A new context with a new Span
@@ -288,12 +299,14 @@ function withNewTrace(ctx) {
 }
 
 /**
- * Creates a new Span that continues a trace represented in request.
- * The new Span will be attached to the returned context.
+ * Creates a new [Span]{@link module:vanadium.vtrace~Span} that continues
+ * a trace represented in request. The new Span will be attached to the
+ * returned context.
  * @param {module:vanadium.context.Context} ctx A context.Context instance to
  * derive a new context from.
  * @param {string} name The name of the new Span.
- * @param {Request} request A [Request] instance.
+ * @param {module:vanadium.vtrace~Request} request A
+ * [Request]{@link module:vanadium.vtrace~Request} instance.
  * @return {module:vanadium.context.Context} A new context with a new Span
  * attached.
  * @memberof module:vanadium.vtrace
@@ -308,7 +321,8 @@ function withContinuedTrace(ctx, name, request) {
 }
 
 /**
- * Creates a new Span that continues the trace attached to ctx.
+ * Creates a new [Span]{@link module:vanadium.vtrace~Span} that continues
+ * the trace attached to ctx.
  * @param {module:vanadium.context.Context} ctx A context.Context instance to
  * derive a new context from.
  * @param {string} name The name of the new Span.
@@ -324,7 +338,7 @@ function withNewSpan(ctx, name) {
 }
 
 /**
- * Return the Span attached to ctx.
+ * Return the [Span]{@link module:vanadium.vtrace~Span} attached to ctx.
  * @param {module:vanadium.context.Context} ctx A context.Context instance.
  * @return {module:vanadium.vtrace.SpanRecord} A Span instance.
  * @memberof module:vanadium.vtrace
@@ -334,8 +348,8 @@ function getSpan(ctx) {
 }
 
 /**
- * Creates a new Store and returns a new context derived from ctx with the
- * store attached.
+ * Creates a new [Store]{@link module:vanadium.vtrace~Store} and returns
+ * a new context derived from ctx with the store attached.
  * @param {module:vanadium.context.Context} ctx A context.Context instance to
  * derive a new context from.
  * @return {module:vanadium.context.Context} A new context with a new Store
@@ -350,7 +364,7 @@ function withNewStore(ctx) {
 /**
  * Return the Store attached to ctx.
  * @param {module:vanadium.context.Context} ctx A context.Context instance.
- * @return {Store} A {@link Store} instance.
+ * @return {module:vanadium.vtrace~Store} A {@link Store} instance.
  * @memberof module:vanadium.vtrace
  */
 function getStore(ctx) {
@@ -369,9 +383,11 @@ function forceCollect(ctx) {
 }
 
 /**
- * Generate a {@link Request} to send over the wire.
+ * Generate a [Request]{@link module:vanadium.vtrace~Request} to send over
+ * the wire.
  * @param {module:vanadium.context.Context} ctx A context.Context instance.
- * @return {Request} a {@link Request} instance.
+ * @return {module:vanadium.vtrace.Request} a
+ * [Request]{@link module:vanadium.vtrace~Request} instance.
  * @memberof module:vanadium.vtrace
  */
 function request(ctx) {
@@ -385,9 +401,11 @@ function request(ctx) {
 }
 
 /**
- * Generate a {@link Response} to send over the wire.
+ * Generate a [Response]{@link module:vanadium.vtraceResponse} to send over the
+ * wire.
  * @param {module:vanadium.context.Context} ctx A context.Context instance.
- * @return {Response} a {@link Response} response instance.
+ * @return {module:vanadium.vtraceResponse} A
+ * [Response]{@link module:vanadium.vtraceResponse} instance.
  * @memberof module:vanadium.vtrace
  */
 function response(ctx) {

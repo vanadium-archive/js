@@ -39,7 +39,7 @@ module.exports = {
   /**
    * Type registry that contains a mapping of vdl types
    * to constructors
-   * @property {Registry}
+   * @property {module:vanadium.vdl~Registry}
    * @memberof module:vanadium.vdl
    */
   Registry: require('./registry'),
