@@ -124,6 +124,10 @@ Context.prototype.done = function() {
   return false;
 };
 
+Context.prototype.finish = function() {
+  // Do nothing for most contexts.
+};
+
 /**
  * Returns a promise that will be resolved when the context exceeds
  * its deadline, is cancelled, or is finished.  Optionally you can
@@ -226,6 +230,12 @@ ChildContext.prototype.waitUntilDone = function(callback) {
 };
 ChildContext.prototype.value = function(key) {
   return this._parent.value(key);
+};
+ChildContext.prototype.finish = function() {
+  return this._parent.finish();
+};
+ChildContext.prototype.cancel = function() {
+  return this._parent.cancel();
 };
 
 // ValueContext is a context that associates a single key with a

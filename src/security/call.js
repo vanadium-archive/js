@@ -49,3 +49,15 @@ function Call(call, controller) {
   this.localEndpoint = call.localEndpoint;
   this.remoteEndpoint = call.remoteEndpoint;
 }
+
+Call.prototype.clone = function() {
+  var res = Object.create(this.constructor.prototype);
+  Object.defineProperty(res, 'constructor', { value: this.constructor });
+  for (var key in this) {
+    if (!this.hasOwnProperty(key)) {
+      continue;
+    }
+    res[key] = this[key];
+  }
+  return res;
+};

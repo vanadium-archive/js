@@ -16,14 +16,14 @@ var TypeUtil = require('../../src/vdl/type-util');
 
 var CacheService = {
   cacheMap: {},
-  set: function(context, key, value, cb) {
+  set: function(context, serverCall, key, value, cb) {
     this.cacheMap[key] = value;
 
     process.nextTick(function() {
       cb();
     });
   },
-  get: function(context, key, cb) {
+  get: function(context, serverCall, key, cb) {
     var val = this.cacheMap[key];
     if (val === undefined) {
       var message = 'unknown key ' + JSON.stringify(key);
@@ -39,7 +39,7 @@ var CacheService = {
     }
   } ,
   // TODO(bprosnitz) Also test streaming with no return arg.
-  multiGet: function(context, $stream, cb) {
+  multiGet: function(context, serverCall, $stream, cb) {
     var numReceived = 0;
     $stream.on('end', function close() {
       cb(null, numReceived);
@@ -60,20 +60,20 @@ var CacheService = {
     });
     $stream.read();
   },
-  doNothingStream: function(ctx, $stream, cb) {
+  doNothingStream: function(ctx, serverCall, $stream, cb) {
     cb(null);
   },
-  nonAsyncFunction: function(ctx, cb) {
+  nonAsyncFunction: function(ctx, serverCall, cb) {
     cb(null, 'RESULT');
   }
 };
 
 var CacheServicePromises = {
   cacheMap: {},
-  set: function(context, key, value) {
+  set: function(context, serverCall, key, value) {
     this.cacheMap[key] = value;
   },
-  get: function(context, key) {
+  get: function(context, serverCall, key) {
     var def = new Deferred();
     var val = this.cacheMap[key];
     process.nextTick(function() {
@@ -89,7 +89,7 @@ var CacheServicePromises = {
     });
     return def.promise;
   } ,
-  multiGet: function(context, $stream) {
+  multiGet: function(context, serverCall, $stream) {
     var numReceived = 0;
     var def = new Deferred();
     $stream.on('end', function() {
@@ -113,9 +113,9 @@ var CacheServicePromises = {
     $stream.read();
     return def.promise;
   },
-  doNothingStream: function(ctx, $stream) {
+  doNothingStream: function(ctx, serverCall, $stream) {
   },
-  nonAsyncFunction: function(ctx) {
+  nonAsyncFunction: function(ctx, serverCall) {
     return 'RESULT';
   }
 };
@@ -289,16 +289,16 @@ function runCache(options) {
 }
 
 var TypeService = {
-  isTyped: function(context, any) {
+  isTyped: function(context, serverCall, any) {
     // We expect to receive the internally typed value of the any.
     // However, clients who send JSValue will not produce a typed value here.
     return TypeUtil.isTyped(any);
   },
-  isString: function(context, str) {
+  isString: function(context, serverCall, str) {
     // We expect to receive a native string, if the client sent us one.
     return (typeof str === 'string');
   },
-  isStruct: function(context, struct) {
+  isStruct: function(context, serverCall, struct) {
     // A struct should always be typed.
     if (TypeUtil.isTyped(struct)) {
       return;
@@ -307,7 +307,7 @@ var TypeService = {
 
     throw new Error('did not receive a typed struct' + stringify(struct));
   },
-  swap: function(context, a, b) {
+  swap: function(context, serverCall, a, b) {
     return [b, a];
   },
   _serviceDescription: {
@@ -545,7 +545,7 @@ var typeListType = new vdl.Type({
 // See each test case for what the service method tests.
 var TypedStreamingService = {
   // inStreamOnly verifies that typed inStreams work properly.
-  inStreamOnly: function(ctx, numTimes, $stream) {
+  inStreamOnly: function(ctx, serverCall, numTimes, $stream) {
     // Receive stream values numTimes
     var numReceived = 0;
     var def = new Deferred();
@@ -571,7 +571,7 @@ var TypedStreamingService = {
     return def.promise;
   },
   // outStreamOnly verifies that typed outStreams work properly.
-  outStreamOnly: function(ctx, numTimes, $stream, cb) {
+  outStreamOnly: function(ctx, serverCall, numTimes, $stream, cb) {
     // Send stream values numTimes
     var numSent = 0;
     while (numSent < numTimes) {
@@ -582,7 +582,7 @@ var TypedStreamingService = {
   },
   // bidirBoolListNegationsStream tests that bidirectional streams can send
   // composite types back and forth, as well as modify the data items streamed.
-  bidirBoolListNegationStream: function(ctx, $stream) {
+  bidirBoolListNegationStream: function(ctx, serverCall, $stream) {
     // Given a list of bool, send the opposite bools back.
     var numReceived = 0;
     var def = new Deferred();
@@ -605,7 +605,7 @@ var TypedStreamingService = {
   },
   // structValueStream converts a number to a struct based on that number.
   // Ensures that custom-defined types can be sent across the stream.
-  structValueStream: function(ctx, $stream) {
+  structValueStream: function(ctx, serverCall, $stream) {
     // Given a number, send a number struct back.
     var numReceived = 0;
     var def = new Deferred();
@@ -627,7 +627,7 @@ var TypedStreamingService = {
     return def.promise;
   },
   // anyStream tests that typed values can pass through a bidirectional stream.
-  anyStream: function(ctx, types, $stream) {
+  anyStream: function(ctx, serverCall, types, $stream) {
     // Given a list of types, listen to a stream of values.
     // Errors if any of the values received did not match their expected type.
     // Stream those values back directly.

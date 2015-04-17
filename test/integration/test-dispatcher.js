@@ -231,7 +231,7 @@ function Counter(string) {
   this.string = string;
 }
 
-Counter.prototype.count = function(ctx) {
+Counter.prototype.count = function(ctx, serverCall) {
   return this.string.length;
 };
 
@@ -239,7 +239,7 @@ function Echoer(string) {
   this.string = string;
 }
 
-Echoer.prototype.echo = function(ctx) {
+Echoer.prototype.echo = function(ctx, serverCall) {
   return this.string;
 };
 

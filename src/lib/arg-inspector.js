@@ -67,6 +67,14 @@ ArgumentInspector.prototype.hasContext = function() {
 };
 
 /**
+ * Helper to know if a call is in the argument position and is in the right
+ * position.
+ */
+ArgumentInspector.prototype.hasCall = function() {
+  return this.contains('serverCall') && this.position('serverCall') === 1;
+};
+
+/**
  * ArgumentInspector.prototype.hasCallback - Helper to know if a context is in
  * the argument list and is in the right position.
  *
@@ -142,6 +150,9 @@ function filter(names) {
     results.shift();
   }
 
+  if (results[0] === 'serverCall') {
+    results.shift();
+  }
   // only filter cb/callback if it is the last
   if (last === 'cb' || last === 'callback') {
     results.pop();

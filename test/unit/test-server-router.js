@@ -19,7 +19,7 @@ test('Server Router Signature Lookup', function(t) {
   var inputName = 'aName';
   var inputMessageId = 10;
   var inputService = {
-    a: function(ctx, x, $stream, y) {
+    a: function(ctx, serverCall, x, $stream, y) {
       return x + y;
     }
   };

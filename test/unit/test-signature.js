@@ -12,11 +12,12 @@ var vdl = require('../../src/vdl');
 var stringify = require('../../src/vdl/stringify');
 
 function TestService() {
-  this.nonPrototypeFunction = function(ctx, a, $stream, b) {};
+  this.nonPrototypeFunction = function(ctx, serverCall, a, $stream, b) {};
 }
 
-TestService.prototype.noArgsFunction = function(ctx) {};
-TestService.prototype.namedFunction = function NamedFunc(ctx, x, y, z) {};
+TestService.prototype.noArgsFunction = function(ctx, serverCall) {};
+TestService.prototype.namedFunction = function NamedFunc(ctx, serverCall, x,
+                                                         y, z) {};
 
 test('signature', function(t) {
   var testService = new TestService();

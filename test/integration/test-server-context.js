@@ -8,15 +8,15 @@ var leafDispatcher = require('../../src/rpc/leaf-dispatcher');
 
 // Services that handles anything in a/b/* where b is the service name
 var dispatcher = leafDispatcher({
-  getSuffix: function(ctx) {
-    return ctx.suffix;
+  getSuffix: function(ctx, serverCall) {
+    return serverCall.securityCall.suffix;
   },
-  getContext: function(ctx) {
-    return ctx;
+  getContext: function(ctx, serverCall) {
+    return serverCall;
   },
-  getArgs: function(ctx, a, b, c, $stream, cb) {
+  getArgs: function(ctx, serverCall, a, b, c, $stream, cb) {
     var results = {
-      context: ctx,
+      call: serverCall,
       a: a,
       b: b,
       c: c
@@ -57,13 +57,13 @@ function validateEndpoint(ep, assert) {
   assert.ok(ep !== '', 'endpoint should not be empty');
 }
 
-function validateContext(ctx, assert) {
-  blessingStringsMatch(ctx.localBlessingStrings, defaultBlessingRegex,
+function validateContext(call, assert) {
+  blessingStringsMatch(call.localBlessingStrings, defaultBlessingRegex,
                          assert);
-  blessingStringsMatch(ctx.remoteBlessingStrings, defaultBlessingRegex,
+  blessingStringsMatch(call.remoteBlessingStrings, defaultBlessingRegex,
                          assert);
-  validateEndpoint(ctx.localEndpoint, assert);
-  validateEndpoint(ctx.remoteEndpoint, assert);
+  validateEndpoint(call.localEndpoint, assert);
+  validateEndpoint(call.remoteEndpoint, assert);
 }
 
 test('Test non-empty suffix is available in context', function(assert) {
@@ -127,10 +127,10 @@ test('Test context object', function(assert) {
     client.bindTo(ctx, 'a/b/suf', function(err, service) {
       assert.error(err, 'should not error on runtime.bindTo(...)');
 
-      service.getContext(ctx, function(err, context) {
+      service.getContext(ctx, function(err, call) {
         assert.error(err, 'should not error on getContext(...)');
-        contains(context, expectedContext, assert);
-        validateContext(context, assert);
+        contains(call.securityCall, expectedContext, assert);
+        validateContext(call.securityCall, assert);
         end(assert);
       });
     });
@@ -155,9 +155,9 @@ test('Test context object and injected stream', function(assert) {
           c: '-c-'
         }, assert);
 
-        var context = results.context;
-        contains(context, expectedContext, assert);
-        validateContext(context, assert);
+        var call = results.call.securityCall;
+        contains(call, expectedContext, assert);
+        validateContext(call, assert);
         end(assert);
       });
     });

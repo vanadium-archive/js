@@ -76,7 +76,7 @@ function newDispatcher() {
       this._processWaiters(key);
       info.cb(err);
     },
-    neverReturn: function(context, key, cb) {
+    neverReturn: function(context, serverCall, key, cb) {
       var info = this.callInfo[key];
       if (!info) {
         info = {};
@@ -96,7 +96,7 @@ function newDispatcher() {
         server._onCancel(key, err);
       });
     },
-    waitForStatus: function(context, key, status, cb) {
+    waitForStatus: function(context, serverCall, key, status, cb) {
       var info = this.callInfo[key];
       if (!info) {
         info = {

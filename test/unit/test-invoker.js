@@ -19,15 +19,15 @@ var base = require('../vdl-out/v.io/x/ref/lib/vdl/testdata/base');
 function BasePartialImpl() {
 }
 
-BasePartialImpl.prototype.methodA3 = function(context, $stream, a) {
+BasePartialImpl.prototype.methodA3 = function(ctx, serverCall, $stream, a) {
     return ['methodA3', $stream, a];
 };
 
-BasePartialImpl.prototype.methodA4 = function(context, $stream, a) {
+BasePartialImpl.prototype.methodA4 = function(ctx, serverCall, $stream, a) {
   return;
 };
 
-BasePartialImpl.prototype.methodB1 = function(context, a, b, cb) {
+BasePartialImpl.prototype.methodB1 = function(ctx, serverCall, a, b, cb) {
   cb(null);
 };
 

@@ -11,7 +11,7 @@ var testService = require('../vdl-out/v.io/x/js.core/test_service');
 
 // Service to be invoked
 function aServiceDef() {
-  this.aMethod = function(ctx) {
+  this.aMethod = function(ctx, serverCall) {
     return 'aResult';
   };
 }
@@ -39,7 +39,7 @@ test('caveatValidation', function(t) {
   // caveatValidator will validate caveats iff nextCaveatValidationResult
   // is true
   var nextCaveatValidationResult = true;
-  function caveatValidator(call, data) {
+  function caveatValidator(ctx, call, data) {
     t.deepEqual(data, expectedCaveatData, 'validator receives correct data');
     if (!nextCaveatValidationResult) {
       throw new Error('Intentionally failing caveat validation');

@@ -237,9 +237,10 @@ Server.prototype.getInvokerForHandle = function(handle) {
  * @param {Number} handle The handle for the authorizer
  * @param {module:vanadium.context.Context} ctx The ctx of the
  * call.
+ * @param {module:vanadium.security~SecurityCall} call The security call.
  * @return {Promise} a promise that will be fulfilled with the result.
  */
-Server.prototype.handleAuthorization = function(handle, ctx) {
+Server.prototype.handleAuthorization = function(handle, ctx, call) {
   var handler = this.serviceObjectHandles[handle];
   var authorizer = defaultAuthorizer;
   if (handler && handler.authorizer) {
@@ -248,7 +249,7 @@ Server.prototype.handleAuthorization = function(handle, ctx) {
 
   var def = new Deferred();
   var inspectableAuthorizer = new InspectableFunction(authorizer);
-  asyncCall(ctx, null, inspectableAuthorizer, 0, [ctx],
+  asyncCall(ctx, null, inspectableAuthorizer, 0, [ctx, call],
     function(err) {
     if (err) {
       def.reject(err);
