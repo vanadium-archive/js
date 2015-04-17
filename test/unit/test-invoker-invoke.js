@@ -55,7 +55,7 @@ test('invoker.invoke(...) - cb', function(t) {
   });
 
   // Hoisted into the service object above.
-  function callbackMethod(context, a, b, c, d, callback) {
+  function callbackMethod(context, serverCall, a, b, c, d, callback) {
     process.nextTick(function() {
       callback(null, 'result');
     });
@@ -80,7 +80,7 @@ test('invoker.invoke(...) - cb single value', function(t) {
   });
 
   // Hoisted into the service object above.
-  function callbackMethod(context, callback) {
+  function callbackMethod(context, serverCall, callback) {
     process.nextTick(function() {
       callback(null, 'ret');
     });
@@ -105,7 +105,7 @@ test('invoker.invoke(...) - return value', function(t) {
   });
 
   // Hoisted into the service object above.
-  function returnMethod(context, a, b, c, d) {
+  function returnMethod(context, serverCall, a, b, c, d) {
     return [ context, a, b, c, d ];
   }
 });
@@ -130,7 +130,7 @@ test('invoker.invoke(...) - return value w/ 5 out args', function(t) {
   });
 
   // Hoisted into the service object above.
-  function returnMethod(context, a, b, c, d) {
+  function returnMethod(context, serverCall, a, b, c, d) {
     return [ context, a, b, c, d ];
   }
 });
@@ -152,7 +152,7 @@ test('invoker.invoke(...) - return single value', function(t) {
   });
 
   // Hoisted into the service object above.
-  function returnMethod(context) {
+  function returnMethod(context, serverCall) {
     return 'ret';
   }
 });
@@ -174,7 +174,7 @@ test('invoker.invoke(...) - promise', function(t) {
   });
 
   // Hoisted into the service object above.
-  function promiseMethod(context, a, b, c, d) {
+  function promiseMethod(context, serverCall, a, b, c, d) {
     var args = [ context, a, b, c, d ];
 
     var promise = new Promise(function(resolve, reject) {
@@ -207,7 +207,7 @@ invoke({
   });
 
   // Hoisted into the service object above.
-  function promiseMethod(context, a, b, c, d) {
+  function promiseMethod(context, serverCall, a, b, c, d) {
     var args = [ context, a, b, c, d ];
 
     var promise = new Promise(function(resolve, reject) {
@@ -234,7 +234,7 @@ test('invoker.invoke(...) - cb - shortnames (ctx/cb)', function(t) {
     t.end();
   });
 
-  function callbackShortNames(ctx, cb) {
+  function callbackShortNames(ctx, serverCall, cb) {
     cb(null, 'shortNameResult');
   }
 });
@@ -253,7 +253,7 @@ test('invoker.invoke(...) - promise - shortnames', function(t) {
     t.end();
   });
 
-  function promiseShortNames(ctx) {
+  function promiseShortNames(ctx, serverCall) {
     var promise = new Promise(function(resolve, reject) {
       resolve('shortNameResult');
     });
@@ -272,17 +272,19 @@ test('invoker.invoke(...) - cb - $stream injection', function(t) {
     args: [ 'a', 'b', 'c', 'd' ],
     injections: {
       context: context,
-      stream: stream
+      stream: stream,
+      call: {},
     }
   }, function cb(err, results) {
     t.error(err, 'should not error');
-    t.deepEqual(results, [ [ context, 'a', 'b', stream, 'c', 'd' ] ]);
+    t.deepEqual(results, [ [ context, {}, 'a', 'b', stream, 'c', 'd' ] ]);
     t.end();
   });
 
   // Hoisted into the service object above.
-  function callbackStreamMethod(context, a, b, $stream, c, d, callback) {
-    var args = slice(arguments, 0, 6);
+  function callbackStreamMethod(context, serverCall,
+                                a, b, $stream, c, d, callback) {
+    var args = slice(arguments, 0, 7);
 
     process.nextTick(function() {
       callback(null, args);
@@ -300,17 +302,18 @@ test('invoker.invoke(...) - return value - $stream injection', function(t) {
     args: [ 'a', 'b', 'c', 'd' ],
     injections: {
       context: context,
-      stream: stream
+      stream: stream,
+      call: {},
     }
   }, function cb(err, results) {
     t.error(err, 'should not error');
-    t.deepEqual(results, [ [ context, 'a', 'b', stream, 'c', 'd' ] ]);
+    t.deepEqual(results, [ [ context, {},'a', 'b', stream, 'c', 'd' ] ]);
     t.end();
   });
 
   // Hoisted into the service object above.
-  function returnStreamMethod(context, a, b, $stream, c, d) {
-    return slice(arguments, 0, 6);
+  function returnStreamMethod(context, serverCall, a, b, $stream, c, d) {
+    return slice(arguments, 0, 7);
   }
 });
 
@@ -324,17 +327,18 @@ test('invoker.invoke(...) - promise - $stream injection', function(t) {
     args: [ 'a', 'b', 'c', 'd' ],
     injections: {
       context: context,
-      stream: stream
+      stream: stream,
+      call: {},
     }
   }, function cb(err, results) {
     t.error(err, 'should not error');
-    t.deepEqual(results, [ [ context, 'a', 'b', stream, 'c', 'd' ] ]);
+    t.deepEqual(results, [ [ context, {}, 'a', 'b', stream, 'c', 'd' ] ]);
     t.end();
   });
 
   // Hoisted into the service object above.
-  function promiseStreamMethod(context, a, b, $stream, c, d) {
-    var args = slice(arguments, 0, 6);
+  function promiseStreamMethod(context, serverCall, a, b, $stream, c, d) {
+    var args = slice(arguments, 0, 7);
 
     var promise = new Promise(function(resolve, reject) {
       process.nextTick(function() {
@@ -353,7 +357,7 @@ test('invoker.invoke(...) - where service is constructed', function(t) {
     };
   }
 
-  KVStore.prototype.get = function(context, key, callback) {
+  KVStore.prototype.get = function(context, serverCall, key, callback) {
     callback(null, this.store[key]);
   };
 
@@ -386,7 +390,7 @@ test('invoker.invoke(...) - cb - no arg method', function(t) {
     t.end();
   });
 
-  function callbackNoArgMethod(context, callback) {
+  function callbackNoArgMethod(context, serverCall, callback) {
     process.nextTick(function() {
       callback(null, context);
     });
@@ -409,7 +413,7 @@ test('invoker.invoke(...) - return value - no arg method', function(t) {
     t.end();
   });
 
-  function returnNoArgMethod(context) {
+  function returnNoArgMethod(context, serverCall) {
     return context;
   }
 });
@@ -430,7 +434,7 @@ test('invoker.invoke(...) - promise - no arg method', function(t) {
     t.end();
   });
 
-  function promiseNoArgMethod(context) {
+  function promiseNoArgMethod(context, serverCall) {
     var promise = new Promise(function(resolve, reject) {
       process.nextTick(function() {
         resolve(context);
@@ -535,7 +539,7 @@ test('invoker.invoke(...) - Error: Private method', function(t) {
 
 test('invoker.invoke(...) - Error: Bad arguments', function(t) {
   var service = {
-    myTestMethod: function(context, a, b, callback) {
+    myTestMethod: function(context, serverCall, a, b, callback) {
       return slice(arguments);
     }
   };
@@ -566,7 +570,7 @@ test('invoker.invoke(...) - Error: Undefined method', function(t) {
 
 test('invoker.invoke(...) - Error: Internal error', function(t) {
   var service = {
-    foo: function(ctx) {}
+    foo: function(ctx, serverCall) {}
   };
 
   invoke({
@@ -598,7 +602,7 @@ test('invoker.invoke(...) - Error: Empty args expected', function(t) {
     t.end();
   });
 
-  function emptyArgs(ctx) {
+  function emptyArgs(ctx, serverCall) {
     var args = slice(arguments);
     var callback = arguments[arguments.length - 1];
 
@@ -634,7 +638,7 @@ test('invoker.invoke(...) - Error: More outArgs expected [promise]',
   });
 
   // Hoisted into the service object above.
-  function notEnoughOutArgs(ctx, a, b, c, d) {
+  function notEnoughOutArgs(ctx, serverCall, a, b, c, d) {
     return [ a, b, c, d ]; // needs 5, not 4
   }
 });
@@ -665,7 +669,7 @@ test('invoker.invoke(...) - Error: Fewer outArgs expected [promise]',
   });
 
   // Hoisted into the service object above.
-  function notEnoughOutArgs(ctx, a, b, c, d) {
+  function notEnoughOutArgs(ctx, serverCall, a, b, c, d) {
     return [ a, b, c, d, d, d ]; // needs 5, not 6
   }
 });

@@ -14,22 +14,23 @@ var Blessings = require('../../src/security/blessings');
 
 
 var blessingsService = {
-  createBlessings: function(ctx, publicKey) {
+  createBlessings: function(ctx, serverCall, publicKey) {
     var principal = runtimeFromContext(ctx).principal;
     var blessings = principal.defaultBlessings;
     var expiryDate = new Date((new Date()).getTime() + 6000000);
     return principal.bless(ctx, publicKey, blessings, 'friend',
                            caveats.createExpiryCaveat(expiryDate));
   },
-  verifyBlessings: function(ctx) {
+  verifyBlessings: function(ctx, serverCall) {
+    var secCall = serverCall.securityCall;
     // We can't look for an exact blessing, because node and browser tests
     // have different root blessings.  Instead of looking for a particular
     // blessing, we try to find the extension blessing string.
-    var hasGeneratedBlessing = ctx.remoteBlessingStrings.some(function(s) {
+    var hasGeneratedBlessing = secCall.remoteBlessingStrings.some(function(s) {
       return s.indexOf('/friend') !== -1;
     });
     if (!hasGeneratedBlessing) {
-      throw new Error('bad blessings ' + ctx.remoteBlessingStrings);
+      throw new Error('bad blessings ' + secCall.remoteBlessingStrings);
     }
     return;
   },

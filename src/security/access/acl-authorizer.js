@@ -12,8 +12,6 @@ var actions = require('../../verror/actions');
 var vdlAccess = require('../../gen-vdl/v.io/v23/security/access');
 var NoPermissionsError = vdlAccess.NoPermissionsError;
 var Permissions = vdlAccess.Permissions;
-var getSecurityCallFromContext =
-  require('../context').getSecurityCallFromContext;
 
 module.exports = authorizer;
 var pkgPath = 'v.io/v23/security/access';
@@ -44,8 +42,7 @@ function authorizer(acls, type) {
   // Force the acls to have the correct Permissions format.
   var permissions = unwrap(new Permissions(acls));
 
-  return function authorize(ctx) {
-    var call = getSecurityCallFromContext(ctx);
+  return function authorize(ctx, call) {
     // If the remoteBlessings has a public key, and it refers to ourselves
     // (i.e a self rpc), then we always authorize.
     if (call.remoteBlessings.publicKey &&

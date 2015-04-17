@@ -15,22 +15,22 @@ testNonStandardErrors();
 function testStandardErrors() {
   var error = new Error(message);
   var errorThrower = {
-    throwError: function(ctx) {
+    throwError: function(ctx, serverCall) {
       throw error;
     },
-    returnErrorInCallback: function(ctx, cb) {
+    returnErrorInCallback: function(ctx, serverCall, cb) {
       cb(error, null);
     },
-    returnStringErrorInCallback: function(ctx, cb) {
+    returnStringErrorInCallback: function(ctx, serverCall, cb) {
       cb(message, null);
     },
-    rejectPromise: function(ctx) {
+    rejectPromise: function(ctx, serverCall) {
       var def = new Deferred();
       def.promise.catch(function() {});
       def.reject(error);
       return def.promise;
     },
-    throwCustomError: function(ctx) {
+    throwCustomError: function(ctx, serverCall) {
       function CustomError(message) {
         Error.call(this);
         this.name = 'CustomError';
@@ -82,34 +82,34 @@ function testStandardErrors() {
 
 function testNonStandardErrors() {
   var nonStandardErrorThrower = {
-    throwString: function(ctx) {
+    throwString: function(ctx, serverCall) {
       throw message;
     },
-    rejectPromiseWithString: function(ctx) {
+    rejectPromiseWithString: function(ctx, serverCall) {
       var def = new Deferred();
       def.promise.catch(function() {});
       def.reject(message);
       return def.promise;
     },
-    throwNull: function(ctx) {
+    throwNull: function(ctx, serverCall) {
       throw null;
     },
-    throwEmpty: function(ctx) {
+    throwEmpty: function(ctx, serverCall) {
       throw '';
     },
-    rejectNothing: function(ctx) {
+    rejectNothing: function(ctx, serverCall) {
       var def = new Deferred();
       def.promise.catch(function() {});
       def.reject();
       return def.promise;
     },
-    rejectNull: function(ctx) {
+    rejectNull: function(ctx, serverCall) {
       var def = new Deferred();
       def.promise.catch(function() {});
       def.reject(null);
       return def.promise;
     },
-    rejectEmpty: function(ctx) {
+    rejectEmpty: function(ctx, serverCall) {
       var def = new Deferred();
       def.promise.catch(function() {});
       def.reject('');

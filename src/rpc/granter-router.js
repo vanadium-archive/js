@@ -15,8 +15,6 @@ var SecurityCall = require('../security/call');
 var InspectableFunction = require('../lib/inspectable-function');
 var GranterResponse =
 require('../gen-vdl/v.io/x/ref/services/wspr/internal/app').GranterResponse;
-var contextWithSecurityCall =
-require('../security/context').contextWithSecurityCall;
 var vlog = require('./../lib/vlog');
 
 module.exports = GranterRouter;
@@ -74,12 +72,12 @@ GranterRouter.prototype.handleRequest = function(messageId, type, request) {
 
 
   var securityCall = new SecurityCall(request.call, this._controller);
-  var ctx = contextWithSecurityCall(this._rootCtx, securityCall);
+  var ctx = this._rootCtx;
   var def = new Deferred();
   var inspectFn = new InspectableFunction(granter);
   var self = this;
   asyncCall(ctx, null, inspectFn, 1,
-    [ctx], function(err, outBlessings) {
+    [ctx, securityCall], function(err, outBlessings) {
     if (err) {
       var res = new GranterResponse({
         err: new verror.NoExistError(this._rootCtx, 'error while granting: ' +

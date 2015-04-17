@@ -6,7 +6,7 @@ var test = require('prova');
 var serve = require('./serve');
 var leafDispatcher = require('../../src/rpc/leaf-dispatcher');
 var dispatcher = leafDispatcher({
-  foo: function(ctx) {
+  foo: function(ctx, serverCall) {
     return 'bar';
   }
 });

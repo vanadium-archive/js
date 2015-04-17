@@ -62,7 +62,7 @@ test('Test using collectRegexp', function(assert) {
 });
 
 var SpanService = {
-  makeSpan: function(context) {
+  makeSpan: function(context, serverCall) {
     context = vtrace.withNewSpan(context, 'in makeSpan');
     vtrace.getSpan(context).finish();
   }

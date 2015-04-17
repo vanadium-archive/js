@@ -20,7 +20,7 @@ function assertBlessings(blessings, t) {
 var serverName = 'foo';
 function newDispatcher() {
   return leafDispatcher({
-    bar: function(ctx) {}
+    bar: function(ctx, serverCall) {}
   });
 }
 

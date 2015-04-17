@@ -5,25 +5,23 @@
 var test = require('prova');
 var serve = require('./serve');
 var Deferred = require('../../src/lib/deferred');
-var getSecurityCallFromContext =
-  require('../../src/security/context').getSecurityCallFromContext;
 var aclAuthorizer = require('../../src/security/access/acl-authorizer');
 var access = require('../../src/gen-vdl/v.io/v23/security/access');
 
 
 var service = {
-  call: function(ctx, arg) {
+  call: function(ctx, serverCall, arg) {
     return Promise.resolve(1);
   }
 };
 
 
 function createPromiseDispatcher(authorizer, tags) {
-  function auth($context) {
-    if ($context.method === '__Signature') {
+  function auth(ctx, call) {
+    if (call.method === '__Signature') {
       return null;
     }
-    return authorizer($context);
+    return authorizer(ctx, call);
   }
   var desc = {
     methods: [
@@ -74,7 +72,7 @@ function testErrorCase(assert, authorizer, tags, isPromise) {
 
 test('Test errors are properly returned',
 function(assert) {
-  testErrorCase(assert, function (ctx, cb) {
+  testErrorCase(assert, function (ctx, call) {
     var def = new Deferred();
     function reject() {
       def.reject(new Error('unauthorized'));
@@ -85,11 +83,11 @@ function(assert) {
 });
 
 function createCallbackDispatcher(authorizer, tags) {
-  function auth($context, cb) {
-    if ($context.method === '__Signature') {
+  function auth(ctx, call, cb) {
+    if (call.method === '__Signature') {
       cb(null);
     }
-    authorizer($context, cb);
+    authorizer(ctx, call, cb);
   }
   var desc = {
     methods: [
@@ -135,7 +133,7 @@ function testSuccessCase(assert, authorizer, tags, isPromise) {
 
 
 test('Test successes are handled', function(assert) {
-  testSuccessCase(assert, function (ctx, cb) {
+  testSuccessCase(assert, function (ctx, call, cb) {
     process.nextTick(cb.bind(null, null));
   });
 });
@@ -143,8 +141,7 @@ test('Test successes are handled', function(assert) {
 test('Test proper context is passed to authorizer', function(assert) {
   var defaultBlessingRegex = require('./default-blessing-regex');
 
-  testSuccessCase(assert, function (ctx, cb) {
-    var call = getSecurityCallFromContext(ctx);
+  testSuccessCase(assert, function (ctx, call, cb) {
     if (!defaultBlessingRegex.test(call.remoteBlessingStrings[0])) {
       return cb(new Error('unknown remote blessings ' +
         call.remoteBlessingStrings));
@@ -169,8 +166,7 @@ test('Test proper context is passed to authorizer', function(assert) {
 });
 
 test('Test passing in labels', function(assert) {
-  testSuccessCase(assert, function(ctx, cb) {
-    var call = getSecurityCallFromContext(ctx);
+  testSuccessCase(assert, function(ctx, call, cb) {
     if (call.methodTags[0] !== 'foo') {
       return cb(new Error('wrong label ' + call.label));
     }
@@ -197,11 +193,10 @@ test('Test ACLAuthorizer (public key) - success', function(assert) {
 test('Test ACLAuthorizer (tag) - success', function(assert) {
   var tagFoo = new access.Tag('Foo');
 
-  function diffPublicKeyAclAuthorizer(ctx) {
-    var call = getSecurityCallFromContext(ctx);
+  function diffPublicKeyAclAuthorizer(ctx, call) {
     // get rid of public key, just for this example
     call.remoteBlessings.publicKey = '';
-    tagAclAuthorizer(ctx);
+    tagAclAuthorizer(ctx, call);
   }
 
   // Everyone is allowed via the Foo tag.
@@ -213,11 +208,10 @@ test('Test ACLAuthorizer (tag) - success', function(assert) {
 test('Test ACLAuthorizer (tag) - failure', function(assert) {
   var tagBar = new access.Tag('Bar');
 
-  function diffPublicKeyAclAuthorizer(ctx) {
-    var call = getSecurityCallFromContext(ctx);
+  function diffPublicKeyAclAuthorizer(ctx, call) {
     // get rid of public key, just for this example to demonstrate failure
     call.remoteBlessings.publicKey = '';
-    tagAclAuthorizer(ctx);
+    tagAclAuthorizer(ctx, call);
   }
 
   // Nobody is allowed via the Bar tag.

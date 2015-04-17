@@ -15,9 +15,9 @@ var app = require('../../src/gen-vdl/v.io/x/ref/services/wspr/internal/app');
 var SharedContextKeys = require('../../src/runtime/shared-context-keys');
 
 var mockService = {
-  tripleArgMethod: function(ctx, a, b, c) {},
-  singleArgMethod: function(ctx, a) {},
-  lyingBoolMethod: function(ctx) {},
+  tripleArgMethod: function(ctx, serverCall, a, b, c) {},
+  singleArgMethod: function(ctx, serverCall, a) {},
+  lyingBoolMethod: function(ctx, serverCall) {},
 };
 var mockServiceDescs = [
   {

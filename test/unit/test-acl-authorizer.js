@@ -11,8 +11,6 @@ var unwrap = require('../../src/vdl/type-util').unwrap;
 var createConstructor = require('../../src/vdl/create-constructor');
 var kind = require('../../src/vdl/kind');
 var Context = require('../../src/runtime/context').Context;
-var contextWithSecurityCall =
-  require('../../src/security/context').contextWithSecurityCall;
 
 require('es6-shim');
 var rootCtx = new Context();
@@ -27,17 +25,16 @@ test('allow same public key access with no other acls', function(assert) {
   var auth = aclAuthorizer({}, access.Tag);
   allTags.forEach(function(t) {
     call.methodTags = [t];
-    var ctx = contextWithSecurityCall(rootCtx, call);
-    assert.error(auth(ctx), 'should not error');
+    assert.error(auth(rootCtx, call), 'should not error');
   });
 
   assert.end();
 });
 
 // Helper function to convert the thrown error into a returned error.
-function tryAuthorize(ctx, auth) {
+function tryAuthorize(ctx, call, auth) {
   try {
-    auth(ctx);
+    auth(ctx, call);
     return null;
   } catch(e) {
     return e;
@@ -182,8 +179,7 @@ function checkExpectations(auth, expectations, assert) {
       var tag = allTags[j];
       var shouldErr = exp.indexOf(tag) === -1;
       call.methodTags = [tag];
-      var ctx = contextWithSecurityCall(rootCtx, call);
-      var err = tryAuthorize(ctx, auth);
+      var err = tryAuthorize(rootCtx, call, auth);
       if (shouldErr) {
         assert.ok(err !== null, 'name: ' + name + ', tag: ' + tag);
         assert.ok(err instanceof access.NoPermissionsError);
@@ -213,14 +209,13 @@ test('tags of different types', function(assert) {
   });
   var tagAuthorizer = aclAuthorizer(acl, access.Tag);
   call.methodTags = [myAdmin, access.Resolve];
-  var ctx = contextWithSecurityCall(rootCtx, call);
-  var err = tryAuthorize(ctx, tagAuthorizer);
+  var err = tryAuthorize(rootCtx, call, tagAuthorizer);
 
   assert.ok(err !== null);
   assert.ok(err instanceof access.NoPermissionsError);
 
   var myTagAuthorizer = aclAuthorizer(acl, MyTag);
-  assert.error(myTagAuthorizer(ctx), 'should not error');
+  assert.error(myTagAuthorizer(rootCtx, call), 'should not error');
   assert.end();
 });
 
@@ -243,8 +238,7 @@ test('no tags of a type - error', function(assert) {
   });
   var tagAuthorizer = aclAuthorizer(acl, access.Tag);
   call.methodTags = [myAdmin];
-  var ctx = contextWithSecurityCall(rootCtx, call);
-  var err = tryAuthorize(ctx, tagAuthorizer);
+  var err = tryAuthorize(rootCtx, call, tagAuthorizer);
 
   assert.ok(err !== null);
   assert.equal(err.id, 'v.io/v23/security/access.errNoMethodTags');
@@ -265,8 +259,7 @@ test('multiple tags of a type - error', function(assert) {
   });
   var tagAuthorizer = aclAuthorizer(acl, access.Tag);
   call.methodTags = [access.Resolve, access.Debug];
-  var ctx = contextWithSecurityCall(rootCtx, call);
-  var err = tryAuthorize(ctx, tagAuthorizer);
+  var err = tryAuthorize(rootCtx, call, tagAuthorizer);
 
   assert.ok(err !== null);
   assert.equal(err.id, 'v.io/v23/security/access.errMultipleMethodTags');

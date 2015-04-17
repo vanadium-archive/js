@@ -13,10 +13,11 @@ var stringify = require('../../src/vdl/stringify');
 function TestService() {
 }
 
-TestService.prototype.noArgsFunction = function(ctx) {};
+TestService.prototype.noArgsFunction = function(ctx, serverCall) {};
 TestService.prototype.namedFunction = NamedFunc;
-function NamedFunc(context, x, y, z ) {}
-TestService.prototype.streamingFunction = function(context, $stream) {};
+function NamedFunc(context, serverCall, x, y, z ) {}
+TestService.prototype.streamingFunction = function(context,
+                                                   serverCall, $stream) {};
 
 test('create signatures with no description', function(t) {
   var testService = new TestService();

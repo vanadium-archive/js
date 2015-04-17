@@ -37,8 +37,6 @@ var CaveatValidationResponse =
 var vtrace = require('../vtrace');
 var lib =
   require('../gen-vdl/v.io/x/ref/services/wspr/internal/lib');
-var contextWithSecurityCall =
-  require('../security/context').contextWithSecurityCall;
 var Blessings = require('../security/blessings');
 var JsBlessings =
   require('../gen-vdl/v.io/x/ref/services/wspr/internal/principal').JsBlessings;
@@ -125,9 +123,9 @@ Router.prototype.handleAuthorizationRequest = function(messageId, request) {
     return;
   }
   var router = this;
-  var securityCall = new SecurityCall(request.call, this._controller);
-  var ctx = contextWithSecurityCall(this._rootCtx, securityCall);
-  server.handleAuthorization(request.handle, ctx).then(function() {
+  var call = new SecurityCall(request.call, this._controller);
+  var ctx = this._rootCtx;
+  server.handleAuthorization(request.handle, ctx, call).then(function() {
     router._proxy.sendRequest('{}', Outgoing.AUTHORIZATION_RESPONSE, null,
         messageId);
   }).catch(function(e) {
@@ -140,11 +138,11 @@ Router.prototype.handleAuthorizationRequest = function(messageId, request) {
   });
 };
 
-Router.prototype._validateChain = function(ctx, cavs) {
+Router.prototype._validateChain = function(ctx, call, cavs) {
   var promises = new Array(cavs.length);
   for (var j = 0; j < cavs.length; j++) {
     var def = new Deferred();
-    this._caveatRegistry.validate(ctx, cavs[j],
+    this._caveatRegistry.validate(ctx, call, cavs[j],
       function(err) {
         if (err) {
           return def.reject(err);
@@ -168,10 +166,10 @@ Router.prototype._validateChain = function(ctx, cavs) {
 
 Router.prototype.handleCaveatValidationRequest = function(messageId, request) {
   var resultPromises = new Array(request.cavs.length);
-  var secCall = new SecurityCall(request.call);
-  var ctx = contextWithSecurityCall(this._rootCtx, secCall);
+  var call = new SecurityCall(request.call);
+  var ctx = this._rootCtx;
   for (var i = 0; i < request.cavs.length; i++) {
-    resultPromises[i] = this._validateChain(ctx, request.cavs[i]);
+    resultPromises[i] = this._validateChain(ctx, call, request.cavs[i]);
   }
   var self = this;
   Promise.all(resultPromises).then(function(results) {
@@ -245,7 +243,7 @@ Router.prototype.handleLookupRequest = function(messageId, request) {
  */
 Router.prototype.handleCancel = function(messageId) {
   var ctx = this._contextMap[messageId];
-  if (ctx) {
+  if (ctx && ctx.cancel) {
     ctx.cancel();
   }
 };
@@ -295,7 +293,25 @@ Router.prototype.handleRPCRequest = function(messageId, vdlRequest) {
 
   var self = this;
   var stream;
-  var call = new ServerCall(request, this._controller, this._rootCtx);
+  var ctx = this._rootCtx;
+  // Setup the context passed in the context info passed in from wspr.
+  if (!request.call.deadline.noDeadline) {
+    var fromNow = request.call.deadline.fromNow;
+    var timeout = fromNow.seconds * 1000;
+    timeout += fromNow.nanos / 1000000;
+    ctx = ctx.withTimeout(timeout);
+  } else {
+    ctx = ctx.withCancel();
+  }
+  // Plumb through the vtrace ids
+  var suffix = request.call.securityCall.suffix;
+  var spanName = '<jsserver>"'+suffix+'".'+request.method;
+  console.log('spanName is ' + spanName);
+  // TODO(mattr): We need to enforce some security on trace responses.
+  ctx = vtrace.withContinuedTrace(ctx, spanName,
+                                  request.call.traceRequest);
+
+  var call = new ServerCall(request, this._controller);
   if (request.method === 'Glob__') {
     if (!invoker.hasGlobber()) {
       err = new Error('Glob is not implemented');
@@ -306,12 +322,12 @@ Router.prototype.handleRPCRequest = function(messageId, vdlRequest) {
     stream = new Stream(messageId, this._proxy.senderPromise, false,
       null, naming.GlobReply.prototype._type);
     this._streamMap[messageId] = stream;
-    this._contextMap[messageId] = call;
+    this._contextMap[messageId] = ctx;
     this._outstandingRequestForId[messageId] = 0;
     this.incrementOutstandingRequestForId(messageId);
     var globPattern = typeUtil.unwrap(request.args[0]);
-    this.handleGlobRequest(messageId, call.suffix,
-                           server, new Glob(globPattern),  call, invoker,
+    this.handleGlobRequest(messageId, call.securityCall.suffix,
+                           server, new Glob(globPattern), ctx, call, invoker,
                            completion);
     return;
   }
@@ -356,7 +372,8 @@ Router.prototype.handleRPCRequest = function(messageId, vdlRequest) {
     methodName: methodName,
     args: unwrappedArgs,
     methodSig: methodSig,
-    ctx: call,
+    ctx: ctx,
+    call: call,
   };
 
   this._contextMap[messageId] = options.ctx;
@@ -413,9 +430,11 @@ Router.prototype.invokeMethod = function(invoker, options, cb) {
   var methodName = options.methodName;
   var args = options.args;
   var ctx = options.ctx;
+  var call = options.call;
 
   var injections = {
     context: ctx,
+    call: call,
     stream: options.stream
   };
 
@@ -424,7 +443,7 @@ Router.prototype.invokeMethod = function(invoker, options, cb) {
     // Note: We use the rootCtx here because we want to make this
     // call to clean up the blessings even if the method invocation
     // is cancelled.
-    ctx.remoteBlessings.release(rootCtx);
+    call.securityCall.remoteBlessings.release(rootCtx);
     cb(err, results);
   }
 
@@ -447,7 +466,7 @@ function createGlobErrorReply(name, err, appName) {
 }
 
 Router.prototype.handleGlobRequest = function(messageId, name, server, glob,
-                                              context, invoker, cb) {
+                                              context, call, invoker, cb) {
   var self = this;
   var options;
   if (invoker.hasMethod('__glob')) {
@@ -456,6 +475,7 @@ Router.prototype.handleGlobRequest = function(messageId, name, server, glob,
       args: [glob.toString()],
       methodSig: { outArgs: [] },
       ctx: context,
+      call: call,
       // For the glob__ method we just write the
       // results directly out to the rpc stream.
       stream: this._streamMap[messageId]
@@ -487,6 +507,7 @@ Router.prototype.handleGlobRequest = function(messageId, name, server, glob,
       args: [],
       methodSig: { outArgs: [] },
       ctx: context,
+      call: call,
       stream: globStream
     };
     globStream.on('data', function(child) {
@@ -502,18 +523,18 @@ Router.prototype.handleGlobRequest = function(messageId, name, server, glob,
 
       var suffix = namespaceUtil.join(name, child);
       self.incrementOutstandingRequestForId(messageId);
-      var ctx = new ServerCall(context);
-      ctx.suffix = suffix;
+      var subCall = new ServerCall(call);
+      subCall.securityCall.suffix = suffix;
       var nextInvoker;
       server._handleLookup(suffix).then(function(value) {
         nextInvoker = value.invoker;
-        var secCtx = contextWithSecurityCall(ctx, ctx);
-        return server.handleAuthorization(value._handle, secCtx);
+        return server.handleAuthorization(value._handle, context,
+                                          subCall.securityCall);
       }).then(function() {
         var match = glob.matchInitialSegment(child);
         if (match.match) {
           self.handleGlobRequest(messageId, suffix, server, match.remainder,
-                                 ctx, nextInvoker, cb);
+                                 context, subCall, nextInvoker, cb);
         } else {
           self.decrementOutstandingRequestForId(messageId, cb);
         }

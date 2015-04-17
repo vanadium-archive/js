@@ -194,7 +194,8 @@ Invoker.prototype.invoke = function(name, args, injections, cb) {
   // Clone the array so we can simply manipulate and apply later
   var clonedArgs = args.slice(0);
 
-  // context goes in front
+  // call and context go in front
+  clonedArgs.unshift(injections.call);
   clonedArgs.unshift(injections.context);
 
   // splice in stream

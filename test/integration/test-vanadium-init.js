@@ -197,7 +197,7 @@ test('Test passing proxy to vanadium.init() sets the proxy',
       // Create a new server, and verify that we can call it.
       var serverName = 'pingpong';
       var service = {
-        ping: function(ctx){
+        ping: function(ctx, serverCall){
           return 'pong';
         }
       };

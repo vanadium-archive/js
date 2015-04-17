@@ -10,7 +10,6 @@ var leafDispatcher = require('../../src/rpc/leaf-dispatcher');
 var serve = require('./serve');
 var Blessings = require('../../src/security/blessings');
 var SharedContextKeys = require('../../src/runtime/shared-context-keys');
-var context = require('../../src/security/context');
 
 test('Test bless self without Caveat', function(t) {
   var rt;
@@ -53,10 +52,11 @@ test('Test bless self with Caveat', function(t) {
 
 test('Test bless without Caveat from server', function(t) {
   var service = {
-    method: function(ctx, cb) {
-      var rt = ctx._ctx.value(SharedContextKeys.RUNTIME);
-      var remoteKey = ctx.remoteBlessings.publicKey;
-      rt.principal.bless(ctx, remoteKey, ctx.localBlessings,
+    method: function(ctx, serverCall, cb) {
+      var secCall = serverCall.securityCall;
+      var rt = ctx.value(SharedContextKeys.RUNTIME);
+      var remoteKey = secCall.remoteBlessings.publicKey;
+      rt.principal.bless(ctx, remoteKey, secCall.localBlessings,
        'ext', function(err) {
          t.ok(err, 'Expected at least one caveat must be specfied error');
          cb();
@@ -80,10 +80,11 @@ test('Test bless without Caveat from server', function(t) {
 
 test('Test bless with Caveat from server', function(t) {
   var service = {
-    method: function(ctx, cb) {
-      var rt = ctx._ctx.value(SharedContextKeys.RUNTIME);
-      var remoteKey = ctx.remoteBlessings.publicKey;
-      rt.principal.bless(ctx, remoteKey, ctx.localBlessings,
+    method: function(ctx, serverCall, cb) {
+      var rt = ctx.value(SharedContextKeys.RUNTIME);
+      var secCall = serverCall.securityCall;
+      var remoteKey = secCall.remoteBlessings.publicKey;
+      rt.principal.bless(ctx, remoteKey, secCall.localBlessings,
        'ext', caveats.createExpiryCaveat(new Date(Date.now() - 1000)),
        caveats.createConstCaveat(true), function(err, blessing) {
          t.notOk(err, 'No error expected during bless');
@@ -111,9 +112,9 @@ test('Test bless without Caveat from client (with Granter)', function(t) {
   var expectedBlessing;
 
   var service = {
-    method: function(ctx) {
-      t.ok(ctx.grantedBlessings, 'Expect to get granted blessing');
-      t.equal(ctx.grantedBlessings._id, expectedBlessing._id,
+    method: function(ctx, serverCall) {
+      t.ok(serverCall.grantedBlessings, 'Expect to get granted blessing');
+      t.equal(serverCall.grantedBlessings._id, expectedBlessing._id,
         'Expect to get blessing that was granted.');
       return 'aResponse';
     }
@@ -130,8 +131,7 @@ test('Test bless without Caveat from client (with Granter)', function(t) {
       var fiveSecondsInFuture = new Date(Date.now() + 5000);
       var granterCalled = false;
       var granterOption = client.callOption({
-        useGranter: function(ctx, cb) {
-          var call = context.getSecurityCallFromContext(ctx);
+        useGranter: function(ctx, call, cb) {
           granterCalled = true;
           res.runtime.principal.bless(res.runtime.getContext(),
             call.remoteBlessings.publicKey,

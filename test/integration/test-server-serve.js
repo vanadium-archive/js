@@ -7,7 +7,7 @@ var test = require('prova');
 var vanadium = require('../../');
 var config = require('./default-config');
 var service = {
-  changeChannel: function(ctx) {
+  changeChannel: function(ctx, serverCall) {
     throw new Error('NotImplemented');
   }
 };

@@ -11,21 +11,17 @@ var timeouts = require('./timeouts');
 var NAME_PREFIX = 'new-server-testing/';
 
 var fooService = {
-  foo: function(ctx) {
+  foo: function(ctx, serverCall) {
     return 'foo result';
   }
 };
 
 var barService = {
-  bar: function(ctx) {
+  bar: function(ctx, serverCall) {
     return 'bar result';
   }
 };
 
-// TODO(bprosnitz) This test is failing on race conditions, presumably in WSPR.
-// If I set breakpoints and walk through slowly, I can sometimes get to the
-// end, but it is unpredictable.
-// Re-enable it after fixing the races.
 test('Test running several JS servers concurrently and under multiple ' +
   'names', function(assert) {
   var ctx;

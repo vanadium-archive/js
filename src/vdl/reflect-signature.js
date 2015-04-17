@@ -66,12 +66,23 @@ function ReflectSignature(service) {
       throw new Error('Function "' + key + '" can not be inspected. ' +
         'This is usually because it is a native method or bind is used.');
     }
+    var message;
     if (!argInspector.hasContext()) {
-      var message = format('Service method "%s" is missing the required ' +
+      message = format('Service method "%s" is missing the required ' +
         '`context` object as the first argument in its definition. ' +
         'Args were: %s',
           key, argInspector.names);
       throw new Error(message);
+    }
+
+    if (!argInspector.hasCall()) {
+      message = format('Service method "%s" is missing the required ' +
+        '`serverCall` object as the second argument in its definition. ' +
+        'Args were: %s',
+          key, argInspector.names);
+      var e = new Error(message);
+      console.log(e);
+      throw e;
     }
 
     methodSignature.inArgs = argInspector.filteredNames.map(function(name) {

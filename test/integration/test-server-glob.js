@@ -8,8 +8,6 @@ var Promise = require('../../src/lib/promise');
 var naming = require('../../src/gen-vdl/v.io/v23/naming');
 var namespaceUtil = require('../../src/naming/util');
 var verror = require('../../src/gen-vdl/v.io/v23/verror');
-var getSecurityCallFromContext =
-  require('../../src/security/context').getSecurityCallFromContext;
 
 
 var ALBUMS = [
@@ -38,7 +36,7 @@ Directory.prototype._addChild = function(name, node) {
   this.children[name] = node;
 };
 
-Directory.prototype.__globChildren = function(ctx, $stream) {
+Directory.prototype.__globChildren = function(ctx, serverCall, $stream) {
   Object.keys(this.children).forEach(function(child) {
     $stream.write(child);
   });
@@ -64,8 +62,7 @@ function createNodes(files) {
 }
 
 function createAuthorizer(disallowed) {
-  return function(ctx) {
-    var call = getSecurityCallFromContext(ctx);
+  return function(ctx, call) {
     for (var i = 0; i < disallowed.length; i++) {
       if (call.suffix === disallowed[i]) {
         return new Error('disallowed');
@@ -251,9 +248,9 @@ test('Test globbing a fully restricted namespace - GlobChildren -' +
 function FullGlobber() {
 }
 
-FullGlobber.prototype.__glob = function(ctx, glob, $stream) {
+FullGlobber.prototype.__glob = function(ctx, serverCall, glob, $stream) {
     var mountEntry = new naming.MountEntry({
-      name: namespaceUtil.join(ctx.suffix, glob),
+      name: namespaceUtil.join(serverCall.securityCall.suffix, glob),
     });
     $stream.write(new naming.GlobReply({
       entry: mountEntry
