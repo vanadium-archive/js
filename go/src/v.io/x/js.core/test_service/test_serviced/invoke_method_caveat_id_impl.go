@@ -57,7 +57,7 @@ func (i *invokeMethWCavIdImpl) Invoke(ctx *context.T, call rpc.ServerCall, name 
 	}
 
 	client := test_service.InvokableTestMethodClient(name)
-	ctxWithCaveats, err := v23.SetPrincipal(ctx, pWithCaveats)
+	ctxWithCaveats, err := v23.WithPrincipal(ctx, pWithCaveats)
 	if err != nil {
 		return err
 	}
