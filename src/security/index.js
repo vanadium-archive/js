@@ -73,8 +73,8 @@ var extend = require('xtend');
 module.exports = extend(
   require('../gen-vdl/v.io/v23/security'),{
   access: require('./access'),
-  createExpiryCaveat: require('./caveats').createExpiryCaveats,
-  createMethodCaveat: require('./caveats').createMethodCaveats,
+  createExpiryCaveat: require('./caveats').createExpiryCaveat,
+  createMethodCaveat: require('./caveats').createMethodCaveat,
   unconstrainedUse: require('./caveats').unconstrainedUse,
   createCaveat: require('./caveats').createCaveat,
 });
