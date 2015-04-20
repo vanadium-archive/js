@@ -1,33 +1,17 @@
-# Veyron JS
+# Vanadium JavaScript
 
-Veyron JavaScript API is a set of client and server APIs that work in both
-NodeJS and browser environments enabling development of Veyron-based applications.
+This repository defines the JavaScript API for [Vanadium].
+The client and server APIs defined here work both in [Node.js] and the browser.
 
 ## Install
 
-You can install this library using npm:
+`npm` can be used to install this library:
 
-    npm install --save git@github.com:veyron/release/javascript/core.git
+    npm install --save git@github.com:vanadium/js.git
 
-We are using a private github repo up until the initial release. The npm CLI
-knows how to deal with [github urls] but you will need to make sure you have
-a [github account][github], that your [ssh keys are setup][ssh setup] and
-that you have been added to the [veyron github organization][github/veyron].
+## Building and testing
 
-If you would like to pin to a specific version or sha use the # notation at the end of the github url:
-
-    npm install --save git@github.com:veyron/release/javascript/core.git#d75035
-
-See also: [NPM Git URLs as Dependencies][github urls]
-
-[github urls]: https://www.npmjs.org/doc/files/package.json.html#git-urls-as-dependencies
-[github]: github.com/
-[ssh setup]: https://help.github.com/articles/generating-ssh-keys
-[github/veyron]: https://github.com/veyron
-
-# Building and testing
-
-We use GNU Make for building and testing Veyron.
+GNU Make is used to build and test [Vanadium].
 
 Build everything:
 
@@ -48,25 +32,33 @@ Run a specific test suite:
     make test-integration-browser
 
 Remove all build and testing artifacts:
-
+    
     make clean
 
-# Summary
+## Usage
 
-The entry point to the API is through a module called "veyron", everything else
-is considered private and should not be accessed by the users of the API.
+Documentation for this API is available at https://jsdoc.v.io/
 
-The "veyron" modules is exported as a global in the browser JS library and for
-NodeJS the "main" property in the "package.json" points to "/src/veyron" making
-it the index module and therefore NodeJS users can use
-"var veyron = require("veyron")" to gain access to the API.
+The entry point to the API is through a module called `vanadium`, everything
+else is considered private and should not be accessed by the users of the API.
+
+The `vanadium` module is exported as a global in the browser JavaScript library and for
+[Node.js] the "main" property in the `package.json` points to `/src/vanadium` making
+it the index module and therefore [Node.js] users can gain access to the API with:
+
+    var vanadium = require("vanadium");
 
 One of the goals of this project is to only write the code once and have it run
-in both NodeJS and Browser. Therefore, specific build and testing steps have been
-designed in the project to ensure this goal.
+in both [Node.js] and browsers. Therefore, specific build and testing steps
+have been designed in the project to ensure this goal.
 
-When run in a browser, veyron.js expects that the veyron extension will be
-installed. The veyron extension is responsible for getting an oauth2 access
-token from the user and sending it to WSPR.  WSPR will use the access token to
-get a blessed identity from the identity server, and will use that identity for
-all requests coming from release/javascript/core's origin.
+When run in a browser, `vanadium.js` expects that the [vanadium
+extension](https://v.io/tools/vanadium-chrome-extension.html) will be
+installed.
+
+## Bugs and feature requests
+
+Bugs and feature requests should be filed in the [Vanadium issue tracker](https://github.com/vanadium/issues/issues).
+
+[Vanadium]: https://v.io/
+[Node.js]: https://nodejs.org/
