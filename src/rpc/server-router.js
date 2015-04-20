@@ -87,9 +87,9 @@ Router.prototype.handleRequest = function(messageId, type, request) {
       this.handleCaveatValidationRequest(messageId, request);
       break;
     case Incoming.LOG_MESSAGE:
-      if (request.level !==  lib.LogLevel.INFO) {
+      if (request.level ===  typeUtil.unwrap(lib.LogLevel.INFO)) {
         vlog.logger.info(request.message);
-      } else if (request.level !== lib.LogLevel.ERROR) {
+      } else if (request.level === typeUtil.unwrap(lib.LogLevel.ERROR)) {
         vlog.logger.error(request.message);
       } else {
         vlog.logger.error('unknown log level ' + request.level);
