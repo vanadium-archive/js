@@ -62,14 +62,14 @@
 
 <main style="max-width: 80%; margin-left: 10px;">
   <h2>Allow access to <span class="origin"></span> for 10 days?</h2>
-  <span>Only allow access to origins you trust.</span>
-  <br>
-  <h3 id="warning"></h3>
-    <!--TODO(suharshs,nlacasse,aghasemi): We can remove this hidden css class to allow the user to select specific caveats.-->
-    <div class="hidden">
-        <input type="text" id="ExpiryCaveat" placeholder="i.e. 2h45m. Valid time units are ns, us (or µs), ms, s, m, h. Defaults to 240h.">
-    </div>
-  <br/>
+  <h4 id="warning" class="hidden">WARNING: <span class="origin"></span> is not secure (not https).  Vanadium's security model may be compromised.</h4>
+  <p>This web page will be able to see your email address and public keys.  Only allow access to web pages you trust.</p>
+  <!--TODO(suharshs,nlacasse,aghasemi): We can remove this hidden css class to allow the user to select specific caveats.-->
+  <div class="hidden">
+      <input type="text" id="ExpiryCaveat" placeholder="i.e. 2h45m. Valid time units are ns, us (or µs), ms, s, m, h. Defaults to 240h.">
+  </div>
+  <p id="tos">By clicking "Allow", you consent to be bound by Google's general <a href="https://www.google.com/intl/en/policies/terms/">Terms of Service</a>
+  and Google's general <a href="https://www.google.com/intl/en/policies/privacy/">Privacy Policy</a>.</p>
   <div class="grid">
     <button id="submit-caveats" class="cell button-passive" type="submit">Allow</button>
     <button id="cancel" class="cell button-passive">Deny</button>

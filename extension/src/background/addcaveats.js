@@ -18,9 +18,7 @@ domready(function() {
   }
   // If the origin is not https, display a warning to the user.
   if (params.origin.indexOf('https') !== 0) {
-    document.getElementById('warning').innerText = 'WARNING: ' + params.origin +
-      ' is not secure (not https).  Vanadium\'s security model may be ' +
-      'compromised.';
+    document.getElementById('warning').classList.remove('hidden');
   }
 
   // Setup the cancel button.
