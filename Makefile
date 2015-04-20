@@ -1,4 +1,4 @@
-PATH := node_modules/.bin:${V23_ROOT}/environment/cout/node/bin:$(PATH)
+PATH := node_modules/.bin:${V23_ROOT}/third_party/cout/node/bin:$(PATH)
 
 NODE_BIN := $(V23_ROOT)/release/javascript/core/node_modules/.bin
 GOPATH := $(V23_ROOT)/release/javascript/core/go

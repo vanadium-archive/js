@@ -1,4 +1,4 @@
-PATH := node_modules/.bin:${V23_ROOT}/environment/cout/node/bin:$(PATH)
+PATH := node_modules/.bin:${V23_ROOT}/third_party/cout/node/bin:$(PATH)
 WSPR_ROOT := $(V23_ROOT)/release/go/src/v.io/x/ref/services/wspr
 SHELL := /bin/bash -e -o pipefail
 .DEFAULT_GOAL := all
@@ -20,7 +20,7 @@ define COMPILE-NACL-PLUGIN
 	GOARCH=amd64p32 \
 	GOOS=nacl \
 	GOROOT= \
-	v23 xgo --target-go=$(V23_ROOT)/environment/go_ppapi/bin/go amd64p32-nacl build -o $2 $1
+	v23 xgo --target-go=$(V23_ROOT)/third_party/repos/go_ppapi/bin/go amd64p32-nacl build -o $2 $1
 endef
 
 all: vanadium.zip
