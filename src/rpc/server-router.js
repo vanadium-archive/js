@@ -306,7 +306,6 @@ Router.prototype.handleRPCRequest = function(messageId, vdlRequest) {
   // Plumb through the vtrace ids
   var suffix = request.call.securityCall.suffix;
   var spanName = '<jsserver>"'+suffix+'".'+request.method;
-  console.log('spanName is ' + spanName);
   // TODO(mattr): We need to enforce some security on trace responses.
   ctx = vtrace.withContinuedTrace(ctx, spanName,
                                   request.call.traceRequest);

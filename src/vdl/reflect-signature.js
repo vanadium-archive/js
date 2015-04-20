@@ -81,7 +81,6 @@ function ReflectSignature(service) {
         'Args were: %s',
           key, argInspector.names);
       var e = new Error(message);
-      console.log(e);
       throw e;
     }
 
