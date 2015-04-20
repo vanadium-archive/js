@@ -36,7 +36,7 @@ module.exports.Exp = Exp
 
     
       
-Exp.prototype.exp = function(ctx, x) {
+Exp.prototype.exp = function(ctx, serverCall, x) {
   throw new Error('Method Exp not implemented');
 };
      

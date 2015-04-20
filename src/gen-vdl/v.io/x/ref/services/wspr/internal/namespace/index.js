@@ -44,62 +44,62 @@ module.exports.Namespace = Namespace
 
     
       
-Namespace.prototype.glob = function(ctx, pattern) {
+Namespace.prototype.glob = function(ctx, serverCall, pattern) {
   throw new Error('Method Glob not implemented');
 };
     
       
-Namespace.prototype.mount = function(ctx, name, server, ttl, replace) {
+Namespace.prototype.mount = function(ctx, serverCall, name, server, ttl, replace) {
   throw new Error('Method Mount not implemented');
 };
     
       
-Namespace.prototype.unmount = function(ctx, name, server) {
+Namespace.prototype.unmount = function(ctx, serverCall, name, server) {
   throw new Error('Method Unmount not implemented');
 };
     
       
-Namespace.prototype.resolve = function(ctx, name) {
+Namespace.prototype.resolve = function(ctx, serverCall, name) {
   throw new Error('Method Resolve not implemented');
 };
     
       
-Namespace.prototype.resolveToMountTable = function(ctx, name) {
+Namespace.prototype.resolveToMountTable = function(ctx, serverCall, name) {
   throw new Error('Method ResolveToMountTable not implemented');
 };
     
       
-Namespace.prototype.flushCacheEntry = function(ctx, name) {
+Namespace.prototype.flushCacheEntry = function(ctx, serverCall, name) {
   throw new Error('Method FlushCacheEntry not implemented');
 };
     
       
-Namespace.prototype.disableCache = function(ctx, disable) {
+Namespace.prototype.disableCache = function(ctx, serverCall, disable) {
   throw new Error('Method DisableCache not implemented');
 };
     
       
-Namespace.prototype.roots = function(ctx) {
+Namespace.prototype.roots = function(ctx, serverCall) {
   throw new Error('Method Roots not implemented');
 };
     
       
-Namespace.prototype.setRoots = function(ctx, roots) {
+Namespace.prototype.setRoots = function(ctx, serverCall, roots) {
   throw new Error('Method SetRoots not implemented');
 };
     
       
-Namespace.prototype.setPermissions = function(ctx, name, acl, version) {
+Namespace.prototype.setPermissions = function(ctx, serverCall, name, acl, version) {
   throw new Error('Method SetPermissions not implemented');
 };
     
       
-Namespace.prototype.getPermissions = function(ctx, name) {
+Namespace.prototype.getPermissions = function(ctx, serverCall, name) {
   throw new Error('Method GetPermissions not implemented');
 };
     
       
-Namespace.prototype.delete = function(ctx, name, deleteSubtree) {
+Namespace.prototype.delete = function(ctx, serverCall, name, deleteSubtree) {
   throw new Error('Method Delete not implemented');
 };
      

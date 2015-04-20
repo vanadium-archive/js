@@ -48,7 +48,7 @@ module.exports.OAuthBlesser = OAuthBlesser
 
     
       
-OAuthBlesser.prototype.blessUsingAccessToken = function(ctx, token) {
+OAuthBlesser.prototype.blessUsingAccessToken = function(ctx, serverCall, token) {
   throw new Error('Method BlessUsingAccessToken not implemented');
 };
      
@@ -97,7 +97,7 @@ module.exports.MacaroonBlesser = MacaroonBlesser
 
     
       
-MacaroonBlesser.prototype.bless = function(ctx, macaroon) {
+MacaroonBlesser.prototype.bless = function(ctx, serverCall, macaroon) {
   throw new Error('Method Bless not implemented');
 };
      

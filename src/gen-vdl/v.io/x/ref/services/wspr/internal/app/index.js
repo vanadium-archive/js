@@ -114,57 +114,57 @@ module.exports.Controller = Controller
 
     
       
-Controller.prototype.serve = function(ctx, name, serverId) {
+Controller.prototype.serve = function(ctx, serverCall, name, serverId) {
   throw new Error('Method Serve not implemented');
 };
     
       
-Controller.prototype.stop = function(ctx, serverId) {
+Controller.prototype.stop = function(ctx, serverCall, serverId) {
   throw new Error('Method Stop not implemented');
 };
     
       
-Controller.prototype.addName = function(ctx, serverId, name) {
+Controller.prototype.addName = function(ctx, serverCall, serverId, name) {
   throw new Error('Method AddName not implemented');
 };
     
       
-Controller.prototype.removeName = function(ctx, serverId, name) {
+Controller.prototype.removeName = function(ctx, serverCall, serverId, name) {
   throw new Error('Method RemoveName not implemented');
 };
     
       
-Controller.prototype.unlinkBlessings = function(ctx, handle) {
+Controller.prototype.unlinkBlessings = function(ctx, serverCall, handle) {
   throw new Error('Method UnlinkBlessings not implemented');
 };
     
       
-Controller.prototype.bless = function(ctx, publicKey, blessingHandle, extension, caveat) {
+Controller.prototype.bless = function(ctx, serverCall, publicKey, blessingHandle, extension, caveat) {
   throw new Error('Method Bless not implemented');
 };
     
       
-Controller.prototype.blessSelf = function(ctx, name, caveats) {
+Controller.prototype.blessSelf = function(ctx, serverCall, name, caveats) {
   throw new Error('Method BlessSelf not implemented');
 };
     
       
-Controller.prototype.putToBlessingStore = function(ctx, blessingHandle, pattern) {
+Controller.prototype.putToBlessingStore = function(ctx, serverCall, blessingHandle, pattern) {
   throw new Error('Method PutToBlessingStore not implemented');
 };
     
       
-Controller.prototype.remoteBlessings = function(ctx, name, method) {
+Controller.prototype.remoteBlessings = function(ctx, serverCall, name, method) {
   throw new Error('Method RemoteBlessings not implemented');
 };
     
       
-Controller.prototype.signature = function(ctx, name) {
+Controller.prototype.signature = function(ctx, serverCall, name) {
   throw new Error('Method Signature not implemented');
 };
     
       
-Controller.prototype.getDefaultBlessings = function(ctx) {
+Controller.prototype.getDefaultBlessings = function(ctx, serverCall) {
   throw new Error('Method GetDefaultBlessings not implemented');
 };
      
