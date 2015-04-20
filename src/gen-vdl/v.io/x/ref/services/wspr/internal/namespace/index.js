@@ -89,7 +89,7 @@ Namespace.prototype.setRoots = function(ctx, serverCall, roots) {
 };
     
       
-Namespace.prototype.setPermissions = function(ctx, serverCall, name, acl, version) {
+Namespace.prototype.setPermissions = function(ctx, serverCall, name, perms, version) {
   throw new Error('Method SetPermissions not implemented');
 };
     
@@ -305,7 +305,7 @@ Namespace.prototype._serviceDescription = {
       type: vdl.Types.STRING
     },
     {
-      name: 'acl',
+      name: 'perms',
       doc: "",
       type: new access.Permissions()._type
     },
@@ -332,7 +332,7 @@ Namespace.prototype._serviceDescription = {
     },
     ],
     outArgs: [{
-      name: 'acl',
+      name: 'perms',
       doc: "",
       type: new access.Permissions()._type
     },
