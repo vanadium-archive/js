@@ -102,18 +102,25 @@ AuthHandler.prototype.associateAccount =
 // Pop up a new tab asking the user to chose their caveats.
 AuthHandler.prototype.getCaveats = function(account, origin, port) {
   var tabId = port.sender.tab.id;
+
+  // Check if the port exists and has started an auth flow within the past 5
+  // seconds.
   if (this._ports[tabId]) {
-    // Authorization is already in progress. Do nothing.
-    console.log('Authorization is already in progress for tab: ' + tabId);
-    return;
+    var p = this._ports[tabId];
+    if (p.authTime && (Date.now() - p.authTime) < 5000) {
+      // Authorization is already in progress. Do nothing.
+      console.log('Authorization is already in progress for tab: ' + tabId);
+      return;
+    }
   }
 
   // Store the port by its tab id.
   this._ports[tabId] = port;
 
-  // Store the account name and a random salt on the port.
+  // Store the account name, random salt, and timestamp on the port.
   port.account = account;
   port.authState = random.hex();
+  port.authTime = Date.now();
 
   // Get  currently active tab in the window.
   var windowId = port.sender.tab.windowId;
