@@ -60,7 +60,7 @@ if (isBrowser) {
 /**
  * Callback passed into the {@link module:vanadium.init} that will be
  * called when the initialization has finished.
- * @callback init~cb
+ * @callback module:vanadium~runtimeCb
  * @param {Error?} err If set, the error that occurred during
  * {@link module:vanadium.init}
  * @param {module:vandium~Runtime} rt The runtime that was constructed.
@@ -68,8 +68,8 @@ if (isBrowser) {
 /**
  * Creates a Vanadium [runtime]{@link module:vanadium~Runtime}.
  * @param {Object} config Configuration options
- * @param {init~cb} [cb] If provided, the callback that will be called with an
- * error or the new runtime
+ * @param {module:vanadium~runtimeCb} [cb] If provided, the callback that will
+ * be called on completion.
  * @return {Promise.<module:vanadium~Runtime>} A promise that resolves to the
  * new Runtime.
  * @memberof module:vanadium

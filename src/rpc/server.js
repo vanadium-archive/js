@@ -55,22 +55,21 @@ function Server(router) {
   this.serviceObjectHandles = {};
 }
 
-/*
- * TODO(aghassemi) Do we need 3 layers here? runtime, server and
- * server_router all have these serve(), stop(), addName(), removeName() methods
- * Maybe we can remove stuff from runtime and just expose getServer() or support
- * ability to have more than one server and expose createServer()
- */
-
 /**
- * @typedef ServeOptions
+ * @typedef module:vanadium.rpc~Server~ServeOptions
  * ServeOptions is a set of options that are passed to the
- * [serve]{@link Server#serve}.
+ * [serve]{@link module:vanadium.rpc~Server#serve}.
  * @property {module:vanadium.security.Authorize} authorizer An Authorizer
  * that will handle the authorization for the method call.  If null, then the
  * default strict authorizer will be used.
  */
 
+/**
+ * Void callback is an callback that will be called on completion of an
+ * async operation that has no results
+ * @callback module:vanadium.rpc~Server~voidCb
+ * @param {error} err If set, the error that occurred.
+ */
 /**
  * <p>Serve associates object with name by publishing the address
  * of this server with the mount table under the supplied name and using
@@ -93,9 +92,9 @@ function Server(router) {
  * @param {string} name Name to serve under
  * @param {object} serviceObject The service object that has a set of
  * exported methods
- * @param {ServeOptions} options Options config
- * @param {function} [cb] If provided, the function will be called on
- * completion. The only argument is an error if there was one.
+ * @param {module:vanadium.rpc~Server~ServeOptions} options Options config
+ * @param {module:vanadium.rpc~Server~voidCb} [cb] If provided, the function
+ * will be called on completion.
  * @return {Promise} Promise to be called when serve completes or fails.
  */
 Server.prototype.serve = function(name, serviceObject, options, cb) {
@@ -120,14 +119,14 @@ Server.prototype.serve = function(name, serviceObject, options, cb) {
  * @type {Object}
  * @property {object} service The Invoker that will handle
  * method call.
- * @property {Authorize} authorizer An Authorizer that will handle the
- * authorization for the method call.  If null, then the default strict
- * authorizer will be used.
+ * @property {module:vanadium.security~Authorize} authorizer An Authorizer that
+ * will handle the authorization for the method call.  If null, then the default
+ * strict authorizer will be used.
  */
 
 /**
  * A function that returns the service object for a suffix/method pair.
- * @callback Dispatcher
+ * @callback module:vanadium.rpc~Dispatcher
  * @param {string} suffix The suffix for the call
  * @param {string} method The method for the call
  * @param {Dispatcher-callback} cb The callback to call when the dispatch is
@@ -139,7 +138,7 @@ Server.prototype.serve = function(name, serviceObject, options, cb) {
 
 /**
  * Callback passed into Dispatcher
- * @callback Dispatcher-callback
+ * @callback module:vanadium.rpc~Dispatcher-callback
  * @param {Error} err An error if one occurred
  * @param {object} object The object that will handle the method call
  */
@@ -168,10 +167,11 @@ Server.prototype.serve = function(name, serviceObject, options, cb) {
  *
  * @public
  * @param {string} name Name to serve under
- * @param {Dispatcher} dispatcher A function that will take in the suffix
- * and the method to be called and return the service object for that suffix.
- * @param {function} [cb] If provided, the function will be called on
- * completion. The only argument is an error if there was one.
+ * @param {module:vanadium.rpc~Dispatcher} dispatcher A function that will
+ * take in the suffix and the method to be called and return the service
+ * object for that suffix.
+ * @param {module:vanadium.rpc~Server~voidCb} [cb] If provided, the function
+ * will be called on completion.
  * @return {Promise} Promise to be called when serve completes or fails.
  */
 Server.prototype.serveDispatcher = function(name, dispatcher, cb) {
@@ -183,8 +183,8 @@ Server.prototype.serveDispatcher = function(name, dispatcher, cb) {
  * Stop gracefully stops all services on this Server.
  * New calls are rejected, but any in-flight calls are allowed to complete.
  * All published named are unmounted.
- * @param {function} [cb] If provided, the function will be called on
- * completion. The only argument is an error if there was one.
+ * @param {module:vanadium.rpc~Server~voidCb} [cb] If provided, the function
+ * will be called on completion.
  * @return {Promise} Promise to be called when stop service completes or fails
  */
 Server.prototype.stop = function(cb) {
@@ -193,11 +193,15 @@ Server.prototype.stop = function(cb) {
 
 /**
  * Adds the specified name to the mount table for the object or dispatcher
- * served by this server.
+ * served by this server. It is an error to specify a name that was not
+ * previously added using
+ * [serve]{@link module:vanadium.rpc~Server#serve}/
+ * [serveDispatcher]{@link module:vanadium.rpc~Server#serveDispatcher}
+ * or [addName]{@link module:vanadium.rpc~Server#addName}.
  * @public
  * @param {string} name Name to publish
- * @param {function} [cb] If provided, the function will be called on
- * completion. The only argument is an error if there was one.
+ * @param {module:vanadium.rpc~Server~voidCb} [cb] If provided, the function
+ * will be called on completion.
  * @return {Promise} Promise to be called when operation completes or fails
  */
 Server.prototype.addName = function(name, cb) {
@@ -207,8 +211,9 @@ Server.prototype.addName = function(name, cb) {
 /**
  * Removes the specified name from the mount table. It is an
  * error to specify a name that was not previously added using
- * {@link Server#serve|serve}/{@link Server#serveDispatcher|
- * serveDispatcher} or {@link Server#addName|addName}.
+ * [serve]{@link module:vanadium.rpc~Server#serve}/
+ * [serveDispatcher]{@link module:vanadium.rpc~Server#serveDispatcher}
+ * or [addName]{@link module:vanadium.rpc~Server#addName}.
  * @public
  * @param {string} name Name to remove
  * @param {function} [cb] If provided, the function will be called on

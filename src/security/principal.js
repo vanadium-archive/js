@@ -26,6 +26,8 @@ var verror = require('../gen-vdl/v.io/v23/verror');
  * <p>This constructor should not be used explicitly.  Instead, use
  * {@link module:vanadium~Runtime#principal}
  * @constructor
+ * @property {module:vanadium.security~Blessings} defaultBlessings The default
+ * blessings for this principal.
  * @inner
  * @memberof module:vanadium.security
  */

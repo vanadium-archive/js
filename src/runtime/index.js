@@ -87,6 +87,15 @@ function init(options, cb) {
  *    Emitted when the runtime crashes in an unexpected way. Recovery from
  *    crash event requires restarting the application.
  * </p>
+ * @property {string} accountName The accountName that the user associated to
+ * this runtime.
+ * @property {module:vanadium.security~Principal} principal The principal
+ * associated with this runtime.  All operations that come from this
+ * runtime, including operations that come from
+ * [Servers]{@link module:vanadium.rpc~Server} and
+ * [Clients]{@link module:vanadium.rpc~Client}, will use this principal.
+ * @property {module:vanadium.security~CaveatValidatorRegistry} caveatRegistry
+ * Used to register custom first party caveat validators.
  * @inner
  * @memberof module:vanadium
  * @constructor
@@ -115,7 +124,7 @@ inherits(Runtime, EE);
  * Closes the runtime, freeing all the related resources and stopping and
  * unpublishing all the servers created in the runtime.
  *
- * @param {Function} [cb] Gets called once the runtime is closed.
+ * @param {function} [cb] Gets called once the runtime is closed.
  * @returns {Promise} Promise that will be resolved or rejected when runtime is
  * closed.
  */
@@ -128,18 +137,18 @@ Runtime.prototype.close = function(cb) {
 };
 
 /**
- * Creates a new [server]{@link Server} instance.<br>
+ * Creates a new [Server]{@link module:vanadium.rpc~Server} instance.<br>
  * Server allows one to create, publish and stop Vanadium services.
- * @return {Server} A server instance.
+ * @return {module:vanadium.rpc~Server} A server instance.
  */
 Runtime.prototype.newServer = function() {
   return new Server(this._getRouter());
 };
 
 /**
- * Creates a new [client]{@link Client} instance.<br>
+ * Creates a new [Client]{@link module:vanadium.rpc~Client} instance.<br>
  * Client allows one to bind to Vanadium names and call methods on them.
- * @return {Client} A Client instance.
+ * @return {module:vanadium.rpc~Client} A Client instance.
  */
 Runtime.prototype.newClient = function() {
   return new Client(this._getProxyConnection());
@@ -172,9 +181,10 @@ Runtime.prototype.getContext = function() {
 };
 
 /**
- * Returns a [namespace]{@link Namespace} client.
- * Namespace client enables interactions with the Vanadium namespace such as
+ * <p>Returns a [namespace]{@link module:vanadium.naming~Namespace} client.</p>
+ * <p>Namespace client enables interactions with the Vanadium namespace such as
  * globbing, mounting, setting permissions and other name related operations.
+ * </p>
  * @return {module:vanadium.naming~Namespace} A namespace client instance.
  */
 Runtime.prototype.namespace = function() {
