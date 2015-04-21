@@ -49,7 +49,7 @@ module.exports = {};
   
     
 function Trigonometry(){}
-module.exports.Trigonometry = Trigonometry
+module.exports.Trigonometry = Trigonometry;
 
     
       
@@ -119,7 +119,7 @@ Trigonometry.prototype._serviceDescription = {
   
     
 function AdvancedMath(){}
-module.exports.AdvancedMath = AdvancedMath
+module.exports.AdvancedMath = AdvancedMath;
 
     
       
@@ -227,7 +227,7 @@ AdvancedMath.prototype._serviceDescription = {
   
     
 function Arith(){}
-module.exports.Arith = Arith
+module.exports.Arith = Arith;
 
     
       
@@ -460,7 +460,7 @@ Arith.prototype._serviceDescription = {
   
     
 function Calculator(){}
-module.exports.Calculator = Calculator
+module.exports.Calculator = Calculator;
 
     
       

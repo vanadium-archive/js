@@ -40,7 +40,7 @@ _type1.freeze();
   
     
 function Namespace(){}
-module.exports.Namespace = Namespace
+module.exports.Namespace = Namespace;
 
     
       

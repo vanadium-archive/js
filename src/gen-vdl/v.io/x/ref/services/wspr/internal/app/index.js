@@ -110,7 +110,7 @@ module.exports.RpcResponse = (vdl.Registry.lookupOrCreateConstructor(_typeRpcRes
   
     
 function Controller(){}
-module.exports.Controller = Controller
+module.exports.Controller = Controller;
 
     
       

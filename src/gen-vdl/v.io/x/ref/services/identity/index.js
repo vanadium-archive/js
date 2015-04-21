@@ -44,7 +44,7 @@ module.exports.BlessingRootResponse = (vdl.Registry.lookupOrCreateConstructor(_t
   
     
 function OAuthBlesser(){}
-module.exports.OAuthBlesser = OAuthBlesser
+module.exports.OAuthBlesser = OAuthBlesser;
 
     
       
@@ -93,7 +93,7 @@ OAuthBlesser.prototype._serviceDescription = {
   
     
 function MacaroonBlesser(){}
-module.exports.MacaroonBlesser = MacaroonBlesser
+module.exports.MacaroonBlesser = MacaroonBlesser;
 
     
       

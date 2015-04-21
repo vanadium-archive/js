@@ -468,7 +468,7 @@ module.exports.notExportedError = makeError('v.io/x/ref/lib/vdl/testdata/base.no
   
     
 function ServiceA(){}
-module.exports.ServiceA = ServiceA
+module.exports.ServiceA = ServiceA;
 
     
       
@@ -592,7 +592,7 @@ ServiceA.prototype._serviceDescription = {
   
     
 function ServiceB(){}
-module.exports.ServiceB = ServiceB
+module.exports.ServiceB = ServiceB;
 
     
       
