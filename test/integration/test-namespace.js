@@ -163,10 +163,14 @@ test('Test globbing non-existing rooted name - ' +
     assert.timeout(timeouts.long);
 
     var runtime;
-    init(config).then(function glob(rt) {
+    vanadium.init(config).then(function glob(rt) {
       runtime = rt;
       var namespace = rt.namespace();
-      var rpc = namespace.glob(rt.getContext().withTimeout(timeouts.long),
+      // Note: Glob will always timeout after 30s 
+      // see v.io/x/ref/profiles/internal/naming/namespace/parallelstartcall.go
+      // This means we'll get a timeout error on the glob stream before
+      // timeouts.long expires.
+      var rpc = namespace.glob(rt.getContext(),
         '/RootedBadName.Google.tld:1234/*');
       rpc.catch(function(err) {
         // Ignore the timeout error.
@@ -184,8 +188,8 @@ test('Test globbing non-existing rooted name - ' +
         }
         numErrorItems++;
         assert.ok(errItem, 'Should get one error result item');
-        assert.ok(errItem.error instanceof verror.NoServersError,
-          'error item should have error field of type NoServersError');
+        assert.ok(errItem.error instanceof verror.TimeoutError,
+          'error item should have error field of type TimeoutError');
         assert.equal(errItem.name, '/RootedBadName.Google.tld:1234',
           'error item should have a name');
       });
@@ -390,12 +394,12 @@ test('Test setting roots to invalid endpoint - ' +
   function(assert) {
 
     // increase timeout for this test as it retries bad-url until timeout.
-    assert.timeout(timeouts.long);
+    assert.timeout(timeouts.max);
 
     var runtime;
     var namespace;
     var ctx;
-    init(config).then(function setRoots(rt) {
+    vanadium.init(config).then(function setRoots(rt) {
       runtime = rt;
       namespace = rt.namespace();
       ctx = rt.getContext();
@@ -405,12 +409,14 @@ test('Test setting roots to invalid endpoint - ' +
       // Since setRoots changes runtimes Namespace roots, binding to any name
       // should now fail
       var client = runtime.newClient();
+      ctx = ctx.withTimeout(timeouts.short);
       return client.bindTo(ctx, PREFIX + 'house/kitchen/lights')
         .then(function() {
           assert.fail('Should not have been able to bind with invalid roots');
         }, function(err) {
           assert.ok(err);
           assert.ok(err instanceof Error);
+          ctx.finish();
           end();
         });
     }).catch(end);
