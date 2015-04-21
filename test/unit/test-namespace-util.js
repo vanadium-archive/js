@@ -167,7 +167,11 @@ test('names.blessingNamesFromAddress(addr)', function(assert) {
     ['@4@tcp@127.0.0.1:22@@@@s@@@', ['']],
     ['@4@tcp@127.0.0.1:22@@@@s@dev.v.io/services/mounttabled@@',
       ['dev.v.io/services/mounttabled']],
+    ['@5@tcp@127.0.0.1:22@@s@dev.v.io/services/mounttabled@@',
+      ['dev.v.io/services/mounttabled']],
     ['@4@tcp@127.0.0.1:22@@@@s@dev.v.io/services/mounttabled,foo/bar,batman@dccomics.com/car@@',  // jshint ignore:line
+      ['dev.v.io/services/mounttabled', 'foo/bar', 'batman@dccomics.com/car']],
+    ['@5@tcp@127.0.0.1:22@@s@dev.v.io/services/mounttabled,foo/bar,batman@dccomics.com/car@@',  // jshint ignore:line
       ['dev.v.io/services/mounttabled', 'foo/bar', 'batman@dccomics.com/car']],
     // Well-formed endpoints of old versions.
     ['@2@tcp@127.0.0.1:21@@@@@', []],

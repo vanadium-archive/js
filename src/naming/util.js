@@ -92,13 +92,17 @@ function blessingNamesFromAddress(addr) {
     // Versions less than 4 do not support blessing names in the endpoint.
     return [];
   }
-  if (epversion > 4) {
+  var blessingNameField = 7;
+  if (epversion === 5) {
+    blessingNameField = 5;
+  }
+  if (epversion > 5) {
     // This code needs to be updated.
     throw new Error('endpoint version '+epversion+' not supported');
   }
   var start = 0;
-  // blessing names are the 7th field!
-  for (var i = 0; i < 7; i++) {
+  // blessing names are the blessingNameField position.
+  for (var i = 0; i < blessingNameField; i++) {
     start = addr.indexOf('@', start+1);
   }
   return addr.substr(start+1, addr.length-start-3).split(',');
