@@ -117,10 +117,10 @@ test-vdl: test-vdl-node test-vdl-browser
 # The alternative is to use the vdl audit command, but that requires checking
 # after both vdl commands in gen-vdl-impl as opposed to a single git status.
 test-vdl-audit: gen-vdl
-	$(eval TEST := "$(shell git status --porcelain | grep ' src/gen-vdl/' | sed 's/^ //')")
-	@if [ $(TEST) != "" ]; then \
+	@if [ "`git status --porcelain | grep ' src/gen-vdl/' | sed 's/^ //'`" != "" ]; then \
 	  echo "Some VDL files changed but were not committed!"; \
-	  echo $(TEST); \
+	  echo "`git status --porcelain | grep ' src/gen-vdl/' | sed 's/^ //'`"; \
+	  echo "Run 'make gen-vdl' in the javascript/core repo, and commit the changed files."; \
 	  exit 1; \
 	fi
 
