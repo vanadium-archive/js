@@ -199,8 +199,8 @@ test-integration-browser-runner:
 	prova test/integration/test-*.js --log=./tmp/chrome.log $(PROVA_OPTS) $(BROWSER_OPTS) $(BROWSER_OUTPUT_LOCAL) $(SAVE_CHROME_LOGS)
 
 go/bin: $(GO_FILES)
+	@$(VGO) build -o $(GOBIN)/servicerunner -a -tags wspr v.io/x/ref/cmd/servicerunner
 	@$(VGO) build -o $(GOBIN)/principal v.io/x/ref/cmd/principal
-	@$(VGO) build -o $(GOBIN)/servicerunner v.io/x/ref/cmd/servicerunner
 	@$(VGO) build -o $(GOBIN)/test_serviced v.io/x/js.core/test_service/test_serviced
 
 lint: node_modules
