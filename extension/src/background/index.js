@@ -144,8 +144,10 @@ BackgroundPage.prototype.handleBrowsprCleanup = function(port, msg) {
   }
 
   var bp = this;
+  var now = Date.now();
   this.nacl.cleanupInstance(instanceId, function() {
-    console.log('Cleaned up instance: ' + instanceId);
+    var end = Date.now();
+    console.log('Cleaned up instance: ' + instanceId + ' in ' + (end - now) + ' ms');
     var pId = portId(port);
     bp.instanceIds[pId] = _.remove(bp.instanceIds[pId], [instanceId]);
     delete bp.ports[instanceId];
