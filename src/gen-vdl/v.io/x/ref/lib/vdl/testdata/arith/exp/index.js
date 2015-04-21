@@ -32,7 +32,7 @@ module.exports = {};
   
     
 function Exp(){}
-module.exports.Exp = Exp
+module.exports.Exp = Exp;
 
     
       
