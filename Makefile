@@ -111,6 +111,19 @@ test: test-unit test-integration test-vdl test-vom
 
 test-vdl: test-vdl-node test-vdl-browser
 
+# This generates the VDL files and asks git if there are any changed files.
+# We don't have to check the extension since it does not check in VDL files.
+#
+# The alternative is to use the vdl audit command, but that requires checking
+# after both vdl commands in gen-vdl-impl as opposed to a single git status.
+test-vdl-audit: gen-vdl
+	$(eval TEST := "$(shell git status --porcelain | grep ' src/gen-vdl/' | sed 's/^ //')")
+	@if [ $(TEST) != "" ]; then \
+	  echo "Some VDL files changed but were not committed!"; \
+	  echo $(TEST); \
+	  exit 1; \
+	fi
+
 test-vom: test-vom-node test-vom-browser
 
 # This generates the output of the vdl files in src/gen-vdl/v.io/<package-path>
