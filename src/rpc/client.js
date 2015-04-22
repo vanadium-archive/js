@@ -348,7 +348,7 @@ var IncorrectArgCount = makeError(
  *
  * Usage:
  * <pre>
- * runtime.bindTo(context, 'Service/Name').then(function(service) {
+ * client.bindTo(context, 'Service/Name').then(function(service) {
  *    service.fooMethod(fooArgs).then(function(methodCallResult) {
  *      // Do stuff with results.
  *    }).catch(function(err) {
@@ -400,7 +400,7 @@ Client.prototype.bindTo = function(ctx, name, cb) {
  *
  * Usage:
  * <pre>
- * var service = runtime.bindWithSignature('Service/Name', signature);
+ * var service = client.bindWithSignature('Service/Name', signature);
  * service.fooMethod(fooArgs).then(function(methodCallResult) {
  *   // Do stuff with results.
  * }).catch(function(err) {

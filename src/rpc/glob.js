@@ -38,7 +38,7 @@ function Glob(pattern) {
   }
   // TODO(bjornick): Make sure that the glob input is actually valid.
   // We don't need to do this now, but we do need to do it once we move
-  // more of the ipc implementation to JS.
+  // more of the rpc implementation to JS.
   this.patterns = this.elems.map(function(elem) {
     return minimatch.makeRe(elem, minimatchOptions);
   });

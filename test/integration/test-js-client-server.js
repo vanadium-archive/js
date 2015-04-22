@@ -134,7 +134,7 @@ runCache({
 
 // options: testName, definition, name
 function runCache(options) {
-  var namePrefix = 'Test JS client/server ipc ' + options.testName + ' - ';
+  var namePrefix = 'Test JS client/server rpc ' + options.testName + ' - ';
 
   test(namePrefix + 'cache.set(key, string) -> cache.get(key)',
             function(t) {
@@ -393,7 +393,7 @@ runTypeService({
 
 // options: testName, definition, name
 function runTypeService(options) {
-  var namePrefix = 'Test JS client/server ipc ' + options.testName + ' - ';
+  var namePrefix = 'Test JS client/server rpc ' + options.testName + ' - ';
   // This test ensures that typed values are sent between JS server and client.
   // The server expects an input of the ANY type, which means that it ought to
   // receive a typed value, if we send a typed value.
@@ -772,7 +772,7 @@ runTypedStreamingService({
 
 // options: testName, definition, name
 function runTypedStreamingService(options) {
-  var namePrefix = 'Test JS client/server ipc ' + options.testName + ' - ';
+  var namePrefix = 'Test JS client/server rpc ' + options.testName + ' - ';
 
   // typedStreamingService.inStreamOnly tests:
   // - correct # of values sent to server
