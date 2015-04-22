@@ -75,13 +75,14 @@ test('method signature encode-decode match', function(assert) {
 });
 
 var expectedAdvancedMathDescription =
-  require('../vdl/expected-gen/testdata/arith').AdvancedMath.
+  require('../vdl/expected-gen/v.io/x/ref/lib/vdl/testdata/arith').AdvancedMath.
   prototype._serviceDescription;
 
 test('correct service description', function(assert) {
   var arith = require('../vdl-out/v.io/x/ref/lib/vdl/testdata/arith');
   var description = (new arith.AdvancedMath())._serviceDescription;
   assert.deepEqual(description, expectedAdvancedMathDescription,
-    'service description matches expectation');
+    'service description matches expectation. (To update the expected ' +
+    'service description, run `make gen-vdl-test-expected`.)');
   assert.end();
 });
