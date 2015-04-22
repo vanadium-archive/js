@@ -13,7 +13,7 @@ function validateCommunication(t, name, cb) {
   var response = 5;
 
   var dispatcher = leafDispatcher({
-    anRpc: function(context, cb) {
+    anRpc: function(context, serverCall, cb) {
       cb(null, response);
     }
   });
@@ -31,12 +31,7 @@ function validateCommunication(t, name, cb) {
   });
 }
 
-// TODO(nlacasse,bjornick): This test is flakey and sometimes hangs.  It appears
-// as though the nacl plugin deadlocks during panic, and a 'crash' event is
-// never emitted from the nacl element, preventing the JavaScript from detecting
-// the crash.  We should figure out why this happens sometimes, and re-enable
-// the test once it is fixed.
-test.skip('Test recovery from nacl plugin crash', function(t) {
+test('Test recovery from nacl plugin crash', function(t) {
   if (!require('is-browser')) {
     return t.end();
   }
@@ -60,13 +55,15 @@ test.skip('Test recovery from nacl plugin crash', function(t) {
       validateCommunication(t, 'test/name2', function(err, close2) {
         if (err) {
           t.error(err);
-          return close1(t.end);
+          return close1(function() {
+            t.ok(err, 'runtime.close should error because nacl crashed.');
+            t.end();
+          });
         }
 
         close1(function(err1) {
-          close2(function(err2) {
-            t.end(err1 && err2);
-          });
+          t.ok(err1, 'First runtime.close should error because nacl crashed.');
+          close2(t.end);
         });
       });
     });

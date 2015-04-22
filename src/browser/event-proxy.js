@@ -54,7 +54,7 @@ function ExtensionEventProxy(timeout){
 
   // Echo any errors or crashes we receive to the console.
   this.on('error', function(err) {
-    console.error('Error message received from content script: ' + err);
+    console.error('Error message received from content script:', err);
   });
   this.on('crash', function(err) {
     console.error('Crash message received from content script.');
