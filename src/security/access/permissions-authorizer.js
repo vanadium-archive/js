@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 /**
- * @fileoverview The AccessList authorizer
+ * @fileoverview The Permissions authorizer
  * @private
  */
 var blessingMatches = require('./blessing-matching');
@@ -28,19 +28,19 @@ var NoTagsError = makeError(
   '{:_}');
 
 /**
- * The AccessList authorizer.
+ * The Permissions authorizer.
  * @function
  * @memberof module:vanadium.security.access
- * @name aclAuthorizer
- * @param {module:vanadium.security.access.Permissions} acls The set of acls
- * to apply.
+ * @name permissionsAuthorizer
+ * @param {module:vanadium.security.access.Permissions} perms The set of
+ * permission to apply.
  * @param {constructor} type The type of tags that this authorizer understands.
  * @return {module:vanadium.security.Authorize} An authorizer that applies
- * the acls.
+ * the perms.
  */
-function authorizer(acls, type) {
-  // Force the acls to have the correct Permissions format.
-  var permissions = unwrap(new Permissions(acls));
+function authorizer(perms, type) {
+  // Force the Permissions to have the correct Permissions format.
+  var permissions = unwrap(new Permissions(perms));
 
   return function authorize(ctx, call) {
     // If the remoteBlessings has a public key, and it refers to ourselves

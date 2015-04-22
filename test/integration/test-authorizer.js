@@ -3,10 +3,11 @@
 // license that can be found in the LICENSE file.
 
 var test = require('prova');
-var serve = require('./serve');
-var Deferred = require('../../src/lib/deferred');
-var aclAuthorizer = require('../../src/security/access/acl-authorizer');
 var access = require('../../src/gen-vdl/v.io/v23/security/access');
+var Deferred = require('../../src/lib/deferred');
+var permissionsAuthorizer =
+  require('../../src/security/access/permissions-authorizer');
+var serve = require('./serve');
 
 
 var service = {
@@ -174,46 +175,46 @@ test('Test passing in labels', function(assert) {
   }, ['foo']);
 });
 
-var acls = {
+var perms = {
   foo: {
     in: ['...']
   },
   bar: {}
 };
-var tagAclAuthorizer = aclAuthorizer(acls, access.Tag);
+var tagPermsAuthorizer = permissionsAuthorizer(perms, access.Tag);
 
 
-test('Test ACLAuthorizer (public key) - success', function(assert) {
+test('Test permissionsAuthorizer (public key) - success', function(assert) {
   var tagBar = new access.Tag('Bar');
 
   // Passes because we reuse the same public key, despite the tag not being ok.
-  testSuccessCase(assert, tagAclAuthorizer, [tagBar], true);
+  testSuccessCase(assert, tagPermsAuthorizer, [tagBar], true);
 });
 
-test('Test ACLAuthorizer (tag) - success', function(assert) {
+test('Test permissionsAuthorizer (tag) - success', function(assert) {
   var tagFoo = new access.Tag('Foo');
 
-  function diffPublicKeyAclAuthorizer(ctx, call) {
+  function diffPublicKeyPermsAuthorizer(ctx, call) {
     // get rid of public key, just for this example
     call.remoteBlessings.publicKey = '';
-    tagAclAuthorizer(ctx, call);
+    tagPermsAuthorizer(ctx, call);
   }
 
   // Everyone is allowed via the Foo tag.
-  testSuccessCase(assert, diffPublicKeyAclAuthorizer, [tagFoo], true);
+  testSuccessCase(assert, diffPublicKeyPermsAuthorizer, [tagFoo], true);
 });
 
 
 
-test('Test ACLAuthorizer (tag) - failure', function(assert) {
+test('Test permissionsAuthorizer (tag) - failure', function(assert) {
   var tagBar = new access.Tag('Bar');
 
-  function diffPublicKeyAclAuthorizer(ctx, call) {
+  function diffPublicKeyPermsAuthorizer(ctx, call) {
     // get rid of public key, just for this example to demonstrate failure
     call.remoteBlessings.publicKey = '';
-    tagAclAuthorizer(ctx, call);
+    tagPermsAuthorizer(ctx, call);
   }
 
   // Nobody is allowed via the Bar tag.
-  testErrorCase(assert, diffPublicKeyAclAuthorizer, [tagBar], true);
+  testErrorCase(assert, diffPublicKeyPermsAuthorizer, [tagBar], true);
 });
