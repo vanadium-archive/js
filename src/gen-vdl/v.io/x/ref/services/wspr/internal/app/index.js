@@ -154,6 +154,11 @@ Controller.prototype.putToBlessingStore = function(ctx, serverCall, blessingHand
 };
     
       
+Controller.prototype.addToRoots = function(ctx, serverCall, blessingHandle) {
+  throw new Error('Method AddToRoots not implemented');
+};
+    
+      
 Controller.prototype.remoteBlessings = function(ctx, serverCall, name, method) {
   throw new Error('Method RemoteBlessings not implemented');
 };
@@ -365,6 +370,22 @@ Controller.prototype._serviceDescription = {
       type: _type5
     },
     ],
+    inStream: null,
+    outStream: null,
+    tags: []
+  },
+    
+      
+    {
+    name: 'AddToRoots',
+    doc: "// AddToRoots adds the provided blessing as a root.",
+    inArgs: [{
+      name: 'blessingHandle',
+      doc: "",
+      type: new principal.BlessingsHandle()._type
+    },
+    ],
+    outArgs: [],
     inStream: null,
     outStream: null,
     tags: []

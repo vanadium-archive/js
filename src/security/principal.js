@@ -157,6 +157,28 @@ Principal.prototype.putToBlessingStore = function(
     });
 };
 
+/**
+ * Add the provided blessing as a root.
+ * @param {module:vanadium.context.Context} ctx The context
+ * @param {module:vanadium.security~Blessings} blessings The blessings object
+ * @param {Blessings~cb} cb an optional callback that will return the blessing
+ * handle
+ * @return {Promise} a promise (resolves with no value)
+ */
+Principal.prototype.addToRoots = function(
+  ctx, blessings, cb) {
+  var def;
+  if (blessings === undefined) {
+    def = new Deferred(cb);
+    def.reject(new verror.InternalError(this._ctx,
+      'Blessings handle not specified'));
+    return def.promise;
+  }
+
+  return this._controller.addToRoots.call(this._controller,
+    ctx, blessings._id, cb);
+};
+
 Principal.prototype._loadDefaultBlessings = function() {
   var self = this;
   return this._controller.getDefaultBlessings(this._ctx).

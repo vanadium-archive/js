@@ -153,7 +153,7 @@ test('Test bless without Caveat from client (with Granter)', function(t) {
     });
 });
 
-
+// TODO(bprosnitz) This test is weak. Improve it.
 test('Test put to blessing store', function(t) {
   vanadium.init(config, function(err, runtime) {
     if (err) {
@@ -180,8 +180,33 @@ test('Test put to blessing store', function(t) {
           runtime.close(t.end);
         });
     }).catch(function(err) {
-      t.error(err);
+      t.error(err, 'either blessSelf or putToBlessingStore errored');
       runtime.close(t.end);
+    });
+  });
+});
+
+// TODO(bprosnitz) This test is weak. Improve it.
+test('Test add roots', function(t) {
+  var rt;
+  vanadium.init(config, function(err, runtime) {
+    if (err) {
+      t.end(err);
+    }
+
+    rt = runtime;
+
+    runtime.principal.blessSelf(runtime.getContext(), 'ext')
+    .then(function(blessings) {
+      t.ok(blessings instanceof Blessings, 'Got blessings');
+      t.ok(blessings._id > 0, 'Should get non-zero blessings');
+
+      return runtime.principal.addToRoots(runtime.getContext(), blessings);
+    }).then(function() {
+      rt.close(t.end);
+    }).catch(function(err) {
+      t.error(err, 'either blessSelf or addToRoots errored');
+      rt.close(t.end);
     });
   });
 });
