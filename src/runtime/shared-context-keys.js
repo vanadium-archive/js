@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-var ContextKey = require('./context-key');
+var ContextKey = require('../context/context-key');
 /**
  * Key for name of the component
  * @private

@@ -7,7 +7,7 @@
  */
 
 var test = require('prova');
-var context = require('../../src/runtime/context');
+var context = require('../../src/context');
 var verror = require('../../src/gen-vdl/v.io/v23/verror');
 
 var ctx = context.Context();

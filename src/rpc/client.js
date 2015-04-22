@@ -17,7 +17,7 @@ var ByteArrayMessageWriter = require('../vom/byte-array-message-writer');
 var byteUtil = require('../vdl/byte-util');
 var Controller =
   require('../gen-vdl/v.io/x/ref/services/wspr/internal/app').Controller;
-var context = require('../runtime/context');
+var context = require('../context');
 var Deferred = require('../lib/deferred');
 var emitStreamError = require('../lib/emit-stream-error');
 var Encoder = require('../vom/encoder');

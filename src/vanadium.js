@@ -46,7 +46,7 @@ module.exports = {
   vlog: require('./lib/vlog'),
   naming: require('./naming'),
   security: require('./security'),
-  context: require('./runtime/context'),
+  context: require('./context'),
   vdl: require('./vdl'),
   vom: require('./vom'),
   uniqueId: require('./lib/uniqueid'),

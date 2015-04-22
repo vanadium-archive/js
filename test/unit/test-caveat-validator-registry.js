@@ -5,7 +5,7 @@
 var test = require('prova');
 var CaveatValidatorRegistry =
   require('../../src/security/caveat-validator-registry');
-var context = require('../../src/runtime/context');
+var context = require('../../src/context');
 var SecurityCall = require('../../src/security/call');
 var caveats = require('../../src/security/caveats');
 

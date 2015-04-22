@@ -15,7 +15,7 @@ var verror = require('../gen-vdl/v.io/v23/verror');
 var capitalize = require('../vdl/util').capitalize;
 var isCapitalized = require('../vdl/util').isCapitalized;
 var format = require('format');
-var context = require('../runtime/context');
+var context = require('../context');
 var asyncCall = require('../lib/async-call');
 var InspectableFunction = require('../lib/inspectable-function');
 

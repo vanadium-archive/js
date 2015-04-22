@@ -14,9 +14,24 @@
  * <p>Application code receives contexts in two main ways:
  * <ol>
  * <li>The runtime returned from vanadium.init() has a getContext() method.
- * This context will generally be used for stand-alone client programs.</li>
+ * This context will generally be used for stand-alone client programs.
+ *   <pre>
+ *     vanadium.init(function(err, runtime) {
+ *       var ctx = runtime.getContext();
+ *       doSomething(ctx);
+ *     });  
+ *   </pre>
+ * </li>
  * <li>The first parameter to every Vanadium server method implementation
- * is a Context.</li>
+ * is a Context.
+ *   <pre>
+ *     var MyService = {
+ *       method: function(ctx, serverCall) {
+ *         doSomething(ctx);
+ *       }
+ *     }
+ *   </pre>
+ * </li>
  * </ol></p>
  *
  * <p>Once you have a context you can derive further contexts to
@@ -79,7 +94,7 @@ var Deferred = require('../lib/deferred');
 var Promise = require('../lib/promise');
 var inherits = require('inherits');
 var vError = require('../gen-vdl/v.io/v23/verror');
-var ContextKey = require('./context-key');
+var ContextKey = require('../context/context-key');
 var BigInt = require('../vdl/big-int');
 
 module.exports = {

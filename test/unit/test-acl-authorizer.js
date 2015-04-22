@@ -10,7 +10,7 @@ var access = require('../../src/gen-vdl/v.io/v23/security/access');
 var unwrap = require('../../src/vdl/type-util').unwrap;
 var createConstructor = require('../../src/vdl/create-constructor');
 var kind = require('../../src/vdl/kind');
-var Context = require('../../src/runtime/context').Context;
+var Context = require('../../src/context').Context;
 
 require('es6-shim');
 var rootCtx = new Context();

@@ -7,7 +7,7 @@ var CaveatValidatorRegistry =
   require('../../src/security/caveat-validator-registry');
 var caveats = require('../../src/security/caveats');
 var vdlSecurity = require('../../src/gen-vdl/v.io/v23/security');
-var context = require('../../src/runtime/context');
+var context = require('../../src/context');
 var SecurityCall = require('../../src/security/call');
 var Time = require('../../src/gen-vdl/v.io/v23/vdlroot/time').Time;
 var vdl = require('../../src/vdl');

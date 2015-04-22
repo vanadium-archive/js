@@ -7,7 +7,7 @@
  */
 
 var test = require('prova');
-var context = require('../../src/runtime/context');
+var context = require('../../src/context');
 var vtrace = require('../../src/vtrace');
 var vdl = require('../../src/gen-vdl/v.io/v23/vtrace');
 var uniqueid = require('../../src/lib/uniqueid');

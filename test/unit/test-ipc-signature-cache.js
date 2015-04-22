@@ -9,7 +9,7 @@
  * Scope of the cache is per proxy connection.
  */
 var test = require('prova');
-var context = require('../../src/runtime/context');
+var context = require('../../src/context');
 var createMockProxy = require('./mock-proxy');
 var Outgoing = require('../../src/proxy/message-type').Outgoing;
 var Client = require('../../src/rpc/client.js');

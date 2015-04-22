@@ -3,7 +3,7 @@
 // license that can be found in the LICENSE file.
 
 var uniqueid = require('../lib/uniqueid');
-var context = require('../runtime/context');
+var context = require('../context');
 var vdl = require('../gen-vdl/v.io/v23/vtrace');
 
 var spanKey = context.ContextKey();

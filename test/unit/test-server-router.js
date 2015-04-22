@@ -13,7 +13,7 @@ var Outgoing = require('../../src/proxy/message-type').Outgoing;
 var vdl = require('../../src/vdl');
 var byteUtil = require('../../src/vdl/byte-util');
 var vom = require('../../src/vom');
-var context = require('../../src/runtime/context');
+var context = require('../../src/context');
 
 test('Server Router Signature Lookup', function(t) {
   var inputName = 'aName';

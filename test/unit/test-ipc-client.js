@@ -4,7 +4,7 @@
 
 var test = require('prova');
 var Client = require('../../src/rpc/client.js');
-var context = require('../../src/runtime/context');
+var context = require('../../src/context');
 var createSignatures = require('../../src/vdl/create-signatures');
 var createMockProxy = require('./mock-proxy');
 var vdl = require('../../src/vdl');

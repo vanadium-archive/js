@@ -4,7 +4,7 @@
 
 var test = require('prova');
 var base = require('../vdl-out/v.io/x/ref/lib/vdl/testdata/base');
-var context = require('../../src/runtime/context');
+var context = require('../../src/context');
 var SharedContextKeys = require('../../src/runtime/shared-context-keys');
 var actions = require('../../src/verror/actions');
 
