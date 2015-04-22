@@ -245,8 +245,12 @@ DOCSTRAP_LOC:= node_modules/ink-docstrap
 docs: $(JS_SRC_FILES) jsdocs/docstrap-template/compiled/site.vanadium.css | node_modules
 	# Copy our compiled style template
 	cp -f jsdocs/docstrap-template/compiled/site.vanadium.css ${DOCSTRAP_LOC}/template/static/styles
+
 	# Build the docs
 	jsdoc $^ --readme ./jsdocs/index.md --configure ./jsdocs/conf.json --template ${DOCSTRAP_LOC}/template --destination $@
+
+	# Copy favicon
+	cp -f ./jsdocs/favicon.ico $@
 
 # docs-template
 #
