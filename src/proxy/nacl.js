@@ -70,7 +70,8 @@ ProxyConnection.prototype.send = function(msg) {
 };
 
 ProxyConnection.prototype.close = function(cb) {
-  var defaultTimeout = 20000; // TODO(bprosnitz) Revisit decreasing this.
+  var self = this;
+  var defaultTimeout = 2000;
   var deferred = new Deferred(cb);
 
   extensionEventProxy.removeListener('crash', this.onCrash);
@@ -82,13 +83,13 @@ ProxyConnection.prototype.close = function(cb) {
   var timedout = false;
   var timeout = setTimeout(function reject() {
     timedout = true;
+    extensionEventProxy.removeListener('browsprMsg', self.onBrowsprMsg);
     var err = new Error('Timeout: Failed to close the runtime in ' +
       defaultTimeout + ' ms');
 
     deferred.reject(err);
   }, defaultTimeout);
 
-  var self = this;
   extensionEventProxy.once('browsprCleanupFinished', function() {
     extensionEventProxy.removeListener('browsprMsg', self.onBrowsprMsg);
     clearTimeout(timeout);

@@ -129,6 +129,13 @@ inherits(Runtime, EE);
  * closed.
  */
 Runtime.prototype.close = function(cb) {
+  if (this._crashed) {
+    // NaCl plugin crashed. Shutting down will not work.
+    return process.nextTick(function() {
+      cb(new Error('Runtime crashed, can not shutdown gracefully.'));
+    });
+  }
+
   var router = this._getRouter();
   var proxy = this._getProxyConnection();
   return router.cleanup().then(function() {
@@ -215,7 +222,11 @@ Runtime.prototype._getProxyConnection = function() {
   }
 
   // relay crash event from proxy
-  this._proxyConnection.on('crash', this.emit.bind(this, 'crash'));
+  var self = this;
+  this._proxyConnection.on('crash', function(e) {
+    self._crashed = true;
+    self.emit('crash', e);
+  });
 
   return this._proxyConnection;
 };

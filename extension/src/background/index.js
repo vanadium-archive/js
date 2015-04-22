@@ -94,14 +94,14 @@ BackgroundPage.prototype.handleMessageFromContentScript = function(port, msg) {
 // Trigger a panic in the plug-in (only for tests).
 BackgroundPage.prototype._triggerIntentionalPanic = function() {
   if (process.env.ALLOW_INTENTIONAL_CRASH) {
-      var panicMsg = {
-        type: 'intentionallyPanic',
-        instanceId: 0,
-        origin: '',
-        body: ''
-      };
-      this.nacl.sendMessage(panicMsg);
-    }
+    var panicMsg = {
+      type: 'intentionallyPanic',
+      instanceId: 0,
+      origin: '',
+      body: ''
+    };
+    this.nacl.sendMessage(panicMsg);
+  }
 };
 
 // Handle a content script connecting to this background script.
