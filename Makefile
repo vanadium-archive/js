@@ -140,6 +140,22 @@ gen-vdl-test: VDLPATH := "$(V23_ROOT)/release/javascript/core/test/vdl-in:$(V23_
 gen-vdl-test: JS_VDL_PATH_TO_CORE := "../../src"
 gen-vdl-test: gen-vdl-impl
 
+# This generates the vdl files used by test/vom/test-vdl-arith.js
+# They are placed in test/vdl/expected-gen/v.io/<package-path>.
+# This command is not normally run by the tests. It should only be run when the
+# expected vdl files need to be updated.
+gen-vdl-test-expected: JS_VDL_DIR := "$(V23_ROOT)/release/javascript/core/test/vdl/expected-gen"
+gen-vdl-test-expected: JS_VDL_PATH_TO_CORE := "../../../src"
+gen-vdl-test-expected: gen-vdl-test-expected-impl
+
+gen-vdl-test-expected-impl:
+	rm -rf $(JS_VDL_DIR)
+	echo $(VDLPATH)
+	VDLPATH=$(VDLPATH) v23 go run $(V23_ROOT)/release/go/src/v.io/x/ref/cmd/vdl/main.go generate -lang=javascript \
+		-js-relative-path-to-core=$(JS_VDL_PATH_TO_CORE) \
+		-js-out-dir=$(JS_VDL_DIR) \
+		v.io/x/ref/lib/vdl/testdata/...
+
 gen-vdl-impl:
 ifndef NOVDLGEN
 	rm -rf $(JS_VDL_DIR)
@@ -286,7 +302,7 @@ check-that-npm-is-in-path:
 .PHONY: test-integration test-integration-node test-integration-browser
 .PHONY: test-unit test-unit-node test-unit-browser
 .PHONY: check-that-npm-is-in-path
-.PHONY: gen-vdl gen-vdl-test gen-vdl-impl
+.PHONY: gen-vdl gen-vdl-test gen-vdl-test-expected gen-vdl-impl gen-vdl-test-expected-impl
 
 # Prevent the tests from running in parallel, which causes problems because it
 # starts multiple instances of the services at once, and also because it
