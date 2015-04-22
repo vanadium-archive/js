@@ -3,7 +3,7 @@
 // license that can be found in the LICENSE file.
 
 /**
- * @fileoverview Constants related to ipc.
+ * @fileoverview Constants related to rpc.
  * @private
  */
 

@@ -38,7 +38,7 @@ test('method signature encode-decode match', function(assert) {
     var signature = arith.AdvancedMath.prototype.
                     _serviceDescription;
 
-    // Encode the signature using the type defined in VDL-generated ipc.js
+    // Encode the signature using the type defined in VDL-generated .js file
     writer = new vom.ByteArrayMessageWriter();
     encoder = new vom.Encoder(writer);
     encoder.encode(signature, ifaceSigType.prototype._type);
