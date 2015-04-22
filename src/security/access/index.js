@@ -21,20 +21,18 @@ var extend = require('xtend');
  *
  * <h2>Overview</h2>
  *
- * <p>Vanadium objects provide GetPermissions and SetPermissions methods.  An
- * [AccessList]{@link module:vanadium.security.access.AccessList}
- * (Access Control List) contains the set of blessings that grant
- * principals access to the object. All methods on objects can have "tags" on
- * them and the access control list used for the method is selected based on
- * that tag (from a
- * [Permissions]{@link module:vanadium.security.access.Permissions}).</p>
+ * <p>Vanadium objects provide GetPermissions and SetPermissions methods.  A
+ * [Permissions]{@link module:vanadium.security.access.Permissions} object
+ * contains the set of blessings that grant principals access to the object.
+ * All methods on objects can have "tags" on them and the access list used for
+ * the method is selected based on that tag.</p>
  *
  * <p>An object can have multiple names, so GetPermissions and SetPermissions
  * can be invoked on any of these names, but the object itself has a single
- * AccessList.</p>
+ * Permissions.</p>
  *
  * <p>SetPermissions completely replaces the Permissions. To perform an atomic
- * read-modify-write of the AccessList, use the etag parameter.</p>
+ * read-modify-write of the Permissions, use the version parameter.</p>
  *
  * <h2>Conventions</h2>
  *
@@ -42,10 +40,10 @@ var extend = require('xtend');
  * with other parts of Vanadium and with each other.</p>
  *
  * <p>All methods that create an object (e.g. Put, Mount, Link) should take an
- * optional AccessList parameter.  If the AccessList is not specified, the new
- * object, O, copies its AccessList from the parent.  Subsequent changes to the
- * parent AccessList are not automatically propagated to O.  Instead, a client
- * library must make recursive AccessList changes.</p>
+ * optional Permissions parameter.  If the Permissions is not specified, the new
+ * object, O, copies its Permissions from the parent.  Subsequent changes to the
+ * parent Permissions are not automatically propagated to O.  Instead, a client
+ * library must make recursive Permissions changes.</p>
  *
  * <p>Resolve access is required on all components of a name, except the last
  * one, in order to access the object referenced by that name.  For example,
@@ -65,20 +63,21 @@ var extend = require('xtend');
  * "home".  Resolve protects these servers against potential denial of service
  * attacks on these large, shared directories.</p>
  *
- * <p>Groups and blessings allow for sweeping access changes.  A group is suitable
- * for saying that the same set of principals have access to a set of unrelated
- * resources (e.g. docs, VMs, images).  See the Group API for a complete
- * description.  A blessing is useful for controlling access to objects that
- * are always accessed together.  For example, a document may have embedded
- * images and comments, each with a unique name.  When accessing a document,
- * the server would generate a blessing that the client would use to fetch the
- * images and comments; the images and comments would have this blessed
- * identity in their AccessLists.  Changes to the document's AccessList are therefore
- * "propagated" to the images and comments.</p>
+ * <p>Blessings allow for sweeping access changes. In particular, a blessing is
+ * useful for controlling access to objects that are always accessed together.
+ * For example, a document may have embedded images and comments, each with a
+ * unique name. When accessing a document, the server would generate a blessing
+ * that the client would use to fetch the images and comments; the images and
+ * comments would have this blessed identity in their AccessLists. Changes to
+ * the document's AccessLists are therefore "propagated" to the images and
+ * comments.</p>
+ *
+ * <p>In the future, we may add some sort of "groups" mechanism to provide an
+ * alternative way to express access control policies.</p>
  *
  * <p>Some services will want a concept of implicit access control.  They are free
  * to implement this as is best for their service.  However, GetPermissions should
- * respond with the correct AccessList.  For example, a corporate file server would
+ * respond with the correct Permissions.  For example, a corporate file server would
  * allow all employees to create their own directory and have full control
  * within that directory.  Employees should not be allowed to modify other
  * employee directories.  In other words, within the directory "home", employee
@@ -91,5 +90,5 @@ var extend = require('xtend');
  */
 /* jshint ignore:end */
 module.exports = extend(require('../../gen-vdl/v.io/v23/security/access'), {
-  aclAuthorizer: require('./acl-authorizer')
+  permissionsAuthorizer: require('./permissions-authorizer')
 });

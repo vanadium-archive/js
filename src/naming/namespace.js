@@ -209,32 +209,27 @@ Namespace.prototype.setRoots = function(roots, cb) {
 };
 
 /**
- * Sets the AccessList on a namespace.
+ * Sets the Permissions on a namespace.
  * If version is specified and is different from the current version on the
- * AccessList, an error will be returned.
- * Note that setPermissions will completely replace the AccessList on the name.
- * If you want to update only a part of the AccessList, you must first call
- * getPermissions, modify the returned AccessList, and then call setPermissions
- * with the modified AccessList. You should use the version parameter in this
- * case to ensure that the AccessList has not been modified in between read and
- * write.
+ * Permissions, an error will be returned.
+ * Note that setPermissions will completely replace the Permissions on the
+ * name.  If you want to update only a part of the Permissions, you must first
+ * call getPermissions, modify the returned Permissions, and then call
+ * setPermissions with the modified Permissions. You should use the version
+ * parameter in this case to ensure that the Permissions has not been modified
+ * in between read and write.
  * @param {module:vanadium.context.Context} ctx The rpc context.
- * @param {string} name name to set the AccessList of
- * @param {Map} acl tagged AccessList map to set on the name
- * @param {string} version Optional version of the AccessList
+ * @param {string} name name to set the Permissions of
+ * @param {Map} perms Permissions to set on the name
+ * @param {string} version Optional version of the Permissions
  * @param {function} cb(error) Optional callback
  * @return {Promise} A promise to be resolved when setPermissions is complete
  * or rejected when there is an error.
  */
-Namespace.prototype.setPermissions = function(ctx, name, acl, version, cb) {
-  // TODO(nlacasse): It's *very* easy to lock yourself out of a name.  If you
-  // accidentally call setPermissions without an Admin key you will be locked
-  // out, and all further getPermissions/setPermissions on that name will fail
-  // with just "ErrNoAccess".
-  // Should we provide an updateAccessList helper method that wraps
-  // getPermissions/setPermissions?
-  // It's not clear exactly how it would work (what to overwrite, what to
-  // append), but we should consider it.
+Namespace.prototype.setPermissions = function(ctx, name, perms, version, cb) {
+  // TODO(nlacasse): Should we provide an updatePermissions helper method that
+  // wraps getPermissions/setPermissions? It's not clear exactly how it would
+  // work (what to overwrite, what to append), but we should consider it.
   if (typeof version === 'function') {
     cb = version;
     version = '';
@@ -243,14 +238,14 @@ Namespace.prototype.setPermissions = function(ctx, name, acl, version, cb) {
     version = '';
   }
 
-  return this._namespace.setPermissions(ctx, name, acl, version, cb);
+  return this._namespace.setPermissions(ctx, name, perms, version, cb);
 };
 
 /**
- * Gets the AccessList on a namespace.
+ * Gets the Permissions on a namespace.
  * @param {module:vanadium.context.Context} ctx The rpc context.
- * @param {string} name name to get the AccessList of
- * @param {function} cb(error, acl, version) Optional callback
+ * @param {string} name name to get the Permissions of
+ * @param {function} cb(error, perms, version) Optional callback
  * @return {Promise} A promise to be resolved when getPermissions is complete
  * or rejected when there is an error.
  */

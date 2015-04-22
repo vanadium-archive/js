@@ -501,7 +501,7 @@ test('Test getPermissions() on non-existant name', function(assert) {
   });
 });
 
-test('Test setting and getting AccessLists - ' +
+test('Test setting and getting permissions - ' +
   'setPermissions(), getPermissions()',
   function(assert) {
     vanadium.init(config, function(err, rt) {
@@ -515,9 +515,7 @@ test('Test setting and getting AccessLists - ' +
       // with the same mounttable without getting locked out of a name.
       var name = 'path/to/some/name/' + random.hex();
 
-      // TODO(nlacasse): This is the best way I found to build a tagged acl map.
-      // Are there better ways?  Consider making a helper function.
-      var tam = new access.Permissions(new Map([
+      var perms = new access.Permissions(new Map([
         [access.Admin, new access.AccessList({
           'in': ['...'],
           'notIn': ['foo']
@@ -530,12 +528,12 @@ test('Test setting and getting AccessLists - ' +
         })]
       ]));
 
-      ns.setPermissions(ctx, name, tam, function(err) {
+      ns.setPermissions(ctx, name, perms, function(err) {
         if (err) {
           return end(err);
         }
 
-        ns.getPermissions(ctx, name, function(err, gotTam, gotVersion) {
+        ns.getPermissions(ctx, name, function(err, gotPerms, gotVersion) {
           if (err) {
             return end(err);
           }
@@ -543,14 +541,14 @@ test('Test setting and getting AccessLists - ' +
           assert.equal(typeof gotVersion, 'string',
             'getPermissions returns a string version');
 
-          assert.ok(gotTam, 'getPermissions returns a tagged acl map');
-          assert.deepEqual(gotTam, tam.val,
-            'getPermissions returns the same tagged acl map that we set');
+          assert.ok(gotPerms, 'getPermissions returns a permissions');
+          assert.deepEqual(gotPerms, perms.val,
+            'getPermissions returns the same permissions that we set');
 
-          ns.setPermissions(ctx, name, tam, 'wrongVersion', function(err) {
+          ns.setPermissions(ctx, name, perms, 'wrongVersion', function(err) {
             assert.ok(err, 'setPermissions with a bad version should error');
 
-            ns.setPermissions(ctx, name, tam, gotVersion, function(err) {
+            ns.setPermissions(ctx, name, perms, gotVersion, function(err) {
               assert.error(err,
                 'setPermissions with the correct version should not error');
               end();
@@ -636,13 +634,13 @@ test('Test delete() on name with no children', function(assert) {
     var ns = rt.namespace();
     var name = 'path/to/name/with/no/children';
 
-    var tam = new access.Permissions(new Map([
+    var perms = new access.Permissions(new Map([
       [access.Admin, new access.AccessList({
         'in': ['...'],
       })]
     ]));
 
-    ns.setPermissions(ctx, name, tam, function(err) {
+    ns.setPermissions(ctx, name, perms, function(err) {
       if (err) {
         return end(err);
       }
@@ -669,22 +667,22 @@ test('Test delete() on name with children', function(assert) {
     var childName1 = vanadium.naming.join(name, 'child1');
     var childName2 = vanadium.naming.join(name, 'node/child2');
 
-    var tam = new access.Permissions(new Map([
+    var perms = new access.Permissions(new Map([
       [access.Admin, new access.AccessList({
         'in': ['...'],
       })]
     ]));
 
     // Create all three names.
-    ns.setPermissions(ctx, name, tam, function(err) {
+    ns.setPermissions(ctx, name, perms, function(err) {
       if (err) {
         return end(err);
       }
-      ns.setPermissions(ctx, childName1, tam, function(err) {
+      ns.setPermissions(ctx, childName1, perms, function(err) {
         if (err) {
           return end(err);
         }
-        ns.setPermissions(ctx, childName2, tam, function(err) {
+        ns.setPermissions(ctx, childName2, perms, function(err) {
           if (err) {
             return end(err);
           }

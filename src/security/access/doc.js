@@ -6,8 +6,8 @@
  * A file for JSDocs for vdl generated files in security/access
  */
 /**
- * @summary AccessList represents an Access Control List - a set of blessings
- * that should be granted access.
+ * @summary AccessList represents a set of blessings that should be granted
+ * access.
  * @name AccessList
  * @constructor
  * @property {array} in <p>An array of [BlessingPatterns]{@link
@@ -29,11 +29,11 @@
  * grants access to a principal that presents at least one of 'alice/friend',
  * 'alice/friend/carol', etc, but NOT to a principal that presents
  * 'alice/friend/bob or 'alice/friend/bob/spouse' etc.</p>
- * @param {object} acl The value to construct from
- * @param {array} acl.in An array of [BlessingPatterns]{@link
+ * @param {object} al The value to construct from.
+ * @param {array} al.in An array of [BlessingPatterns]{@link
  * module:vanadium.security.BlessingPatterns}/strings that denotes the set
  * of blessings that should be granted access, unless blacklisted by notIn.
- * @param {array} acl.notNin <p>An array of strings that denotes the set of
+ * @param {array} al.notIn <p>An array of strings that denotes the set of
  * blessings (and their delegates) that have been explicitly blacklisted
  * from the in set.
  * @memberof module:vanadium.security.access
