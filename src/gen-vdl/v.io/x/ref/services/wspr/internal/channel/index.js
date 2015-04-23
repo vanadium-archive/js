@@ -18,21 +18,21 @@ module.exports = {};
 var _typeMessage = new vdl.Type();
 var _typeRequest = new vdl.Type();
 var _typeResponse = new vdl.Type();
-_typeMessage.kind = vdl.Kind.UNION;
+_typeMessage.kind = vdl.kind.UNION;
 _typeMessage.name = "v.io/x/ref/services/wspr/internal/channel.Message";
 _typeMessage.fields = [{name: "Request", type: _typeRequest}, {name: "Response", type: _typeResponse}];
-_typeRequest.kind = vdl.Kind.STRUCT;
+_typeRequest.kind = vdl.kind.STRUCT;
 _typeRequest.name = "v.io/x/ref/services/wspr/internal/channel.Request";
-_typeRequest.fields = [{name: "Type", type: vdl.Types.STRING}, {name: "Seq", type: vdl.Types.UINT32}, {name: "Body", type: vdl.Types.ANY}];
-_typeResponse.kind = vdl.Kind.STRUCT;
+_typeRequest.fields = [{name: "Type", type: vdl.types.STRING}, {name: "Seq", type: vdl.types.UINT32}, {name: "Body", type: vdl.types.ANY}];
+_typeResponse.kind = vdl.kind.STRUCT;
 _typeResponse.name = "v.io/x/ref/services/wspr/internal/channel.Response";
-_typeResponse.fields = [{name: "ReqSeq", type: vdl.Types.UINT32}, {name: "Err", type: vdl.Types.STRING}, {name: "Body", type: vdl.Types.ANY}];
+_typeResponse.fields = [{name: "ReqSeq", type: vdl.types.UINT32}, {name: "Err", type: vdl.types.STRING}, {name: "Body", type: vdl.types.ANY}];
 _typeMessage.freeze();
 _typeRequest.freeze();
 _typeResponse.freeze();
-module.exports.Message = (vdl.Registry.lookupOrCreateConstructor(_typeMessage));
-module.exports.Request = (vdl.Registry.lookupOrCreateConstructor(_typeRequest));
-module.exports.Response = (vdl.Registry.lookupOrCreateConstructor(_typeResponse));
+module.exports.Message = (vdl.registry.lookupOrCreateConstructor(_typeMessage));
+module.exports.Request = (vdl.registry.lookupOrCreateConstructor(_typeRequest));
+module.exports.Response = (vdl.registry.lookupOrCreateConstructor(_typeResponse));
 
 
 

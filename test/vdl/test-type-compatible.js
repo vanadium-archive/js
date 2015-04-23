@@ -8,9 +8,9 @@
 
 var test = require('prova');
 
-var Kind = require('./../../src/vdl/kind.js');
+var kind = require('./../../src/vdl/kind.js');
 var Type = require('./../../src/vdl/type.js');
-var Types = require('./../../src/vdl/types.js');
+var types = require('./../../src/vdl/types.js');
 var typeCompatible = require('./../../src/vdl/type-compatible.js');
 
 // This tests that any, optional, bool, typeobject, and number interconvert
@@ -19,87 +19,87 @@ test('type compatibility tests - simple', function(t) {
   var tests = [
     {
       name: 'float and undefined',
-      a: Types.FLOAT64,
+      a: types.FLOAT64,
       b: undefined,
       expected: true
     },
     {
       name: 'any and bool',
-      a: Types.ANY,
-      b: Types.BOOL,
+      a: types.ANY,
+      b: types.BOOL,
       expected: true
     },
     {
       name: 'bool and named bool',
-      a: Types.BOOL,
+      a: types.BOOL,
       b: new Type({
-        kind: Kind.BOOL,
+        kind: kind.BOOL,
         name: 'MBool'
       }),
       expected: true
     },
     {
       name: 'string and optional string',
-      a: Types.STRING,
+      a: types.STRING,
       b: new Type({
-        kind: Kind.OPTIONAL,
-        elem: Types.STRING
+        kind: kind.OPTIONAL,
+        elem: types.STRING
       }),
       expected: true
     },
     {
       name: 'numbers',
-      a: Types.INT32,
-      b: Types.UINT16,
+      a: types.INT32,
+      b: types.UINT16,
       expected: true
     },
     {
       name: 'type object and optional typeobject',
-      a: Types.TYPEOBJECT,
+      a: types.TYPEOBJECT,
       b: new Type({
-        kind: Kind.OPTIONAL,
-        elem: Types.TYPEOBJECT
+        kind: kind.OPTIONAL,
+        elem: types.TYPEOBJECT
       }),
       expected: true
     },
     {
       name: 'type object and number',
-      a: Types.TYPEOBJECT,
-      b: Types.INT64,
+      a: types.TYPEOBJECT,
+      b: types.INT64,
       expected: false
     },
     {
       name: 'string and bool',
-      a: Types.STRING,
-      b: Types.BOOL,
+      a: types.STRING,
+      b: types.BOOL,
       expected: false
     },
     {
       name: 'enum and string',
       a: new Type({
-        kind: Kind.ENUM,
+        kind: kind.ENUM,
         labels: []
       }),
-      b: Types.STRING,
+      b: types.STRING,
       expected: true
     },
     {
       name: 'enum and []byte',
       a: new Type({
-        kind: Kind.ENUM,
+        kind: kind.ENUM,
         labels: []
       }),
       b: new Type({
-        kind: Kind.LIST,
-        elem: Types.BYTE
+        kind: kind.LIST,
+        elem: types.BYTE
       }),
       expected: true
     },
     {
       name: 'number and composite',
-      a: Types.COMPLEX128,
+      a: types.COMPLEX128,
       b: new Type({
-        kind: Kind.STRUCT,
+        kind: kind.STRUCT,
         fields: []
       }),
       expected: false
@@ -119,23 +119,23 @@ test('type compatibility tests - composite', function(t) {
   var tests = [
     {
       name: 'any and composite',
-      a: Types.ANY,
+      a: types.ANY,
       b: new Type({
-        kind: Kind.LIST,
-        elem: Types.INT16
+        kind: kind.LIST,
+        elem: types.INT16
       }),
       expected: true
     },
     {
       name: '[]bool and [x]bool',
       a: new Type({
-        kind: Kind.LIST,
-        elem: Types.BOOL,
+        kind: kind.LIST,
+        elem: types.BOOL,
         name: '[]bool'
       }),
       b: new Type({
-        kind: Kind.ARRAY,
-        elem: Types.BOOL,
+        kind: kind.ARRAY,
+        elem: types.BOOL,
         len: 3,
         name: '[3]bool'
       }),
@@ -144,118 +144,118 @@ test('type compatibility tests - composite', function(t) {
     {
       name: '[]bool and []string',
       a: new Type({
-        kind: Kind.LIST,
-        elem: Types.BOOL
+        kind: kind.LIST,
+        elem: types.BOOL
       }),
       b: new Type({
-        kind: Kind.LIST,
-        elem: Types.STRING
+        kind: kind.LIST,
+        elem: types.STRING
       }),
       expected: false
     },
     {
       name: 'set[uint32] and []uint32',
       a: new Type({
-        kind: Kind.SET,
-        key: Types.UINT32
+        kind: kind.SET,
+        key: types.UINT32
       }),
       b: new Type({
-        kind: Kind.LIST,
-        elem: Types.UINT32
+        kind: kind.LIST,
+        elem: types.UINT32
       }),
       expected: false
     },
     {
       name: 'set[uint32] and map[uint32]bool',
       a: new Type({
-        kind: Kind.SET,
-        key: Types.UINT32
+        kind: kind.SET,
+        key: types.UINT32
       }),
       b: new Type({
-        kind: Kind.MAP,
-        key: Types.UINT32,
-        elem: Types.BOOL
+        kind: kind.MAP,
+        key: types.UINT32,
+        elem: types.BOOL
       }),
       expected: true
     },
     {
       name: 'struct with only int64 fields and map[string]int64',
       a: new Type({
-        kind: Kind.STRUCT,
+        kind: kind.STRUCT,
         fields: [
           {
             name: 'A',
-            type: Types.INT64
+            type: types.INT64
           },
           {
             name: 'B',
-            type: Types.INT64
+            type: types.INT64
           }
         ]
       }),
       b: new Type({
-        kind: Kind.MAP,
-        key: Types.STRING,
-        elem: Types.INT64
+        kind: kind.MAP,
+        key: types.STRING,
+        elem: types.INT64
       }),
       expected: true
     },
     {
       name: 'struct with int64-compatible fields and map[string]int64',
       a: new Type({
-        kind: Kind.STRUCT,
+        kind: kind.STRUCT,
         fields: [
           {
             name: 'A',
-            type: Types.INT64
+            type: types.INT64
           },
           {
             name: 'B',
-            type: Types.COMPLEX64
+            type: types.COMPLEX64
           }
         ]
       }),
       b: new Type({
-        kind: Kind.MAP,
-        key: Types.STRING,
-        elem: Types.INT64
+        kind: kind.MAP,
+        key: types.STRING,
+        elem: types.INT64
       }),
       expected: true
     },
     {
       name: 'struct with a non-int64-compatible field and map[string]int64',
       a: new Type({
-        kind: Kind.STRUCT,
+        kind: kind.STRUCT,
         fields: [
           {
             name: 'A',
-            type: Types.STRING
+            type: types.STRING
           },
           {
             name: 'B',
-            type: Types.COMPLEX64
+            type: types.COMPLEX64
           }
         ]
       }),
       b: new Type({
-        kind: Kind.MAP,
-        key: Types.STRING,
-        elem: Types.INT64
+        kind: kind.MAP,
+        key: types.STRING,
+        elem: types.INT64
       }),
       expected: false
     },
     {
       name: 'empty struct with another struct',
       a: new Type({
-        kind: Kind.STRUCT,
+        kind: kind.STRUCT,
         fields: []
       }),
       b: new Type({
-        kind: Kind.STRUCT,
+        kind: kind.STRUCT,
         fields: [
           {
             name: 'Not present',
-            type: Types.STRING
+            type: types.STRING
           }
         ]
       }),
@@ -264,33 +264,33 @@ test('type compatibility tests - composite', function(t) {
     {
       name: 'empty struct with a map',
       a: new Type({
-        kind: Kind.STRUCT,
+        kind: kind.STRUCT,
         fields: []
       }),
       b: new Type({
-        kind: Kind.MAP,
-        key: Types.STRING,
-        elem: Types.INT64
+        kind: kind.MAP,
+        key: types.STRING,
+        elem: types.INT64
       }),
       expected: false
     },
     {
       name: 'struct with another struct (no matching fields)',
       a: new Type({
-        kind: Kind.STRUCT,
+        kind: kind.STRUCT,
         fields: [
           {
             name: 'Number',
-            type: Types.UINT32
+            type: types.UINT32
           }
         ]
       }),
       b: new Type({
-        kind: Kind.STRUCT,
+        kind: kind.STRUCT,
         fields: [
           {
             name: 'String',
-            type: Types.STRING
+            type: types.STRING
           }
         ]
       }),
@@ -299,20 +299,20 @@ test('type compatibility tests - composite', function(t) {
     {
       name: 'union with another union (no matching fields)',
       a: new Type({
-        kind: Kind.UNION,
+        kind: kind.UNION,
         fields: [
           {
             name: 'Number',
-            type: Types.UINT32
+            type: types.UINT32
           }
         ]
       }),
       b: new Type({
-        kind: Kind.UNION,
+        kind: kind.UNION,
         fields: [
           {
             name: 'String',
-            type: Types.STRING
+            type: types.STRING
           }
         ]
       }),
@@ -321,28 +321,28 @@ test('type compatibility tests - composite', function(t) {
     {
       name: 'struct with another struct (1 matching field)',
       a: new Type({
-        kind: Kind.STRUCT,
+        kind: kind.STRUCT,
         fields: [
           {
             name: 'Number',
-            type: Types.UINT32
+            type: types.UINT32
           },
           {
             name: 'StringA',
-            type: Types.STRING
+            type: types.STRING
           }
         ]
       }),
       b: new Type({
-        kind: Kind.STRUCT,
+        kind: kind.STRUCT,
         fields: [
           {
             name: 'Number',
-            type: Types.INT64
+            type: types.INT64
           },
           {
             name: 'StringB',
-            type: Types.STRING
+            type: types.STRING
           }
         ]
       }),
@@ -351,28 +351,28 @@ test('type compatibility tests - composite', function(t) {
     {
       name: 'union with another union (1 matching field)',
       a: new Type({
-        kind: Kind.UNION,
+        kind: kind.UNION,
         fields: [
           {
             name: 'Number',
-            type: Types.UINT32
+            type: types.UINT32
           },
           {
             name: 'StringA',
-            type: Types.STRING
+            type: types.STRING
           }
         ]
       }),
       b: new Type({
-        kind: Kind.UNION,
+        kind: kind.UNION,
         fields: [
           {
             name: 'Number',
-            type: Types.INT64
+            type: types.INT64
           },
           {
             name: 'StringB',
-            type: Types.STRING
+            type: types.STRING
           }
         ]
       }),
@@ -381,47 +381,47 @@ test('type compatibility tests - composite', function(t) {
     {
       name: 'map of composites and another struct of similar composites',
       a: new Type({
-        kind: Kind.MAP,
+        kind: kind.MAP,
         key: new Type({
-          kind: Kind.STRING,
+          kind: kind.STRING,
           name: 'Named string'
         }),
         elem: new Type({
-          kind: Kind.STRUCT,
+          kind: kind.STRUCT,
           fields: [
             {
               name: 'A',
-              type: Types.INT32
+              type: types.INT32
             },
             {
               name: 'B',
-              type: Types.STRING
+              type: types.STRING
             }
           ]
         })
       }),
       b: new Type({
-        kind: Kind.STRUCT,
+        kind: kind.STRUCT,
         fields: [
           {
             name: 'StructField1', // string matches named string
             type: new Type({
-              kind: Kind.STRUCT,  // empty struct matches struct with A, B
+              kind: kind.STRUCT,  // empty struct matches struct with A, B
               fields: []
             })
           },
           {
             name: 'StructField2', // string matches named string
             type: new Type({
-              kind: Kind.STRUCT,  // struct with A matches struct with A, B
+              kind: kind.STRUCT,  // struct with A matches struct with A, B
               fields: [
                 {
                   name: 'A',
-                  type: Types.BYTE
+                  type: types.BYTE
                 },
                 {
                   name: 'C',
-                  type: Types.FLOAT64
+                  type: types.FLOAT64
                 }
               ]
             })
@@ -429,12 +429,12 @@ test('type compatibility tests - composite', function(t) {
           {
             name: 'StructField3', // string matches named string
             type: new Type({
-              kind: Kind.STRUCT,  // struct with A matches struct with A, B
+              kind: kind.STRUCT,  // struct with A matches struct with A, B
               fields: [
                 {
                   name: 'B',
                   type: new Type({
-                    kind: Kind.ENUM, // enum matches string
+                    kind: kind.ENUM, // enum matches string
                     labels: []
                   })
                 }
@@ -457,7 +457,7 @@ test('type compatibility tests - composite', function(t) {
 // This tests recursive types. It's complex to setup, so there are fewer.
 test('type compatibility tests - recursive', function(t) {
   var recStruct = new Type();
-  recStruct.kind = Kind.STRUCT;
+  recStruct.kind = kind.STRUCT;
   recStruct.name = 'recStruct';
   recStruct.fields = [
     {
@@ -467,9 +467,9 @@ test('type compatibility tests - recursive', function(t) {
   ];
 
   var recMap = new Type();
-  recMap.kind = Kind.MAP;
+  recMap.kind = kind.MAP;
   recMap.name = 'recMap';
-  recMap.key = Types.STRING;
+  recMap.key = types.STRING;
   recMap.elem = recMap;
 
   var tests = [
@@ -477,7 +477,7 @@ test('type compatibility tests - recursive', function(t) {
       name: 'recursive struct and empty struct',
       a: recStruct,
       b: new Type({
-        kind: Kind.STRUCT,
+        kind: kind.STRUCT,
         fields: []
       }),
       expected: true
@@ -486,11 +486,11 @@ test('type compatibility tests - recursive', function(t) {
       name: 'recursive struct and non-empty struct (cycle-detected)',
       a: recStruct,
       b: new Type({
-        kind: Kind.STRUCT,
+        kind: kind.STRUCT,
         fields: [
           {
             name: 'SelfPointer',
-            type: Types.STRING
+            type: types.STRING
           }
         ]
       }),
@@ -500,11 +500,11 @@ test('type compatibility tests - recursive', function(t) {
       name: 'recursive struct and non-empty struct (no matches)',
       a: recStruct,
       b: new Type({
-        kind: Kind.STRUCT,
+        kind: kind.STRUCT,
         fields: [
           {
             name: 'NotSelfPointer',
-            type: Types.STRING
+            type: types.STRING
           }
         ]
       }),

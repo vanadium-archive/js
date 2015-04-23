@@ -28,7 +28,7 @@ var mockServiceDescs = [
         outArgs: [
           {
             name: 'Is VanadiumRPCRequest not Bool',
-            type: vdl.Types.BOOL
+            type: vdl.types.BOOL
           }
         ]
       }

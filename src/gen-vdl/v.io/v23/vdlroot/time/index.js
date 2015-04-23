@@ -18,21 +18,21 @@ module.exports = {};
 var _typeDuration = new vdl.Type();
 var _typeTime = new vdl.Type();
 var _typeWireDeadline = new vdl.Type();
-_typeDuration.kind = vdl.Kind.STRUCT;
+_typeDuration.kind = vdl.kind.STRUCT;
 _typeDuration.name = "time.Duration";
-_typeDuration.fields = [{name: "Seconds", type: vdl.Types.INT64}, {name: "Nanos", type: vdl.Types.INT32}];
-_typeTime.kind = vdl.Kind.STRUCT;
+_typeDuration.fields = [{name: "Seconds", type: vdl.types.INT64}, {name: "Nanos", type: vdl.types.INT32}];
+_typeTime.kind = vdl.kind.STRUCT;
 _typeTime.name = "time.Time";
-_typeTime.fields = [{name: "Seconds", type: vdl.Types.INT64}, {name: "Nanos", type: vdl.Types.INT32}];
-_typeWireDeadline.kind = vdl.Kind.STRUCT;
+_typeTime.fields = [{name: "Seconds", type: vdl.types.INT64}, {name: "Nanos", type: vdl.types.INT32}];
+_typeWireDeadline.kind = vdl.kind.STRUCT;
 _typeWireDeadline.name = "time.WireDeadline";
-_typeWireDeadline.fields = [{name: "FromNow", type: _typeDuration}, {name: "NoDeadline", type: vdl.Types.BOOL}];
+_typeWireDeadline.fields = [{name: "FromNow", type: _typeDuration}, {name: "NoDeadline", type: vdl.types.BOOL}];
 _typeDuration.freeze();
 _typeTime.freeze();
 _typeWireDeadline.freeze();
-module.exports.Duration = (vdl.Registry.lookupOrCreateConstructor(_typeDuration));
-module.exports.Time = (vdl.Registry.lookupOrCreateConstructor(_typeTime));
-module.exports.WireDeadline = (vdl.Registry.lookupOrCreateConstructor(_typeWireDeadline));
+module.exports.Duration = (vdl.registry.lookupOrCreateConstructor(_typeDuration));
+module.exports.Time = (vdl.registry.lookupOrCreateConstructor(_typeTime));
+module.exports.WireDeadline = (vdl.registry.lookupOrCreateConstructor(_typeWireDeadline));
 
 
 

@@ -7,7 +7,7 @@
  * @private
  */
 
-var Kind = require('./kind.js');
+var kind = require('./kind.js');
 
 module.exports = {
   shouldSendLength: shouldSendLength,
@@ -28,18 +28,18 @@ module.exports = {
  * the value message or false otherwise.
  */
 function shouldSendLength(type) {
-  if (type.kind === Kind.ARRAY || type.kind === Kind.LIST) {
-    return type.elem.kind !== Kind.BYTE;
+  if (type.kind === kind.ARRAY || type.kind === kind.LIST) {
+    return type.elem.kind !== kind.BYTE;
   }
   switch (type.kind) {
-    case Kind.COMPLEX64:
-    case Kind.COMPLEX128:
-    case Kind.SET:
-    case Kind.MAP:
-    case Kind.STRUCT:
-    case Kind.ANY:
-    case Kind.UNION:
-    case Kind.OPTIONAL:
+    case kind.COMPLEX64:
+    case kind.COMPLEX128:
+    case kind.SET:
+    case kind.MAP:
+    case kind.STRUCT:
+    case kind.ANY:
+    case kind.UNION:
+    case kind.OPTIONAL:
       return true;
     default:
       return false;

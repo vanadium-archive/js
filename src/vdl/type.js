@@ -12,13 +12,13 @@
 
 module.exports = Type;
 
-var Kind = require('./kind');
+var kind = require('./kind');
 var canonicalize; // Must be lazily-required to avoid circular dependency.
 
 /**
  * Creates a new Type.
  * Without o, the Type is incomplete and must be filled in further.
- * Notably, each type has a Kind, which implies the existence of other fields.
+ * Notably, each type has a kind, which implies the existence of other fields.
  * Type can be optionally constructed with an object, which has the option of
  * being canonicalized.
  * Note: Sidesteps a cyclic dependency with injection. During module setup,
@@ -48,7 +48,7 @@ function Type(o, skipValidation) {
 }
 
 Type.prototype._type = new Type();
-Type.prototype._type.kind = Kind.TYPEOBJECT;
+Type.prototype._type.kind = kind.TYPEOBJECT;
 
 /**
  * Checks for equality
@@ -106,22 +106,22 @@ function uniqueTypeStr(t, seen) {
     s += ' ';
   }
   switch (t.kind) {
-    case Kind.OPTIONAL:
+    case kind.OPTIONAL:
       return s + '?' + uniqueTypeStr(t.elem, seen);
-    case Kind.ENUM:
+    case kind.ENUM:
       return s + 'enum{' + t.labels.join(';') + '}';
-    case Kind.ARRAY:
+    case kind.ARRAY:
       return s + '[' + t.len + ']' + uniqueTypeStr(t.elem, seen);
-    case Kind.LIST:
+    case kind.LIST:
       return s + '[]' + uniqueTypeStr(t.elem, seen);
-    case Kind.SET:
+    case kind.SET:
       return s + 'set[' + uniqueTypeStr(t.key, seen) + ']';
-    case Kind.MAP:
+    case kind.MAP:
       return s + 'map[' + uniqueTypeStr(t.key, seen) + ']' +
         uniqueTypeStr(t.elem, seen);
-    case Kind.STRUCT:
-    case Kind.UNION:
-      if (t.kind === Kind.STRUCT) {
+    case kind.STRUCT:
+    case kind.UNION:
+      if (t.kind === kind.STRUCT) {
         s += 'struct{';
       } else {
         s += 'union{';
@@ -134,6 +134,6 @@ function uniqueTypeStr(t, seen) {
       });
       return s + '}';
     default:
-      return s + Kind.kindStr(t.kind);
+      return s + kind.kindStr(t.kind);
   }
 }

@@ -91,234 +91,234 @@ var _typeVomdataStruct = new vdl.Type();
 var _typeXyzStruct = new vdl.Type();
 var _typeYzStruct = new vdl.Type();
 var _typeZStruct = new vdl.Type();
-_type1.kind = vdl.Kind.LIST;
+_type1.kind = vdl.kind.LIST;
 _type1.name = "";
 _type1.elem = _typeTestCase;
-_type10.kind = vdl.Kind.LIST;
+_type10.kind = vdl.kind.LIST;
 _type10.name = "";
-_type10.elem = vdl.Types.INT32;
-_type11.kind = vdl.Kind.LIST;
+_type10.elem = vdl.types.INT32;
+_type11.kind = vdl.kind.LIST;
 _type11.name = "";
-_type11.elem = vdl.Types.STRING;
-_type12.kind = vdl.Kind.MAP;
+_type11.elem = vdl.types.STRING;
+_type12.kind = vdl.kind.MAP;
 _type12.name = "";
 _type12.elem = _type13;
-_type12.key = vdl.Types.STRING;
-_type13.kind = vdl.Kind.LIST;
+_type12.key = vdl.types.STRING;
+_type13.kind = vdl.kind.LIST;
 _type13.name = "";
 _type13.elem = _typeConvertGroup;
-_type14.kind = vdl.Kind.LIST;
+_type14.kind = vdl.kind.LIST;
 _type14.name = "";
-_type14.elem = vdl.Types.ANY;
-_type2.kind = vdl.Kind.LIST;
+_type14.elem = vdl.types.ANY;
+_type2.kind = vdl.kind.LIST;
 _type2.name = "";
-_type2.elem = vdl.Types.BYTE;
-_type3.kind = vdl.Kind.LIST;
+_type2.elem = vdl.types.BYTE;
+_type3.kind = vdl.kind.LIST;
 _type3.name = "";
-_type3.elem = vdl.Types.UINT64;
-_type4.kind = vdl.Kind.SET;
+_type3.elem = vdl.types.UINT64;
+_type4.kind = vdl.kind.SET;
 _type4.name = "";
-_type4.key = vdl.Types.UINT64;
-_type5.kind = vdl.Kind.MAP;
+_type4.key = vdl.types.UINT64;
+_type5.kind = vdl.kind.MAP;
 _type5.name = "";
-_type5.elem = vdl.Types.STRING;
-_type5.key = vdl.Types.UINT64;
-_type6.kind = vdl.Kind.OPTIONAL;
+_type5.elem = vdl.types.STRING;
+_type5.key = vdl.types.UINT64;
+_type6.kind = vdl.kind.OPTIONAL;
 _type6.name = "";
 _type6.elem = _typeNStruct;
-_type7.kind = vdl.Kind.OPTIONAL;
+_type7.kind = vdl.kind.OPTIONAL;
 _type7.name = "";
 _type7.elem = _typeRecStruct;
-_type8.kind = vdl.Kind.MAP;
+_type8.kind = vdl.kind.MAP;
 _type8.name = "";
 _type8.elem = _type9;
-_type8.key = vdl.Types.STRING;
-_type9.kind = vdl.Kind.LIST;
+_type8.key = vdl.types.STRING;
+_type9.kind = vdl.kind.LIST;
 _type9.name = "";
-_type9.elem = vdl.Types.TYPEOBJECT;
-_typeAbcStruct.kind = vdl.Kind.STRUCT;
+_type9.elem = vdl.types.TYPEOBJECT;
+_typeAbcStruct.kind = vdl.kind.STRUCT;
 _typeAbcStruct.name = "v.io/v23/vom/testdata.AbcStruct";
-_typeAbcStruct.fields = [{name: "A", type: vdl.Types.BOOL}, {name: "B", type: vdl.Types.STRING}, {name: "C", type: vdl.Types.INT64}];
-_typeAdeStruct.kind = vdl.Kind.STRUCT;
+_typeAbcStruct.fields = [{name: "A", type: vdl.types.BOOL}, {name: "B", type: vdl.types.STRING}, {name: "C", type: vdl.types.INT64}];
+_typeAdeStruct.kind = vdl.kind.STRUCT;
 _typeAdeStruct.name = "v.io/v23/vom/testdata.AdeStruct";
-_typeAdeStruct.fields = [{name: "A", type: vdl.Types.BOOL}, {name: "D", type: vdl.Types.ANY}, {name: "E", type: vdl.Types.TYPEOBJECT}];
-_typeArray3String.kind = vdl.Kind.ARRAY;
+_typeAdeStruct.fields = [{name: "A", type: vdl.types.BOOL}, {name: "D", type: vdl.types.ANY}, {name: "E", type: vdl.types.TYPEOBJECT}];
+_typeArray3String.kind = vdl.kind.ARRAY;
 _typeArray3String.name = "v.io/v23/vom/testdata.Array3String";
 _typeArray3String.len = 3;
-_typeArray3String.elem = vdl.Types.STRING;
-_typeArray4String.kind = vdl.Kind.ARRAY;
+_typeArray3String.elem = vdl.types.STRING;
+_typeArray4String.kind = vdl.kind.ARRAY;
 _typeArray4String.name = "v.io/v23/vom/testdata.Array4String";
 _typeArray4String.len = 4;
-_typeArray4String.elem = vdl.Types.STRING;
-_typeBdeUnion.kind = vdl.Kind.UNION;
+_typeArray4String.elem = vdl.types.STRING;
+_typeBdeUnion.kind = vdl.kind.UNION;
 _typeBdeUnion.name = "v.io/v23/vom/testdata.BdeUnion";
-_typeBdeUnion.fields = [{name: "B", type: vdl.Types.STRING}, {name: "D", type: vdl.Types.ANY}, {name: "E", type: vdl.Types.TYPEOBJECT}];
-_typeBeanEnum.kind = vdl.Kind.ENUM;
+_typeBdeUnion.fields = [{name: "B", type: vdl.types.STRING}, {name: "D", type: vdl.types.ANY}, {name: "E", type: vdl.types.TYPEOBJECT}];
+_typeBeanEnum.kind = vdl.kind.ENUM;
 _typeBeanEnum.name = "v.io/v23/vom/testdata.BeanEnum";
 _typeBeanEnum.labels = ["Bean"];
-_typeBrieEnum.kind = vdl.Kind.ENUM;
+_typeBrieEnum.kind = vdl.kind.ENUM;
 _typeBrieEnum.name = "v.io/v23/vom/testdata.BrieEnum";
 _typeBrieEnum.labels = ["Glee", "Brie", "Three"];
-_typeConvertGroup.kind = vdl.Kind.STRUCT;
+_typeConvertGroup.kind = vdl.kind.STRUCT;
 _typeConvertGroup.name = "v.io/v23/vom/testdata.ConvertGroup";
-_typeConvertGroup.fields = [{name: "Name", type: vdl.Types.STRING}, {name: "PrimaryType", type: vdl.Types.TYPEOBJECT}, {name: "Values", type: _type14}];
-_typeFoodEnum.kind = vdl.Kind.ENUM;
+_typeConvertGroup.fields = [{name: "Name", type: vdl.types.STRING}, {name: "PrimaryType", type: vdl.types.TYPEOBJECT}, {name: "Values", type: _type14}];
+_typeFoodEnum.kind = vdl.kind.ENUM;
 _typeFoodEnum.name = "v.io/v23/vom/testdata.FoodEnum";
 _typeFoodEnum.labels = ["Bean", "Brie", "Cherry"];
-_typeListString.kind = vdl.Kind.LIST;
+_typeListString.kind = vdl.kind.LIST;
 _typeListString.name = "v.io/v23/vom/testdata.ListString";
-_typeListString.elem = vdl.Types.STRING;
-_typeMBool.kind = vdl.Kind.BOOL;
+_typeListString.elem = vdl.types.STRING;
+_typeMBool.kind = vdl.kind.BOOL;
 _typeMBool.name = "v.io/v23/vom/testdata.MBool";
-_typeMList.kind = vdl.Kind.LIST;
+_typeMList.kind = vdl.kind.LIST;
 _typeMList.name = "v.io/v23/vom/testdata.MList";
 _typeMList.elem = _typeNListUint64;
-_typeMMap.kind = vdl.Kind.MAP;
+_typeMMap.kind = vdl.kind.MAP;
 _typeMMap.name = "v.io/v23/vom/testdata.MMap";
 _typeMMap.elem = _typeNListUint64;
 _typeMMap.key = _typeNFloat32;
-_typeMStruct.kind = vdl.Kind.STRUCT;
+_typeMStruct.kind = vdl.kind.STRUCT;
 _typeMStruct.name = "v.io/v23/vom/testdata.MStruct";
-_typeMStruct.fields = [{name: "A", type: vdl.Types.BOOL}, {name: "B", type: _typeNBool}, {name: "C", type: _typeMBool}, {name: "D", type: _type6}, {name: "E", type: vdl.Types.TYPEOBJECT}, {name: "F", type: vdl.Types.ANY}];
-_typeMapOnlyA.kind = vdl.Kind.MAP;
+_typeMStruct.fields = [{name: "A", type: vdl.types.BOOL}, {name: "B", type: _typeNBool}, {name: "C", type: _typeMBool}, {name: "D", type: _type6}, {name: "E", type: vdl.types.TYPEOBJECT}, {name: "F", type: vdl.types.ANY}];
+_typeMapOnlyA.kind = vdl.kind.MAP;
 _typeMapOnlyA.name = "v.io/v23/vom/testdata.MapOnlyA";
-_typeMapOnlyA.elem = vdl.Types.UINT32;
-_typeMapOnlyA.key = vdl.Types.UINT32;
-_typeMapOnlyA2.kind = vdl.Kind.MAP;
+_typeMapOnlyA.elem = vdl.types.UINT32;
+_typeMapOnlyA.key = vdl.types.UINT32;
+_typeMapOnlyA2.kind = vdl.kind.MAP;
 _typeMapOnlyA2.name = "v.io/v23/vom/testdata.MapOnlyA2";
-_typeMapOnlyA2.elem = vdl.Types.FLOAT64;
-_typeMapOnlyA2.key = vdl.Types.INT64;
-_typeMapOnlyB.kind = vdl.Kind.MAP;
+_typeMapOnlyA2.elem = vdl.types.FLOAT64;
+_typeMapOnlyA2.key = vdl.types.INT64;
+_typeMapOnlyB.kind = vdl.kind.MAP;
 _typeMapOnlyB.name = "v.io/v23/vom/testdata.MapOnlyB";
-_typeMapOnlyB.elem = vdl.Types.STRING;
-_typeMapOnlyB.key = vdl.Types.BOOL;
-_typeMapOnlyB2.kind = vdl.Kind.MAP;
+_typeMapOnlyB.elem = vdl.types.STRING;
+_typeMapOnlyB.key = vdl.types.BOOL;
+_typeMapOnlyB2.kind = vdl.kind.MAP;
 _typeMapOnlyB2.name = "v.io/v23/vom/testdata.MapOnlyB2";
 _typeMapOnlyB2.elem = _typeNString;
 _typeMapOnlyB2.key = _typeNBool;
-_typeMapOnlySet.kind = vdl.Kind.SET;
+_typeMapOnlySet.kind = vdl.kind.SET;
 _typeMapOnlySet.name = "v.io/v23/vom/testdata.MapOnlySet";
-_typeMapOnlySet.key = vdl.Types.FLOAT64;
-_typeMapOnlyStruct.kind = vdl.Kind.STRUCT;
+_typeMapOnlySet.key = vdl.types.FLOAT64;
+_typeMapOnlyStruct.kind = vdl.kind.STRUCT;
 _typeMapOnlyStruct.name = "v.io/v23/vom/testdata.MapOnlyStruct";
-_typeMapOnlyStruct.fields = [{name: "Key1", type: vdl.Types.INT64}, {name: "Key2", type: vdl.Types.UINT32}, {name: "Key3", type: vdl.Types.COMPLEX128}];
-_typeMapSetStruct.kind = vdl.Kind.STRUCT;
+_typeMapOnlyStruct.fields = [{name: "Key1", type: vdl.types.INT64}, {name: "Key2", type: vdl.types.UINT32}, {name: "Key3", type: vdl.types.COMPLEX128}];
+_typeMapSetStruct.kind = vdl.kind.STRUCT;
 _typeMapSetStruct.name = "v.io/v23/vom/testdata.MapSetStruct";
-_typeMapSetStruct.fields = [{name: "Feat", type: vdl.Types.BOOL}, {name: "Tire", type: vdl.Types.BOOL}, {name: "Eel", type: vdl.Types.BOOL}];
-_typeMapStructSet.kind = vdl.Kind.SET;
+_typeMapSetStruct.fields = [{name: "Feat", type: vdl.types.BOOL}, {name: "Tire", type: vdl.types.BOOL}, {name: "Eel", type: vdl.types.BOOL}];
+_typeMapStructSet.kind = vdl.kind.SET;
 _typeMapStructSet.name = "v.io/v23/vom/testdata.MapStructSet";
-_typeMapStructSet.key = vdl.Types.STRING;
-_typeNArray2Uint64.kind = vdl.Kind.ARRAY;
+_typeMapStructSet.key = vdl.types.STRING;
+_typeNArray2Uint64.kind = vdl.kind.ARRAY;
 _typeNArray2Uint64.name = "v.io/v23/vom/testdata.NArray2Uint64";
 _typeNArray2Uint64.len = 2;
-_typeNArray2Uint64.elem = vdl.Types.UINT64;
-_typeNBool.kind = vdl.Kind.BOOL;
+_typeNArray2Uint64.elem = vdl.types.UINT64;
+_typeNBool.kind = vdl.kind.BOOL;
 _typeNBool.name = "v.io/v23/vom/testdata.NBool";
-_typeNByte.kind = vdl.Kind.BYTE;
+_typeNByte.kind = vdl.kind.BYTE;
 _typeNByte.name = "v.io/v23/vom/testdata.NByte";
-_typeNByteArray.kind = vdl.Kind.ARRAY;
+_typeNByteArray.kind = vdl.kind.ARRAY;
 _typeNByteArray.name = "v.io/v23/vom/testdata.NByteArray";
 _typeNByteArray.len = 4;
-_typeNByteArray.elem = vdl.Types.BYTE;
-_typeNByteSlice.kind = vdl.Kind.LIST;
+_typeNByteArray.elem = vdl.types.BYTE;
+_typeNByteSlice.kind = vdl.kind.LIST;
 _typeNByteSlice.name = "v.io/v23/vom/testdata.NByteSlice";
-_typeNByteSlice.elem = vdl.Types.BYTE;
-_typeNComplex128.kind = vdl.Kind.COMPLEX128;
+_typeNByteSlice.elem = vdl.types.BYTE;
+_typeNComplex128.kind = vdl.kind.COMPLEX128;
 _typeNComplex128.name = "v.io/v23/vom/testdata.NComplex128";
-_typeNComplex64.kind = vdl.Kind.COMPLEX64;
+_typeNComplex64.kind = vdl.kind.COMPLEX64;
 _typeNComplex64.name = "v.io/v23/vom/testdata.NComplex64";
-_typeNEnum.kind = vdl.Kind.ENUM;
+_typeNEnum.kind = vdl.kind.ENUM;
 _typeNEnum.name = "v.io/v23/vom/testdata.NEnum";
 _typeNEnum.labels = ["A", "B", "C"];
-_typeNFloat32.kind = vdl.Kind.FLOAT32;
+_typeNFloat32.kind = vdl.kind.FLOAT32;
 _typeNFloat32.name = "v.io/v23/vom/testdata.NFloat32";
-_typeNFloat64.kind = vdl.Kind.FLOAT64;
+_typeNFloat64.kind = vdl.kind.FLOAT64;
 _typeNFloat64.name = "v.io/v23/vom/testdata.NFloat64";
-_typeNInt16.kind = vdl.Kind.INT16;
+_typeNInt16.kind = vdl.kind.INT16;
 _typeNInt16.name = "v.io/v23/vom/testdata.NInt16";
-_typeNInt32.kind = vdl.Kind.INT32;
+_typeNInt32.kind = vdl.kind.INT32;
 _typeNInt32.name = "v.io/v23/vom/testdata.NInt32";
-_typeNInt64.kind = vdl.Kind.INT64;
+_typeNInt64.kind = vdl.kind.INT64;
 _typeNInt64.name = "v.io/v23/vom/testdata.NInt64";
-_typeNListUint64.kind = vdl.Kind.LIST;
+_typeNListUint64.kind = vdl.kind.LIST;
 _typeNListUint64.name = "v.io/v23/vom/testdata.NListUint64";
-_typeNListUint64.elem = vdl.Types.UINT64;
-_typeNMapUint64String.kind = vdl.Kind.MAP;
+_typeNListUint64.elem = vdl.types.UINT64;
+_typeNMapUint64String.kind = vdl.kind.MAP;
 _typeNMapUint64String.name = "v.io/v23/vom/testdata.NMapUint64String";
-_typeNMapUint64String.elem = vdl.Types.STRING;
-_typeNMapUint64String.key = vdl.Types.UINT64;
-_typeNSetUint64.kind = vdl.Kind.SET;
+_typeNMapUint64String.elem = vdl.types.STRING;
+_typeNMapUint64String.key = vdl.types.UINT64;
+_typeNSetUint64.kind = vdl.kind.SET;
 _typeNSetUint64.name = "v.io/v23/vom/testdata.NSetUint64";
-_typeNSetUint64.key = vdl.Types.UINT64;
-_typeNString.kind = vdl.Kind.STRING;
+_typeNSetUint64.key = vdl.types.UINT64;
+_typeNString.kind = vdl.kind.STRING;
 _typeNString.name = "v.io/v23/vom/testdata.NString";
-_typeNStruct.kind = vdl.Kind.STRUCT;
+_typeNStruct.kind = vdl.kind.STRUCT;
 _typeNStruct.name = "v.io/v23/vom/testdata.NStruct";
-_typeNStruct.fields = [{name: "A", type: vdl.Types.BOOL}, {name: "B", type: vdl.Types.STRING}, {name: "C", type: vdl.Types.INT64}];
-_typeNUint16.kind = vdl.Kind.UINT16;
+_typeNStruct.fields = [{name: "A", type: vdl.types.BOOL}, {name: "B", type: vdl.types.STRING}, {name: "C", type: vdl.types.INT64}];
+_typeNUint16.kind = vdl.kind.UINT16;
 _typeNUint16.name = "v.io/v23/vom/testdata.NUint16";
-_typeNUint32.kind = vdl.Kind.UINT32;
+_typeNUint32.kind = vdl.kind.UINT32;
 _typeNUint32.name = "v.io/v23/vom/testdata.NUint32";
-_typeNUint64.kind = vdl.Kind.UINT64;
+_typeNUint64.kind = vdl.kind.UINT64;
 _typeNUint64.name = "v.io/v23/vom/testdata.NUint64";
-_typeNUnion.kind = vdl.Kind.UNION;
+_typeNUnion.kind = vdl.kind.UNION;
 _typeNUnion.name = "v.io/v23/vom/testdata.NUnion";
-_typeNUnion.fields = [{name: "A", type: vdl.Types.BOOL}, {name: "B", type: vdl.Types.STRING}, {name: "C", type: vdl.Types.INT64}];
-_typeRecA.kind = vdl.Kind.LIST;
+_typeNUnion.fields = [{name: "A", type: vdl.types.BOOL}, {name: "B", type: vdl.types.STRING}, {name: "C", type: vdl.types.INT64}];
+_typeRecA.kind = vdl.kind.LIST;
 _typeRecA.name = "v.io/v23/vom/testdata.RecA";
 _typeRecA.elem = _typeRecA;
-_typeRecStruct.kind = vdl.Kind.STRUCT;
+_typeRecStruct.kind = vdl.kind.STRUCT;
 _typeRecStruct.name = "v.io/v23/vom/testdata.RecStruct";
 _typeRecStruct.fields = [{name: "A", type: _type7}];
-_typeRecX.kind = vdl.Kind.LIST;
+_typeRecX.kind = vdl.kind.LIST;
 _typeRecX.name = "v.io/v23/vom/testdata.RecX";
 _typeRecX.elem = _typeRecY;
-_typeRecY.kind = vdl.Kind.LIST;
+_typeRecY.kind = vdl.kind.LIST;
 _typeRecY.name = "v.io/v23/vom/testdata.RecY";
 _typeRecY.elem = _typeRecX;
-_typeSetOnlyA.kind = vdl.Kind.SET;
+_typeSetOnlyA.kind = vdl.kind.SET;
 _typeSetOnlyA.name = "v.io/v23/vom/testdata.SetOnlyA";
-_typeSetOnlyA.key = vdl.Types.BOOL;
-_typeSetOnlyA2.kind = vdl.Kind.SET;
+_typeSetOnlyA.key = vdl.types.BOOL;
+_typeSetOnlyA2.kind = vdl.kind.SET;
 _typeSetOnlyA2.name = "v.io/v23/vom/testdata.SetOnlyA2";
 _typeSetOnlyA2.key = _typeNBool;
-_typeSetOnlyB.kind = vdl.Kind.SET;
+_typeSetOnlyB.kind = vdl.kind.SET;
 _typeSetOnlyB.name = "v.io/v23/vom/testdata.SetOnlyB";
-_typeSetOnlyB.key = vdl.Types.INT16;
-_typeSetOnlyB2.kind = vdl.Kind.SET;
+_typeSetOnlyB.key = vdl.types.INT16;
+_typeSetOnlyB2.kind = vdl.kind.SET;
 _typeSetOnlyB2.name = "v.io/v23/vom/testdata.SetOnlyB2";
 _typeSetOnlyB2.key = _typeNInt16;
-_typeSetOnlyMap.kind = vdl.Kind.MAP;
+_typeSetOnlyMap.kind = vdl.kind.MAP;
 _typeSetOnlyMap.name = "v.io/v23/vom/testdata.SetOnlyMap";
-_typeSetOnlyMap.elem = vdl.Types.BOOL;
-_typeSetOnlyMap.key = vdl.Types.FLOAT64;
-_typeSetStructMap.kind = vdl.Kind.MAP;
+_typeSetOnlyMap.elem = vdl.types.BOOL;
+_typeSetOnlyMap.key = vdl.types.FLOAT64;
+_typeSetStructMap.kind = vdl.kind.MAP;
 _typeSetStructMap.name = "v.io/v23/vom/testdata.SetStructMap";
-_typeSetStructMap.elem = vdl.Types.BOOL;
-_typeSetStructMap.key = vdl.Types.STRING;
-_typeSometimesSetMap.kind = vdl.Kind.MAP;
+_typeSetStructMap.elem = vdl.types.BOOL;
+_typeSetStructMap.key = vdl.types.STRING;
+_typeSometimesSetMap.kind = vdl.kind.MAP;
 _typeSometimesSetMap.name = "v.io/v23/vom/testdata.SometimesSetMap";
-_typeSometimesSetMap.elem = vdl.Types.ANY;
-_typeSometimesSetMap.key = vdl.Types.FLOAT64;
-_typeStructOnlyMap.kind = vdl.Kind.MAP;
+_typeSometimesSetMap.elem = vdl.types.ANY;
+_typeSometimesSetMap.key = vdl.types.FLOAT64;
+_typeStructOnlyMap.kind = vdl.kind.MAP;
 _typeStructOnlyMap.name = "v.io/v23/vom/testdata.StructOnlyMap";
-_typeStructOnlyMap.elem = vdl.Types.UINT64;
-_typeStructOnlyMap.key = vdl.Types.STRING;
-_typeTestCase.kind = vdl.Kind.STRUCT;
+_typeStructOnlyMap.elem = vdl.types.UINT64;
+_typeStructOnlyMap.key = vdl.types.STRING;
+_typeTestCase.kind = vdl.kind.STRUCT;
 _typeTestCase.name = "v.io/v23/vom/testdata.TestCase";
-_typeTestCase.fields = [{name: "Name", type: vdl.Types.STRING}, {name: "Value", type: vdl.Types.ANY}, {name: "TypeString", type: vdl.Types.STRING}, {name: "Hex", type: vdl.Types.STRING}, {name: "HexMagic", type: vdl.Types.STRING}, {name: "HexType", type: vdl.Types.STRING}, {name: "HexValue", type: vdl.Types.STRING}];
-_typeVomdataStruct.kind = vdl.Kind.STRUCT;
+_typeTestCase.fields = [{name: "Name", type: vdl.types.STRING}, {name: "Value", type: vdl.types.ANY}, {name: "TypeString", type: vdl.types.STRING}, {name: "Hex", type: vdl.types.STRING}, {name: "HexMagic", type: vdl.types.STRING}, {name: "HexType", type: vdl.types.STRING}, {name: "HexValue", type: vdl.types.STRING}];
+_typeVomdataStruct.kind = vdl.kind.STRUCT;
 _typeVomdataStruct.name = "v.io/v23/vom/testdata.VomdataStruct";
 _typeVomdataStruct.fields = [{name: "EncodeDecodeData", type: _type14}, {name: "CompatData", type: _type8}, {name: "ConvertData", type: _type12}];
-_typeXyzStruct.kind = vdl.Kind.STRUCT;
+_typeXyzStruct.kind = vdl.kind.STRUCT;
 _typeXyzStruct.name = "v.io/v23/vom/testdata.XyzStruct";
-_typeXyzStruct.fields = [{name: "X", type: vdl.Types.BOOL}, {name: "Y", type: _typeMBool}, {name: "Z", type: vdl.Types.STRING}];
-_typeYzStruct.kind = vdl.Kind.STRUCT;
+_typeXyzStruct.fields = [{name: "X", type: vdl.types.BOOL}, {name: "Y", type: _typeMBool}, {name: "Z", type: vdl.types.STRING}];
+_typeYzStruct.kind = vdl.kind.STRUCT;
 _typeYzStruct.name = "v.io/v23/vom/testdata.YzStruct";
 _typeYzStruct.fields = [{name: "Y", type: _typeNBool}, {name: "Z", type: _typeNString}];
-_typeZStruct.kind = vdl.Kind.STRUCT;
+_typeZStruct.kind = vdl.kind.STRUCT;
 _typeZStruct.name = "v.io/v23/vom/testdata.ZStruct";
-_typeZStruct.fields = [{name: "Z", type: vdl.Types.STRING}];
+_typeZStruct.fields = [{name: "Z", type: vdl.types.STRING}];
 _type1.freeze();
 _type10.freeze();
 _type11.freeze();
@@ -394,91 +394,91 @@ _typeVomdataStruct.freeze();
 _typeXyzStruct.freeze();
 _typeYzStruct.freeze();
 _typeZStruct.freeze();
-module.exports.AbcStruct = (vdl.Registry.lookupOrCreateConstructor(_typeAbcStruct));
-module.exports.AdeStruct = (vdl.Registry.lookupOrCreateConstructor(_typeAdeStruct));
-module.exports.Array3String = (vdl.Registry.lookupOrCreateConstructor(_typeArray3String));
-module.exports.Array4String = (vdl.Registry.lookupOrCreateConstructor(_typeArray4String));
-module.exports.BdeUnion = (vdl.Registry.lookupOrCreateConstructor(_typeBdeUnion));
+module.exports.AbcStruct = (vdl.registry.lookupOrCreateConstructor(_typeAbcStruct));
+module.exports.AdeStruct = (vdl.registry.lookupOrCreateConstructor(_typeAdeStruct));
+module.exports.Array3String = (vdl.registry.lookupOrCreateConstructor(_typeArray3String));
+module.exports.Array4String = (vdl.registry.lookupOrCreateConstructor(_typeArray4String));
+module.exports.BdeUnion = (vdl.registry.lookupOrCreateConstructor(_typeBdeUnion));
 module.exports.BeanEnum = {
-  BEAN: canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeBeanEnum))('Bean', true), _typeBeanEnum),
+  BEAN: canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeBeanEnum))('Bean', true), _typeBeanEnum),
 };
 module.exports.BrieEnum = {
-  GLEE: canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeBrieEnum))('Glee', true), _typeBrieEnum),
-  BRIE: canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeBrieEnum))('Brie', true), _typeBrieEnum),
-  THREE: canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeBrieEnum))('Three', true), _typeBrieEnum),
+  GLEE: canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeBrieEnum))('Glee', true), _typeBrieEnum),
+  BRIE: canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeBrieEnum))('Brie', true), _typeBrieEnum),
+  THREE: canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeBrieEnum))('Three', true), _typeBrieEnum),
 };
-module.exports.ConvertGroup = (vdl.Registry.lookupOrCreateConstructor(_typeConvertGroup));
+module.exports.ConvertGroup = (vdl.registry.lookupOrCreateConstructor(_typeConvertGroup));
 module.exports.FoodEnum = {
-  BEAN: canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeFoodEnum))('Bean', true), _typeFoodEnum),
-  BRIE: canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeFoodEnum))('Brie', true), _typeFoodEnum),
-  CHERRY: canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeFoodEnum))('Cherry', true), _typeFoodEnum),
+  BEAN: canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeFoodEnum))('Bean', true), _typeFoodEnum),
+  BRIE: canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeFoodEnum))('Brie', true), _typeFoodEnum),
+  CHERRY: canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeFoodEnum))('Cherry', true), _typeFoodEnum),
 };
-module.exports.ListString = (vdl.Registry.lookupOrCreateConstructor(_typeListString));
-module.exports.MBool = (vdl.Registry.lookupOrCreateConstructor(_typeMBool));
-module.exports.MList = (vdl.Registry.lookupOrCreateConstructor(_typeMList));
-module.exports.MMap = (vdl.Registry.lookupOrCreateConstructor(_typeMMap));
-module.exports.MStruct = (vdl.Registry.lookupOrCreateConstructor(_typeMStruct));
-module.exports.MapOnlyA = (vdl.Registry.lookupOrCreateConstructor(_typeMapOnlyA));
-module.exports.MapOnlyA2 = (vdl.Registry.lookupOrCreateConstructor(_typeMapOnlyA2));
-module.exports.MapOnlyB = (vdl.Registry.lookupOrCreateConstructor(_typeMapOnlyB));
-module.exports.MapOnlyB2 = (vdl.Registry.lookupOrCreateConstructor(_typeMapOnlyB2));
-module.exports.MapOnlySet = (vdl.Registry.lookupOrCreateConstructor(_typeMapOnlySet));
-module.exports.MapOnlyStruct = (vdl.Registry.lookupOrCreateConstructor(_typeMapOnlyStruct));
-module.exports.MapSetStruct = (vdl.Registry.lookupOrCreateConstructor(_typeMapSetStruct));
-module.exports.MapStructSet = (vdl.Registry.lookupOrCreateConstructor(_typeMapStructSet));
-module.exports.NArray2Uint64 = (vdl.Registry.lookupOrCreateConstructor(_typeNArray2Uint64));
-module.exports.NBool = (vdl.Registry.lookupOrCreateConstructor(_typeNBool));
-module.exports.NByte = (vdl.Registry.lookupOrCreateConstructor(_typeNByte));
-module.exports.NByteArray = (vdl.Registry.lookupOrCreateConstructor(_typeNByteArray));
-module.exports.NByteSlice = (vdl.Registry.lookupOrCreateConstructor(_typeNByteSlice));
-module.exports.NComplex128 = (vdl.Registry.lookupOrCreateConstructor(_typeNComplex128));
-module.exports.NComplex64 = (vdl.Registry.lookupOrCreateConstructor(_typeNComplex64));
+module.exports.ListString = (vdl.registry.lookupOrCreateConstructor(_typeListString));
+module.exports.MBool = (vdl.registry.lookupOrCreateConstructor(_typeMBool));
+module.exports.MList = (vdl.registry.lookupOrCreateConstructor(_typeMList));
+module.exports.MMap = (vdl.registry.lookupOrCreateConstructor(_typeMMap));
+module.exports.MStruct = (vdl.registry.lookupOrCreateConstructor(_typeMStruct));
+module.exports.MapOnlyA = (vdl.registry.lookupOrCreateConstructor(_typeMapOnlyA));
+module.exports.MapOnlyA2 = (vdl.registry.lookupOrCreateConstructor(_typeMapOnlyA2));
+module.exports.MapOnlyB = (vdl.registry.lookupOrCreateConstructor(_typeMapOnlyB));
+module.exports.MapOnlyB2 = (vdl.registry.lookupOrCreateConstructor(_typeMapOnlyB2));
+module.exports.MapOnlySet = (vdl.registry.lookupOrCreateConstructor(_typeMapOnlySet));
+module.exports.MapOnlyStruct = (vdl.registry.lookupOrCreateConstructor(_typeMapOnlyStruct));
+module.exports.MapSetStruct = (vdl.registry.lookupOrCreateConstructor(_typeMapSetStruct));
+module.exports.MapStructSet = (vdl.registry.lookupOrCreateConstructor(_typeMapStructSet));
+module.exports.NArray2Uint64 = (vdl.registry.lookupOrCreateConstructor(_typeNArray2Uint64));
+module.exports.NBool = (vdl.registry.lookupOrCreateConstructor(_typeNBool));
+module.exports.NByte = (vdl.registry.lookupOrCreateConstructor(_typeNByte));
+module.exports.NByteArray = (vdl.registry.lookupOrCreateConstructor(_typeNByteArray));
+module.exports.NByteSlice = (vdl.registry.lookupOrCreateConstructor(_typeNByteSlice));
+module.exports.NComplex128 = (vdl.registry.lookupOrCreateConstructor(_typeNComplex128));
+module.exports.NComplex64 = (vdl.registry.lookupOrCreateConstructor(_typeNComplex64));
 module.exports.NEnum = {
-  A: canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeNEnum))('A', true), _typeNEnum),
-  B: canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeNEnum))('B', true), _typeNEnum),
-  C: canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeNEnum))('C', true), _typeNEnum),
+  A: canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeNEnum))('A', true), _typeNEnum),
+  B: canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeNEnum))('B', true), _typeNEnum),
+  C: canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeNEnum))('C', true), _typeNEnum),
 };
-module.exports.NFloat32 = (vdl.Registry.lookupOrCreateConstructor(_typeNFloat32));
-module.exports.NFloat64 = (vdl.Registry.lookupOrCreateConstructor(_typeNFloat64));
-module.exports.NInt16 = (vdl.Registry.lookupOrCreateConstructor(_typeNInt16));
-module.exports.NInt32 = (vdl.Registry.lookupOrCreateConstructor(_typeNInt32));
-module.exports.NInt64 = (vdl.Registry.lookupOrCreateConstructor(_typeNInt64));
-module.exports.NListUint64 = (vdl.Registry.lookupOrCreateConstructor(_typeNListUint64));
-module.exports.NMapUint64String = (vdl.Registry.lookupOrCreateConstructor(_typeNMapUint64String));
-module.exports.NSetUint64 = (vdl.Registry.lookupOrCreateConstructor(_typeNSetUint64));
-module.exports.NString = (vdl.Registry.lookupOrCreateConstructor(_typeNString));
-module.exports.NStruct = (vdl.Registry.lookupOrCreateConstructor(_typeNStruct));
-module.exports.NUint16 = (vdl.Registry.lookupOrCreateConstructor(_typeNUint16));
-module.exports.NUint32 = (vdl.Registry.lookupOrCreateConstructor(_typeNUint32));
-module.exports.NUint64 = (vdl.Registry.lookupOrCreateConstructor(_typeNUint64));
-module.exports.NUnion = (vdl.Registry.lookupOrCreateConstructor(_typeNUnion));
-module.exports.RecA = (vdl.Registry.lookupOrCreateConstructor(_typeRecA));
-module.exports.RecStruct = (vdl.Registry.lookupOrCreateConstructor(_typeRecStruct));
-module.exports.RecX = (vdl.Registry.lookupOrCreateConstructor(_typeRecX));
-module.exports.RecY = (vdl.Registry.lookupOrCreateConstructor(_typeRecY));
-module.exports.SetOnlyA = (vdl.Registry.lookupOrCreateConstructor(_typeSetOnlyA));
-module.exports.SetOnlyA2 = (vdl.Registry.lookupOrCreateConstructor(_typeSetOnlyA2));
-module.exports.SetOnlyB = (vdl.Registry.lookupOrCreateConstructor(_typeSetOnlyB));
-module.exports.SetOnlyB2 = (vdl.Registry.lookupOrCreateConstructor(_typeSetOnlyB2));
-module.exports.SetOnlyMap = (vdl.Registry.lookupOrCreateConstructor(_typeSetOnlyMap));
-module.exports.SetStructMap = (vdl.Registry.lookupOrCreateConstructor(_typeSetStructMap));
-module.exports.SometimesSetMap = (vdl.Registry.lookupOrCreateConstructor(_typeSometimesSetMap));
-module.exports.StructOnlyMap = (vdl.Registry.lookupOrCreateConstructor(_typeStructOnlyMap));
-module.exports.TestCase = (vdl.Registry.lookupOrCreateConstructor(_typeTestCase));
-module.exports.VomdataStruct = (vdl.Registry.lookupOrCreateConstructor(_typeVomdataStruct));
-module.exports.XyzStruct = (vdl.Registry.lookupOrCreateConstructor(_typeXyzStruct));
-module.exports.YzStruct = (vdl.Registry.lookupOrCreateConstructor(_typeYzStruct));
-module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
+module.exports.NFloat32 = (vdl.registry.lookupOrCreateConstructor(_typeNFloat32));
+module.exports.NFloat64 = (vdl.registry.lookupOrCreateConstructor(_typeNFloat64));
+module.exports.NInt16 = (vdl.registry.lookupOrCreateConstructor(_typeNInt16));
+module.exports.NInt32 = (vdl.registry.lookupOrCreateConstructor(_typeNInt32));
+module.exports.NInt64 = (vdl.registry.lookupOrCreateConstructor(_typeNInt64));
+module.exports.NListUint64 = (vdl.registry.lookupOrCreateConstructor(_typeNListUint64));
+module.exports.NMapUint64String = (vdl.registry.lookupOrCreateConstructor(_typeNMapUint64String));
+module.exports.NSetUint64 = (vdl.registry.lookupOrCreateConstructor(_typeNSetUint64));
+module.exports.NString = (vdl.registry.lookupOrCreateConstructor(_typeNString));
+module.exports.NStruct = (vdl.registry.lookupOrCreateConstructor(_typeNStruct));
+module.exports.NUint16 = (vdl.registry.lookupOrCreateConstructor(_typeNUint16));
+module.exports.NUint32 = (vdl.registry.lookupOrCreateConstructor(_typeNUint32));
+module.exports.NUint64 = (vdl.registry.lookupOrCreateConstructor(_typeNUint64));
+module.exports.NUnion = (vdl.registry.lookupOrCreateConstructor(_typeNUnion));
+module.exports.RecA = (vdl.registry.lookupOrCreateConstructor(_typeRecA));
+module.exports.RecStruct = (vdl.registry.lookupOrCreateConstructor(_typeRecStruct));
+module.exports.RecX = (vdl.registry.lookupOrCreateConstructor(_typeRecX));
+module.exports.RecY = (vdl.registry.lookupOrCreateConstructor(_typeRecY));
+module.exports.SetOnlyA = (vdl.registry.lookupOrCreateConstructor(_typeSetOnlyA));
+module.exports.SetOnlyA2 = (vdl.registry.lookupOrCreateConstructor(_typeSetOnlyA2));
+module.exports.SetOnlyB = (vdl.registry.lookupOrCreateConstructor(_typeSetOnlyB));
+module.exports.SetOnlyB2 = (vdl.registry.lookupOrCreateConstructor(_typeSetOnlyB2));
+module.exports.SetOnlyMap = (vdl.registry.lookupOrCreateConstructor(_typeSetOnlyMap));
+module.exports.SetStructMap = (vdl.registry.lookupOrCreateConstructor(_typeSetStructMap));
+module.exports.SometimesSetMap = (vdl.registry.lookupOrCreateConstructor(_typeSometimesSetMap));
+module.exports.StructOnlyMap = (vdl.registry.lookupOrCreateConstructor(_typeStructOnlyMap));
+module.exports.TestCase = (vdl.registry.lookupOrCreateConstructor(_typeTestCase));
+module.exports.VomdataStruct = (vdl.registry.lookupOrCreateConstructor(_typeVomdataStruct));
+module.exports.XyzStruct = (vdl.registry.lookupOrCreateConstructor(_typeXyzStruct));
+module.exports.YzStruct = (vdl.registry.lookupOrCreateConstructor(_typeYzStruct));
+module.exports.ZStruct = (vdl.registry.lookupOrCreateConstructor(_typeZStruct));
 
 
 
 
 // Consts:
 
-  module.exports.Tests = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_type1))([
+  module.exports.Tests = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_type1))([
 {
   'name': "true",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.BOOL))(true, true), vdl.Types.BOOL),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.BOOL))(true, true), vdl.types.BOOL),
   'typeString': "bool",
   'hex': "800201",
   'hexMagic': "80",
@@ -487,7 +487,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "false",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.BOOL))(false, true), vdl.Types.BOOL),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.BOOL))(false, true), vdl.types.BOOL),
   'typeString': "bool",
   'hex': "800200",
   'hexMagic': "80",
@@ -496,7 +496,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "\"\"",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.STRING))("", true), vdl.Types.STRING),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.STRING))("", true), vdl.types.STRING),
   'typeString': "string",
   'hex': "800600",
   'hexMagic': "80",
@@ -505,7 +505,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "\"abc\"",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.STRING))("abc", true), vdl.Types.STRING),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.STRING))("abc", true), vdl.types.STRING),
   'typeString': "string",
   'hex': "800603616263",
   'hexMagic': "80",
@@ -514,7 +514,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "[]byte(\"\")",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_type2))(new Uint8Array([
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_type2))(new Uint8Array([
 ]), true), _type2),
   'typeString': "[]byte",
   'hex': "804e00",
@@ -524,7 +524,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "[]byte(\"\\x01\\x02\\x03\")",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_type2))(new Uint8Array([
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_type2))(new Uint8Array([
 1,
 2,
 3,
@@ -537,7 +537,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "[]byte(\"adef\")",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_type2))(new Uint8Array([
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_type2))(new Uint8Array([
 97,
 100,
 101,
@@ -551,7 +551,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "byte(0)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.BYTE))(0, true), vdl.Types.BYTE),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.BYTE))(0, true), vdl.types.BYTE),
   'typeString': "byte",
   'hex': "800400",
   'hexMagic': "80",
@@ -560,7 +560,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "byte(127)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.BYTE))(127, true), vdl.Types.BYTE),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.BYTE))(127, true), vdl.types.BYTE),
   'typeString': "byte",
   'hex': "80047f",
   'hexMagic': "80",
@@ -569,7 +569,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "byte(255)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.BYTE))(255, true), vdl.Types.BYTE),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.BYTE))(255, true), vdl.types.BYTE),
   'typeString': "byte",
   'hex': "8004ff",
   'hexMagic': "80",
@@ -578,7 +578,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "uint16(0)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.UINT16))(0, true), vdl.Types.UINT16),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.UINT16))(0, true), vdl.types.UINT16),
   'typeString': "uint16",
   'hex': "800800",
   'hexMagic': "80",
@@ -587,7 +587,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "uint16(1)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.UINT16))(1, true), vdl.Types.UINT16),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.UINT16))(1, true), vdl.types.UINT16),
   'typeString': "uint16",
   'hex': "800801",
   'hexMagic': "80",
@@ -596,7 +596,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "uint16(2)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.UINT16))(2, true), vdl.Types.UINT16),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.UINT16))(2, true), vdl.types.UINT16),
   'typeString': "uint16",
   'hex': "800802",
   'hexMagic': "80",
@@ -605,7 +605,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "uint16(63)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.UINT16))(63, true), vdl.Types.UINT16),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.UINT16))(63, true), vdl.types.UINT16),
   'typeString': "uint16",
   'hex': "80083f",
   'hexMagic': "80",
@@ -614,7 +614,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "uint16(64)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.UINT16))(64, true), vdl.Types.UINT16),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.UINT16))(64, true), vdl.types.UINT16),
   'typeString': "uint16",
   'hex': "800840",
   'hexMagic': "80",
@@ -623,7 +623,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "uint16(127)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.UINT16))(127, true), vdl.Types.UINT16),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.UINT16))(127, true), vdl.types.UINT16),
   'typeString': "uint16",
   'hex': "80087f",
   'hexMagic': "80",
@@ -632,7 +632,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "uint16(128)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.UINT16))(128, true), vdl.Types.UINT16),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.UINT16))(128, true), vdl.types.UINT16),
   'typeString': "uint16",
   'hex': "8008ff80",
   'hexMagic': "80",
@@ -641,7 +641,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "uint16(255)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.UINT16))(255, true), vdl.Types.UINT16),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.UINT16))(255, true), vdl.types.UINT16),
   'typeString': "uint16",
   'hex': "8008ffff",
   'hexMagic': "80",
@@ -650,7 +650,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "uint16(256)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.UINT16))(256, true), vdl.Types.UINT16),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.UINT16))(256, true), vdl.types.UINT16),
   'typeString': "uint16",
   'hex': "8008fe0100",
   'hexMagic': "80",
@@ -659,7 +659,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "uint16(32766)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.UINT16))(32766, true), vdl.Types.UINT16),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.UINT16))(32766, true), vdl.types.UINT16),
   'typeString': "uint16",
   'hex': "8008fe7ffe",
   'hexMagic': "80",
@@ -668,7 +668,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "uint16(32767)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.UINT16))(32767, true), vdl.Types.UINT16),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.UINT16))(32767, true), vdl.types.UINT16),
   'typeString': "uint16",
   'hex': "8008fe7fff",
   'hexMagic': "80",
@@ -677,7 +677,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "uint16(65534)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.UINT16))(65534, true), vdl.Types.UINT16),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.UINT16))(65534, true), vdl.types.UINT16),
   'typeString': "uint16",
   'hex': "8008fefffe",
   'hexMagic': "80",
@@ -686,7 +686,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "uint16(65535)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.UINT16))(65535, true), vdl.Types.UINT16),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.UINT16))(65535, true), vdl.types.UINT16),
   'typeString': "uint16",
   'hex': "8008feffff",
   'hexMagic': "80",
@@ -695,7 +695,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "uint32(0)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.UINT32))(0, true), vdl.Types.UINT32),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.UINT32))(0, true), vdl.types.UINT32),
   'typeString': "uint32",
   'hex': "800a00",
   'hexMagic': "80",
@@ -704,7 +704,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "uint32(8388606)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.UINT32))(8388606, true), vdl.Types.UINT32),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.UINT32))(8388606, true), vdl.types.UINT32),
   'typeString': "uint32",
   'hex': "800afd7ffffe",
   'hexMagic': "80",
@@ -713,7 +713,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "uint32(8388607)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.UINT32))(8388607, true), vdl.Types.UINT32),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.UINT32))(8388607, true), vdl.types.UINT32),
   'typeString': "uint32",
   'hex': "800afd7fffff",
   'hexMagic': "80",
@@ -722,7 +722,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "uint32(16777214)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.UINT32))(16777214, true), vdl.Types.UINT32),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.UINT32))(16777214, true), vdl.types.UINT32),
   'typeString': "uint32",
   'hex': "800afdfffffe",
   'hexMagic': "80",
@@ -731,7 +731,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "uint32(16777215)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.UINT32))(16777215, true), vdl.Types.UINT32),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.UINT32))(16777215, true), vdl.types.UINT32),
   'typeString': "uint32",
   'hex': "800afdffffff",
   'hexMagic': "80",
@@ -740,7 +740,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "uint32(2147483646)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.UINT32))(2147483646, true), vdl.Types.UINT32),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.UINT32))(2147483646, true), vdl.types.UINT32),
   'typeString': "uint32",
   'hex': "800afc7ffffffe",
   'hexMagic': "80",
@@ -749,7 +749,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "uint32(2147483647)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.UINT32))(2147483647, true), vdl.Types.UINT32),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.UINT32))(2147483647, true), vdl.types.UINT32),
   'typeString': "uint32",
   'hex': "800afc7fffffff",
   'hexMagic': "80",
@@ -758,7 +758,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "uint32(4294967294)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.UINT32))(4294967294, true), vdl.Types.UINT32),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.UINT32))(4294967294, true), vdl.types.UINT32),
   'typeString': "uint32",
   'hex': "800afcfffffffe",
   'hexMagic': "80",
@@ -767,7 +767,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "uint32(4294967295)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.UINT32))(4294967295, true), vdl.Types.UINT32),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.UINT32))(4294967295, true), vdl.types.UINT32),
   'typeString': "uint32",
   'hex': "800afcffffffff",
   'hexMagic': "80",
@@ -776,7 +776,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "uint64(0)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.UINT64))(new vdl.BigInt(0, new Uint8Array([])), true), vdl.Types.UINT64),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.UINT64))(new vdl.BigInt(0, new Uint8Array([])), true), vdl.types.UINT64),
   'typeString': "uint64",
   'hex': "800c00",
   'hexMagic': "80",
@@ -785,7 +785,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "uint64(549755813886)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.UINT64))(new vdl.BigInt(1, new Uint8Array([0x7f, 0xff, 0xff, 0xff, 0xfe])), true), vdl.Types.UINT64),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.UINT64))(new vdl.BigInt(1, new Uint8Array([0x7f, 0xff, 0xff, 0xff, 0xfe])), true), vdl.types.UINT64),
   'typeString': "uint64",
   'hex': "800cfb7ffffffffe",
   'hexMagic': "80",
@@ -794,7 +794,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "uint64(549755813887)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.UINT64))(new vdl.BigInt(1, new Uint8Array([0x7f, 0xff, 0xff, 0xff, 0xff])), true), vdl.Types.UINT64),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.UINT64))(new vdl.BigInt(1, new Uint8Array([0x7f, 0xff, 0xff, 0xff, 0xff])), true), vdl.types.UINT64),
   'typeString': "uint64",
   'hex': "800cfb7fffffffff",
   'hexMagic': "80",
@@ -803,7 +803,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "uint64(1099511627774)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.UINT64))(new vdl.BigInt(1, new Uint8Array([0xff, 0xff, 0xff, 0xff, 0xfe])), true), vdl.Types.UINT64),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.UINT64))(new vdl.BigInt(1, new Uint8Array([0xff, 0xff, 0xff, 0xff, 0xfe])), true), vdl.types.UINT64),
   'typeString': "uint64",
   'hex': "800cfbfffffffffe",
   'hexMagic': "80",
@@ -812,7 +812,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "uint64(1099511627775)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.UINT64))(new vdl.BigInt(1, new Uint8Array([0xff, 0xff, 0xff, 0xff, 0xff])), true), vdl.Types.UINT64),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.UINT64))(new vdl.BigInt(1, new Uint8Array([0xff, 0xff, 0xff, 0xff, 0xff])), true), vdl.types.UINT64),
   'typeString': "uint64",
   'hex': "800cfbffffffffff",
   'hexMagic': "80",
@@ -821,7 +821,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "uint64(140737488355326)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.UINT64))(new vdl.BigInt(1, new Uint8Array([0x7f, 0xff, 0xff, 0xff, 0xff, 0xfe])), true), vdl.Types.UINT64),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.UINT64))(new vdl.BigInt(1, new Uint8Array([0x7f, 0xff, 0xff, 0xff, 0xff, 0xfe])), true), vdl.types.UINT64),
   'typeString': "uint64",
   'hex': "800cfa7ffffffffffe",
   'hexMagic': "80",
@@ -830,7 +830,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "uint64(140737488355327)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.UINT64))(new vdl.BigInt(1, new Uint8Array([0x7f, 0xff, 0xff, 0xff, 0xff, 0xff])), true), vdl.Types.UINT64),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.UINT64))(new vdl.BigInt(1, new Uint8Array([0x7f, 0xff, 0xff, 0xff, 0xff, 0xff])), true), vdl.types.UINT64),
   'typeString': "uint64",
   'hex': "800cfa7fffffffffff",
   'hexMagic': "80",
@@ -839,7 +839,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "uint64(281474976710654)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.UINT64))(new vdl.BigInt(1, new Uint8Array([0xff, 0xff, 0xff, 0xff, 0xff, 0xfe])), true), vdl.Types.UINT64),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.UINT64))(new vdl.BigInt(1, new Uint8Array([0xff, 0xff, 0xff, 0xff, 0xff, 0xfe])), true), vdl.types.UINT64),
   'typeString': "uint64",
   'hex': "800cfafffffffffffe",
   'hexMagic': "80",
@@ -848,7 +848,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "uint64(281474976710655)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.UINT64))(new vdl.BigInt(1, new Uint8Array([0xff, 0xff, 0xff, 0xff, 0xff, 0xff])), true), vdl.Types.UINT64),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.UINT64))(new vdl.BigInt(1, new Uint8Array([0xff, 0xff, 0xff, 0xff, 0xff, 0xff])), true), vdl.types.UINT64),
   'typeString': "uint64",
   'hex': "800cfaffffffffffff",
   'hexMagic': "80",
@@ -857,7 +857,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "uint64(36028797018963966)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.UINT64))(new vdl.BigInt(1, new Uint8Array([0x7f, 0xff, 0xff, 0xff, 0xff, 0xff, 0xfe])), true), vdl.Types.UINT64),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.UINT64))(new vdl.BigInt(1, new Uint8Array([0x7f, 0xff, 0xff, 0xff, 0xff, 0xff, 0xfe])), true), vdl.types.UINT64),
   'typeString': "uint64",
   'hex': "800cf97ffffffffffffe",
   'hexMagic': "80",
@@ -866,7 +866,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "uint64(36028797018963967)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.UINT64))(new vdl.BigInt(1, new Uint8Array([0x7f, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff])), true), vdl.Types.UINT64),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.UINT64))(new vdl.BigInt(1, new Uint8Array([0x7f, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff])), true), vdl.types.UINT64),
   'typeString': "uint64",
   'hex': "800cf97fffffffffffff",
   'hexMagic': "80",
@@ -875,7 +875,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "uint64(72057594037927934)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.UINT64))(new vdl.BigInt(1, new Uint8Array([0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xfe])), true), vdl.Types.UINT64),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.UINT64))(new vdl.BigInt(1, new Uint8Array([0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xfe])), true), vdl.types.UINT64),
   'typeString': "uint64",
   'hex': "800cf9fffffffffffffe",
   'hexMagic': "80",
@@ -884,7 +884,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "uint64(72057594037927935)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.UINT64))(new vdl.BigInt(1, new Uint8Array([0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff])), true), vdl.Types.UINT64),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.UINT64))(new vdl.BigInt(1, new Uint8Array([0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff])), true), vdl.types.UINT64),
   'typeString': "uint64",
   'hex': "800cf9ffffffffffffff",
   'hexMagic': "80",
@@ -893,7 +893,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "uint64(9223372036854775806)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.UINT64))(new vdl.BigInt(1, new Uint8Array([0x7f, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xfe])), true), vdl.Types.UINT64),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.UINT64))(new vdl.BigInt(1, new Uint8Array([0x7f, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xfe])), true), vdl.types.UINT64),
   'typeString': "uint64",
   'hex': "800cf87ffffffffffffffe",
   'hexMagic': "80",
@@ -902,7 +902,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "uint64(9223372036854775807)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.UINT64))(new vdl.BigInt(1, new Uint8Array([0x7f, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff])), true), vdl.Types.UINT64),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.UINT64))(new vdl.BigInt(1, new Uint8Array([0x7f, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff])), true), vdl.types.UINT64),
   'typeString': "uint64",
   'hex': "800cf87fffffffffffffff",
   'hexMagic': "80",
@@ -911,7 +911,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "uint64(18446744073709551614)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.UINT64))(new vdl.BigInt(1, new Uint8Array([0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xfe])), true), vdl.Types.UINT64),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.UINT64))(new vdl.BigInt(1, new Uint8Array([0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xfe])), true), vdl.types.UINT64),
   'typeString': "uint64",
   'hex': "800cf8fffffffffffffffe",
   'hexMagic': "80",
@@ -920,7 +920,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "uint64(18446744073709551615)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.UINT64))(new vdl.BigInt(1, new Uint8Array([0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff])), true), vdl.Types.UINT64),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.UINT64))(new vdl.BigInt(1, new Uint8Array([0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff])), true), vdl.types.UINT64),
   'typeString': "uint64",
   'hex': "800cf8ffffffffffffffff",
   'hexMagic': "80",
@@ -929,7 +929,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "int16(0)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.INT16))(0, true), vdl.Types.INT16),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.INT16))(0, true), vdl.types.INT16),
   'typeString': "int16",
   'hex': "800e00",
   'hexMagic': "80",
@@ -938,7 +938,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "int16(1)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.INT16))(1, true), vdl.Types.INT16),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.INT16))(1, true), vdl.types.INT16),
   'typeString': "int16",
   'hex': "800e02",
   'hexMagic': "80",
@@ -947,7 +947,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "int16(2)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.INT16))(2, true), vdl.Types.INT16),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.INT16))(2, true), vdl.types.INT16),
   'typeString': "int16",
   'hex': "800e04",
   'hexMagic': "80",
@@ -956,7 +956,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "int16(63)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.INT16))(63, true), vdl.Types.INT16),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.INT16))(63, true), vdl.types.INT16),
   'typeString': "int16",
   'hex': "800e7e",
   'hexMagic': "80",
@@ -965,7 +965,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "int16(64)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.INT16))(64, true), vdl.Types.INT16),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.INT16))(64, true), vdl.types.INT16),
   'typeString': "int16",
   'hex': "800eff80",
   'hexMagic': "80",
@@ -974,7 +974,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "int16(127)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.INT16))(127, true), vdl.Types.INT16),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.INT16))(127, true), vdl.types.INT16),
   'typeString': "int16",
   'hex': "800efffe",
   'hexMagic': "80",
@@ -983,7 +983,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "int16(128)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.INT16))(128, true), vdl.Types.INT16),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.INT16))(128, true), vdl.types.INT16),
   'typeString': "int16",
   'hex': "800efe0100",
   'hexMagic': "80",
@@ -992,7 +992,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "int16(255)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.INT16))(255, true), vdl.Types.INT16),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.INT16))(255, true), vdl.types.INT16),
   'typeString': "int16",
   'hex': "800efe01fe",
   'hexMagic': "80",
@@ -1001,7 +1001,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "int16(256)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.INT16))(256, true), vdl.Types.INT16),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.INT16))(256, true), vdl.types.INT16),
   'typeString': "int16",
   'hex': "800efe0200",
   'hexMagic': "80",
@@ -1010,7 +1010,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "int16(32766)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.INT16))(32766, true), vdl.Types.INT16),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.INT16))(32766, true), vdl.types.INT16),
   'typeString': "int16",
   'hex': "800efefffc",
   'hexMagic': "80",
@@ -1019,7 +1019,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "int16(32767)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.INT16))(32767, true), vdl.Types.INT16),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.INT16))(32767, true), vdl.types.INT16),
   'typeString': "int16",
   'hex': "800efefffe",
   'hexMagic': "80",
@@ -1028,7 +1028,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "int32(0)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.INT32))(0, true), vdl.Types.INT32),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.INT32))(0, true), vdl.types.INT32),
   'typeString': "int32",
   'hex': "801000",
   'hexMagic': "80",
@@ -1037,7 +1037,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "int32(8388606)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.INT32))(8388606, true), vdl.Types.INT32),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.INT32))(8388606, true), vdl.types.INT32),
   'typeString': "int32",
   'hex': "8010fdfffffc",
   'hexMagic': "80",
@@ -1046,7 +1046,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "int32(8388607)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.INT32))(8388607, true), vdl.Types.INT32),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.INT32))(8388607, true), vdl.types.INT32),
   'typeString': "int32",
   'hex': "8010fdfffffe",
   'hexMagic': "80",
@@ -1055,7 +1055,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "int32(16777214)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.INT32))(16777214, true), vdl.Types.INT32),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.INT32))(16777214, true), vdl.types.INT32),
   'typeString': "int32",
   'hex': "8010fc01fffffc",
   'hexMagic': "80",
@@ -1064,7 +1064,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "int32(16777215)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.INT32))(16777215, true), vdl.Types.INT32),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.INT32))(16777215, true), vdl.types.INT32),
   'typeString': "int32",
   'hex': "8010fc01fffffe",
   'hexMagic': "80",
@@ -1073,7 +1073,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "int32(2147483646)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.INT32))(2147483646, true), vdl.Types.INT32),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.INT32))(2147483646, true), vdl.types.INT32),
   'typeString': "int32",
   'hex': "8010fcfffffffc",
   'hexMagic': "80",
@@ -1082,7 +1082,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "int32(2147483647)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.INT32))(2147483647, true), vdl.Types.INT32),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.INT32))(2147483647, true), vdl.types.INT32),
   'typeString': "int32",
   'hex': "8010fcfffffffe",
   'hexMagic': "80",
@@ -1091,7 +1091,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "int64(0)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.INT64))(new vdl.BigInt(0, new Uint8Array([])), true), vdl.Types.INT64),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.INT64))(new vdl.BigInt(0, new Uint8Array([])), true), vdl.types.INT64),
   'typeString': "int64",
   'hex': "801200",
   'hexMagic': "80",
@@ -1100,7 +1100,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "int64(1)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.INT64))(new vdl.BigInt(1, new Uint8Array([0x1])), true), vdl.Types.INT64),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.INT64))(new vdl.BigInt(1, new Uint8Array([0x1])), true), vdl.types.INT64),
   'typeString': "int64",
   'hex': "801202",
   'hexMagic': "80",
@@ -1109,7 +1109,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "int64(2)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.INT64))(new vdl.BigInt(1, new Uint8Array([0x2])), true), vdl.Types.INT64),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.INT64))(new vdl.BigInt(1, new Uint8Array([0x2])), true), vdl.types.INT64),
   'typeString': "int64",
   'hex': "801204",
   'hexMagic': "80",
@@ -1118,7 +1118,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "int64(549755813886)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.INT64))(new vdl.BigInt(1, new Uint8Array([0x7f, 0xff, 0xff, 0xff, 0xfe])), true), vdl.Types.INT64),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.INT64))(new vdl.BigInt(1, new Uint8Array([0x7f, 0xff, 0xff, 0xff, 0xfe])), true), vdl.types.INT64),
   'typeString': "int64",
   'hex': "8012fbfffffffffc",
   'hexMagic': "80",
@@ -1127,7 +1127,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "int64(549755813887)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.INT64))(new vdl.BigInt(1, new Uint8Array([0x7f, 0xff, 0xff, 0xff, 0xff])), true), vdl.Types.INT64),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.INT64))(new vdl.BigInt(1, new Uint8Array([0x7f, 0xff, 0xff, 0xff, 0xff])), true), vdl.types.INT64),
   'typeString': "int64",
   'hex': "8012fbfffffffffe",
   'hexMagic': "80",
@@ -1136,7 +1136,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "int64(1099511627774)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.INT64))(new vdl.BigInt(1, new Uint8Array([0xff, 0xff, 0xff, 0xff, 0xfe])), true), vdl.Types.INT64),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.INT64))(new vdl.BigInt(1, new Uint8Array([0xff, 0xff, 0xff, 0xff, 0xfe])), true), vdl.types.INT64),
   'typeString': "int64",
   'hex': "8012fa01fffffffffc",
   'hexMagic': "80",
@@ -1145,7 +1145,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "int64(1099511627775)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.INT64))(new vdl.BigInt(1, new Uint8Array([0xff, 0xff, 0xff, 0xff, 0xff])), true), vdl.Types.INT64),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.INT64))(new vdl.BigInt(1, new Uint8Array([0xff, 0xff, 0xff, 0xff, 0xff])), true), vdl.types.INT64),
   'typeString': "int64",
   'hex': "8012fa01fffffffffe",
   'hexMagic': "80",
@@ -1154,7 +1154,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "int64(140737488355326)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.INT64))(new vdl.BigInt(1, new Uint8Array([0x7f, 0xff, 0xff, 0xff, 0xff, 0xfe])), true), vdl.Types.INT64),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.INT64))(new vdl.BigInt(1, new Uint8Array([0x7f, 0xff, 0xff, 0xff, 0xff, 0xfe])), true), vdl.types.INT64),
   'typeString': "int64",
   'hex': "8012fafffffffffffc",
   'hexMagic': "80",
@@ -1163,7 +1163,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "int64(140737488355327)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.INT64))(new vdl.BigInt(1, new Uint8Array([0x7f, 0xff, 0xff, 0xff, 0xff, 0xff])), true), vdl.Types.INT64),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.INT64))(new vdl.BigInt(1, new Uint8Array([0x7f, 0xff, 0xff, 0xff, 0xff, 0xff])), true), vdl.types.INT64),
   'typeString': "int64",
   'hex': "8012fafffffffffffe",
   'hexMagic': "80",
@@ -1172,7 +1172,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "int64(281474976710654)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.INT64))(new vdl.BigInt(1, new Uint8Array([0xff, 0xff, 0xff, 0xff, 0xff, 0xfe])), true), vdl.Types.INT64),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.INT64))(new vdl.BigInt(1, new Uint8Array([0xff, 0xff, 0xff, 0xff, 0xff, 0xfe])), true), vdl.types.INT64),
   'typeString': "int64",
   'hex': "8012f901fffffffffffc",
   'hexMagic': "80",
@@ -1181,7 +1181,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "int64(281474976710655)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.INT64))(new vdl.BigInt(1, new Uint8Array([0xff, 0xff, 0xff, 0xff, 0xff, 0xff])), true), vdl.Types.INT64),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.INT64))(new vdl.BigInt(1, new Uint8Array([0xff, 0xff, 0xff, 0xff, 0xff, 0xff])), true), vdl.types.INT64),
   'typeString': "int64",
   'hex': "8012f901fffffffffffe",
   'hexMagic': "80",
@@ -1190,7 +1190,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "int64(36028797018963966)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.INT64))(new vdl.BigInt(1, new Uint8Array([0x7f, 0xff, 0xff, 0xff, 0xff, 0xff, 0xfe])), true), vdl.Types.INT64),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.INT64))(new vdl.BigInt(1, new Uint8Array([0x7f, 0xff, 0xff, 0xff, 0xff, 0xff, 0xfe])), true), vdl.types.INT64),
   'typeString': "int64",
   'hex': "8012f9fffffffffffffc",
   'hexMagic': "80",
@@ -1199,7 +1199,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "int64(36028797018963967)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.INT64))(new vdl.BigInt(1, new Uint8Array([0x7f, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff])), true), vdl.Types.INT64),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.INT64))(new vdl.BigInt(1, new Uint8Array([0x7f, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff])), true), vdl.types.INT64),
   'typeString': "int64",
   'hex': "8012f9fffffffffffffe",
   'hexMagic': "80",
@@ -1208,7 +1208,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "int64(72057594037927934)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.INT64))(new vdl.BigInt(1, new Uint8Array([0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xfe])), true), vdl.Types.INT64),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.INT64))(new vdl.BigInt(1, new Uint8Array([0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xfe])), true), vdl.types.INT64),
   'typeString': "int64",
   'hex': "8012f801fffffffffffffc",
   'hexMagic': "80",
@@ -1217,7 +1217,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "int64(72057594037927935)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.INT64))(new vdl.BigInt(1, new Uint8Array([0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff])), true), vdl.Types.INT64),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.INT64))(new vdl.BigInt(1, new Uint8Array([0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff])), true), vdl.types.INT64),
   'typeString': "int64",
   'hex': "8012f801fffffffffffffe",
   'hexMagic': "80",
@@ -1226,7 +1226,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "int64(9223372036854775806)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.INT64))(new vdl.BigInt(1, new Uint8Array([0x7f, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xfe])), true), vdl.Types.INT64),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.INT64))(new vdl.BigInt(1, new Uint8Array([0x7f, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xfe])), true), vdl.types.INT64),
   'typeString': "int64",
   'hex': "8012f8fffffffffffffffc",
   'hexMagic': "80",
@@ -1235,7 +1235,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "int64(9223372036854775807)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.INT64))(new vdl.BigInt(1, new Uint8Array([0x7f, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff])), true), vdl.Types.INT64),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.INT64))(new vdl.BigInt(1, new Uint8Array([0x7f, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff])), true), vdl.types.INT64),
   'typeString': "int64",
   'hex': "8012f8fffffffffffffffe",
   'hexMagic': "80",
@@ -1244,7 +1244,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "int16(-1)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.INT16))(-1, true), vdl.Types.INT16),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.INT16))(-1, true), vdl.types.INT16),
   'typeString': "int16",
   'hex': "800e01",
   'hexMagic': "80",
@@ -1253,7 +1253,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "int16(-2)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.INT16))(-2, true), vdl.Types.INT16),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.INT16))(-2, true), vdl.types.INT16),
   'typeString': "int16",
   'hex': "800e03",
   'hexMagic': "80",
@@ -1262,7 +1262,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "int16(-64)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.INT16))(-64, true), vdl.Types.INT16),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.INT16))(-64, true), vdl.types.INT16),
   'typeString': "int16",
   'hex': "800e7f",
   'hexMagic': "80",
@@ -1271,7 +1271,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "int16(-65)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.INT16))(-65, true), vdl.Types.INT16),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.INT16))(-65, true), vdl.types.INT16),
   'typeString': "int16",
   'hex': "800eff81",
   'hexMagic': "80",
@@ -1280,7 +1280,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "int16(-128)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.INT16))(-128, true), vdl.Types.INT16),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.INT16))(-128, true), vdl.types.INT16),
   'typeString': "int16",
   'hex': "800effff",
   'hexMagic': "80",
@@ -1289,7 +1289,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "int16(-129)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.INT16))(-129, true), vdl.Types.INT16),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.INT16))(-129, true), vdl.types.INT16),
   'typeString': "int16",
   'hex': "800efe0101",
   'hexMagic': "80",
@@ -1298,7 +1298,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "int16(-256)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.INT16))(-256, true), vdl.Types.INT16),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.INT16))(-256, true), vdl.types.INT16),
   'typeString': "int16",
   'hex': "800efe01ff",
   'hexMagic': "80",
@@ -1307,7 +1307,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "int16(-257)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.INT16))(-257, true), vdl.Types.INT16),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.INT16))(-257, true), vdl.types.INT16),
   'typeString': "int16",
   'hex': "800efe0201",
   'hexMagic': "80",
@@ -1316,7 +1316,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "int16(-32767)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.INT16))(-32767, true), vdl.Types.INT16),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.INT16))(-32767, true), vdl.types.INT16),
   'typeString': "int16",
   'hex': "800efefffd",
   'hexMagic': "80",
@@ -1325,7 +1325,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "int16(-32768)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.INT16))(-32768, true), vdl.Types.INT16),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.INT16))(-32768, true), vdl.types.INT16),
   'typeString': "int16",
   'hex': "800efeffff",
   'hexMagic': "80",
@@ -1334,7 +1334,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "int32(-8388607)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.INT32))(-8388607, true), vdl.Types.INT32),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.INT32))(-8388607, true), vdl.types.INT32),
   'typeString': "int32",
   'hex': "8010fdfffffd",
   'hexMagic': "80",
@@ -1343,7 +1343,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "int32(-8388608)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.INT32))(-8388608, true), vdl.Types.INT32),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.INT32))(-8388608, true), vdl.types.INT32),
   'typeString': "int32",
   'hex': "8010fdffffff",
   'hexMagic': "80",
@@ -1352,7 +1352,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "int32(-16777215)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.INT32))(-16777215, true), vdl.Types.INT32),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.INT32))(-16777215, true), vdl.types.INT32),
   'typeString': "int32",
   'hex': "8010fc01fffffd",
   'hexMagic': "80",
@@ -1361,7 +1361,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "int32(-16777216)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.INT32))(-16777216, true), vdl.Types.INT32),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.INT32))(-16777216, true), vdl.types.INT32),
   'typeString': "int32",
   'hex': "8010fc01ffffff",
   'hexMagic': "80",
@@ -1370,7 +1370,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "int32(-2147483647)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.INT32))(-2147483647, true), vdl.Types.INT32),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.INT32))(-2147483647, true), vdl.types.INT32),
   'typeString': "int32",
   'hex': "8010fcfffffffd",
   'hexMagic': "80",
@@ -1379,7 +1379,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "int32(-2147483648)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.INT32))(-2147483648, true), vdl.Types.INT32),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.INT32))(-2147483648, true), vdl.types.INT32),
   'typeString': "int32",
   'hex': "8010fcffffffff",
   'hexMagic': "80",
@@ -1388,7 +1388,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "int64(-1)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.INT64))(new vdl.BigInt(-1, new Uint8Array([0x1])), true), vdl.Types.INT64),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.INT64))(new vdl.BigInt(-1, new Uint8Array([0x1])), true), vdl.types.INT64),
   'typeString': "int64",
   'hex': "801201",
   'hexMagic': "80",
@@ -1397,7 +1397,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "int64(-2)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.INT64))(new vdl.BigInt(-1, new Uint8Array([0x2])), true), vdl.Types.INT64),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.INT64))(new vdl.BigInt(-1, new Uint8Array([0x2])), true), vdl.types.INT64),
   'typeString': "int64",
   'hex': "801203",
   'hexMagic': "80",
@@ -1406,7 +1406,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "int64(-549755813887)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.INT64))(new vdl.BigInt(-1, new Uint8Array([0x7f, 0xff, 0xff, 0xff, 0xff])), true), vdl.Types.INT64),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.INT64))(new vdl.BigInt(-1, new Uint8Array([0x7f, 0xff, 0xff, 0xff, 0xff])), true), vdl.types.INT64),
   'typeString': "int64",
   'hex': "8012fbfffffffffd",
   'hexMagic': "80",
@@ -1415,7 +1415,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "int64(-549755813888)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.INT64))(new vdl.BigInt(-1, new Uint8Array([0x80, 0x0, 0x0, 0x0, 0x0])), true), vdl.Types.INT64),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.INT64))(new vdl.BigInt(-1, new Uint8Array([0x80, 0x0, 0x0, 0x0, 0x0])), true), vdl.types.INT64),
   'typeString': "int64",
   'hex': "8012fbffffffffff",
   'hexMagic': "80",
@@ -1424,7 +1424,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "int64(-1099511627775)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.INT64))(new vdl.BigInt(-1, new Uint8Array([0xff, 0xff, 0xff, 0xff, 0xff])), true), vdl.Types.INT64),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.INT64))(new vdl.BigInt(-1, new Uint8Array([0xff, 0xff, 0xff, 0xff, 0xff])), true), vdl.types.INT64),
   'typeString': "int64",
   'hex': "8012fa01fffffffffd",
   'hexMagic': "80",
@@ -1433,7 +1433,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "int64(-1099511627776)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.INT64))(new vdl.BigInt(-1, new Uint8Array([0x1, 0x0, 0x0, 0x0, 0x0, 0x0])), true), vdl.Types.INT64),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.INT64))(new vdl.BigInt(-1, new Uint8Array([0x1, 0x0, 0x0, 0x0, 0x0, 0x0])), true), vdl.types.INT64),
   'typeString': "int64",
   'hex': "8012fa01ffffffffff",
   'hexMagic': "80",
@@ -1442,7 +1442,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "int64(-140737488355327)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.INT64))(new vdl.BigInt(-1, new Uint8Array([0x7f, 0xff, 0xff, 0xff, 0xff, 0xff])), true), vdl.Types.INT64),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.INT64))(new vdl.BigInt(-1, new Uint8Array([0x7f, 0xff, 0xff, 0xff, 0xff, 0xff])), true), vdl.types.INT64),
   'typeString': "int64",
   'hex': "8012fafffffffffffd",
   'hexMagic': "80",
@@ -1451,7 +1451,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "int64(-140737488355328)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.INT64))(new vdl.BigInt(-1, new Uint8Array([0x80, 0x0, 0x0, 0x0, 0x0, 0x0])), true), vdl.Types.INT64),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.INT64))(new vdl.BigInt(-1, new Uint8Array([0x80, 0x0, 0x0, 0x0, 0x0, 0x0])), true), vdl.types.INT64),
   'typeString': "int64",
   'hex': "8012faffffffffffff",
   'hexMagic': "80",
@@ -1460,7 +1460,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "int64(-281474976710655)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.INT64))(new vdl.BigInt(-1, new Uint8Array([0xff, 0xff, 0xff, 0xff, 0xff, 0xff])), true), vdl.Types.INT64),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.INT64))(new vdl.BigInt(-1, new Uint8Array([0xff, 0xff, 0xff, 0xff, 0xff, 0xff])), true), vdl.types.INT64),
   'typeString': "int64",
   'hex': "8012f901fffffffffffd",
   'hexMagic': "80",
@@ -1469,7 +1469,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "int64(-281474976710656)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.INT64))(new vdl.BigInt(-1, new Uint8Array([0x1, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0])), true), vdl.Types.INT64),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.INT64))(new vdl.BigInt(-1, new Uint8Array([0x1, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0])), true), vdl.types.INT64),
   'typeString': "int64",
   'hex': "8012f901ffffffffffff",
   'hexMagic': "80",
@@ -1478,7 +1478,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "int64(-36028797018963967)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.INT64))(new vdl.BigInt(-1, new Uint8Array([0x7f, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff])), true), vdl.Types.INT64),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.INT64))(new vdl.BigInt(-1, new Uint8Array([0x7f, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff])), true), vdl.types.INT64),
   'typeString': "int64",
   'hex': "8012f9fffffffffffffd",
   'hexMagic': "80",
@@ -1487,7 +1487,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "int64(-36028797018963968)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.INT64))(new vdl.BigInt(-1, new Uint8Array([0x80, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0])), true), vdl.Types.INT64),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.INT64))(new vdl.BigInt(-1, new Uint8Array([0x80, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0])), true), vdl.types.INT64),
   'typeString': "int64",
   'hex': "8012f9ffffffffffffff",
   'hexMagic': "80",
@@ -1496,7 +1496,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "int64(-72057594037927935)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.INT64))(new vdl.BigInt(-1, new Uint8Array([0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff])), true), vdl.Types.INT64),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.INT64))(new vdl.BigInt(-1, new Uint8Array([0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff])), true), vdl.types.INT64),
   'typeString': "int64",
   'hex': "8012f801fffffffffffffd",
   'hexMagic': "80",
@@ -1505,7 +1505,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "int64(-72057594037927936)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.INT64))(new vdl.BigInt(-1, new Uint8Array([0x1, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0])), true), vdl.Types.INT64),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.INT64))(new vdl.BigInt(-1, new Uint8Array([0x1, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0])), true), vdl.types.INT64),
   'typeString': "int64",
   'hex': "8012f801ffffffffffffff",
   'hexMagic': "80",
@@ -1514,7 +1514,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "int64(-9223372036854775807)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.INT64))(new vdl.BigInt(-1, new Uint8Array([0x7f, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff])), true), vdl.Types.INT64),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.INT64))(new vdl.BigInt(-1, new Uint8Array([0x7f, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff])), true), vdl.types.INT64),
   'typeString': "int64",
   'hex': "8012f8fffffffffffffffd",
   'hexMagic': "80",
@@ -1523,7 +1523,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "int64(-9223372036854775808)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.INT64))(new vdl.BigInt(-1, new Uint8Array([0x80, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0])), true), vdl.Types.INT64),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.INT64))(new vdl.BigInt(-1, new Uint8Array([0x80, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0])), true), vdl.types.INT64),
   'typeString': "int64",
   'hex': "8012f8ffffffffffffffff",
   'hexMagic': "80",
@@ -1532,7 +1532,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "float32(0)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.FLOAT32))(0, true), vdl.Types.FLOAT32),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.FLOAT32))(0, true), vdl.types.FLOAT32),
   'typeString': "float32",
   'hex': "801400",
   'hexMagic': "80",
@@ -1541,7 +1541,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "float32(32.5)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.FLOAT32))(32.5, true), vdl.Types.FLOAT32),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.FLOAT32))(32.5, true), vdl.types.FLOAT32),
   'typeString': "float32",
   'hex': "8014fd404040",
   'hexMagic': "80",
@@ -1550,7 +1550,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "float32(-32.5)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.FLOAT32))(-32.5, true), vdl.Types.FLOAT32),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.FLOAT32))(-32.5, true), vdl.types.FLOAT32),
   'typeString': "float32",
   'hex': "8014fd4040c0",
   'hexMagic': "80",
@@ -1559,7 +1559,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "float64(0)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.FLOAT64))(0, true), vdl.Types.FLOAT64),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.FLOAT64))(0, true), vdl.types.FLOAT64),
   'typeString': "float64",
   'hex': "801600",
   'hexMagic': "80",
@@ -1568,7 +1568,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "float64(64.5)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.FLOAT64))(64.5, true), vdl.Types.FLOAT64),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.FLOAT64))(64.5, true), vdl.types.FLOAT64),
   'typeString': "float64",
   'hex': "8016fd205040",
   'hexMagic': "80",
@@ -1577,7 +1577,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "float64(-64.5)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.FLOAT64))(-64.5, true), vdl.Types.FLOAT64),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.FLOAT64))(-64.5, true), vdl.types.FLOAT64),
   'typeString': "float64",
   'hex': "8016fd2050c0",
   'hexMagic': "80",
@@ -1586,7 +1586,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "complex64(0)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.COMPLEX64))(new vdl.Complex(0.000000, 0.000000), true), vdl.Types.COMPLEX64),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.COMPLEX64))(new vdl.Complex(0.000000, 0.000000), true), vdl.types.COMPLEX64),
   'typeString': "complex64",
   'hex': "8018020000",
   'hexMagic': "80",
@@ -1595,7 +1595,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "complex64(64.5+64.5i)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.COMPLEX64))(new vdl.Complex(64.500000, 64.500000), true), vdl.Types.COMPLEX64),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.COMPLEX64))(new vdl.Complex(64.500000, 64.500000), true), vdl.types.COMPLEX64),
   'typeString': "complex64",
   'hex': "801808fd205040fd205040",
   'hexMagic': "80",
@@ -1604,7 +1604,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "complex64(64.5-64.5i)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.COMPLEX64))(new vdl.Complex(64.500000, -64.500000), true), vdl.Types.COMPLEX64),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.COMPLEX64))(new vdl.Complex(64.500000, -64.500000), true), vdl.types.COMPLEX64),
   'typeString': "complex64",
   'hex': "801808fd205040fd2050c0",
   'hexMagic': "80",
@@ -1613,7 +1613,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "complex128(0)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.COMPLEX128))(new vdl.Complex(0.000000, 0.000000), true), vdl.Types.COMPLEX128),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.COMPLEX128))(new vdl.Complex(0.000000, 0.000000), true), vdl.types.COMPLEX128),
   'typeString': "complex128",
   'hex': "801a020000",
   'hexMagic': "80",
@@ -1622,7 +1622,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "complex128(128.5+128.5i)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.COMPLEX128))(new vdl.Complex(128.500000, 128.500000), true), vdl.Types.COMPLEX128),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.COMPLEX128))(new vdl.Complex(128.500000, 128.500000), true), vdl.types.COMPLEX128),
   'typeString': "complex128",
   'hex': "801a08fd106040fd106040",
   'hexMagic': "80",
@@ -1631,7 +1631,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "complex128(128.5-128.5i)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.COMPLEX128))(new vdl.Complex(128.500000, -128.500000), true), vdl.Types.COMPLEX128),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.COMPLEX128))(new vdl.Complex(128.500000, -128.500000), true), vdl.types.COMPLEX128),
   'typeString': "complex128",
   'hex': "801a08fd106040fd1060c0",
   'hexMagic': "80",
@@ -1640,7 +1640,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "NBool(true)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeNBool))(true, true), _typeNBool),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeNBool))(true, true), _typeNBool),
   'typeString': "v.io/v23/vom/testdata.NBool bool",
   'hex': "80512100001b762e696f2f7632332f766f6d2f74657374646174612e4e426f6f6c0101e15201",
   'hexMagic': "80",
@@ -1649,7 +1649,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "NBool(false)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeNBool))(false, true), _typeNBool),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeNBool))(false, true), _typeNBool),
   'typeString': "v.io/v23/vom/testdata.NBool bool",
   'hex': "80512100001b762e696f2f7632332f766f6d2f74657374646174612e4e426f6f6c0101e15200",
   'hexMagic': "80",
@@ -1658,7 +1658,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "NString(\"\")",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeNString))("", true), _typeNString),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeNString))("", true), _typeNString),
   'typeString': "v.io/v23/vom/testdata.NString string",
   'hex': "80512300001d762e696f2f7632332f766f6d2f74657374646174612e4e537472696e670103e15200",
   'hexMagic': "80",
@@ -1667,7 +1667,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "NString(\"abc\")",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeNString))("abc", true), _typeNString),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeNString))("abc", true), _typeNString),
   'typeString': "v.io/v23/vom/testdata.NString string",
   'hex': "80512300001d762e696f2f7632332f766f6d2f74657374646174612e4e537472696e670103e15203616263",
   'hexMagic': "80",
@@ -1676,7 +1676,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "NByteSlice(\"\")",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeNByteSlice))(new Uint8Array([
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeNByteSlice))(new Uint8Array([
 ]), true), _typeNByteSlice),
   'typeString': "v.io/v23/vom/testdata.NByteSlice []byte",
   'hex': "805126030020762e696f2f7632332f766f6d2f74657374646174612e4e42797465536c6963650102e15200",
@@ -1686,7 +1686,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "NByteSlice(\"\\x01\\x02\\x03\")",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeNByteSlice))(new Uint8Array([
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeNByteSlice))(new Uint8Array([
 1,
 2,
 3,
@@ -1699,7 +1699,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "NByteSlice(\"abc\")",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeNByteSlice))(new Uint8Array([
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeNByteSlice))(new Uint8Array([
 97,
 98,
 99,
@@ -1712,7 +1712,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "NByteArray(\"\\x00\\x00\\x00\\x00\")",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeNByteArray))(new Uint8Array([
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeNByteArray))(new Uint8Array([
 0,
 0,
 0,
@@ -1726,7 +1726,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "NByteArray(\"\\x01\\x02\\x03\\x00\")",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeNByteArray))(new Uint8Array([
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeNByteArray))(new Uint8Array([
 1,
 2,
 3,
@@ -1740,7 +1740,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "NByteArray(\"abcd\")",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeNByteArray))(new Uint8Array([
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeNByteArray))(new Uint8Array([
 97,
 98,
 99,
@@ -1754,7 +1754,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "NByte(0)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeNByte))(0, true), _typeNByte),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeNByte))(0, true), _typeNByte),
   'typeString': "v.io/v23/vom/testdata.NByte byte",
   'hex': "80512100001b762e696f2f7632332f766f6d2f74657374646174612e4e427974650102e15200",
   'hexMagic': "80",
@@ -1763,7 +1763,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "NByte(127)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeNByte))(127, true), _typeNByte),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeNByte))(127, true), _typeNByte),
   'typeString': "v.io/v23/vom/testdata.NByte byte",
   'hex': "80512100001b762e696f2f7632332f766f6d2f74657374646174612e4e427974650102e1527f",
   'hexMagic': "80",
@@ -1772,7 +1772,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "NByte(255)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeNByte))(255, true), _typeNByte),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeNByte))(255, true), _typeNByte),
   'typeString': "v.io/v23/vom/testdata.NByte byte",
   'hex': "80512100001b762e696f2f7632332f766f6d2f74657374646174612e4e427974650102e152ff",
   'hexMagic': "80",
@@ -1781,7 +1781,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "NUint16(0)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeNUint16))(0, true), _typeNUint16),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeNUint16))(0, true), _typeNUint16),
   'typeString': "v.io/v23/vom/testdata.NUint16 uint16",
   'hex': "80512300001d762e696f2f7632332f766f6d2f74657374646174612e4e55696e7431360104e15200",
   'hexMagic': "80",
@@ -1790,7 +1790,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "NUint16(65535)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeNUint16))(65535, true), _typeNUint16),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeNUint16))(65535, true), _typeNUint16),
   'typeString': "v.io/v23/vom/testdata.NUint16 uint16",
   'hex': "80512300001d762e696f2f7632332f766f6d2f74657374646174612e4e55696e7431360104e152feffff",
   'hexMagic': "80",
@@ -1799,7 +1799,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "NUint32(0)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeNUint32))(0, true), _typeNUint32),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeNUint32))(0, true), _typeNUint32),
   'typeString': "v.io/v23/vom/testdata.NUint32 uint32",
   'hex': "80512300001d762e696f2f7632332f766f6d2f74657374646174612e4e55696e7433320105e15200",
   'hexMagic': "80",
@@ -1808,7 +1808,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "NUint32(4294967295)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeNUint32))(4294967295, true), _typeNUint32),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeNUint32))(4294967295, true), _typeNUint32),
   'typeString': "v.io/v23/vom/testdata.NUint32 uint32",
   'hex': "80512300001d762e696f2f7632332f766f6d2f74657374646174612e4e55696e7433320105e152fcffffffff",
   'hexMagic': "80",
@@ -1817,7 +1817,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "NUint64(0)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeNUint64))(new vdl.BigInt(0, new Uint8Array([])), true), _typeNUint64),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeNUint64))(new vdl.BigInt(0, new Uint8Array([])), true), _typeNUint64),
   'typeString': "v.io/v23/vom/testdata.NUint64 uint64",
   'hex': "80512300001d762e696f2f7632332f766f6d2f74657374646174612e4e55696e7436340106e15200",
   'hexMagic': "80",
@@ -1826,7 +1826,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "NUint64(18446744073709551615)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeNUint64))(new vdl.BigInt(1, new Uint8Array([0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff])), true), _typeNUint64),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeNUint64))(new vdl.BigInt(1, new Uint8Array([0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff])), true), _typeNUint64),
   'typeString': "v.io/v23/vom/testdata.NUint64 uint64",
   'hex': "80512300001d762e696f2f7632332f766f6d2f74657374646174612e4e55696e7436340106e152f8ffffffffffffffff",
   'hexMagic': "80",
@@ -1835,7 +1835,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "NInt16(0)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeNInt16))(0, true), _typeNInt16),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeNInt16))(0, true), _typeNInt16),
   'typeString': "v.io/v23/vom/testdata.NInt16 int16",
   'hex': "80512200001c762e696f2f7632332f766f6d2f74657374646174612e4e496e7431360107e15200",
   'hexMagic': "80",
@@ -1844,7 +1844,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "NInt16(32767)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeNInt16))(32767, true), _typeNInt16),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeNInt16))(32767, true), _typeNInt16),
   'typeString': "v.io/v23/vom/testdata.NInt16 int16",
   'hex': "80512200001c762e696f2f7632332f766f6d2f74657374646174612e4e496e7431360107e152fefffe",
   'hexMagic': "80",
@@ -1853,7 +1853,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "NInt16(-32768)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeNInt16))(-32768, true), _typeNInt16),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeNInt16))(-32768, true), _typeNInt16),
   'typeString': "v.io/v23/vom/testdata.NInt16 int16",
   'hex': "80512200001c762e696f2f7632332f766f6d2f74657374646174612e4e496e7431360107e152feffff",
   'hexMagic': "80",
@@ -1862,7 +1862,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "NInt32(0)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeNInt32))(0, true), _typeNInt32),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeNInt32))(0, true), _typeNInt32),
   'typeString': "v.io/v23/vom/testdata.NInt32 int32",
   'hex': "80512200001c762e696f2f7632332f766f6d2f74657374646174612e4e496e7433320108e15200",
   'hexMagic': "80",
@@ -1871,7 +1871,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "NInt32(2147483647)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeNInt32))(2147483647, true), _typeNInt32),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeNInt32))(2147483647, true), _typeNInt32),
   'typeString': "v.io/v23/vom/testdata.NInt32 int32",
   'hex': "80512200001c762e696f2f7632332f766f6d2f74657374646174612e4e496e7433320108e152fcfffffffe",
   'hexMagic': "80",
@@ -1880,7 +1880,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "NInt32(-2147483648)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeNInt32))(-2147483648, true), _typeNInt32),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeNInt32))(-2147483648, true), _typeNInt32),
   'typeString': "v.io/v23/vom/testdata.NInt32 int32",
   'hex': "80512200001c762e696f2f7632332f766f6d2f74657374646174612e4e496e7433320108e152fcffffffff",
   'hexMagic': "80",
@@ -1889,7 +1889,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "NInt64(0)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeNInt64))(new vdl.BigInt(0, new Uint8Array([])), true), _typeNInt64),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeNInt64))(new vdl.BigInt(0, new Uint8Array([])), true), _typeNInt64),
   'typeString': "v.io/v23/vom/testdata.NInt64 int64",
   'hex': "80512200001c762e696f2f7632332f766f6d2f74657374646174612e4e496e7436340109e15200",
   'hexMagic': "80",
@@ -1898,7 +1898,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "NInt64(9223372036854775807)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeNInt64))(new vdl.BigInt(1, new Uint8Array([0x7f, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff])), true), _typeNInt64),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeNInt64))(new vdl.BigInt(1, new Uint8Array([0x7f, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff])), true), _typeNInt64),
   'typeString': "v.io/v23/vom/testdata.NInt64 int64",
   'hex': "80512200001c762e696f2f7632332f766f6d2f74657374646174612e4e496e7436340109e152f8fffffffffffffffe",
   'hexMagic': "80",
@@ -1907,7 +1907,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "NInt64(-9223372036854775808)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeNInt64))(new vdl.BigInt(-1, new Uint8Array([0x80, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0])), true), _typeNInt64),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeNInt64))(new vdl.BigInt(-1, new Uint8Array([0x80, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0])), true), _typeNInt64),
   'typeString': "v.io/v23/vom/testdata.NInt64 int64",
   'hex': "80512200001c762e696f2f7632332f766f6d2f74657374646174612e4e496e7436340109e152f8ffffffffffffffff",
   'hexMagic': "80",
@@ -1916,7 +1916,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "NFloat32(0)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeNFloat32))(0, true), _typeNFloat32),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeNFloat32))(0, true), _typeNFloat32),
   'typeString': "v.io/v23/vom/testdata.NFloat32 float32",
   'hex': "80512400001e762e696f2f7632332f766f6d2f74657374646174612e4e466c6f61743332010ae15200",
   'hexMagic': "80",
@@ -1925,7 +1925,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "NFloat32(32.5)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeNFloat32))(32.5, true), _typeNFloat32),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeNFloat32))(32.5, true), _typeNFloat32),
   'typeString': "v.io/v23/vom/testdata.NFloat32 float32",
   'hex': "80512400001e762e696f2f7632332f766f6d2f74657374646174612e4e466c6f61743332010ae152fd404040",
   'hexMagic': "80",
@@ -1934,7 +1934,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "NFloat32(-32.5)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeNFloat32))(-32.5, true), _typeNFloat32),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeNFloat32))(-32.5, true), _typeNFloat32),
   'typeString': "v.io/v23/vom/testdata.NFloat32 float32",
   'hex': "80512400001e762e696f2f7632332f766f6d2f74657374646174612e4e466c6f61743332010ae152fd4040c0",
   'hexMagic': "80",
@@ -1943,7 +1943,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "NFloat64(0)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeNFloat64))(0, true), _typeNFloat64),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeNFloat64))(0, true), _typeNFloat64),
   'typeString': "v.io/v23/vom/testdata.NFloat64 float64",
   'hex': "80512400001e762e696f2f7632332f766f6d2f74657374646174612e4e466c6f61743634010be15200",
   'hexMagic': "80",
@@ -1952,7 +1952,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "NFloat64(64.5)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeNFloat64))(64.5, true), _typeNFloat64),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeNFloat64))(64.5, true), _typeNFloat64),
   'typeString': "v.io/v23/vom/testdata.NFloat64 float64",
   'hex': "80512400001e762e696f2f7632332f766f6d2f74657374646174612e4e466c6f61743634010be152fd205040",
   'hexMagic': "80",
@@ -1961,7 +1961,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "NFloat64(-64.5)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeNFloat64))(-64.5, true), _typeNFloat64),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeNFloat64))(-64.5, true), _typeNFloat64),
   'typeString': "v.io/v23/vom/testdata.NFloat64 float64",
   'hex': "80512400001e762e696f2f7632332f766f6d2f74657374646174612e4e466c6f61743634010be152fd2050c0",
   'hexMagic': "80",
@@ -1970,7 +1970,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "NComplex64(0)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeNComplex64))(new vdl.Complex(0.000000, 0.000000), true), _typeNComplex64),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeNComplex64))(new vdl.Complex(0.000000, 0.000000), true), _typeNComplex64),
   'typeString': "v.io/v23/vom/testdata.NComplex64 complex64",
   'hex': "805126000020762e696f2f7632332f766f6d2f74657374646174612e4e436f6d706c65783634010ce152020000",
   'hexMagic': "80",
@@ -1979,7 +1979,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "NComplex64(64.5+64.5i)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeNComplex64))(new vdl.Complex(64.500000, 64.500000), true), _typeNComplex64),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeNComplex64))(new vdl.Complex(64.500000, 64.500000), true), _typeNComplex64),
   'typeString': "v.io/v23/vom/testdata.NComplex64 complex64",
   'hex': "805126000020762e696f2f7632332f766f6d2f74657374646174612e4e436f6d706c65783634010ce15208fd205040fd205040",
   'hexMagic': "80",
@@ -1988,7 +1988,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "NComplex64(64.5-64.5i)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeNComplex64))(new vdl.Complex(64.500000, -64.500000), true), _typeNComplex64),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeNComplex64))(new vdl.Complex(64.500000, -64.500000), true), _typeNComplex64),
   'typeString': "v.io/v23/vom/testdata.NComplex64 complex64",
   'hex': "805126000020762e696f2f7632332f766f6d2f74657374646174612e4e436f6d706c65783634010ce15208fd205040fd2050c0",
   'hexMagic': "80",
@@ -1997,7 +1997,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "NComplex128(0)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeNComplex128))(new vdl.Complex(0.000000, 0.000000), true), _typeNComplex128),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeNComplex128))(new vdl.Complex(0.000000, 0.000000), true), _typeNComplex128),
   'typeString': "v.io/v23/vom/testdata.NComplex128 complex128",
   'hex': "805127000021762e696f2f7632332f766f6d2f74657374646174612e4e436f6d706c6578313238010de152020000",
   'hexMagic': "80",
@@ -2006,7 +2006,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "NComplex128(128.5+128.5i)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeNComplex128))(new vdl.Complex(128.500000, 128.500000), true), _typeNComplex128),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeNComplex128))(new vdl.Complex(128.500000, 128.500000), true), _typeNComplex128),
   'typeString': "v.io/v23/vom/testdata.NComplex128 complex128",
   'hex': "805127000021762e696f2f7632332f766f6d2f74657374646174612e4e436f6d706c6578313238010de15208fd106040fd106040",
   'hexMagic': "80",
@@ -2015,7 +2015,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "NComplex128(128.5-128.5i)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeNComplex128))(new vdl.Complex(128.500000, -128.500000), true), _typeNComplex128),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeNComplex128))(new vdl.Complex(128.500000, -128.500000), true), _typeNComplex128),
   'typeString': "v.io/v23/vom/testdata.NComplex128 complex128",
   'hex': "805127000021762e696f2f7632332f766f6d2f74657374646174612e4e436f6d706c6578313238010de15208fd106040fd1060c0",
   'hexMagic': "80",
@@ -2024,7 +2024,7 @@ module.exports.ZStruct = (vdl.Registry.lookupOrCreateConstructor(_typeZStruct));
 },
 {
   'name': "NArray2Uint64{1, 2}",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeNArray2Uint64))([
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeNArray2Uint64))([
 new vdl.BigInt(1, new Uint8Array([0x1])),
 new vdl.BigInt(1, new Uint8Array([0x2])),
 ], true), _typeNArray2Uint64),
@@ -2036,7 +2036,7 @@ new vdl.BigInt(1, new Uint8Array([0x2])),
 },
 {
   'name': "[]uint64{1, 2}",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_type3))([
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_type3))([
 new vdl.BigInt(1, new Uint8Array([0x1])),
 new vdl.BigInt(1, new Uint8Array([0x2])),
 ], true), _type3),
@@ -2048,7 +2048,7 @@ new vdl.BigInt(1, new Uint8Array([0x2])),
 },
 {
   'name': "NListUint64{1, 2}",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeNListUint64))([
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeNListUint64))([
 new vdl.BigInt(1, new Uint8Array([0x1])),
 new vdl.BigInt(1, new Uint8Array([0x2])),
 ], true), _typeNListUint64),
@@ -2060,7 +2060,7 @@ new vdl.BigInt(1, new Uint8Array([0x2])),
 },
 {
   'name': "set[uint64]{1}",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_type4))(new Set([
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_type4))(new Set([
   new vdl.BigInt(1, new Uint8Array([0x1])), ]), true), _type4),
   'typeString': "set[uint64]",
   'hex': "805104040106e152020101",
@@ -2070,7 +2070,7 @@ new vdl.BigInt(1, new Uint8Array([0x2])),
 },
 {
   'name': "NSetUint64{1}",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeNSetUint64))(new Set([
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeNSetUint64))(new Set([
   new vdl.BigInt(1, new Uint8Array([0x1])), ]), true), _typeNSetUint64),
   'typeString': "v.io/v23/vom/testdata.NSetUint64 set[uint64]",
   'hex': "805126040020762e696f2f7632332f766f6d2f74657374646174612e4e53657455696e7436340106e152020101",
@@ -2080,7 +2080,7 @@ new vdl.BigInt(1, new Uint8Array([0x2])),
 },
 {
   'name': "map[uint64]string{1: \"abc\"}",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_type5))(new Map([
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_type5))(new Map([
   [new vdl.BigInt(1, new Uint8Array([0x1])), "abc"]]), true), _type5),
   'typeString': "map[uint64]string",
   'hex': "8051060501060203e15206010103616263",
@@ -2090,7 +2090,7 @@ new vdl.BigInt(1, new Uint8Array([0x2])),
 },
 {
   'name': "NMapUint64String{1: \"abc\"}",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeNMapUint64String))(new Map([
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeNMapUint64String))(new Map([
   [new vdl.BigInt(1, new Uint8Array([0x1])), "abc"]]), true), _typeNMapUint64String),
   'typeString': "v.io/v23/vom/testdata.NMapUint64String map[uint64]string",
   'hex': "80512e050026762e696f2f7632332f766f6d2f74657374646174612e4e4d617055696e743634537472696e6701060203e15206010103616263",
@@ -2100,7 +2100,7 @@ new vdl.BigInt(1, new Uint8Array([0x2])),
 },
 {
   'name': "NStruct{A: true, B: \"abc\", C: 123}",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeNStruct))({
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeNStruct))({
   'a': true,
   'b': "abc",
   'c': new vdl.BigInt(1, new Uint8Array([0x7b])),
@@ -2113,7 +2113,7 @@ new vdl.BigInt(1, new Uint8Array([0x2])),
 },
 {
   'name': "?NStruct(nil)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_type6))(null, true), _type6),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_type6))(null, true), _type6),
   'typeString': "?v.io/v23/vom/testdata.NStruct struct{A bool;B string;C int64}",
   'hex': "80533506001d762e696f2f7632332f766f6d2f74657374646174612e4e53747275637401030001410101e10001420103e10001430109e1e1510408012ae15201e0",
   'hexMagic': "80",
@@ -2122,7 +2122,7 @@ new vdl.BigInt(1, new Uint8Array([0x2])),
 },
 {
   'name': "?NStruct{}",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_type6))({
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_type6))({
   'a': false,
   'b': "",
   'c': new vdl.BigInt(0, new Uint8Array([])),
@@ -2135,7 +2135,7 @@ new vdl.BigInt(1, new Uint8Array([0x2])),
 },
 {
   'name': "?NStruct{A: true, B: \"abc\", C: 123}",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_type6))({
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_type6))({
   'a': true,
   'b': "abc",
   'c': new vdl.BigInt(1, new Uint8Array([0x7b])),
@@ -2148,7 +2148,7 @@ new vdl.BigInt(1, new Uint8Array([0x2])),
 },
 {
   'name': "NEnum.A",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeNEnum))('A', true), _typeNEnum),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeNEnum))('A', true), _typeNEnum),
   'typeString': "v.io/v23/vom/testdata.NEnum enum{A;B;C}",
   'hex': "80512701001b762e696f2f7632332f766f6d2f74657374646174612e4e456e756d0103014101420143e15200",
   'hexMagic': "80",
@@ -2157,7 +2157,7 @@ new vdl.BigInt(1, new Uint8Array([0x2])),
 },
 {
   'name': "NEnum.B",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeNEnum))('B', true), _typeNEnum),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeNEnum))('B', true), _typeNEnum),
   'typeString': "v.io/v23/vom/testdata.NEnum enum{A;B;C}",
   'hex': "80512701001b762e696f2f7632332f766f6d2f74657374646174612e4e456e756d0103014101420143e15201",
   'hexMagic': "80",
@@ -2166,7 +2166,7 @@ new vdl.BigInt(1, new Uint8Array([0x2])),
 },
 {
   'name': "NEnum.C",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeNEnum))('C', true), _typeNEnum),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeNEnum))('C', true), _typeNEnum),
   'typeString': "v.io/v23/vom/testdata.NEnum enum{A;B;C}",
   'hex': "80512701001b762e696f2f7632332f766f6d2f74657374646174612e4e456e756d0103014101420143e15202",
   'hexMagic': "80",
@@ -2175,7 +2175,7 @@ new vdl.BigInt(1, new Uint8Array([0x2])),
 },
 {
   'name': "NUnion{A: true}",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeNUnion))({ "a": true }, true), _typeNUnion),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeNUnion))({ "a": true }, true), _typeNUnion),
   'typeString': "v.io/v23/vom/testdata.NUnion union{A bool;B string;C int64}",
   'hex': "80513407001c762e696f2f7632332f766f6d2f74657374646174612e4e556e696f6e01030001410101e10001420103e10001430109e1e152020001",
   'hexMagic': "80",
@@ -2184,7 +2184,7 @@ new vdl.BigInt(1, new Uint8Array([0x2])),
 },
 {
   'name': "NUnion{A: false}",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeNUnion))({ "a": false }, true), _typeNUnion),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeNUnion))({ "a": false }, true), _typeNUnion),
   'typeString': "v.io/v23/vom/testdata.NUnion union{A bool;B string;C int64}",
   'hex': "80513407001c762e696f2f7632332f766f6d2f74657374646174612e4e556e696f6e01030001410101e10001420103e10001430109e1e152020000",
   'hexMagic': "80",
@@ -2193,7 +2193,7 @@ new vdl.BigInt(1, new Uint8Array([0x2])),
 },
 {
   'name': "NUnion{B: \"\"}",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeNUnion))({ "b": "" }, true), _typeNUnion),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeNUnion))({ "b": "" }, true), _typeNUnion),
   'typeString': "v.io/v23/vom/testdata.NUnion union{A bool;B string;C int64}",
   'hex': "80513407001c762e696f2f7632332f766f6d2f74657374646174612e4e556e696f6e01030001410101e10001420103e10001430109e1e152020100",
   'hexMagic': "80",
@@ -2202,7 +2202,7 @@ new vdl.BigInt(1, new Uint8Array([0x2])),
 },
 {
   'name': "NUnion{B: \"abc\"}",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeNUnion))({ "b": "abc" }, true), _typeNUnion),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeNUnion))({ "b": "abc" }, true), _typeNUnion),
   'typeString': "v.io/v23/vom/testdata.NUnion union{A bool;B string;C int64}",
   'hex': "80513407001c762e696f2f7632332f766f6d2f74657374646174612e4e556e696f6e01030001410101e10001420103e10001430109e1e152050103616263",
   'hexMagic': "80",
@@ -2211,7 +2211,7 @@ new vdl.BigInt(1, new Uint8Array([0x2])),
 },
 {
   'name': "NUnion{C: 0}",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeNUnion))({ "c": new vdl.BigInt(0, new Uint8Array([])) }, true), _typeNUnion),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeNUnion))({ "c": new vdl.BigInt(0, new Uint8Array([])) }, true), _typeNUnion),
   'typeString': "v.io/v23/vom/testdata.NUnion union{A bool;B string;C int64}",
   'hex': "80513407001c762e696f2f7632332f766f6d2f74657374646174612e4e556e696f6e01030001410101e10001420103e10001430109e1e152020200",
   'hexMagic': "80",
@@ -2220,7 +2220,7 @@ new vdl.BigInt(1, new Uint8Array([0x2])),
 },
 {
   'name': "NUnion{C: 123}",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeNUnion))({ "c": new vdl.BigInt(1, new Uint8Array([0x7b])) }, true), _typeNUnion),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeNUnion))({ "c": new vdl.BigInt(1, new Uint8Array([0x7b])) }, true), _typeNUnion),
   'typeString': "v.io/v23/vom/testdata.NUnion union{A bool;B string;C int64}",
   'hex': "80513407001c762e696f2f7632332f766f6d2f74657374646174612e4e556e696f6e01030001410101e10001420103e10001430109e1e1520302fff6",
   'hexMagic': "80",
@@ -2229,7 +2229,7 @@ new vdl.BigInt(1, new Uint8Array([0x2])),
 },
 {
   'name': "NUnion{C: -123}",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeNUnion))({ "c": new vdl.BigInt(-1, new Uint8Array([0x7b])) }, true), _typeNUnion),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeNUnion))({ "c": new vdl.BigInt(-1, new Uint8Array([0x7b])) }, true), _typeNUnion),
   'typeString': "v.io/v23/vom/testdata.NUnion union{A bool;B string;C int64}",
   'hex': "80513407001c762e696f2f7632332f766f6d2f74657374646174612e4e556e696f6e01030001410101e10001420103e10001430109e1e1520302fff5",
   'hexMagic': "80",
@@ -2238,7 +2238,7 @@ new vdl.BigInt(1, new Uint8Array([0x2])),
 },
 {
   'name': "MBool(true)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeMBool))(true, true), _typeMBool),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeMBool))(true, true), _typeMBool),
   'typeString': "v.io/v23/vom/testdata.MBool bool",
   'hex': "80512100001b762e696f2f7632332f766f6d2f74657374646174612e4d426f6f6c0101e15201",
   'hexMagic': "80",
@@ -2247,7 +2247,7 @@ new vdl.BigInt(1, new Uint8Array([0x2])),
 },
 {
   'name': "MBool(false)",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeMBool))(false, true), _typeMBool),
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeMBool))(false, true), _typeMBool),
   'typeString': "v.io/v23/vom/testdata.MBool bool",
   'hex': "80512100001b762e696f2f7632332f766f6d2f74657374646174612e4d426f6f6c0101e15200",
   'hexMagic': "80",
@@ -2256,12 +2256,12 @@ new vdl.BigInt(1, new Uint8Array([0x2])),
 },
 {
   'name': "MStruct{A: true, B: true, C: true}",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeMStruct))({
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeMStruct))({
   'a': true,
   'b': true,
   'c': true,
   'd': null,
-  'e': vdl.Types.ANY,
+  'e': vdl.types.ANY,
   'f': null,
 }, true), _typeMStruct),
   'typeString': "v.io/v23/vom/testdata.MStruct struct{A bool;B v.io/v23/vom/testdata.NBool bool;C v.io/v23/vom/testdata.MBool bool;D ?v.io/v23/vom/testdata.NStruct struct{A bool;B string;C int64};E typeobject;F any}",
@@ -2272,12 +2272,12 @@ new vdl.BigInt(1, new Uint8Array([0x2])),
 },
 {
   'name': "MStruct{}",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeMStruct))({
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeMStruct))({
   'a': false,
   'b': false,
   'c': false,
   'd': null,
-  'e': vdl.Types.ANY,
+  'e': vdl.types.ANY,
   'f': null,
 }, true), _typeMStruct),
   'typeString': "v.io/v23/vom/testdata.MStruct struct{A bool;B v.io/v23/vom/testdata.NBool bool;C v.io/v23/vom/testdata.MBool bool;D ?v.io/v23/vom/testdata.NStruct struct{A bool;B string;C int64};E typeobject;F any}",
@@ -2288,7 +2288,7 @@ new vdl.BigInt(1, new Uint8Array([0x2])),
 },
 {
   'name': "MStruct{D: {}}",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeMStruct))({
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeMStruct))({
   'a': false,
   'b': false,
   'c': false,
@@ -2297,7 +2297,7 @@ new vdl.BigInt(1, new Uint8Array([0x2])),
   'b': "",
   'c': new vdl.BigInt(0, new Uint8Array([])),
 },
-  'e': vdl.Types.ANY,
+  'e': vdl.types.ANY,
   'f': null,
 }, true), _typeMStruct),
   'typeString': "v.io/v23/vom/testdata.MStruct struct{A bool;B v.io/v23/vom/testdata.NBool bool;C v.io/v23/vom/testdata.MBool bool;D ?v.io/v23/vom/testdata.NStruct struct{A bool;B string;C int64};E typeobject;F any}",
@@ -2308,7 +2308,7 @@ new vdl.BigInt(1, new Uint8Array([0x2])),
 },
 {
   'name': "MStruct{D: {A: true, B: \"abc\", C: 123}}",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeMStruct))({
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeMStruct))({
   'a': false,
   'b': false,
   'c': false,
@@ -2317,7 +2317,7 @@ new vdl.BigInt(1, new Uint8Array([0x2])),
   'b': "abc",
   'c': new vdl.BigInt(1, new Uint8Array([0x7b])),
 },
-  'e': vdl.Types.ANY,
+  'e': vdl.types.ANY,
   'f': null,
 }, true), _typeMStruct),
   'typeString': "v.io/v23/vom/testdata.MStruct struct{A bool;B v.io/v23/vom/testdata.NBool bool;C v.io/v23/vom/testdata.MBool bool;D ?v.io/v23/vom/testdata.NStruct struct{A bool;B string;C int64};E typeobject;F any}",
@@ -2328,13 +2328,13 @@ new vdl.BigInt(1, new Uint8Array([0x2])),
 },
 {
   'name': "MStruct{F: \"abc\"}",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeMStruct))({
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeMStruct))({
   'a': false,
   'b': false,
   'c': false,
   'd': null,
-  'e': vdl.Types.ANY,
-  'f': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.STRING))("abc", true), vdl.Types.STRING),
+  'e': vdl.types.ANY,
+  'f': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.STRING))("abc", true), vdl.types.STRING),
 }, true), _typeMStruct),
   'typeString': "v.io/v23/vom/testdata.MStruct struct{A bool;B v.io/v23/vom/testdata.NBool bool;C v.io/v23/vom/testdata.MBool bool;D ?v.io/v23/vom/testdata.NStruct struct{A bool;B string;C int64};E typeobject;F any}",
   'hex': "80532100001b762e696f2f7632332f766f6d2f74657374646174612e4e426f6f6c0101e1552100001b762e696f2f7632332f766f6d2f74657374646174612e4d426f6f6c0101e1593506001d762e696f2f7632332f766f6d2f74657374646174612e4e53747275637401030001410101e10001420103e10001430109e1e1570408012de1514706001d762e696f2f7632332f766f6d2f74657374646174612e4d53747275637401060001410101e1000142012ae1000143012be1000144012ce1000145010ee1000146010fe1e15207050303616263e1",
@@ -2344,13 +2344,13 @@ new vdl.BigInt(1, new Uint8Array([0x2])),
 },
 {
   'name': "MStruct{F: MBool(true)}",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeMStruct))({
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeMStruct))({
   'a': false,
   'b': false,
   'c': false,
   'd': null,
-  'e': vdl.Types.ANY,
-  'f': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeMBool))(true, true), _typeMBool),
+  'e': vdl.types.ANY,
+  'f': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeMBool))(true, true), _typeMBool),
 }, true), _typeMStruct),
   'typeString': "v.io/v23/vom/testdata.MStruct struct{A bool;B v.io/v23/vom/testdata.NBool bool;C v.io/v23/vom/testdata.MBool bool;D ?v.io/v23/vom/testdata.NStruct struct{A bool;B string;C int64};E typeobject;F any}",
   'hex': "80532100001b762e696f2f7632332f766f6d2f74657374646174612e4e426f6f6c0101e1552100001b762e696f2f7632332f766f6d2f74657374646174612e4d426f6f6c0101e1593506001d762e696f2f7632332f766f6d2f74657374646174612e4e53747275637401030001410101e10001420103e10001430109e1e1570408012de1514706001d762e696f2f7632332f766f6d2f74657374646174612e4d53747275637401060001410101e1000142012ae1000143012be1000144012ce1000145010ee1000146010fe1e15204052b01e1",
@@ -2360,13 +2360,13 @@ new vdl.BigInt(1, new Uint8Array([0x2])),
 },
 {
   'name': "MStruct{F: ?NStruct{B: \"abc\"}}",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeMStruct))({
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeMStruct))({
   'a': false,
   'b': false,
   'c': false,
   'd': null,
-  'e': vdl.Types.ANY,
-  'f': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_type6))({
+  'e': vdl.types.ANY,
+  'f': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_type6))({
   'a': false,
   'b': "abc",
   'c': new vdl.BigInt(0, new Uint8Array([])),
@@ -2380,7 +2380,7 @@ new vdl.BigInt(1, new Uint8Array([0x2])),
 },
 {
   'name': "MList{{4, 2}, {}, {99}}",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeMList))([
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeMList))([
 [
 new vdl.BigInt(1, new Uint8Array([0x4])),
 new vdl.BigInt(1, new Uint8Array([0x2])),
@@ -2399,7 +2399,7 @@ new vdl.BigInt(1, new Uint8Array([0x63])),
 },
 {
   'name': "MMap{4.5: {2, 3}}",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeMMap))(new Map([
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeMMap))(new Map([
   [4.5, [
 new vdl.BigInt(1, new Uint8Array([0x2])),
 new vdl.BigInt(1, new Uint8Array([0x3])),
@@ -2412,7 +2412,7 @@ new vdl.BigInt(1, new Uint8Array([0x3])),
 },
 {
   'name': "RecA{{}, {{}}}",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeRecA))([
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeRecA))([
 [
 ],
 [
@@ -2428,7 +2428,7 @@ new vdl.BigInt(1, new Uint8Array([0x3])),
 },
 {
   'name': "RecX{{}, {{}, {}}}",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeRecX))([
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeRecX))([
 [
 ],
 [
@@ -2446,7 +2446,7 @@ new vdl.BigInt(1, new Uint8Array([0x3])),
 },
 {
   'name': "RecStruct{A: {}}",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeRecStruct))({
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeRecStruct))({
   'a': {
   'a': null,
 },
@@ -2459,7 +2459,7 @@ new vdl.BigInt(1, new Uint8Array([0x3])),
 },
 {
   'name': "RecStruct{A: {A: {}}}",
-  'value': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeRecStruct))({
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeRecStruct))({
   'a': {
   'a': {
   'a': null,
@@ -2474,7 +2474,7 @@ new vdl.BigInt(1, new Uint8Array([0x3])),
 },
 {
   'name': "typeobject(any)",
-  'value': vdl.Types.ANY,
+  'value': vdl.types.ANY,
   'typeString': "typeobject",
   'hex': "801c0f",
   'hexMagic': "80",
@@ -2483,7 +2483,7 @@ new vdl.BigInt(1, new Uint8Array([0x3])),
 },
 {
   'name': "typeobject(bool)",
-  'value': vdl.Types.BOOL,
+  'value': vdl.types.BOOL,
   'typeString': "typeobject",
   'hex': "801c01",
   'hexMagic': "80",
@@ -2492,7 +2492,7 @@ new vdl.BigInt(1, new Uint8Array([0x3])),
 },
 {
   'name': "typeobject(uint16)",
-  'value': vdl.Types.UINT16,
+  'value': vdl.types.UINT16,
   'typeString': "typeobject",
   'hex': "801c04",
   'hexMagic': "80",
@@ -2501,7 +2501,7 @@ new vdl.BigInt(1, new Uint8Array([0x3])),
 },
 {
   'name': "typeobject(uint32)",
-  'value': vdl.Types.UINT32,
+  'value': vdl.types.UINT32,
   'typeString': "typeobject",
   'hex': "801c05",
   'hexMagic': "80",
@@ -2510,7 +2510,7 @@ new vdl.BigInt(1, new Uint8Array([0x3])),
 },
 {
   'name': "typeobject(uint64)",
-  'value': vdl.Types.UINT64,
+  'value': vdl.types.UINT64,
   'typeString': "typeobject",
   'hex': "801c06",
   'hexMagic': "80",
@@ -2519,7 +2519,7 @@ new vdl.BigInt(1, new Uint8Array([0x3])),
 },
 {
   'name': "typeobject(int16)",
-  'value': vdl.Types.INT16,
+  'value': vdl.types.INT16,
   'typeString': "typeobject",
   'hex': "801c07",
   'hexMagic': "80",
@@ -2528,7 +2528,7 @@ new vdl.BigInt(1, new Uint8Array([0x3])),
 },
 {
   'name': "typeobject(int32)",
-  'value': vdl.Types.INT32,
+  'value': vdl.types.INT32,
   'typeString': "typeobject",
   'hex': "801c08",
   'hexMagic': "80",
@@ -2537,7 +2537,7 @@ new vdl.BigInt(1, new Uint8Array([0x3])),
 },
 {
   'name': "typeobject(int64)",
-  'value': vdl.Types.INT64,
+  'value': vdl.types.INT64,
   'typeString': "typeobject",
   'hex': "801c09",
   'hexMagic': "80",
@@ -2546,7 +2546,7 @@ new vdl.BigInt(1, new Uint8Array([0x3])),
 },
 {
   'name': "typeobject(int16)",
-  'value': vdl.Types.INT16,
+  'value': vdl.types.INT16,
   'typeString': "typeobject",
   'hex': "801c07",
   'hexMagic': "80",
@@ -2555,7 +2555,7 @@ new vdl.BigInt(1, new Uint8Array([0x3])),
 },
 {
   'name': "typeobject(int32)",
-  'value': vdl.Types.INT32,
+  'value': vdl.types.INT32,
   'typeString': "typeobject",
   'hex': "801c08",
   'hexMagic': "80",
@@ -2564,7 +2564,7 @@ new vdl.BigInt(1, new Uint8Array([0x3])),
 },
 {
   'name': "typeobject(int64)",
-  'value': vdl.Types.INT64,
+  'value': vdl.types.INT64,
   'typeString': "typeobject",
   'hex': "801c09",
   'hexMagic': "80",
@@ -2573,7 +2573,7 @@ new vdl.BigInt(1, new Uint8Array([0x3])),
 },
 {
   'name': "typeobject(float32)",
-  'value': vdl.Types.FLOAT32,
+  'value': vdl.types.FLOAT32,
   'typeString': "typeobject",
   'hex': "801c0a",
   'hexMagic': "80",
@@ -2582,7 +2582,7 @@ new vdl.BigInt(1, new Uint8Array([0x3])),
 },
 {
   'name': "typeobject(float64)",
-  'value': vdl.Types.FLOAT64,
+  'value': vdl.types.FLOAT64,
   'typeString': "typeobject",
   'hex': "801c0b",
   'hexMagic': "80",
@@ -2591,7 +2591,7 @@ new vdl.BigInt(1, new Uint8Array([0x3])),
 },
 {
   'name': "typeobject(complex64)",
-  'value': vdl.Types.COMPLEX64,
+  'value': vdl.types.COMPLEX64,
   'typeString': "typeobject",
   'hex': "801c0c",
   'hexMagic': "80",
@@ -2600,7 +2600,7 @@ new vdl.BigInt(1, new Uint8Array([0x3])),
 },
 {
   'name': "typeobject(complex128)",
-  'value': vdl.Types.COMPLEX128,
+  'value': vdl.types.COMPLEX128,
   'typeString': "typeobject",
   'hex': "801c0d",
   'hexMagic': "80",
@@ -2798,9 +2798,9 @@ new vdl.BigInt(1, new Uint8Array([0x3])),
 },
 ], true), _type1);
 
-  module.exports.CompatTests = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_type8))(new Map([
+  module.exports.CompatTests = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_type8))(new Map([
   ["bool", [
-vdl.Types.BOOL,
+vdl.types.BOOL,
 _typeNBool,
 _typeMBool,
 ]],
@@ -2824,16 +2824,16 @@ _typeNArray2Uint64,
 _typeNListUint64,
 ]],
   ["number", [
-vdl.Types.UINT16,
-vdl.Types.UINT32,
-vdl.Types.UINT64,
-vdl.Types.INT16,
-vdl.Types.INT32,
-vdl.Types.INT64,
-vdl.Types.FLOAT32,
-vdl.Types.FLOAT64,
-vdl.Types.COMPLEX64,
-vdl.Types.COMPLEX128,
+vdl.types.UINT16,
+vdl.types.UINT32,
+vdl.types.UINT64,
+vdl.types.INT16,
+vdl.types.INT32,
+vdl.types.INT64,
+vdl.types.FLOAT32,
+vdl.types.FLOAT64,
+vdl.types.COMPLEX64,
+vdl.types.COMPLEX128,
 _typeNUint16,
 _typeNUint32,
 _typeNUint64,
@@ -2852,7 +2852,7 @@ _typeArray3String,
 _typeArray4String,
 ]],
   ["string/[]byte/enum", [
-vdl.Types.STRING,
+vdl.types.STRING,
 _typeNString,
 _type2,
 _typeNByteSlice,
@@ -2870,25 +2870,25 @@ _typeYzStruct,
 _typeZStruct,
 ]],
   ["typeobject", [
-vdl.Types.TYPEOBJECT,
+vdl.types.TYPEOBJECT,
 ]],
   ["union B", [
 _typeNUnion,
 _typeBdeUnion,
 ]]]), true), _type8);
 
-  module.exports.ConvertTests = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_type12))(new Map([
+  module.exports.ConvertTests = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_type12))(new Map([
   ["array/list", [
 {
   'name': "[3]string",
   'primaryType': _typeArray3String,
   'values': [
-canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeArray3String))([
+canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeArray3String))([
 "A",
 "B",
 "C",
 ], true), _typeArray3String),
-canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_type11))([
+canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_type11))([
 "A",
 "B",
 "C",
@@ -2899,7 +2899,7 @@ canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_type11))([
   'name': "[4]string",
   'primaryType': _typeArray4String,
   'values': [
-canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeArray4String))([
+canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeArray4String))([
 "D",
 "E",
 "F",
@@ -2911,13 +2911,13 @@ canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeArray4Strin
   'name': "ByteArray",
   'primaryType': _typeNByteArray,
   'values': [
-canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeNByteArray))(new Uint8Array([
+canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeNByteArray))(new Uint8Array([
 5,
 2,
 0,
 4,
 ]), true), _typeNByteArray),
-canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_type2))(new Uint8Array([
+canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_type2))(new Uint8Array([
 5,
 2,
 0,
@@ -2929,68 +2929,68 @@ canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_type2))(new Uin
   ["bool", [
 {
   'name': "bool",
-  'primaryType': vdl.Types.BOOL,
+  'primaryType': vdl.types.BOOL,
   'values': [
-canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.BOOL))(true, true), vdl.Types.BOOL),
-canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeNBool))(true, true), _typeNBool),
-canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeMBool))(true, true), _typeMBool),
+canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.BOOL))(true, true), vdl.types.BOOL),
+canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeNBool))(true, true), _typeNBool),
+canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeMBool))(true, true), _typeMBool),
 ],
 },
 ]],
   ["number", [
 {
   'name': "byte",
-  'primaryType': vdl.Types.BYTE,
+  'primaryType': vdl.types.BYTE,
   'values': [
-canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.BYTE))(3, true), vdl.Types.BYTE),
-canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.UINT16))(3, true), vdl.Types.UINT16),
-canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.INT32))(3, true), vdl.Types.INT32),
-canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.FLOAT64))(3, true), vdl.Types.FLOAT64),
-canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.INT64))(new vdl.BigInt(1, new Uint8Array([0x3])), true), vdl.Types.INT64),
-canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.COMPLEX128))(new vdl.Complex(3.000000, 0.000000), true), vdl.Types.COMPLEX128),
+canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.BYTE))(3, true), vdl.types.BYTE),
+canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.UINT16))(3, true), vdl.types.UINT16),
+canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.INT32))(3, true), vdl.types.INT32),
+canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.FLOAT64))(3, true), vdl.types.FLOAT64),
+canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.INT64))(new vdl.BigInt(1, new Uint8Array([0x3])), true), vdl.types.INT64),
+canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.COMPLEX128))(new vdl.Complex(3.000000, 0.000000), true), vdl.types.COMPLEX128),
 ],
 },
 {
   'name': "uint16",
-  'primaryType': vdl.Types.UINT16,
+  'primaryType': vdl.types.UINT16,
   'values': [
-canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.UINT16))(256, true), vdl.Types.UINT16),
-canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.INT32))(256, true), vdl.Types.INT32),
-canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.FLOAT64))(256, true), vdl.Types.FLOAT64),
-canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.INT64))(new vdl.BigInt(1, new Uint8Array([0x1, 0x0])), true), vdl.Types.INT64),
-canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.COMPLEX128))(new vdl.Complex(256.000000, 0.000000), true), vdl.Types.COMPLEX128),
+canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.UINT16))(256, true), vdl.types.UINT16),
+canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.INT32))(256, true), vdl.types.INT32),
+canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.FLOAT64))(256, true), vdl.types.FLOAT64),
+canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.INT64))(new vdl.BigInt(1, new Uint8Array([0x1, 0x0])), true), vdl.types.INT64),
+canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.COMPLEX128))(new vdl.Complex(256.000000, 0.000000), true), vdl.types.COMPLEX128),
 ],
 },
 {
   'name': "int32",
-  'primaryType': vdl.Types.INT32,
+  'primaryType': vdl.types.INT32,
   'values': [
-canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.INT32))(-5, true), vdl.Types.INT32),
-canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.FLOAT64))(-5, true), vdl.Types.FLOAT64),
-canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.INT64))(new vdl.BigInt(-1, new Uint8Array([0x5])), true), vdl.Types.INT64),
-canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.COMPLEX128))(new vdl.Complex(-5.000000, 0.000000), true), vdl.Types.COMPLEX128),
+canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.INT32))(-5, true), vdl.types.INT32),
+canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.FLOAT64))(-5, true), vdl.types.FLOAT64),
+canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.INT64))(new vdl.BigInt(-1, new Uint8Array([0x5])), true), vdl.types.INT64),
+canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.COMPLEX128))(new vdl.Complex(-5.000000, 0.000000), true), vdl.types.COMPLEX128),
 ],
 },
 {
   'name': "float64",
-  'primaryType': vdl.Types.FLOAT64,
+  'primaryType': vdl.types.FLOAT64,
   'values': [
-canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.FLOAT64))(3.3, true), vdl.Types.FLOAT64),
-canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.COMPLEX128))(new vdl.Complex(3.300000, 0.000000), true), vdl.Types.COMPLEX128),
+canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.FLOAT64))(3.3, true), vdl.types.FLOAT64),
+canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.COMPLEX128))(new vdl.Complex(3.300000, 0.000000), true), vdl.types.COMPLEX128),
 ],
 },
 {
   'name': "int64",
-  'primaryType': vdl.Types.INT64,
+  'primaryType': vdl.types.INT64,
   'values': [
-canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.INT64))(new vdl.BigInt(-1, new Uint8Array([0x80, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0])), true), vdl.Types.INT64),
+canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.INT64))(new vdl.BigInt(-1, new Uint8Array([0x80, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0])), true), vdl.types.INT64),
 ],
 },
 {
   'name': "complex128",
-  'primaryType': vdl.Types.COMPLEX128,
+  'primaryType': vdl.types.COMPLEX128,
   'values': [
-canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.COMPLEX128))(new vdl.Complex(1.500000, -1.000000), true), vdl.Types.COMPLEX128),
+canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.COMPLEX128))(new vdl.Complex(1.500000, -1.000000), true), vdl.types.COMPLEX128),
 ],
 },
 ]],
@@ -2999,10 +2999,10 @@ canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.COMPLE
   'name': "enum (A)",
   'primaryType': _typeNEnum,
   'values': [
-canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.STRING))("A", true), vdl.Types.STRING),
-canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeNString))("A", true), _typeNString),
-canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeNEnum))('A', true), _typeNEnum),
-canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_type2))(new Uint8Array([
+canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.STRING))("A", true), vdl.types.STRING),
+canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeNString))("A", true), _typeNString),
+canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeNEnum))('A', true), _typeNEnum),
+canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_type2))(new Uint8Array([
 65,
 ]), true), _type2),
 ],
@@ -3011,17 +3011,17 @@ canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_type2))(new Uin
   'name': "enum (brie)",
   'primaryType': _typeBrieEnum,
   'values': [
-canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.STRING))("Brie", true), vdl.Types.STRING),
-canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeNString))("Brie", true), _typeNString),
-canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeBrieEnum))('Brie', true), _typeBrieEnum),
-canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeFoodEnum))('Brie', true), _typeFoodEnum),
-canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_type2))(new Uint8Array([
+canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.STRING))("Brie", true), vdl.types.STRING),
+canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeNString))("Brie", true), _typeNString),
+canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeBrieEnum))('Brie', true), _typeBrieEnum),
+canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeFoodEnum))('Brie', true), _typeFoodEnum),
+canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_type2))(new Uint8Array([
 66,
 114,
 105,
 101,
 ]), true), _type2),
-canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeNByteArray))(new Uint8Array([
+canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeNByteArray))(new Uint8Array([
 66,
 114,
 105,
@@ -3033,17 +3033,17 @@ canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeNByteArray)
   'name': "[4]byte",
   'primaryType': _typeNByteArray,
   'values': [
-canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.STRING))("Bean", true), vdl.Types.STRING),
-canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeNString))("Bean", true), _typeNString),
-canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeBeanEnum))('Bean', true), _typeBeanEnum),
-canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeFoodEnum))('Bean', true), _typeFoodEnum),
-canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_type2))(new Uint8Array([
+canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.STRING))("Bean", true), vdl.types.STRING),
+canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeNString))("Bean", true), _typeNString),
+canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeBeanEnum))('Bean', true), _typeBeanEnum),
+canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeFoodEnum))('Bean', true), _typeFoodEnum),
+canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_type2))(new Uint8Array([
 66,
 101,
 97,
 110,
 ]), true), _type2),
-canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeNByteArray))(new Uint8Array([
+canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeNByteArray))(new Uint8Array([
 66,
 101,
 97,
@@ -3055,10 +3055,10 @@ canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeNByteArray)
   'name': "string",
   'primaryType': _typeNString,
   'values': [
-canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.STRING))("Cherry", true), vdl.Types.STRING),
-canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeNString))("Cherry", true), _typeNString),
-canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeFoodEnum))('Cherry', true), _typeFoodEnum),
-canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_type2))(new Uint8Array([
+canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.STRING))("Cherry", true), vdl.types.STRING),
+canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeNString))("Cherry", true), _typeNString),
+canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeFoodEnum))('Cherry', true), _typeFoodEnum),
+canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_type2))(new Uint8Array([
 67,
 104,
 101,
@@ -3066,7 +3066,7 @@ canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_type2))(new Uin
 114,
 121,
 ]), true), _type2),
-canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeNByteSlice))(new Uint8Array([
+canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeNByteSlice))(new Uint8Array([
 67,
 104,
 101,
@@ -3082,10 +3082,10 @@ canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeNByteSlice)
   'name': "map[uint32]uint32",
   'primaryType': _typeMapOnlyA,
   'values': [
-canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeMapOnlyA))(new Map([
+canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeMapOnlyA))(new Map([
   [4, 0],
   [6, 7]]), true), _typeMapOnlyA),
-canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeMapOnlyA2))(new Map([
+canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeMapOnlyA2))(new Map([
   [new vdl.BigInt(1, new Uint8Array([0x4])), 0],
   [new vdl.BigInt(1, new Uint8Array([0x6])), 7]]), true), _typeMapOnlyA2),
 ],
@@ -3094,9 +3094,9 @@ canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeMapOnlyA2))
   'name': "map[bool]string",
   'primaryType': _typeMapOnlyB,
   'values': [
-canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeMapOnlyB))(new Map([
+canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeMapOnlyB))(new Map([
   [true, "hello"]]), true), _typeMapOnlyB),
-canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeMapOnlyB2))(new Map([
+canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeMapOnlyB2))(new Map([
   [true, "hello"]]), true), _typeMapOnlyB2),
 ],
 },
@@ -3104,10 +3104,10 @@ canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeMapOnlyB2))
   'name': "set[bool]",
   'primaryType': _typeSetOnlyA,
   'values': [
-canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeSetOnlyA))(new Set([
+canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeSetOnlyA))(new Set([
   false, 
   true, ]), true), _typeSetOnlyA),
-canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeSetOnlyA2))(new Set([
+canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeSetOnlyA2))(new Set([
   false, 
   true, ]), true), _typeSetOnlyA2),
 ],
@@ -3116,10 +3116,10 @@ canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeSetOnlyA2))
   'name': "set[int16]",
   'primaryType': _typeSetOnlyB,
   'values': [
-canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeSetOnlyB))(new Set([
+canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeSetOnlyB))(new Set([
   4, 
   6, ]), true), _typeSetOnlyB),
-canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeSetOnlyB2))(new Set([
+canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeSetOnlyB2))(new Set([
   4, 
   6, ]), true), _typeSetOnlyB2),
 ],
@@ -3128,17 +3128,17 @@ canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeSetOnlyB2))
   'name': "structABC",
   'primaryType': _typeAbcStruct,
   'values': [
-canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeAbcStruct))({
+canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeAbcStruct))({
   'a': true,
   'b': "",
   'c': new vdl.BigInt(0, new Uint8Array([])),
 }, true), _typeAbcStruct),
-canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeAdeStruct))({
+canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeAdeStruct))({
   'a': true,
   'd': null,
-  'e': vdl.Types.ANY,
+  'e': vdl.types.ANY,
 }, true), _typeAdeStruct),
-canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeNStruct))({
+canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeNStruct))({
   'a': true,
   'b': "",
   'c': new vdl.BigInt(0, new Uint8Array([])),
@@ -3149,16 +3149,16 @@ canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeNStruct))({
   'name': "structYz",
   'primaryType': _typeYzStruct,
   'values': [
-canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeXyzStruct))({
+canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeXyzStruct))({
   'x': false,
   'y': false,
   'z': "ahoy",
 }, true), _typeXyzStruct),
-canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeYzStruct))({
+canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeYzStruct))({
   'y': false,
   'z': "ahoy",
 }, true), _typeYzStruct),
-canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeZStruct))({
+canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeZStruct))({
   'z': "ahoy",
 }, true), _typeZStruct),
 ],
@@ -3167,11 +3167,11 @@ canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeZStruct))({
   'name': "struct+map",
   'primaryType': _typeMapOnlyStruct,
   'values': [
-canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeStructOnlyMap))(new Map([
+canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeStructOnlyMap))(new Map([
   ["Key1", new vdl.BigInt(1, new Uint8Array([0x4]))],
   ["Key2", new vdl.BigInt(1, new Uint8Array([0x5]))],
   ["Key3", new vdl.BigInt(0, new Uint8Array([]))]]), true), _typeStructOnlyMap),
-canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeMapOnlyStruct))({
+canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeMapOnlyStruct))({
   'key1': new vdl.BigInt(1, new Uint8Array([0x4])),
   'key2': 5,
   'key3': new vdl.Complex(0.000000, 0.000000),
@@ -3182,13 +3182,13 @@ canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeMapOnlyStru
   'name': "map+set",
   'primaryType': _typeMapOnlySet,
   'values': [
-canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeMapOnlySet))(new Set([
+canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeMapOnlySet))(new Set([
   3.14, 
   8, ]), true), _typeMapOnlySet),
-canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeSometimesSetMap))(new Map([
-  [3.14, canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.BOOL))(true, true), vdl.Types.BOOL)],
-  [8, canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.BOOL))(true, true), vdl.Types.BOOL)]]), true), _typeSometimesSetMap),
-canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeSetOnlyMap))(new Map([
+canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeSometimesSetMap))(new Map([
+  [3.14, canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.BOOL))(true, true), vdl.types.BOOL)],
+  [8, canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.BOOL))(true, true), vdl.types.BOOL)]]), true), _typeSometimesSetMap),
+canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeSetOnlyMap))(new Map([
   [3.14, true],
   [8, true]]), true), _typeSetOnlyMap),
 ],
@@ -3197,24 +3197,24 @@ canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeSetOnlyMap)
   'name': "map-set",
   'primaryType': _typeSetOnlyMap,
   'values': [
-canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeSometimesSetMap))(new Map([
-  [3.14, canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.STRING))("cannot be a set anymore", true), vdl.Types.STRING)],
-  [8, canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.BOOL))(true, true), vdl.Types.BOOL)]]), true), _typeSometimesSetMap),
+canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeSometimesSetMap))(new Map([
+  [3.14, canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.STRING))("cannot be a set anymore", true), vdl.types.STRING)],
+  [8, canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.BOOL))(true, true), vdl.types.BOOL)]]), true), _typeSometimesSetMap),
 ],
 },
 {
   'name': "struct+map+set",
   'primaryType': _typeMapStructSet,
   'values': [
-canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeMapStructSet))(new Set([
+canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeMapStructSet))(new Set([
   "Eel", 
   "Feat", 
   "Tire", ]), true), _typeMapStructSet),
-canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeSetStructMap))(new Map([
+canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeSetStructMap))(new Map([
   ["Eel", true],
   ["Feat", true],
   ["Tire", true]]), true), _typeSetStructMap),
-canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeMapSetStruct))({
+canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeMapSetStruct))({
   'feat': true,
   'tire': true,
   'eel': true,
@@ -3225,9 +3225,9 @@ canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeMapSetStruc
   ["typeobject", [
 {
   'name': "typeobject(any)",
-  'primaryType': vdl.Types.TYPEOBJECT,
+  'primaryType': vdl.types.TYPEOBJECT,
   'values': [
-vdl.Types.ANY,
+vdl.types.ANY,
 ],
 },
 ]],
@@ -3236,15 +3236,15 @@ vdl.Types.ANY,
   'name': "BdeUnion",
   'primaryType': _typeBdeUnion,
   'values': [
-canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeBdeUnion))({ "b": "bde" }, true), _typeBdeUnion),
-canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeNUnion))({ "b": "bde" }, true), _typeNUnion),
+canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeBdeUnion))({ "b": "bde" }, true), _typeBdeUnion),
+canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeNUnion))({ "b": "bde" }, true), _typeNUnion),
 ],
 },
 {
   'name': "BdeUnion fail",
   'primaryType': _typeNUnion,
   'values': [
-canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeNUnion))({ "a": true }, true), _typeNUnion),
+canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeNUnion))({ "a": true }, true), _typeNUnion),
 ],
 },
 ]]]), true), _type12);

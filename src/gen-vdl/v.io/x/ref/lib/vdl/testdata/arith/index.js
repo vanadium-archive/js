@@ -24,19 +24,19 @@ module.exports = {};
 
 // Consts:
 
-  module.exports.Yes = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.BOOL))(true, true), vdl.Types.BOOL);
+  module.exports.Yes = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.BOOL))(true, true), vdl.types.BOOL);
 
-  module.exports.No = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.BOOL))(false, true), vdl.Types.BOOL);
+  module.exports.No = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.BOOL))(false, true), vdl.types.BOOL);
 
-  module.exports.Hello = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.STRING))("hello", true), vdl.Types.STRING);
+  module.exports.Hello = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.STRING))("hello", true), vdl.types.STRING);
 
-  module.exports.Int32Const = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.INT32))(123, true), vdl.Types.INT32);
+  module.exports.Int32Const = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.INT32))(123, true), vdl.types.INT32);
 
-  module.exports.Int64Const = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.INT64))(new vdl.BigInt(1, new Uint8Array([0x80])), true), vdl.Types.INT64);
+  module.exports.Int64Const = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.INT64))(new vdl.BigInt(1, new Uint8Array([0x80])), true), vdl.types.INT64);
 
-  module.exports.FloatConst = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.FLOAT64))(2, true), vdl.Types.FLOAT64);
+  module.exports.FloatConst = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.FLOAT64))(2, true), vdl.types.FLOAT64);
 
-  module.exports.Mask = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.UINT64))(new vdl.BigInt(1, new Uint8Array([0x1, 0x0])), true), vdl.Types.UINT64);
+  module.exports.Mask = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.UINT64))(new vdl.BigInt(1, new Uint8Array([0x1, 0x0])), true), vdl.types.UINT64);
 
 
 
@@ -78,13 +78,13 @@ Trigonometry.prototype._serviceDescription = {
     inArgs: [{
       name: 'angle',
       doc: "",
-      type: vdl.Types.FLOAT64
+      type: vdl.types.FLOAT64
     },
     ],
     outArgs: [{
       name: '',
       doc: "",
-      type: vdl.Types.FLOAT64
+      type: vdl.types.FLOAT64
     },
     ],
     inStream: null,
@@ -99,13 +99,13 @@ Trigonometry.prototype._serviceDescription = {
     inArgs: [{
       name: 'angle',
       doc: "",
-      type: vdl.Types.FLOAT64
+      type: vdl.types.FLOAT64
     },
     ],
     outArgs: [{
       name: '',
       doc: "",
-      type: vdl.Types.FLOAT64
+      type: vdl.types.FLOAT64
     },
     ],
     inStream: null,
@@ -163,13 +163,13 @@ AdvancedMath.prototype._serviceDescription = {
     inArgs: [{
       name: 'angle',
       doc: "",
-      type: vdl.Types.FLOAT64
+      type: vdl.types.FLOAT64
     },
     ],
     outArgs: [{
       name: '',
       doc: "",
-      type: vdl.Types.FLOAT64
+      type: vdl.types.FLOAT64
     },
     ],
     inStream: null,
@@ -184,13 +184,13 @@ AdvancedMath.prototype._serviceDescription = {
     inArgs: [{
       name: 'angle',
       doc: "",
-      type: vdl.Types.FLOAT64
+      type: vdl.types.FLOAT64
     },
     ],
     outArgs: [{
       name: '',
       doc: "",
-      type: vdl.Types.FLOAT64
+      type: vdl.types.FLOAT64
     },
     ],
     inStream: null,
@@ -205,13 +205,13 @@ AdvancedMath.prototype._serviceDescription = {
     inArgs: [{
       name: 'x',
       doc: "",
-      type: vdl.Types.FLOAT64
+      type: vdl.types.FLOAT64
     },
     ],
     outArgs: [{
       name: '',
       doc: "",
-      type: vdl.Types.FLOAT64
+      type: vdl.types.FLOAT64
     },
     ],
     inStream: null,
@@ -286,18 +286,18 @@ Arith.prototype._serviceDescription = {
     inArgs: [{
       name: 'a',
       doc: "",
-      type: vdl.Types.INT32
+      type: vdl.types.INT32
     },
     {
       name: 'b',
       doc: "",
-      type: vdl.Types.INT32
+      type: vdl.types.INT32
     },
     ],
     outArgs: [{
       name: '',
       doc: "",
-      type: vdl.Types.INT32
+      type: vdl.types.INT32
     },
     ],
     inStream: null,
@@ -312,23 +312,23 @@ Arith.prototype._serviceDescription = {
     inArgs: [{
       name: 'a',
       doc: "",
-      type: vdl.Types.INT32
+      type: vdl.types.INT32
     },
     {
       name: 'b',
       doc: "",
-      type: vdl.Types.INT32
+      type: vdl.types.INT32
     },
     ],
     outArgs: [{
       name: 'quot',
       doc: "",
-      type: vdl.Types.INT32
+      type: vdl.types.INT32
     },
     {
       name: 'rem',
       doc: "",
-      type: vdl.Types.INT32
+      type: vdl.types.INT32
     },
     ],
     inStream: null,
@@ -349,7 +349,7 @@ Arith.prototype._serviceDescription = {
     outArgs: [{
       name: '',
       doc: "",
-      type: vdl.Types.INT32
+      type: vdl.types.INT32
     },
     ],
     inStream: null,
@@ -370,7 +370,7 @@ Arith.prototype._serviceDescription = {
     outArgs: [{
       name: '',
       doc: "",
-      type: vdl.Types.INT32
+      type: vdl.types.INT32
     },
     ],
     inStream: null,
@@ -386,7 +386,7 @@ Arith.prototype._serviceDescription = {
     outArgs: [],
     inStream: null,
     outStream: null,
-    tags: [canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.STRING))("foo", true), vdl.Types.STRING), canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.STRING))("barz", true), vdl.Types.STRING), canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.STRING))("hello", true), vdl.Types.STRING), canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.INT32))(129, true), vdl.Types.INT32), canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.UINT64))(new vdl.BigInt(1, new Uint8Array([0x24])), true), vdl.Types.UINT64), ]
+    tags: [canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.STRING))("foo", true), vdl.types.STRING), canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.STRING))("barz", true), vdl.types.STRING), canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.STRING))("hello", true), vdl.types.STRING), canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.INT32))(129, true), vdl.types.INT32), canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.UINT64))(new vdl.BigInt(1, new Uint8Array([0x24])), true), vdl.types.UINT64), ]
   },
     
       
@@ -396,7 +396,7 @@ Arith.prototype._serviceDescription = {
     inArgs: [{
       name: 'start',
       doc: "",
-      type: vdl.Types.INT32
+      type: vdl.types.INT32
     },
     ],
     outArgs: [],
@@ -404,7 +404,7 @@ Arith.prototype._serviceDescription = {
     outStream: {
       name: '',
       doc: '',
-      type: vdl.Types.INT32
+      type: vdl.types.INT32
     },
     tags: []
   },
@@ -417,18 +417,18 @@ Arith.prototype._serviceDescription = {
     outArgs: [{
       name: 'total',
       doc: "",
-      type: vdl.Types.INT32
+      type: vdl.types.INT32
     },
     ],
     inStream: {
       name: '',
       doc: '',
-      type: vdl.Types.INT32
+      type: vdl.types.INT32
     },
     outStream: {
       name: '',
       doc: '',
-      type: vdl.Types.INT32
+      type: vdl.types.INT32
     },
     tags: []
   },
@@ -440,13 +440,13 @@ Arith.prototype._serviceDescription = {
     inArgs: [{
       name: 'a',
       doc: "",
-      type: vdl.Types.ANY
+      type: vdl.types.ANY
     },
     ],
     outArgs: [{
       name: '',
       doc: "",
-      type: vdl.Types.ANY
+      type: vdl.types.ANY
     },
     ],
     inStream: null,
@@ -566,7 +566,7 @@ Calculator.prototype._serviceDescription = {
     outArgs: [],
     inStream: null,
     outStream: null,
-    tags: [canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.STRING))("offtag", true), vdl.Types.STRING), ]
+    tags: [canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.STRING))("offtag", true), vdl.types.STRING), ]
   },
     
       
@@ -576,18 +576,18 @@ Calculator.prototype._serviceDescription = {
     inArgs: [{
       name: 'a',
       doc: "",
-      type: vdl.Types.INT32
+      type: vdl.types.INT32
     },
     {
       name: 'b',
       doc: "",
-      type: vdl.Types.INT32
+      type: vdl.types.INT32
     },
     ],
     outArgs: [{
       name: '',
       doc: "",
-      type: vdl.Types.INT32
+      type: vdl.types.INT32
     },
     ],
     inStream: null,
@@ -602,23 +602,23 @@ Calculator.prototype._serviceDescription = {
     inArgs: [{
       name: 'a',
       doc: "",
-      type: vdl.Types.INT32
+      type: vdl.types.INT32
     },
     {
       name: 'b',
       doc: "",
-      type: vdl.Types.INT32
+      type: vdl.types.INT32
     },
     ],
     outArgs: [{
       name: 'quot',
       doc: "",
-      type: vdl.Types.INT32
+      type: vdl.types.INT32
     },
     {
       name: 'rem',
       doc: "",
-      type: vdl.Types.INT32
+      type: vdl.types.INT32
     },
     ],
     inStream: null,
@@ -639,7 +639,7 @@ Calculator.prototype._serviceDescription = {
     outArgs: [{
       name: '',
       doc: "",
-      type: vdl.Types.INT32
+      type: vdl.types.INT32
     },
     ],
     inStream: null,
@@ -660,7 +660,7 @@ Calculator.prototype._serviceDescription = {
     outArgs: [{
       name: '',
       doc: "",
-      type: vdl.Types.INT32
+      type: vdl.types.INT32
     },
     ],
     inStream: null,
@@ -676,7 +676,7 @@ Calculator.prototype._serviceDescription = {
     outArgs: [],
     inStream: null,
     outStream: null,
-    tags: [canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.STRING))("foo", true), vdl.Types.STRING), canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.STRING))("barz", true), vdl.Types.STRING), canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.STRING))("hello", true), vdl.Types.STRING), canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.INT32))(129, true), vdl.Types.INT32), canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.UINT64))(new vdl.BigInt(1, new Uint8Array([0x24])), true), vdl.Types.UINT64), ]
+    tags: [canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.STRING))("foo", true), vdl.types.STRING), canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.STRING))("barz", true), vdl.types.STRING), canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.STRING))("hello", true), vdl.types.STRING), canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.INT32))(129, true), vdl.types.INT32), canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.UINT64))(new vdl.BigInt(1, new Uint8Array([0x24])), true), vdl.types.UINT64), ]
   },
     
       
@@ -686,7 +686,7 @@ Calculator.prototype._serviceDescription = {
     inArgs: [{
       name: 'start',
       doc: "",
-      type: vdl.Types.INT32
+      type: vdl.types.INT32
     },
     ],
     outArgs: [],
@@ -694,7 +694,7 @@ Calculator.prototype._serviceDescription = {
     outStream: {
       name: '',
       doc: '',
-      type: vdl.Types.INT32
+      type: vdl.types.INT32
     },
     tags: []
   },
@@ -707,18 +707,18 @@ Calculator.prototype._serviceDescription = {
     outArgs: [{
       name: 'total',
       doc: "",
-      type: vdl.Types.INT32
+      type: vdl.types.INT32
     },
     ],
     inStream: {
       name: '',
       doc: '',
-      type: vdl.Types.INT32
+      type: vdl.types.INT32
     },
     outStream: {
       name: '',
       doc: '',
-      type: vdl.Types.INT32
+      type: vdl.types.INT32
     },
     tags: []
   },
@@ -730,13 +730,13 @@ Calculator.prototype._serviceDescription = {
     inArgs: [{
       name: 'a',
       doc: "",
-      type: vdl.Types.ANY
+      type: vdl.types.ANY
     },
     ],
     outArgs: [{
       name: '',
       doc: "",
-      type: vdl.Types.ANY
+      type: vdl.types.ANY
     },
     ],
     inStream: null,
@@ -751,13 +751,13 @@ Calculator.prototype._serviceDescription = {
     inArgs: [{
       name: 'angle',
       doc: "",
-      type: vdl.Types.FLOAT64
+      type: vdl.types.FLOAT64
     },
     ],
     outArgs: [{
       name: '',
       doc: "",
-      type: vdl.Types.FLOAT64
+      type: vdl.types.FLOAT64
     },
     ],
     inStream: null,
@@ -772,13 +772,13 @@ Calculator.prototype._serviceDescription = {
     inArgs: [{
       name: 'angle',
       doc: "",
-      type: vdl.Types.FLOAT64
+      type: vdl.types.FLOAT64
     },
     ],
     outArgs: [{
       name: '',
       doc: "",
-      type: vdl.Types.FLOAT64
+      type: vdl.types.FLOAT64
     },
     ],
     inStream: null,
@@ -793,13 +793,13 @@ Calculator.prototype._serviceDescription = {
     inArgs: [{
       name: 'x',
       doc: "",
-      type: vdl.Types.FLOAT64
+      type: vdl.types.FLOAT64
     },
     ],
     outArgs: [{
       name: '',
       doc: "",
-      type: vdl.Types.FLOAT64
+      type: vdl.types.FLOAT64
     },
     ],
     inStream: null,

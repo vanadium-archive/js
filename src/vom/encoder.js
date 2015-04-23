@@ -11,9 +11,9 @@ module.exports = Encoder;
 
 var TypeEncoder = require('./type-encoder.js');
 var util = require('../vdl/util.js');
-var TypeUtil = require('../vdl/type-util.js');
+var typeUtil = require('../vdl/type-util.js');
 var RawVomWriter = require('./raw-vom-writer.js');
-var Kind = require('../vdl/kind.js');
+var kind = require('../vdl/kind.js');
 var canonicalize = require('../vdl/canonicalize.js');
 var stringify = require('../vdl/stringify.js');
 var guessType = require('../vdl/guess-type.js');
@@ -58,28 +58,28 @@ Encoder.prototype.encode = function(val, type) {
   var writer = new RawVomWriter();
   this._encodeValue(val, type, writer, false);
   this._messageWriter.writeValueMessage(typeId,
-    TypeUtil.shouldSendLength(type), writer.getBytes());
+    typeUtil.shouldSendLength(type), writer.getBytes());
 };
 
 Encoder.prototype._encodeValue = function(v, t, writer, omitEmpty) {
-  v = TypeUtil.unwrap(v);
+  v = typeUtil.unwrap(v);
 
   switch (t.kind) {
-    case Kind.BOOL:
+    case kind.BOOL:
       if (!v && omitEmpty) {
         return false;
       }
       writer.writeBool(v);
       return true;
-    case Kind.BYTE:
+    case kind.BYTE:
       if (!v && omitEmpty) {
         return false;
       }
       writer.writeByte(v);
       return true;
-    case Kind.UINT16:
-    case Kind.UINT32:
-    case Kind.UINT64:
+    case kind.UINT16:
+    case kind.UINT32:
+    case kind.UINT64:
       if (!v && omitEmpty) {
         return false;
       }
@@ -88,9 +88,9 @@ Encoder.prototype._encodeValue = function(v, t, writer, omitEmpty) {
       }
       writer.writeUint(v);
       return true;
-    case Kind.INT16:
-    case Kind.INT32:
-    case Kind.INT64:
+    case kind.INT16:
+    case kind.INT32:
+    case kind.INT64:
       if (!v && omitEmpty) {
         return false;
       }
@@ -99,15 +99,15 @@ Encoder.prototype._encodeValue = function(v, t, writer, omitEmpty) {
       }
       writer.writeInt(v);
       return true;
-    case Kind.FLOAT32:
-    case Kind.FLOAT64:
+    case kind.FLOAT32:
+    case kind.FLOAT64:
       if (!v && omitEmpty) {
         return false;
       }
       writer.writeFloat(v);
       return true;
-    case Kind.COMPLEX64:
-    case Kind.COMPLEX128:
+    case kind.COMPLEX64:
+    case kind.COMPLEX128:
       if (typeof v === 'object') {
         if (v.real === 0 && v.imag === 0 && omitEmpty) {
           return false;
@@ -124,31 +124,31 @@ Encoder.prototype._encodeValue = function(v, t, writer, omitEmpty) {
         return true;
       }
       return false;
-    case Kind.STRING:
+    case kind.STRING:
       if (v === '' && omitEmpty) {
         return false;
       }
       writer.writeString(v);
       return true;
-    case Kind.ENUM:
+    case kind.ENUM:
       return this._encodeEnum(v, t, writer, omitEmpty);
-    case Kind.LIST:
+    case kind.LIST:
       return this._encodeList(v, t, writer, omitEmpty);
-    case Kind.ARRAY:
+    case kind.ARRAY:
       return this._encodeArray(v, t, writer, omitEmpty);
-    case Kind.SET:
+    case kind.SET:
       return this._encodeSet(v, t, writer, omitEmpty);
-    case Kind.MAP:
+    case kind.MAP:
       return this._encodeMap(v, t, writer, omitEmpty);
-    case Kind.STRUCT:
+    case kind.STRUCT:
       return this._encodeStruct(v, t, writer, omitEmpty);
-    case Kind.UNION:
+    case kind.UNION:
       return this._encodeUnion(v, t, writer, omitEmpty);
-    case Kind.ANY:
+    case kind.ANY:
       return this._encodeAny(v, writer, omitEmpty);
-    case Kind.OPTIONAL:
+    case kind.OPTIONAL:
       return this._encodeOptional(v, t, writer, omitEmpty);
-    case Kind.TYPEOBJECT:
+    case kind.TYPEOBJECT:
       var typeId = this._typeEncoder.encodeType(this._messageWriter, v);
       if (typeId === BootstrapTypes.definitions.ANY.id && omitEmpty) {
         return false;
@@ -230,7 +230,7 @@ Encoder.prototype._encodeStruct = function(v, t, writer, omitEmpty) {
 };
 
 Encoder.prototype._writeSequence = function(v, t, writer) {
-  if (t.elem.kind === Kind.BYTE) {
+  if (t.elem.kind === kind.BYTE) {
     // Byte sequences can be copied directly from the input Uint8Array.
     writer._writeRawBytes(v);
     return;

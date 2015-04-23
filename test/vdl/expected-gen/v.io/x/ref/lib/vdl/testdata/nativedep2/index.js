@@ -16,10 +16,10 @@ module.exports = {};
 
 // Types:
 var _typeMyTime = new vdl.Type();
-_typeMyTime.kind = vdl.Kind.INT32;
+_typeMyTime.kind = vdl.kind.INT32;
 _typeMyTime.name = "v.io/x/ref/lib/vdl/testdata/nativedep2.MyTime";
 _typeMyTime.freeze();
-module.exports.MyTime = (vdl.Registry.lookupOrCreateConstructor(_typeMyTime));
+module.exports.MyTime = (vdl.registry.lookupOrCreateConstructor(_typeMyTime));
 
 
 

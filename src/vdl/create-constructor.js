@@ -4,7 +4,7 @@
 
 // Defines a function that creates a constructor for the specified type.
 
-var Kind = require('./kind.js');
+var kind = require('./kind.js');
 var canonicalize = require('./canonicalize.js');
 
 // TODO(bprosnitz) Test generated constructor pass validation logic.
@@ -18,32 +18,32 @@ var canonicalize = require('./canonicalize.js');
 module.exports = function createConstructor(type) {
   var constructor;
   switch (type.kind) {
-    case Kind.OPTIONAL:
-    case Kind.ANY:
-    case Kind.BOOL:
-    case Kind.BYTE:
-    case Kind.UINT16:
-    case Kind.UINT32:
-    case Kind.UINT64:
-    case Kind.INT16:
-    case Kind.INT32:
-    case Kind.INT64:
-    case Kind.FLOAT32:
-    case Kind.FLOAT64:
-    case Kind.COMPLEX64:
-    case Kind.COMPLEX128:
-    case Kind.STRING:
-    case Kind.ENUM:
-    case Kind.TYPEOBJECT:
+    case kind.OPTIONAL:
+    case kind.ANY:
+    case kind.BOOL:
+    case kind.BYTE:
+    case kind.UINT16:
+    case kind.UINT32:
+    case kind.UINT64:
+    case kind.INT16:
+    case kind.INT32:
+    case kind.INT64:
+    case kind.FLOAT32:
+    case kind.FLOAT64:
+    case kind.COMPLEX64:
+    case kind.COMPLEX128:
+    case kind.STRING:
+    case kind.ENUM:
+    case kind.TYPEOBJECT:
     // TODO(bprosnitz) Should we treat collections differently?
-    case Kind.SET:
-    case Kind.MAP:
-    case Kind.ARRAY:
-    case Kind.LIST:
+    case kind.SET:
+    case kind.MAP:
+    case kind.ARRAY:
+    case kind.LIST:
       constructor = createWrappedConstructor();
       break;
-    case Kind.UNION:
-    case Kind.STRUCT:
+    case kind.UNION:
+    case kind.STRUCT:
       constructor = createStructConstructor();
       break;
     default:

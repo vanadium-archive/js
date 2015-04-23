@@ -34,42 +34,42 @@ var _typeGranterResponse = new vdl.Type();
 var _typeRpcCallOption = new vdl.Type();
 var _typeRpcRequest = new vdl.Type();
 var _typeRpcResponse = new vdl.Type();
-_type1.kind = vdl.Kind.LIST;
+_type1.kind = vdl.kind.LIST;
 _type1.name = "";
 _type1.elem = _typeRpcCallOption;
-_type2.kind = vdl.Kind.LIST;
+_type2.kind = vdl.kind.LIST;
 _type2.name = "";
 _type2.elem = new security.BlessingPattern()._type;
-_type3.kind = vdl.Kind.LIST;
+_type3.kind = vdl.kind.LIST;
 _type3.name = "";
-_type3.elem = vdl.Types.ANY;
-_type4.kind = vdl.Kind.LIST;
+_type3.elem = vdl.types.ANY;
+_type4.kind = vdl.kind.LIST;
 _type4.name = "";
 _type4.elem = new security.Caveat()._type;
-_type5.kind = vdl.Kind.OPTIONAL;
+_type5.kind = vdl.kind.OPTIONAL;
 _type5.name = "";
 _type5.elem = new principal.JsBlessings()._type;
-_type6.kind = vdl.Kind.LIST;
+_type6.kind = vdl.kind.LIST;
 _type6.name = "";
-_type6.elem = vdl.Types.STRING;
-_type7.kind = vdl.Kind.LIST;
+_type6.elem = vdl.types.STRING;
+_type7.kind = vdl.kind.LIST;
 _type7.name = "";
 _type7.elem = new signature.Interface()._type;
-_typeGranterHandle.kind = vdl.Kind.INT32;
+_typeGranterHandle.kind = vdl.kind.INT32;
 _typeGranterHandle.name = "v.io/x/ref/services/wspr/internal/app.GranterHandle";
-_typeGranterRequest.kind = vdl.Kind.STRUCT;
+_typeGranterRequest.kind = vdl.kind.STRUCT;
 _typeGranterRequest.name = "v.io/x/ref/services/wspr/internal/app.GranterRequest";
 _typeGranterRequest.fields = [{name: "GranterHandle", type: _typeGranterHandle}, {name: "Call", type: new server.SecurityCall()._type}];
-_typeGranterResponse.kind = vdl.Kind.STRUCT;
+_typeGranterResponse.kind = vdl.kind.STRUCT;
 _typeGranterResponse.name = "v.io/x/ref/services/wspr/internal/app.GranterResponse";
-_typeGranterResponse.fields = [{name: "Blessings", type: new principal.BlessingsHandle()._type}, {name: "Err", type: vdl.Types.ERROR}];
-_typeRpcCallOption.kind = vdl.Kind.UNION;
+_typeGranterResponse.fields = [{name: "Blessings", type: new principal.BlessingsHandle()._type}, {name: "Err", type: vdl.types.ERROR}];
+_typeRpcCallOption.kind = vdl.kind.UNION;
 _typeRpcCallOption.name = "v.io/x/ref/services/wspr/internal/app.RpcCallOption";
 _typeRpcCallOption.fields = [{name: "AllowedServersPolicy", type: _type2}, {name: "RetryTimeout", type: new time.Duration()._type}, {name: "UseGranter", type: _typeGranterHandle}];
-_typeRpcRequest.kind = vdl.Kind.STRUCT;
+_typeRpcRequest.kind = vdl.kind.STRUCT;
 _typeRpcRequest.name = "v.io/x/ref/services/wspr/internal/app.RpcRequest";
-_typeRpcRequest.fields = [{name: "Name", type: vdl.Types.STRING}, {name: "Method", type: vdl.Types.STRING}, {name: "NumInArgs", type: vdl.Types.INT32}, {name: "NumOutArgs", type: vdl.Types.INT32}, {name: "IsStreaming", type: vdl.Types.BOOL}, {name: "Deadline", type: new time.WireDeadline()._type}, {name: "TraceRequest", type: new vtrace.Request()._type}, {name: "CallOptions", type: _type1}];
-_typeRpcResponse.kind = vdl.Kind.STRUCT;
+_typeRpcRequest.fields = [{name: "Name", type: vdl.types.STRING}, {name: "Method", type: vdl.types.STRING}, {name: "NumInArgs", type: vdl.types.INT32}, {name: "NumOutArgs", type: vdl.types.INT32}, {name: "IsStreaming", type: vdl.types.BOOL}, {name: "Deadline", type: new time.WireDeadline()._type}, {name: "TraceRequest", type: new vtrace.Request()._type}, {name: "CallOptions", type: _type1}];
+_typeRpcResponse.kind = vdl.kind.STRUCT;
 _typeRpcResponse.name = "v.io/x/ref/services/wspr/internal/app.RpcResponse";
 _typeRpcResponse.fields = [{name: "OutArgs", type: _type3}, {name: "TraceResponse", type: new vtrace.Response()._type}];
 _type1.freeze();
@@ -85,12 +85,12 @@ _typeGranterResponse.freeze();
 _typeRpcCallOption.freeze();
 _typeRpcRequest.freeze();
 _typeRpcResponse.freeze();
-module.exports.GranterHandle = (vdl.Registry.lookupOrCreateConstructor(_typeGranterHandle));
-module.exports.GranterRequest = (vdl.Registry.lookupOrCreateConstructor(_typeGranterRequest));
-module.exports.GranterResponse = (vdl.Registry.lookupOrCreateConstructor(_typeGranterResponse));
-module.exports.RpcCallOption = (vdl.Registry.lookupOrCreateConstructor(_typeRpcCallOption));
-module.exports.RpcRequest = (vdl.Registry.lookupOrCreateConstructor(_typeRpcRequest));
-module.exports.RpcResponse = (vdl.Registry.lookupOrCreateConstructor(_typeRpcResponse));
+module.exports.GranterHandle = (vdl.registry.lookupOrCreateConstructor(_typeGranterHandle));
+module.exports.GranterRequest = (vdl.registry.lookupOrCreateConstructor(_typeGranterRequest));
+module.exports.GranterResponse = (vdl.registry.lookupOrCreateConstructor(_typeGranterResponse));
+module.exports.RpcCallOption = (vdl.registry.lookupOrCreateConstructor(_typeRpcCallOption));
+module.exports.RpcRequest = (vdl.registry.lookupOrCreateConstructor(_typeRpcRequest));
+module.exports.RpcResponse = (vdl.registry.lookupOrCreateConstructor(_typeRpcResponse));
 
 
 
@@ -189,12 +189,12 @@ Controller.prototype._serviceDescription = {
     inArgs: [{
       name: 'name',
       doc: "",
-      type: vdl.Types.STRING
+      type: vdl.types.STRING
     },
     {
       name: 'serverId',
       doc: "",
-      type: vdl.Types.UINT32
+      type: vdl.types.UINT32
     },
     ],
     outArgs: [],
@@ -210,7 +210,7 @@ Controller.prototype._serviceDescription = {
     inArgs: [{
       name: 'serverId',
       doc: "",
-      type: vdl.Types.UINT32
+      type: vdl.types.UINT32
     },
     ],
     outArgs: [],
@@ -226,12 +226,12 @@ Controller.prototype._serviceDescription = {
     inArgs: [{
       name: 'serverId',
       doc: "",
-      type: vdl.Types.UINT32
+      type: vdl.types.UINT32
     },
     {
       name: 'name',
       doc: "",
-      type: vdl.Types.STRING
+      type: vdl.types.STRING
     },
     ],
     outArgs: [],
@@ -247,12 +247,12 @@ Controller.prototype._serviceDescription = {
     inArgs: [{
       name: 'serverId',
       doc: "",
-      type: vdl.Types.UINT32
+      type: vdl.types.UINT32
     },
     {
       name: 'name',
       doc: "",
-      type: vdl.Types.STRING
+      type: vdl.types.STRING
     },
     ],
     outArgs: [],
@@ -284,7 +284,7 @@ Controller.prototype._serviceDescription = {
     inArgs: [{
       name: 'publicKey',
       doc: "",
-      type: vdl.Types.STRING
+      type: vdl.types.STRING
     },
     {
       name: 'blessingHandle',
@@ -294,7 +294,7 @@ Controller.prototype._serviceDescription = {
     {
       name: 'extension',
       doc: "",
-      type: vdl.Types.STRING
+      type: vdl.types.STRING
     },
     {
       name: 'caveat',
@@ -305,7 +305,7 @@ Controller.prototype._serviceDescription = {
     outArgs: [{
       name: '',
       doc: "",
-      type: vdl.Types.STRING
+      type: vdl.types.STRING
     },
     {
       name: '',
@@ -325,7 +325,7 @@ Controller.prototype._serviceDescription = {
     inArgs: [{
       name: 'name',
       doc: "",
-      type: vdl.Types.STRING
+      type: vdl.types.STRING
     },
     {
       name: 'caveats',
@@ -336,7 +336,7 @@ Controller.prototype._serviceDescription = {
     outArgs: [{
       name: '',
       doc: "",
-      type: vdl.Types.STRING
+      type: vdl.types.STRING
     },
     {
       name: '',
@@ -398,12 +398,12 @@ Controller.prototype._serviceDescription = {
     inArgs: [{
       name: 'name',
       doc: "",
-      type: vdl.Types.STRING
+      type: vdl.types.STRING
     },
     {
       name: 'method',
       doc: "",
-      type: vdl.Types.STRING
+      type: vdl.types.STRING
     },
     ],
     outArgs: [{
@@ -424,7 +424,7 @@ Controller.prototype._serviceDescription = {
     inArgs: [{
       name: 'name',
       doc: "",
-      type: vdl.Types.STRING
+      type: vdl.types.STRING
     },
     ],
     outArgs: [{

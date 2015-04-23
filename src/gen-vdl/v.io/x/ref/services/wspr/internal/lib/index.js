@@ -21,28 +21,28 @@ var _type1 = new vdl.Type();
 var _typeLogLevel = new vdl.Type();
 var _typeLogMessage = new vdl.Type();
 var _typeServerRpcReply = new vdl.Type();
-_type1.kind = vdl.Kind.LIST;
+_type1.kind = vdl.kind.LIST;
 _type1.name = "";
-_type1.elem = vdl.Types.ANY;
-_typeLogLevel.kind = vdl.Kind.ENUM;
+_type1.elem = vdl.types.ANY;
+_typeLogLevel.kind = vdl.kind.ENUM;
 _typeLogLevel.name = "v.io/x/ref/services/wspr/internal/lib.LogLevel";
 _typeLogLevel.labels = ["Info", "Error"];
-_typeLogMessage.kind = vdl.Kind.STRUCT;
+_typeLogMessage.kind = vdl.kind.STRUCT;
 _typeLogMessage.name = "v.io/x/ref/services/wspr/internal/lib.LogMessage";
-_typeLogMessage.fields = [{name: "Level", type: _typeLogLevel}, {name: "Message", type: vdl.Types.STRING}];
-_typeServerRpcReply.kind = vdl.Kind.STRUCT;
+_typeLogMessage.fields = [{name: "Level", type: _typeLogLevel}, {name: "Message", type: vdl.types.STRING}];
+_typeServerRpcReply.kind = vdl.kind.STRUCT;
 _typeServerRpcReply.name = "v.io/x/ref/services/wspr/internal/lib.ServerRpcReply";
-_typeServerRpcReply.fields = [{name: "Results", type: _type1}, {name: "Err", type: vdl.Types.ERROR}, {name: "TraceResponse", type: new vtrace.Response()._type}];
+_typeServerRpcReply.fields = [{name: "Results", type: _type1}, {name: "Err", type: vdl.types.ERROR}, {name: "TraceResponse", type: new vtrace.Response()._type}];
 _type1.freeze();
 _typeLogLevel.freeze();
 _typeLogMessage.freeze();
 _typeServerRpcReply.freeze();
 module.exports.LogLevel = {
-  INFO: canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeLogLevel))('Info', true), _typeLogLevel),
-  ERROR: canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeLogLevel))('Error', true), _typeLogLevel),
+  INFO: canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeLogLevel))('Info', true), _typeLogLevel),
+  ERROR: canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeLogLevel))('Error', true), _typeLogLevel),
 };
-module.exports.LogMessage = (vdl.Registry.lookupOrCreateConstructor(_typeLogMessage));
-module.exports.ServerRpcReply = (vdl.Registry.lookupOrCreateConstructor(_typeServerRpcReply));
+module.exports.LogMessage = (vdl.registry.lookupOrCreateConstructor(_typeLogMessage));
+module.exports.ServerRpcReply = (vdl.registry.lookupOrCreateConstructor(_typeServerRpcReply));
 
 
 

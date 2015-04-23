@@ -12,9 +12,9 @@
 
 var BigInt = require('./big-int.js');
 var Complex = require('./complex.js');
-var Kind = require('./kind.js');
-var Registry; // Must be lazily required to avoid circular dependency.
-var Types = require('./types.js');
+var kind = require('./kind.js');
+var registry; // Must be lazily required to avoid circular dependency.
+var types = require('./types.js');
 var Type = require('./type.js');
 var TypeUtil = require('./type-util.js');
 var guessType = require('./guess-type.js');
@@ -23,7 +23,7 @@ var overflow = require('./overflow.js');
 var util = require('./util.js');
 var stringify = require('./stringify.js');
 var typeCompatible = require('./type-compatible.js');
-var typeObjectFromKind = require('./type-object-from-kind.js');
+var typeObjectFromkind = require('./type-object-from-kind.js');
 var nativeTypeRegistry = require('./native-type-registry');
 require('./es6-shim');
 
@@ -43,7 +43,7 @@ var ZERO_BIGINT = new BigInt(0, new Uint8Array());
  * Creates a new copy of inValue that is the canonical wire format of inValue.
  * @function
  * @name fill
- * @memberof module:vanadium.vdl.Canonicalize
+ * @memberof module:vanadium.vdl.canonicalize
  * @param {*} inValue The value to convert to the wire format
  * @param {module:vanadium.vdl.Type} t The type of inValue
  * @return {*} The canonical wire format of inValue
@@ -57,7 +57,7 @@ function canonicalizeFill(inValue, t) {
  * inValue.
  * @function
  * @name reduce
- * @memberof module:vanadium.vdl.Canonicalize
+ * @memberof module:vanadium.vdl.canonicalize
  * @param {*} inValue The value to convert to the in memory format
  * @param {module:vanadium.vdl.Type} t The type of inValue
  * @return {*} The canonical in-format of inValue
@@ -121,7 +121,7 @@ function canonicalize(inValue, inType, t, deepWrap, seen, isTopLevelValue) {
   var needsWrap = deepWrap || isTopLevelValue;
 
   // Special case JSValue. Convert the inValue to JSValue form.
-  var isJSValue = Types.JSVALUE.equals(t);
+  var isJSValue = types.JSVALUE.equals(t);
   if (isJSValue) {
     inValue = jsValueConvert.fromNative(inValue);
   }
@@ -133,7 +133,7 @@ function canonicalize(inValue, inType, t, deepWrap, seen, isTopLevelValue) {
 
   // Check for type convertibility; fail early if the types are incompatible.
   if (!typeCompatible(inType, t)) {
-    if (inType.kind !== Kind.TYPEOBJECT) {
+    if (inType.kind !== kind.TYPEOBJECT) {
       throw new TypeError(inType + ' and ' + t +
         ' are not compatible');
     }
@@ -141,15 +141,15 @@ function canonicalize(inValue, inType, t, deepWrap, seen, isTopLevelValue) {
 
   // If the inType is ANY and inValue's type is ANY, then unwrap and try again.
   // This allows any(foo) to be converted to foo.
-  if (Types.ANY.equals(inType) && TypeUtil.isTyped(inValue) &&
-    Types.ANY.equals(inValue._type)) {
+  if (types.ANY.equals(inType) && TypeUtil.isTyped(inValue) &&
+    types.ANY.equals(inValue._type)) {
 
     return canonicalize(TypeUtil.unwrap(inValue), inValue._type, t, deepWrap,
       seen, isTopLevelValue);
   }
 
   // Special case TypeObject. See canonicalizeType.
-  if (t.kind === Kind.TYPEOBJECT) {
+  if (t.kind === kind.TYPEOBJECT) {
     return canonicalizeType(inValue, seen);
   }
 
@@ -186,7 +186,7 @@ function canonicalize(inValue, inType, t, deepWrap, seen, isTopLevelValue) {
   // _type as a field using Object.define.
   var canonValue;
   var v;
-  if (t.kind === Kind.ANY) {
+  if (t.kind === kind.ANY) {
     // TODO(alexfandrianto): This logic is complex and unwieldy.
     // See https://github.com/veyron/release-issues/issues/1149
 
@@ -195,14 +195,14 @@ function canonicalize(inValue, inType, t, deepWrap, seen, isTopLevelValue) {
     var dropped = unwrapAndGuessType(inValue);
     v = dropped.unwrappedValue;
 
-    // Note: guessType is Types.ANY whenever v is null or undefined.
+    // Note: guessType is types.ANY whenever v is null or undefined.
     // However, we should use inType if present.
     var guessedType = dropped.guessedType;
-    if (inType && inType.kind !== Kind.ANY) {
+    if (inType && inType.kind !== kind.ANY) {
       guessedType = inType;
     }
 
-    if (guessedType.kind === Kind.ANY) {
+    if (guessedType.kind === kind.ANY) {
       canonValue = null;
     } else {
       // The value inside an ANY needs to be canonicalized as a top-level value.
@@ -263,7 +263,7 @@ function canonicalizeInternal(deepWrap, v, inType, t, seen, outValue) {
     // Otherwise, canonicalize but remove the top-level wrapping.
     // The top-level will be reapplied by this function's caller.
     return TypeUtil.unwrap(canonicalize(zero, inType, t, true, seen, false));
-  } else if (v === null && (t.kind !== Kind.ANY && t.kind !== Kind.OPTIONAL)) {
+  } else if (v === null && (t.kind !== kind.ANY && t.kind !== kind.OPTIONAL)) {
     throw makeError(v, t, 'value is null for non-optional type');
   }
 
@@ -274,29 +274,29 @@ function canonicalizeInternal(deepWrap, v, inType, t, seen, outValue) {
   var i;
   // Otherwise, the value is defined; validate it and canonicalize the value.
   switch(t.kind) {
-    case Kind.ANY:
+    case kind.ANY:
       // Any values are canonicalized with their internal value instead.
       throw new Error('Unreachable; Any values are always extracted and then ' +
         'canonicalized.');
-    case Kind.OPTIONAL:
+    case kind.OPTIONAL:
       // Verify the value is null or the correct Optional element.
       if (v === null) {
         return null;
       }
       return canonicalize(v, inElemType, t.elem, deepWrap, seen, false);
-    case Kind.BOOL:
+    case kind.BOOL:
       // Verify the value is a boolean.
       if (typeof v !== 'boolean') {
         throw makeError(v, t, 'value is not a boolean');
       }
       return v;
-    case Kind.BYTE:
-    case Kind.UINT16:
-    case Kind.UINT32:
-    case Kind.INT16:
-    case Kind.INT32:
-    case Kind.FLOAT32:
-    case Kind.FLOAT64:
+    case kind.BYTE:
+    case kind.UINT16:
+    case kind.UINT32:
+    case kind.INT16:
+    case kind.INT32:
+    case kind.FLOAT32:
+    case kind.FLOAT64:
       // Verify this is a valid number value and then convert.
       if (typeof v === 'number' || v instanceof BigInt || isComplex(v)) {
 
@@ -304,13 +304,13 @@ function canonicalizeInternal(deepWrap, v, inType, t, seen, outValue) {
         assertRealNumber(v, t);
 
         // Non-floats must be integers.
-        if (t.kind !== Kind.FLOAT32 && t.kind !== Kind.FLOAT64) {
+        if (t.kind !== kind.FLOAT32 && t.kind !== kind.FLOAT64) {
           assertInteger(v, t);
         }
 
         // Uints must be non-negative.
-        if (t.kind === Kind.BYTE || t.kind === Kind.UINT16 ||
-          t.kind === Kind.UINT32) {
+        if (t.kind === kind.BYTE || t.kind === kind.UINT16 ||
+          t.kind === kind.UINT32) {
 
           assertNonNegativeNumber(v, t);
         }
@@ -319,29 +319,29 @@ function canonicalizeInternal(deepWrap, v, inType, t, seen, outValue) {
         return convertToNativeNumber(v, t);
       }
       throw makeError(v, t, 'value is not a number');
-    case Kind.UINT64:
-    case Kind.INT64:
+    case kind.UINT64:
+    case kind.INT64:
       // Verify this is a valid number value and then convert.
       if (typeof v === 'number' || v instanceof BigInt || isComplex(v)) {
 
         // These numbers must be real integers.
         assertRealNumber(v, t);
         assertInteger(v, t);
-        if (t.kind === Kind.UINT64) {
+        if (t.kind === kind.UINT64) {
           assertNonNegativeNumber(v, t); // also non-negative
         }
         return convertToBigIntNumber(v, t);
       }
       throw makeError(v, t, 'value is not a number or BigInt');
-    case Kind.COMPLEX64:
-    case Kind.COMPLEX128:
+    case kind.COMPLEX64:
+    case kind.COMPLEX128:
       if (typeof v === 'number' || v instanceof BigInt || isComplex(v)) {
         return convertToComplexNumber(v, t);
       }
       throw makeError(v, t, 'value is not a number or object of the form ' +
         '{ real: <number>, imag: <number> }');
-    case Kind.STRING:
-    case Kind.ENUM:
+    case kind.STRING:
+    case kind.ENUM:
       // Determine the string representation.
       var str;
       if (typeof v === 'string') {
@@ -353,20 +353,20 @@ function canonicalizeInternal(deepWrap, v, inType, t, seen, outValue) {
       }
 
       // For enums, check that the string actually appears in the labels.
-      if (t.kind === Kind.ENUM && t.labels.indexOf(str) === -1) {
+      if (t.kind === kind.ENUM && t.labels.indexOf(str) === -1) {
         throw makeError(v, t, 'value refers to unexpected label: ' + v);
       }
       return str;
-    case Kind.TYPEOBJECT:
+    case kind.TYPEOBJECT:
       // TypeObjects are canonicalized with a fake type, so they should never
       // reach this case.
       throw new Error('Unreachable; TypeObjects use canonicalizeType.');
-    case Kind.LIST:
-    case Kind.ARRAY:
+    case kind.LIST:
+    case kind.ARRAY:
       // Verify the list/array and its internal contents.
       // Values whose length exceeds the array length cannot convert.
       var neededLen = v.length;
-      if (t.kind === Kind.ARRAY) {
+      if (t.kind === kind.ARRAY) {
         if (v.length > t.len) {
           throw makeError(v, t, 'value has length ' + v.length +
             ', which exceeds type length ' + t.len);
@@ -375,7 +375,7 @@ function canonicalizeInternal(deepWrap, v, inType, t, seen, outValue) {
       }
 
       // Special-case: Byte slices and byte arrays are treated like strings.
-      if (t.elem.kind === Kind.BYTE) {
+      if (t.elem.kind === kind.BYTE) {
         // Then v can be a string or Uint8Array.
         if (v instanceof Uint8Array) {
           return v;
@@ -398,7 +398,7 @@ function canonicalizeInternal(deepWrap, v, inType, t, seen, outValue) {
           seen, false);
       }
       return outValue;
-    case Kind.SET:
+    case kind.SET:
       // Verify that the value can be converted to an ES6 Set; return that copy.
       if (typeof v !== 'object') {
         throw makeError(v, t, 'value is not an object');
@@ -406,12 +406,12 @@ function canonicalizeInternal(deepWrap, v, inType, t, seen, outValue) {
         // Map is allowed to convert to Set, but it could fail.
         v = mapToSet(v, t);
       } else if (!(v instanceof Set) && !Array.isArray(v)) {
-        if (t.key.kind !== Kind.STRING) {
+        if (t.key.kind !== kind.STRING) {
           throw makeError(v, t, 'cannot encode Object as VDL set with ' +
             'non-string key type. Use Set instead.');
         }
         v = objectToSet(v);       // v now refers to a Set instead of an Object.
-        inKeyType = Types.STRING; // Object keys are strings.
+        inKeyType = types.STRING; // Object keys are strings.
       }
 
       // Recurse: Validate internal keys.
@@ -422,7 +422,7 @@ function canonicalizeInternal(deepWrap, v, inType, t, seen, outValue) {
       });
 
       return outValue;
-    case Kind.MAP:
+    case kind.MAP:
       var useInTypeForElem = false; // Only used for struct/object => Map.
 
       // Verify that the value can be converted to an ES6 Map; return that copy.
@@ -431,14 +431,14 @@ function canonicalizeInternal(deepWrap, v, inType, t, seen, outValue) {
       } else if (v instanceof Set) {
         // Sets can always upconvert to Maps.
         v = setToMap(v);
-        inElemType = Types.BOOL; // Set should use bool as elem type.
+        inElemType = types.BOOL; // Set should use bool as elem type.
       } else if (!(v instanceof Map)) {
-        if (t.key.kind !== Kind.STRING) {
+        if (t.key.kind !== kind.STRING) {
           throw makeError(v, t, 'cannot encode Object as VDL map with ' +
            'non-string key type. Use Map instead.');
         }
         v = objectToMap(v);       // v now refers to a Map instead of an Object.
-        inKeyType = Types.STRING; // Object keys are strings.
+        inKeyType = types.STRING; // Object keys are strings.
         // inElemType might change every time though! Set a flag.
         useInTypeForElem = true;
       }
@@ -446,7 +446,7 @@ function canonicalizeInternal(deepWrap, v, inType, t, seen, outValue) {
       // Recurse: Validate internal keys and values.
       outValue = new Map();
       v.forEach(function(val, key) {
-        if (useInTypeForElem && inType && inType.kind === Kind.STRUCT) {
+        if (useInTypeForElem && inType && inType.kind === kind.STRUCT) {
           inElemType = lookupFieldType(inType, key);
         }
         outValue.set(
@@ -456,7 +456,7 @@ function canonicalizeInternal(deepWrap, v, inType, t, seen, outValue) {
       });
 
       return outValue;
-    case Kind.STRUCT:
+    case kind.STRUCT:
       // Verify that the Struct and all its internal fields.
       // TODO(alexfandrianto): We may want to disallow other types of objects
       // (e.g., Uint8Array, Complex, and BigInt).
@@ -488,7 +488,7 @@ function canonicalizeInternal(deepWrap, v, inType, t, seen, outValue) {
       }
 
       return outValue;
-    case Kind.UNION:
+    case kind.UNION:
       // Verify that the Union contains 1 field, 0-filling if there are none.
       if (typeof v !== 'object' || Array.isArray(v)) {
         throw makeError(v, t, 'value is not an object');
@@ -540,35 +540,35 @@ function canonicalizeInternal(deepWrap, v, inType, t, seen, outValue) {
  */
 function zeroValue(t) {
   switch(t.kind) {
-    case Kind.ANY:
-    case Kind.OPTIONAL:
+    case kind.ANY:
+    case kind.OPTIONAL:
       return null;
-    case Kind.BOOL:
+    case kind.BOOL:
       return false;
-    case Kind.BYTE:
-    case Kind.UINT16:
-    case Kind.UINT32:
-    case Kind.INT16:
-    case Kind.INT32:
-    case Kind.FLOAT32:
-    case Kind.FLOAT64:
+    case kind.BYTE:
+    case kind.UINT16:
+    case kind.UINT32:
+    case kind.INT16:
+    case kind.INT32:
+    case kind.FLOAT32:
+    case kind.FLOAT64:
       return 0;
-    case Kind.UINT64:
-    case Kind.INT64:
+    case kind.UINT64:
+    case kind.INT64:
       return ZERO_BIGINT;
-    case Kind.COMPLEX64:
-    case Kind.COMPLEX128:
+    case kind.COMPLEX64:
+    case kind.COMPLEX128:
       return new Complex(0, 0);
-    case Kind.STRING:
+    case kind.STRING:
       return '';
-    case Kind.ENUM:
+    case kind.ENUM:
       return t.labels[0];
-    case Kind.TYPEOBJECT:
-      return Types.ANY;
-    case Kind.ARRAY:
-    case Kind.LIST:
+    case kind.TYPEOBJECT:
+      return types.ANY;
+    case kind.ARRAY:
+    case kind.LIST:
       var len = t.len || 0;
-      if (t.elem.kind === Kind.BYTE) {
+      if (t.elem.kind === kind.BYTE) {
         return new Uint8Array(len);
       }
       var arr = new Array(len);
@@ -576,16 +576,16 @@ function zeroValue(t) {
         arr[arri] = zeroValue(t.elem);
       }
       return arr;
-    case Kind.SET:
+    case kind.SET:
       return new Set();
-    case Kind.MAP:
+    case kind.MAP:
       return new Map();
-    case Kind.UNION:
+    case kind.UNION:
       var zeroUnion = {};
       var name = util.uncapitalize(t.fields[0].name);
       zeroUnion[name] = zeroValue(t.fields[0].type);
       return zeroUnion;
-    case Kind.STRUCT:
+    case kind.STRUCT:
       return t.fields.reduce(function(obj, curr) {
         var name = util.uncapitalize(curr.name);
         obj[name] = zeroValue(curr.type);
@@ -631,26 +631,26 @@ function canonicalizeTypeExternal(t) {
  */
 function canonicalizeType(type, seen) {
   if (type === undefined) {
-    // We whitelist undefined and return Types.ANY. This check matches
+    // We whitelist undefined and return types.ANY. This check matches
     // canonicalizeValue's undefined => zeroValue(type).
-    return zeroValue(Types.TYPEOBJECT);
+    return zeroValue(types.TYPEOBJECT);
   } else {
-    var cached = getFromSeenCache(seen, type, Types.TYPEOBJECT);
+    var cached = getFromSeenCache(seen, type, types.TYPEOBJECT);
     if (cached !== undefined) {
       return cached;
     }
   }
 
   if (!type.hasOwnProperty('kind')) {
-    throw new TypeError('Kind not specified');
+    throw new TypeError('kind not specified');
   }
   if (typeof type.kind !== 'number') {
-    throw new TypeError('Kind expected to be a number. Got ' + type.kind);
+    throw new TypeError('kind expected to be a number. Got ' + type.kind);
   }
 
   // The Type for each kind has its own Type Object.
   // Verify deeply that the given type is in the correct form.
-  var typeOfType = typeObjectFromKind(type.kind);
+  var typeOfType = typeObjectFromkind(type.kind);
 
   // If the type has a field that is not relevant to its kind, then throw.
   Object.keys(type).forEach(function(key) {
@@ -670,7 +670,7 @@ function canonicalizeType(type, seen) {
     false);
 
   // Certain types may not be named.
-  if (type.kind === Kind.ANY || type.kind === Kind.TYPEOBJECT) {
+  if (type.kind === kind.ANY || type.kind === kind.TYPEOBJECT) {
     if (canonType.name !== '') {
       throw makeError(
         canonType,
@@ -681,7 +681,7 @@ function canonicalizeType(type, seen) {
 
 
   // Union needs at least 1 field.
-  if (type.kind === Kind.UNION && canonType.fields.length <= 0) {
+  if (type.kind === kind.UNION && canonType.fields.length <= 0) {
     throw makeError(canonType, typeOfType, 'union needs >=1 field');
   }
 
@@ -751,8 +751,8 @@ function mapToSet(m, t) {
  */
 function getObjectWithType(t, v) {
   // Get the proper constructor from the Registry.
-  Registry = Registry || require('./registry.js');
-  var Constructor = Registry.lookupOrCreateConstructor(t);
+  registry = registry || require('./registry.js');
+  var Constructor = registry.lookupOrCreateConstructor(t);
 
   if (v && nativeTypeRegistry.hasNativeType(t)) {
     Constructor = v.constructor;
@@ -798,14 +798,14 @@ function getFromSeenCache(seen, oldRef, type) {
 
 /**
  * Recursively unwraps v to drop excess ANY. Guesses the type, after.
- * Ex: null => { unwrappedValue: undefined, guessedType: Types.ANY }
+ * Ex: null => { unwrappedValue: undefined, guessedType: types.ANY }
  * Ex: { val: null, of type ANY } =>
- *     { unwrappedValue: undefined, guessedType: Types.ANY }
+ *     { unwrappedValue: undefined, guessedType: types.ANY }
  * Ex: ANY in ANY with null =>
- *     { unwrappedValue: undefined, guessedType: Types.ANY }
+ *     { unwrappedValue: undefined, guessedType: types.ANY }
  * Ex: wrapped primitive =>
        { unwrappedValue: primitive, guessedType: typeOfPrimitiveWrapper }
- * Ex: nativeVal => { unwrappedValue: nativeVal, guessedType: Types.JSVALUE }
+ * Ex: nativeVal => { unwrappedValue: nativeVal, guessedType: types.JSVALUE }
  * @param{any} v The value which may have nested ANY
  * @return{object} Object with guessedType => type and unwrappedValue => value
  * @private
@@ -814,11 +814,11 @@ function unwrapAndGuessType(v) {
   if (v === null || v === undefined) {
     return {
       unwrappedValue: undefined,
-      guessedType: Types.ANY
+      guessedType: types.ANY
     };
   }
   var t = guessType(v);
-  if (t.kind !== Kind.ANY) {
+  if (t.kind !== kind.ANY) {
     return {
       unwrappedValue: v,
       guessedType: t
@@ -830,7 +830,7 @@ function unwrapAndGuessType(v) {
 /**
  * Finds the correct struct/union field type given a field name.
  * We rely on type compatibility to ensure that only Struct has leeway.
- * Maps use their elem as the field type, while Sets use Types.BOOL.
+ * Maps use their elem as the field type, while Sets use types.BOOL.
  * @private
  */
 function lookupFieldType(t, fieldName) {
@@ -840,12 +840,12 @@ function lookupFieldType(t, fieldName) {
 
   // Maps, Sets, Union, and Structs can have a field type by name.
   switch(t.kind) {
-    case Kind.MAP:
+    case kind.MAP:
       return t.elem;
-    case Kind.SET:
-      return Types.BOOL;
-    case Kind.STRUCT:
-    case Kind.UNION:
+    case kind.SET:
+      return types.BOOL;
+    case kind.STRUCT:
+    case kind.UNION:
       for (var i = 0; i < t.fields.length; i++) {
         if (t.fields[i].name === fieldName) {
           return t.fields[i].type;
@@ -897,10 +897,10 @@ function assertRealNumber(v, t) {
 // Only use this for the numerical kinds.
 function assertNonNegativeNumber(v, t) {
   switch(t.kind) {
-    case Kind.BYTE:
-    case Kind.UINT16:
-    case Kind.UINT32:
-    case Kind.UINT64:
+    case kind.BYTE:
+    case kind.UINT16:
+    case kind.UINT32:
+    case kind.UINT64:
       var isNegative = (v < 0 || ((v instanceof BigInt) && v.getSign() < 0) ||
         ((isComplex(v)) && v.real < 0));
       if (isNegative) {
@@ -914,13 +914,13 @@ function assertNonNegativeNumber(v, t) {
 // Assumes that the value given is a real number.
 function assertInteger(v, t) {
   switch(t.kind) {
-    case Kind.BYTE:
-    case Kind.UINT16:
-    case Kind.UINT32:
-    case Kind.UINT64:
-    case Kind.INT16:
-    case Kind.INT32:
-    case Kind.INT64:
+    case kind.BYTE:
+    case kind.UINT16:
+    case kind.UINT32:
+    case kind.UINT64:
+    case kind.INT16:
+    case kind.INT32:
+    case kind.INT64:
       var isInt;
       if (v instanceof BigInt) {
         isInt = true;

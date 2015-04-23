@@ -24,40 +24,40 @@ var _type2 = new vdl.Type();
 var _typeBlessingsRequest = new vdl.Type();
 var _typeRequest = new vdl.Type();
 var _typeResponse = new vdl.Type();
-_type1.kind = vdl.Kind.OPTIONAL;
+_type1.kind = vdl.kind.OPTIONAL;
 _type1.name = "";
 _type1.elem = new security.WireBlessings()._type;
-_type2.kind = vdl.Kind.LIST;
+_type2.kind = vdl.kind.LIST;
 _type2.name = "";
 _type2.elem = new security.WireDischarge()._type;
-_typeBlessingsRequest.kind = vdl.Kind.STRUCT;
+_typeBlessingsRequest.kind = vdl.kind.STRUCT;
 _typeBlessingsRequest.name = "v.io/v23/rpc.BlessingsRequest";
-_typeBlessingsRequest.fields = [{name: "Key", type: vdl.Types.UINT64}, {name: "Blessings", type: _type1}];
-_typeRequest.kind = vdl.Kind.STRUCT;
+_typeBlessingsRequest.fields = [{name: "Key", type: vdl.types.UINT64}, {name: "Blessings", type: _type1}];
+_typeRequest.kind = vdl.kind.STRUCT;
 _typeRequest.name = "v.io/v23/rpc.Request";
-_typeRequest.fields = [{name: "Suffix", type: vdl.Types.STRING}, {name: "Method", type: vdl.Types.STRING}, {name: "NumPosArgs", type: vdl.Types.UINT64}, {name: "EndStreamArgs", type: vdl.Types.BOOL}, {name: "Deadline", type: new time.WireDeadline()._type}, {name: "GrantedBlessings", type: new security.WireBlessings()._type}, {name: "Blessings", type: _typeBlessingsRequest}, {name: "Discharges", type: _type2}, {name: "TraceRequest", type: new vtrace.Request()._type}];
-_typeResponse.kind = vdl.Kind.STRUCT;
+_typeRequest.fields = [{name: "Suffix", type: vdl.types.STRING}, {name: "Method", type: vdl.types.STRING}, {name: "NumPosArgs", type: vdl.types.UINT64}, {name: "EndStreamArgs", type: vdl.types.BOOL}, {name: "Deadline", type: new time.WireDeadline()._type}, {name: "GrantedBlessings", type: new security.WireBlessings()._type}, {name: "Blessings", type: _typeBlessingsRequest}, {name: "Discharges", type: _type2}, {name: "TraceRequest", type: new vtrace.Request()._type}];
+_typeResponse.kind = vdl.kind.STRUCT;
 _typeResponse.name = "v.io/v23/rpc.Response";
-_typeResponse.fields = [{name: "Error", type: vdl.Types.ERROR}, {name: "EndStreamResults", type: vdl.Types.BOOL}, {name: "NumPosResults", type: vdl.Types.UINT64}, {name: "TraceResponse", type: new vtrace.Response()._type}, {name: "AckBlessings", type: vdl.Types.BOOL}];
+_typeResponse.fields = [{name: "Error", type: vdl.types.ERROR}, {name: "EndStreamResults", type: vdl.types.BOOL}, {name: "NumPosResults", type: vdl.types.UINT64}, {name: "TraceResponse", type: new vtrace.Response()._type}, {name: "AckBlessings", type: vdl.types.BOOL}];
 _type1.freeze();
 _type2.freeze();
 _typeBlessingsRequest.freeze();
 _typeRequest.freeze();
 _typeResponse.freeze();
-module.exports.BlessingsRequest = (vdl.Registry.lookupOrCreateConstructor(_typeBlessingsRequest));
-module.exports.Request = (vdl.Registry.lookupOrCreateConstructor(_typeRequest));
-module.exports.Response = (vdl.Registry.lookupOrCreateConstructor(_typeResponse));
+module.exports.BlessingsRequest = (vdl.registry.lookupOrCreateConstructor(_typeBlessingsRequest));
+module.exports.Request = (vdl.registry.lookupOrCreateConstructor(_typeRequest));
+module.exports.Response = (vdl.registry.lookupOrCreateConstructor(_typeResponse));
 
 
 
 
 // Consts:
 
-  module.exports.GlobMethod = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.STRING))("__Glob", true), vdl.Types.STRING);
+  module.exports.GlobMethod = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.STRING))("__Glob", true), vdl.types.STRING);
 
-  module.exports.ReservedSignature = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.STRING))("__Signature", true), vdl.Types.STRING);
+  module.exports.ReservedSignature = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.STRING))("__Signature", true), vdl.types.STRING);
 
-  module.exports.ReservedMethodSignature = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.STRING))("__MethodSignature", true), vdl.Types.STRING);
+  module.exports.ReservedMethodSignature = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.STRING))("__MethodSignature", true), vdl.types.STRING);
 
 
 

@@ -25,8 +25,8 @@
  * @memberof module:vanadium
  */
 module.exports = {
-  Kind: require('./kind'),
-  Types: require('./types'),
+  kind: require('./kind'),
+  types: require('./types'),
   BigInt: require('./big-int'),
   /**
    * Namespace of utilities to canonicalize vdl types
@@ -34,7 +34,7 @@ module.exports = {
    * @namespace
    * @memberof module:vanadium.vdl
    */
-  Canonicalize: require('./canonicalize'),
+  canonicalize: require('./canonicalize'),
   Complex: require('./complex'),
   /**
    * Type registry that contains a mapping of vdl types
@@ -42,7 +42,7 @@ module.exports = {
    * @property {module:vanadium.vdl~Registry}
    * @memberof module:vanadium.vdl
    */
-  Registry: require('./registry'),
+  registry: require('./registry'),
   Type: require('./type'),
 };
 

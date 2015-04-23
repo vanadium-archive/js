@@ -5,8 +5,8 @@
 var test = require('prova');
 var verror = require('../../src/gen-vdl/v.io/v23/verror');
 var ec = require('../../src/vdl/error-conversion');
-var Types = require('../../src/vdl/types');
-var Kind = require('../../src/vdl/kind');
+var types = require('../../src/vdl/types');
+var kind = require('../../src/vdl/kind');
 var reduce = require('../../src/vdl/canonicalize').reduce;
 var unwrap = require('../../src/vdl/type-util').unwrap;
 var message = 'Something bad happened.';
@@ -51,8 +51,8 @@ test('var err = ec.fromWireValue(verror)', function(assert) {
 });
 
 var anyList = {
-  kind: Kind.LIST,
-  elem: Types.ANY,
+  kind: kind.LIST,
+  elem: types.ANY,
 };
 
 function deepUnwrapParamList(paramList) {

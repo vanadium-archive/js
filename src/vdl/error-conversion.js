@@ -10,7 +10,7 @@ var unwrap = require('./type-util').unwrap;
 var verror = require('../gen-vdl/v.io/v23/verror');
 var canonicalize = require('./canonicalize');
 var registry = require('./native-type-registry');
-var Types = require('./types');
+var types = require('./types');
 var defaultLanguage = require('../runtime/default-language');
 
 module.exports = {
@@ -21,10 +21,10 @@ module.exports = {
 // VanadiumErrors already have the right type description.  We registered Error
 // in case anyone tries to pass a non-vanadium error as an argument to a
 // function.
-registry.registerFromNativeValue(Error, fromNativeValue, Types.ERROR.elem);
+registry.registerFromNativeValue(Error, fromNativeValue, types.ERROR.elem);
 // We register both the optional and the concrete type for the error depending
 // on what gets sent on the wire.
-registry.registerFromWireValue(Types.ERROR.elem, fromWireValue);
+registry.registerFromWireValue(types.ERROR.elem, fromWireValue);
 
 var unknown = (new verror.UnknownError(null));
 
@@ -36,8 +36,8 @@ var unknown = (new verror.UnknownError(null));
  * @return {Error} JavaScript error object
  */
 function fromWireValue(verr) {
-  // We have to unwrap verr, because it could either be of type Types.ERROR
-  // or Types.ERROR.elem The first type is an optional version of the
+  // We have to unwrap verr, because it could either be of type types.ERROR
+  // or types.ERROR.elem The first type is an optional version of the
   // second type.
   verr = unwrap(verr);
   if (verr instanceof VanadiumError) {
@@ -92,13 +92,13 @@ function fromNativeValue(err, appName, operation) {
     paramList = unwrap(res.paramList);
     if (paramList.length > 0) {
       paramList[0] = canonicalize.fill(
-        canonicalize.reduce(paramList[0], Types.STRING),
-        Types.ANY);
+        canonicalize.reduce(paramList[0], types.STRING),
+        types.ANY);
     }
     if (paramList.length > 1) {
       paramList[1] = canonicalize.fill(
-        canonicalize.reduce(paramList[1], Types.STRING),
-        Types.ANY);
+        canonicalize.reduce(paramList[1], types.STRING),
+        types.ANY);
     }
 
     var argTypes = res._argTypes || [];
@@ -116,11 +116,11 @@ function fromNativeValue(err, appName, operation) {
       // Issue: https://github.com/veyron/release-issues/issues/1560
       if (!argType) {
         if (typeof paramList[i] === 'string') {
-          argType = Types.STRING;
+          argType = types.STRING;
         } else if (typeof paramList[i] === 'boolean') {
-          argType = Types.BOOL;
+          argType = types.BOOL;
         } else if (typeof paramList[i] === 'number') {
-          argType = Types.FLOAT64;
+          argType = types.FLOAT64;
         }
       }
 
@@ -128,7 +128,7 @@ function fromNativeValue(err, appName, operation) {
       if (argType) {
         paramList[i] = canonicalize.fill(
           canonicalize.reduce(paramList[i], argType),
-          Types.ANY
+          types.ANY
         );
       }
     }

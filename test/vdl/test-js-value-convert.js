@@ -10,15 +10,15 @@
 
 var test = require('prova');
 
-var Registry = require('./../../src/vdl/registry.js');
-var Types = require('./../../src/vdl/types.js');
+var registry = require('./../../src/vdl/registry.js');
+var types = require('./../../src/vdl/types.js');
 var jsValueConvert = require('./../../src/vdl/js-value-convert.js');
 var stringify = require('./../../src/vdl/stringify.js');
 
 // A helper function that shallow copies an object into an object with the
 // JSValue prototype. It makes the test cases a lot more readable.
 function JS(obj) {
-  var JSValue = Registry.lookupOrCreateConstructor(Types.JSVALUE);
+  var JSValue = registry.lookupOrCreateConstructor(types.JSVALUE);
   var jsval = Object.create(JSValue.prototype);
   Object.keys(obj).forEach(function(key) {
     jsval[key] = obj[key];
@@ -29,7 +29,7 @@ function JS(obj) {
 // Note: These test cases usually convert native and jsval correctly. There are
 // some edge cases like 'undefined', so nativeFinal is used in such cases.
 test('js-value convert to and from native', function(t) {
-  var Float32 = Registry.lookupOrCreateConstructor(Types.FLOAT32);
+  var Float32 = registry.lookupOrCreateConstructor(types.FLOAT32);
 
   var tests = [
     {
@@ -269,7 +269,7 @@ test('js-value convert to and from native', function(t) {
     t.deepEqual(jsValueFromNative, jsval, name + ' - from native');
     t.equal(stringify(jsValueFromNative), stringify(jsval),
       name + ' - from native (stringify)');
-    t.ok(jsValueFromNative._type === Types.JSVALUE,
+    t.ok(jsValueFromNative._type === types.JSVALUE,
       name + ' - from native has Type JSValue');
 
     // Check that JSValue => native is ok.

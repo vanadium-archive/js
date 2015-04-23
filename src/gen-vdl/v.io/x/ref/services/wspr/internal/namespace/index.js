@@ -19,9 +19,9 @@ module.exports = {};
 
 // Types:
 var _type1 = new vdl.Type();
-_type1.kind = vdl.Kind.LIST;
+_type1.kind = vdl.kind.LIST;
 _type1.name = "";
-_type1.elem = vdl.Types.STRING;
+_type1.elem = vdl.types.STRING;
 _type1.freeze();
 
 
@@ -119,7 +119,7 @@ Namespace.prototype._serviceDescription = {
     inArgs: [{
       name: 'pattern',
       doc: "",
-      type: vdl.Types.STRING
+      type: vdl.types.STRING
     },
     ],
     outArgs: [],
@@ -139,12 +139,12 @@ Namespace.prototype._serviceDescription = {
     inArgs: [{
       name: 'name',
       doc: "",
-      type: vdl.Types.STRING
+      type: vdl.types.STRING
     },
     {
       name: 'server',
       doc: "",
-      type: vdl.Types.STRING
+      type: vdl.types.STRING
     },
     {
       name: 'ttl',
@@ -154,7 +154,7 @@ Namespace.prototype._serviceDescription = {
     {
       name: 'replace',
       doc: "",
-      type: vdl.Types.BOOL
+      type: vdl.types.BOOL
     },
     ],
     outArgs: [],
@@ -170,12 +170,12 @@ Namespace.prototype._serviceDescription = {
     inArgs: [{
       name: 'name',
       doc: "",
-      type: vdl.Types.STRING
+      type: vdl.types.STRING
     },
     {
       name: 'server',
       doc: "",
-      type: vdl.Types.STRING
+      type: vdl.types.STRING
     },
     ],
     outArgs: [],
@@ -191,7 +191,7 @@ Namespace.prototype._serviceDescription = {
     inArgs: [{
       name: 'name',
       doc: "",
-      type: vdl.Types.STRING
+      type: vdl.types.STRING
     },
     ],
     outArgs: [{
@@ -212,7 +212,7 @@ Namespace.prototype._serviceDescription = {
     inArgs: [{
       name: 'name',
       doc: "",
-      type: vdl.Types.STRING
+      type: vdl.types.STRING
     },
     ],
     outArgs: [{
@@ -233,13 +233,13 @@ Namespace.prototype._serviceDescription = {
     inArgs: [{
       name: 'name',
       doc: "",
-      type: vdl.Types.STRING
+      type: vdl.types.STRING
     },
     ],
     outArgs: [{
       name: '',
       doc: "",
-      type: vdl.Types.BOOL
+      type: vdl.types.BOOL
     },
     ],
     inStream: null,
@@ -254,7 +254,7 @@ Namespace.prototype._serviceDescription = {
     inArgs: [{
       name: 'disable',
       doc: "",
-      type: vdl.Types.BOOL
+      type: vdl.types.BOOL
     },
     ],
     outArgs: [],
@@ -302,7 +302,7 @@ Namespace.prototype._serviceDescription = {
     inArgs: [{
       name: 'name',
       doc: "",
-      type: vdl.Types.STRING
+      type: vdl.types.STRING
     },
     {
       name: 'perms',
@@ -312,7 +312,7 @@ Namespace.prototype._serviceDescription = {
     {
       name: 'version',
       doc: "",
-      type: vdl.Types.STRING
+      type: vdl.types.STRING
     },
     ],
     outArgs: [],
@@ -328,7 +328,7 @@ Namespace.prototype._serviceDescription = {
     inArgs: [{
       name: 'name',
       doc: "",
-      type: vdl.Types.STRING
+      type: vdl.types.STRING
     },
     ],
     outArgs: [{
@@ -339,7 +339,7 @@ Namespace.prototype._serviceDescription = {
     {
       name: 'version',
       doc: "",
-      type: vdl.Types.STRING
+      type: vdl.types.STRING
     },
     ],
     inStream: null,
@@ -354,12 +354,12 @@ Namespace.prototype._serviceDescription = {
     inArgs: [{
       name: 'name',
       doc: "",
-      type: vdl.Types.STRING
+      type: vdl.types.STRING
     },
     {
       name: 'deleteSubtree',
       doc: "",
-      type: vdl.Types.BOOL
+      type: vdl.types.BOOL
     },
     ],
     outArgs: [],

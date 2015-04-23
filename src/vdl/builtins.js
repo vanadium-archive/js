@@ -9,12 +9,12 @@
 
 module.exports = {};
 
-var Types = require('./types');
+var types = require('./types');
 var Registry = require('./registry');
 
-for (var typeName in Types) {
-  if (Types.hasOwnProperty(typeName)) {
-    var type = Types[typeName];
+for (var typeName in types) {
+  if (types.hasOwnProperty(typeName)) {
+    var type = types[typeName];
     if (typeof type === 'object') { // Do not export functions.
       module.exports[typeName] = Registry.lookupOrCreateConstructor(type);
     }

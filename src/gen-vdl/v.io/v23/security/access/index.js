@@ -25,23 +25,23 @@ var _type3 = new vdl.Type();
 var _typeAccessList = new vdl.Type();
 var _typePermissions = new vdl.Type();
 var _typeTag = new vdl.Type();
-_type1.kind = vdl.Kind.LIST;
+_type1.kind = vdl.kind.LIST;
 _type1.name = "";
 _type1.elem = new security.BlessingPattern()._type;
-_type2.kind = vdl.Kind.LIST;
+_type2.kind = vdl.kind.LIST;
 _type2.name = "";
-_type2.elem = vdl.Types.STRING;
-_type3.kind = vdl.Kind.LIST;
+_type2.elem = vdl.types.STRING;
+_type3.kind = vdl.kind.LIST;
 _type3.name = "";
 _type3.elem = new security.RejectedBlessing()._type;
-_typeAccessList.kind = vdl.Kind.STRUCT;
+_typeAccessList.kind = vdl.kind.STRUCT;
 _typeAccessList.name = "v.io/v23/security/access.AccessList";
 _typeAccessList.fields = [{name: "In", type: _type1}, {name: "NotIn", type: _type2}];
-_typePermissions.kind = vdl.Kind.MAP;
+_typePermissions.kind = vdl.kind.MAP;
 _typePermissions.name = "v.io/v23/security/access.Permissions";
 _typePermissions.elem = _typeAccessList;
-_typePermissions.key = vdl.Types.STRING;
-_typeTag.kind = vdl.Kind.STRING;
+_typePermissions.key = vdl.types.STRING;
+_typeTag.kind = vdl.kind.STRING;
 _typeTag.name = "v.io/v23/security/access.Tag";
 _type1.freeze();
 _type2.freeze();
@@ -49,24 +49,24 @@ _type3.freeze();
 _typeAccessList.freeze();
 _typePermissions.freeze();
 _typeTag.freeze();
-module.exports.AccessList = (vdl.Registry.lookupOrCreateConstructor(_typeAccessList));
-module.exports.Permissions = (vdl.Registry.lookupOrCreateConstructor(_typePermissions));
-module.exports.Tag = (vdl.Registry.lookupOrCreateConstructor(_typeTag));
+module.exports.AccessList = (vdl.registry.lookupOrCreateConstructor(_typeAccessList));
+module.exports.Permissions = (vdl.registry.lookupOrCreateConstructor(_typePermissions));
+module.exports.Tag = (vdl.registry.lookupOrCreateConstructor(_typeTag));
 
 
 
 
 // Consts:
 
-  module.exports.Admin = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeTag))("Admin", true), _typeTag);
+  module.exports.Admin = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeTag))("Admin", true), _typeTag);
 
-  module.exports.Debug = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeTag))("Debug", true), _typeTag);
+  module.exports.Debug = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeTag))("Debug", true), _typeTag);
 
-  module.exports.Read = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeTag))("Read", true), _typeTag);
+  module.exports.Read = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeTag))("Read", true), _typeTag);
 
-  module.exports.Write = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeTag))("Write", true), _typeTag);
+  module.exports.Write = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeTag))("Write", true), _typeTag);
 
-  module.exports.Resolve = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeTag))("Resolve", true), _typeTag);
+  module.exports.Resolve = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeTag))("Resolve", true), _typeTag);
 
 
 
@@ -83,7 +83,7 @@ module.exports.NoPermissionsError = makeError('v.io/v23/security/access.NoPermis
 }, [
   _type2,
   _type3,
-  vdl.Types.STRING,
+  vdl.types.STRING,
 ]);
 
 

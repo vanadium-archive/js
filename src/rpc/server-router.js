@@ -206,8 +206,8 @@ Router.prototype.handleLookupRequest = function(messageId, request) {
       // See dispatcher.go lookupReply's signature field.
       // Also see dispatcher.go lookupIntermediateReply's signature field.
       // We have to pre-encode the signature list into a string.
-      var canonicalSignatureList = vdl.Canonicalize.fill(signatureList, {
-        kind: vdl.Kind.LIST,
+      var canonicalSignatureList = vdl.canonicalize.fill(signatureList, {
+        kind: vdl.kind.LIST,
         elem: vdlsig.Interface.prototype._type
       });
       res = byteUtil.bytes2Hex(vom.encode(canonicalSignatureList));
@@ -357,7 +357,7 @@ Router.prototype.handleRPCRequest = function(messageId, vdlRequest) {
   // Unwrap the RPC arguments sent to the JS server.
   var unwrappedArgs = request.args.map(function(arg, i) {
     // If an any type was expected, unwrapping is not needed.
-    if (methodSig.inArgs[i].type.kind === vdl.Kind.ANY) {
+    if (methodSig.inArgs[i].type.kind === vdl.kind.ANY) {
       return arg;
     }
     var unwrapped = typeUtil.unwrap(arg);
@@ -409,7 +409,7 @@ Router.prototype.handleRPCRequest = function(messageId, vdlRequest) {
       if (t.equals(WireBlessings.prototype._type)) {
         return result;
       }
-      return vdl.Canonicalize.fill(result, t);
+      return vdl.canonicalize.fill(result, t);
     });
     self.sendResult(messageId, methodName, canonResults, undefined,
                     methodSig.outArgs.length);

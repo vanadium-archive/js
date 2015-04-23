@@ -4,7 +4,7 @@
 
 var createConstructor = require('./create-constructor.js');
 var typeObjectFromKind = require('./type-object-from-kind.js');
-var Kind = require('./kind.js');
+var kind = require('./kind.js');
 var Type = require('./type.js');
 require('./es6-shim');
 
@@ -26,10 +26,10 @@ Registry.prototype._getBuiltinTypes = function() {
 
   // Canonicalize uses structs to represent each kind of TypeObject. Thus, the
   // constructor for those structs should be Type.
-  Object.keys(Kind).forEach(function(key) {
-    var kind = Kind[key];
-    if (typeof kind === 'number') {
-      var typeOfType = typeObjectFromKind(kind);
+  Object.keys(kind).forEach(function(key) {
+    var k = kind[key];
+    if (typeof k === 'number') {
+      var typeOfType = typeObjectFromKind(k);
       map.set(typeOfType, Type);
     }
   });

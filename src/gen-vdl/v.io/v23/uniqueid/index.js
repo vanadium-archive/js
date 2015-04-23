@@ -16,12 +16,12 @@ module.exports = {};
 
 // Types:
 var _typeId = new vdl.Type();
-_typeId.kind = vdl.Kind.ARRAY;
+_typeId.kind = vdl.kind.ARRAY;
 _typeId.name = "v.io/v23/uniqueid.Id";
 _typeId.len = 16;
-_typeId.elem = vdl.Types.BYTE;
+_typeId.elem = vdl.types.BYTE;
 _typeId.freeze();
-module.exports.Id = (vdl.Registry.lookupOrCreateConstructor(_typeId));
+module.exports.Id = (vdl.registry.lookupOrCreateConstructor(_typeId));
 
 
 

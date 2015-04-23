@@ -3,18 +3,18 @@
 // license that can be found in the LICENSE file.
 
 /**
- * @fileoverview Kind definitions.
+ * @fileoverview kind definitions.
  * @private
  */
 
 var kindCount = 0;
 
 /**
- * Namespace of constants for VDL Kinds
+ * Namespace of constants for VDL kinds
  * @namespace
  * @memberof module:vanadium.vdl
  */
-var Kind = {
+var kind = {
   // Nullable kinds
   /**
    * @const
@@ -115,12 +115,12 @@ var Kind = {
 
 /**
  * Returns the human readable name for a kind
- * @param {module:vanadium.vdl.Kind} k The kind to print out
+ * @param {module:vanadium.vdl.kind} k The kind to print out
  * @return {string}
  */
-Kind.kindStr = function(k) {
-  var kindKeys = Object.keys(Kind).filter(function(key) {
-    return Kind[key] === k;
+kind.kindStr = function(k) {
+  var kindKeys = Object.keys(kind).filter(function(key) {
+    return kind[key] === k;
   });
   if (kindKeys.length !== 1) {
     throw new TypeError('kind: ' + k + ' is not a known kind');
@@ -128,4 +128,4 @@ Kind.kindStr = function(k) {
   return kindKeys[0].toLowerCase(); // There should only be 1 result.
 };
 
-module.exports = Kind;
+module.exports = kind;

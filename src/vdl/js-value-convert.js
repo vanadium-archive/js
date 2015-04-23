@@ -12,8 +12,8 @@
  * @private
  */
 
-var TypeUtil = require('./type-util.js');
-var Types = require('./types.js');
+var typeUtil = require('./type-util.js');
+var types = require('./types.js');
 var util = require('./util.js');
 require('./es6-shim');
 
@@ -32,7 +32,7 @@ var JSValueConstructor = null;
 function getJSValueConstructor() {
   if (JSValueConstructor === null) {
     var Registry = require('./registry.js');
-    JSValueConstructor = Registry.lookupOrCreateConstructor(Types.JSVALUE);
+    JSValueConstructor = Registry.lookupOrCreateConstructor(types.JSVALUE);
   }
   return JSValueConstructor;
 }
@@ -48,7 +48,7 @@ function getJSValueConstructor() {
 function convertFromNative(val) {
   // No need to convert if val is already a JSValue or typed object.
   // Note: In this case, val is NOT a new reference.
-  if (TypeUtil.isTyped(val)) {
+  if (typeUtil.isTyped(val)) {
     return val;
   }
 
@@ -117,7 +117,7 @@ function convertFromNative(val) {
  */
 function convertToNative(jsval) {
   // No need to convert if jsval lacks type or isn't of type JSValue.
-  if (!TypeUtil.isTyped(jsval) || !Types.JSVALUE.equals(jsval._type)) {
+  if (!typeUtil.isTyped(jsval) || !types.JSVALUE.equals(jsval._type)) {
     return jsval;
   }
   if (jsval === undefined) {

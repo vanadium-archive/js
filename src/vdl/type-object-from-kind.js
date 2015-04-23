@@ -3,69 +3,69 @@
 // license that can be found in the LICENSE file.
 
 /**
- * @fileoverview Utility for converting from a Kind to a TypeObject.
+ * @fileoverview Utility for converting from a kind to a TypeObject.
  * @private
  */
 
-var Kind = require('./kind.js');
+var kind = require('./kind.js');
 var Type = require('./type.js');
-var Types = require('./types.js');
+var types = require('./types.js');
 
-module.exports = typeObjectFromKind;
+module.exports = typeObjectFromkind;
 
 // All Types below are constructed with 'isValidated' set to true. This avoids a
 // cyclic dependency with canonicalize.js and type.js.
 var _primitiveTypeObject = new Type({
   name: 'PrimitiveTypeObject',
-  kind: Kind.STRUCT,
+  kind: kind.STRUCT,
   fields: [
     {
       name: 'Kind',
-      type: Types.UINT32
+      type: types.UINT32
     },
     {
       name: 'Name',
-      type: Types.STRING
+      type: types.STRING
     }
   ]
 }, true);
 
 var _optionalTypeObject = new Type({
   name: 'OptionalTypeObject',
-  kind: Kind.STRUCT,
+  kind: kind.STRUCT,
   fields: [
     {
       name: 'Kind',
-      type: Types.UINT32
+      type: types.UINT32
     },
     {
       name: 'Name',
-      type: Types.STRING
+      type: types.STRING
     },
     {
       name: 'Elem',
-      type: Types.TYPEOBJECT
+      type: types.TYPEOBJECT
     }
   ]
 }, true);
 
 var _enumTypeObject = new Type({
   name: 'EnumTypeObject',
-  kind: Kind.STRUCT,
+  kind: kind.STRUCT,
   fields: [
     {
       name: 'Kind',
-      type: Types.UINT32
+      type: types.UINT32
     },
     {
       name: 'Name',
-      type: Types.STRING
+      type: types.STRING
     },
     {
       name: 'Labels',
       type: new Type({
-        kind: Kind.LIST,
-        elem: Types.STRING
+        kind: kind.LIST,
+        elem: types.STRING
       }, true)
     }
   ]
@@ -73,114 +73,114 @@ var _enumTypeObject = new Type({
 
 var _listTypeObject = new Type({
   name: 'ListTypeObject',
-  kind: Kind.STRUCT,
+  kind: kind.STRUCT,
   fields: [
     {
       name: 'Kind',
-      type: Types.UINT32
+      type: types.UINT32
     },
     {
       name: 'Name',
-      type: Types.STRING
+      type: types.STRING
     },
     {
       name: 'Elem',
-      type: Types.TYPEOBJECT
+      type: types.TYPEOBJECT
     }
   ]
 }, true);
 
 var _arrayTypeObject = new Type({
   name: 'ArrayTypeObject',
-  kind: Kind.STRUCT,
+  kind: kind.STRUCT,
   fields: [
     {
       name: 'Kind',
-      type: Types.UINT32
+      type: types.UINT32
     },
     {
       name: 'Name',
-      type: Types.STRING
+      type: types.STRING
     },
     {
       name: 'Elem',
-      type: Types.TYPEOBJECT
+      type: types.TYPEOBJECT
     },
     {
       name: 'Len',
-      type: Types.UINT32
+      type: types.UINT32
     }
   ]
 }, true);
 
 var _setTypeObject = new Type({
   name: 'SetTypeObject',
-  kind: Kind.STRUCT,
+  kind: kind.STRUCT,
   fields: [
     {
       name: 'Kind',
-      type: Types.UINT32
+      type: types.UINT32
     },
     {
       name: 'Name',
-      type: Types.STRING
+      type: types.STRING
     },
     {
       name: 'Key',
-      type: Types.TYPEOBJECT
+      type: types.TYPEOBJECT
     }
   ]
 }, true);
 
 var _mapTypeObject = new Type({
   name: 'MapTypeObject',
-  kind: Kind.STRUCT,
+  kind: kind.STRUCT,
   fields: [
     {
       name: 'Kind',
-      type: Types.UINT32
+      type: types.UINT32
     },
     {
       name: 'Name',
-      type: Types.STRING
+      type: types.STRING
     },
     {
       name: 'Key',
-      type: Types.TYPEOBJECT
+      type: types.TYPEOBJECT
     },
     {
       name: 'Elem',
-      type: Types.TYPEOBJECT
+      type: types.TYPEOBJECT
     }
   ]
 }, true);
 
 var _structTypeObject = new Type({
   name: 'StructTypeObject',
-  kind: Kind.STRUCT,
+  kind: kind.STRUCT,
   fields: [
     {
       name: 'Kind',
-      type: Types.UINT32
+      type: types.UINT32
     },
     {
       name: 'Name',
-      type: Types.STRING
+      type: types.STRING
     },
     {
       name: 'Fields',
       type: new Type({
-        kind: Kind.LIST,
+        kind: kind.LIST,
         elem: new Type({
-          kind: Kind.STRUCT,
+          kind: kind.STRUCT,
           fields: [
             {
               name: 'Name',
-              type: Types.STRING
+              type: types.STRING
             },
             {
               name: 'Type',
-              type: Types.TYPEOBJECT
+              type: types.TYPEOBJECT
             }
           ]
         }, true)
@@ -191,30 +191,30 @@ var _structTypeObject = new Type({
 
 var _unionTypeObject = new Type({
   name: 'UnionTypeObject',
-  kind: Kind.STRUCT,
+  kind: kind.STRUCT,
   fields: [
     {
       name: 'Kind',
-      type: Types.UINT32
+      type: types.UINT32
     },
     {
       name: 'Name',
-      type: Types.STRING
+      type: types.STRING
     },
     {
       name: 'Fields',
       type: new Type({
-        kind: Kind.LIST,
+        kind: kind.LIST,
         elem: new Type({
-          kind: Kind.STRUCT,
+          kind: kind.STRUCT,
           fields: [
             {
               name: 'Name',
-              type: Types.STRING
+              type: types.STRING
             },
             {
               name: 'Type',
-              type: Types.TYPEOBJECT
+              type: types.TYPEOBJECT
             }
           ]
         }, true)
@@ -226,42 +226,42 @@ var _unionTypeObject = new Type({
 /**
  * Returns the corresponding type object for a given kind.
  * @private
- * @param {Kind} k The kind.
+ * @param {kind} k The kind.
  * @return {TypeObject} The corresponding type object.
  */
-function typeObjectFromKind(k) {
+function typeObjectFromkind(k) {
   switch (k) {
-    case Kind.BOOL:
-    case Kind.BYTE:
-    case Kind.UINT16:
-    case Kind.UINT32:
-    case Kind.UINT64:
-    case Kind.INT16:
-    case Kind.INT32:
-    case Kind.INT64:
-    case Kind.FLOAT32:
-    case Kind.FLOAT64:
-    case Kind.COMPLEX64:
-    case Kind.COMPLEX128:
-    case Kind.STRING:
-    case Kind.ANY:
-    case Kind.TYPEOBJECT:
+    case kind.BOOL:
+    case kind.BYTE:
+    case kind.UINT16:
+    case kind.UINT32:
+    case kind.UINT64:
+    case kind.INT16:
+    case kind.INT32:
+    case kind.INT64:
+    case kind.FLOAT32:
+    case kind.FLOAT64:
+    case kind.COMPLEX64:
+    case kind.COMPLEX128:
+    case kind.STRING:
+    case kind.ANY:
+    case kind.TYPEOBJECT:
       return _primitiveTypeObject;
-    case Kind.OPTIONAL:
+    case kind.OPTIONAL:
       return _optionalTypeObject;
-    case Kind.ENUM:
+    case kind.ENUM:
       return _enumTypeObject;
-    case Kind.LIST:
+    case kind.LIST:
       return _listTypeObject;
-    case Kind.ARRAY:
+    case kind.ARRAY:
       return _arrayTypeObject;
-    case Kind.SET:
+    case kind.SET:
       return _setTypeObject;
-    case Kind.MAP:
+    case kind.MAP:
       return _mapTypeObject;
-    case Kind.STRUCT:
+    case kind.STRUCT:
       return _structTypeObject;
-    case Kind.UNION:
+    case kind.UNION:
       return _unionTypeObject;
     default:
       throw new TypeError('Unknown kind ' + k);

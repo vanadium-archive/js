@@ -10,7 +10,7 @@
 
 module.exports = TypeEncoder;
 
-var Kind = require('../vdl/kind.js');
+var kind = require('../vdl/kind.js');
 var stringify = require('../vdl/stringify.js');
 var canonicalize = require('../vdl/canonicalize.js');
 var util = require('../vdl/util.js');
@@ -67,37 +67,37 @@ TypeEncoder.prototype.encodeType = function(messageWriter, type) {
   return typeId;
 };
 
-var kindToBootstrapType = function(kind) {
-  switch (kind) {
-    case Kind.ANY:
+var kindToBootstrapType = function(k) {
+  switch (k) {
+    case kind.ANY:
       return BootstrapTypes.definitions.ANY;
-    case Kind.BOOL:
+    case kind.BOOL:
       return BootstrapTypes.definitions.BOOL;
-    case Kind.BYTE:
+    case kind.BYTE:
       return BootstrapTypes.definitions.BYTE;
-    case Kind.UINT16:
+    case kind.UINT16:
       return BootstrapTypes.definitions.UINT16;
-    case Kind.UINT32:
+    case kind.UINT32:
       return BootstrapTypes.definitions.UINT32;
-    case Kind.UINT64:
+    case kind.UINT64:
       return BootstrapTypes.definitions.UINT64;
-    case Kind.INT16:
+    case kind.INT16:
       return BootstrapTypes.definitions.INT16;
-    case Kind.INT32:
+    case kind.INT32:
       return BootstrapTypes.definitions.INT32;
-    case Kind.INT64:
+    case kind.INT64:
       return BootstrapTypes.definitions.INT64;
-    case Kind.FLOAT32:
+    case kind.FLOAT32:
       return BootstrapTypes.definitions.FLOAT32;
-    case Kind.FLOAT64:
+    case kind.FLOAT64:
       return BootstrapTypes.definitions.FLOAT64;
-    case Kind.COMPLEX64:
+    case kind.COMPLEX64:
       return BootstrapTypes.definitions.COMPLEX64;
-    case Kind.COMPLEX128:
+    case kind.COMPLEX128:
       return BootstrapTypes.definitions.COMPLEX128;
-    case Kind.STRING:
+    case kind.STRING:
       return BootstrapTypes.definitions.STRING;
-    case Kind.TYPEOBJECT:
+    case kind.TYPEOBJECT:
       return BootstrapTypes.definitions.TYPEOBJECT;
     default:
       throw new Error('expected primitive kind ' + kind);
@@ -116,21 +116,21 @@ TypeEncoder.prototype._encodeWireType = function(messageWriter, type, typeId) {
   var elemId;
   var keyId;
   switch (type.kind) {
-    case Kind.ANY:
-    case Kind.BOOL:
-    case Kind.BYTE:
-    case Kind.UINT16:
-    case Kind.UINT32:
-    case Kind.UINT64:
-    case Kind.INT16:
-    case Kind.INT32:
-    case Kind.INT64:
-    case Kind.FLOAT32:
-    case Kind.FLOAT64:
-    case Kind.COMPLEX64:
-    case Kind.COMPLEX128:
-    case Kind.STRING:
-    case Kind.TYPEOBJECT:
+    case kind.ANY:
+    case kind.BOOL:
+    case kind.BYTE:
+    case kind.UINT16:
+    case kind.UINT32:
+    case kind.UINT64:
+    case kind.INT16:
+    case kind.INT32:
+    case kind.INT64:
+    case kind.FLOAT32:
+    case kind.FLOAT64:
+    case kind.COMPLEX64:
+    case kind.COMPLEX128:
+    case kind.STRING:
+    case kind.TYPEOBJECT:
       rawWriter.writeUint(BootstrapTypes.unionIds.NAMED_TYPE);
       if (type.name !== '') {
         rawWriter.writeUint(0);
@@ -140,7 +140,7 @@ TypeEncoder.prototype._encodeWireType = function(messageWriter, type, typeId) {
       rawWriter.writeUint(kindToBootstrapType(type.kind).id);
       rawWriter.writeByte(endByte);
       break;
-    case Kind.OPTIONAL:
+    case kind.OPTIONAL:
       elemId = this.encodeType(messageWriter, type.elem);
       rawWriter.writeUint(BootstrapTypes.unionIds.OPTIONAL_TYPE);
       if (type.name !== '') {
@@ -151,7 +151,7 @@ TypeEncoder.prototype._encodeWireType = function(messageWriter, type, typeId) {
       rawWriter.writeUint(elemId);
       rawWriter.writeByte(endByte);
       break;
-    case Kind.ENUM:
+    case kind.ENUM:
       rawWriter.writeUint(BootstrapTypes.unionIds.ENUM_TYPE);
       if (type.name !== '') {
         rawWriter.writeUint(0);
@@ -164,7 +164,7 @@ TypeEncoder.prototype._encodeWireType = function(messageWriter, type, typeId) {
       }
       rawWriter.writeByte(endByte);
       break;
-    case Kind.ARRAY:
+    case kind.ARRAY:
       elemId = this.encodeType(messageWriter, type.elem);
       rawWriter.writeUint(BootstrapTypes.unionIds.ARRAY_TYPE);
       if (type.name !== '') {
@@ -177,7 +177,7 @@ TypeEncoder.prototype._encodeWireType = function(messageWriter, type, typeId) {
       rawWriter.writeUint(type.len);
       rawWriter.writeByte(endByte);
       break;
-    case Kind.LIST:
+    case kind.LIST:
       elemId = this.encodeType(messageWriter, type.elem);
       rawWriter.writeUint(BootstrapTypes.unionIds.LIST_TYPE);
       if (type.name !== '') {
@@ -188,7 +188,7 @@ TypeEncoder.prototype._encodeWireType = function(messageWriter, type, typeId) {
       rawWriter.writeUint(elemId);
       rawWriter.writeByte(endByte);
       break;
-    case Kind.SET:
+    case kind.SET:
       keyId = this.encodeType(messageWriter, type.key);
       rawWriter.writeUint(BootstrapTypes.unionIds.SET_TYPE);
       if (type.name !== '') {
@@ -199,7 +199,7 @@ TypeEncoder.prototype._encodeWireType = function(messageWriter, type, typeId) {
       rawWriter.writeUint(keyId);
       rawWriter.writeByte(endByte);
       break;
-    case Kind.MAP:
+    case kind.MAP:
       keyId = this.encodeType(messageWriter, type.key);
       elemId = this.encodeType(messageWriter, type.elem);
       rawWriter.writeUint(BootstrapTypes.unionIds.MAP_TYPE);
@@ -213,8 +213,8 @@ TypeEncoder.prototype._encodeWireType = function(messageWriter, type, typeId) {
       rawWriter.writeUint(elemId);
       rawWriter.writeByte(endByte);
       break;
-    case Kind.STRUCT:
-    case Kind.UNION:
+    case kind.STRUCT:
+    case kind.UNION:
       var fieldInfo = [];
       for (i = 0; i < type.fields.length; i++) {
         fieldInfo.push({
@@ -222,7 +222,7 @@ TypeEncoder.prototype._encodeWireType = function(messageWriter, type, typeId) {
           id: this.encodeType(messageWriter, type.fields[i].type)
         });
       }
-      if (type.kind === Kind.STRUCT) {
+      if (type.kind === kind.STRUCT) {
         rawWriter.writeUint(BootstrapTypes.unionIds.STRUCT_TYPE);
       } else {
         rawWriter.writeUint(BootstrapTypes.unionIds.UNION_TYPE);

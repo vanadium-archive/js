@@ -62,24 +62,24 @@ test('signature', function(t) {
               {
                 name: 'x',
                 doc: '',
-                type: vdl.Types.JSVALUE
+                type: vdl.types.JSVALUE
               },
               {
                 name: 'y',
                 doc: '',
-                type: vdl.Types.JSVALUE
+                type: vdl.types.JSVALUE
               },
               {
                 name: 'z',
                 doc: '',
-                type: vdl.Types.JSVALUE
+                type: vdl.types.JSVALUE
               }
             ],
             outArgs: [
               {
                 name: '',
                 doc: '',
-                type: vdl.Types.JSVALUE
+                type: vdl.types.JSVALUE
               }
             ],
             inStream: null,
@@ -94,7 +94,7 @@ test('signature', function(t) {
               {
                 name: '',
                 doc: '',
-                type: vdl.Types.JSVALUE
+                type: vdl.types.JSVALUE
               }
             ],
             inStream: null,
@@ -108,30 +108,30 @@ test('signature', function(t) {
               {
                 name: 'a',
                 doc: '',
-                type: vdl.Types.JSVALUE
+                type: vdl.types.JSVALUE
               },
               {
                 name: 'b',
                 doc: '',
-                type: vdl.Types.JSVALUE
+                type: vdl.types.JSVALUE
               }
             ],
             outArgs: [
               {
                 name: '',
                 doc: '',
-                type: vdl.Types.JSVALUE
+                type: vdl.types.JSVALUE
               }
             ],
             inStream: {
               name: '',
               doc: '',
-              type: vdl.Types.JSVALUE
+              type: vdl.types.JSVALUE
             },
             outStream: {
               name: '',
               doc: '',
-              type: vdl.Types.JSVALUE
+              type: vdl.types.JSVALUE
             },
             tags: []
           },
@@ -164,19 +164,19 @@ test('signature', function(t) {
               {
                 name: 'a',
                 doc: 'aDoc',
-                type: vdl.Types.UINT32
+                type: vdl.types.UINT32
               },
               {
                 name: 'b',
                 doc: 'bDoc',
-                type: vdl.Types.STRING
+                type: vdl.types.STRING
               }
             ],
             inStream: {
-              type: vdl.Types.UINT32
+              type: vdl.types.UINT32
             },
             outStream: {
-              type: vdl.Types.UINT32
+              type: vdl.types.UINT32
             },
             tags: [
               {
@@ -184,7 +184,7 @@ test('signature', function(t) {
                 '_wrappedType': true,
                 '_type': {
                   name: 'StringTag',
-                  kind: vdl.Kind.STRING
+                  kind: vdl.kind.STRING
                 }
               }
             ]
@@ -196,12 +196,12 @@ test('signature', function(t) {
               {
                 name: 'first',
                 doc: 'firstDoc',
-                type: vdl.Types.INT16
+                type: vdl.types.INT16
               },
               {
                 name: 'second',
                 doc: 'secondDoc',
-                type: vdl.Types.STRING
+                type: vdl.types.STRING
               }
             ]
           },
@@ -212,17 +212,17 @@ test('signature', function(t) {
               {
                 name: 'x',
                 doc: 'xDoc',
-                type: vdl.Types.UINT32
+                type: vdl.types.UINT32
               },
               {
                 name: 'y',
                 doc: 'yDoc',
-                type: vdl.Types.STRING
+                type: vdl.types.STRING
               },
               {
                 name: 'z',
                 doc: 'zDoc',
-                type: vdl.Types.STRING
+                type: vdl.types.STRING
               }
             ]
           },
@@ -252,24 +252,24 @@ test('signature', function(t) {
               {
                 name: 'x',
                 doc: 'xDoc',
-                type: vdl.Types.UINT32
+                type: vdl.types.UINT32
               },
               {
                 name: 'y',
                 doc: 'yDoc',
-                type: vdl.Types.STRING
+                type: vdl.types.STRING
               },
               {
                 name: 'z',
                 doc: 'zDoc',
-                type: vdl.Types.STRING
+                type: vdl.types.STRING
               }
             ],
             outArgs: [
               {
                 name: '',
                 doc: '',
-                type: vdl.Types.JSVALUE
+                type: vdl.types.JSVALUE
               }
             ],
             inStream: null,
@@ -284,12 +284,12 @@ test('signature', function(t) {
               {
                 name: 'first',
                 doc: 'firstDoc',
-                type: vdl.Types.INT16
+                type: vdl.types.INT16
               },
               {
                 name: 'second',
                 doc: 'secondDoc',
-                type: vdl.Types.STRING
+                type: vdl.types.STRING
               }
             ],
             inStream: null,
@@ -303,30 +303,30 @@ test('signature', function(t) {
               {
                 name: 'a',
                 doc: 'aDoc',
-                type: vdl.Types.UINT32
+                type: vdl.types.UINT32
               },
               {
                 name: 'b',
                 doc: 'bDoc',
-                type: vdl.Types.STRING
+                type: vdl.types.STRING
               }
             ],
             outArgs: [
               {
                 name: '',
                 doc: '',
-                type: vdl.Types.JSVALUE
+                type: vdl.types.JSVALUE
               }
             ],
             inStream: {
               name: '',
               doc: '',
-              type: vdl.Types.UINT32
+              type: vdl.types.UINT32
             },
             outStream: {
               name: '',
               doc: '',
-              type: vdl.Types.UINT32
+              type: vdl.types.UINT32
             },
             tags: [
               {
@@ -350,7 +350,7 @@ test('signature', function(t) {
             inArgs: [
               {
                 name: 'a',
-                type: vdl.Types.STRING
+                type: vdl.types.STRING
               }
             ]
           },
@@ -360,22 +360,22 @@ test('signature', function(t) {
               {
                 name: 'x',
                 doc: '',
-                type: vdl.Types.INT16
+                type: vdl.types.INT16
               },
               {
                 name: 'SIGNATURENAME',
-                type: vdl.Types.INT16
+                type: vdl.types.INT16
               },
               {
                 name: 'z',
-                type: vdl.Types.INT16
+                type: vdl.types.INT16
               }
             ],
             inStream: {
-              type: vdl.Types.ANY
+              type: vdl.types.ANY
             },
             outStream: {
-              type: vdl.Types.STRING
+              type: vdl.types.STRING
             }
           }
         ]
@@ -393,24 +393,24 @@ test('signature', function(t) {
               {
                 name: 'x',
                 doc: '',
-                type: vdl.Types.INT16
+                type: vdl.types.INT16
               },
               {
                 name: 'SIGNATURENAME',
                 doc: '',
-                type: vdl.Types.INT16
+                type: vdl.types.INT16
               },
               {
                 name: 'z',
                 doc: '',
-                type: vdl.Types.INT16
+                type: vdl.types.INT16
               }
             ],
             outArgs: [
               {
                 name: '',
                 doc: '',
-                type: vdl.Types.JSVALUE
+                type: vdl.types.JSVALUE
               }
             ],
             inStream: null,
@@ -424,30 +424,30 @@ test('signature', function(t) {
               {
                 name: 'a',
                 doc: '',
-                type: vdl.Types.JSVALUE
+                type: vdl.types.JSVALUE
               },
               {
                 name: 'b',
                 doc: '',
-                type: vdl.Types.JSVALUE
+                type: vdl.types.JSVALUE
               }
             ],
             outArgs: [
               {
                 name: '',
                 doc: '',
-                type: vdl.Types.JSVALUE
+                type: vdl.types.JSVALUE
               }
             ],
             inStream: {
               name: '',
               doc: '',
-              type: vdl.Types.JSVALUE
+              type: vdl.types.JSVALUE
             },
             outStream: {
               name: '',
               doc: '',
-              type: vdl.Types.JSVALUE
+              type: vdl.types.JSVALUE
             },
             tags: []
           },

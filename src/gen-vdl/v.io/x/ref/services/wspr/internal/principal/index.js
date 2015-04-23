@@ -18,22 +18,22 @@ module.exports = {};
 // Types:
 var _typeBlessingsHandle = new vdl.Type();
 var _typeJsBlessings = new vdl.Type();
-_typeBlessingsHandle.kind = vdl.Kind.INT32;
+_typeBlessingsHandle.kind = vdl.kind.INT32;
 _typeBlessingsHandle.name = "v.io/x/ref/services/wspr/internal/principal.BlessingsHandle";
-_typeJsBlessings.kind = vdl.Kind.STRUCT;
+_typeJsBlessings.kind = vdl.kind.STRUCT;
 _typeJsBlessings.name = "v.io/x/ref/services/wspr/internal/principal.JsBlessings";
-_typeJsBlessings.fields = [{name: "Handle", type: _typeBlessingsHandle}, {name: "PublicKey", type: vdl.Types.STRING}];
+_typeJsBlessings.fields = [{name: "Handle", type: _typeBlessingsHandle}, {name: "PublicKey", type: vdl.types.STRING}];
 _typeBlessingsHandle.freeze();
 _typeJsBlessings.freeze();
-module.exports.BlessingsHandle = (vdl.Registry.lookupOrCreateConstructor(_typeBlessingsHandle));
-module.exports.JsBlessings = (vdl.Registry.lookupOrCreateConstructor(_typeJsBlessings));
+module.exports.BlessingsHandle = (vdl.registry.lookupOrCreateConstructor(_typeBlessingsHandle));
+module.exports.JsBlessings = (vdl.registry.lookupOrCreateConstructor(_typeJsBlessings));
 
 
 
 
 // Consts:
 
-  module.exports.ZeroHandle = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeBlessingsHandle))(0, true), _typeBlessingsHandle);
+  module.exports.ZeroHandle = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeBlessingsHandle))(0, true), _typeBlessingsHandle);
 
 
 

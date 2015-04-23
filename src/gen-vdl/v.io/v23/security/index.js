@@ -42,71 +42,71 @@ var _typeWireDischarge = new vdl.Type();
 var _typenonce = new vdl.Type();
 var _typepublicKeyDischarge = new vdl.Type();
 var _typepublicKeyThirdPartyCaveat = new vdl.Type();
-_type1.kind = vdl.Kind.LIST;
+_type1.kind = vdl.kind.LIST;
 _type1.name = "";
 _type1.elem = _typeCaveat;
-_type2.kind = vdl.Kind.LIST;
+_type2.kind = vdl.kind.LIST;
 _type2.name = "";
-_type2.elem = vdl.Types.BYTE;
-_type3.kind = vdl.Kind.LIST;
+_type2.elem = vdl.types.BYTE;
+_type3.kind = vdl.kind.LIST;
 _type3.name = "";
-_type3.elem = vdl.Types.STRING;
-_type4.kind = vdl.Kind.LIST;
+_type3.elem = vdl.types.STRING;
+_type4.kind = vdl.kind.LIST;
 _type4.name = "";
 _type4.elem = _typeBlessingPattern;
-_type5.kind = vdl.Kind.LIST;
+_type5.kind = vdl.kind.LIST;
 _type5.name = "";
-_type5.elem = vdl.Types.ANY;
-_type6.kind = vdl.Kind.LIST;
+_type5.elem = vdl.types.ANY;
+_type6.kind = vdl.kind.LIST;
 _type6.name = "";
 _type6.elem = _type7;
-_type7.kind = vdl.Kind.LIST;
+_type7.kind = vdl.kind.LIST;
 _type7.name = "";
 _type7.elem = _typeCertificate;
-_type8.kind = vdl.Kind.LIST;
+_type8.kind = vdl.kind.LIST;
 _type8.name = "";
 _type8.elem = _typeRejectedBlessing;
-_typeBlessingPattern.kind = vdl.Kind.STRING;
+_typeBlessingPattern.kind = vdl.kind.STRING;
 _typeBlessingPattern.name = "v.io/v23/security.BlessingPattern";
-_typeCaveat.kind = vdl.Kind.STRUCT;
+_typeCaveat.kind = vdl.kind.STRUCT;
 _typeCaveat.name = "v.io/v23/security.Caveat";
 _typeCaveat.fields = [{name: "Id", type: new uniqueid.Id()._type}, {name: "ParamVom", type: _type2}];
-_typeCaveatDescriptor.kind = vdl.Kind.STRUCT;
+_typeCaveatDescriptor.kind = vdl.kind.STRUCT;
 _typeCaveatDescriptor.name = "v.io/v23/security.CaveatDescriptor";
-_typeCaveatDescriptor.fields = [{name: "Id", type: new uniqueid.Id()._type}, {name: "ParamType", type: vdl.Types.TYPEOBJECT}];
-_typeCertificate.kind = vdl.Kind.STRUCT;
+_typeCaveatDescriptor.fields = [{name: "Id", type: new uniqueid.Id()._type}, {name: "ParamType", type: vdl.types.TYPEOBJECT}];
+_typeCertificate.kind = vdl.kind.STRUCT;
 _typeCertificate.name = "v.io/v23/security.Certificate";
-_typeCertificate.fields = [{name: "Extension", type: vdl.Types.STRING}, {name: "PublicKey", type: _type2}, {name: "Caveats", type: _type1}, {name: "Signature", type: _typeSignature}];
-_typeDischargeImpetus.kind = vdl.Kind.STRUCT;
+_typeCertificate.fields = [{name: "Extension", type: vdl.types.STRING}, {name: "PublicKey", type: _type2}, {name: "Caveats", type: _type1}, {name: "Signature", type: _typeSignature}];
+_typeDischargeImpetus.kind = vdl.kind.STRUCT;
 _typeDischargeImpetus.name = "v.io/v23/security.DischargeImpetus";
-_typeDischargeImpetus.fields = [{name: "Server", type: _type4}, {name: "Method", type: vdl.Types.STRING}, {name: "Arguments", type: _type5}];
-_typeHash.kind = vdl.Kind.STRING;
+_typeDischargeImpetus.fields = [{name: "Server", type: _type4}, {name: "Method", type: vdl.types.STRING}, {name: "Arguments", type: _type5}];
+_typeHash.kind = vdl.kind.STRING;
 _typeHash.name = "v.io/v23/security.Hash";
-_typeRejectedBlessing.kind = vdl.Kind.STRUCT;
+_typeRejectedBlessing.kind = vdl.kind.STRUCT;
 _typeRejectedBlessing.name = "v.io/v23/security.RejectedBlessing";
-_typeRejectedBlessing.fields = [{name: "Blessing", type: vdl.Types.STRING}, {name: "Err", type: vdl.Types.ERROR}];
-_typeSignature.kind = vdl.Kind.STRUCT;
+_typeRejectedBlessing.fields = [{name: "Blessing", type: vdl.types.STRING}, {name: "Err", type: vdl.types.ERROR}];
+_typeSignature.kind = vdl.kind.STRUCT;
 _typeSignature.name = "v.io/v23/security.Signature";
 _typeSignature.fields = [{name: "Purpose", type: _type2}, {name: "Hash", type: _typeHash}, {name: "R", type: _type2}, {name: "S", type: _type2}];
-_typeThirdPartyRequirements.kind = vdl.Kind.STRUCT;
+_typeThirdPartyRequirements.kind = vdl.kind.STRUCT;
 _typeThirdPartyRequirements.name = "v.io/v23/security.ThirdPartyRequirements";
-_typeThirdPartyRequirements.fields = [{name: "ReportServer", type: vdl.Types.BOOL}, {name: "ReportMethod", type: vdl.Types.BOOL}, {name: "ReportArguments", type: vdl.Types.BOOL}];
-_typeWireBlessings.kind = vdl.Kind.STRUCT;
+_typeThirdPartyRequirements.fields = [{name: "ReportServer", type: vdl.types.BOOL}, {name: "ReportMethod", type: vdl.types.BOOL}, {name: "ReportArguments", type: vdl.types.BOOL}];
+_typeWireBlessings.kind = vdl.kind.STRUCT;
 _typeWireBlessings.name = "v.io/v23/security.WireBlessings";
 _typeWireBlessings.fields = [{name: "CertificateChains", type: _type6}];
-_typeWireDischarge.kind = vdl.Kind.UNION;
+_typeWireDischarge.kind = vdl.kind.UNION;
 _typeWireDischarge.name = "v.io/v23/security.WireDischarge";
 _typeWireDischarge.fields = [{name: "PublicKey", type: _typepublicKeyDischarge}];
-_typenonce.kind = vdl.Kind.ARRAY;
+_typenonce.kind = vdl.kind.ARRAY;
 _typenonce.name = "v.io/v23/security.nonce";
 _typenonce.len = 16;
-_typenonce.elem = vdl.Types.BYTE;
-_typepublicKeyDischarge.kind = vdl.Kind.STRUCT;
+_typenonce.elem = vdl.types.BYTE;
+_typepublicKeyDischarge.kind = vdl.kind.STRUCT;
 _typepublicKeyDischarge.name = "v.io/v23/security.publicKeyDischarge";
-_typepublicKeyDischarge.fields = [{name: "ThirdPartyCaveatId", type: vdl.Types.STRING}, {name: "Caveats", type: _type1}, {name: "Signature", type: _typeSignature}];
-_typepublicKeyThirdPartyCaveat.kind = vdl.Kind.STRUCT;
+_typepublicKeyDischarge.fields = [{name: "ThirdPartyCaveatId", type: vdl.types.STRING}, {name: "Caveats", type: _type1}, {name: "Signature", type: _typeSignature}];
+_typepublicKeyThirdPartyCaveat.kind = vdl.kind.STRUCT;
 _typepublicKeyThirdPartyCaveat.name = "v.io/v23/security.publicKeyThirdPartyCaveat";
-_typepublicKeyThirdPartyCaveat.fields = [{name: "Nonce", type: _typenonce}, {name: "Caveats", type: _type1}, {name: "DischargerKey", type: _type2}, {name: "DischargerLocation", type: vdl.Types.STRING}, {name: "DischargerRequirements", type: _typeThirdPartyRequirements}];
+_typepublicKeyThirdPartyCaveat.fields = [{name: "Nonce", type: _typenonce}, {name: "Caveats", type: _type1}, {name: "DischargerKey", type: _type2}, {name: "DischargerLocation", type: vdl.types.STRING}, {name: "DischargerRequirements", type: _typeThirdPartyRequirements}];
 _type1.freeze();
 _type2.freeze();
 _type3.freeze();
@@ -129,27 +129,27 @@ _typeWireDischarge.freeze();
 _typenonce.freeze();
 _typepublicKeyDischarge.freeze();
 _typepublicKeyThirdPartyCaveat.freeze();
-module.exports.BlessingPattern = (vdl.Registry.lookupOrCreateConstructor(_typeBlessingPattern));
-module.exports.Caveat = (vdl.Registry.lookupOrCreateConstructor(_typeCaveat));
-module.exports.CaveatDescriptor = (vdl.Registry.lookupOrCreateConstructor(_typeCaveatDescriptor));
-module.exports.Certificate = (vdl.Registry.lookupOrCreateConstructor(_typeCertificate));
-module.exports.DischargeImpetus = (vdl.Registry.lookupOrCreateConstructor(_typeDischargeImpetus));
-module.exports.Hash = (vdl.Registry.lookupOrCreateConstructor(_typeHash));
-module.exports.RejectedBlessing = (vdl.Registry.lookupOrCreateConstructor(_typeRejectedBlessing));
-module.exports.Signature = (vdl.Registry.lookupOrCreateConstructor(_typeSignature));
-module.exports.ThirdPartyRequirements = (vdl.Registry.lookupOrCreateConstructor(_typeThirdPartyRequirements));
-module.exports.WireBlessings = (vdl.Registry.lookupOrCreateConstructor(_typeWireBlessings));
-module.exports.WireDischarge = (vdl.Registry.lookupOrCreateConstructor(_typeWireDischarge));
-module.exports.nonce = (vdl.Registry.lookupOrCreateConstructor(_typenonce));
-module.exports.publicKeyDischarge = (vdl.Registry.lookupOrCreateConstructor(_typepublicKeyDischarge));
-module.exports.publicKeyThirdPartyCaveat = (vdl.Registry.lookupOrCreateConstructor(_typepublicKeyThirdPartyCaveat));
+module.exports.BlessingPattern = (vdl.registry.lookupOrCreateConstructor(_typeBlessingPattern));
+module.exports.Caveat = (vdl.registry.lookupOrCreateConstructor(_typeCaveat));
+module.exports.CaveatDescriptor = (vdl.registry.lookupOrCreateConstructor(_typeCaveatDescriptor));
+module.exports.Certificate = (vdl.registry.lookupOrCreateConstructor(_typeCertificate));
+module.exports.DischargeImpetus = (vdl.registry.lookupOrCreateConstructor(_typeDischargeImpetus));
+module.exports.Hash = (vdl.registry.lookupOrCreateConstructor(_typeHash));
+module.exports.RejectedBlessing = (vdl.registry.lookupOrCreateConstructor(_typeRejectedBlessing));
+module.exports.Signature = (vdl.registry.lookupOrCreateConstructor(_typeSignature));
+module.exports.ThirdPartyRequirements = (vdl.registry.lookupOrCreateConstructor(_typeThirdPartyRequirements));
+module.exports.WireBlessings = (vdl.registry.lookupOrCreateConstructor(_typeWireBlessings));
+module.exports.WireDischarge = (vdl.registry.lookupOrCreateConstructor(_typeWireDischarge));
+module.exports.nonce = (vdl.registry.lookupOrCreateConstructor(_typenonce));
+module.exports.publicKeyDischarge = (vdl.registry.lookupOrCreateConstructor(_typepublicKeyDischarge));
+module.exports.publicKeyThirdPartyCaveat = (vdl.registry.lookupOrCreateConstructor(_typepublicKeyThirdPartyCaveat));
 
 
 
 
 // Consts:
 
-  module.exports.ConstCaveat = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeCaveatDescriptor))({
+  module.exports.ConstCaveat = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeCaveatDescriptor))({
   'id': new Uint8Array([
 0,
 0,
@@ -168,10 +168,10 @@ module.exports.publicKeyThirdPartyCaveat = (vdl.Registry.lookupOrCreateConstruct
 0,
 0,
 ]),
-  'paramType': vdl.Types.BOOL,
+  'paramType': vdl.types.BOOL,
 }, true), _typeCaveatDescriptor);
 
-  module.exports.ExpiryCaveatX = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeCaveatDescriptor))({
+  module.exports.ExpiryCaveatX = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeCaveatDescriptor))({
   'id': new Uint8Array([
 166,
 76,
@@ -193,7 +193,7 @@ module.exports.publicKeyThirdPartyCaveat = (vdl.Registry.lookupOrCreateConstruct
   'paramType': new time.Time()._type,
 }, true), _typeCaveatDescriptor);
 
-  module.exports.MethodCaveatX = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeCaveatDescriptor))({
+  module.exports.MethodCaveatX = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeCaveatDescriptor))({
   'id': new Uint8Array([
 84,
 166,
@@ -215,7 +215,7 @@ module.exports.publicKeyThirdPartyCaveat = (vdl.Registry.lookupOrCreateConstruct
   'paramType': _type3,
 }, true), _typeCaveatDescriptor);
 
-  module.exports.PublicKeyThirdPartyCaveatX = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeCaveatDescriptor))({
+  module.exports.PublicKeyThirdPartyCaveatX = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeCaveatDescriptor))({
   'id': new Uint8Array([
 121,
 114,
@@ -237,7 +237,7 @@ module.exports.publicKeyThirdPartyCaveat = (vdl.Registry.lookupOrCreateConstruct
   'paramType': _typepublicKeyThirdPartyCaveat,
 }, true), _typeCaveatDescriptor);
 
-  module.exports.PeerBlessingsCaveat = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeCaveatDescriptor))({
+  module.exports.PeerBlessingsCaveat = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeCaveatDescriptor))({
   'id': new Uint8Array([
 5,
 119,
@@ -259,25 +259,25 @@ module.exports.publicKeyThirdPartyCaveat = (vdl.Registry.lookupOrCreateConstruct
   'paramType': _type4,
 }, true), _typeCaveatDescriptor);
 
-  module.exports.NoExtension = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeBlessingPattern))("$", true), _typeBlessingPattern);
+  module.exports.NoExtension = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeBlessingPattern))("$", true), _typeBlessingPattern);
 
-  module.exports.AllPrincipals = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeBlessingPattern))("...", true), _typeBlessingPattern);
+  module.exports.AllPrincipals = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeBlessingPattern))("...", true), _typeBlessingPattern);
 
-  module.exports.ChainSeparator = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.STRING))("/", true), vdl.Types.STRING);
+  module.exports.ChainSeparator = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.STRING))("/", true), vdl.types.STRING);
 
-  module.exports.SHA1Hash = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeHash))("SHA1", true), _typeHash);
+  module.exports.SHA1Hash = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeHash))("SHA1", true), _typeHash);
 
-  module.exports.SHA256Hash = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeHash))("SHA256", true), _typeHash);
+  module.exports.SHA256Hash = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeHash))("SHA256", true), _typeHash);
 
-  module.exports.SHA384Hash = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeHash))("SHA384", true), _typeHash);
+  module.exports.SHA384Hash = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeHash))("SHA384", true), _typeHash);
 
-  module.exports.SHA512Hash = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeHash))("SHA512", true), _typeHash);
+  module.exports.SHA512Hash = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeHash))("SHA512", true), _typeHash);
 
-  module.exports.SignatureForMessageSigning = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.STRING))("S", true), vdl.Types.STRING);
+  module.exports.SignatureForMessageSigning = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.STRING))("S", true), vdl.types.STRING);
 
-  module.exports.SignatureForBlessingCertificates = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.STRING))("B", true), vdl.Types.STRING);
+  module.exports.SignatureForBlessingCertificates = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.STRING))("B", true), vdl.types.STRING);
 
-  module.exports.SignatureForDischarge = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.STRING))("D", true), vdl.Types.STRING);
+  module.exports.SignatureForDischarge = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.STRING))("D", true), vdl.types.STRING);
 
 
 
@@ -301,8 +301,8 @@ module.exports.CaveatParamTypeMismatchError = makeError('v.io/v23/security.Cavea
   'en': '{1:}{2:} bad param type: caveat {3} got {4}, want {5}',
 }, [
   new uniqueid.Id()._type,
-  vdl.Types.TYPEOBJECT,
-  vdl.Types.TYPEOBJECT,
+  vdl.types.TYPEOBJECT,
+  vdl.types.TYPEOBJECT,
 ]);
 
 
@@ -310,15 +310,15 @@ module.exports.CaveatParamCodingError = makeError('v.io/v23/security.CaveatParam
   'en': '{1:}{2:} unable to encode/decode caveat param(type={4}) for caveat {3}: {5}',
 }, [
   new uniqueid.Id()._type,
-  vdl.Types.TYPEOBJECT,
-  vdl.Types.ERROR,
+  vdl.types.TYPEOBJECT,
+  vdl.types.ERROR,
 ]);
 
 
 module.exports.CaveatValidationError = makeError('v.io/v23/security.CaveatValidation', actions.NO_RETRY, {
   'en': '{1:}{2:} caveat validation failed: {3}',
 }, [
-  vdl.Types.ERROR,
+  vdl.types.ERROR,
 ]);
 
 
@@ -339,7 +339,7 @@ module.exports.ExpiryCaveatValidationError = makeError('v.io/v23/security.Expiry
 module.exports.MethodCaveatValidationError = makeError('v.io/v23/security.MethodCaveatValidation', actions.NO_RETRY, {
   'en': '{1:}{2:} method {3} not in list {4}',
 }, [
-  vdl.Types.STRING,
+  vdl.types.STRING,
   _type3,
 ]);
 
@@ -355,8 +355,8 @@ module.exports.PeerBlessingsCaveatValidationError = makeError('v.io/v23/security
 module.exports.UnrecognizedRootError = makeError('v.io/v23/security.UnrecognizedRoot', actions.NO_RETRY, {
   'en': '{1:}{2:} unrecognized public key {3} in root certificate{:4}',
 }, [
-  vdl.Types.STRING,
-  vdl.Types.ERROR,
+  vdl.types.STRING,
+  vdl.types.ERROR,
 ]);
 
 

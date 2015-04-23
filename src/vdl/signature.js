@@ -11,14 +11,14 @@
 
 module.exports = Signature;
 
-var Types = require('./types');
+var types = require('./types');
 var vdlsig = require('../gen-vdl/v.io/v23/vdlroot/signature');
 var ReflectSignature = require('./reflect-signature');
 var vlog = require('../lib/vlog');
 
 // Each argument type is JSValue.
 // This can be overriden by specifying types in the description.
-var defaultArgType = Types.JSVALUE;
+var defaultArgType = types.JSVALUE;
 
 // Default to returning a single out arg.
 var defaultOutArgs = [
