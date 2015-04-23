@@ -58,6 +58,12 @@ if (isBrowser) {
     module.exports.extension = require('./browser/extension-utils');
 }
 /**
+ * Void callback is an callback that will be called on completion of an
+ * async operation that has no results
+ * @callback module:vanadium~voidCb
+ * @param {Error} err If set, the error that occurred.
+ */
+/**
  * Callback passed into the {@link module:vanadium.init} that will be
  * called when the initialization has finished.
  * @callback module:vanadium~runtimeCb

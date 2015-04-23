@@ -12,6 +12,7 @@ module.exports = {
 };
 
 /**
+ * @summary
  * ExtensionCrashError indicates that the Vanadium extension has crashed.
  * This is only available in browser environment and will not exist in NodeJS.
  * @name ExtensionCrashError
@@ -29,8 +30,10 @@ function ExtensionCrashError(message) {
 inherits(ExtensionCrashError, Error);
 
 /**
+ * @summary
  * ExtensionNotInstalledError indicates that the Vanadium extension is not
  * installed.
+ * @description
  * This is only available in browser environment and will not exist in NodeJS.
  * @name ExtensionNotInstalledError
  * @constructor

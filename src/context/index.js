@@ -19,7 +19,7 @@
  *     vanadium.init(function(err, runtime) {
  *       var ctx = runtime.getContext();
  *       doSomething(ctx);
- *     });  
+ *     });
  *   </pre>
  * </li>
  * <li>The first parameter to every Vanadium server method implementation
@@ -35,7 +35,7 @@
  * </ol></p>
  *
  * <p>Once you have a context you can derive further contexts to
- * change settings.  for example to adjust a deadline you might do:
+ * change settings.  For example to adjust a deadline you might do:
  * </p>
  * <pre>
  *    vanadium.init(function(err, runtime) {
@@ -108,7 +108,8 @@ var CanceledError;
  * boundaries.
  * @description
  * Generally application code should not call this constructor to
- * create contexts.  Instead it should call runtime.getContext() or
+ * create contexts.  Instead it should call
+ * [runtime.getContext]{@link module:vanadium~Runtime#getContext} or
  * use the context supplied as the first argument to server method
  * implementations.
  * @constructor
@@ -123,7 +124,7 @@ function Context() {
 /**
  * Returns the time at which this context will be automatically
  * canceled.  If no deadline has been set, null is returned.
- * @return {Date} The Date corresponding to the deadline
+ * @return {Date} The Date corresponding to the deadline.
  */
 Context.prototype.deadline = function() {
   return null;
@@ -133,13 +134,28 @@ Context.prototype.deadline = function() {
 /**
  * Returns true if the context has exceeded its deadline,
  * been cancelled, or been finished.
- * @return {boolean} True if the context is done
+ * @return {boolean} True if the context is done.
  */
 Context.prototype.done = function() {
   return false;
 };
 
+/**
+ * Frees resources associated with the context without generating an error.
+ * Only applicable to context objects returned from withCancel(). It does
+ * nothing for other contexts.
+ */
 Context.prototype.finish = function() {
+  // Do nothing for most contexts.
+};
+
+/**
+ * Can be used to cancel the context and generate a
+ * {@link module:vanadium.verror.CanceledError}.
+ * Only applicable to context objects returned from withCancel(). It does
+ * nothing for other contexts.
+ */
+Context.prototype.cancel = function() {
   // Do nothing for most contexts.
 };
 
@@ -147,7 +163,9 @@ Context.prototype.finish = function() {
  * Returns a promise that will be resolved when the context exceeds
  * its deadline, is cancelled, or is finished.  Optionally you can
  * pass a callback that will be run when the promise is resolved.
- * @param {function} cb A callback function(error) to call upon cancellation
+ * @param {module:vanadium~voidCb} [cb] If provided, the function
+ * will be called on completion.
+ * @return {Promise} Promise to be called on completion.
  */
 Context.prototype.waitUntilDone = function(callback) {
   // The root context can never be cancelled, and therefore we
@@ -166,8 +184,8 @@ Context.prototype.waitUntilDone = function(callback) {
  * just to pass extra parameters to functions and methods.  The key
  * must be an instance of ContextKey.  This function will return null
  * if there is no value associated with the given key.
- * @param {module:vanadium.context.ContextKey} A ContextKey to look up
- * @return {*} The value associated with the key, or null
+ * @param {module:vanadium.context.ContextKey} key A ContextKey to look up.
+ * @return {*} The value associated with the key, or null.
  */
 Context.prototype.value = function(key) {
   return null;
@@ -188,9 +206,11 @@ Context.prototype.withValue = function(key, value) {
 /**
  * Returns a new context derived from the current context but that can
  * be cancelled.  The returned context will have two additional
- * methods cancel() which can be used to cancel the context and
- * generate a module:vanadium.verror.CanceledError and finish() which frees
- * resources associated with the context without generating an error.
+ * methods [cancel()]{@link module:vanadium.context.Context#cancel} which
+ * can be used to cancel the context and
+ * generate a {@link module:vanadium.verror.CanceledError} and
+ * [finish()]{@link module:vanadium.context.Context#finish} which
+ * frees resources associated with the context without generating an error.
  * @return {module:vanadium.context.Context} A new derived cancellable context.
  */
 Context.prototype.withCancel = function() {

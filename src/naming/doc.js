@@ -59,7 +59,7 @@
  * @constructor
  * @param {Object} globError
  * @param {string} globError.name Name Root of the subtree.
- * @param {module.vanadium.errors.VanadiumError} globError.error The error that
+ * @param {module.vanadium.verror.VanadiumError} globError.error The error that
  * occurred fulfilling the request.
  * @memberof module:vanadium.naming
  */

@@ -28,7 +28,7 @@ var isBrowser = require('is-browser');
  * error messages to be generated in different languages.</p>
  *
  * @namespace
- * @name errors
+ * @name verror
  * @memberof module:vanadium
  */
 module.exports = extend(require('../gen-vdl/v.io/v23/verror'), {

@@ -11,16 +11,26 @@ var TypeUtil = require('../vdl/type-util');
 module.exports = VanadiumError;
 
 /**
+ * @summary
  * The base error for all vanadium wire errors.  This class should not
  * be used directly, but all vanadium errors should inherit from
  * VanadiumError.
  * @constructor
  * @memberof module:vanadium.verror
- * @param {string} id The errorId for the error
- * @param {string} retryCode The retry behavior for this error
+ * @param {string} id The unique id for this error type.  It is preferable
+ * to prefix the error name with a package path that is unique.
+ * @param {module:vanadium.verror.actions} retryCode The retry action for
+ * this error.
  * @param {module:vanadium.context.Context} ctx The context the error was
  * created in.
- * @param {...*} params A list of parameters to include in the error message
+ * @param {...*} params A list of parameters to include in the error message.
+ *
+ * @property {string} id The unique id for this error type.
+ * @property {module:vanadium.verror.actions} retryCode The retry action for
+ * this error.
+ * @property {Array.<*>} paramList A list of parameters to included in the error
+ * message
+ * this error.
  */
 function VanadiumError() {
   var args = Array.prototype.slice.call(arguments);
@@ -79,8 +89,8 @@ VanadiumError.prototype.resetArgs = function() {
 VanadiumError.prototype._type = Types.ERROR.elem;
 
 /**
- * Clones the error
- * @return {VanadiumError} A deep copy of the error
+ * Clones the error.
+ * @return {module:vanadium.verror.VanadiumError} A deep copy of the error.
  */
 VanadiumError.prototype.clone = function() {
   var res = Object.create(this.constructor.prototype);

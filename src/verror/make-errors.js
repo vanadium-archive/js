@@ -14,19 +14,22 @@ module.exports = makeError;
  * and retryCode passed in.
  * @param {string} id The unique id for this error type.  It is preferable
  * to prefix the error name with a package path that is unique.
- * @param {string} retryCode The retry action for this error.
+ * @param {module:vanadium.verror.actions} retryCode The retry action for this
+ * error.
  * @param {string|object} format If a string, then it's the en-US text string,
  * otherwise it is a map from languageId to format string.
  * @param {Array} types The array of types that expected for the arguments to
  * the error constructor.
- * @returns {constructor} A constructor that can be used to create vanadium
- * errors with the given error id.
+ * @returns {function} A constructor function
+ * that can be used to create vanadium errors with the given error id.
+ * The returned constructor function inherits from
+ * {@link module:vanadium.verror.VanadiumError}.
  * @memberof module:vanadium.verror
  */
 function makeError(id, retryCode, format, types) {
   var fname = id.split('.').pop();
   var Errors = {};
-  Errors[fname] = function () {
+  Errors[fname] = function() {
     var args = Array.prototype.slice.call(arguments);
     if (Array.isArray(args[0]) && args.length === 1) {
       args = args[0];
@@ -42,7 +45,9 @@ function makeError(id, retryCode, format, types) {
   Errors[fname].prototype._argTypes = types || [];
   errorMap[id] = Errors[fname];
   if (typeof format === 'string') {
-    format = { 'en-US': format };
+    format = {
+      'en-US': format
+    };
   }
 
   if (format) {
@@ -54,5 +59,3 @@ function makeError(id, retryCode, format, types) {
   }
   return Errors[fname];
 }
-
-

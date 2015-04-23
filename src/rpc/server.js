@@ -65,12 +65,6 @@ function Server(router) {
  */
 
 /**
- * Void callback is an callback that will be called on completion of an
- * async operation that has no results
- * @callback module:vanadium.rpc~Server~voidCb
- * @param {error} err If set, the error that occurred.
- */
-/**
  * <p>Serve associates object with name by publishing the address
  * of this server with the mount table under the supplied name and using
  * authorizer to authorize access to it.</p>
@@ -93,7 +87,7 @@ function Server(router) {
  * @param {object} serviceObject The service object that has a set of
  * exported methods
  * @param {module:vanadium.rpc~Server~ServeOptions} options Options config
- * @param {module:vanadium.rpc~Server~voidCb} [cb] If provided, the function
+ * @param {module:vanadium~voidCb} [cb] If provided, the function
  * will be called on completion.
  * @return {Promise} Promise to be called when serve completes or fails.
  */
@@ -170,7 +164,7 @@ Server.prototype.serve = function(name, serviceObject, options, cb) {
  * @param {module:vanadium.rpc~Dispatcher} dispatcher A function that will
  * take in the suffix and the method to be called and return the service
  * object for that suffix.
- * @param {module:vanadium.rpc~Server~voidCb} [cb] If provided, the function
+ * @param {module:vanadium~voidCb} [cb] If provided, the function
  * will be called on completion.
  * @return {Promise} Promise to be called when serve completes or fails.
  */
@@ -183,7 +177,7 @@ Server.prototype.serveDispatcher = function(name, dispatcher, cb) {
  * Stop gracefully stops all services on this Server.
  * New calls are rejected, but any in-flight calls are allowed to complete.
  * All published named are unmounted.
- * @param {module:vanadium.rpc~Server~voidCb} [cb] If provided, the function
+ * @param {module:vanadium~voidCb} [cb] If provided, the function
  * will be called on completion.
  * @return {Promise} Promise to be called when stop service completes or fails
  */
@@ -200,7 +194,7 @@ Server.prototype.stop = function(cb) {
  * or [addName]{@link module:vanadium.rpc~Server#addName}.
  * @public
  * @param {string} name Name to publish
- * @param {module:vanadium.rpc~Server~voidCb} [cb] If provided, the function
+ * @param {module:vanadium~voidCb} [cb] If provided, the function
  * will be called on completion.
  * @return {Promise} Promise to be called when operation completes or fails
  */
