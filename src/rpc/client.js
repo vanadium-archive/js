@@ -87,9 +87,9 @@ function convertOutArg(arg, type, controller) {
 
 // Helper function to safely convert an out argument.
 // The returned error, if any is useful for a callback.
-function convertOutArgSafe(arg, type) {
+function convertOutArgSafe(arg, type, controller) {
   try {
-    return [undefined, convertOutArg(arg, type)];
+    return [undefined, convertOutArg(arg, type, controller)];
   } catch(err) {
     return [err, undefined];
   }
