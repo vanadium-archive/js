@@ -439,15 +439,44 @@ test('fromNativeNumber', function(t) {
         new Uint8Array([0x20, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00]))
     },
     {
-      input: 9007199254741001,
+      input: 9007199254741001, // slightly too large to be accurate
       expectedFailure: true,
-      expectedOutput: null
+      expectedOutput: new BigInt(1,
+        new Uint8Array([0x20, 0x00, 0x00, 0x00, 0x00, 0x00, 0x08]))
     },
     {
-      input: -9007199254741001,
+      input: -9007199254741001, // slightly too large (neg) to be accurate
       expectedFailure: true,
-      expectedOutput: null
+      expectedOutput: new BigInt(-1,
+        new Uint8Array([0x20, 0x00, 0x00, 0x00, 0x00, 0x00, 0x08]))
     },
+    {
+      input: 0xfedcba0987654321ff, // 2 too many hex digits
+      expectedFailure: true,
+      expectedOutput: new BigInt(1,
+        new Uint8Array([0xfe, 0xdc, 0xba, 0x09, 0x87, 0x65, 0x40, 0x00, 0x00]))
+        // Instead of 0x43, 0x21, and 0xff, it got rounded down.
+    },
+    {
+      input: 0.1, // non-integer that floors to 0
+      expectedFailure: true,
+      expectedOutput: new BigInt(0, new Uint8Array([]))
+    },
+    {
+      input: -300.26, // non-integer that floors to -301
+      expectedFailure: true,
+      expectedOutput: new BigInt(-1, new Uint8Array([0x01, 0x2d]))
+    },
+    {
+      input: '12', // non-number is parsed
+      expectedFailure: false,
+      expectedOutput: new BigInt(1, new Uint8Array([0x0c]))
+    },
+    {
+      input: 'not a number', // non-parseable number becomes NaN, which is 0
+      expectedFailure: true,
+      expectedOutput: new BigInt(0, new Uint8Array([]))
+    }
   ];
   var generator = function(test) {
     return function() {
@@ -463,9 +492,14 @@ test('fromNativeNumber', function(t) {
     } else {
       var result = BigInt.fromNativeNumber(test.input);
       t.ok(result.equals(test.expectedOutput), 'test: ' +
-        test.input.toString(16) + ' got ' + result + ' but expected ' +
+        test.input.toString(16) + ' got ' + result + ' and expected ' +
         test.expectedOutput);
     }
+
+    // Always do the approx test. Use expectedOutputApprox
+    var resultApprox = BigInt.fromNativeNumberApprox(test.input);
+    t.ok(resultApprox.equals(test.expectedOutput), 'test: ' +
+      test.input.toString(16) + ' approximation matches');
   }
   t.end();
 });

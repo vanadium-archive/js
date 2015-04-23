@@ -35,6 +35,7 @@ function BigInt(sign, uintBytes) {
   }
 }
 
+// Returns a subarray that excludes the uppermost zero bytes.
 function trimBytes(bytes) {
   var i = 0;
   for (; i < bytes.length; i++) {
@@ -52,32 +53,58 @@ function trimBytes(bytes) {
  * @return {BigInt} The BigInt representation.
  */
 BigInt.fromNativeNumber = function(val) {
-  if (val !== parseInt(val)) {
-    throw new Error('From number can only convert integer values (failing ' +
-      'on ' + val + ')');
+  if (typeof val !== 'number' || Math.round(val) !== val) {
+    throw new Error('fromNativeNumber can only convert integer values ' +
+      '(failing on ' + val + ')');
   }
   if (val > 9007199254740992 || val < -9007199254740992) {
     throw new Error('Cannot convert 0x' + val.toString(16) + ' to big int. ' +
       'Integers outside of (-2^53, 2^53)');
   }
+  return convertFromNative(val);
+};
+
+/**
+ * Approximates a BigInt from a native JavaScript number.
+ * Caution: The conversion is not accurate for large numbers, non-integers, and
+ * non-numerical inputs.
+ * @param {number} val A native JavaScript value.
+ * @return {BigInt} The BigInt representation.
+ */
+BigInt.fromNativeNumberApprox = function(val) {
+  var floored;
+  if (typeof val !== 'number') {
+    floored = parseInt(val); // make an attempt to convert to an integer
+  } else {
+    floored = Math.floor(val);
+  }
+  return convertFromNative(floored);
+};
+
+// Converts from a number to a BigInt.
+function convertFromNative(val) {
+  // The input is an integer, if it is 0, the BigInt is also 0.
   if (val === 0) {
     return new BigInt(0, new Uint8Array(0));
   }
+
+  // Go through each 4-byte chunk of |val|.
   var abs = Math.abs(val);
-  if (abs <= 0xffffffff) {
-    var lowerByteArr = new Uint8Array(4);
-    var dataView = new DataView(lowerByteArr.buffer);
-    dataView.setUint32(0, abs, false);
-    return new BigInt(_sign(val), lowerByteArr);
+  var chunks = [];
+  var CHUNK = 0x100000000;
+  do {
+    chunks.unshift(abs % CHUNK);
+    abs /= CHUNK;
+  } while (abs >= 1);
+
+  // Use these chunks to construct a Uint8Array for the BigInt.
+  var byteArr = new Uint8Array(4 * chunks.length);
+  var dataView = new DataView(byteArr.buffer);
+  for (var i = 0; i < chunks.length; i++) {
+    dataView.setUint32(4 * i, chunks[i], false);
   }
-  var upperVal = abs / 0x100000000;
-  var lowerVal = abs % 0x100000000;
-  var upperByteArr = new Uint8Array(8);
-  var upperDataView = new DataView(upperByteArr.buffer);
-  upperDataView.setUint32(4, lowerVal, false);
-  upperDataView.setUint32(0, upperVal, false);
-  return new BigInt(_sign(val), upperByteArr);
-};
+  return new BigInt(_sign(val), byteArr);
+}
 
 /**
  * Generate a string representation of the BigInt.
