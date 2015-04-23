@@ -591,7 +591,7 @@ test('Test delete() unmounts a name', function(assert) {
     var ctx = rt.getContext();
     var ns = rt.namespace();
     var name = 'name/that/will/be/deleted';
-    var ep = '/@3@ws@2.2.2.2:2222@e8972f90fe028674f78a164f001d07c5@5@7@s@@';
+    var ep = '/@5@ws@2.2.2.2:2222@e8972f90fe028674f78a164f001d07c5@s@@';
 
     ns.mount(ctx, name, ep, MINUTE)
       .then(function onMount(err) {
