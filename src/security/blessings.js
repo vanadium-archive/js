@@ -59,6 +59,15 @@ Blessings.prototype.toJSON = function() {
   };
 };
 
+/**
+ * Get a string that describes this blessings object.
+ * @return {Promise} A promise to a string describing the blessings.
+ * @private
+ */
+Blessings.prototype._debugString = function(ctx) {
+  return this._controller.blessingsDebugString(ctx, this._id);
+};
+
 Blessings.prototype.convertToJsBlessings = function() {
   return new JsBlessings({
     handle: this._id,

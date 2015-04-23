@@ -11,6 +11,15 @@ var serve = require('./serve');
 var Blessings = require('../../src/security/blessings');
 var SharedContextKeys = require('../../src/runtime/shared-context-keys');
 
+function validateBlessings(t, blessings) {
+  t.ok(blessings instanceof Blessings, 'Blessings have correct type');
+  t.ok(typeof blessings._id === 'number' && blessings._id !== 0,
+    'Blessing has non-zero id');
+  t.ok(typeof blessings.publicKey === 'string' && blessings.publicKey !== '',
+    'Blessing has public key');
+  t.ok(blessings._controller, 'Blessing object has controller attached');
+}
+
 test('Test bless self without Caveat', function(t) {
   var rt;
   vanadium.init(config, function(err, runtime) {
@@ -22,7 +31,7 @@ test('Test bless self without Caveat', function(t) {
 
     runtime.principal.blessSelf(runtime.getContext(), 'ext')
     .then(function(blessings) {
-      t.ok(blessings instanceof Blessings, 'Got blessings');
+      validateBlessings(t, blessings);
       rt.close(t.end);
     }).catch(function(err) {
       t.error(err);
@@ -44,7 +53,7 @@ test('Test bless self with Caveat', function(t) {
       caveats.createExpiryCaveat(new Date()),
       function(err, blessings) {
       t.error(err);
-      t.ok(blessings instanceof Blessings, 'Got blessings');
+      validateBlessings(t, blessings);
       rt.close(t.end);
     });
   });
@@ -86,9 +95,9 @@ test('Test bless with Caveat from server', function(t) {
       var remoteKey = secCall.remoteBlessings.publicKey;
       rt.principal.bless(ctx, remoteKey, secCall.localBlessings,
        'ext', caveats.createExpiryCaveat(new Date(Date.now() - 1000)),
-       caveats.createConstCaveat(true), function(err, blessing) {
+       caveats.createConstCaveat(true), function(err, blessings) {
          t.notOk(err, 'No error expected during bless');
-         t.ok(blessing instanceof Blessings, 'Got blessing');
+         validateBlessings(t, blessings);
          cb();
        });
     }
@@ -206,6 +215,28 @@ test('Test add roots', function(t) {
       rt.close(t.end);
     }).catch(function(err) {
       t.error(err, 'either blessSelf or addToRoots errored');
+      rt.close(t.end);
+    });
+  });
+});
+
+test('Test fetching blessing debug string', function(t) {
+  var rt;
+  vanadium.init(config, function(err, runtime) {
+    if (err) {
+      t.end(err);
+    }
+
+    rt = runtime;
+
+    runtime.principal.blessSelf(runtime.getContext(), 'blessedname')
+    .then(function(blessings) {
+      return blessings._debugString(runtime.getContext());
+    }).then(function(debugString) {
+      t.ok(debugString === 'blessedname', 'Got blessed name as debug string');
+      rt.close(t.end);
+    }).catch(function(err) {
+      t.error(err);
       rt.close(t.end);
     });
   });

@@ -139,6 +139,11 @@ Controller.prototype.unlinkBlessings = function(ctx, serverCall, handle) {
 };
     
       
+Controller.prototype.blessingsDebugString = function(ctx, serverCall, handle) {
+  throw new Error('Method BlessingsDebugString not implemented');
+};
+    
+      
 Controller.prototype.bless = function(ctx, serverCall, publicKey, blessingHandle, extension, caveat) {
   throw new Error('Method Bless not implemented');
 };
@@ -272,6 +277,27 @@ Controller.prototype._serviceDescription = {
     },
     ],
     outArgs: [],
+    inStream: null,
+    outStream: null,
+    tags: []
+  },
+    
+      
+    {
+    name: 'BlessingsDebugString',
+    doc: "// BlessingsDebugString gets a string useful for debugging blessings.",
+    inArgs: [{
+      name: 'handle',
+      doc: "",
+      type: new principal.BlessingsHandle()._type
+    },
+    ],
+    outArgs: [{
+      name: '',
+      doc: "",
+      type: vdl.types.STRING
+    },
+    ],
     inStream: null,
     outStream: null,
     tags: []
