@@ -8,7 +8,7 @@
  */
 
 var Type = require('./type.js');
-var Kind = require('./kind.js');
+var kind = require('./kind.js');
 
 // TODO(bprosnitz) Should we add other helpers? Or is it better just to directly
 // create the types in js?
@@ -18,80 +18,80 @@ var Kind = require('./kind.js');
  * @namespace
  * @memberof module:vanadium.vdl
  */
-var Types = {
+var types = {
   /**
    * @const
    */
-  ANY: primitiveType(Kind.ANY),
+  ANY: primitiveType(kind.ANY),
   /**
    * @const
    */
-  BOOL: primitiveType(Kind.BOOL),
+  BOOL: primitiveType(kind.BOOL),
   /**
    * @const
    */
-  BYTE: primitiveType(Kind.BYTE),
+  BYTE: primitiveType(kind.BYTE),
   /**
    * @const
    */
-  UINT16: primitiveType(Kind.UINT16),
+  UINT16: primitiveType(kind.UINT16),
   /**
    * @const
    */
-  UINT32: primitiveType(Kind.UINT32),
+  UINT32: primitiveType(kind.UINT32),
   /**
    * @const
    */
-  UINT64: primitiveType(Kind.UINT64),
+  UINT64: primitiveType(kind.UINT64),
   /**
    * @const
    */
-  INT16: primitiveType(Kind.INT16),
+  INT16: primitiveType(kind.INT16),
   /**
    * @const
    */
-  INT32: primitiveType(Kind.INT32),
+  INT32: primitiveType(kind.INT32),
   /**
    * @const
    */
-  INT64: primitiveType(Kind.INT64),
+  INT64: primitiveType(kind.INT64),
   /**
    * @const
    */
-  FLOAT32: primitiveType(Kind.FLOAT32),
+  FLOAT32: primitiveType(kind.FLOAT32),
   /**
    * @const
    */
-  FLOAT64: primitiveType(Kind.FLOAT64),
+  FLOAT64: primitiveType(kind.FLOAT64),
   /**
    * @const
    */
-  COMPLEX64: primitiveType(Kind.COMPLEX64),
+  COMPLEX64: primitiveType(kind.COMPLEX64),
   /**
    * @const
    */
-  COMPLEX128: primitiveType(Kind.COMPLEX128),
+  COMPLEX128: primitiveType(kind.COMPLEX128),
   /**
    * @const
    */
-  STRING: primitiveType(Kind.STRING),
+  STRING: primitiveType(kind.STRING),
   /**
    * @const
    */
-  TYPEOBJECT: Type.prototype._type // So that === works for Types.TypeObject
+  TYPEOBJECT: Type.prototype._type // So that === works for types.TypeObject
 };
 /**
  * Defines the wire error format
  * @const
  */
-Types.ERROR = defineOptionalErrorType();
+types.ERROR = defineOptionalErrorType();
 
 /**
  * @const
  */
-Types.JSVALUE = defineJSValueType();
+types.JSVALUE = defineJSValueType();
 
-module.exports = Types;
+module.exports = types;
 
 function defineOptionalErrorType() {
   var nilErrorType = new Type();
@@ -101,7 +101,7 @@ function defineOptionalErrorType() {
   // well)
   var retryCodeType = new Type();
   retryCodeType.name = '';
-  retryCodeType.kind = Kind.ENUM;
+  retryCodeType.kind = kind.ENUM;
   retryCodeType.labels = [
     'NoRetry',
     'RetryConnection',
@@ -110,16 +110,16 @@ function defineOptionalErrorType() {
   ];
   var paramListType = new Type();
   paramListType.name = '';
-  paramListType.kind = Kind.LIST;
-  paramListType.elem = Types.ANY;
+  paramListType.kind = kind.LIST;
+  paramListType.elem = types.ANY;
 
   var errorType = new Type();
   errorType.name = 'error';
-  errorType.kind = Kind.STRUCT;
+  errorType.kind = kind.STRUCT;
   errorType.fields = [
     {
       name: 'Id',
-      type: Types.STRING
+      type: types.STRING
     },
     {
       name: 'RetryCode',
@@ -127,7 +127,7 @@ function defineOptionalErrorType() {
     },
     {
       name: 'Msg',
-      type: Types.STRING
+      type: types.STRING
     },
     {
       name: 'ParamList',
@@ -135,7 +135,7 @@ function defineOptionalErrorType() {
     }
   ];
   nilErrorType.name = '';
-  nilErrorType.kind = Kind.OPTIONAL;
+  nilErrorType.kind = kind.OPTIONAL;
   nilErrorType.elem = errorType;
 
   return nilErrorType;
@@ -144,7 +144,7 @@ function defineOptionalErrorType() {
 // The JSValueType is a special type for JavaScript. Services will default to
 // sending and receiving this type when they do not specify a type in their
 // service signature.
-// TODO(alexfandrianto): We are still use Types.ANY instead of Types.JSVALUE.
+// TODO(alexfandrianto): We are still use types.ANY instead of types.JSVALUE.
 // TODO(alexfandrianto): We should consider moving this type into VDL.
 // See the issue: https://github.com/veyron/release-issues/issues/760
 // Warning: In the rare case that someone defines their own JSValue, they will
@@ -162,7 +162,7 @@ function defineJSValueType() {
 
   // Fill JSValue
   JSValueType.name = 'JSValue';
-  JSValueType.kind = Kind.UNION;
+  JSValueType.kind = kind.UNION;
   JSValueType.fields = [
     {
       name: 'Null',
@@ -170,15 +170,15 @@ function defineJSValueType() {
     },
     {
       name: 'Boolean',
-      type: Types.BOOL
+      type: types.BOOL
     },
     {
       name: 'Number',
-      type: Types.FLOAT64
+      type: types.FLOAT64
     },
     {
       name: 'String',
-      type: Types.STRING
+      type: types.STRING
     },
     {
       name: 'Bytes',
@@ -204,49 +204,49 @@ function defineJSValueType() {
 
   // Define the rest of EmptyStruct
   // Add a name, since VDL does not allow unnamed, empty structs.
-  EmptyStruct.kind = Kind.STRUCT;
+  EmptyStruct.kind = kind.STRUCT;
   EmptyStruct.fields = [];
   EmptyStruct.name = 'EmptyStruct';
 
   // Define the rest of ByteList
-  ByteList.kind = Kind.LIST;
-  ByteList.elem = Types.BYTE;
+  ByteList.kind = kind.LIST;
+  ByteList.elem = types.BYTE;
 
   // Define the rest of JSValueList
-  JSValueList.kind = Kind.LIST;
-  JSValueList.elem = Types.ANY;
+  JSValueList.kind = kind.LIST;
+  JSValueList.elem = types.ANY;
 
   // Define the rest of JSKeyValueList
-  JSKeyValueList.kind = Kind.LIST;
+  JSKeyValueList.kind = kind.LIST;
   JSKeyValueList.elem = JSKeyValuePair;
 
   // Define the rest of JSKeyValuePair
-  JSKeyValuePair.kind = Kind.STRUCT;
+  JSKeyValuePair.kind = kind.STRUCT;
   JSKeyValuePair.fields = [
     {
       name: 'Key',
-      type: Types.ANY
+      type: types.ANY
     },
     {
       name: 'Value',
-      type: Types.ANY
+      type: types.ANY
     }
   ];
 
   // Define the rest of JSStringValueList
-  JSStringValueList.kind = Kind.LIST;
+  JSStringValueList.kind = kind.LIST;
   JSStringValueList.elem = JSStringValuePair;
 
   // Define the rest of JSStringValuePair
-  JSStringValuePair.kind = Kind.STRUCT;
+  JSStringValuePair.kind = kind.STRUCT;
   JSStringValuePair.fields = [
     {
       name: 'Key',
-      type: Types.STRING
+      type: types.STRING
     },
     {
       name: 'Value',
-      type: Types.ANY
+      type: types.ANY
     }
   ];
 

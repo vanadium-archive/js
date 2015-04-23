@@ -8,11 +8,11 @@
 
 var test = require('prova');
 
-var Kind = require('./../../src/vdl/kind.js');
-var Registry = require('./../../src/vdl/registry.js');
+var kind = require('./../../src/vdl/kind.js');
+var registry = require('./../../src/vdl/registry.js');
 var Type = require('./../../src/vdl/type.js');
-var Types = require('./../../src/vdl/types.js');
-var TypeUtil = require('./../../src/vdl/type-util.js');
+var types = require('./../../src/vdl/types.js');
+var typeUtil = require('./../../src/vdl/type-util.js');
 var stringify = require('./../../src/vdl/stringify.js');
 var canonicalize = require('./../../src/vdl/canonicalize.js');
 
@@ -25,31 +25,31 @@ var Encoder = require('./../../src/vom/encoder.js');
 var Decoder = require('./../../src/vom/decoder.js');
 
 test('encode and decode', function(t) {
-  var linkedListNodeType = {
-    kind: Kind.STRUCT,
+  var linkedListNodetype = {
+    kind: kind.STRUCT,
     name: 'LinkedListNode',
     fields: [
       {
         name: 'Value',
-        type: Types.ANY
+        type: types.ANY
       },
       {
         name: 'Next'
       }
     ]
   };
-  linkedListNodeType.fields[1].type = {
-    kind: Kind.OPTIONAL,
-    elem: linkedListNodeType
+  linkedListNodetype.fields[1].type = {
+    kind: kind.OPTIONAL,
+    elem: linkedListNodetype
   };
 
-  var treeNodeType = new Type({
-    kind: Kind.STRUCT,
-    name: 'TreeNodeType',
+  var treeNodetype = new Type({
+    kind: kind.STRUCT,
+    name: 'TreeNodetype',
     fields: [
       {
         name: 'Value',
-        type: Types.ANY
+        type: types.ANY
       },
       {
         name: 'Left'
@@ -59,19 +59,19 @@ test('encode and decode', function(t) {
       }
     ]
   });
-  var nextTreeNodeType = new Type({
-    kind: Kind.OPTIONAL,
-    elem: treeNodeType
+  var nextTreeNodetype = new Type({
+    kind: kind.OPTIONAL,
+    elem: treeNodetype
   });
-  treeNodeType.fields[1].type = nextTreeNodeType;
-  treeNodeType.fields[2].type = nextTreeNodeType;
+  treeNodetype.fields[1].type = nextTreeNodetype;
+  treeNodetype.fields[2].type = nextTreeNodetype;
 
   // Define a type with _type on the prototype to test type look up in one of.
   function NamedUintConstructor(val) {
     this.val = val;
   }
   NamedUintConstructor.prototype._type = {
-    kind: Kind.UINT32,
+    kind: kind.UINT32,
     name: 'namedUint32'
   };
   NamedUintConstructor.prototype._wrappedType = true;
@@ -83,7 +83,7 @@ test('encode and decode', function(t) {
       expectedOutput: {
         val:  1
       },
-      t: Types.BYTE
+      t: types.BYTE
     },
     {
       n: 'Decode(Encode(Uint16))',
@@ -91,7 +91,7 @@ test('encode and decode', function(t) {
       expectedOutput: {
         val:  1000
       },
-      t: Types.UINT16
+      t: types.UINT16
     },
     {
       n: 'Decode(Encode(Float32))',
@@ -99,7 +99,7 @@ test('encode and decode', function(t) {
       expectedOutput: {
         val:  0.3
       },
-      t: Types.FLOAT32
+      t: types.FLOAT32
     },
     {
       n: 'Decode(Encode(Int32))',
@@ -107,7 +107,7 @@ test('encode and decode', function(t) {
       expectedOutput: {
         val:  -1
       },
-      t: Types.INT32
+      t: types.INT32
     },
     {
       n: 'Decode(Encode(Complex64))',
@@ -121,7 +121,7 @@ test('encode and decode', function(t) {
           imag: -0.4
         }
       },
-      t: Types.COMPLEX64
+      t: types.COMPLEX64
     },
     {
       n: 'Decode(Encode(String))',
@@ -129,7 +129,7 @@ test('encode and decode', function(t) {
       expectedOutput: {
         val:  'a string'
       },
-      t: Types.STRING
+      t: types.STRING
     },
     {
       n: 'Decode(Encode(Bool))',
@@ -137,36 +137,36 @@ test('encode and decode', function(t) {
       expectedOutput: {
         val:  true
       },
-      t: Types.BOOL
+      t: types.BOOL
     },
     {
-      n: 'Decode(Encode(TypeObject))',
+      n: 'Decode(Encode(typeObject))',
       v: {
-        kind: Kind.LIST,
+        kind: kind.LIST,
         name: 'A list',
-        elem: Types.STRING
+        elem: types.STRING
       },
       expectedOutput: {
-        kind: Kind.LIST,
+        kind: kind.LIST,
         name: 'A list',
-        elem: Types.STRING
+        elem: types.STRING
       },
-      t: Types.TYPEOBJECT
+      t: types.TYPEOBJECT
     },
     {
-      n: 'Decode(Encode(Struct{X: TypeObject(nil)}))',
+      n: 'Decode(Encode(Struct{X: typeObject(nil)}))',
       v: {
         x: undefined
       },
       expectedOutput: {
-        x: Types.ANY
+        x: types.ANY
       },
       t: {
-        kind: Kind.STRUCT,
+        kind: kind.STRUCT,
         fields: [
           {
             name: 'X',
-            type: Types.TYPEOBJECT
+            type: types.TYPEOBJECT
           }
         ]
       }
@@ -181,11 +181,11 @@ test('encode and decode', function(t) {
         x: 'val'
       },
       t: {
-        kind: Kind.STRUCT,
+        kind: kind.STRUCT,
         fields: [
           {
             name: 'X',
-            type: Types.STRING
+            type: types.STRING
           }
         ]
       }
@@ -207,8 +207,8 @@ test('encode and decode', function(t) {
         val:  [2, 3, 4]
       },
       t: {
-        kind: Kind.LIST,
-        elem: Types.UINT32
+        kind: kind.LIST,
+        elem: types.UINT32
       }
     },
     {
@@ -218,8 +218,8 @@ test('encode and decode', function(t) {
         val:  [2, 3, 4]
       },
       t: {
-        kind: Kind.ARRAY,
-        elem: Types.INT32,
+        kind: kind.ARRAY,
+        elem: types.INT32,
         len: 3
       }
     },
@@ -230,8 +230,8 @@ test('encode and decode', function(t) {
         val:  new Uint8Array([0x80, 0x90])
       },
       t: {
-        kind: Kind.LIST,
-        elem: Types.BYTE
+        kind: kind.LIST,
+        elem: types.BYTE
       }
     },
     {
@@ -241,8 +241,8 @@ test('encode and decode', function(t) {
         val:  new Uint8Array([0x80, 0x90])
       },
       t: {
-        kind: Kind.ARRAY,
-        elem: Types.BYTE,
+        kind: kind.ARRAY,
+        elem: types.BYTE,
         len: 2
       }
     },
@@ -256,8 +256,8 @@ test('encode and decode', function(t) {
         val:  new Set(['B', 'A'])
       },
       t: {
-        kind: Kind.SET,
-        key: Types.STRING
+        kind: kind.SET,
+        key: types.STRING
       },
     },
     {
@@ -267,8 +267,8 @@ test('encode and decode', function(t) {
         val:  new Set([3, 5])
       },
       t: {
-        kind: Kind.SET,
-        key: Types.UINT32
+        kind: kind.SET,
+        key: types.UINT32
       }
     },
     {
@@ -284,9 +284,9 @@ test('encode and decode', function(t) {
         ]),
       },
       t: {
-        kind: Kind.MAP,
-        key: Types.STRING,
-        elem: Types.STRING
+        kind: kind.MAP,
+        key: types.STRING,
+        elem: types.STRING
       },
     },
     {
@@ -302,9 +302,9 @@ test('encode and decode', function(t) {
         ])
       },
       t: {
-        kind: Kind.MAP,
-        key: Types.UINT16,
-        elem: Types.FLOAT32
+        kind: kind.MAP,
+        key: types.UINT16,
+        elem: types.FLOAT32
       }
     },
     {
@@ -315,22 +315,22 @@ test('encode and decode', function(t) {
         field3: [4, 5]
       },
       t: {
-        kind: Kind.STRUCT,
+        kind: kind.STRUCT,
         name: 'testStruct',
         fields: [
           {
             name: 'Field1',
-            type: Types.UINT16
+            type: types.UINT16
           },
           {
             name: 'Field2',
-            type: Types.STRING
+            type: types.STRING
           },
           {
             name: 'Field3',
             type: {
-              kind: Kind.LIST,
-              elem: Types.FLOAT64
+              kind: kind.LIST,
+              elem: types.FLOAT64
             }
           }
         ]
@@ -343,8 +343,8 @@ test('encode and decode', function(t) {
         val: 'alabel'
       },
       t: {
-        kind: Kind.ENUM,
-        name: 'enumType',
+        kind: kind.ENUM,
+        name: 'enumtype',
         labels: ['alabel', 'blabel']
       }
     },
@@ -355,8 +355,8 @@ test('encode and decode', function(t) {
         val: 'optionalString'
       },
       t: {
-        kind: Kind.OPTIONAL,
-        elem: Types.STRING
+        kind: kind.OPTIONAL,
+        elem: types.STRING
       }
     },
     {
@@ -366,8 +366,8 @@ test('encode and decode', function(t) {
         val: null
       },
       t: {
-        kind: Kind.OPTIONAL,
-        elem: Types.STRING
+        kind: kind.OPTIONAL,
+        elem: types.STRING
       }
     },
     {
@@ -439,8 +439,8 @@ test('encode and decode', function(t) {
         ]
       },
       t: {
-        kind: Kind.LIST,
-        elem: Types.ANY
+        kind: kind.LIST,
+        elem: types.ANY
       }
     },
     {
@@ -449,16 +449,16 @@ test('encode and decode', function(t) {
         'uInt': 5
       },
       t: {
-        kind: Kind.UNION,
+        kind: kind.UNION,
         name: 'unionName',
         fields: [
           {
             name: 'StringInt',
-            type: Types.STRING
+            type: types.STRING
           },
           {
             name: 'UInt',
-            type: Types.UINT16
+            type: types.UINT16
           }
         ]
       }
@@ -469,16 +469,16 @@ test('encode and decode', function(t) {
         'stringBool': 'str'
       },
       t: {
-        kind: Kind.UNION,
+        kind: kind.UNION,
         name: 'unionName',
         fields: [
           {
             name: 'StringBool',
-            type: Types.STRING
+            type: types.STRING
           },
           {
             name: 'Boolean',
-            type: Types.BOOL
+            type: types.BOOL
           }
         ]
       }
@@ -489,16 +489,16 @@ test('encode and decode', function(t) {
         'boolean': true
       },
       t: {
-        kind: Kind.UNION,
+        kind: kind.UNION,
         name: 'UnionName',
         fields: [
           {
             name: 'StringBool',
-            type: Types.STRING
+            type: types.STRING
           },
           {
             name: 'Boolean',
-            type: Types.BOOL
+            type: types.BOOL
           }
         ]
       }
@@ -509,22 +509,22 @@ test('encode and decode', function(t) {
         'list': [4,3,5]
       },
       t: {
-        kind: Kind.UNION,
+        kind: kind.UNION,
         name: 'UnionName',
         fields: [
           {
             name: 'Map',
             type: {
-              kind: Kind.MAP,
-              key: Types.STRING,
-              elem: Types.UINT32
+              kind: kind.MAP,
+              key: types.STRING,
+              elem: types.UINT32
             }
           },
           {
             name: 'List',
             type: {
-              kind: Kind.LIST,
-              elem: Types.FLOAT64
+              kind: kind.LIST,
+              elem: types.FLOAT64
             }
           }
         ]
@@ -537,29 +537,29 @@ test('encode and decode', function(t) {
           'a': 9,                  // are capitalized upon conversion to Map.
           'b': 10,
           _type: {
-            kind: Kind.MAP,
-            key: Types.STRING,
-            elem: Types.UINT32
+            kind: kind.MAP,
+            key: types.STRING,
+            elem: types.UINT32
           }
         }
       },
       t: {
-        kind: Kind.UNION,
+        kind: kind.UNION,
         name: 'UnionName',
         fields: [
           {
             name: 'Map',
             type: {
-              kind: Kind.MAP,
-              key: Types.STRING,
-              elem: Types.UINT32
+              kind: kind.MAP,
+              key: types.STRING,
+              elem: types.UINT32
             }
           },
           {
             name: 'List',
             type: {
-              kind: Kind.LIST,
-              elem: Types.FLOAT64
+              kind: kind.LIST,
+              elem: types.FLOAT64
             }
           }
         ]
@@ -593,7 +593,7 @@ test('encode and decode', function(t) {
           }
         }
       },
-      t: linkedListNodeType
+      t: linkedListNodetype
     },
     {
       n: 'Decode(Encode(Tree Nodes))',
@@ -631,7 +631,7 @@ test('encode and decode', function(t) {
           right: null
         }
       },
-      t: treeNodeType
+      t: treeNodetype
     },
     {
       n: 'Decode(Encode(Any))',
@@ -639,7 +639,7 @@ test('encode and decode', function(t) {
       expectedOutput: { // any with JSValue(number)
         val: 5
       },
-      t: Types.ANY
+      t: types.ANY
     },
     {
       n: 'Decode(Encode(Any)) - wrapLike',
@@ -651,13 +651,13 @@ test('encode and decode', function(t) {
           val: 5
         }
       },
-      t: Types.ANY
+      t: types.ANY
     },
     {
       n: 'Decode(Encode(Any)) - INT32 wrap',
       v: {
         val: 5,
-        _type: Types.INT32, // pretend this is on the prototype
+        _type: types.INT32, // pretend this is on the prototype
         _wrappedType: true  // pretend this is on the prototype
       },
       expectedOutput: {
@@ -665,15 +665,15 @@ test('encode and decode', function(t) {
           val: 5
         }
       },
-      t: Types.ANY
+      t: types.ANY
     },
     {
       n: 'Decode(Encode(Any)) - Optional wrap',
       v: {
         val: 'not null',
         _type: {              // pretend this is on the prototype
-          kind: Kind.OPTIONAL,
-          elem: Types.STRING
+          kind: kind.OPTIONAL,
+          elem: types.STRING
         },
         _wrappedType: true    // pretend this is on the prototype
       },
@@ -682,18 +682,18 @@ test('encode and decode', function(t) {
           val: 'not null'
         }
       },
-      t: Types.ANY
+      t: types.ANY
     },
     {
       n: 'Decode(Encode(Any)) - Struct wrap',
       v: {
         a: 'abc',
         _type: {              // pretend this is on the prototype
-          kind: Kind.STRUCT,
+          kind: kind.STRUCT,
           fields: [
             {
               name: 'A',
-              type: Types.STRING
+              type: types.STRING
             }
           ]
         }
@@ -703,18 +703,18 @@ test('encode and decode', function(t) {
           a: 'abc'
         }
       },
-      t: Types.ANY
+      t: types.ANY
     },
     {
       n: 'Decode(Encode(Any)) - Struct w/ Any wrap',
       v: {
         a: 'abc',
         _type: {              // pretend this is on the prototype
-          kind: Kind.STRUCT,
+          kind: kind.STRUCT,
           fields: [
             {
               name: 'A',
-              type: Types.ANY
+              type: types.ANY
             }
           ]
         }
@@ -724,21 +724,21 @@ test('encode and decode', function(t) {
           a: 'abc'
         }
       },
-      t: Types.ANY
+      t: types.ANY
     },
     {
       n: 'Decode(Encode(JSValue w/ null))',
       expectedOutput: null,
       v: null,
-      t: Types.JSVALUE
+      t: types.JSVALUE
     },
     {
       n: 'Decode(Encode(Any w/ null))',
       expectedOutput: {
         val: null
       },
-      v: null,            // guesses to be a null of Type ANY
-      t: Types.ANY
+      v: null,            // guesses to be a null of type ANY
+      t: types.ANY
     },
     {
       n: 'Decode(Encode(Any w/ null)) - wrapLike))',
@@ -748,9 +748,9 @@ test('encode and decode', function(t) {
         }
       },
       v: {
-        val: null         // is not a null of Type ANY; it's a struct
+        val: null         // is not a null of type ANY; it's a struct
       },
-      t: Types.ANY
+      t: types.ANY
     },
     {
       n: 'Decode(Encode(Any w/ null)) - ANY wrap',
@@ -759,10 +759,10 @@ test('encode and decode', function(t) {
       },
       v: {
         val: null,
-        _type: Types.ANY,  // pretend this is on the prototype
+        _type: types.ANY,  // pretend this is on the prototype
         _wrappedType: true // pretend this is on the prototype
       },
-      t: Types.ANY
+      t: types.ANY
     },
     {
       n: 'Decode(Encode(Any w/ null)) - OPTIONAL wrap',
@@ -774,23 +774,23 @@ test('encode and decode', function(t) {
       v: {
         val: null,
         _type: {              // pretend this is on the prototype
-          kind: Kind.OPTIONAL,
-          elem: Types.STRING
+          kind: kind.OPTIONAL,
+          elem: types.STRING
         },
         _wrappedType: true    // pretend this is on the prototype
       },
-      t: Types.ANY
+      t: types.ANY
     },
     {
       n: 'Decode(Encode(Any w/ null)) - in a struct',
       v: {
         a: null,
         _type: {              // pretend this is on the prototype
-          kind: Kind.STRUCT,
+          kind: kind.STRUCT,
           fields: [
             {
               name: 'A',
-              type: Types.ANY
+              type: types.ANY
             }
           ]
         }
@@ -800,22 +800,22 @@ test('encode and decode', function(t) {
           a: null
         }
       },
-      t: Types.ANY
+      t: types.ANY
     },
     {
       n: 'Decode(Encode(Any w/ null)) - wrapped null in a struct',
       v: {
         a: {
           val: null,
-          _type: Types.ANY,   // pretend this is on the prototype
+          _type: types.ANY,   // pretend this is on the prototype
           _wrappedType: true  // pretend this is on the prototype
         },
         _type: {              // pretend this is on the prototype
-          kind: Kind.STRUCT,
+          kind: kind.STRUCT,
           fields: [
             {
               name: 'A',
-              type: Types.ANY
+              type: types.ANY
             }
           ]
         }
@@ -825,7 +825,7 @@ test('encode and decode', function(t) {
           a: null
         }
       },
-      t: Types.ANY
+      t: types.ANY
     },
     {
       n: 'Decode(Encode(Map in Map))',
@@ -868,12 +868,12 @@ test('encode and decode', function(t) {
         ]
       ]),
       t: {
-        kind: Kind.MAP,
-        key: Types.STRING,
+        kind: kind.MAP,
+        key: types.STRING,
         elem: {
-          kind: Kind.MAP,
-          key: Types.STRING,
-          elem: Types.ANY,
+          kind: kind.MAP,
+          key: types.STRING,
+          elem: types.ANY,
         },
       },
     },
@@ -882,19 +882,19 @@ test('encode and decode', function(t) {
       v: {
         c: true,
         _type: {
-          kind: Kind.STRUCT,
+          kind: kind.STRUCT,
           fields: [
             {
               name: 'A',
-              type: Types.UINT32
+              type: types.UINT32
             },
             {
               name: 'B',
-              type: Types.STRING
+              type: types.STRING
             },
             {
               name: 'C',
-              type: Types.BOOL
+              type: types.BOOL
             }
           ]
         }
@@ -948,21 +948,21 @@ test('encode and decode', function(t) {
         ]
       },
       t: {
-        kind: Kind.LIST,
+        kind: kind.LIST,
         elem: {
-          kind: Kind.STRUCT,
+          kind: kind.STRUCT,
           fields: [
             {
               name: 'A',
-              type: Types.UINT32
+              type: types.UINT32
             },
             {
               name: 'B',
-              type: Types.STRING
+              type: types.STRING
             },
             {
               name: 'C',
-              type: Types.BOOL
+              type: types.BOOL
             }
           ]
         }
@@ -1019,18 +1019,18 @@ test('encode and decode', function(t) {
     },
     {
       n: 'typed string',
-      v: new (Registry.lookupOrCreateConstructor(Types.STRING))(''),
-      expectedOutput: new (Registry.lookupOrCreateConstructor(Types.STRING))('')
+      v: new (registry.lookupOrCreateConstructor(types.STRING))(''),
+      expectedOutput: new (registry.lookupOrCreateConstructor(types.STRING))('')
     },
     {
       n: 'typed number',
-      v: new (Registry.lookupOrCreateConstructor(Types.INT16))(4),
-      expectedOutput: new (Registry.lookupOrCreateConstructor(Types.INT16))(4)
+      v: new (registry.lookupOrCreateConstructor(types.INT16))(4),
+      expectedOutput: new (registry.lookupOrCreateConstructor(types.INT16))(4)
     },
     {
       n: 'typed boolean',
-      v: new (Registry.lookupOrCreateConstructor(Types.BOOL))(true),
-      expectedOutput: new (Registry.lookupOrCreateConstructor(Types.BOOL))(true)
+      v: new (registry.lookupOrCreateConstructor(types.BOOL))(true),
+      expectedOutput: new (registry.lookupOrCreateConstructor(types.BOOL))(true)
     },
   ];
   for (var i = 0; i < tests.length; i++) {
@@ -1049,13 +1049,13 @@ test('encode and decode', function(t) {
     t.equals(resultStr, expectedStr, test.n  + ' - decode value match');
 
     // Then validate that we were given a canonicalized value.
-    // Note that some results are native post-decode; if so, use Types.JSVALUE.
-    var resultType = Types.JSVALUE;
-    if (TypeUtil.isTyped(result)) {
-      resultType = result._type;
+    // Note that some results are native post-decode; if so, use types.JSVALUE.
+    var resulttype = types.JSVALUE;
+    if (typeUtil.isTyped(result)) {
+      resulttype = result._type;
     }
     t.deepEqual(
-      canonicalize.reduce(result, resultType),
+      canonicalize.reduce(result, resulttype),
       expected,
       test.n + ' - decode value validation'
     );
@@ -1064,59 +1064,59 @@ test('encode and decode', function(t) {
     // TODO(bprosnitz) Even if test.t isn't defined, we should still know what
     // the expected type ought to be.
     if (test.t) {
-      var resultTypeStr = stringify(resultType);
-      var expectedTypeStr = stringify(canonicalize.type(test.t));
-      t.equals(resultTypeStr, expectedTypeStr, test.n + ' - decode type match');
+      var resulttypeStr = stringify(resulttype);
+      var expectedtypeStr = stringify(canonicalize.type(test.t));
+      t.equals(resulttypeStr, expectedtypeStr, test.n + ' - decode type match');
     }
   }
   t.end();
 });
 
 test('encode error cases', function(t) {
-  var Str = Registry.lookupOrCreateConstructor(Types.STRING);
-  var IntList = Registry.lookupOrCreateConstructor(new Type({
-    kind: Kind.LIST,
-    elem: Types.INT16
+  var Str = registry.lookupOrCreateConstructor(types.STRING);
+  var IntList = registry.lookupOrCreateConstructor(new Type({
+    kind: kind.LIST,
+    elem: types.INT16
   }));
 
   var tests = [
     {
       n: 'converting null to non-optional type',
       v: null,
-      t: Types.UINT64
+      t: types.UINT64
     },
     {
       n: 'encoding float as int',
       v: 3.5,
-      t: Types.INT32
+      t: types.INT32
     },
     {
       n: 'converting string to complex type',
       v: 'a string cannot convert to Complex',
-      t: Types.COMPLEX64
+      t: types.COMPLEX64
     },
     {
       n: 'converting wrapped string to complex type',
       v: new Str('a string cannot convert to Complex'),
-      t: Types.COMPLEX64,
+      t: types.COMPLEX64,
       e: 'are not compatible'
     },
     {
       n: 'using value as typeobject',
       v: [3, 4, 90],
-      t: Types.TYPEOBJECT
+      t: types.TYPEOBJECT
     },
     {
       n: 'using wrapped value as typeobject',
       v: new IntList([3, 4, 90]),
-      t: Types.TYPEOBJECT,
+      t: types.TYPEOBJECT,
       e: 'are not compatible'
     },
     {
       n: 'using label not in enum',
       v: 'Thursday',
       t: {
-        kind: Kind.ENUM,
+        kind: kind.ENUM,
         labels: ['Sunday', 'Monday', 'Tuesday']
       }
     },
@@ -1124,8 +1124,8 @@ test('encode error cases', function(t) {
       n: 'array size mismatch',
       v: [2, -4, 9, 34],
       t: {
-        kind: Kind.ARRAY,
-        elem: Types.INT16,
+        kind: kind.ARRAY,
+        elem: types.INT16,
         len: 3
       }
     },
@@ -1137,8 +1137,8 @@ test('encode error cases', function(t) {
         ['c', true]
       ]),
       t: {
-        kind: Kind.SET,
-        key: Types.STRING
+        kind: kind.SET,
+        key: types.STRING
       }
     },
     {
@@ -1149,8 +1149,8 @@ test('encode error cases', function(t) {
         c: true
       },
       t: {
-        kind: Kind.SET,
-        key: Types.FLOAT64
+        kind: kind.SET,
+        key: types.FLOAT64
       }
     },
     {
@@ -1161,9 +1161,9 @@ test('encode error cases', function(t) {
         c: 'asf'
       },
       t: {
-        kind: Kind.MAP,
-        key: Types.UINT32,
-        elem: Types.ANY
+        kind: kind.MAP,
+        key: types.UINT32,
+        elem: types.ANY
       }
     },
     {
@@ -1175,19 +1175,19 @@ test('encode error cases', function(t) {
         d: 'KABOOM! This cannot be here!'
       },
       t: {
-        kind: Kind.STRUCT,
+        kind: kind.STRUCT,
         fields: [
           {
             name: 'A',
-            type: Types.INT16
+            type: types.INT16
           },
           {
             name: 'B',
-            type: Types.BYTE
+            type: types.BYTE
           },
           {
             name: 'C',
-            type: Types.STRING
+            type: types.STRING
           }
         ]
       }
@@ -1199,19 +1199,19 @@ test('encode error cases', function(t) {
         c: 'asf'
       },
       t: {
-        kind: Kind.UNION,
+        kind: kind.UNION,
         fields: [
           {
             name: 'A',
-            type: Types.INT16
+            type: types.INT16
           },
           {
             name: 'B',
-            type: Types.BYTE
+            type: types.BYTE
           },
           {
             name: 'C',
-            type: Types.STRING
+            type: types.STRING
           }
         ]
       }
@@ -1220,19 +1220,19 @@ test('encode error cases', function(t) {
       n: 'Union is not NoneOf',
       v: {},
       t: {
-        kind: Kind.UNION,
+        kind: kind.UNION,
         fields: [
           {
             name: 'A',
-            type: Types.INT16
+            type: types.INT16
           },
           {
             name: 'B',
-            type: Types.BYTE
+            type: types.BYTE
           },
           {
             name: 'C',
-            type: Types.STRING
+            type: types.STRING
           }
         ]
       }

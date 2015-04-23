@@ -12,7 +12,7 @@ var registry = require('./../../src/vdl/registry.js');
 var registryMultipleRequire = require('./../../src/vdl/registry.js');
 var createConstructor = require('./../../src/vdl/create-constructor.js');
 
-var Kind = require('./../../src/vdl/kind.js');
+var kind = require('./../../src/vdl/kind.js');
 var Type = require('./../../src/vdl/type.js');
 
 function createNamedType(name, kind) {
@@ -23,8 +23,8 @@ function createNamedType(name, kind) {
 }
 
 test('_addConstructor', function(t) {
-  var foo = createNamedType('foo', Kind.FLOAT32);
-  var boo = createNamedType('boo', Kind.BOOL);
+  var foo = createNamedType('foo', kind.FLOAT32);
+  var boo = createNamedType('boo', kind.BOOL);
 
   // Unique types do not throw.
   t.doesNotThrow(
@@ -45,21 +45,21 @@ test('_addConstructor', function(t) {
 });
 
 test('_lookupConstructor', function(t) {
-  var notHere = createNamedType('noo', Kind.STRING);
+  var notHere = createNamedType('noo', kind.STRING);
 
   // A missing type gets null.
   t.equal(registry._lookupConstructor(notHere), null,
     'lookup unused type => null');
 
   // An added type gets its constructor back.
-  var type = createNamedType('through', Kind.INT64);
+  var type = createNamedType('through', kind.INT64);
   var constructor = 'czar';
   registry._addConstructor(type, constructor);
   t.equal(registry._lookupConstructor(type), constructor,
     'add(A, B) => lookup(A) => get B');
 
   // If we add another type, we get its constructor back instead.
-  var type2 = createNamedType('loo', Kind.UINT32);
+  var type2 = createNamedType('loo', kind.UINT32);
   var constructor2 = 'jar';
   registry._addConstructor(type2, constructor2);
   t.equal(registry._lookupConstructor(type2), constructor2,
@@ -73,7 +73,7 @@ test('_lookupConstructor', function(t) {
 });
 
 test('multiple require', function(t) {
-  var type = createNamedType('glue', Kind.STRUCT);
+  var type = createNamedType('glue', kind.STRUCT);
   var constructor = 'car';
   registry._addConstructor(type, constructor);
   t.equals(registryMultipleRequire._lookupConstructor(type), constructor,
@@ -82,13 +82,13 @@ test('multiple require', function(t) {
 });
 
 test('lookupOrCreateConstructor', function(t) {
-  var firstType = createNamedType('few', Kind.INT32);
+  var firstType = createNamedType('few', kind.INT32);
   var Constructor = registry.lookupOrCreateConstructor(firstType);
   var SameConstructor = registry.lookupOrCreateConstructor(firstType);
   t.equals(Constructor, SameConstructor);
   t.deepEquals(new Constructor(), new (createConstructor(firstType))());
 
-  var secondType = createNamedType('chew', Kind.STRING);
+  var secondType = createNamedType('chew', kind.STRING);
   var SecondConstructor = registry.lookupOrCreateConstructor(secondType);
   t.notEquals(Constructor, SecondConstructor);
   t.deepEquals(new SecondConstructor(), new (createConstructor(secondType))());

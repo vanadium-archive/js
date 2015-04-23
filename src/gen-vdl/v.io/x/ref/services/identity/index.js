@@ -18,15 +18,15 @@ module.exports = {};
 // Types:
 var _type1 = new vdl.Type();
 var _typeBlessingRootResponse = new vdl.Type();
-_type1.kind = vdl.Kind.LIST;
+_type1.kind = vdl.kind.LIST;
 _type1.name = "";
-_type1.elem = vdl.Types.STRING;
-_typeBlessingRootResponse.kind = vdl.Kind.STRUCT;
+_type1.elem = vdl.types.STRING;
+_typeBlessingRootResponse.kind = vdl.kind.STRUCT;
 _typeBlessingRootResponse.name = "v.io/x/ref/services/identity.BlessingRootResponse";
-_typeBlessingRootResponse.fields = [{name: "Names", type: _type1}, {name: "PublicKey", type: vdl.Types.STRING}];
+_typeBlessingRootResponse.fields = [{name: "Names", type: _type1}, {name: "PublicKey", type: vdl.types.STRING}];
 _type1.freeze();
 _typeBlessingRootResponse.freeze();
-module.exports.BlessingRootResponse = (vdl.Registry.lookupOrCreateConstructor(_typeBlessingRootResponse));
+module.exports.BlessingRootResponse = (vdl.registry.lookupOrCreateConstructor(_typeBlessingRootResponse));
 
 
 
@@ -68,7 +68,7 @@ OAuthBlesser.prototype._serviceDescription = {
     inArgs: [{
       name: 'token',
       doc: "",
-      type: vdl.Types.STRING
+      type: vdl.types.STRING
     },
     ],
     outArgs: [{
@@ -79,7 +79,7 @@ OAuthBlesser.prototype._serviceDescription = {
     {
       name: 'email',
       doc: "",
-      type: vdl.Types.STRING
+      type: vdl.types.STRING
     },
     ],
     inStream: null,
@@ -117,7 +117,7 @@ MacaroonBlesser.prototype._serviceDescription = {
     inArgs: [{
       name: 'macaroon',
       doc: "",
-      type: vdl.Types.STRING
+      type: vdl.types.STRING
     },
     ],
     outArgs: [{

@@ -56,13 +56,13 @@ Exp.prototype._serviceDescription = {
     inArgs: [{
       name: 'x',
       doc: "",
-      type: vdl.Types.FLOAT64
+      type: vdl.types.FLOAT64
     },
     ],
     outArgs: [{
       name: '',
       doc: "",
-      type: vdl.Types.FLOAT64
+      type: vdl.types.FLOAT64
     },
     ],
     inStream: null,

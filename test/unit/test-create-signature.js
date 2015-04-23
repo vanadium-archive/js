@@ -36,20 +36,20 @@ test('create signatures with no description', function(t) {
       inArgs: [{
         doc: '',
         name: 'x',
-        type: vdl.Types.JSVALUE
+        type: vdl.types.JSVALUE
       }, {
         doc: '',
         name: 'y',
-        type: vdl.Types.JSVALUE
+        type: vdl.types.JSVALUE
       }, {
         doc: '',
         name: 'z',
-        type: vdl.Types.JSVALUE
+        type: vdl.types.JSVALUE
       }],
       outArgs: [{
         name: '',
         doc: '',
-        type: vdl.Types.JSVALUE
+        type: vdl.types.JSVALUE
       }],
       tags: []
     }, {
@@ -61,7 +61,7 @@ test('create signatures with no description', function(t) {
       outArgs: [{
         name: '',
         doc: '',
-        'type': vdl.Types.JSVALUE
+        'type': vdl.types.JSVALUE
       }],
       tags: []
     }, {
@@ -71,17 +71,17 @@ test('create signatures with no description', function(t) {
       outArgs: [{
         name: '',
         doc: '',
-        type: vdl.Types.JSVALUE
+        type: vdl.types.JSVALUE
       }],
       inStream: {
         doc: '',
         name: '',
-        type: vdl.Types.JSVALUE
+        type: vdl.types.JSVALUE
       },
       outStream: {
         doc: '',
         name: '',
-        type: vdl.Types.JSVALUE
+        type: vdl.types.JSVALUE
       },
       tags: []
     }]
@@ -105,24 +105,24 @@ test('create signatures with full description', function(t) {
       inArgs: [{
         name: 'x',
         doc: 'xDoc',
-        type: vdl.Types.UINT32
+        type: vdl.types.UINT32
       }, {
         name: 'y',
         doc: 'yDoc',
-        type: vdl.Types.STRING
+        type: vdl.types.STRING
       }, {
         name: 'z',
         doc: 'zDoc',
-        type: vdl.Types.COMPLEX128
+        type: vdl.types.COMPLEX128
       }],
       outArgs: [{
         name: 'a',
         doc: 'aDoc',
-        type: vdl.Types.STRING
+        type: vdl.types.STRING
       }, {
         name: 'err',
         doc: 'errDoc',
-        type: vdl.Types.ERROR
+        type: vdl.types.ERROR
       }],
       inStream: null,
       outStream: null,
@@ -142,17 +142,17 @@ test('create signatures with full description', function(t) {
       outArgs: [{
         name: 'err',
         doc: 'errDoc',
-        type: vdl.Types.ERROR
+        type: vdl.types.ERROR
       }],
       inStream: {
         doc: '',
         name: '',
-        type: vdl.Types.UINT32
+        type: vdl.types.UINT32
       },
       outStream: {
         doc: '',
         name: '',
-        type: vdl.Types.INT32
+        type: vdl.types.INT32
       },
       tags: []
     }]
@@ -179,24 +179,24 @@ test('create signatures with one description but extra methods',
       inArgs: [{
         name: 'x',
         doc: 'xDoc',
-        type: vdl.Types.UINT32
+        type: vdl.types.UINT32
       }, {
         name: 'y',
         doc: 'yDoc',
-        type: vdl.Types.STRING
+        type: vdl.types.STRING
       }, {
         name: 'z',
         doc: 'zDoc',
-        type: vdl.Types.COMPLEX128
+        type: vdl.types.COMPLEX128
       }],
       outArgs: [{
         name: 'a',
         doc: 'aDoc',
-        type: vdl.Types.STRING
+        type: vdl.types.STRING
       }, {
         name: 'err',
         doc: 'errDoc',
-        type: vdl.Types.ERROR
+        type: vdl.types.ERROR
       }],
       inStream: null,
       outStream: null,
@@ -209,12 +209,12 @@ test('create signatures with one description but extra methods',
       inStream: {
         doc: '',
         name: '',
-        type: vdl.Types.UINT32
+        type: vdl.types.UINT32
       },
       outStream: {
         doc: '',
         name: '',
-        type: vdl.Types.INT32
+        type: vdl.types.INT32
       },
       tags: []
     }]
@@ -237,7 +237,7 @@ test('create signatures with one description but extra methods',
       outArgs: [{
         doc: '',
         name: '',
-        type: vdl.Types.JSVALUE
+        type: vdl.types.JSVALUE
       }],
       inStream: null,
       outStream: null,
@@ -279,20 +279,20 @@ test('create signatures with full description across multiple descs',
       inArgs: [{
         name: 'x',
         doc: 'xDoc',
-        type: vdl.Types.UINT32
+        type: vdl.types.UINT32
       }, {
         name: 'y',
         doc: 'yDoc',
-        type: vdl.Types.STRING
+        type: vdl.types.STRING
       }, {
         name: 'z',
         doc: 'zDoc',
-        type: vdl.Types.COMPLEX128
+        type: vdl.types.COMPLEX128
       }],
       outArgs: [{
         name: 'a',
         doc: 'aDoc',
-        type: vdl.Types.STRING
+        type: vdl.types.STRING
       }],
       inStream: null,
       outStream: null,
@@ -311,12 +311,12 @@ test('create signatures with full description across multiple descs',
       inStream: {
         doc: '',
         name: '',
-        type: vdl.Types.UINT32
+        type: vdl.types.UINT32
       },
       outStream: {
         doc: '',
         name: '',
-        type: vdl.Types.INT32
+        type: vdl.types.INT32
       },
       tags: []
     }]
@@ -343,20 +343,20 @@ test('create signatures with multiple descs and missing methods',
       inArgs: [{
         name: 'x',
         doc: 'xDoc',
-        type: vdl.Types.UINT32
+        type: vdl.types.UINT32
       }, {
         name: 'y',
         doc: 'yDoc',
-        type: vdl.Types.STRING
+        type: vdl.types.STRING
       }, {
         name: 'z',
         doc: 'zDoc',
-        type: vdl.Types.COMPLEX128
+        type: vdl.types.COMPLEX128
       }],
       outArgs: [{
         name: 'a',
         doc: 'aDoc',
-        type: vdl.Types.STRING
+        type: vdl.types.STRING
       }],
       inStream: null,
       outStream: null,
@@ -375,12 +375,12 @@ test('create signatures with multiple descs and missing methods',
       inStream: {
         doc: '',
         name: '',
-        type: vdl.Types.UINT32
+        type: vdl.types.UINT32
       },
       outStream: {
         doc: '',
         name: '',
-        type: vdl.Types.INT32
+        type: vdl.types.INT32
       },
       tags: []
     }]
@@ -399,7 +399,7 @@ test('create signatures with multiple descs and missing methods',
       outArgs: [{
         doc: '',
         name: '',
-        type: vdl.Types.JSVALUE
+        type: vdl.types.JSVALUE
       }],
       inStream: null,
       outStream: null,
@@ -440,20 +440,20 @@ test('create signatures with full description across multiple descs' +
       inArgs: [{
         name: 'x',
         doc: 'xDoc',
-        type: vdl.Types.UINT32
+        type: vdl.types.UINT32
       }, {
         name: 'y',
         doc: 'yDoc',
-        type: vdl.Types.STRING
+        type: vdl.types.STRING
       }, {
         name: 'z',
         doc: 'zDoc',
-        type: vdl.Types.COMPLEX128
+        type: vdl.types.COMPLEX128
       }],
       outArgs: [{
         name: 'a',
         doc: 'aDoc',
-        type: vdl.Types.STRING
+        type: vdl.types.STRING
       }],
       inStream: null,
       outStream: null,
@@ -470,20 +470,20 @@ test('create signatures with full description across multiple descs' +
       inArgs: [{
         name: 'x',
         doc: 'xDoc',
-        type: vdl.Types.UINT32
+        type: vdl.types.UINT32
       }, {
         name: 'y',
         doc: 'yDoc',
-        type: vdl.Types.STRING
+        type: vdl.types.STRING
       }, {
         name: 'z',
         doc: 'zDoc',
-        type: vdl.Types.COMPLEX128
+        type: vdl.types.COMPLEX128
       }],
       outArgs: [{
         name: 'a',
         doc: 'aDoc',
-        type: vdl.Types.STRING
+        type: vdl.types.STRING
       }],
       inStream: null,
       outStream: null,
@@ -496,12 +496,12 @@ test('create signatures with full description across multiple descs' +
       inStream: {
         doc: '',
         name: '',
-        type: vdl.Types.UINT32
+        type: vdl.types.UINT32
       },
       outStream: {
         doc: '',
         name: '',
-        type: vdl.Types.INT32
+        type: vdl.types.INT32
       },
       tags: []
     }]
@@ -539,20 +539,20 @@ test('create signatures with full description across multiple descs' +
       inArgs: [{
         name: 'x',
         doc: 'xDoc',
-        type: vdl.Types.UINT32
+        type: vdl.types.UINT32
       }, {
         name: 'y',
         doc: 'yDoc',
-        type: vdl.Types.STRING
+        type: vdl.types.STRING
       }, {
         name: 'z',
         doc: 'zDoc',
-        type: vdl.Types.COMPLEX128
+        type: vdl.types.COMPLEX128
       }],
       outArgs: [{
         name: 'a',
         doc: 'aDoc',
-        type: vdl.Types.STRING
+        type: vdl.types.STRING
       }]
     }]
   }, {
@@ -568,12 +568,12 @@ test('create signatures with full description across multiple descs' +
       inStream: {
         doc: '',
         name: '',
-        type: vdl.Types.UINT32
+        type: vdl.types.UINT32
       },
       outStream: {
         doc: '',
         name: '',
-        type: vdl.Types.INT32
+        type: vdl.types.INT32
       }
     }, {
       name: 'NamedFunction',
@@ -581,20 +581,20 @@ test('create signatures with full description across multiple descs' +
       inArgs: [{
         name: 'x',
         doc: 'xDoc',
-        type: vdl.Types.UINT32
+        type: vdl.types.UINT32
       }, {
         name: 'y',
         doc: 'yDoc',
-        type: vdl.Types.ANY
+        type: vdl.types.ANY
       }, {
         name: 'z',
         doc: 'zDoc',
-        type: vdl.Types.COMPLEX128
+        type: vdl.types.COMPLEX128
       }],
       outArgs: [{
         name: 'a',
         doc: 'aDoc',
-        type: vdl.Types.STRING
+        type: vdl.types.STRING
       }]
     }]
   }];

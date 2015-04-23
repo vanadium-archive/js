@@ -17,19 +17,19 @@ var _fiveOutArgSig = [
         'name': 'FiveOutArgMethod',
         'outArgs': [
           {
-            type: vdl.Types.ANY
+            type: vdl.types.ANY
           },
           {
-            type: vdl.Types.ANY
+            type: vdl.types.ANY
           },
           {
-            type: vdl.Types.ANY
+            type: vdl.types.ANY
           },
           {
-            type: vdl.Types.ANY
+            type: vdl.types.ANY
           },
           {
-            type: vdl.Types.ANY
+            type: vdl.types.ANY
           }
         ]
       }

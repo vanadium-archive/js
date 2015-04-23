@@ -35,62 +35,62 @@ var _typewireSet = new vdl.Type();
 var _typewireStruct = new vdl.Type();
 var _typewireType = new vdl.Type();
 var _typewireUnion = new vdl.Type();
-_type1.kind = vdl.Kind.LIST;
+_type1.kind = vdl.kind.LIST;
 _type1.name = "";
-_type1.elem = vdl.Types.BYTE;
-_type2.kind = vdl.Kind.LIST;
+_type1.elem = vdl.types.BYTE;
+_type2.kind = vdl.kind.LIST;
 _type2.name = "";
-_type2.elem = vdl.Types.STRING;
-_type3.kind = vdl.Kind.LIST;
+_type2.elem = vdl.types.STRING;
+_type3.kind = vdl.kind.LIST;
 _type3.name = "";
 _type3.elem = _typewireField;
-_typeControlKind.kind = vdl.Kind.ENUM;
+_typeControlKind.kind = vdl.kind.ENUM;
 _typeControlKind.name = "v.io/v23/vom.ControlKind";
 _typeControlKind.labels = ["Nil", "End"];
-_typeDumpAtom.kind = vdl.Kind.STRUCT;
+_typeDumpAtom.kind = vdl.kind.STRUCT;
 _typeDumpAtom.name = "v.io/v23/vom.DumpAtom";
-_typeDumpAtom.fields = [{name: "Kind", type: _typeDumpKind}, {name: "Bytes", type: _type1}, {name: "Data", type: _typePrimitive}, {name: "Debug", type: vdl.Types.STRING}];
-_typeDumpKind.kind = vdl.Kind.ENUM;
+_typeDumpAtom.fields = [{name: "Kind", type: _typeDumpKind}, {name: "Bytes", type: _type1}, {name: "Data", type: _typePrimitive}, {name: "Debug", type: vdl.types.STRING}];
+_typeDumpKind.kind = vdl.kind.ENUM;
 _typeDumpKind.name = "v.io/v23/vom.DumpKind";
 _typeDumpKind.labels = ["Magic", "Control", "MsgId", "TypeMsg", "ValueMsg", "MsgLen", "TypeId", "PrimValue", "ByteLen", "ValueLen", "Index", "WireTypeIndex"];
-_typePrimitive.kind = vdl.Kind.UNION;
+_typePrimitive.kind = vdl.kind.UNION;
 _typePrimitive.name = "v.io/v23/vom.Primitive";
-_typePrimitive.fields = [{name: "PBool", type: vdl.Types.BOOL}, {name: "PByte", type: vdl.Types.BYTE}, {name: "PUint", type: vdl.Types.UINT64}, {name: "PInt", type: vdl.Types.INT64}, {name: "PFloat", type: vdl.Types.FLOAT64}, {name: "PString", type: vdl.Types.STRING}, {name: "PControl", type: _typeControlKind}];
-_typetypeId.kind = vdl.Kind.UINT64;
+_typePrimitive.fields = [{name: "PBool", type: vdl.types.BOOL}, {name: "PByte", type: vdl.types.BYTE}, {name: "PUint", type: vdl.types.UINT64}, {name: "PInt", type: vdl.types.INT64}, {name: "PFloat", type: vdl.types.FLOAT64}, {name: "PString", type: vdl.types.STRING}, {name: "PControl", type: _typeControlKind}];
+_typetypeId.kind = vdl.kind.UINT64;
 _typetypeId.name = "v.io/v23/vom.typeId";
-_typewireArray.kind = vdl.Kind.STRUCT;
+_typewireArray.kind = vdl.kind.STRUCT;
 _typewireArray.name = "v.io/v23/vom.wireArray";
-_typewireArray.fields = [{name: "Name", type: vdl.Types.STRING}, {name: "Elem", type: _typetypeId}, {name: "Len", type: vdl.Types.UINT64}];
-_typewireEnum.kind = vdl.Kind.STRUCT;
+_typewireArray.fields = [{name: "Name", type: vdl.types.STRING}, {name: "Elem", type: _typetypeId}, {name: "Len", type: vdl.types.UINT64}];
+_typewireEnum.kind = vdl.kind.STRUCT;
 _typewireEnum.name = "v.io/v23/vom.wireEnum";
-_typewireEnum.fields = [{name: "Name", type: vdl.Types.STRING}, {name: "Labels", type: _type2}];
-_typewireField.kind = vdl.Kind.STRUCT;
+_typewireEnum.fields = [{name: "Name", type: vdl.types.STRING}, {name: "Labels", type: _type2}];
+_typewireField.kind = vdl.kind.STRUCT;
 _typewireField.name = "v.io/v23/vom.wireField";
-_typewireField.fields = [{name: "Name", type: vdl.Types.STRING}, {name: "Type", type: _typetypeId}];
-_typewireList.kind = vdl.Kind.STRUCT;
+_typewireField.fields = [{name: "Name", type: vdl.types.STRING}, {name: "Type", type: _typetypeId}];
+_typewireList.kind = vdl.kind.STRUCT;
 _typewireList.name = "v.io/v23/vom.wireList";
-_typewireList.fields = [{name: "Name", type: vdl.Types.STRING}, {name: "Elem", type: _typetypeId}];
-_typewireMap.kind = vdl.Kind.STRUCT;
+_typewireList.fields = [{name: "Name", type: vdl.types.STRING}, {name: "Elem", type: _typetypeId}];
+_typewireMap.kind = vdl.kind.STRUCT;
 _typewireMap.name = "v.io/v23/vom.wireMap";
-_typewireMap.fields = [{name: "Name", type: vdl.Types.STRING}, {name: "Key", type: _typetypeId}, {name: "Elem", type: _typetypeId}];
-_typewireNamed.kind = vdl.Kind.STRUCT;
+_typewireMap.fields = [{name: "Name", type: vdl.types.STRING}, {name: "Key", type: _typetypeId}, {name: "Elem", type: _typetypeId}];
+_typewireNamed.kind = vdl.kind.STRUCT;
 _typewireNamed.name = "v.io/v23/vom.wireNamed";
-_typewireNamed.fields = [{name: "Name", type: vdl.Types.STRING}, {name: "Base", type: _typetypeId}];
-_typewireOptional.kind = vdl.Kind.STRUCT;
+_typewireNamed.fields = [{name: "Name", type: vdl.types.STRING}, {name: "Base", type: _typetypeId}];
+_typewireOptional.kind = vdl.kind.STRUCT;
 _typewireOptional.name = "v.io/v23/vom.wireOptional";
-_typewireOptional.fields = [{name: "Name", type: vdl.Types.STRING}, {name: "Elem", type: _typetypeId}];
-_typewireSet.kind = vdl.Kind.STRUCT;
+_typewireOptional.fields = [{name: "Name", type: vdl.types.STRING}, {name: "Elem", type: _typetypeId}];
+_typewireSet.kind = vdl.kind.STRUCT;
 _typewireSet.name = "v.io/v23/vom.wireSet";
-_typewireSet.fields = [{name: "Name", type: vdl.Types.STRING}, {name: "Key", type: _typetypeId}];
-_typewireStruct.kind = vdl.Kind.STRUCT;
+_typewireSet.fields = [{name: "Name", type: vdl.types.STRING}, {name: "Key", type: _typetypeId}];
+_typewireStruct.kind = vdl.kind.STRUCT;
 _typewireStruct.name = "v.io/v23/vom.wireStruct";
-_typewireStruct.fields = [{name: "Name", type: vdl.Types.STRING}, {name: "Fields", type: _type3}];
-_typewireType.kind = vdl.Kind.UNION;
+_typewireStruct.fields = [{name: "Name", type: vdl.types.STRING}, {name: "Fields", type: _type3}];
+_typewireType.kind = vdl.kind.UNION;
 _typewireType.name = "v.io/v23/vom.wireType";
 _typewireType.fields = [{name: "NamedT", type: _typewireNamed}, {name: "EnumT", type: _typewireEnum}, {name: "ArrayT", type: _typewireArray}, {name: "ListT", type: _typewireList}, {name: "SetT", type: _typewireSet}, {name: "MapT", type: _typewireMap}, {name: "StructT", type: _typewireStruct}, {name: "UnionT", type: _typewireUnion}, {name: "OptionalT", type: _typewireOptional}];
-_typewireUnion.kind = vdl.Kind.STRUCT;
+_typewireUnion.kind = vdl.kind.STRUCT;
 _typewireUnion.name = "v.io/v23/vom.wireUnion";
-_typewireUnion.fields = [{name: "Name", type: vdl.Types.STRING}, {name: "Fields", type: _type3}];
+_typewireUnion.fields = [{name: "Name", type: vdl.types.STRING}, {name: "Fields", type: _type3}];
 _type1.freeze();
 _type2.freeze();
 _type3.freeze();
@@ -111,82 +111,82 @@ _typewireStruct.freeze();
 _typewireType.freeze();
 _typewireUnion.freeze();
 module.exports.ControlKind = {
-  NIL: canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeControlKind))('Nil', true), _typeControlKind),
-  END: canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeControlKind))('End', true), _typeControlKind),
+  NIL: canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeControlKind))('Nil', true), _typeControlKind),
+  END: canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeControlKind))('End', true), _typeControlKind),
 };
-module.exports.DumpAtom = (vdl.Registry.lookupOrCreateConstructor(_typeDumpAtom));
+module.exports.DumpAtom = (vdl.registry.lookupOrCreateConstructor(_typeDumpAtom));
 module.exports.DumpKind = {
-  MAGIC: canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeDumpKind))('Magic', true), _typeDumpKind),
-  CONTROL: canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeDumpKind))('Control', true), _typeDumpKind),
-  MSG_ID: canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeDumpKind))('MsgId', true), _typeDumpKind),
-  TYPE_MSG: canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeDumpKind))('TypeMsg', true), _typeDumpKind),
-  VALUE_MSG: canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeDumpKind))('ValueMsg', true), _typeDumpKind),
-  MSG_LEN: canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeDumpKind))('MsgLen', true), _typeDumpKind),
-  TYPE_ID: canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeDumpKind))('TypeId', true), _typeDumpKind),
-  PRIM_VALUE: canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeDumpKind))('PrimValue', true), _typeDumpKind),
-  BYTE_LEN: canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeDumpKind))('ByteLen', true), _typeDumpKind),
-  VALUE_LEN: canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeDumpKind))('ValueLen', true), _typeDumpKind),
-  INDEX: canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeDumpKind))('Index', true), _typeDumpKind),
-  WIRE_TYPE_INDEX: canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeDumpKind))('WireTypeIndex', true), _typeDumpKind),
+  MAGIC: canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeDumpKind))('Magic', true), _typeDumpKind),
+  CONTROL: canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeDumpKind))('Control', true), _typeDumpKind),
+  MSG_ID: canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeDumpKind))('MsgId', true), _typeDumpKind),
+  TYPE_MSG: canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeDumpKind))('TypeMsg', true), _typeDumpKind),
+  VALUE_MSG: canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeDumpKind))('ValueMsg', true), _typeDumpKind),
+  MSG_LEN: canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeDumpKind))('MsgLen', true), _typeDumpKind),
+  TYPE_ID: canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeDumpKind))('TypeId', true), _typeDumpKind),
+  PRIM_VALUE: canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeDumpKind))('PrimValue', true), _typeDumpKind),
+  BYTE_LEN: canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeDumpKind))('ByteLen', true), _typeDumpKind),
+  VALUE_LEN: canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeDumpKind))('ValueLen', true), _typeDumpKind),
+  INDEX: canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeDumpKind))('Index', true), _typeDumpKind),
+  WIRE_TYPE_INDEX: canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeDumpKind))('WireTypeIndex', true), _typeDumpKind),
 };
-module.exports.Primitive = (vdl.Registry.lookupOrCreateConstructor(_typePrimitive));
-module.exports.typeId = (vdl.Registry.lookupOrCreateConstructor(_typetypeId));
-module.exports.wireArray = (vdl.Registry.lookupOrCreateConstructor(_typewireArray));
-module.exports.wireEnum = (vdl.Registry.lookupOrCreateConstructor(_typewireEnum));
-module.exports.wireField = (vdl.Registry.lookupOrCreateConstructor(_typewireField));
-module.exports.wireList = (vdl.Registry.lookupOrCreateConstructor(_typewireList));
-module.exports.wireMap = (vdl.Registry.lookupOrCreateConstructor(_typewireMap));
-module.exports.wireNamed = (vdl.Registry.lookupOrCreateConstructor(_typewireNamed));
-module.exports.wireOptional = (vdl.Registry.lookupOrCreateConstructor(_typewireOptional));
-module.exports.wireSet = (vdl.Registry.lookupOrCreateConstructor(_typewireSet));
-module.exports.wireStruct = (vdl.Registry.lookupOrCreateConstructor(_typewireStruct));
-module.exports.wireType = (vdl.Registry.lookupOrCreateConstructor(_typewireType));
-module.exports.wireUnion = (vdl.Registry.lookupOrCreateConstructor(_typewireUnion));
+module.exports.Primitive = (vdl.registry.lookupOrCreateConstructor(_typePrimitive));
+module.exports.typeId = (vdl.registry.lookupOrCreateConstructor(_typetypeId));
+module.exports.wireArray = (vdl.registry.lookupOrCreateConstructor(_typewireArray));
+module.exports.wireEnum = (vdl.registry.lookupOrCreateConstructor(_typewireEnum));
+module.exports.wireField = (vdl.registry.lookupOrCreateConstructor(_typewireField));
+module.exports.wireList = (vdl.registry.lookupOrCreateConstructor(_typewireList));
+module.exports.wireMap = (vdl.registry.lookupOrCreateConstructor(_typewireMap));
+module.exports.wireNamed = (vdl.registry.lookupOrCreateConstructor(_typewireNamed));
+module.exports.wireOptional = (vdl.registry.lookupOrCreateConstructor(_typewireOptional));
+module.exports.wireSet = (vdl.registry.lookupOrCreateConstructor(_typewireSet));
+module.exports.wireStruct = (vdl.registry.lookupOrCreateConstructor(_typewireStruct));
+module.exports.wireType = (vdl.registry.lookupOrCreateConstructor(_typewireType));
+module.exports.wireUnion = (vdl.registry.lookupOrCreateConstructor(_typewireUnion));
 
 
 
 
 // Consts:
 
-  module.exports.WireIdBool = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typetypeId))(new vdl.BigInt(1, new Uint8Array([0x1])), true), _typetypeId);
+  module.exports.WireIdBool = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typetypeId))(new vdl.BigInt(1, new Uint8Array([0x1])), true), _typetypeId);
 
-  module.exports.WireIdByte = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typetypeId))(new vdl.BigInt(1, new Uint8Array([0x2])), true), _typetypeId);
+  module.exports.WireIdByte = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typetypeId))(new vdl.BigInt(1, new Uint8Array([0x2])), true), _typetypeId);
 
-  module.exports.WireIdString = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typetypeId))(new vdl.BigInt(1, new Uint8Array([0x3])), true), _typetypeId);
+  module.exports.WireIdString = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typetypeId))(new vdl.BigInt(1, new Uint8Array([0x3])), true), _typetypeId);
 
-  module.exports.WireIdUint16 = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typetypeId))(new vdl.BigInt(1, new Uint8Array([0x4])), true), _typetypeId);
+  module.exports.WireIdUint16 = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typetypeId))(new vdl.BigInt(1, new Uint8Array([0x4])), true), _typetypeId);
 
-  module.exports.WireIdUint32 = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typetypeId))(new vdl.BigInt(1, new Uint8Array([0x5])), true), _typetypeId);
+  module.exports.WireIdUint32 = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typetypeId))(new vdl.BigInt(1, new Uint8Array([0x5])), true), _typetypeId);
 
-  module.exports.WireIdUint64 = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typetypeId))(new vdl.BigInt(1, new Uint8Array([0x6])), true), _typetypeId);
+  module.exports.WireIdUint64 = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typetypeId))(new vdl.BigInt(1, new Uint8Array([0x6])), true), _typetypeId);
 
-  module.exports.WireIdInt16 = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typetypeId))(new vdl.BigInt(1, new Uint8Array([0x7])), true), _typetypeId);
+  module.exports.WireIdInt16 = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typetypeId))(new vdl.BigInt(1, new Uint8Array([0x7])), true), _typetypeId);
 
-  module.exports.WireIdInt32 = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typetypeId))(new vdl.BigInt(1, new Uint8Array([0x8])), true), _typetypeId);
+  module.exports.WireIdInt32 = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typetypeId))(new vdl.BigInt(1, new Uint8Array([0x8])), true), _typetypeId);
 
-  module.exports.WireIdInt64 = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typetypeId))(new vdl.BigInt(1, new Uint8Array([0x9])), true), _typetypeId);
+  module.exports.WireIdInt64 = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typetypeId))(new vdl.BigInt(1, new Uint8Array([0x9])), true), _typetypeId);
 
-  module.exports.WireIdFloat32 = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typetypeId))(new vdl.BigInt(1, new Uint8Array([0xa])), true), _typetypeId);
+  module.exports.WireIdFloat32 = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typetypeId))(new vdl.BigInt(1, new Uint8Array([0xa])), true), _typetypeId);
 
-  module.exports.WireIdFloat64 = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typetypeId))(new vdl.BigInt(1, new Uint8Array([0xb])), true), _typetypeId);
+  module.exports.WireIdFloat64 = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typetypeId))(new vdl.BigInt(1, new Uint8Array([0xb])), true), _typetypeId);
 
-  module.exports.WireIdComplex64 = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typetypeId))(new vdl.BigInt(1, new Uint8Array([0xc])), true), _typetypeId);
+  module.exports.WireIdComplex64 = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typetypeId))(new vdl.BigInt(1, new Uint8Array([0xc])), true), _typetypeId);
 
-  module.exports.WireIdComplex128 = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typetypeId))(new vdl.BigInt(1, new Uint8Array([0xd])), true), _typetypeId);
+  module.exports.WireIdComplex128 = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typetypeId))(new vdl.BigInt(1, new Uint8Array([0xd])), true), _typetypeId);
 
-  module.exports.WireIdTypeObject = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typetypeId))(new vdl.BigInt(1, new Uint8Array([0xe])), true), _typetypeId);
+  module.exports.WireIdTypeObject = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typetypeId))(new vdl.BigInt(1, new Uint8Array([0xe])), true), _typetypeId);
 
-  module.exports.WireIdAny = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typetypeId))(new vdl.BigInt(1, new Uint8Array([0xf])), true), _typetypeId);
+  module.exports.WireIdAny = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typetypeId))(new vdl.BigInt(1, new Uint8Array([0xf])), true), _typetypeId);
 
-  module.exports.WireIdByteList = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typetypeId))(new vdl.BigInt(1, new Uint8Array([0x27])), true), _typetypeId);
+  module.exports.WireIdByteList = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typetypeId))(new vdl.BigInt(1, new Uint8Array([0x27])), true), _typetypeId);
 
-  module.exports.WireIdStringList = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typetypeId))(new vdl.BigInt(1, new Uint8Array([0x28])), true), _typetypeId);
+  module.exports.WireIdStringList = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typetypeId))(new vdl.BigInt(1, new Uint8Array([0x28])), true), _typetypeId);
 
-  module.exports.WireIdFirstUserType = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typetypeId))(new vdl.BigInt(1, new Uint8Array([0x29])), true), _typetypeId);
+  module.exports.WireIdFirstUserType = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typetypeId))(new vdl.BigInt(1, new Uint8Array([0x29])), true), _typetypeId);
 
-  module.exports.WireCtrlNil = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.BYTE))(224, true), vdl.Types.BYTE);
+  module.exports.WireCtrlNil = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.BYTE))(224, true), vdl.types.BYTE);
 
-  module.exports.WireCtrlEnd = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.BYTE))(225, true), vdl.Types.BYTE);
+  module.exports.WireCtrlEnd = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.BYTE))(225, true), vdl.types.BYTE);
 
 
 

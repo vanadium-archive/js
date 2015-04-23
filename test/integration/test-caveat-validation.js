@@ -31,7 +31,7 @@ test('caveatValidation', function(t) {
         _wrappedType: true,
         _type: {
           name: 'NamedInt32',
-          kind: vdl.Kind.INT32
+          kind: vdl.kind.INT32
         }
     }
   });

@@ -78,8 +78,8 @@ function convertOutArg(arg, type, controller) {
 
   // There's no protection against bad out args if it's a JSValue.
   // Otherwise, convert to the out arg type to ensure type correctness.
-  if (!type.equals(vdl.Types.JSVALUE)) {
-    canonOutArg = vdl.Canonicalize.reduce(arg, type);
+  if (!type.equals(vdl.types.JSVALUE)) {
+    canonOutArg = vdl.canonicalize.reduce(arg, type);
   }
 
   return unwrap(canonOutArg);
@@ -496,7 +496,7 @@ Client.prototype.bindWithSignature = function(name, signature) {
       var canonArgs = new Array(args.length);
       try {
         for (var i = 0; i < args.length; i++) {
-          canonArgs[i] = vdl.Canonicalize.fill(args[i],
+          canonArgs[i] = vdl.canonicalize.fill(args[i],
                                                methodSig.inArgs[i].type);
 
         }

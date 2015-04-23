@@ -9,8 +9,8 @@
 var test = require('prova');
 
 var stringify = require('./../../src/vdl/stringify.js');
-var Types = require('./../../src/vdl/types.js');
-var Kind = require('./../../src/vdl/kind.js');
+var types = require('./../../src/vdl/types.js');
+var kind = require('./../../src/vdl/kind.js');
 
 var TypeEncoder = require('./../../src/vom/type-encoder.js');
 var TypeDecoder = require('./../../src/vom/type-decoder.js');
@@ -69,64 +69,64 @@ test('type encoding encode and decode (optional fields omitted)',
   var tests = [
     {
       test: {
-        kind: Kind.OPTIONAL,
-        elem: Types.UINT64
+        kind: kind.OPTIONAL,
+        elem: types.UINT64
       },
       expected: {
         name: '',
-        kind: Kind.OPTIONAL,
-        elem: Types.UINT64
+        kind: kind.OPTIONAL,
+        elem: types.UINT64
       },
     },
     {
       test: {
-        kind: Kind.LIST,
+        kind: kind.LIST,
         elem: {
-          kind: Kind.UINT16,
+          kind: kind.UINT16,
           name: 'namedUint16'
         }
       },
       expected: {
-        kind: Kind.LIST,
+        kind: kind.LIST,
         name: '',
         elem: {
-          kind: Kind.UINT16,
+          kind: kind.UINT16,
           name: 'namedUint16'
         }
       }
     },
     {
       test: {
-        kind: Kind.UNION,
+        kind: kind.UNION,
         name: 'unionName',
         fields: [
           {
             name: 'A',
-            type: Types.INT16
+            type: types.INT16
           },
           {
             name: 'B',
             type: {
-              kind: Kind.SET,
-              key: Types.BOOL
+              kind: kind.SET,
+              key: types.BOOL
             }
           }
         ]
       },
       expected: {
-        kind: Kind.UNION,
+        kind: kind.UNION,
         name: 'unionName',
         fields: [
           {
             name: 'A',
-            type: Types.INT16
+            type: types.INT16
           },
           {
             name: 'B',
             type: {
               name: '',
-              kind: Kind.SET,
-              key: Types.BOOL
+              kind: kind.SET,
+              key: types.BOOL
             }
           }
         ]
@@ -134,25 +134,25 @@ test('type encoding encode and decode (optional fields omitted)',
     },
     {
       test: {
-        kind: Kind.MAP,
+        kind: kind.MAP,
         key: {
-          kind: Kind.INT16,
+          kind: kind.INT16,
           name: 'namedInt16'
         },
         elem: {
-          kind: Kind.INT32,
+          kind: kind.INT32,
           name: 'namedInt32'
         }
       },
       expected: {
-        kind: Kind.MAP,
+        kind: kind.MAP,
         name: '',
         key: {
-          kind: Kind.INT16,
+          kind: kind.INT16,
           name: 'namedInt16'
         },
         elem: {
-          kind: Kind.INT32,
+          kind: kind.INT32,
           name: 'namedInt32'
         }
       },
@@ -205,27 +205,27 @@ test('type encoding encode errors', function(t) {
       kind: -1
     },
     'list w/ bad elem': {
-      kind: Kind.LIST,
+      kind: kind.LIST,
       name: 'testList',
       elem: true
     },
     'array w/ bad len': {
-      kind: Kind.ARRAY,
+      kind: kind.ARRAY,
       name: 'testArray',
-      elem: Types.UINT64,
+      elem: types.UINT64,
       len: -1
     },
     'set w/ labels': {
-      kind: Kind.SET,
-      key: Types.ANY,
+      kind: kind.SET,
+      key: types.ANY,
       labels: ['labels', 'are', 'for', 'enums', 'only']
     },
     'enum w/ non-string labels': {
-      kind: Kind.ENUM,
+      kind: kind.ENUM,
       labels: ['do not', 'put a number in', 'the enum labels', 3]
     },
     'union w/o fields': {
-      kind: Kind.UNION,
+      kind: kind.UNION,
       fields: []
     }
   };

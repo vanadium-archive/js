@@ -11,8 +11,8 @@
  * @private
  */
 
-var Kind = require('./kind.js');
-var Types = require('./types.js');
+var kind = require('./kind.js');
+var types = require('./types.js');
 require('./es6-shim');
 
 module.exports = compatible;
@@ -44,10 +44,10 @@ function compat(a, b, seenA, seenB) {
   }
 
   // Drop optionals. ?foo is compatible with foo.
-  if (a.kind === Kind.OPTIONAL) {
+  if (a.kind === kind.OPTIONAL) {
     a = a.elem;
   }
-  if (b.kind === Kind.OPTIONAL) {
+  if (b.kind === kind.OPTIONAL) {
     b = b.elem;
   }
 
@@ -66,7 +66,7 @@ function compat(a, b, seenA, seenB) {
   var kb = b.kind;
 
   // Any is always compatible with everything.
-  if (ka === Kind.ANY || kb === Kind.ANY) {
+  if (ka === kind.ANY || kb === kind.ANY) {
     return true;
   }
 
@@ -78,13 +78,13 @@ function compat(a, b, seenA, seenB) {
   }
 
   // Booleans are only compatible with booleans.
-  if (ka === Kind.BOOL || kb === Kind.BOOL) {
-    return ka === Kind.BOOL && kb === Kind.BOOL;
+  if (ka === kind.BOOL || kb === kind.BOOL) {
+    return ka === kind.BOOL && kb === kind.BOOL;
   }
 
   // Type objects are only compatible with type objects.
-  if (ka === Kind.TYPEOBJECT || kb === Kind.TYPEOBJECT) {
-    return ka === Kind.TYPEOBJECT && kb === Kind.TYPEOBJECT;
+  if (ka === kind.TYPEOBJECT || kb === kind.TYPEOBJECT) {
+    return ka === kind.TYPEOBJECT && kb === kind.TYPEOBJECT;
   }
 
   // Handle string, enum, []byte here. []byte is not compatible with []number
@@ -100,44 +100,44 @@ function compat(a, b, seenA, seenB) {
 
   // Handle composites types.
   switch(ka) {
-    case Kind.ARRAY:
-    case Kind.LIST:
+    case kind.ARRAY:
+    case kind.LIST:
       switch(kb) {
-        case Kind.ARRAY:
-        case Kind.LIST:
+        case kind.ARRAY:
+        case kind.LIST:
           return compat(a.elem, b.elem, seenA, seenB);
       }
       return false;
-    case Kind.SET:
+    case kind.SET:
       switch(kb) {
-        case Kind.SET:
+        case kind.SET:
           return compat(a.key, b.key, seenA, seenB);
-        case Kind.MAP:
+        case kind.MAP:
           // Note: Swap a and b. The helper needs a map first.
-          return compatMapKeyElem(b, a.key, Types.BOOL, seenB, seenA);
-        case Kind.STRUCT:
+          return compatMapKeyElem(b, a.key, types.BOOL, seenB, seenA);
+        case kind.STRUCT:
           // Note: Swap a and b. The helper needs a struct first.
-          return compatStructKeyElem(b, a.key, Types.BOOL, seenB, seenA);
+          return compatStructKeyElem(b, a.key, types.BOOL, seenB, seenA);
       }
       return false;
-    case Kind.MAP:
+    case kind.MAP:
       switch(kb) {
-        case Kind.SET:
-          return compatMapKeyElem(a, b.key, Types.BOOL, seenA, seenB);
-        case Kind.MAP:
+        case kind.SET:
+          return compatMapKeyElem(a, b.key, types.BOOL, seenA, seenB);
+        case kind.MAP:
           return compatMapKeyElem(a, b.key, b.elem, seenA, seenB);
-        case Kind.STRUCT:
+        case kind.STRUCT:
           // Note: Swap a and b. The helper needs a struct first.
           return compatStructKeyElem(b, a.key, a.elem, seenA, seenB);
       }
       return false;
-    case Kind.STRUCT:
+    case kind.STRUCT:
       switch(kb) {
-        case Kind.SET:
-          return compatStructKeyElem(a, b.key, Types.BOOL, seenA, seenB);
-        case Kind.MAP:
+        case kind.SET:
+          return compatStructKeyElem(a, b.key, types.BOOL, seenA, seenB);
+        case kind.MAP:
           return compatStructKeyElem(a, b.key, b.elem, seenB, seenA);
-        case Kind.STRUCT:
+        case kind.STRUCT:
           // Special: empty struct is compatible to all other structs
           if (isEmptyStruct(a) || isEmptyStruct(b)) {
             return true;
@@ -145,9 +145,9 @@ function compat(a, b, seenA, seenB) {
           return compatFields(a, b, seenA, seenB);
       }
       return false;
-    case Kind.UNION:
+    case kind.UNION:
       switch (kb) {
-        case Kind.UNION:
+        case kind.UNION:
           return compatFields(a, b, seenA, seenB);
       }
       return false;
@@ -173,7 +173,7 @@ function compatStructKeyElem(a, bKey, bElem, seenA, seenB) {
   if (isEmptyStruct(a)) {
     return false; // empty struct can't convert to map/set
   }
-  if (!compat(Types.STRING, bKey, seenA, seenB)) {
+  if (!compat(types.STRING, bKey, seenA, seenB)) {
     return false;
   }
   for (var i = 0; i < a.fields.length; i++) {
@@ -231,17 +231,17 @@ function setCopy(set) {
 // Helper to determine if the type represents a number.
 function isNumber(t) {
   switch(t.kind) {
-    case Kind.BYTE: // TODO(alexfandrianto): Byte is not a number.
-    case Kind.UINT16:
-    case Kind.UINT32:
-    case Kind.UINT64:
-    case Kind.INT16:
-    case Kind.INT32:
-    case Kind.INT64:
-    case Kind.FLOAT32:
-    case Kind.FLOAT64:
-    case Kind.COMPLEX64:
-    case Kind.COMPLEX128:
+    case kind.BYTE: // TODO(alexfandrianto): Byte is not a number.
+    case kind.UINT16:
+    case kind.UINT32:
+    case kind.UINT64:
+    case kind.INT16:
+    case kind.INT32:
+    case kind.INT64:
+    case kind.FLOAT32:
+    case kind.FLOAT64:
+    case kind.COMPLEX64:
+    case kind.COMPLEX128:
       return true;
   }
   return false;
@@ -249,9 +249,9 @@ function isNumber(t) {
 
 // Helper to determine if the type is a string, enum, or byte array/slice.
 function isStringEnumBytes(t) {
-  return t.kind === Kind.STRING || t.kind === Kind.ENUM ||
-    (t.kind === Kind.LIST && t.elem.kind === Kind.BYTE) ||
-    (t.kind === Kind.ARRAY && t.elem.kind === Kind.BYTE);
+  return t.kind === kind.STRING || t.kind === kind.ENUM ||
+    (t.kind === kind.LIST && t.elem.kind === kind.BYTE) ||
+    (t.kind === kind.ARRAY && t.elem.kind === kind.BYTE);
 }
 
 // Helper to determine if this struct is empty.

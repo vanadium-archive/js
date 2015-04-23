@@ -318,12 +318,12 @@ var TypeService = {
           {
             name: 'any',
             doc: 'The value can be anything.',
-            type: vdl.Types.ANY
+            type: vdl.types.ANY
           }
         ],
         outArgs: [
           {
-            type: vdl.Types.BOOL
+            type: vdl.types.BOOL
           }
         ]
       },
@@ -333,12 +333,12 @@ var TypeService = {
           {
             name: 'str',
             doc: 'The value should be a string.',
-            type: vdl.Types.STRING
+            type: vdl.types.STRING
           }
         ],
         outArgs: [
           {
-            type: vdl.Types.BOOL
+            type: vdl.types.BOOL
           }
         ]
       },
@@ -349,7 +349,7 @@ var TypeService = {
             name: 'struct',
             doc: 'The value should be a struct.',
             type: new vdl.Type({
-              kind: vdl.Kind.STRUCT,
+              kind: vdl.kind.STRUCT,
               fields: []
             })
           }
@@ -362,22 +362,22 @@ var TypeService = {
           {
             name: 'a',
             doc: 'The first value',
-            type: vdl.Types.ANY
+            type: vdl.types.ANY
           },
           {
             name: 'b',
             doc: 'The second value',
-            type: vdl.Types.ANY
+            type: vdl.types.ANY
           }
         ],
         outArgs: [
           {
             doc: 'The second value is returned first',
-            type: vdl.Types.ANY
+            type: vdl.types.ANY
           },
           {
             doc: 'The first value is returned second',
-            type: vdl.Types.ANY
+            type: vdl.types.ANY
           }
         ]
       }
@@ -408,7 +408,7 @@ function runTypeService(options) {
         t.equal(res, false, '\'foo\' is an untyped string');
 
 
-        var VomStr = vdl.Registry.lookupOrCreateConstructor(vdl.Types.STRING);
+        var VomStr = vdl.registry.lookupOrCreateConstructor(vdl.types.STRING);
         var typedString = new VomStr('food');
         typeService.isTyped(ctx, typedString, function(err, res) {
           t.error(err, 'should not error on isTyped(...)');
@@ -468,25 +468,25 @@ function runTypeService(options) {
         // Now, swap a typed value (aa) with a wrapped and typed value (bb).
         var simpleType = {
           name: 'SimpleStruct',
-          kind: vdl.Kind.STRUCT,
+          kind: vdl.kind.STRUCT,
           fields: [
             {
               name: 'Foo',
-              type: vdl.Types.INT32
+              type: vdl.types.INT32
             },
             {
               name: 'Bar',
-              type: vdl.Types.BOOL
+              type: vdl.types.BOOL
             }
           ]
         };
-        var SimpleStruct = vdl.Registry.lookupOrCreateConstructor(simpleType);
+        var SimpleStruct = vdl.registry.lookupOrCreateConstructor(simpleType);
         var aa = new SimpleStruct({
           foo: 10,
           bar: true
         });
-        var simpleTypeB = vdl.Types.INT32;
-        var SimpleInt32 = vdl.Registry.lookupOrCreateConstructor(simpleTypeB);
+        var simpleTypeB = vdl.types.INT32;
+        var SimpleInt32 = vdl.registry.lookupOrCreateConstructor(simpleTypeB);
         var bb = new SimpleInt32(-32);
         typeService.swap(ctx, aa, bb, function(err, res1, res2) {
           t.error(err, 'should not error on swap(...)');
@@ -516,29 +516,29 @@ function runTypeService(options) {
 }
 
 var boolListType = new vdl.Type({
-  kind: vdl.Kind.LIST,
-  elem: vdl.Types.BOOL
+  kind: vdl.kind.LIST,
+  elem: vdl.types.BOOL
 });
 var numStructType = new vdl.Type({
-  kind: vdl.Kind.STRUCT,
+  kind: vdl.kind.STRUCT,
   fields: [
     {
       name: 'Number',
-      type: vdl.Types.FLOAT64
+      type: vdl.types.FLOAT64
     },
     {
       name: 'BigInt',
-      type: vdl.Types.INT64
+      type: vdl.types.INT64
     },
     {
       name: 'String',
-      type: vdl.Types.STRING
+      type: vdl.types.STRING
     }
   ]
 });
 var typeListType = new vdl.Type({
-  kind: vdl.Kind.LIST,
-  elem: vdl.Types.TYPEOBJECT
+  kind: vdl.kind.LIST,
+  elem: vdl.types.TYPEOBJECT
 });
 
 // TODO(alexfandrianto): Add a callback version of the typed streaming service.
@@ -642,11 +642,11 @@ var TypedStreamingService = {
     $stream.on('data', function(val) {
       // Verify that the value has no type if native, or matches, otherwise.
       var expectedType = types[typesReceived.length];
-      if (expectedType.equals(vdl.Types.JSVALUE) && val._type !== undefined) {
+      if (expectedType.equals(vdl.types.JSVALUE) && val._type !== undefined) {
         def.reject(new Error('Native value had a type: ' +
           JSON.stringify(val)));
       }
-      if (!expectedType.equals(vdl.Types.JSVALUE) &&
+      if (!expectedType.equals(vdl.types.JSVALUE) &&
         !expectedType.equals(val._type)) {
         def.reject(new Error('Value had wrong type: ' +
           JSON.stringify(val)));
@@ -654,7 +654,7 @@ var TypedStreamingService = {
 
       // The value had the corerct type. Write the same value back.
       // Note: Native values lack types, so use the JSValue type instead.
-      typesReceived.push(val._type || vdl.Types.JSVALUE);
+      typesReceived.push(val._type || vdl.types.JSVALUE);
       $stream.write(val);
     });
     $stream.read();
@@ -668,18 +668,18 @@ var TypedStreamingService = {
           {
             name: 'numTimes',
             doc: '# of strings client must send',
-            type: vdl.Types.UINT32
+            type: vdl.types.UINT32
           }
         ],
         outArgs: [
           {
             name: 'numReceived',
             doc: '# of strings received from client',
-            type: vdl.Types.UIN32
+            type: vdl.types.UIN32
           }
         ],
         inStream: {
-          type: vdl.Types.STRING
+          type: vdl.types.STRING
         },
         outStream: null
       },
@@ -689,19 +689,19 @@ var TypedStreamingService = {
           {
             name: 'numTimes',
             doc: '# of ints that the client wants back',
-            type: vdl.Types.UINT32
+            type: vdl.types.UINT32
           }
         ],
         outArgs: [
           {
             name: 'numSent',
             doc: '# of ints that service tried to send',
-            type: vdl.Types.UINT32
+            type: vdl.types.UINT32
           }
         ],
         inStream: null,
         outStream: {
-          type: vdl.Types.INT64
+          type: vdl.types.INT64
         }
       },
       {
@@ -711,7 +711,7 @@ var TypedStreamingService = {
           {
             name: 'numReceived',
             doc: '# of strings received from client',
-            type: vdl.Types.UIN32
+            type: vdl.types.UIN32
           }
         ],
         inStream: {
@@ -727,11 +727,11 @@ var TypedStreamingService = {
           {
             name: 'numReceived',
             doc: '# of strings received from client',
-            type: vdl.Types.UIN32
+            type: vdl.types.UIN32
           }
         ],
         inStream: {
-          type: vdl.Types.FLOAT64
+          type: vdl.types.FLOAT64
         },
         outStream: {
           type: numStructType
@@ -741,23 +741,23 @@ var TypedStreamingService = {
         name: 'AnyStream',
         inArgs: [
           {
-            name: 'inTypes',
+            name: 'intypes',
             doc: 'list of types to be streamed from client',
             type: typeListType
           }
         ],
         outArgs: [
           {
-            name: 'outTypes',
+            name: 'outtypes',
             doc: 'list of types to be streamed to client',
             type: typeListType
           }
         ],
         inStream: {
-          type: vdl.Types.ANY
+          type: vdl.types.ANY
         },
         outStream: {
-          type: vdl.Types.ANY
+          type: vdl.types.ANY
         }
       }
     ]
@@ -794,7 +794,7 @@ function runTypedStreamingService(options) {
         inArg: numStrs,
         inData: strList,
         serviceMethod: typedStreamingService.inStreamOnly,
-        writeType: vdl.Types.STRING,
+        writeType: vdl.types.STRING,
         readType: null,
         onResolveFunc: function(numReceived) {
           t.equal(numReceived, numStrs,
@@ -835,7 +835,7 @@ function runTypedStreamingService(options) {
         inArg: numStrs,
         inData: strList,
         serviceMethod: typedStreamingService.inStreamOnly,
-        writeType: vdl.Types.STRING,
+        writeType: vdl.types.STRING,
         readType: null,
         onResolveFunc: function(numReceived) {
           t.fail('should have errored; did not send correct # of strings');
@@ -882,7 +882,7 @@ function runTypedStreamingService(options) {
         inArg: numStrs,
         inData: strList,
         serviceMethod: typedStreamingService.inStreamOnly,
-        writeType: vdl.Types.STRING,
+        writeType: vdl.types.STRING,
         readType: null,
         onResolveFunc: function(numReceived) {
           t.fail('should have errored; sent an int');
@@ -921,7 +921,7 @@ function runTypedStreamingService(options) {
         inData: [],
         serviceMethod: typedStreamingService.outStreamOnly,
         writeType: null,
-        readType: vdl.Types.INT64,
+        readType: vdl.types.INT64,
         onResolveFunc: function(numSent) {
           t.equal(numSent, numInts, 'service knows # of values sent');
           t.equal(numOutStream, numInts, 'service sent correct # of values');
@@ -995,7 +995,7 @@ function runTypedStreamingService(options) {
         3,
         -500000
       ];
-      var NumStruct = vdl.Registry.lookupOrCreateConstructor(numStructType);
+      var NumStruct = vdl.registry.lookupOrCreateConstructor(numStructType);
       var expectedNumStructs = [
         new NumStruct({
           string: '0'
@@ -1017,7 +1017,7 @@ function runTypedStreamingService(options) {
         inArg: undefined,
         inData: numbers,
         serviceMethod: typedStreamingService.structValueStream,
-        writeType: vdl.Types.FLOAT64,
+        writeType: vdl.types.FLOAT64,
         readType: numStructType,
         onResolveFunc: function(numReceived) {
           t.deepEqual(numReceived, numbers.length,
@@ -1045,20 +1045,20 @@ function runTypedStreamingService(options) {
 
       // These are the testcases.
       var typesSent = [
-        vdl.Types.JSVALUE,
-        vdl.Types.INT32,
-        vdl.Types.INT64,
-        vdl.Types.COMPLEX128,
-        vdl.Types.STRING,
-        vdl.Types.BOOL,
+        vdl.types.JSVALUE,
+        vdl.types.INT32,
+        vdl.types.INT64,
+        vdl.types.COMPLEX128,
+        vdl.types.STRING,
+        vdl.types.BOOL,
         numStructType,
         boolListType,
         typeListType
       ];
 
-      var NumStruct = vdl.Registry.lookupOrCreateConstructor(numStructType);
-      var BoolList = vdl.Registry.lookupOrCreateConstructor(boolListType);
-      var TypeList = vdl.Registry.lookupOrCreateConstructor(typeListType);
+      var NumStruct = vdl.registry.lookupOrCreateConstructor(numStructType);
+      var BoolList = vdl.registry.lookupOrCreateConstructor(boolListType);
+      var TypeList = vdl.registry.lookupOrCreateConstructor(typeListType);
 
       var sendList = [
         3.14,
@@ -1079,8 +1079,8 @@ function runTypedStreamingService(options) {
         inArg: typesSent,
         inData: sendList,
         serviceMethod: typedStreamingService.anyStream,
-        writeType: vdl.Types.ANY,
-        readType: vdl.Types.ANY,
+        writeType: vdl.types.ANY,
+        readType: vdl.types.ANY,
         onResolveFunc: function(typesReceived) {
           t.deepEqual(typesReceived, typesSent,
           'service sent back the correct types');
@@ -1088,7 +1088,7 @@ function runTypedStreamingService(options) {
         },
         onDataFunc: function(actual, dataIndex) {
           if (actual._type === undefined) {
-            t.ok(typesSent[dataIndex].equals(vdl.Types.JSVALUE),
+            t.ok(typesSent[dataIndex].equals(vdl.types.JSVALUE),
               'value is native');
           } else {
             t.deepEqual(actual._type, typesSent[dataIndex], 'type matches');

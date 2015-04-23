@@ -109,7 +109,7 @@ function CaveatValidator(cavDesc, validateFn) {
 CaveatValidator.prototype.validate = function(ctx, call, paramForValidator,
                                               cb) {
   var paramType = this.cavDesc.paramType;
-  var canonParam = vdl.Canonicalize.reduce(paramForValidator, paramType);
+  var canonParam = vdl.canonicalize.reduce(paramForValidator, paramType);
   var unwrappedParam = unwrapArg(canonParam, paramType);
 
   var inspectableFn = new InspectableFunction(this.validateFn);

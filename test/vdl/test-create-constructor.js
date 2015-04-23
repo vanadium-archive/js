@@ -10,14 +10,14 @@ var test = require('prova');
 
 var BigInt = require('./../../src/vdl/big-int.js');
 var createConstructor = require('./../../src/vdl/create-constructor.js');
-var Kind = require('./../../src/vdl/kind.js');
-var Types = require('./../../src/vdl/types.js');
+var kind = require('./../../src/vdl/kind.js');
+var types = require('./../../src/vdl/types.js');
 var Complex = require('./../../src/vdl/complex.js');
 
 test('create constructor', function(assert) {
   var tests = [
     {
-      type: Types.UINT32,
+      type: types.UINT32,
       value: 23,
       expectedValue: {
         val: 23
@@ -27,10 +27,10 @@ test('create constructor', function(assert) {
       }
     },
     {
-      type: Types.UINT32,
+      type: types.UINT32,
       value: {
         val: 24,
-        _type: Types.UINT32,
+        _type: types.UINT32,
         _wrappedType: true
       },
       expectedValue: {
@@ -41,8 +41,8 @@ test('create constructor', function(assert) {
       }
     },
     { // Ensure that we can pass constructed values as arguments
-      type: Types.UINT32,
-      value:  new (createConstructor(Types.UINT32))(25),
+      type: types.UINT32,
+      value:  new (createConstructor(types.UINT32))(25),
       expectedValue: {
         val: 25
       },
@@ -51,10 +51,10 @@ test('create constructor', function(assert) {
       }
     },
     {
-      type: Types.UINT64,
+      type: types.UINT64,
       value: {
         val: new BigInt(1, new Uint8Array([4, 3])),
-        _type: Types.UINT64,
+        _type: types.UINT64,
         _wrappedType: true
       },
       expectedValue: {
@@ -65,12 +65,12 @@ test('create constructor', function(assert) {
       }
     },
     {
-      type: Types.UINT64,
+      type: types.UINT64,
       value: {
         val: new BigInt(1, new Uint8Array([4, 3])),
         _type: {
           name: 'NamedBigInt',
-          kind: Kind.UINT64
+          kind: kind.UINT64
         },
         _wrappedType: true
       },
@@ -82,8 +82,8 @@ test('create constructor', function(assert) {
       }
     },
     { // Ensure that we can pass constructed values as arguments
-      type: Types.UINT64,
-      value:  new (createConstructor(Types.UINT64))(
+      type: types.UINT64,
+      value:  new (createConstructor(types.UINT64))(
         new BigInt(1, new Uint8Array([1, 2]))),
       expectedValue: {
         val: new BigInt(1, new Uint8Array([1, 2]))
@@ -93,10 +93,10 @@ test('create constructor', function(assert) {
       }
     },
     {
-      type: Types.COMPLEX64,
+      type: types.COMPLEX64,
       value: {
         val: new Complex(2, 3),
-        _type: Types.COMPLEX64,
+        _type: types.COMPLEX64,
         _wrappedType: true
       },
       expectedValue: {
@@ -107,10 +107,10 @@ test('create constructor', function(assert) {
       }
     },
     {
-      type: Types.STRING,
+      type: types.STRING,
       value: {
         val: 'testString',
-        _type: Types.STRING,
+        _type: types.STRING,
         _wrappedType: true
       },
       expectedValue: {
@@ -122,10 +122,10 @@ test('create constructor', function(assert) {
     },
     {
       type: {
-        kind: Kind.MAP,
+        kind: kind.MAP,
         name: 'aMap',
-        key: Types.STRING,
-        elem: Types.INT64,
+        key: types.STRING,
+        elem: types.INT64,
       },
       value: {
         'a': 3,
@@ -146,16 +146,16 @@ test('create constructor', function(assert) {
     },
     {
       type: {
-        kind: Kind.STRUCT,
+        kind: kind.STRUCT,
         name: 'aStruct',
         fields: [
           {
             name: 'UsedField',
-            type: Types.STRING
+            type: types.STRING
           },
           {
             name: 'UnusedField',
-            type: Types.UINT16
+            type: types.UINT16
           }
         ]
       },
@@ -191,7 +191,7 @@ test('create constructor', function(assert) {
 
     // Standard use of the constructor; constructedValues are shallow.
     var constructedValue = new Constructor(value);
-    if (type.kind === Kind.STRUCT) {
+    if (type.kind === kind.STRUCT) {
       assert.deepEqual(constructedValue, expectedValue);
       assert.notOk(constructedValue.hasOwnProperty('_wrappedType'));
     } else {
@@ -202,7 +202,7 @@ test('create constructor', function(assert) {
 
     // deepWrap use of the constructor; constructedValues are deep.
     var constructedValueDeep = new Constructor(value, true);
-    if (type.kind === Kind.STRUCT) {
+    if (type.kind === kind.STRUCT) {
       assert.deepEqual(constructedValueDeep, expectedValueDeep);
       assert.notOk(constructedValue.hasOwnProperty('_wrappedType'));
     } else {
@@ -216,12 +216,12 @@ test('create constructor', function(assert) {
 
 test('created constructor fails on invalid data - struct', function(assert) {
   var type = {
-    kind: Kind.STRUCT,
+    kind: kind.STRUCT,
     name: 'aStruct',
     fields: [
       {
         name: 'usedField',
-        type: Types.STRING
+        type: types.STRING
       }
     ]
   };
@@ -235,7 +235,7 @@ test('created constructor fails on invalid data - struct', function(assert) {
 
 test('created constructor fails on invalid data - bool', function(assert) {
   var type = {
-    kind: Kind.BOOL,
+    kind: kind.BOOL,
     name: 'aBool'
   };
   var constructor = createConstructor(type);

@@ -3,7 +3,7 @@
 // license that can be found in the LICENSE file.
 
 var unwrap = require('../vdl/type-util').unwrap;
-var Kind = require('../vdl/kind');
+var kind = require('../vdl/kind');
 
 module.exports = unwrapArg;
 
@@ -17,7 +17,7 @@ module.exports = unwrapArg;
  * @return {*} either arg or an unwrapped arg.
  */
 function unwrapArg(arg, targetType) {
-    if (targetType.kind === Kind.ANY) {
+    if (targetType.kind === kind.ANY) {
       return arg;
     }
     return unwrap(arg);

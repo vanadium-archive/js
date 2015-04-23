@@ -3,8 +3,8 @@
 // license that can be found in the LICENSE file.
 
 var test = require('prova');
-var Types = require('../../src/vdl/types');
-var Kind = require('../../src/vdl/kind');
+var types = require('../../src/vdl/types');
+var kind = require('../../src/vdl/kind');
 var vdlSecurity = require('../vdl-out/v.io/v23/security');
 var caveats = require('../../src/security/caveats');
 var vom = require('../../src/vom');
@@ -13,7 +13,7 @@ test('createCaveat with any-type param', function(t) {
   var desc = {
     id: new Uint8Array([0x99, 0x99, 0x99, 0x99, 0x99, 0x99, 0x99, 0x99,
       0x99, 0x99, 0x99, 0x99, 0x99, 0x99, 0x99, 0x99]),
-    paramType: Types.ANY,
+    paramType: types.ANY,
   };
   var cav = caveats.createCaveat(desc, 9);
   t.deepEqual(cav.id, desc.id, 'Correct id');
@@ -26,7 +26,7 @@ test('createCaveat with incompatible param', function(t) {
   var desc = {
     id: new Uint8Array([0x99, 0x99, 0x99, 0x99, 0x99, 0x99, 0x99, 0x99,
       0x99, 0x99, 0x99, 0x99, 0x99, 0x99, 0x99, 0x99]),
-    paramType: Types.INT32,
+    paramType: types.INT32,
   };
   t.throws(function() {
     caveats.createCaveat(desc, 'AString');
@@ -39,7 +39,7 @@ test('createCaveat with type coversion', function(t) {
     id: new Uint8Array([0x99, 0x99, 0x99, 0x99, 0x99, 0x99, 0x99, 0x99,
       0x99, 0x99, 0x99, 0x99, 0x99, 0x99, 0x99, 0x99]),
     paramType: {
-      kind: Kind.INT32,
+      kind: kind.INT32,
       name: 'NamedInt'
     },
   };

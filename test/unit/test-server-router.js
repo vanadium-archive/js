@@ -36,30 +36,30 @@ test('Server Router Signature Lookup', function(t) {
           {
             name: 'x',
             doc: '',
-            type: vdl.Types.JSVALUE
+            type: vdl.types.JSVALUE
           },
           {
             name: 'y',
             doc: '',
-            type: vdl.Types.JSVALUE
+            type: vdl.types.JSVALUE
           }
         ],
         outArgs: [
           {
             name: '',
             doc: '',
-            type: vdl.Types.JSVALUE
+            type: vdl.types.JSVALUE
           },
         ],
         inStream: {
           name: '',
           doc: '',
-          type: vdl.Types.JSVALUE
+          type: vdl.types.JSVALUE
         },
         outStream: {
           name: '',
           doc: '',
-          type: vdl.Types.JSVALUE
+          type: vdl.types.JSVALUE
         },
         tags: []
       }

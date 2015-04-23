@@ -34,7 +34,7 @@ function TypeDecoder() {
   this._partialTypes = {};
 }
 
-var Kind = require('../vdl/kind.js');
+var kind = require('../vdl/kind.js');
 var Type = require('../vdl/type.js');
 var BootstrapTypes = require('./bootstrap-types.js');
 var RawVomReader = require('./raw-vom-reader.js');
@@ -292,7 +292,7 @@ TypeDecoder.prototype._readPartialType = function(messageBytes) {
       }
       break;
     case BootstrapTypes.unionIds.ENUM_TYPE:
-      partialType.kind = Kind.ENUM;
+      partialType.kind = kind.ENUM;
       endDef2:
       while (true) {
         if (reader.tryReadControlByte() === endByte) {
@@ -316,7 +316,7 @@ TypeDecoder.prototype._readPartialType = function(messageBytes) {
       }
       break;
     case BootstrapTypes.unionIds.ARRAY_TYPE:
-      partialType.kind = Kind.ARRAY;
+      partialType.kind = kind.ARRAY;
       endDef3:
       while (true) {
         if (reader.tryReadControlByte() === endByte) {
@@ -339,7 +339,7 @@ TypeDecoder.prototype._readPartialType = function(messageBytes) {
       }
       break;
     case BootstrapTypes.unionIds.LIST_TYPE:
-      partialType.kind = Kind.LIST;
+      partialType.kind = kind.LIST;
       endDef4:
       while (true) {
         if (reader.tryReadControlByte() === endByte) {
@@ -359,7 +359,7 @@ TypeDecoder.prototype._readPartialType = function(messageBytes) {
       }
       break;
     case BootstrapTypes.unionIds.SET_TYPE:
-      partialType.kind = Kind.SET;
+      partialType.kind = kind.SET;
       endDef5:
       while (true) {
         if (reader.tryReadControlByte() === endByte) {
@@ -379,7 +379,7 @@ TypeDecoder.prototype._readPartialType = function(messageBytes) {
       }
       break;
     case BootstrapTypes.unionIds.MAP_TYPE:
-      partialType.kind = Kind.MAP;
+      partialType.kind = kind.MAP;
       endDef6:
       while (true) {
         if (reader.tryReadControlByte() === endByte) {
@@ -404,9 +404,9 @@ TypeDecoder.prototype._readPartialType = function(messageBytes) {
     case BootstrapTypes.unionIds.STRUCT_TYPE:
     case BootstrapTypes.unionIds.UNION_TYPE:
       if (unionId === BootstrapTypes.unionIds.STRUCT_TYPE) {
-        partialType.kind = Kind.STRUCT;
+        partialType.kind = kind.STRUCT;
       } else {
-        partialType.kind = Kind.UNION;
+        partialType.kind = kind.UNION;
       }
       endDef7:
       while (true) {
@@ -445,12 +445,12 @@ TypeDecoder.prototype._readPartialType = function(messageBytes) {
           }
       }
       // We allow struct{} definitions.
-      if (partialType.kind === Kind.STRUCT) {
+      if (partialType.kind === kind.STRUCT) {
         partialType.fields = partialType.fields || [];
       }
       break;
     case BootstrapTypes.unionIds.OPTIONAL_TYPE:
-      partialType.kind = Kind.OPTIONAL;
+      partialType.kind = kind.OPTIONAL;
       endDef9:
       while (true) {
         if (reader.tryReadControlByte() === endByte) {

@@ -25,86 +25,86 @@ module.exports = {
   }
 };
 
-var Kind = require('../vdl/kind.js');
+var kind = require('../vdl/kind.js');
 var stringify = require('../vdl/stringify.js');
-var Types = require('../vdl/types.js');
+var types = require('../vdl/types.js');
 var wiretype = require('../gen-vdl/v.io/v23/vom');
 var unwrap = require('../vdl/type-util').unwrap;
 
 var stringList = {
   name: '',
-  kind: Kind.LIST,
-  elem: Types.STRING
+  kind: kind.LIST,
+  elem: types.STRING
 };
 
 var bootstrapTypes = {
   ANY: {
     id: unwrap(wiretype.WireIdAny).toNativeNumberApprox(),
-    type: Types.ANY
+    type: types.ANY
   },
   BOOL: {
     id: unwrap(wiretype.WireIdBool).toNativeNumberApprox(),
-    type: Types.BOOL
+    type: types.BOOL
   },
   STRING: {
     id: unwrap(wiretype.WireIdString).toNativeNumberApprox(),
-    type: Types.STRING
+    type: types.STRING
   },
   BYTE: {
     id: unwrap(wiretype.WireIdByte).toNativeNumberApprox(),
-    type: Types.BYTE
+    type: types.BYTE
   },
   UINT16: {
     id: unwrap(wiretype.WireIdUint16).toNativeNumberApprox(),
-    type: Types.UINT16
+    type: types.UINT16
   },
   UINT32: {
     id: unwrap(wiretype.WireIdUint32).toNativeNumberApprox(),
-    type: Types.UINT32
+    type: types.UINT32
   },
   UINT64: {
     id: unwrap(wiretype.WireIdUint64).toNativeNumberApprox(),
-    type: Types.UINT64
+    type: types.UINT64
   },
   INT16: {
     id: unwrap(wiretype.WireIdInt16).toNativeNumberApprox(),
-    type: Types.INT16
+    type: types.INT16
   },
   INT32: {
     id: unwrap(wiretype.WireIdInt32).toNativeNumberApprox(),
-    type: Types.INT32
+    type: types.INT32
   },
   INT64: {
     id: unwrap(wiretype.WireIdInt64).toNativeNumberApprox(),
-    type: Types.INT64
+    type: types.INT64
   },
   FLOAT32: {
     id: unwrap(wiretype.WireIdFloat32).toNativeNumberApprox(),
-    type: Types.FLOAT32
+    type: types.FLOAT32
   },
   FLOAT64: {
     id: unwrap(wiretype.WireIdFloat64).toNativeNumberApprox(),
-    type: Types.FLOAT64
+    type: types.FLOAT64
   },
   COMPLEX64: {
     id: unwrap(wiretype.WireIdComplex64).toNativeNumberApprox(),
-    type: Types.COMPLEX64
+    type: types.COMPLEX64
   },
   COMPLEX128: {
     id: unwrap(wiretype.WireIdComplex128).toNativeNumberApprox(),
-    type: Types.COMPLEX128
+    type: types.COMPLEX128
   },
   LIST_BYTE: {
     id: unwrap(wiretype.WireIdByteList).toNativeNumberApprox(),
     type: {
       name: '',
-      kind: Kind.LIST,
-      elem: Types.BYTE
+      kind: kind.LIST,
+      elem: types.BYTE
     }
   },
   TYPEOBJECT: {
     id: unwrap(wiretype.WireIdTypeObject).toNativeNumberApprox(),
-    type: Types.TYPEOBJECT
+    type: types.TYPEOBJECT
   },
   LIST_STRING: {
     id: unwrap(wiretype.WireIdStringList).toNativeNumberApprox(),

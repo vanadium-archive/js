@@ -70,14 +70,14 @@ test('Invoker and signature for vdl-generated base.js',
                         {
                             'name': 'a',
                             'doc': '',
-                            'type': vdl.Types.INT32
+                            'type': vdl.types.INT32
                         }
                     ],
                     'outArgs': [
                         {
                             'name': 's',
                             'doc': '',
-                            'type': vdl.Types.STRING
+                            'type': vdl.types.STRING
                         }
                     ],
                     'inStream': null,
@@ -102,19 +102,19 @@ test('Invoker and signature for vdl-generated base.js',
                         {
                             'name': 'a',
                             'doc': '',
-                            'type': vdl.Types.INT32
+                            'type': vdl.types.INT32
                         }
                     ],
                     'outArgs': [],
                     'inStream': {
                         'name': '',
                         'doc': '',
-                        'type': vdl.Types.INT32
+                        'type': vdl.types.INT32
                     },
                     'outStream': {
                         'name': '',
                         'doc': '',
-                        'type': vdl.Types.STRING
+                        'type': vdl.types.STRING
                     },
                     'tags': []
                 },

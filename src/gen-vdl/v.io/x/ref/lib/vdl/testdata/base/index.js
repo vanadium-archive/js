@@ -63,136 +63,136 @@ var _typeNamedUnion = new vdl.Type();
 var _typeNestedArgs = new vdl.Type();
 var _typeScalars = new vdl.Type();
 var _typeScalarsArray = new vdl.Type();
-_type1.kind = vdl.Kind.LIST;
+_type1.kind = vdl.kind.LIST;
 _type1.name = "";
 _type1.elem = _typeScalars;
-_type10.kind = vdl.Kind.LIST;
+_type10.kind = vdl.kind.LIST;
 _type10.name = "";
 _type10.elem = _type8;
-_type11.kind = vdl.Kind.LIST;
+_type11.kind = vdl.kind.LIST;
 _type11.name = "";
-_type11.elem = vdl.Types.INT32;
-_type12.kind = vdl.Kind.SET;
+_type11.elem = vdl.types.INT32;
+_type12.kind = vdl.kind.SET;
 _type12.name = "";
-_type12.key = vdl.Types.INT32;
-_type13.kind = vdl.Kind.MAP;
+_type12.key = vdl.types.INT32;
+_type13.kind = vdl.kind.MAP;
 _type13.name = "";
-_type13.elem = vdl.Types.STRING;
-_type13.key = vdl.Types.INT32;
-_type14.kind = vdl.Kind.LIST;
+_type13.elem = vdl.types.STRING;
+_type13.key = vdl.types.INT32;
+_type14.kind = vdl.kind.LIST;
 _type14.name = "";
-_type14.elem = vdl.Types.BYTE;
-_type15.kind = vdl.Kind.LIST;
+_type14.elem = vdl.types.BYTE;
+_type15.kind = vdl.kind.LIST;
 _type15.name = "";
-_type15.elem = vdl.Types.STRING;
-_type16.kind = vdl.Kind.SET;
+_type15.elem = vdl.types.STRING;
+_type16.kind = vdl.kind.SET;
 _type16.name = "";
-_type16.key = vdl.Types.STRING;
-_type17.kind = vdl.Kind.MAP;
+_type16.key = vdl.types.STRING;
+_type17.kind = vdl.kind.MAP;
 _type17.name = "";
-_type17.elem = vdl.Types.INT64;
-_type17.key = vdl.Types.STRING;
-_type2.kind = vdl.Kind.SET;
+_type17.elem = vdl.types.INT64;
+_type17.key = vdl.types.STRING;
+_type2.kind = vdl.kind.SET;
 _type2.name = "";
 _type2.key = _typeKeyScalars;
-_type3.kind = vdl.Kind.MAP;
+_type3.kind = vdl.kind.MAP;
 _type3.name = "";
 _type3.elem = _typeScalars;
-_type3.key = vdl.Types.STRING;
-_type4.kind = vdl.Kind.MAP;
+_type3.key = vdl.types.STRING;
+_type4.kind = vdl.kind.MAP;
 _type4.name = "";
 _type4.elem = _type5;
 _type4.key = _typeKeyScalars;
-_type5.kind = vdl.Kind.LIST;
+_type5.kind = vdl.kind.LIST;
 _type5.name = "";
 _type5.elem = _type6;
-_type6.kind = vdl.Kind.MAP;
+_type6.kind = vdl.kind.MAP;
 _type6.name = "";
-_type6.elem = vdl.Types.COMPLEX128;
-_type6.key = vdl.Types.STRING;
-_type7.kind = vdl.Kind.LIST;
+_type6.elem = vdl.types.COMPLEX128;
+_type6.key = vdl.types.STRING;
+_type7.kind = vdl.kind.LIST;
 _type7.name = "";
 _type7.elem = _typeComposites;
-_type8.kind = vdl.Kind.MAP;
+_type8.kind = vdl.kind.MAP;
 _type8.name = "";
 _type8.elem = _typeComposites;
-_type8.key = vdl.Types.STRING;
-_type9.kind = vdl.Kind.MAP;
+_type8.key = vdl.types.STRING;
+_type9.kind = vdl.kind.MAP;
 _type9.name = "";
 _type9.elem = _type10;
 _type9.key = _typeKeyScalars;
-_typeArgs.kind = vdl.Kind.STRUCT;
+_typeArgs.kind = vdl.kind.STRUCT;
 _typeArgs.name = "v.io/x/ref/lib/vdl/testdata/base.Args";
-_typeArgs.fields = [{name: "A", type: vdl.Types.INT32}, {name: "B", type: vdl.Types.INT32}];
-_typeCompComp.kind = vdl.Kind.STRUCT;
+_typeArgs.fields = [{name: "A", type: vdl.types.INT32}, {name: "B", type: vdl.types.INT32}];
+_typeCompComp.kind = vdl.kind.STRUCT;
 _typeCompComp.name = "v.io/x/ref/lib/vdl/testdata/base.CompComp";
 _typeCompComp.fields = [{name: "A0", type: _typeComposites}, {name: "A1", type: _typeCompositesArray}, {name: "A2", type: _type7}, {name: "A3", type: _type8}, {name: "A4", type: _type9}];
-_typeComposites.kind = vdl.Kind.STRUCT;
+_typeComposites.kind = vdl.kind.STRUCT;
 _typeComposites.name = "v.io/x/ref/lib/vdl/testdata/base.Composites";
 _typeComposites.fields = [{name: "A0", type: _typeScalars}, {name: "A1", type: _typeScalarsArray}, {name: "A2", type: _type1}, {name: "A3", type: _type2}, {name: "A4", type: _type3}, {name: "A5", type: _type4}];
-_typeCompositesArray.kind = vdl.Kind.ARRAY;
+_typeCompositesArray.kind = vdl.kind.ARRAY;
 _typeCompositesArray.name = "v.io/x/ref/lib/vdl/testdata/base.CompositesArray";
 _typeCompositesArray.len = 2;
 _typeCompositesArray.elem = _typeComposites;
-_typeKeyScalars.kind = vdl.Kind.STRUCT;
+_typeKeyScalars.kind = vdl.kind.STRUCT;
 _typeKeyScalars.name = "v.io/x/ref/lib/vdl/testdata/base.KeyScalars";
-_typeKeyScalars.fields = [{name: "A0", type: vdl.Types.BOOL}, {name: "A1", type: vdl.Types.BYTE}, {name: "A2", type: vdl.Types.UINT16}, {name: "A3", type: vdl.Types.UINT32}, {name: "A4", type: vdl.Types.UINT64}, {name: "A5", type: vdl.Types.INT16}, {name: "A6", type: vdl.Types.INT32}, {name: "A7", type: vdl.Types.INT64}, {name: "A8", type: vdl.Types.FLOAT32}, {name: "A9", type: vdl.Types.FLOAT64}, {name: "A10", type: vdl.Types.COMPLEX64}, {name: "A11", type: vdl.Types.COMPLEX128}, {name: "A12", type: vdl.Types.STRING}, {name: "B0", type: _typeNamedBool}, {name: "B1", type: _typeNamedByte}, {name: "B2", type: _typeNamedUint16}, {name: "B3", type: _typeNamedUint32}, {name: "B4", type: _typeNamedUint64}, {name: "B5", type: _typeNamedInt16}, {name: "B6", type: _typeNamedInt32}, {name: "B7", type: _typeNamedInt64}, {name: "B8", type: _typeNamedFloat32}, {name: "B9", type: _typeNamedFloat64}, {name: "B10", type: _typeNamedComplex64}, {name: "B11", type: _typeNamedComplex128}, {name: "B12", type: _typeNamedString}];
-_typeNamedArray.kind = vdl.Kind.ARRAY;
+_typeKeyScalars.fields = [{name: "A0", type: vdl.types.BOOL}, {name: "A1", type: vdl.types.BYTE}, {name: "A2", type: vdl.types.UINT16}, {name: "A3", type: vdl.types.UINT32}, {name: "A4", type: vdl.types.UINT64}, {name: "A5", type: vdl.types.INT16}, {name: "A6", type: vdl.types.INT32}, {name: "A7", type: vdl.types.INT64}, {name: "A8", type: vdl.types.FLOAT32}, {name: "A9", type: vdl.types.FLOAT64}, {name: "A10", type: vdl.types.COMPLEX64}, {name: "A11", type: vdl.types.COMPLEX128}, {name: "A12", type: vdl.types.STRING}, {name: "B0", type: _typeNamedBool}, {name: "B1", type: _typeNamedByte}, {name: "B2", type: _typeNamedUint16}, {name: "B3", type: _typeNamedUint32}, {name: "B4", type: _typeNamedUint64}, {name: "B5", type: _typeNamedInt16}, {name: "B6", type: _typeNamedInt32}, {name: "B7", type: _typeNamedInt64}, {name: "B8", type: _typeNamedFloat32}, {name: "B9", type: _typeNamedFloat64}, {name: "B10", type: _typeNamedComplex64}, {name: "B11", type: _typeNamedComplex128}, {name: "B12", type: _typeNamedString}];
+_typeNamedArray.kind = vdl.kind.ARRAY;
 _typeNamedArray.name = "v.io/x/ref/lib/vdl/testdata/base.NamedArray";
 _typeNamedArray.len = 2;
-_typeNamedArray.elem = vdl.Types.BOOL;
-_typeNamedBool.kind = vdl.Kind.BOOL;
+_typeNamedArray.elem = vdl.types.BOOL;
+_typeNamedBool.kind = vdl.kind.BOOL;
 _typeNamedBool.name = "v.io/x/ref/lib/vdl/testdata/base.NamedBool";
-_typeNamedByte.kind = vdl.Kind.BYTE;
+_typeNamedByte.kind = vdl.kind.BYTE;
 _typeNamedByte.name = "v.io/x/ref/lib/vdl/testdata/base.NamedByte";
-_typeNamedComplex128.kind = vdl.Kind.COMPLEX128;
+_typeNamedComplex128.kind = vdl.kind.COMPLEX128;
 _typeNamedComplex128.name = "v.io/x/ref/lib/vdl/testdata/base.NamedComplex128";
-_typeNamedComplex64.kind = vdl.Kind.COMPLEX64;
+_typeNamedComplex64.kind = vdl.kind.COMPLEX64;
 _typeNamedComplex64.name = "v.io/x/ref/lib/vdl/testdata/base.NamedComplex64";
-_typeNamedEnum.kind = vdl.Kind.ENUM;
+_typeNamedEnum.kind = vdl.kind.ENUM;
 _typeNamedEnum.name = "v.io/x/ref/lib/vdl/testdata/base.NamedEnum";
 _typeNamedEnum.labels = ["A", "B", "C"];
-_typeNamedFloat32.kind = vdl.Kind.FLOAT32;
+_typeNamedFloat32.kind = vdl.kind.FLOAT32;
 _typeNamedFloat32.name = "v.io/x/ref/lib/vdl/testdata/base.NamedFloat32";
-_typeNamedFloat64.kind = vdl.Kind.FLOAT64;
+_typeNamedFloat64.kind = vdl.kind.FLOAT64;
 _typeNamedFloat64.name = "v.io/x/ref/lib/vdl/testdata/base.NamedFloat64";
-_typeNamedInt16.kind = vdl.Kind.INT16;
+_typeNamedInt16.kind = vdl.kind.INT16;
 _typeNamedInt16.name = "v.io/x/ref/lib/vdl/testdata/base.NamedInt16";
-_typeNamedInt32.kind = vdl.Kind.INT32;
+_typeNamedInt32.kind = vdl.kind.INT32;
 _typeNamedInt32.name = "v.io/x/ref/lib/vdl/testdata/base.NamedInt32";
-_typeNamedInt64.kind = vdl.Kind.INT64;
+_typeNamedInt64.kind = vdl.kind.INT64;
 _typeNamedInt64.name = "v.io/x/ref/lib/vdl/testdata/base.NamedInt64";
-_typeNamedList.kind = vdl.Kind.LIST;
+_typeNamedList.kind = vdl.kind.LIST;
 _typeNamedList.name = "v.io/x/ref/lib/vdl/testdata/base.NamedList";
-_typeNamedList.elem = vdl.Types.UINT32;
-_typeNamedMap.kind = vdl.Kind.MAP;
+_typeNamedList.elem = vdl.types.UINT32;
+_typeNamedMap.kind = vdl.kind.MAP;
 _typeNamedMap.name = "v.io/x/ref/lib/vdl/testdata/base.NamedMap";
-_typeNamedMap.elem = vdl.Types.FLOAT32;
-_typeNamedMap.key = vdl.Types.STRING;
-_typeNamedSet.kind = vdl.Kind.SET;
+_typeNamedMap.elem = vdl.types.FLOAT32;
+_typeNamedMap.key = vdl.types.STRING;
+_typeNamedSet.kind = vdl.kind.SET;
 _typeNamedSet.name = "v.io/x/ref/lib/vdl/testdata/base.NamedSet";
-_typeNamedSet.key = vdl.Types.STRING;
-_typeNamedString.kind = vdl.Kind.STRING;
+_typeNamedSet.key = vdl.types.STRING;
+_typeNamedString.kind = vdl.kind.STRING;
 _typeNamedString.name = "v.io/x/ref/lib/vdl/testdata/base.NamedString";
-_typeNamedStruct.kind = vdl.Kind.STRUCT;
+_typeNamedStruct.kind = vdl.kind.STRUCT;
 _typeNamedStruct.name = "v.io/x/ref/lib/vdl/testdata/base.NamedStruct";
-_typeNamedStruct.fields = [{name: "A", type: vdl.Types.BOOL}, {name: "B", type: vdl.Types.STRING}, {name: "C", type: vdl.Types.INT32}];
-_typeNamedUint16.kind = vdl.Kind.UINT16;
+_typeNamedStruct.fields = [{name: "A", type: vdl.types.BOOL}, {name: "B", type: vdl.types.STRING}, {name: "C", type: vdl.types.INT32}];
+_typeNamedUint16.kind = vdl.kind.UINT16;
 _typeNamedUint16.name = "v.io/x/ref/lib/vdl/testdata/base.NamedUint16";
-_typeNamedUint32.kind = vdl.Kind.UINT32;
+_typeNamedUint32.kind = vdl.kind.UINT32;
 _typeNamedUint32.name = "v.io/x/ref/lib/vdl/testdata/base.NamedUint32";
-_typeNamedUint64.kind = vdl.Kind.UINT64;
+_typeNamedUint64.kind = vdl.kind.UINT64;
 _typeNamedUint64.name = "v.io/x/ref/lib/vdl/testdata/base.NamedUint64";
-_typeNamedUnion.kind = vdl.Kind.UNION;
+_typeNamedUnion.kind = vdl.kind.UNION;
 _typeNamedUnion.name = "v.io/x/ref/lib/vdl/testdata/base.NamedUnion";
-_typeNamedUnion.fields = [{name: "A", type: vdl.Types.BOOL}, {name: "B", type: vdl.Types.STRING}, {name: "C", type: vdl.Types.INT32}];
-_typeNestedArgs.kind = vdl.Kind.STRUCT;
+_typeNamedUnion.fields = [{name: "A", type: vdl.types.BOOL}, {name: "B", type: vdl.types.STRING}, {name: "C", type: vdl.types.INT32}];
+_typeNestedArgs.kind = vdl.kind.STRUCT;
 _typeNestedArgs.name = "v.io/x/ref/lib/vdl/testdata/base.NestedArgs";
 _typeNestedArgs.fields = [{name: "Args", type: _typeArgs}];
-_typeScalars.kind = vdl.Kind.STRUCT;
+_typeScalars.kind = vdl.kind.STRUCT;
 _typeScalars.name = "v.io/x/ref/lib/vdl/testdata/base.Scalars";
-_typeScalars.fields = [{name: "A0", type: vdl.Types.BOOL}, {name: "A1", type: vdl.Types.BYTE}, {name: "A2", type: vdl.Types.UINT16}, {name: "A3", type: vdl.Types.UINT32}, {name: "A4", type: vdl.Types.UINT64}, {name: "A5", type: vdl.Types.INT16}, {name: "A6", type: vdl.Types.INT32}, {name: "A7", type: vdl.Types.INT64}, {name: "A8", type: vdl.Types.FLOAT32}, {name: "A9", type: vdl.Types.FLOAT64}, {name: "A10", type: vdl.Types.COMPLEX64}, {name: "A11", type: vdl.Types.COMPLEX128}, {name: "A12", type: vdl.Types.STRING}, {name: "A13", type: vdl.Types.ERROR}, {name: "A14", type: vdl.Types.ANY}, {name: "A15", type: vdl.Types.TYPEOBJECT}, {name: "B0", type: _typeNamedBool}, {name: "B1", type: _typeNamedByte}, {name: "B2", type: _typeNamedUint16}, {name: "B3", type: _typeNamedUint32}, {name: "B4", type: _typeNamedUint64}, {name: "B5", type: _typeNamedInt16}, {name: "B6", type: _typeNamedInt32}, {name: "B7", type: _typeNamedInt64}, {name: "B8", type: _typeNamedFloat32}, {name: "B9", type: _typeNamedFloat64}, {name: "B10", type: _typeNamedComplex64}, {name: "B11", type: _typeNamedComplex128}, {name: "B12", type: _typeNamedString}, {name: "B13", type: _typeNamedEnum}, {name: "B14", type: _typeNamedUnion}];
-_typeScalarsArray.kind = vdl.Kind.ARRAY;
+_typeScalars.fields = [{name: "A0", type: vdl.types.BOOL}, {name: "A1", type: vdl.types.BYTE}, {name: "A2", type: vdl.types.UINT16}, {name: "A3", type: vdl.types.UINT32}, {name: "A4", type: vdl.types.UINT64}, {name: "A5", type: vdl.types.INT16}, {name: "A6", type: vdl.types.INT32}, {name: "A7", type: vdl.types.INT64}, {name: "A8", type: vdl.types.FLOAT32}, {name: "A9", type: vdl.types.FLOAT64}, {name: "A10", type: vdl.types.COMPLEX64}, {name: "A11", type: vdl.types.COMPLEX128}, {name: "A12", type: vdl.types.STRING}, {name: "A13", type: vdl.types.ERROR}, {name: "A14", type: vdl.types.ANY}, {name: "A15", type: vdl.types.TYPEOBJECT}, {name: "B0", type: _typeNamedBool}, {name: "B1", type: _typeNamedByte}, {name: "B2", type: _typeNamedUint16}, {name: "B3", type: _typeNamedUint32}, {name: "B4", type: _typeNamedUint64}, {name: "B5", type: _typeNamedInt16}, {name: "B6", type: _typeNamedInt32}, {name: "B7", type: _typeNamedInt64}, {name: "B8", type: _typeNamedFloat32}, {name: "B9", type: _typeNamedFloat64}, {name: "B10", type: _typeNamedComplex64}, {name: "B11", type: _typeNamedComplex128}, {name: "B12", type: _typeNamedString}, {name: "B13", type: _typeNamedEnum}, {name: "B14", type: _typeNamedUnion}];
+_typeScalarsArray.kind = vdl.kind.ARRAY;
 _typeScalarsArray.name = "v.io/x/ref/lib/vdl/testdata/base.ScalarsArray";
 _typeScalarsArray.len = 2;
 _typeScalarsArray.elem = _typeScalars;
@@ -241,105 +241,105 @@ _typeNamedUnion.freeze();
 _typeNestedArgs.freeze();
 _typeScalars.freeze();
 _typeScalarsArray.freeze();
-module.exports.Args = (vdl.Registry.lookupOrCreateConstructor(_typeArgs));
-module.exports.CompComp = (vdl.Registry.lookupOrCreateConstructor(_typeCompComp));
-module.exports.Composites = (vdl.Registry.lookupOrCreateConstructor(_typeComposites));
-module.exports.CompositesArray = (vdl.Registry.lookupOrCreateConstructor(_typeCompositesArray));
-module.exports.KeyScalars = (vdl.Registry.lookupOrCreateConstructor(_typeKeyScalars));
-module.exports.NamedArray = (vdl.Registry.lookupOrCreateConstructor(_typeNamedArray));
-module.exports.NamedBool = (vdl.Registry.lookupOrCreateConstructor(_typeNamedBool));
-module.exports.NamedByte = (vdl.Registry.lookupOrCreateConstructor(_typeNamedByte));
-module.exports.NamedComplex128 = (vdl.Registry.lookupOrCreateConstructor(_typeNamedComplex128));
-module.exports.NamedComplex64 = (vdl.Registry.lookupOrCreateConstructor(_typeNamedComplex64));
+module.exports.Args = (vdl.registry.lookupOrCreateConstructor(_typeArgs));
+module.exports.CompComp = (vdl.registry.lookupOrCreateConstructor(_typeCompComp));
+module.exports.Composites = (vdl.registry.lookupOrCreateConstructor(_typeComposites));
+module.exports.CompositesArray = (vdl.registry.lookupOrCreateConstructor(_typeCompositesArray));
+module.exports.KeyScalars = (vdl.registry.lookupOrCreateConstructor(_typeKeyScalars));
+module.exports.NamedArray = (vdl.registry.lookupOrCreateConstructor(_typeNamedArray));
+module.exports.NamedBool = (vdl.registry.lookupOrCreateConstructor(_typeNamedBool));
+module.exports.NamedByte = (vdl.registry.lookupOrCreateConstructor(_typeNamedByte));
+module.exports.NamedComplex128 = (vdl.registry.lookupOrCreateConstructor(_typeNamedComplex128));
+module.exports.NamedComplex64 = (vdl.registry.lookupOrCreateConstructor(_typeNamedComplex64));
 module.exports.NamedEnum = {
-  A: canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeNamedEnum))('A', true), _typeNamedEnum),
-  B: canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeNamedEnum))('B', true), _typeNamedEnum),
-  C: canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeNamedEnum))('C', true), _typeNamedEnum),
+  A: canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeNamedEnum))('A', true), _typeNamedEnum),
+  B: canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeNamedEnum))('B', true), _typeNamedEnum),
+  C: canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeNamedEnum))('C', true), _typeNamedEnum),
 };
-module.exports.NamedFloat32 = (vdl.Registry.lookupOrCreateConstructor(_typeNamedFloat32));
-module.exports.NamedFloat64 = (vdl.Registry.lookupOrCreateConstructor(_typeNamedFloat64));
-module.exports.NamedInt16 = (vdl.Registry.lookupOrCreateConstructor(_typeNamedInt16));
-module.exports.NamedInt32 = (vdl.Registry.lookupOrCreateConstructor(_typeNamedInt32));
-module.exports.NamedInt64 = (vdl.Registry.lookupOrCreateConstructor(_typeNamedInt64));
-module.exports.NamedList = (vdl.Registry.lookupOrCreateConstructor(_typeNamedList));
-module.exports.NamedMap = (vdl.Registry.lookupOrCreateConstructor(_typeNamedMap));
-module.exports.NamedSet = (vdl.Registry.lookupOrCreateConstructor(_typeNamedSet));
-module.exports.NamedString = (vdl.Registry.lookupOrCreateConstructor(_typeNamedString));
-module.exports.NamedStruct = (vdl.Registry.lookupOrCreateConstructor(_typeNamedStruct));
-module.exports.NamedUint16 = (vdl.Registry.lookupOrCreateConstructor(_typeNamedUint16));
-module.exports.NamedUint32 = (vdl.Registry.lookupOrCreateConstructor(_typeNamedUint32));
-module.exports.NamedUint64 = (vdl.Registry.lookupOrCreateConstructor(_typeNamedUint64));
-module.exports.NamedUnion = (vdl.Registry.lookupOrCreateConstructor(_typeNamedUnion));
-module.exports.NestedArgs = (vdl.Registry.lookupOrCreateConstructor(_typeNestedArgs));
-module.exports.Scalars = (vdl.Registry.lookupOrCreateConstructor(_typeScalars));
-module.exports.ScalarsArray = (vdl.Registry.lookupOrCreateConstructor(_typeScalarsArray));
+module.exports.NamedFloat32 = (vdl.registry.lookupOrCreateConstructor(_typeNamedFloat32));
+module.exports.NamedFloat64 = (vdl.registry.lookupOrCreateConstructor(_typeNamedFloat64));
+module.exports.NamedInt16 = (vdl.registry.lookupOrCreateConstructor(_typeNamedInt16));
+module.exports.NamedInt32 = (vdl.registry.lookupOrCreateConstructor(_typeNamedInt32));
+module.exports.NamedInt64 = (vdl.registry.lookupOrCreateConstructor(_typeNamedInt64));
+module.exports.NamedList = (vdl.registry.lookupOrCreateConstructor(_typeNamedList));
+module.exports.NamedMap = (vdl.registry.lookupOrCreateConstructor(_typeNamedMap));
+module.exports.NamedSet = (vdl.registry.lookupOrCreateConstructor(_typeNamedSet));
+module.exports.NamedString = (vdl.registry.lookupOrCreateConstructor(_typeNamedString));
+module.exports.NamedStruct = (vdl.registry.lookupOrCreateConstructor(_typeNamedStruct));
+module.exports.NamedUint16 = (vdl.registry.lookupOrCreateConstructor(_typeNamedUint16));
+module.exports.NamedUint32 = (vdl.registry.lookupOrCreateConstructor(_typeNamedUint32));
+module.exports.NamedUint64 = (vdl.registry.lookupOrCreateConstructor(_typeNamedUint64));
+module.exports.NamedUnion = (vdl.registry.lookupOrCreateConstructor(_typeNamedUnion));
+module.exports.NestedArgs = (vdl.registry.lookupOrCreateConstructor(_typeNestedArgs));
+module.exports.Scalars = (vdl.registry.lookupOrCreateConstructor(_typeScalars));
+module.exports.ScalarsArray = (vdl.registry.lookupOrCreateConstructor(_typeScalarsArray));
 
 
 
 
 // Consts:
 
-  module.exports.Cbool = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.BOOL))(true, true), vdl.Types.BOOL);
+  module.exports.Cbool = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.BOOL))(true, true), vdl.types.BOOL);
 
-  module.exports.Cbyte = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.BYTE))(1, true), vdl.Types.BYTE);
+  module.exports.Cbyte = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.BYTE))(1, true), vdl.types.BYTE);
 
-  module.exports.Cint32 = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.INT32))(2, true), vdl.Types.INT32);
+  module.exports.Cint32 = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.INT32))(2, true), vdl.types.INT32);
 
-  module.exports.Cint64 = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.INT64))(new vdl.BigInt(1, new Uint8Array([0x3])), true), vdl.Types.INT64);
+  module.exports.Cint64 = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.INT64))(new vdl.BigInt(1, new Uint8Array([0x3])), true), vdl.types.INT64);
 
-  module.exports.Cuint32 = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.UINT32))(4, true), vdl.Types.UINT32);
+  module.exports.Cuint32 = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.UINT32))(4, true), vdl.types.UINT32);
 
-  module.exports.Cuint64 = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.UINT64))(new vdl.BigInt(1, new Uint8Array([0x5])), true), vdl.Types.UINT64);
+  module.exports.Cuint64 = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.UINT64))(new vdl.BigInt(1, new Uint8Array([0x5])), true), vdl.types.UINT64);
 
-  module.exports.Cfloat32 = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.FLOAT32))(6, true), vdl.Types.FLOAT32);
+  module.exports.Cfloat32 = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.FLOAT32))(6, true), vdl.types.FLOAT32);
 
-  module.exports.Cfloat64 = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.FLOAT64))(7, true), vdl.Types.FLOAT64);
+  module.exports.Cfloat64 = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.FLOAT64))(7, true), vdl.types.FLOAT64);
 
-  module.exports.CNamedBool = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeNamedBool))(true, true), _typeNamedBool);
+  module.exports.CNamedBool = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeNamedBool))(true, true), _typeNamedBool);
 
-  module.exports.CNamedStruct = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeNamedStruct))({
+  module.exports.CNamedStruct = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeNamedStruct))({
   'a': true,
   'b': "test",
   'c': 0,
 }, true), _typeNamedStruct);
 
-  module.exports.Ccomplex64 = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.COMPLEX64))(new vdl.Complex(8.000000, 9.000000), true), vdl.Types.COMPLEX64);
+  module.exports.Ccomplex64 = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.COMPLEX64))(new vdl.Complex(8.000000, 9.000000), true), vdl.types.COMPLEX64);
 
-  module.exports.Ccomplex128 = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.COMPLEX128))(new vdl.Complex(10.000000, 11.000000), true), vdl.Types.COMPLEX128);
+  module.exports.Ccomplex128 = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.COMPLEX128))(new vdl.Complex(10.000000, 11.000000), true), vdl.types.COMPLEX128);
 
-  module.exports.Cstring = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.STRING))("foo", true), vdl.Types.STRING);
+  module.exports.Cstring = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.STRING))("foo", true), vdl.types.STRING);
 
-  module.exports.Cenum = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeNamedEnum))('A', true), _typeNamedEnum);
+  module.exports.Cenum = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeNamedEnum))('A', true), _typeNamedEnum);
 
-  module.exports.Cunion = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeNamedUnion))({ "a": true }, true), _typeNamedUnion);
+  module.exports.Cunion = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeNamedUnion))({ "a": true }, true), _typeNamedUnion);
 
-  module.exports.Carray = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeNamedArray))([
+  module.exports.Carray = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeNamedArray))([
 true,
 false,
 ], true), _typeNamedArray);
 
-  module.exports.Clist = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_type11))([
+  module.exports.Clist = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_type11))([
 1,
 2,
 3,
 ], true), _type11);
 
-  module.exports.Cset = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_type12))(new Set([
+  module.exports.Cset = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_type12))(new Set([
   1, 
   2, 
   3, ]), true), _type12);
 
-  module.exports.cmap = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_type13))(new Map([
+  module.exports.cmap = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_type13))(new Map([
   [1, "A"],
   [2, "B"],
   [3, "C"]]), true), _type13);
 
-  module.exports.Cargs = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeArgs))({
+  module.exports.Cargs = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeArgs))({
   'a': 1,
   'b': 2,
 }, true), _typeArgs);
 
-  module.exports.CScalars = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(_typeScalars))({
+  module.exports.CScalars = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeScalars))({
   'a0': true,
   'a1': 1,
   'a2': 2,
@@ -354,8 +354,8 @@ false,
   'a11': new vdl.Complex(11.000000, 0.000000),
   'a12': "abc",
   'a13': null,
-  'a14': canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.BOOL))(false, true), vdl.Types.BOOL),
-  'a15': vdl.Types.BOOL,
+  'a14': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.BOOL))(false, true), vdl.types.BOOL),
+  'a15': vdl.types.BOOL,
   'b0': true,
   'b1': 1,
   'b2': 2,
@@ -373,33 +373,33 @@ false,
   'b14': { "c": 123 },
 }, true), _typeScalars);
 
-  module.exports.True = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.BOOL))(true, true), vdl.Types.BOOL);
+  module.exports.True = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.BOOL))(true, true), vdl.types.BOOL);
 
-  module.exports.Foo = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.STRING))("foo", true), vdl.Types.STRING);
+  module.exports.Foo = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.STRING))("foo", true), vdl.types.STRING);
 
-  module.exports.Five = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.INT32))(5, true), vdl.Types.INT32);
+  module.exports.Five = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.INT32))(5, true), vdl.types.INT32);
 
-  module.exports.Six = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.UINT64))(new vdl.BigInt(1, new Uint8Array([0x6])), true), vdl.Types.UINT64);
+  module.exports.Six = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.UINT64))(new vdl.BigInt(1, new Uint8Array([0x6])), true), vdl.types.UINT64);
 
-  module.exports.SixSquared = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.UINT64))(new vdl.BigInt(1, new Uint8Array([0x24])), true), vdl.Types.UINT64);
+  module.exports.SixSquared = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.UINT64))(new vdl.BigInt(1, new Uint8Array([0x24])), true), vdl.types.UINT64);
 
-  module.exports.FiveSquared = canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.INT32))(25, true), vdl.Types.INT32);
+  module.exports.FiveSquared = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.INT32))(25, true), vdl.types.INT32);
 
-  module.exports.CTypeObject_bool = vdl.Types.BOOL;
+  module.exports.CTypeObject_bool = vdl.types.BOOL;
 
-  module.exports.CTypeObject_string = vdl.Types.STRING;
+  module.exports.CTypeObject_string = vdl.types.STRING;
 
   module.exports.CTypeObject_bytes = _type14;
 
-  module.exports.CTypeObject_byte = vdl.Types.BYTE;
+  module.exports.CTypeObject_byte = vdl.types.BYTE;
 
-  module.exports.CTypeObject_uint16 = vdl.Types.UINT16;
+  module.exports.CTypeObject_uint16 = vdl.types.UINT16;
 
-  module.exports.CTypeObject_int16 = vdl.Types.INT16;
+  module.exports.CTypeObject_int16 = vdl.types.INT16;
 
-  module.exports.CTypeObject_float32 = vdl.Types.FLOAT32;
+  module.exports.CTypeObject_float32 = vdl.types.FLOAT32;
 
-  module.exports.CTypeObject_complex64 = vdl.Types.COMPLEX64;
+  module.exports.CTypeObject_complex64 = vdl.types.COMPLEX64;
 
   module.exports.CTypeObject_enum = _typeNamedEnum;
 
@@ -415,9 +415,9 @@ false,
 
   module.exports.CTypeObject_Union = _typeNamedUnion;
 
-  module.exports.CTypeObject_TypeObject = vdl.Types.TYPEOBJECT;
+  module.exports.CTypeObject_TypeObject = vdl.types.TYPEOBJECT;
 
-  module.exports.CTypeObject_Any = vdl.Types.ANY;
+  module.exports.CTypeObject_Any = vdl.types.ANY;
 
 
 
@@ -439,8 +439,8 @@ module.exports.NoParams2Error = makeError('v.io/x/ref/lib/vdl/testdata/base.NoPa
 module.exports.WithParams1Error = makeError('v.io/x/ref/lib/vdl/testdata/base.WithParams1', actions.NO_RETRY, {
   'en': '{1:}{2:} en x={3} y={4}',
 }, [
-  vdl.Types.STRING,
-  vdl.Types.INT32,
+  vdl.types.STRING,
+  vdl.types.INT32,
 ]);
 
 
@@ -448,16 +448,16 @@ module.exports.WithParams2Error = makeError('v.io/x/ref/lib/vdl/testdata/base.Wi
   'en': '{1:}{2:} en x={3} y={4}',
   'fr': '{1:}{2:} fr y={4} x={3}',
 }, [
-  vdl.Types.STRING,
-  vdl.Types.INT32,
+  vdl.types.STRING,
+  vdl.types.INT32,
 ]);
 
 
 module.exports.notExportedError = makeError('v.io/x/ref/lib/vdl/testdata/base.notExported', actions.NO_RETRY, {
   'en': '{1:}{2:} en x={3} y={4}',
 }, [
-  vdl.Types.STRING,
-  vdl.Types.INT32,
+  vdl.types.STRING,
+  vdl.types.INT32,
 ]);
 
 
@@ -518,18 +518,18 @@ ServiceA.prototype._serviceDescription = {
     inArgs: [{
       name: 'a',
       doc: "",
-      type: vdl.Types.INT32
+      type: vdl.types.INT32
     },
     {
       name: 'b',
       doc: "",
-      type: vdl.Types.STRING
+      type: vdl.types.STRING
     },
     ],
     outArgs: [{
       name: 's',
       doc: "",
-      type: vdl.Types.STRING
+      type: vdl.types.STRING
     },
     ],
     inStream: null,
@@ -544,13 +544,13 @@ ServiceA.prototype._serviceDescription = {
     inArgs: [{
       name: 'a',
       doc: "",
-      type: vdl.Types.INT32
+      type: vdl.types.INT32
     },
     ],
     outArgs: [{
       name: 's',
       doc: "",
-      type: vdl.Types.STRING
+      type: vdl.types.STRING
     },
     ],
     inStream: null,
@@ -559,7 +559,7 @@ ServiceA.prototype._serviceDescription = {
       doc: '',
       type: _typeScalars
     },
-    tags: [canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.STRING))("tag", true), vdl.Types.STRING), canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.UINT64))(new vdl.BigInt(1, new Uint8Array([0x6])), true), vdl.Types.UINT64), ]
+    tags: [canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.STRING))("tag", true), vdl.types.STRING), canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.UINT64))(new vdl.BigInt(1, new Uint8Array([0x6])), true), vdl.types.UINT64), ]
   },
     
       
@@ -569,19 +569,19 @@ ServiceA.prototype._serviceDescription = {
     inArgs: [{
       name: 'a',
       doc: "",
-      type: vdl.Types.INT32
+      type: vdl.types.INT32
     },
     ],
     outArgs: [],
     inStream: {
       name: '',
       doc: '',
-      type: vdl.Types.INT32
+      type: vdl.types.INT32
     },
     outStream: {
       name: '',
       doc: '',
-      type: vdl.Types.STRING
+      type: vdl.types.STRING
     },
     tags: []
   },
@@ -678,18 +678,18 @@ ServiceB.prototype._serviceDescription = {
     inArgs: [{
       name: 'a',
       doc: "",
-      type: vdl.Types.INT32
+      type: vdl.types.INT32
     },
     {
       name: 'b',
       doc: "",
-      type: vdl.Types.STRING
+      type: vdl.types.STRING
     },
     ],
     outArgs: [{
       name: 's',
       doc: "",
-      type: vdl.Types.STRING
+      type: vdl.types.STRING
     },
     ],
     inStream: null,
@@ -704,13 +704,13 @@ ServiceB.prototype._serviceDescription = {
     inArgs: [{
       name: 'a',
       doc: "",
-      type: vdl.Types.INT32
+      type: vdl.types.INT32
     },
     ],
     outArgs: [{
       name: 's',
       doc: "",
-      type: vdl.Types.STRING
+      type: vdl.types.STRING
     },
     ],
     inStream: null,
@@ -719,7 +719,7 @@ ServiceB.prototype._serviceDescription = {
       doc: '',
       type: _typeScalars
     },
-    tags: [canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.STRING))("tag", true), vdl.Types.STRING), canonicalize.reduce(new (vdl.Registry.lookupOrCreateConstructor(vdl.Types.UINT64))(new vdl.BigInt(1, new Uint8Array([0x6])), true), vdl.Types.UINT64), ]
+    tags: [canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.STRING))("tag", true), vdl.types.STRING), canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.UINT64))(new vdl.BigInt(1, new Uint8Array([0x6])), true), vdl.types.UINT64), ]
   },
     
       
@@ -729,19 +729,19 @@ ServiceB.prototype._serviceDescription = {
     inArgs: [{
       name: 'a',
       doc: "",
-      type: vdl.Types.INT32
+      type: vdl.types.INT32
     },
     ],
     outArgs: [],
     inStream: {
       name: '',
       doc: '',
-      type: vdl.Types.INT32
+      type: vdl.types.INT32
     },
     outStream: {
       name: '',
       doc: '',
-      type: vdl.Types.STRING
+      type: vdl.types.STRING
     },
     tags: []
   },

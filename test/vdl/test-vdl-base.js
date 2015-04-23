@@ -8,98 +8,98 @@ var context = require('../../src/context');
 var SharedContextKeys = require('../../src/runtime/shared-context-keys');
 var actions = require('../../src/verror/actions');
 
-var Kind = require('../../src/vdl').Kind;
-var Types = require('../../src/vdl').Types;
+var kind = require('../../src/vdl').kind;
+var types = require('../../src/vdl').types;
 var BigInt = require('../../src/vdl').BigInt;
 
 test('named primitive types', function(assert) {
   var res = new base.NamedBool(false);
   assert.deepEqual(res._type, {
-    kind: Kind.BOOL,
+    kind: kind.BOOL,
     name: 'v.io/x/ref/lib/vdl/testdata/base.NamedBool',
   });
   assert.equal(res.val, false);
 
   res = new base.NamedByte(1);
   assert.deepEqual(res._type,{
-    kind: Kind.BYTE,
+    kind: kind.BYTE,
     name: 'v.io/x/ref/lib/vdl/testdata/base.NamedByte',
   });
   assert.equal(res.val, 1);
 
   res = new base.NamedUint16(1);
   assert.deepEqual(res._type, {
-    kind: Kind.UINT16,
+    kind: kind.UINT16,
     name: 'v.io/x/ref/lib/vdl/testdata/base.NamedUint16',
   });
   assert.equal(res.val, 1);
 
   res = new base.NamedUint32(1);
   assert.deepEqual(res._type, {
-    kind: Kind.UINT32,
+    kind: kind.UINT32,
     name: 'v.io/x/ref/lib/vdl/testdata/base.NamedUint32',
   });
   assert.equal(res.val, 1);
 
   res = new base.NamedUint64(1);
   assert.deepEqual(res._type, {
-    kind: Kind.UINT64,
+    kind: kind.UINT64,
     name: 'v.io/x/ref/lib/vdl/testdata/base.NamedUint64',
   });
   assert.deepEqual(res.val, BigInt.fromNativeNumber(1));
 
   res = new base.NamedInt16(1);
   assert.deepEqual(res._type, {
-    kind: Kind.INT16,
+    kind: kind.INT16,
     name: 'v.io/x/ref/lib/vdl/testdata/base.NamedInt16',
   });
   assert.equal(res.val, 1);
 
   res = new base.NamedInt32(1);
   assert.deepEqual(res._type, {
-    kind: Kind.INT32,
+    kind: kind.INT32,
     name: 'v.io/x/ref/lib/vdl/testdata/base.NamedInt32',
   });
   assert.equal(res.val, 1);
 
   res = new base.NamedInt64(1);
   assert.deepEqual(res._type, {
-    kind: Kind.INT64,
+    kind: kind.INT64,
     name: 'v.io/x/ref/lib/vdl/testdata/base.NamedInt64',
   });
   assert.deepEqual(res.val, BigInt.fromNativeNumber(1));
 
   res = new base.NamedFloat32(1);
   assert.deepEqual(res._type, {
-    kind: Kind.FLOAT32,
+    kind: kind.FLOAT32,
     name: 'v.io/x/ref/lib/vdl/testdata/base.NamedFloat32',
   });
   assert.equal(res.val, 1);
 
   res = new base.NamedFloat64(1);
   assert.deepEqual(res._type, {
-    kind: Kind.FLOAT64,
+    kind: kind.FLOAT64,
     name: 'v.io/x/ref/lib/vdl/testdata/base.NamedFloat64',
   });
   assert.equal(res.val, 1);
 
   res = new base.NamedComplex64();
   assert.deepEqual(res._type, {
-    kind: Kind.COMPLEX64,
+    kind: kind.COMPLEX64,
     name: 'v.io/x/ref/lib/vdl/testdata/base.NamedComplex64',
   });
   assert.deepEqual(res.val, { real: 0, imag: 0 });
 
   res = new base.NamedComplex128();
   assert.deepEqual(res._type, {
-    kind: Kind.COMPLEX128,
+    kind: kind.COMPLEX128,
     name: 'v.io/x/ref/lib/vdl/testdata/base.NamedComplex128',
   });
   assert.deepEqual(res.val, { real: 0, imag: 0 });
 
   res = new base.NamedString('foo');
   assert.deepEqual(res._type, {
-    kind: Kind.STRING,
+    kind: kind.STRING,
     name: 'v.io/x/ref/lib/vdl/testdata/base.NamedString',
   });
   assert.equal(res.val, 'foo');
@@ -110,8 +110,8 @@ test('named composite types', function(assert) {
   var res = new base.NamedArray([false, true]);
   assert.deepEqual(res._type, {
     name: 'v.io/x/ref/lib/vdl/testdata/base.NamedArray',
-    kind: Kind.ARRAY,
-    elem: Types.BOOL,
+    kind: kind.ARRAY,
+    elem: types.BOOL,
     len: 2,
   });
   assert.deepEquals(res.val, [false, true]);
@@ -119,8 +119,8 @@ test('named composite types', function(assert) {
   res = new base.NamedList([]);
   assert.deepEqual(res._type, {
     name: 'v.io/x/ref/lib/vdl/testdata/base.NamedList',
-    kind: Kind.LIST,
-    elem: Types.UINT32
+    kind: kind.LIST,
+    elem: types.UINT32
   });
   assert.deepEquals(res.val, []);
   assert.end();
@@ -129,7 +129,7 @@ test('named composite types', function(assert) {
 test('enum', function(assert) {
     assert.deepEqual(base.NamedEnum.A._type, {
       name: 'v.io/x/ref/lib/vdl/testdata/base.NamedEnum',
-      kind: Kind.ENUM,
+      kind: kind.ENUM,
       labels: ['A','B','C']
     });
     assert.deepEqual(base.NamedEnum.A, {val:'A'});

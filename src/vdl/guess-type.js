@@ -9,8 +9,8 @@
  * @private
  */
 
-var Types = require('./types.js');
-var TypeUtil = require('./type-util.js');
+var types = require('./types.js');
+var typeUtil = require('./type-util.js');
 require('./es6-shim');
 var nativeTypeRegistry = require('./native-type-registry');
 
@@ -18,13 +18,13 @@ module.exports = guessType;
 
 /**
  * Guess the type of a value based on its contents. If _type is not present
- * this returns Types.JSValue.
+ * this returns types.JSValue.
  * @private
  * @param {any} val The value.
  * @return {Type} The guessed type for val.
  */
 function guessType(val) {
-  if (TypeUtil.isTyped(val)) {
+  if (typeUtil.isTyped(val)) {
     return val._type;
   }
 
@@ -33,5 +33,5 @@ function guessType(val) {
     return nativeType;
   }
 
-  return Types.JSVALUE;
+  return types.JSVALUE;
 }

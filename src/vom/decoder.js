@@ -11,9 +11,9 @@ module.exports = Decoder;
 
 var canonicalize = require('../vdl/canonicalize.js');
 var TypeDecoder = require('./type-decoder.js');
-var Kind = require('../vdl/kind.js');
+var kind = require('../vdl/kind.js');
 var Registry = require('../vdl/registry.js');
-var Types = require('../vdl/types.js');
+var types = require('../vdl/types.js');
 var util = require('../vdl/util.js');
 var unwrap = require('../vdl/type-util').unwrap;
 var wiretype = require('../gen-vdl/v.io/v23/vom');
@@ -57,15 +57,15 @@ Decoder.prototype._decodeValue = function(t, reader, shouldWrap) {
   var value = this._decodeUnwrappedValue(t, reader);
 
   // Special: JSValue should be reduced and returned as a native value.
-  if (Types.JSVALUE.equals(t)) {
-    return canonicalize.reduce(value, Types.JSVALUE);
+  if (types.JSVALUE.equals(t)) {
+    return canonicalize.reduce(value, types.JSVALUE);
   }
 
   if (nativeTypeRegistry.hasNativeType(t)) {
     return canonicalize.reduce(value, t);
   }
   // If this value should be wrapped, apply the constructor.
-  if (t.kind !== Kind.TYPEOBJECT && shouldWrap) {
+  if (t.kind !== kind.TYPEOBJECT && shouldWrap) {
     var Ctor = Registry.lookupOrCreateConstructor(t);
     return new Ctor(value, this._deepWrap);
   }
@@ -74,50 +74,50 @@ Decoder.prototype._decodeValue = function(t, reader, shouldWrap) {
 
 Decoder.prototype._decodeUnwrappedValue = function(t, reader) {
   switch (t.kind) {
-    case Kind.BOOL:
+    case kind.BOOL:
       return reader.readBool();
-    case Kind.BYTE:
+    case kind.BYTE:
       return reader.readByte();
-    case Kind.UINT16:
-    case Kind.UINT32:
+    case kind.UINT16:
+    case kind.UINT32:
       return reader.readUint();
-    case Kind.UINT64:
+    case kind.UINT64:
       return reader.readBigUint();
-    case Kind.INT16:
-    case Kind.INT32:
+    case kind.INT16:
+    case kind.INT32:
       return reader.readInt();
-    case Kind.INT64:
+    case kind.INT64:
       return reader.readBigInt();
-    case Kind.FLOAT32:
-    case Kind.FLOAT64:
+    case kind.FLOAT32:
+    case kind.FLOAT64:
       return reader.readFloat();
-    case Kind.COMPLEX64:
-    case Kind.COMPLEX128:
+    case kind.COMPLEX64:
+    case kind.COMPLEX128:
       return {
         real: reader.readFloat(),
         imag: reader.readFloat()
       };
-    case Kind.STRING:
+    case kind.STRING:
       return reader.readString();
-    case Kind.ENUM:
+    case kind.ENUM:
       return this._decodeEnum(t, reader);
-    case Kind.LIST:
+    case kind.LIST:
       return this._decodeList(t, reader);
-    case Kind.ARRAY:
+    case kind.ARRAY:
       return this._decodeArray(t, reader);
-    case Kind.SET:
+    case kind.SET:
       return this._decodeSet(t, reader);
-    case Kind.MAP:
+    case kind.MAP:
       return this._decodeMap(t, reader);
-    case Kind.STRUCT:
+    case kind.STRUCT:
       return this._decodeStruct(t, reader);
-    case Kind.UNION:
+    case kind.UNION:
       return this._decodeUnion(t, reader);
-    case Kind.ANY:
+    case kind.ANY:
       return this._decodeAny(reader);
-    case Kind.OPTIONAL:
+    case kind.OPTIONAL:
       return this._decodeOptional(t, reader);
-    case Kind.TYPEOBJECT:
+    case kind.TYPEOBJECT:
       var typeId = reader.readUint();
       var type = this._typeDecoder.lookupType(typeId);
       if (type === undefined) {
@@ -153,7 +153,7 @@ Decoder.prototype._decodeArray = function(t, reader) {
 };
 
 Decoder.prototype._readSequence = function(t, len, reader) {
-  if (t.elem.kind === Kind.BYTE) {
+  if (t.elem.kind === kind.BYTE) {
     // Read byte sequences directly into Uint8Arrays.
 
     // The Uint8Array is created by calling subarray. In node, this means that

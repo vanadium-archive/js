@@ -2,96 +2,96 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-var Kind = require('./../../src/vdl/kind.js');
+var kind = require('./../../src/vdl/kind.js');
 var Type = require('./../../src/vdl/type.js');
-var Types = require('./../../src/vdl/types.js');
+var types = require('./../../src/vdl/types.js');
 
 var recursiveType = new Type();
-recursiveType.kind = Kind.LIST;
+recursiveType.kind = kind.LIST;
 recursiveType.name = 'recList';
 recursiveType.elem = recursiveType;
 
 var secondLevelRecursiveTypeA = new Type();
-secondLevelRecursiveTypeA.kind = Kind.SET;
+secondLevelRecursiveTypeA.kind = kind.SET;
 secondLevelRecursiveTypeA.name = 'recSet';
 var secondLevelRecursiveTypeB = new Type();
 secondLevelRecursiveTypeB.name = 'recArray';
-secondLevelRecursiveTypeB.kind = Kind.ARRAY;
+secondLevelRecursiveTypeB.kind = kind.ARRAY;
 secondLevelRecursiveTypeB.len = 4;
 secondLevelRecursiveTypeB.elem = secondLevelRecursiveTypeA;
 secondLevelRecursiveTypeA.key = secondLevelRecursiveTypeB;
 
 var tests = [
   {
-    type: Types.ANY,
+    type: types.ANY,
     toString: 'any'
   },
   {
-    type: Types.BOOL,
+    type: types.BOOL,
     toString: 'bool'
   },
   {
-    type: Types.BYTE,
+    type: types.BYTE,
     toString: 'byte'
   },
   {
-    type: Types.UINT16,
+    type: types.UINT16,
     toString: 'uint16'
   },
   {
-    type: Types.UINT32,
+    type: types.UINT32,
     toString: 'uint32'
   },
   {
-    type: Types.UINT64,
+    type: types.UINT64,
     toString: 'uint64'
   },
   {
-    type: Types.INT16,
+    type: types.INT16,
     toString: 'int16'
   },
   {
-    type: Types.INT32,
+    type: types.INT32,
     toString: 'int32'
   },
   {
-    type: Types.INT64,
+    type: types.INT64,
     toString: 'int64'
   },
   {
-    type: Types.FLOAT32,
+    type: types.FLOAT32,
     toString: 'float32'
   },
   {
-    type: Types.FLOAT64,
+    type: types.FLOAT64,
     toString: 'float64'
   },
   {
-    type: Types.COMPLEX64,
+    type: types.COMPLEX64,
     toString: 'complex64'
   },
   {
-    type: Types.COMPLEX128,
+    type: types.COMPLEX128,
     toString: 'complex128'
   },
   {
-    type: Types.STRING,
+    type: types.STRING,
     toString: 'string'
   },
   {
-    type: Types.TYPEOBJECT,
+    type: types.TYPEOBJECT,
     toString: 'typeobject'
   },
   {
     type: {
-      kind: Kind.BOOL,
+      kind: kind.BOOL,
       name: 'Boolean'
     },
     toString: 'Boolean bool'
   },
   {
     type: {
-      kind: Kind.ENUM,
+      kind: kind.ENUM,
       name: 'EnumName',
       labels: ['labelOne', 'labelTwo']
     },
@@ -99,10 +99,10 @@ var tests = [
   },
   {
     type: {
-      kind: Kind.ARRAY,
+      kind: kind.ARRAY,
       name: 'namedArray',
       elem: {
-        kind: Kind.STRING,
+        kind: kind.STRING,
         name: 'namedString'
       },
       len: 10
@@ -111,10 +111,10 @@ var tests = [
   },
   {
     type: {
-      kind: Kind.LIST,
+      kind: kind.LIST,
       name: 'namedList',
       elem: {
-        kind: Kind.UINT16,
+        kind: kind.UINT16,
         name: 'namedUint16'
       }
     },
@@ -122,10 +122,10 @@ var tests = [
   },
   {
     type: {
-      kind: Kind.SET,
+      kind: kind.SET,
       name: 'setName',
       key: {
-        kind: Kind.UINT32,
+        kind: kind.UINT32,
         name: 'namedUint32'
       }
     },
@@ -133,14 +133,14 @@ var tests = [
   },
   {
     type: {
-      kind: Kind.MAP,
+      kind: kind.MAP,
       name: 'mapName',
       key: {
-        kind: Kind.INT16,
+        kind: kind.INT16,
         name: 'namedInt16'
       },
       elem: {
-        kind: Kind.INT32,
+        kind: kind.INT32,
         name: 'namedInt32'
       }
     },
@@ -148,19 +148,19 @@ var tests = [
   },
   {
     type: {
-      kind: Kind.STRUCT,
+      kind: kind.STRUCT,
       name: 'structName',
       fields: [
         {
           name: 'FirstField',
-          type: Types.STRING
+          type: types.STRING
         },
         {
           name: 'SecondField',
           type: {
             name: 'innerList',
-            kind: Kind.LIST,
-            elem: Types.INT16
+            kind: kind.LIST,
+            elem: types.INT16
           }
         }
       ]
@@ -170,19 +170,19 @@ var tests = [
   },
   {
     type: {
-      kind: Kind.UNION,
+      kind: kind.UNION,
       name: 'unionName',
       fields: [
         {
           name: 'A',
-          type: Types.INT16
+          type: types.INT16
         },
         {
           name: 'B',
           type: {
             name: 'innerSet',
-            kind: Kind.SET,
-            key: Types.BOOL
+            kind: kind.SET,
+            key: types.BOOL
           }
         }
       ]
@@ -192,8 +192,8 @@ var tests = [
   {
     type: {
       name: 'shouldNotBeNamed', // NOTE: Optional should normally not be named.
-      kind: Kind.OPTIONAL,
-      elem: Types.UINT64
+      kind: kind.OPTIONAL,
+      elem: types.UINT64
     },
     toString: 'shouldNotBeNamed ?uint64'
   },

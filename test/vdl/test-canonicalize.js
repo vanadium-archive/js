@@ -10,10 +10,10 @@ var test = require('prova');
 
 var BigInt = require('./../../src/vdl/big-int.js');
 var Complex = require('./../../src/vdl/complex.js');
-var Kind = require('./../../src/vdl/kind.js');
-var Registry = require('./../../src/vdl/registry.js');
+var kind = require('./../../src/vdl/kind.js');
+var registry = require('./../../src/vdl/registry.js');
 var Type = require('./../../src/vdl/type.js');
-var Types = require('./../../src/vdl/types.js');
+var types = require('./../../src/vdl/types.js');
 var canonicalize = require('./../../src/vdl/canonicalize.js');
 var stringify = require('./../../src/vdl/stringify.js');
 require('../../src/vom/native-types');
@@ -24,7 +24,7 @@ var actions = require('../../src/verror/actions');
 // A helper function that shallow copies an object into an object with the
 // JSValue prototype. It makes the test cases a lot more readable.
 function JS(obj) {
-  var JSValue = Registry.lookupOrCreateConstructor(Types.JSVALUE);
+  var JSValue = registry.lookupOrCreateConstructor(types.JSVALUE);
   var jsval = Object.create(JSValue.prototype);
   Object.keys(obj).forEach(function(key) {
     jsval[key] = obj[key];
@@ -176,7 +176,7 @@ test('canonicalize JSValue - basic functionality', function(t) {
     var input = tests[i].input;
     var expected = tests[i].output;
     var expectedDeep = tests[i].outputDeep;
-    var type = Types.JSVALUE;
+    var type = types.JSVALUE;
 
     // The input canonicalizes to the expected output.
     var output = canonicalize.reduce(input, type);
@@ -215,7 +215,7 @@ test('canonicalize JSValue - basic functionality', function(t) {
 test('canonicalize JSValue - mixed JSValue and non-JSValue functionality',
   function(t) {
 
-  var Float32 = Registry.lookupOrCreateConstructor(Types.FLOAT32);
+  var Float32 = registry.lookupOrCreateConstructor(types.FLOAT32);
 
   var tests = [
     {
@@ -264,7 +264,7 @@ test('canonicalize JSValue - mixed JSValue and non-JSValue functionality',
     var input = tests[i].input;
     var expected = tests[i].output;
     var expectedDeep = tests[i].outputDeep;
-    var type = Types.JSVALUE;
+    var type = types.JSVALUE;
 
     // The input canonicalizes to the expected output.
     var output = canonicalize.reduce(input, type);
@@ -302,37 +302,37 @@ test('canonicalize JSValue - mixed JSValue and non-JSValue functionality',
 
 test('canonicalize struct - basic functionality', function(t) {
   var OptStringType = new Type({
-    kind: Kind.OPTIONAL,
-    elem: Types.STRING
+    kind: kind.OPTIONAL,
+    elem: types.STRING
   });
-  var OptStr = Registry.lookupOrCreateConstructor(OptStringType);
+  var OptStr = registry.lookupOrCreateConstructor(OptStringType);
   var AnyListType = new Type({
-    kind: Kind.LIST,
-    elem: Types.ANY
+    kind: kind.LIST,
+    elem: types.ANY
   });
   var BoolListType = new Type({
-    kind: Kind.LIST,
-    elem: Types.BOOL
+    kind: kind.LIST,
+    elem: types.BOOL
   });
 
   var ComplicatedStringStructType = new Type({
-    kind: Kind.STRUCT,
+    kind: kind.STRUCT,
     fields: [
       {
         name: 'JSValueString',
-        type: Types.ANY
+        type: types.ANY
       },
       {
         name: 'WrappedString',
-        type: Types.STRING
+        type: types.STRING
       },
       {
         name: 'NativeString',
-        type: Types.STRING
+        type: types.STRING
       },
       {
         name: 'AnyString',
-        type: Types.ANY
+        type: types.ANY
       },
       {
         name: 'NullOptionalAny',
@@ -344,16 +344,16 @@ test('canonicalize struct - basic functionality', function(t) {
       },
       {
         name: 'UndefinedToZeroString',
-        type: Types.STRING
+        type: types.STRING
       },
       {
         name: 'UndefinedToZeroStringAny',
-        type: Types.STRING
+        type: types.STRING
       }
     ]
   });
   var ComplicatedBoolAnyListType = new Type({
-    kind: Kind.STRUCT,
+    kind: kind.STRUCT,
     fields: [
       {
         name: 'BoolToAny',
@@ -374,11 +374,11 @@ test('canonicalize struct - basic functionality', function(t) {
     ]
   });
 
-  var Bool = Registry.lookupOrCreateConstructor(Types.BOOL);
-  var Str = Registry.lookupOrCreateConstructor(Types.STRING);
-  var ComplicatedStringStruct = Registry.lookupOrCreateConstructor(
+  var Bool = registry.lookupOrCreateConstructor(types.BOOL);
+  var Str = registry.lookupOrCreateConstructor(types.STRING);
+  var ComplicatedStringStruct = registry.lookupOrCreateConstructor(
     ComplicatedStringStructType);
-  var ComplicatedBoolAnyList = Registry.lookupOrCreateConstructor(
+  var ComplicatedBoolAnyList = registry.lookupOrCreateConstructor(
     ComplicatedBoolAnyListType);
 
   var tests = [
@@ -406,15 +406,15 @@ test('canonicalize struct - basic functionality', function(t) {
       inputFields: [
         {
           name: 'A',
-          type: Types.UINT32
+          type: types.UINT32
         },
         {
           name: 'B',
-          type: Types.STRING
+          type: types.STRING
         },
         {
           name: 'E',
-          type: Types.ANY
+          type: types.ANY
         },
       ],
       outputObject: {
@@ -438,15 +438,15 @@ test('canonicalize struct - basic functionality', function(t) {
       inputFields: [
         {
           name: 'Man',
-          type: Types.ANY
+          type: types.ANY
         },
         {
           name: 'Ban',
-          type: Types.BOOL
+          type: types.BOOL
         },
         {
           name: 'Dan',
-          type: Types.COMPLEX64
+          type: types.COMPLEX64
         }
       ],
       outputObject: {
@@ -475,35 +475,35 @@ test('canonicalize struct - basic functionality', function(t) {
       inputFields: [
         {
           name: 'JSValueString',
-          type: Types.ANY
+          type: types.ANY
         },
         {
           name: 'WrappedString',
-          type: Types.ANY
+          type: types.ANY
         },
         {
           name: 'NativeString',
-          type: Types.ANY
+          type: types.ANY
         },
         {
           name: 'AnyString',
-          type: Types.STRING
+          type: types.STRING
         },
         {
           name: 'NullOptionalAny',
-          type: Types.ANY
+          type: types.ANY
         },
         {
           name: 'OptionalToString',
-          type: Types.STRING
+          type: types.STRING
         },
         {
           name: 'UndefinedToZeroString',
-          type: Types.STRING
+          type: types.STRING
         },
         {
           name: 'UndefinedToZeroStringAny',
-          type: Types.ANY
+          type: types.ANY
         }
       ],
       outputObject: {
@@ -603,54 +603,54 @@ test('canonicalize struct - basic functionality', function(t) {
         {
           name: 'Enum',
           type: {
-            kind: Kind.ENUM,
+            kind: kind.ENUM,
             labels: ['Sunday', 'Monday', 'Tuesday']
           }
         },
         {
           name: 'Optional',
           type: {
-            kind: Kind.OPTIONAL,
-            elem: Types.STRING
+            kind: kind.OPTIONAL,
+            elem: types.STRING
           }
         },
         {
           name: 'String',
-          type: Types.STRING
+          type: types.STRING
         },
         {
           name: 'Array',
           type: {
-            kind: Kind.ARRAY,
-            elem: Types.BOOL,
+            kind: kind.ARRAY,
+            elem: types.BOOL,
             len: 3
           }
         },
         {
           name: 'List',
           type: {
-            kind: Kind.LIST,
-            elem: Types.BOOL
+            kind: kind.LIST,
+            elem: types.BOOL
           }
         },
         {
           name: 'Set',
           type: {
-            kind: Kind.SET,
-            key: Types.UINT64
+            kind: kind.SET,
+            key: types.UINT64
           }
         },
         {
           name: 'Map',
           type: {
-            kind: Kind.MAP,
-            key: Types.STRING,
-            elem: Types.STRING
+            kind: kind.MAP,
+            key: types.STRING,
+            elem: types.STRING
           }
         },
         {
           name: 'TypeObject',
-          type: Types.TYPEOBJECT
+          type: types.TYPEOBJECT
         }
       ],
       outputObject: {
@@ -661,7 +661,7 @@ test('canonicalize struct - basic functionality', function(t) {
         'list': [],
         'set': new Set(),
         'map': new Map(),
-        'typeObject': Types.ANY
+        'typeObject': types.ANY
       },
       outputObjectDeep: {
         'enum': { val: 'Sunday' },
@@ -683,7 +683,7 @@ test('canonicalize struct - basic functionality', function(t) {
         'map': {
           val: new Map()
         },
-        'typeObject': Types.ANY
+        'typeObject': types.ANY
       }
     },
     {
@@ -693,8 +693,8 @@ test('canonicalize struct - basic functionality', function(t) {
         {
           name: 'ByteSlice',
           type: {
-            kind: Kind.LIST,
-            elem: Types.BYTE
+            kind: kind.LIST,
+            elem: types.BYTE
           }
         }
       ],
@@ -714,8 +714,8 @@ test('canonicalize struct - basic functionality', function(t) {
         {
           name: 'ByteArray',
           type: {
-            kind: Kind.ARRAY,
-            elem: Types.BYTE,
+            kind: kind.ARRAY,
+            elem: types.BYTE,
             len: 4
           }
         }
@@ -736,15 +736,15 @@ test('canonicalize struct - basic functionality', function(t) {
         {
           name: 'Struct',
           type: {
-            kind: Kind.STRUCT,
+            kind: kind.STRUCT,
             fields: [
               {
                 name: 'A',
-                type: Types.BOOL
+                type: types.BOOL
               },
               {
                 name: 'B',
-                type: Types.UINT64
+                type: types.UINT64
               }
             ]
           }
@@ -752,15 +752,15 @@ test('canonicalize struct - basic functionality', function(t) {
         {
           name: 'Union',
           type: {
-            kind: Kind.UNION,
+            kind: kind.UNION,
             fields: [
               {
                 name: 'A',
-                type: Types.BOOL
+                type: types.BOOL
               },
               {
                 name: 'B',
-                type: Types.UINT64
+                type: types.UINT64
               }
             ]
           }
@@ -789,7 +789,7 @@ test('canonicalize struct - basic functionality', function(t) {
 
   for (var i = 0; i < tests.length; i++) {
     var type = new Type({
-      kind: Kind.STRUCT,
+      kind: kind.STRUCT,
       fields: tests[i].inputFields
     });
     runNativeWireTest(tests[i], type, t);
@@ -838,15 +838,15 @@ test('canonicalize union - basic functionality', function(t) {
       inputFields: [
         {
           name: 'A',
-          type: Types.UINT32
+          type: types.UINT32
         },
         {
           name: 'B',
-          type: Types.STRING
+          type: types.STRING
         },
         {
           name: 'E',
-          type: Types.ANY
+          type: types.ANY
         }
       ],
       outputObject: {
@@ -866,15 +866,15 @@ test('canonicalize union - basic functionality', function(t) {
       inputFields: [
         {
           name: 'A',
-          type: Types.UINT32
+          type: types.UINT32
         },
         {
           name: 'B',
-          type: Types.STRING
+          type: types.STRING
         },
         {
           name: 'E',
-          type: Types.ANY
+          type: types.ANY
         }
       ],
       outputObject: {         // any with []JSValue
@@ -915,15 +915,15 @@ test('canonicalize union - basic functionality', function(t) {
       inputFields: [
         {
           name: 'A',
-          type: Types.UINT32
+          type: types.UINT32
         },
         {
           name: 'B',
-          type: Types.STRING
+          type: types.STRING
         },
         {
           name: 'E',
-          type: Types.ANY
+          type: types.ANY
         }
       ],
       outputObject: {
@@ -944,15 +944,15 @@ test('canonicalize union - basic functionality', function(t) {
       inputFields: [
         {
           name: 'A',
-          type: Types.UINT32
+          type: types.UINT32
         },
         {
           name: 'B',
-          type: Types.STRING
+          type: types.STRING
         },
         {
           name: 'E',
-          type: Types.ANY
+          type: types.ANY
         }
       ],
       outputObject: {
@@ -970,7 +970,7 @@ test('canonicalize union - basic functionality', function(t) {
 
   for (var i = 0; i < tests.length; i++) {
     var type = new Type({
-      kind: Kind.UNION,
+      kind: kind.UNION,
       fields: tests[i].inputFields
     });
     runNativeWireTest(tests[i], type, t);
@@ -981,12 +981,12 @@ test('canonicalize union - basic functionality', function(t) {
 // Ensures that valid types don't error out when canonicalizing.
 test('canonicalize type - basic functionality', function(t) {
   var loopyList = {
-    kind: Kind.LIST
+    kind: kind.LIST
   };
   loopyList.elem = loopyList;
   var expectedLoopyList = {
     name: '',
-    kind: Kind.LIST
+    kind: kind.LIST
   };
   expectedLoopyList.elem = expectedLoopyList;
 
@@ -994,26 +994,26 @@ test('canonicalize type - basic functionality', function(t) {
     {
       name: 'undefined type => any',
       inputType: undefined,
-      outputType: Types.ANY
+      outputType: types.ANY
     },
     {
       name: 'simple list',
       inputType: {
-        kind: Kind.LIST,
-        elem: Types.INT16
+        kind: kind.LIST,
+        elem: types.INT16
       },
       outputType: {
         name: '',
-        kind: Kind.LIST,
-        elem: Types.INT16
+        kind: kind.LIST,
+        elem: types.INT16
       }
     },
     {
       name: 'typeobject',
       inputType: {
-        kind: Kind.TYPEOBJECT
+        kind: kind.TYPEOBJECT
       },
-      outputType: Types.TYPEOBJECT
+      outputType: types.TYPEOBJECT
     },
     {
       name: 'loopyList',
@@ -1040,7 +1040,7 @@ test('canonicalize type - basic functionality', function(t) {
     t.equal(output2Str, expectedStr, name + ' - idempotent');
 
     // Post-canonicalization, the type is still a TypeObject.
-    t.deepEqual(output._type, Types.TYPEOBJECT, name + ' - is TypeObject');
+    t.deepEqual(output._type, types.TYPEOBJECT, name + ' - is TypeObject');
   }
   t.end();
 });
@@ -1053,70 +1053,70 @@ test('canonicalize type - basic functionality', function(t) {
 // other coverage, and it seems like it's just checking that deep wrap converts
 // to shallow wrap.
 test('canonicalize deep to shallow - basic functionality', function(t) {
-  var Int16 = Registry.lookupOrCreateConstructor(Types.INT16);
-  var Int64 = Registry.lookupOrCreateConstructor(Types.INT64);
-  var Uint32 = Registry.lookupOrCreateConstructor(Types.UINT32);
-  var Complex64 = Registry.lookupOrCreateConstructor(Types.COMPLEX64);
-  var Str = Registry.lookupOrCreateConstructor(Types.STRING);
-  var Uint32Uint32Map = Registry.lookupOrCreateConstructor({
-    kind: Kind.MAP,
+  var Int16 = registry.lookupOrCreateConstructor(types.INT16);
+  var Int64 = registry.lookupOrCreateConstructor(types.INT64);
+  var Uint32 = registry.lookupOrCreateConstructor(types.UINT32);
+  var Complex64 = registry.lookupOrCreateConstructor(types.COMPLEX64);
+  var Str = registry.lookupOrCreateConstructor(types.STRING);
+  var Uint32Uint32Map = registry.lookupOrCreateConstructor({
+    kind: kind.MAP,
     name: '',
-    key: Types.INT32,
-    elem: Types.INT32
+    key: types.INT32,
+    elem: types.INT32
   });
-  var KindNameStruct = Registry.lookupOrCreateConstructor({
-    kind: Kind.STRUCT,
+  var KindNameStruct = registry.lookupOrCreateConstructor({
+    kind: kind.STRUCT,
     name: '',
     fields: [
       {
-        name: 'Kind',
-        type: Types.UINT32
+        name: 'kind',
+        type: types.UINT32
       },
       {
         name: 'Name',
-        type: Types.STRING
+        type: types.STRING
       }
     ]
   });
-  var ABUnion = Registry.lookupOrCreateConstructor({
-    kind: Kind.UNION,
+  var ABUnion = registry.lookupOrCreateConstructor({
+    kind: kind.UNION,
     name: '',
     fields: [
       {
         name: 'A',
-        type: Types.UINT32
+        type: types.UINT32
       },
       {
         name: 'B',
-        type: Types.STRING
+        type: types.STRING
       }
     ]
   });
-  var ABStruct = Registry.lookupOrCreateConstructor({
-    kind: Kind.STRUCT,
+  var ABStruct = registry.lookupOrCreateConstructor({
+    kind: kind.STRUCT,
     name: '',
     fields: [
       {
         name: 'A',
-        type: Types.UINT32
+        type: types.UINT32
       },
       {
         name: 'B',
-        type: Types.STRING
+        type: types.STRING
       }
     ]
   });
-  var AnyStrStruct = Registry.lookupOrCreateConstructor({
-    kind: Kind.STRUCT,
+  var AnyStrStruct = registry.lookupOrCreateConstructor({
+    kind: kind.STRUCT,
     name: '',
     fields: [
       {
         name: 'Any',
-        type: Types.ANY
+        type: types.ANY
       },
       {
         name: 'Normal',
-        type: Types.STRING
+        type: types.STRING
       }
     ]
   });
@@ -1224,44 +1224,44 @@ function testDeepWrapToUnwrap(t, test) {
 // test-vom-compatible.js
 test('canonicalize conversion - success', function(t) {
   var AnyListType = new Type({
-    kind: Kind.LIST,
-    elem: Types.ANY
+    kind: kind.LIST,
+    elem: types.ANY
   });
   var OptStringType = new Type({
-    kind: Kind.OPTIONAL,
-    elem: Types.STRING
+    kind: kind.OPTIONAL,
+    elem: types.STRING
   });
   var StringListType = new Type({
-    kind: Kind.LIST,
-    elem: Types.STRING
+    kind: kind.LIST,
+    elem: types.STRING
   });
   var ByteListType = new Type({
-    kind: Kind.LIST,
-    elem: Types.BYTE
+    kind: kind.LIST,
+    elem: types.BYTE
   });
   var MyEnumType = new Type({
-    kind: Kind.ENUM,
+    kind: kind.ENUM,
     labels: ['M', 'A', 'G']
   });
   var IntSetType = new Type({
-    kind: Kind.SET,
-    key: Types.INT16
+    kind: kind.SET,
+    key: types.INT16
   });
   var FloatBoolMapType = new Type({
-    kind: Kind.MAP,
-    key: Types.FLOAT32,
-    elem: Types.BOOL
+    kind: kind.MAP,
+    key: types.FLOAT32,
+    elem: types.BOOL
   });
   var StringSetType = new Type({
-    kind: Kind.SET,
-    key: Types.STRING
+    kind: kind.SET,
+    key: types.STRING
   });
   var StringyStructType = new Type({
-    kind: Kind.STRUCT,
+    kind: kind.STRUCT,
     fields: [
       {
         name: 'Ma',
-        type: Types.STRING
+        type: types.STRING
       },
       {
         name: 'Bu',
@@ -1274,43 +1274,43 @@ test('canonicalize conversion - success', function(t) {
     ]
   });
   var StringStringMapType = new Type({
-    kind: Kind.MAP,
-    key: Types.STRING,
-    elem: Types.STRING
+    kind: kind.MAP,
+    key: types.STRING,
+    elem: types.STRING
   });
   var StringAnyMapType = new Type({
-    kind: Kind.MAP,
-    key: Types.STRING,
-    elem: Types.ANY
+    kind: kind.MAP,
+    key: types.STRING,
+    elem: types.ANY
   });
   var Byte10ArrayType = new Type({
-    kind: Kind.ARRAY,
-    elem: Types.BYTE,
+    kind: kind.ARRAY,
+    elem: types.BYTE,
     len: 10
   });
   var StructABCType = new Type({
-    kind: Kind.STRUCT,
+    kind: kind.STRUCT,
     fields: [
       {
         name: 'A',
-        type: Types.BOOL
+        type: types.BOOL
       },
       {
         name: 'B',
-        type: Types.STRING
+        type: types.STRING
       },
       {
         name: 'C',
-        type: Types.UINT32
+        type: types.UINT32
       }
     ]
   });
   var StructCDBType = new Type({
-    kind: Kind.STRUCT,
+    kind: kind.STRUCT,
     fields: [
       {
         name: 'C',
-        type: Types.UINT32
+        type: types.UINT32
       },
       {
         name: 'D',
@@ -1318,41 +1318,41 @@ test('canonicalize conversion - success', function(t) {
       },
       {
         name: 'B',
-        type: Types.STRING
+        type: types.STRING
       }
     ]
   });
 
-  var Any = Registry.lookupOrCreateConstructor(Types.ANY);
-  var AnyList = Registry.lookupOrCreateConstructor(AnyListType);
-  var Bool = Registry.lookupOrCreateConstructor(Types.BOOL);
-  var Str = Registry.lookupOrCreateConstructor(Types.STRING);
-  var StrList = Registry.lookupOrCreateConstructor(StringListType);
-  var OptStr = Registry.lookupOrCreateConstructor(OptStringType);
-  var IntSet = Registry.lookupOrCreateConstructor(IntSetType);
-  var FloatBoolMap = Registry.lookupOrCreateConstructor(FloatBoolMapType);
-  var ByteList = Registry.lookupOrCreateConstructor(ByteListType);
-  var Byte10Array = Registry.lookupOrCreateConstructor(Byte10ArrayType);
-  var MyEnum = Registry.lookupOrCreateConstructor(MyEnumType);
-  var StructABC = Registry.lookupOrCreateConstructor(StructABCType);
-  var StructCDB = Registry.lookupOrCreateConstructor(StructCDBType);
-  var StringSet = Registry.lookupOrCreateConstructor(StringSetType);
-  var StringStringMap = Registry.lookupOrCreateConstructor(StringStringMapType);
-  var StringAnyMap = Registry.lookupOrCreateConstructor(StringAnyMapType);
-  var StringyStruct = Registry.lookupOrCreateConstructor(StringyStructType);
+  var Any = registry.lookupOrCreateConstructor(types.ANY);
+  var AnyList = registry.lookupOrCreateConstructor(AnyListType);
+  var Bool = registry.lookupOrCreateConstructor(types.BOOL);
+  var Str = registry.lookupOrCreateConstructor(types.STRING);
+  var StrList = registry.lookupOrCreateConstructor(StringListType);
+  var OptStr = registry.lookupOrCreateConstructor(OptStringType);
+  var IntSet = registry.lookupOrCreateConstructor(IntSetType);
+  var FloatBoolMap = registry.lookupOrCreateConstructor(FloatBoolMapType);
+  var ByteList = registry.lookupOrCreateConstructor(ByteListType);
+  var Byte10Array = registry.lookupOrCreateConstructor(Byte10ArrayType);
+  var MyEnum = registry.lookupOrCreateConstructor(MyEnumType);
+  var StructABC = registry.lookupOrCreateConstructor(StructABCType);
+  var StructCDB = registry.lookupOrCreateConstructor(StructCDBType);
+  var StringSet = registry.lookupOrCreateConstructor(StringSetType);
+  var StringStringMap = registry.lookupOrCreateConstructor(StringStringMapType);
+  var StringAnyMap = registry.lookupOrCreateConstructor(StringAnyMapType);
+  var StringyStruct = registry.lookupOrCreateConstructor(StringyStructType);
 
   var tests = [
     {
       name: 'Any(String) to String',
       inValue: new Any(new Str('fff')),
       outValue: new Str('fff'),
-      targetType: Types.STRING
+      targetType: types.STRING
     },
     {
       name: 'String to Any(String)',
       inValue: new Str('fff'),
       outValue: new Any(new Str('fff')),
-      targetType: Types.ANY
+      targetType: types.ANY
     },
     {
       name: '[]Any to []String',
@@ -1372,7 +1372,7 @@ test('canonicalize conversion - success', function(t) {
       name: 'OptString to String',
       inValue: new OptStr('abc'),
       outValue: new Str('abc'),
-      targetType: Types.STRING
+      targetType: types.STRING
     },
     {
       name: 'String to ByteArray',
@@ -1508,7 +1508,7 @@ test('canonicalize conversion - success', function(t) {
 
 test('canonicalize error', function(t) {
   var E = makeError('MyId', actions.NO_RETRY, '', [
-    Types.STRING, Types.INT32 ]);
+    types.STRING, types.INT32 ]);
 
   // There are two different values of native errors we expect.  The first is
   // the value that the developer will pass in.  It's paramList will not have
@@ -1525,9 +1525,9 @@ test('canonicalize error', function(t) {
     return { val: v };
   });
 
-  var VerrorConstructor = Registry.lookupOrCreateConstructor(Types.ERROR.elem);
-  var Str = Registry.lookupOrCreateConstructor(Types.STRING);
-  var Int32 = Registry.lookupOrCreateConstructor(Types.INT32);
+  var VerrorConstructor = registry.lookupOrCreateConstructor(types.ERROR.elem);
+  var Str = registry.lookupOrCreateConstructor(types.STRING);
+  var Int32 = registry.lookupOrCreateConstructor(types.INT32);
 
   var wrappedMessage = new VerrorConstructor({
     id: 'MyId',
@@ -1570,14 +1570,14 @@ test('canonicalize error', function(t) {
     {
       name: '?err, deepWrap = false',
       inValue: err,
-      type: Types.ERROR,
+      type: types.ERROR,
       deepWrap: false,
       outValue: { val: wrappedErr } // optional(error)
     },
     {
       name: '?err, deepWrap = true',
       inValue: err,
-      type: Types.ERROR,
+      type: types.ERROR,
       deepWrap: true,
       outValue: { val: wrappedMessageWithLangId } // optional(error) deep
     }
@@ -1586,7 +1586,7 @@ test('canonicalize error', function(t) {
   for (var i = 0; i < tests.length; i++) {
     var test = tests[i];
 
-    var type = test.type || Types.ANY;
+    var type = test.type || types.ANY;
     var canon = canonicalize.value(test.inValue, type, test.deepWrap);
     var outValue = test.outValue;
     t.deepEqual(
@@ -1637,7 +1637,7 @@ test('canonicalize time (to any)', function(t) {
   for (var i = 0; i < tests.length; i++) {
     var test = tests[i];
 
-    var canon = canonicalize.value(test.inValue, Types.ANY, test.deepWrap);
+    var canon = canonicalize.value(test.inValue, types.ANY, test.deepWrap);
     var outValue = test.outValue;
     t.deepEqual(
       stringify(canon),
@@ -1651,12 +1651,12 @@ test('canonicalize time (to any)', function(t) {
 test('canonicalize native and vdl', function(t) {
   var TimeType = Time.prototype._type;
   var TimeArray = new Type({
-    kind: Kind.ARRAY,
+    kind: kind.ARRAY,
     elem: TimeType,
     len: 3
   });
   var TimeErrStruct = new Type({
-    kind: Kind.STRUCT,
+    kind: kind.STRUCT,
     fields: [
       {
         name: 'Time',
@@ -1664,7 +1664,7 @@ test('canonicalize native and vdl', function(t) {
       },
       {
         name: 'Err',
-        type: Types.ERROR
+        type: types.ERROR
       }
     ]
   });
@@ -1674,7 +1674,7 @@ test('canonicalize native and vdl', function(t) {
     'cerrID',
     actions.RETRY_BACKOFF,
     'Canonical Error',
-    [ Types.STRING, Types.INT32 ]
+    [ types.STRING, types.INT32 ]
   );
   var cError = new CanonError(null, 'blue', -1); // no ctx, string, int32
   var cErrorN = cError.clone(); // The reduced cError params should be wrapped.
@@ -1817,62 +1817,62 @@ test('canonicalize native and vdl', function(t) {
 // test-vom-compatible.js
 test('canonicalize conversion - failure', function(t) {
   var OptStringType = new Type({
-    kind: Kind.OPTIONAL,
-    elem: Types.STRING
+    kind: kind.OPTIONAL,
+    elem: types.STRING
   });
   var IntListType = new Type({
-    kind: Kind.LIST,
-    elem: Types.INT32
+    kind: kind.LIST,
+    elem: types.INT32
   });
   var Int3ArrType = new Type({
-    kind: Kind.ARRAY,
-    elem: Types.INT32,
+    kind: kind.ARRAY,
+    elem: types.INT32,
     len: 3
   });
   var IntSetType = new Type({
-    kind: Kind.SET,
-    key: Types.INT16
+    kind: kind.SET,
+    key: types.INT16
   });
 
-  var Str = Registry.lookupOrCreateConstructor(Types.STRING);
-  var OptStr = Registry.lookupOrCreateConstructor(OptStringType);
-  var IntList = Registry.lookupOrCreateConstructor(IntListType);
+  var Str = registry.lookupOrCreateConstructor(types.STRING);
+  var OptStr = registry.lookupOrCreateConstructor(OptStringType);
+  var IntList = registry.lookupOrCreateConstructor(IntListType);
 
   var tests = [
     {
       name: 'number larger than MAX_FLOAT32',
       inValue: 1e40,
-      targetType: Types.FLOAT32,
+      targetType: types.FLOAT32,
       expectedErr: 'is too large'
     },
     {
       name: 'imag smaller than MAX_FLOAT32 in Complex64',
       inValue: { real: 0, imag: -1e40 },
-      targetType: Types.COMPLEX64,
+      targetType: types.COMPLEX64,
       expectedErr: 'is too small'
     },
     {
       name: 'negative, real Complex to uint',
       inValue: new Complex(-4, 0),
-      targetType: Types.UINT16,
+      targetType: types.UINT16,
       expectedErr: 'value cannot be negative'
     },
     {
       name: 'null OptString to String',
       inValue: new OptStr(null),
-      targetType: Types.STRING,
+      targetType: types.STRING,
       expectedErr: 'value is null for non-optional type'
     },
     {
       name: 'String to Bool',
       inValue: new Str('not a boolean'),
-      targetType: Types.BOOL,
+      targetType: types.BOOL,
       expectedErr: 'not compatible'
     },
     {
       name: 'String to Bool - native',
       inValue: 'not a boolean',
-      targetType: Types.BOOL,
+      targetType: types.BOOL,
       expectedErr: 'value is not a boolean'
     },
     {

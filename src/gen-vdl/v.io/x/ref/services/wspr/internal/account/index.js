@@ -16,11 +16,11 @@ module.exports = {};
 
 // Types:
 var _typeCaveat = new vdl.Type();
-_typeCaveat.kind = vdl.Kind.STRUCT;
+_typeCaveat.kind = vdl.kind.STRUCT;
 _typeCaveat.name = "v.io/x/ref/services/wspr/internal/account.Caveat";
-_typeCaveat.fields = [{name: "Type", type: vdl.Types.STRING}, {name: "Args", type: vdl.Types.STRING}];
+_typeCaveat.fields = [{name: "Type", type: vdl.types.STRING}, {name: "Args", type: vdl.types.STRING}];
 _typeCaveat.freeze();
-module.exports.Caveat = (vdl.Registry.lookupOrCreateConstructor(_typeCaveat));
+module.exports.Caveat = (vdl.registry.lookupOrCreateConstructor(_typeCaveat));
 
 
 
