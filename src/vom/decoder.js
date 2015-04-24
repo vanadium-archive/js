@@ -38,11 +38,13 @@ function Decoder(messageReader, deepWrap) {
   this._deepWrap = deepWrap || false;
 }
 
-/**
- * Decodes the next object off of the message reader.
+/*
  * TODO(bprosnitz) We will want to be able to decode when we get callbacks.
  * Revisit this API.
- * @return The next object or null if no more objects are available.
+ */
+/**
+ * Decodes the next object off of the message reader.
+ * @return {object} The next object or null if no more objects are available.
  */
 Decoder.prototype.decode = function() {
   var type = this._messageReader.nextMessageType(this._typeDecoder);

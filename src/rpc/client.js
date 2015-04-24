@@ -336,11 +336,12 @@ var IncorrectArgCount = makeError(
   'arguments. Expected format: {5}({6})');
 
 /**
- * A callbacked that is called when
+ * A callback that is called when
  * [bindTo]{@link module:vanadium.rpc~Client#bindTo} finishes.
  * @callback module:vanadium.rpc~Client~bindToCb
- * @param {error} err If set the error that occured.
- * @param {object} service The service object containing the exported methods.
+ * @param {Error} err If set the error that occurred.
+ * @param {object} service The stub object containing the exported
+ * methods of the remote service.
  */
 /**
  * <p>Performs client side binding of a remote service to a native JavaScript
@@ -359,10 +360,11 @@ var IncorrectArgCount = makeError(
  * });
  * </pre>
  * @param {module:vanadium.context.Context} ctx A context.
- * @param {string} name the vanadium name of the service to bind to.
- * @param {module:vanadium.rpc~Client~bindToCb} [cb] if given, this function
+ * @param {string} name The vanadium name of the service to bind to.
+ * @param {module:vanadium.rpc~Client~bindToCb} [cb] If given, this function
  * will be called on completion of the bind.
- * @return {Promise} An object with methods that perform rpcs to service methods
+ * @return {Promise<object>} Promise that resolves to the stub object containing
+ * the exported methods of the remote service.
  */
 Client.prototype.bindTo = function(ctx, name, cb) {
   var client = this;
@@ -408,12 +410,15 @@ Client.prototype.bindTo = function(ctx, name, cb) {
  * });
  * </pre>
  *
- * @param {string} name the vanadium name of the service to bind to.
- * @param {module:vanadium.vdl.signature.Interface} signature the service
+ * @param {string} name The vanadium name of the service to bind to.
+ * @param {module:vanadium.vdl.signature.Interface} signature The service
  * signature of a vanadium service.
- * @return {object} An object with methods that perform rpcs to service methods.
+ * @param {module:vanadium.rpc~Client~bindToCb} [cb] If given, this function
+ * will be called on completion of the bind.
+ * @return {Promise<object>} Promise that resolves to the stub object containing
+ * the exported methods of the remote service.
  */
-Client.prototype.bindWithSignature = function(name, signature) {
+Client.prototype.bindWithSignature = function(name, signature, cb) {
   var client = this;
   var boundObject = {};
 
@@ -554,20 +559,21 @@ Client.prototype.bindWithSignature = function(name, signature) {
 };
 
 /**
- * A callback that is called with either a signature or an error
+ * A callback that is called with either signature interfaces or an error.
  * @callback module:vanadium.rpc~Client~signatureCb
- * @param {error} err If set, the error that occured.
- * @param {module:vanadium.vdl.signature.Interface} signature The signature
- * result.
+ * @param {Error} err If set, the error that occurred.
+ * @param {module:vanadium.vdl.signature.Interface[]} signature The signature
+ * interfaces.
  */
 /**
  * Returns the object signatures for a given object name.
  * @param {module:vanadium.context.Context} ctx A context.
- * @param {string} name the vanadium name of the service to bind to.
- * @param {function} [cb] if given, this function will be called on
- * completion.
- * @return {Promise<module:vanadium.vdl.signature.Interface>} Promise that will
- * be resolved with the signatures or rejected with an error if there is one.
+ * @param {string} name The vanadium name of the service to bind to.
+ * @param {module:vanadium.rpc~Client~signatureCb} [cb] If given, this
+ * function will be called on completion.
+ * @return {Promise<module:vanadium.vdl.signature.Interface[]>} Promise that
+ * will be resolved with the signature interfaces or rejected with an error
+ * if there is one.
  */
 Client.prototype.signature = function(ctx, name, cb) {
   var last = arguments.length - 1;
@@ -604,21 +610,21 @@ Client.prototype.signature = function(ctx, name, cb) {
  * [remoteBlessings]{@link module:vanadium.rpc~Client#remoteBlessings}
  * function.
  * @callback module:vanadium.rpc~Client~remoteBlessingsCb
- * @param {error} err If set, the error that occured
- * @param {array<string>} blessingNames The blessings of the remote server.
+ * @param {Error} err If set, the error that occurred.
+ * @param {string[]} blessingNames The blessings of the remote server.
  */
 /**
  * Returns the remote blessings of a server at the given name.
  * @param {module:vanadium.context.Context} ctx A context.
- * @param {string} name the vanadium name of the service to get the remote
+ * @param {string} name The vanadium name of the service to get the remote
  * blessings of.
- * @param {string} [method] the name of the rpc method that will be started in
+ * @param {string} [method] The name of the rpc method that will be started in
  * order to read the blessings.  Defaults to 'Signature'.  This only matters in
  * the case when a server responds to different method calls with different
  * blessings.
- * @param {module:vanadium.rpc~Client~remoteBlessingsCb} [cb] if given, this
+ * @param {module:vanadium.rpc~Client~remoteBlessingsCb} [cb] If given, this
  * function will be called on completion.
- * @return {Promise<array<string>>} Promise that will be resolved with the
+ * @return {Promise<string[]>} Promise that will be resolved with the
  * blessing names or rejected with an error if there is one.
  */
 Client.prototype.remoteBlessings = function(ctx, name, method, cb) {
@@ -645,7 +651,7 @@ Client.prototype.remoteBlessings = function(ctx, name, method, cb) {
  *
  * Currently the only supported key is 'allowedServersPolicy'.
  *
- * @param {Object} opts map of call options.
+ * @param {object} opts Map of call options.
  * @param {string[]} opts.allowedServersPolicy Array of blessing patterns that
  * the allowed server must match in order for the RPC to be initiated.
  */

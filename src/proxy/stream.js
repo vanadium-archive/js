@@ -21,11 +21,25 @@ var ServerRpcReply =
   require('../gen-vdl/v.io/x/ref/services/wspr/internal/lib').ServerRpcReply;
 
 /**
- * A stream that allows sending and receiving data for a streaming rpc.  If
- * onmessage is set and a function, it will be called whenever there is data on.
- * the stream. The stream implements the promise api.  When the rpc is complete,
- * the stream will be fulfilled.  If there is an error, then the stream will be
- * rejected.  This constructor should not be directly called.
+ * @summary
+ * A stream that allows sending and receiving data for a streaming rpc.
+ * @description
+ * <p>Stream is a
+ * [Duplex Node.js stream]{@link https://nodejs.org/api/stream.html}
+ * in 'objectMode'.
+ * This constructor should not be directly called.</p>
+ *
+ * <p>If a 'data' event handler is specified, it will be called with data as
+ * they become available.
+ * <pre>
+ *  stream.on('data', function(obj) {
+ *    console.log(obj);
+ *  });
+ * </pre></p>
+ * <p>
+ * All other [Node.js stream]{@link https://nodejs.org/api/stream.html} events,
+ * properties and function are also available on this stream as well.
+ * </p>
  * @constructor
  * @inner
  * @memberof module:vanadium.rpc
@@ -116,6 +130,7 @@ Stream.prototype._queueRead = function(object) {
 
 /**
  * Queue the close signal onto the Duplex's queue.
+ * @private
  */
 Stream.prototype._queueClose = function() {
   this._queueData(null);
@@ -123,6 +138,7 @@ Stream.prototype._queueClose = function() {
 
 /**
  * Queues the data onto the Duplex's queue.
+ * @private
  */
 Stream.prototype._queueData = function(data) {
   if (this.shouldQueue) {
@@ -137,9 +153,9 @@ Stream.prototype._queueData = function(data) {
 /**
  * Writes an object to the stream.
  * @param {*} chunk The data to write to the stream.
- * @param {null} encoding ignored for object streams.
- * @param {function} cb if set, the function to call when the write
- * completes.
+ * @param {string} [encoding=null] ignored for object streams.
+ * @param {module:vanadium~voidCb} cb If set, the function to call when the
+ * write completes.
  * @return {boolean} Returns false if the write buffer is full.
  */
 Stream.prototype.write = function(chunk, encoding, cb) {
@@ -171,9 +187,9 @@ Stream.prototype._write = function(chunk, encoding, cb) {
 /**
  * Writes an optional object to the stream and ends the stream.
  * @param {*} chunk The data to write to the stream.
- * @param {null} encoding ignored for object streams.
- * @param {function} cb if set, the function to call when the write
- * completes.
+ * @param {string} [encoding=null] Ignored for object streams.
+ * @param {module:vanadium~voidCb} cb If set, the function to call when the
+ * end call completes.
  */
 Stream.prototype.end = function(chunk, encoding, cb) {
   if (this.isClient) {

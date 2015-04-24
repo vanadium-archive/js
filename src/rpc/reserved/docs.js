@@ -3,8 +3,9 @@
 // license that can be found in the LICENSE file.
 
 /**
+ * @summary
  * GlobMaxRecursionReached indicates that the Glob
- * request exceeded the max recursion level
+ * request exceeded the max recursion level.
  * @name GlobMaxRecursionReached
  * @constructor
  * @param {module:vanadium.context.Context} ctx The context the error was
@@ -14,6 +15,7 @@
  * @augments module:vanadium.verror.VanadiumError
  */
 /**
+ * @summary
  * GlobMatchesOmitted indicates that some of the Glob results might
  * have been omitted due to access restrictions.
  * @name GlobMatchesOmitted
@@ -25,6 +27,7 @@
  * @augments module:vanadium.verror.VanadiumError
  */
 /**
+ * @summary
  * GlobNotImplemented indicates that Glob is not implemented by the object.
  * @name GlobNotImplemented
  * @constructor
