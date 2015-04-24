@@ -90,5 +90,6 @@ var extend = require('xtend');
  */
 /* jshint ignore:end */
 module.exports = extend(require('../../gen-vdl/v.io/v23/security/access'), {
+  allowEveryoneAuthorizer: require('./allow-everyone-authorizer'),
   permissionsAuthorizer: require('./permissions-authorizer')
 });

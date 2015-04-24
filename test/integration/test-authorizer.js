@@ -7,6 +7,8 @@ var access = require('../../src/gen-vdl/v.io/v23/security/access');
 var Deferred = require('../../src/lib/deferred');
 var permissionsAuthorizer =
   require('../../src/security/access/permissions-authorizer');
+var allowEveryoneAuthorizer =
+  require('../../src/security/access/allow-everyone-authorizer');
 var serve = require('./serve');
 
 
@@ -204,8 +206,6 @@ test('Test permissionsAuthorizer (tag) - success', function(assert) {
   testSuccessCase(assert, diffPublicKeyPermsAuthorizer, [tagFoo], true);
 });
 
-
-
 test('Test permissionsAuthorizer (tag) - failure', function(assert) {
   var tagBar = new access.Tag('Bar');
 
@@ -217,4 +217,8 @@ test('Test permissionsAuthorizer (tag) - failure', function(assert) {
 
   // Nobody is allowed via the Bar tag.
   testErrorCase(assert, diffPublicKeyPermsAuthorizer, [tagBar], true);
+});
+
+test('Test allowEveryoneAuthorizer() - success', function(assert) {
+  testSuccessCase(assert, allowEveryoneAuthorizer(), [], true);
 });
