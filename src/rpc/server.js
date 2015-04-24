@@ -37,7 +37,7 @@ var nextServerID = 1; // The ID for the next server.
  * Server defines the interface for managing a collection of services.
  * @description
  * <p>Private Constructor, use
- * [Runtime#newServer]{@link module:vanadium~Runtime#newServer}</p>
+ * [Runtime#newServer]{@link module:vanadium~Runtime#newServer}.</p>
  * @inner
  * @constructor
  * @memberof module:vanadium.rpc
@@ -56,9 +56,9 @@ function Server(router) {
 }
 
 /**
- * @typedef module:vanadium.rpc~Server~ServeOptions
  * ServeOptions is a set of options that are passed to the
  * [serve]{@link module:vanadium.rpc~Server#serve}.
+ * @typedef module:vanadium.rpc~Server~ServeOptions
  * @property {module:vanadium.security.Authorize} authorizer An Authorizer
  * that will handle the authorization for the method call.  If null, then the
  * default strict authorizer will be used.
@@ -76,20 +76,21 @@ function Server(router) {
  * });
  * </pre>
  * <p>If name is an empty string, no attempt will made to publish that
- * name to a mount table. It is an error to call {@link Server#serve|serve}
- * if either {@link Server#serveDispatcher|serveDispatcher} or
- * {@link Server.serve|serve} has already been called.
+ * name to a mount table. It is an error to call
+ * {@link module:vanadium.rpc~Server#serve|serve}
+ * if either {@link module:vanadium.rpc~Server#serveDispatcher|serveDispatcher}
+ * or {@link module:vanadium.rpc~Server.serve|serve} has already been called.
  * To serve the same object under multiple names,
- * {@link Server#addName|addName} can be used.</p>
+ * {@link module:vanadium.rpc~Server#addName|addName} can be used.</p>
  *
  * @public
- * @param {string} name Name to serve under
+ * @param {string} name Name to serve under.
  * @param {object} serviceObject The service object that has a set of
- * exported methods
- * @param {module:vanadium.rpc~Server~ServeOptions} options Options config
+ * exported methods.
+ * @param {module:vanadium.rpc~Server~ServeOptions} options Options config.
  * @param {module:vanadium~voidCb} [cb] If provided, the function
  * will be called on completion.
- * @return {Promise} Promise to be called when serve completes or fails.
+ * @return {Promise<void>} Promise to be called when serve completes or fails.
  */
 Server.prototype.serve = function(name, serviceObject, options, cb) {
   if (typeof options === 'function') {
@@ -109,32 +110,33 @@ Server.prototype.serve = function(name, serviceObject, options, cb) {
 };
 
 /**
- * @typedef DispatcherResponse
- * @type {Object}
+ * @typedef module:vanadium.rpc~Server~DispatcherResponse
+ * @type {object}
  * @property {object} service The Invoker that will handle
  * method call.
- * @property {module:vanadium.security~Authorize} authorizer An Authorizer that
+ * @property {module:vanadium.security.Authorize} authorizer An Authorizer that
  * will handle the authorization for the method call.  If null, then the default
- * strict authorizer will be used.
+ * authorizer will be used.
  */
 
 /**
  * A function that returns the service object for a suffix/method pair.
- * @callback module:vanadium.rpc~Dispatcher
- * @param {string} suffix The suffix for the call
- * @param {string} method The method for the call
- * @param {Dispatcher-callback} cb The callback to call when the dispatch is
- * complete
- * @return {DispatcherResponse|Promise} Either the DispatcherResponse object to
+ * @callback module:vanadium.rpc~Server~Dispatcher
+ * @param {string} suffix The suffix for the call.
+ * @param {string} method The method for the call.
+ * @param {module:vanadium.rpc~Server~Dispatcher-callback} cb
+ * The callback to call when the dispatch is complete.
+ * @return {module:vanadium.rpc~Server~DispatcherResponse | Promise}
+ * Either the DispatcherResponse object to
  * handle the method call or a Promise that will be resolved the service
  * callback.
  */
 
 /**
- * Callback passed into Dispatcher
- * @callback module:vanadium.rpc~Dispatcher-callback
- * @param {Error} err An error if one occurred
- * @param {object} object The object that will handle the method call
+ * Callback passed into Dispatcher.
+ * @callback module:vanadium.rpc~Server~Dispatcher-callback
+ * @param {Error} err An error if one occurred.
+ * @param {object} object The object that will handle the method call.
  */
 
 /**
@@ -153,20 +155,22 @@ Server.prototype.serve = function(name, serviceObject, options, cb) {
  * <p>If name is an empty string, no attempt will made to publish that
  * name to a mount table. </p>
  *
- * <p>It is an error to call {@link Server#serveDispatcher|serveDispatcher}
- * if {@link Server#serve|serve} has already been called. It is also an error
+ * <p>It is an error to call
+ * {@link module:vanadium.rpc~Server#serveDispatcher|serveDispatcher}
+ * if {@link module:vanadium.rpc~Server#serve|serve} has already been called.
+ * It is also an error
  * to call serveDispatcher multiple times.</p>
  * To serve the same dispatcher under multiple names,
- * {@link Server#addName|addName} can be used. </p>
+ * {@link module:vanadium.rpc~Server#addName|addName} can be used. </p>
  *
  * @public
- * @param {string} name Name to serve under
- * @param {module:vanadium.rpc~Dispatcher} dispatcher A function that will
- * take in the suffix and the method to be called and return the service
+ * @param {string} name Name to serve under.
+ * @param {module:vanadium.rpc~Server~Dispatcher} dispatcher A function that
+ * will take in the suffix and the method to be called and return the service
  * object for that suffix.
  * @param {module:vanadium~voidCb} [cb] If provided, the function
  * will be called on completion.
- * @return {Promise} Promise to be called when serve completes or fails.
+ * @return {Promise<void>} Promise to be called when serve completes or fails.
  */
 Server.prototype.serveDispatcher = function(name, dispatcher, cb) {
   this.dispatcher = dispatcher;
@@ -179,7 +183,8 @@ Server.prototype.serveDispatcher = function(name, dispatcher, cb) {
  * All published named are unmounted.
  * @param {module:vanadium~voidCb} [cb] If provided, the function
  * will be called on completion.
- * @return {Promise} Promise to be called when stop service completes or fails
+ * @return {Promise<void>} Promise to be called when stop service completes or
+ * fails
  */
 Server.prototype.stop = function(cb) {
   return this._router.stopServer(this, cb);
@@ -193,10 +198,11 @@ Server.prototype.stop = function(cb) {
  * [serveDispatcher]{@link module:vanadium.rpc~Server#serveDispatcher}
  * or [addName]{@link module:vanadium.rpc~Server#addName}.
  * @public
- * @param {string} name Name to publish
+ * @param {string} name Name to publish.
  * @param {module:vanadium~voidCb} [cb] If provided, the function
  * will be called on completion.
- * @return {Promise} Promise to be called when operation completes or fails
+ * @return {Promise<void>} Promise to be called when operation completes or
+ * fails
  */
 Server.prototype.addName = function(name, cb) {
   return this._router.addName(name, this, cb);
@@ -209,10 +215,11 @@ Server.prototype.addName = function(name, cb) {
  * [serveDispatcher]{@link module:vanadium.rpc~Server#serveDispatcher}
  * or [addName]{@link module:vanadium.rpc~Server#addName}.
  * @public
- * @param {string} name Name to remove
+ * @param {string} name Name to remove.
  * @param {function} [cb] If provided, the function will be called on
  * completion. The only argument is an error if there was one.
- * @return {Promise} Promise to be called when operation completes or fails
+ * @return {Promise<void>} Promise to be called when operation completes or
+ * fails.
  */
 Server.prototype.removeName = function(name, cb) {
   return this._router.removeName(name, this, cb);
@@ -220,7 +227,7 @@ Server.prototype.removeName = function(name, cb) {
 
 /**
  * @private
- * @param {Number} handle The handle for the service
+ * @param {Number} handle The handle for the service.
  * @return {Object} The invoker corresponding to the provided error.
  */
 Server.prototype.getInvokerForHandle = function(handle) {
@@ -233,11 +240,11 @@ Server.prototype.getInvokerForHandle = function(handle) {
 /**
  * Handles the authorization for an RPC.
  * @private
- * @param {Number} handle The handle for the authorizer
+ * @param {Number} handle The handle for the authorizer.
  * @param {module:vanadium.context.Context} ctx The ctx of the
  * call.
  * @param {module:vanadium.security~SecurityCall} call The security call.
- * @return {Promise} a promise that will be fulfilled with the result.
+ * @return {Promise} A promise that will be fulfilled with the result.
  */
 Server.prototype.handleAuthorization = function(handle, ctx, call) {
   var handler = this.serviceObjectHandles[handle];

@@ -34,6 +34,7 @@
 
 module.exports = {
   /**
+   * @summary
    * Namespace reserved defines interfaces for interacting with reserved RPC
    * methods such as Signature, MethodSignature and Glob.
    * @memberof module:vanadium.rpc
