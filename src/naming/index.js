@@ -30,10 +30,10 @@
   * <p>The first component of a rooted name is the address of the
   * MountTable to use for resolving the remaining components of the
   * name. The address may be the string representation of an Endpoint,
-  * a <host>:<port>, or <ip>:<port>. In addition, <host> or <ip> may be
-  * used without a <port> being specified in which case a default port
-  * is used. The portion of the name following the address is a
-  * relative name.</p>
+  * a &lt;host&gt;:&lt;port&gt;, or &lt;ip&gt;:&lt;port&gt;. In addition,
+  * &lt;host&gt; or &lt;ip&gt; may be used without a &lt;port&gt; being
+  * specified in which case a default port is used. The portion of the name
+  * following the address is a relative name.</p>
   * <br>
   * Thus:
   * <br>

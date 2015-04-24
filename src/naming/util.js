@@ -23,6 +23,7 @@ module.exports = {
  * Normalizes a name by collapsing multiple slashes and removing any
  * trailing slashes.
  * @param {string} name The vanadium name.
+ * @returns {string} The clean name.
  * @memberof module:vanadium.naming
  */
 function clean(name) {
@@ -30,15 +31,17 @@ function clean(name) {
 }
 
 /**
- * Joins parts of a name into a whole. The joined name will be cleaned; it only
- * preserved the rootedness of the name components.
- * Examples:
+ * <p>Joins parts of a name into a whole. The joined name will be cleaned; it
+ * only preserved the rootedness of the name components.</p>
+ * <p>Examples:</p>
+ * <pre>
  * join(['a, b']) -> 'a/b'
  * join('/a/b/', '//d') -> '/a/b/d'
  * join('//a/b', 'c/') -> '/a/b/c'
+ * </pre>
  * @param {...string} parts Either a single array that contains the strings
  * to join or a variable number of string arguments that will be joined.
- * @return {string} A joined string
+ * @return {string} A joined string.
  * @memberof module:vanadium.naming
  */
 function join(parts) {
@@ -55,24 +58,23 @@ function join(parts) {
 /**
  * Determines if a name is rooted, that is beginning with a single '/'.
  * @param {string} name The vanadium name.
- * @return {boolean} True if the name is rooted, false otherwise.
+ * @return {boolean} True iff the name is rooted.
  * @memberof module:vanadium.naming
  */
 function isRooted(name) {
   return name[0] === '/';
 }
 
+// TODO(nlacasse): Should we have a full fledged object parallel to
+// naming.Endpoint in Go? Because this parsing is really really shabby!
 /**
  * blessingNamesFromAddress extracts the blessing names of the server with the
  * provided address (endpoint).
  *
- * TODO(nlacasse): Should we have a full fledged object parallel to
- * naming.Endpoint in Go? Because this parsing is really really shabby!
- *
  * @param {string} address String representation of the server address (aka
  * endpoint).
- * @return {...string} Blessing names extracted from address, or an empty list
- * if none could be extracted.
+ * @return {Array<string>} Blessing names extracted from address, or an empty
+ * list if none could be extracted.
  * @memberof module:vanadium.naming
  */
 function blessingNamesFromAddress(addr) {
@@ -138,11 +140,13 @@ function parseWholeNumber(value) {
  * the name relative to the server.
  * The name parameter may be a rooted name or a relative name; an empty string
  * address is returned for the latter case.
- * The returned address may be in endpoint format or host:port format.
- * Returned object will be in the format of:
- *      {address: string, suffix: string}
  * @param {string} name The vanadium name.
- * @return {Object.<string, string>}
+ * @return {Object.<string, string>}  An object with the address and suffix
+ * split. Returned object will be in the format of:
+ * <pre>
+ * {address: string, suffix: string}
+ * </pre>
+ * Address may be in endpoint format or host:port format.
  * @memberof module:vanadium.naming
  */
 function splitAddressName(name) {
@@ -192,7 +196,7 @@ function splitAddressName(name) {
 /**
  * Gets the basename of the given vanadium name.
  * @param {string} name The vanadium name.
- * @return {string} The basename of the given name
+ * @return {string} The basename of the given name.
  * @memberof module:vanadium.naming
  */
 function basename(name) {

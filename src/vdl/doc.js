@@ -58,4 +58,11 @@
  * more, the sign of Nanos must match Seconds, or be 0.
  * @memberof module:vanadium.vdl.time
  */
-
+/**
+ * @constructor
+ * @name WireDeadline
+ * @summary Deadline represents the deadline for an operation
+ * @property {number} fromNow The number of milliseconds from now.
+ * @property {boolean} noDeadline True iff there is no deadline.
+ * @memberof module:vanadium.vdl.time
+ */
