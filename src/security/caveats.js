@@ -42,7 +42,7 @@ function createConstCaveat(value) {
  * @memberof module:vanadium.security
  */
 function createExpiryCaveat(expiryTime) {
-  return createCaveat(vdlSecurity.ExpiryCaveatX, expiryTime);
+  return createCaveat(vdlSecurity.ExpiryCaveat, expiryTime);
 }
 
 /**
@@ -54,7 +54,7 @@ function createExpiryCaveat(expiryTime) {
  * @memberof module:vanadium.security
  */
 function createMethodCaveat(methods) {
-  return createCaveat(vdlSecurity.MethodCaveatX, methods);
+  return createCaveat(vdlSecurity.MethodCaveat, methods);
 }
 
 /**

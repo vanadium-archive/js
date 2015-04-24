@@ -60,9 +60,9 @@ test('Expiry caveat is validated correctly using native Date',
   var thePast = new Date(now - oneHour);
   var theFuture = new Date(now + oneHour);
 
-  assertValidation(t, vdlSecurity.ExpiryCaveatX, theFuture, function(err) {
+  assertValidation(t, vdlSecurity.ExpiryCaveat, theFuture, function(err) {
     t.notOk(err, 'expiry caveat should validate when expiry is in the future');
-    assertValidation(t, vdlSecurity.ExpiryCaveatX, thePast, function(err) {
+    assertValidation(t, vdlSecurity.ExpiryCaveat, thePast, function(err) {
       t.ok(err,  'expiry caveat should not validate after expiration');
       t.end();
     });
@@ -87,9 +87,9 @@ test('Expiry caveat is validated correctly using vdl Time', function(t) {
   var theFutureTime = toDateWireType(theFuture);
   var thePast = new Date(now - oneHour);
   var thePastTime = toDateWireType(thePast);
-  assertValidation(t, vdlSecurity.ExpiryCaveatX, theFutureTime, function(err) {
+  assertValidation(t, vdlSecurity.ExpiryCaveat, theFutureTime, function(err) {
     t.notOk(err, 'expiry caveat should validate when expiry is in the future');
-    assertValidation(t, vdlSecurity.ExpiryCaveatX, thePastTime, function(err) {
+    assertValidation(t, vdlSecurity.ExpiryCaveat, thePastTime, function(err) {
       t.ok(err,  'expiry caveat should not validate after expiration');
       t.end();
     });
@@ -97,15 +97,15 @@ test('Expiry caveat is validated correctly using vdl Time', function(t) {
 });
 
 test('Method caveat is validated correctly', function(t) {
-  assertValidation(t, vdlSecurity.MethodCaveatX, [], function(err) {
+  assertValidation(t, vdlSecurity.MethodCaveat, [], function(err) {
     t.notOk(err, 'empty method list always validates');
-    assertValidation(t, vdlSecurity.MethodCaveatX,  ['aMethod'],
+    assertValidation(t, vdlSecurity.MethodCaveat,  ['aMethod'],
       function(err) {
       t.notOk(err, 'method list with just matching method validates');
-      assertValidation(t, vdlSecurity.MethodCaveatX, ['Z', 'aMethod', 'X'],
+      assertValidation(t, vdlSecurity.MethodCaveat, ['Z', 'aMethod', 'X'],
         function(err) {
         t.notOk(err, 'method list including matching method validates');
-        assertValidation(t, vdlSecurity.MethodCaveatX,
+        assertValidation(t, vdlSecurity.MethodCaveat,
           ['OtherMethod1', 'OtherMethod2'], function(err) {
           t.ok(err,
             'method list with without matching method fails to validate');
