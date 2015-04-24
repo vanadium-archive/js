@@ -264,8 +264,8 @@ Store.prototype._now = function() {
 /**
  * Merges a response into the store, adding information on the
  * Span in contains into the local database.
- * @param {module:vanadium.vtraceResponse} response A
- * [Response]{@link module.vanadium.vtraceResponse} instance.
+ * @param {module:vanadium.vtrace~Response} response A
+ * [Response]{@link module.vanadium.vtrace~Response} instance.
  */
 Store.prototype.merge = function(response) {
   if (!uniqueid.valid(response.trace.id)) {
@@ -386,7 +386,7 @@ function forceCollect(ctx) {
  * Generate a [Request]{@link module:vanadium.vtrace~Request} to send over
  * the wire.
  * @param {module:vanadium.context.Context} ctx A context.Context instance.
- * @return {module:vanadium.vtrace.Request} a
+ * @return {module:vanadium.vtrace~Request} request a
  * [Request]{@link module:vanadium.vtrace~Request} instance.
  * @memberof module:vanadium.vtrace
  */
@@ -401,11 +401,11 @@ function request(ctx) {
 }
 
 /**
- * Generate a [Response]{@link module:vanadium.vtraceResponse} to send over the
+ * Generate a [Response]{@link module:vanadium.vtrace~Response} to send over the
  * wire.
  * @param {module:vanadium.context.Context} ctx A context.Context instance.
- * @return {module:vanadium.vtraceResponse} A
- * [Response]{@link module:vanadium.vtraceResponse} instance.
+ * @return {module:vanadium.vtrace~Response} A
+ * [Response]{@link module:vanadium.vtrace~Response} instance.
  * @memberof module:vanadium.vtrace
  */
 function response(ctx) {
@@ -598,7 +598,7 @@ function formatTrace(record) {
 /**
  * Return a string representation of a trace (or array of traces).
  * @param {Array<module:vanadium.vtrace.TraceRecord>} traces Trace records.
- * @return {string} a human friendly string representation of the trace.
+ * @return {string} A human friendly string representation of the trace.
  * @memberof module:vanadium.vtrace
  */
 function formatTraces(traces) {

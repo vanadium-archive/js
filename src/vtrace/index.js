@@ -72,9 +72,9 @@
  * particular operation is of special importance you can force it to
  * be collected by calling a Spans forceCollect method.  You can also
  * call:
- *   <pre>
- *     vtrace.getStore(ctx).setCollectRegexp("regular.*expression")
- *   </pre>
+ * <pre>
+ *   vtrace.getStore(ctx).setCollectRegexp("regular.*expression")
+ * </pre>
  * which causes us to record any matching trace.</p>
  *
  * <p>If your trace has collected information you can retrieve the data
