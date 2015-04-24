@@ -174,11 +174,11 @@ test('Test put to blessing store', function(t) {
       t.ok(blessings instanceof Blessings, 'Got blessings');
       t.ok(blessings._id > 0, 'Should get non-zero blessings');
 
-      runtime.principal.putToBlessingStore(runtime.getContext(),
+      runtime.principal.blessingStore.set(runtime.getContext(),
         blessings, 'fake/remote/pattern').then(function(oldBlessing) {
           t.equal(oldBlessing, null,
             'Should get null (no previous handle) for pattern not in store');
-          return runtime.principal.putToBlessingStore(runtime.getContext(),
+          return runtime.principal.blessingStore.set(runtime.getContext(),
             blessings, 'fake/remote/pattern');
         }).then(function(firstBlessing) {
           t.equal(firstBlessing._id, blessings._id,
@@ -189,7 +189,7 @@ test('Test put to blessing store', function(t) {
           runtime.close(t.end);
         });
     }).catch(function(err) {
-      t.error(err, 'either blessSelf or putToBlessingStore errored');
+      t.error(err, 'either blessSelf or blessingStore.set errored');
       runtime.close(t.end);
     });
   });

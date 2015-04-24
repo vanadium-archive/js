@@ -59,7 +59,7 @@ test('Test blessings are passed as return args', function(assert) {
     var ctx = res.runtime.getContext();
     res.service.createBlessings(ctx, key).then(function(blessings) {
       assert.ok(blessings instanceof Blessings, 'Is a blessing');
-      return principal.putToBlessingStore(ctx, blessings, 'test');
+      return principal.blessingStore.set(ctx, blessings, 'test');
     }).then(function() {
       return res.service.verifyBlessings(ctx);
     }).then(function() {

@@ -9,11 +9,12 @@
 
 var Deferred = require('../lib/deferred');
 var Blessings = require('./blessings');
+var BlessingStore = require('./blessingstore');
 var verror = require('../gen-vdl/v.io/v23/verror');
 
 /**
  * A callback that is called with either an error or a
- * [Blessings]{@link module:vanadium~Blessings} object.
+ * [Blessings]{@link module:vanadium.security~Blessings} object.
  * @callback Blessings~cb
  * @param {Error} err If set, the error that occured
  * @param {module:vanadium.security~Blessings} blessings The blessings result.
@@ -28,12 +29,15 @@ var verror = require('../gen-vdl/v.io/v23/verror');
  * @constructor
  * @property {module:vanadium.security~Blessings} defaultBlessings The default
  * blessings for this principal.
+ * @property {module:vanadium.security~BlessingStore} blessingStore The
+ * blessing store.
  * @inner
  * @memberof module:vanadium.security
  */
 function Principal(ctx, controller) {
   this._controller = controller;
   this._ctx = ctx;
+  this.blessingStore = new BlessingStore(controller);
 }
 
 /**
@@ -125,37 +129,6 @@ Principal.prototype.blessSelf = function(ctx, name /*, ...caveats, cb*/) {
   });
 
   return def.promise;
-};
-
-/**
- * Put to blessing store puts a blessing in the blessing store.
- * @param {module:vanadium.context.Context} ctx The context
- * @param {module:vanadium.security~Blessings} blessings The blessings object
- * @param {string} pattern The blessing match pattern.
- * @param {Blessings~cb} cb an optional callback that will return the blessing
- * handle
- * @return {Promise} a promise that will be resolved with the blessing handle
- */
-Principal.prototype.putToBlessingStore = function(
-  ctx, blessings, pattern, cb) {
-  var def;
-  if (blessings === undefined) {
-    def = new Deferred(cb);
-    def.reject(new verror.InternalError(this._ctx,
-      'Blessings handle not specified'));
-    return def.promise;
-  }
-  if (pattern === undefined) {
-    def = new Deferred(cb);
-    def.reject(new verror.InternalError(this._ctx,
-      'Pattern not specified'));
-    return def.promise;
-  }
-
-  return this._controller.putToBlessingStore.call(this._controller,
-    ctx, blessings._id, pattern, cb).then(function(res) {
-      return res;
-    });
 };
 
 /**
