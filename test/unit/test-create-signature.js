@@ -6,7 +6,7 @@
  * @fileoverview Tests of generating signature with multiple descriptions
  */
 var test = require('prova');
-var createSignatures = require('../../src/vdl/create-signatures');
+var createSignature = require('../../src/vdl/create-signature');
 var vdl = require('../../src/vdl');
 var stringify = require('../../src/vdl/stringify');
 
@@ -19,9 +19,9 @@ function NamedFunc(context, serverCall, x, y, z ) {}
 TestService.prototype.streamingFunction = function(context,
                                                    serverCall, $stream) {};
 
-test('create signatures with no description', function(t) {
+test('create signature with no description', function(t) {
   var testService = new TestService();
-  var sigs = createSignatures(testService);
+  var sigs = createSignature(testService);
   t.equals(sigs.length, 1);
   var expected = {
     name: '',
@@ -92,7 +92,7 @@ test('create signatures with no description', function(t) {
   t.end();
 });
 
-test('create signatures with full description', function(t) {
+test('create signature with full description', function(t) {
   var testService = new TestService();
   var desc = {
     name: 'TestService',
@@ -157,7 +157,7 @@ test('create signatures with full description', function(t) {
       tags: []
     }]
   };
-  var sigs = createSignatures(testService, desc);
+  var sigs = createSignature(testService, desc);
   t.equals(sigs.length, 1);
   var stringifiedResult = stringify(sigs[0]);
   var stringifiedExpected = stringify(desc);
@@ -165,7 +165,7 @@ test('create signatures with full description', function(t) {
   t.end();
 });
 
-test('create signatures with one description but extra methods',
+test('create signature with one description but extra methods',
           function(t) {
   var testService = new TestService();
   var desc = {
@@ -219,7 +219,7 @@ test('create signatures with one description but extra methods',
       tags: []
     }]
   };
-  var sigs = createSignatures(testService, desc);
+  var sigs = createSignature(testService, desc);
   t.equals(sigs.length, 2);
   var stringifiedResult = stringify(sigs[0]);
   var stringifiedExpected = stringify(desc);
@@ -251,7 +251,7 @@ test('create signatures with one description but extra methods',
   t.end();
 });
 
-test('create signatures with full description across multiple descs',
+test('create signature with full description across multiple descs',
      function(t) {
   var testService = new TestService();
   var descs = [{
@@ -321,7 +321,7 @@ test('create signatures with full description across multiple descs',
       tags: []
     }]
   }];
-  var sigs = createSignatures(testService, descs);
+  var sigs = createSignature(testService, descs);
   t.equals(sigs.length, 3);
   var stringifiedResult = stringify(sigs);
   var stringifiedExpected = stringify(descs);
@@ -329,7 +329,7 @@ test('create signatures with full description across multiple descs',
   t.end();
 });
 
-test('create signatures with multiple descs and missing methods',
+test('create signature with multiple descs and missing methods',
      function(t) {
   var testService = new TestService();
   var descs = [{
@@ -385,7 +385,7 @@ test('create signatures with multiple descs and missing methods',
       tags: []
     }]
   }];
-  var sigs = createSignatures(testService, descs);
+  var sigs = createSignature(testService, descs);
   t.equals(sigs.length, 3);
   var expectedDescs = descs.concat([{
     name: '',
@@ -412,7 +412,7 @@ test('create signatures with multiple descs and missing methods',
   t.end();
 });
 
-test('create signatures with full description across multiple descs' +
+test('create signature with full description across multiple descs' +
      ' with duplicates', function(t) {
   var testService = new TestService();
   var descs = [{
@@ -506,7 +506,7 @@ test('create signatures with full description across multiple descs' +
       tags: []
     }]
   }];
-  var sigs = createSignatures(testService, descs);
+  var sigs = createSignature(testService, descs);
   t.equals(sigs.length, 3);
   var stringifiedResult = stringify(sigs);
   var stringifiedExpected = stringify(descs);
@@ -514,7 +514,7 @@ test('create signatures with full description across multiple descs' +
   t.end();
 });
 
-test('create signatures with full description across multiple descs' +
+test('create signature with full description across multiple descs' +
      ' with incompatible methods', function(t) {
   var testService = new TestService();
   var descs = [{
@@ -599,7 +599,7 @@ test('create signatures with full description across multiple descs' +
     }]
   }];
   t.throws(function() {
-    createSignatures(testService, descs);
+    createSignature(testService, descs);
   }, null, 'NamedFunction should not match');
   t.end();
 });

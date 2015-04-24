@@ -3,11 +3,11 @@
 // license that can be found in the LICENSE file.
 
 /**
- * @fileoverview Generator of typeless service signature from JavaScript object.
+ * @fileoverview Generator of typeless service interface from JavaScript object.
  * @private
  */
 
-module.exports = ReflectSignature;
+module.exports = ReflectInterface;
 
 var ArgInspector = require('../lib/arg-inspector');
 var isPublicMethod = require('../lib/service-reflection').isPublicMethod;
@@ -15,22 +15,22 @@ var vdlUtil = require('./util');
 var format = require('format');
 
 /**
-  * Create a signature for a service by inspecting the service object.
+  * Create an interface for a service by inspecting the service object.
   * @private
   * @param {Service} service The service.
   * @constructor
   */
-function ReflectSignature(service) {
-  if (!(this instanceof ReflectSignature)) {
-    return new ReflectSignature(service);
+function ReflectInterface(service) {
+  if (!(this instanceof ReflectInterface)) {
+    return new ReflectInterface(service);
   }
 
-  var signature = this;
+  var ifc = this;
 
-  signature.methods = [];
+  ifc.methods = [];
 
   // NOTE: service.hasOwnProperty(key) is intentionally omitted so that
-  // methods defined on the prototype chain are mapped into the signature
+  // methods defined on the prototype chain are mapped into the interface
   // correctly. This supports services defined using constructors:
   //
   //     function Service() {
@@ -43,7 +43,7 @@ function ReflectSignature(service) {
   //
   // TODO(jasoncampbell): At some point we should try to avoid inherited
   // properties so we don't unintentionally publish a service's internal
-  // implementation where inheritence has been used (event emitters etc.).
+  // implementation where inheritance has been used (event emitters etc.).
   //
   // SEE: http://git.io/mi6jDg
   // SEE: veyron/release-issues#657
@@ -90,12 +90,12 @@ function ReflectSignature(service) {
 
     methodSignature.streaming = argInspector.contains('$stream');
 
-    // Add this method's signature to it's service signature
-    signature.methods.push(methodSignature);
+    // Add this method's signature to its service interface.
+    ifc.methods.push(methodSignature);
   }
 
-  // Sort all the signatures by method name.
-  signature.methods.sort(function(methodSig, methodSig2) {
+  // Sort all the method signatures by method name.
+  ifc.methods.sort(function(methodSig, methodSig2) {
     if (methodSig.name === methodSig2.name) {
       return 0;
     }

@@ -9,7 +9,7 @@
 
 module.exports = Invoker;
 
-var createSignatures = require('../vdl/create-signatures');
+var createSignature = require('../vdl/create-signature');
 var isPublicMethod = require('../lib/service-reflection').isPublicMethod;
 var verror = require('../gen-vdl/v.io/v23/verror');
 var capitalize = require('../vdl/util').capitalize;
@@ -48,7 +48,7 @@ function Invoker(service) {
   var invoker = this;
 
   invoker._service = service;
-  invoker._signature = createSignatures(service, service._serviceDescription);
+  invoker._signature = createSignature(service, service._serviceDescription);
   invoker._methods = {};
 
   // See comment in src/vdl/reflect-signature.js for..in loop

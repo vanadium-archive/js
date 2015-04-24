@@ -5,7 +5,7 @@
 var test = require('prova');
 var Client = require('../../src/rpc/client.js');
 var context = require('../../src/context');
-var createSignatures = require('../../src/vdl/create-signatures');
+var createSignature = require('../../src/vdl/create-signature');
 var createMockProxy = require('./mock-proxy');
 var vdl = require('../../src/vdl');
 var byteUtil = require('../../src/vdl/byte-util');
@@ -36,7 +36,7 @@ var mockServiceDescs = [
   }
 ];
 
-var mockSignature = createSignatures(mockService, mockServiceDescs);
+var mockSignature = createSignature(mockService, mockServiceDescs);
 var mockRuntime = {
   _controller: null,
 };

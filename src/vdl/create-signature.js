@@ -3,15 +3,15 @@
 // license that can be found in the LICENSE file.
 
 /**
- * @fileoverview A method to create an array of signatures for a service
- * based on the descriptions passed in.
+ * @fileoverview A method to create an array of interface signatures for a
+ * service based on the descriptions passed in.
  * @private
  */
-module.exports = createSignatures;
+module.exports = createSignature;
 
 var stringify = require('./stringify');
 var capitalize = require('./util').capitalize;
-var Signature = require('./signature');
+var Interface = require('./interface');
 
 function sigsHaveMethod(sigs, method) {
   return sigs.some(function(sig) {
@@ -21,7 +21,7 @@ function sigsHaveMethod(sigs, method) {
   });
 }
 
-function createSignatures(service, descs) {
+function createSignature(service, descs) {
   if (!Array.isArray(descs)) {
     if (typeof descs !== 'object') {
       descs = [];
@@ -31,7 +31,7 @@ function createSignatures(service, descs) {
   }
 
   var sigs = descs.map(function(desc) {
-    return new Signature(service, desc);
+    return new Interface(service, desc);
   });
   // Find any methods that are in service that are not in any of the
   // signatures generated and then generate a signature that contains
@@ -51,15 +51,15 @@ function createSignatures(service, descs) {
   // TODO(bjornick): How terrible is it to create this leftover signature if the
   // user provided a description and thought (incorrectly) that it was complete?
   if (leftOverSig.methods.length > 0) {
-    sigs.push(new Signature(service, leftOverSig));
+    sigs.push(new Interface(service, leftOverSig));
   }
 
   checkForConflicts(sigs);
   return sigs;
 }
 
-// Looks through all the InterfaceSigs and makes sure any duplicate methods
-// have the signature.  Throws if there are any conflicts.
+// Looks through all the Interface signatures and makes sure that any duplicate
+// methods have the same signature.  Throws if there are any conflicts.
 function checkForConflicts(sigs) {
   // Keep track of the methods sigs seen so far.  The key is the method name.
   // the value is the an object containing the interface name under the key

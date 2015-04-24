@@ -3,17 +3,17 @@
 // license that can be found in the LICENSE file.
 
 /**
- * @fileoverview Generator of service signature from JavaScript object.
- * This signature can optionally include additional information in a
+ * @fileoverview Generator of service interface from JavaScript object.
+ * This interface can optionally include additional information in a
  * descriptor object.
  * @private
  */
 
-module.exports = Signature;
+module.exports = Interface;
 
 var types = require('./types');
 var vdlsig = require('../gen-vdl/v.io/v23/vdlroot/signature');
-var ReflectSignature = require('./reflect-signature');
+var ReflectInterface = require('./reflect-interface');
 var vlog = require('../lib/vlog');
 
 // Each argument type is JSValue.
@@ -32,9 +32,9 @@ var defaultStreamingArg = {
     type: defaultArgType
 };
 
-function Signature(service, desc) {
-  if (!(this instanceof Signature)) {
-    return new Signature(service, desc);
+function Interface(service, desc) {
+  if (!(this instanceof Interface)) {
+    return new Interface(service, desc);
   }
   if (typeof desc !== 'object') {
     desc = {};
@@ -42,13 +42,13 @@ function Signature(service, desc) {
 
   vdlsig.Interface.call(this);
 
-  var reflectSig = new ReflectSignature(service);
+  var reflectInt = new ReflectInterface(service);
 
   copyIfSet(this, desc, ['name', 'pkgPath', 'doc', 'embeds']);
 
   this.methods = [];
   var methods = this.methods;
-  reflectSig.methods.forEach(function(reflectMethod) {
+  reflectInt.methods.forEach(function(reflectMethod) {
     var thisMethod = {
       name: reflectMethod.name,
       inArgs: reflectMethod.inArgs,
@@ -116,7 +116,7 @@ function Signature(service, desc) {
   });
 }
 
-Signature.prototype = new vdlsig.Interface();
+Interface.prototype = new vdlsig.Interface();
 
 function copyIfSet(dst, src, fields) {
   for (var i = 0; i < fields.length; i++) {

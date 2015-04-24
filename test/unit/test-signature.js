@@ -7,7 +7,7 @@
  */
 
 var test = require('prova');
-var Signature = require('../../src/vdl/signature.js');
+var Interface = require('../../src/vdl/interface');
 var vdl = require('../../src/vdl');
 var stringify = require('../../src/vdl/stringify');
 
@@ -459,7 +459,7 @@ test('signature', function(t) {
   for (var i = 0; i< tests.length; i++) {
     var test = tests[i];
 
-    var resultSig = new Signature(testService, test.desc);
+    var resultSig = new Interface(testService, test.desc);
     var stringifiedResult = stringify(resultSig);
     var stringifiedExpected = stringify(test.expected);
 
