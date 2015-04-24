@@ -108,6 +108,7 @@ Nacl.prototype._start = function() {
         nacl._initialized = true;
         nacl._sendQueuedMessages();
         nacl.channel.ready();
+        nacl.emit('ready');
       });
     });
 };

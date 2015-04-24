@@ -61,34 +61,39 @@ BackgroundPage.prototype.handleMessageFromNacl = function(msg) {
 
 // Handle messages coming from a content script.
 BackgroundPage.prototype.handleMessageFromContentScript = function(port, msg) {
+  var bp = this;
+
   if (!this.naclPluginIsActive()) {
     // Start the plugin if it is not started.
-    this.startNaclPlugin();
+    this.startNaclPlugin(handleMessage.bind(bp, port, msg));
+  } else {
+    handleMessage(port, msg);
   }
 
-  // Wrap in process.nextTick so chrome stack traces can use sourceMap.
-  var bp = this;
-  process.nextTick(function() {
-    debug('background received message from content script.', msg);
+  function handleMessage(port, msg) {
+    // Wrap in process.nextTick so chrome stack traces can use sourceMap.
+    process.nextTick(function() {
+      debug('background received message from content script.', msg);
 
-    // Dispatch on the type of the message.
-    switch (msg.type) {
-      case 'browsprMsg':
-        return bp.handleBrowsprMessage(port, msg);
-      case 'browsprCleanup':
-        return bp.handleBrowsprCleanup(port, msg);
-      case 'createInstance':
-        return bp.handleCreateInstance(port, msg);
-      case 'auth':
-        return bp.authHandler.handleAuthMessage(port);
-      case 'assocAccount:finish':
-        return bp.authHandler.handleFinishAuth(port, msg);
-      case 'intentionallyPanic': // Only for tests.
-        return bp._triggerIntentionalPanic();
-      default:
-        console.error('unknown message.', msg);
-    }
-  });
+      // Dispatch on the type of the message.
+      switch (msg.type) {
+        case 'browsprMsg':
+          return bp.handleBrowsprMessage(port, msg);
+        case 'browsprCleanup':
+          return bp.handleBrowsprCleanup(port, msg);
+        case 'createInstance':
+          return bp.handleCreateInstance(port, msg);
+        case 'auth':
+          return bp.authHandler.handleAuthMessage(port);
+        case 'assocAccount:finish':
+          return bp.authHandler.handleFinishAuth(port, msg);
+        case 'intentionallyPanic': // Only for tests.
+          return bp._triggerIntentionalPanic();
+        default:
+          console.error('unknown message.', msg);
+      }
+    });
+  }
 };
 
 // Trigger a panic in the plug-in (only for tests).
@@ -237,11 +242,15 @@ BackgroundPage.prototype.naclPluginIsActive = function() {
 };
 
 // Start the nacl plug-in -- add it to the page and register handlers.
-BackgroundPage.prototype.startNaclPlugin = function() {
+BackgroundPage.prototype.startNaclPlugin = function(cb) {
   var bp = this;
+  cb = cb || function() {};
   bp.nacl = new Nacl();
   bp.registerNaclListeners();
-  bp.authHandler = new AuthHandler(bp.nacl.channel);
+  bp.nacl.once('ready', function() {
+    bp.authHandler = new AuthHandler(bp.nacl.channel);
+    cb();
+  });
 };
 
 // Stop the nacl plug-in - remove it from the page and clean up state.
@@ -252,11 +261,12 @@ BackgroundPage.prototype.stopNaclPlugin = function() {
 };
 
 // Stop and start the nacl plug-in
-BackgroundPage.prototype.restartNaclPlugin = function() {
+BackgroundPage.prototype.restartNaclPlugin = function(cb) {
+  cb = cb || function() {};
   if (this.naclPluginIsActive()) {
     this.stopNaclPlugin();
   }
-  this.startNaclPlugin();
+  this.startNaclPlugin(cb);
 };
 
 // Returns an array of all active port objects.
