@@ -238,19 +238,23 @@ function portId(port) {
 
 // Return true if the nacl plug-in is running.
 BackgroundPage.prototype.naclPluginIsActive = function() {
-  return this.hasOwnProperty('nacl');
+  return this.hasOwnProperty('nacl') && this.nacl.isReady;
 };
 
 // Start the nacl plug-in -- add it to the page and register handlers.
 BackgroundPage.prototype.startNaclPlugin = function(cb) {
   var bp = this;
   cb = cb || function() {};
-  bp.nacl = new Nacl();
-  bp.registerNaclListeners();
-  bp.nacl.once('ready', function() {
-    bp.authHandler = new AuthHandler(bp.nacl.channel);
-    cb();
-  });
+
+  if (!bp.nacl) {
+    bp.nacl = new Nacl();
+    bp.registerNaclListeners();
+    bp.nacl.once('ready', function() {
+      bp.authHandler = new AuthHandler(bp.nacl.channel);
+    });
+  }
+
+  bp.nacl.once('ready', cb.bind(bp));
 };
 
 // Stop the nacl plug-in - remove it from the page and clean up state.
