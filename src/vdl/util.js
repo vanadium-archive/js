@@ -39,7 +39,7 @@ function uncapitalize(s) {
  * Note: Strings starting with a special character are considered capitalized.
  * @private
  * @param {string} s The string.
- * @return {bool} whether or not the string is capitalized.
+ * @return {boolean} whether or not the string is capitalized.
  */
 function isCapitalized(s) {
   return s[0].toUpperCase() === s[0];
@@ -49,7 +49,7 @@ function isCapitalized(s) {
  * Returns true if the field doesn't start with '_'.
  * @param {string} field The field label of a struct.
  * @private
- * @return {bool} whether or not the field should be exported.
+ * @return {boolean} whether or not the field should be exported.
  */
 function isExportedStructField(field) {
   return field.length > 0 && field[0] !== '_';

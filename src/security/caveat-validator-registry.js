@@ -54,7 +54,7 @@ CaveatValidatorRegistry.prototype._makeKey = function(bytes) {
  * to validate.
  * @memberof module:vanadium.security
  * @param {*} param Validation-function specific parameter.
- * @throws Error upon failure to validate, does not throw if successful.
+ * @throws {Error} If validation fails.
  */
 
 /**
@@ -80,7 +80,7 @@ CaveatValidatorRegistry.prototype.register = function(cavDesc, validateFn) {
  * @param {*} caveat The caveat to validate.
  * @param {Function} [cb] Callback after validation is complete.
  * See security/types.vdl
- * @throws Error Upon failure to validate, does not throw if successful.
+ * @throws {Error} If validation fails.
  * @private
  */
 CaveatValidatorRegistry.prototype.validate =

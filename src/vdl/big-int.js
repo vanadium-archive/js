@@ -12,7 +12,7 @@ var ByteUtil = require('./byte-util.js');
 module.exports = BigInt;
 
 /**
- * BigInt represents an integer value of arbitrary size.
+ * @summary Represents an integer value of arbitrary size.
  * @memberof module:vanadium.vdl
  * @param {number} sign The sign of the number 1, -1 or 0.
  * @param {Uint8Array} uintBytes The backing byte array, in network byte order.
@@ -50,7 +50,7 @@ function trimBytes(bytes) {
  * Create a BigInt from a native JavaScript number.
  * @param {number} val A native JavaScript value.
  * @throws {Error} If value cannot be represented as a BigInt.
- * @return {BigInt} The BigInt representation.
+ * @return {modules:vdl.BigInt} The BigInt representation.
  */
 BigInt.fromNativeNumber = function(val) {
   if (typeof val !== 'number' || Math.round(val) !== val) {
@@ -69,7 +69,7 @@ BigInt.fromNativeNumber = function(val) {
  * Caution: The conversion is not accurate for large numbers, non-integers, and
  * non-numerical inputs.
  * @param {number} val A native JavaScript value.
- * @return {BigInt} The BigInt representation.
+ * @return {modules:vanadium.vdl.BigInt} The BigInt representation.
  */
 BigInt.fromNativeNumberApprox = function(val) {
   var floored;
@@ -110,7 +110,7 @@ function convertFromNative(val) {
  * Generate a string representation of the BigInt.
  * This must have the same output format as the string conversion of normal
  * JavaScript integer (for the range of valid JavaScript integers).
- * @return {string} The string representation.
+ * @return {string} The string representation of the BigInt.
  */
 BigInt.prototype.toString = function() {
   if (this._sign === 0) {
@@ -147,7 +147,9 @@ BigInt.prototype.toString = function() {
 
 /**
  * Compares BigInt objects.
- * @return {boolean} True if this BigInt is greater than the passed in BigInt.
+ * @param {modules:vanadium.vdl.BigInt} other The BigInt to compare with this
+ * BigInt.
+ * @return {boolean} True if this BigInt is greater than the argument BigInt.
  */
 BigInt.prototype.greaterThan = function(other) {
   if (this._sign !== other._sign) {
@@ -172,8 +174,10 @@ BigInt.prototype.greaterThan = function(other) {
 
 /**
  * Compares BigInt objects.
- * @return {boolean} True if this BigInt is greater than or equal to the passed
- * in BigInt.
+ * @param {modules:vanadium.vdl.BigInt} other The BigInt to compare with this
+ * BigInt.
+ * @return {boolean} True if this BigInt is greater than or equal to
+ * the argument BigInt.
  */
 BigInt.prototype.greaterThanEquals = function(other) {
   return this.greaterThan(other) || this.equals(other);
@@ -181,8 +185,10 @@ BigInt.prototype.greaterThanEquals = function(other) {
 
 /**
  * Subtracts one BigInt from another.
- * @param {BigInt} other The value to subtract from this BigInt.
- * @return {BigInt} Returns a new BigInt equal to this - other.
+ * @param {modules:vanadium.vdl.BigInt} other The BigInt to subtract from this
+ * BigInt.
+ * @return {modules:vanadium.vdl.BigInt} Returns a new BigInt equal to this
+ * minus the argument BigInt.
  */
 BigInt.prototype.subtract = function(other) {
   if (this._sign === 0) {
@@ -247,8 +253,9 @@ BigInt.prototype.subtract = function(other) {
 
 /**
  * Adds two BigInts together.
- * @param {BigInt} other The BigInt to add to this BigInt.
- * @return {BigInt} A new BigInt equal to this + other.
+ * @param {modules:vanadium.vdl.BigInt} other The BigInt to add to this BigInt.
+ * @return {modules:vanadium.vdl.BigInt} A new BigInt equal to this plus the
+ * argument BigInt.
  */
 BigInt.prototype.add = function(other) {
   if (this._sign === 0) {
@@ -301,9 +308,11 @@ BigInt.prototype.add = function(other) {
 };
 
 /**
- * Multiplies BigInts
- * @param {BigInt} other The BigInt to multiply with this BigInt.
- * @return {BigInt} A new BigInt equal to this * other.
+ * Multiplies BigInts.
+ * @param {modules:vanadium.vdl.BigInt} other The BigInt to multiply with this
+ * BigInt.
+ * @return {modules:vanadium.vdl.BigInt} A new BigInt equal to this times the
+ * argument BigInt.
  */
 BigInt.prototype.multiply = function(other) {
   var total = new BigInt(0, new Uint8Array());
@@ -325,8 +334,10 @@ BigInt.prototype.multiply = function(other) {
 
 /**
  * Divides BigInts
- * @param {BigInt} divisor The BigInt to use as the divisor.
- * @return {BigInt} a new BigInt equalt to this / divisor.
+ * @param {modules:vanadium.vdl.BigInt} divisor The BigInt to use as the
+ * divisor.
+ * @return {modules:vanadium.vdl.BigInt} a new BigInt equalt to this divided by
+ * the argument BigInt.
  */
 BigInt.prototype.divide = function(divisor) {
   if (divisor._sign === 0) {
@@ -356,15 +367,17 @@ BigInt.prototype.divide = function(divisor) {
 
 /**
  * Negates the BigInt.
- * @return {BigInt} A new BigInt that is a negated version the BigInt.
+ * @return {modules:vanadium.vdl.BigInt} A new BigInt that is a negated version
+ * this BigInt.
  */
 BigInt.prototype.negate = function() {
   return new BigInt(-this._sign, this._bytes);
 };
 
 /**
- * Takes the absolute value.
- * @return {BigInt} A new BigInt equal to the absolute value of this BigInt.
+ * Returns the absolute value of the BigInt.
+ * @return {modules:vanadium.vdl.BigInt} A new BigInt equal to the absolute
+ * value of this BigInt.
  */
 BigInt.prototype.abs = function() {
   return new BigInt(Math.abs(this._sign), this._bytes);
@@ -388,8 +401,9 @@ function mostSignificantBitForByte(b) {
 
 /**
  * Performs left shift of an arbitrary amount.
- * @param {amt} The amount to shift in bits.
- * @return {BigInt} A new BigInt that is left shifted by the specified amount.
+ * @param {number} amt The amount to shift in bits.
+ * @return {modules:vanadium.vdl.BigInt} A new BigInt that is left shifted by
+ * the specified amount.
  */
 BigInt.prototype.leftShift = function(amt) {
   if (this._bytes.length === 0) {
@@ -426,7 +440,7 @@ BigInt.prototype.leftShift = function(amt) {
 /**
  * Determine if this BigInt is equal to another BigInt.
  *
- * @param {BigInt} other The other BigInt to compare.
+ * @param {modules:vanadium.vdl.BigInt} other The other BigInt to compare.
  * @return {boolean} true if this BigInt is equal to the other BigInt. false
  * otherwise.
  */
@@ -543,8 +557,8 @@ BigInt.prototype._largerThanMaxLosslessInteger = function() {
 /**
  * Get the sign of the value.
  * @private
- * @param {number} val input value
- * @return {number} 1, -1, 0 depending on the sign of the input
+ * @param {number} val Input value.
+ * @return {number} 1, -1, or 0 depending on the sign of the input.
  */
 function _sign(val) {
   if (val > 0) {

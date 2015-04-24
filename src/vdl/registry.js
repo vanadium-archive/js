@@ -9,9 +9,12 @@ var Type = require('./type.js');
 require('./es6-shim');
 
 /**
- * The Registry maps types to corresponding constructors.
- * These constructors convert a given value to a a vom-typed object.
- * There is no support for removing added constructors.<br>
+ * @summary Maps types to corresponding constructors.
+ *
+ * @description
+ * <p>Registered constructors convert a given value to a a vom-typed object.
+ * There is no support for removing added constructors.</p>
+ *
  * @constructor
  * @inner
  * @memberof module:vanadium.vdl
@@ -65,8 +68,10 @@ Registry.prototype._lookupConstructor = function(type) {
 };
 
 /**
- * Lookup a constructor or if it isn't found, create a new one and register it.
+ * Lookup a constructor. If it isn't found, then create a new one and register
+ * it.
  * @param {module:vanadium.vdl.Type} type Type
+ * @return {function} The constructor function for the type.
  */
 Registry.prototype.lookupOrCreateConstructor = function(type) {
   if (!(type instanceof Type)) {

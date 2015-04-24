@@ -93,7 +93,7 @@ Namespace.prototype.glob = function(ctx, pattern, cb) {
  * @param {module:vanadium.context.Context} ctx The rpc context.
  * @param {string} name Object name
  * @param {string} server Server object address
- * @param {integer} ttl Expiry time for the mount in milliseconds. ttl of zero
+ * @param {number} ttl Expiry time for the mount in milliseconds. ttl of zero
  * implies never expire.
  * @param {boolean} Optional replaceMount Whether the previous mount should
  * be replaced by the new server object address. False by default.

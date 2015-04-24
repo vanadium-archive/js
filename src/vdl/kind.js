@@ -10,7 +10,8 @@
 var kindCount = 0;
 
 /**
- * Namespace of constants for VDL kinds
+ * @summary Namespace of constants for VDL kinds.
+ * @description Namespace of constants for VDL kinds.
  * @namespace
  * @memberof module:vanadium.vdl
  */
@@ -114,9 +115,9 @@ var kind = {
 };
 
 /**
- * Returns the human readable name for a kind
- * @param {module:vanadium.vdl.kind} k The kind to print out
- * @return {string}
+ * Returns the human-readable name for a kind.
+ * @param {module:vanadium.vdl.kind} k The kind to print out.
+ * @return {string} Human-readable name for the kind.
  */
 kind.kindStr = function(k) {
   var kindKeys = Object.keys(kind).filter(function(key) {

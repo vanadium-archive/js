@@ -23,7 +23,7 @@ module.exports = {
  * Determines if the length should be sent in the header of a value message of
  * the specified type.
  * @private
- * @param {Type} type The type.
+ * @param {module:vanadium.vdl.Type} type The type.
  * @return {boolean} true if the length should be sent in the header of the
  * the value message or false otherwise.
  */
@@ -53,7 +53,7 @@ function _isObject(v) {
 /**
  * Checks whether the given value is a typed value.
  * @private
- * @param {any} v The potentially typed value.
+ * @param {*} v The potentially typed value.
  * @return {boolean} whether the value has a type attached or not.
  */
 function isTyped(v) {
@@ -75,7 +75,7 @@ function isWrapped(v) {
  * Note: The convention is to only wrap types once, not deeply.
  * @private
  * @param {VomValue} v The value to be unwrapped.
- * @return {any} the unwrapped value.
+ * @return {*} the unwrapped value.
  */
 function unwrap(v) {
   if (isWrapped(v)) {
@@ -106,7 +106,7 @@ function constructorOf(v) {
  * Unwrap the value if the unwrapped type will be guessed on encode.
  * @private
  * @param {VomValue} v The value to be unwrapped.
- * @return {any} the unwrapped value.
+ * @return {*} the unwrapped value.
  */
 function unwrapNonDefault(v) {
   // TODO(bprosnitz) This function doesn't match the default guess rules.

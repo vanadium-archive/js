@@ -6,7 +6,7 @@
  * MountFlag is a bit mask of options to the mount call.
  * @name MountFlag
  * @constructor
- * @param {integer} bitMask MountFlag bit mask
+ * @param {number} bitMask MountFlag bit mask
  * @memberof module:vanadium.naming
  */
 
@@ -34,7 +34,7 @@
  * @param {string} mountedServer.server Server is the OA that's mounted.
  * @param {string[]} mountedServer.blessingPatterns Patterns that match the set
  * of blessings presented by the server listening on the above object address.
- * @param {integer} mountedServer.deadline deadline before the mount entry
+ * @param {number} mountedServer.deadline deadline before the mount entry
  * expires.
  * @memberof module:vanadium.naming
  */

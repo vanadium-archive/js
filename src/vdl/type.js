@@ -16,14 +16,16 @@ var kind = require('./kind');
 var canonicalize; // Must be lazily-required to avoid circular dependency.
 
 /**
- * Creates a new Type.
- * Without o, the Type is incomplete and must be filled in further.
- * Notably, each type has a kind, which implies the existence of other fields.
- * Type can be optionally constructed with an object, which has the option of
- * being canonicalized.
- * Note: Sidesteps a cyclic dependency with injection. During module setup,
- * any calls to the Type constructor with a type object should also set
- * skipValidation to true.
+ * @summary Creates a new Type.
+ *
+ * @description <p>Without o, the Type is incomplete and must be filled in
+ * further.</p>
+ * <p>Notably, each type has a kind, which implies the existence of other
+ * fields.  Type can be optionally constructed with an object, which has the
+ * option of being canonicalized.</p>
+ * <p>Note: This sidesteps a cyclic dependency with injection. During module
+ * setup, any calls to the Type constructor with a type object should also set
+ * skipValidation to true.</p>
  * @constructor
  * @memberof module:vanadium.vdl
  * @param {Object=} o An object whose fields match those of a TypeObject.
@@ -52,8 +54,8 @@ Type.prototype._type.kind = kind.TYPEOBJECT;
 
 /**
  * Checks for equality
- * @param {*} other The value to test against
- * @return boolean True iff other equals this.
+ * @param {*} other The value to check for equality against.
+ * @return {boolean} True iff other equals this.
  */
 Type.prototype.equals = function(other) {
   if (this === other) {
@@ -79,6 +81,7 @@ Type.prototype.freeze = function() {
 };
 
 /**
+ * Get a human-readable string for this type.
  * @return {string} The human-readable string for this type
  */
 Type.prototype.toString = function() {
@@ -89,8 +92,9 @@ Type.prototype.toString = function() {
 };
 
 /**
- * Compute a unique type string that breaks cycles.
- * Note: This logic replicates that of uniqueTypeStr in type_builder.go
+ * <p>Compute a unique type string that breaks cycles.</p>
+ *
+ * <p>Note: This logic replicates that of uniqueTypeStr in type_builder.go.</p>
  * @private
  * @param {Type} t The type whose unique type string is needed
  * @param {Array} seen A list of seen type references

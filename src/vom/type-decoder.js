@@ -98,7 +98,8 @@ TypeDecoder.prototype.defineType = function(typeId, messageBytes) {
 
 /**
  * Flattens the type's dependencies into a typeId->(type, partial type) map.
- * @throws Error if the type's dependencies are not available.
+ * @private
+ * @throws {Error} If the type's dependencies are not available.
  */
 TypeDecoder.prototype._flattenTypeDepGraph = function(typeId, typeDeps) {
   // Already in map?

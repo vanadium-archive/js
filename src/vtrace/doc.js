@@ -41,7 +41,7 @@
  * @summary TraceFlags specify options for how traces should be collected.
  * @name TraceFlags
  * @constructor
- * @param {integer} flag
+ * @param {number} flag
  * @memberof module:vanadium.vtrace
  */
 

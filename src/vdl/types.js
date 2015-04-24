@@ -14,7 +14,8 @@ var kind = require('./kind.js');
 // create the types in js?
 
 /**
- * Namespace of pre-defined VDL Types
+ * @summary Namespace of pre-defined VDL Types.
+ * @description Namespace of pre-defined VDL Types.
  * @namespace
  * @memberof module:vanadium.vdl
  */

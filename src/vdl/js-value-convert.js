@@ -42,8 +42,8 @@ function getJSValueConstructor() {
  * Excluding undefined, raw values satisfy the following equality:
  * convertToNative(convertFromNative(val)) === val
  * @private
- * @param{any} val The value to be molded into a JSValue
- * @return The JSValue
+ * @param {*} val The value to be molded into a JSValue.
+ * @return {*} The JSValue.
  */
 function convertFromNative(val) {
   // No need to convert if val is already a JSValue or typed object.

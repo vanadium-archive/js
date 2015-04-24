@@ -20,10 +20,9 @@ module.exports = makeError;
  * otherwise it is a map from languageId to format string.
  * @param {Array} types The array of types that expected for the arguments to
  * the error constructor.
- * @returns {function} A constructor function
- * that can be used to create vanadium errors with the given error id.
- * The returned constructor function inherits from
- * {@link module:vanadium.verror.VanadiumError}.
+ * @returns {function} A constructor function that can be used to create
+ * vanadium errors with the given error id.  The returned constructor function
+ * inherits from {@link module:vanadium.verror.VanadiumError}.
  * @memberof module:vanadium.verror
  */
 function makeError(id, retryCode, format, types) {

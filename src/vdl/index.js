@@ -11,11 +11,13 @@
  * system.</p>
  *
  * <p>VDL is an interface definition language designed to enable interoperation
- * between clients and servers executing in heterogeneous environments.  E.g. it
- * enables a frontend written in Javascript running on a phone to communicate
- * with a backend written in Go running on a server.  VDL is compiled into an
- * intermediate representation that is used to generate code in each target
- * environment.</p>
+ * between clients and servers executing in heterogeneous environments.</p>
+ *
+ * For example, VDL enables a frontend written in Javascript running on a phone
+ * to communicate with a backend written in Go running on a server.</p>
+ *
+ * <p>VDL is compiled into an intermediate representation that is used to
+ * generate code in each target environment.</p>
  *
  * <p>The concepts in VDL are similar to the concepts used in general-purpose
  * languages to specify interfaces and communication protocols.</p>
@@ -28,18 +30,11 @@ module.exports = {
   kind: require('./kind'),
   types: require('./types'),
   BigInt: require('./big-int'),
-  /**
-   * Namespace of utilities to canonicalize vdl types
-   * for use in encoding and decoding values.
-   * @namespace
-   * @memberof module:vanadium.vdl
-   */
   canonicalize: require('./canonicalize'),
   Complex: require('./complex'),
   /**
    * Type registry that contains a mapping of vdl types
    * to constructors
-   * @property {module:vanadium.vdl~Registry}
    * @memberof module:vanadium.vdl
    */
   registry: require('./registry'),
@@ -49,12 +44,16 @@ module.exports = {
 /**
  * @namespace
  * @name signature
+ * @summary Namespace of types representing interface and method signatures.
+ * @description Namespace of types representing interface and method signatures.
  * @memberof module:vanadium.vdl
  */
 module.exports.signature = require('../gen-vdl/v.io/v23/vdlroot/signature');
 /**
  * @namespace
  * @name time
+ * @summary Namespace of types representing absolute and relative times.
+ * @description Namespace of types representing absolute and relative times.
  * @memberof module:vanadium.vdl
  */
 module.exports.time = require('../gen-vdl/v.io/v23/vdlroot/time');

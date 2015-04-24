@@ -3,18 +3,18 @@
 // license that can be found in the LICENSE file.
 
 /**
- * @fileoverview A type for complex numbers
+ * @fileoverview A type for complex numbers.
  * @private
  */
 
 module.exports = Complex;
 
 /**
- * Represents a complex number
+ * @summary Represents a complex number.
  * @constructor
  * @memberof module:vanadium.vdl
- * @param {number} real The real part of the number
- * @param {number} imag The imaginary part the number
+ * @param {number} real The real part of the number.
+ * @param {number} imag The imaginary part of the number.
  */
 function Complex(real, imag) {
   this.real = real || 0;
@@ -22,7 +22,7 @@ function Complex(real, imag) {
 }
 
 /**
- * @returns string The string format of the number
+ * @returns {string} The string format of this complex number.
  */
 Complex.prototype.toString = function() {
   if (this.imag === 0) {
@@ -40,9 +40,11 @@ Complex.prototype.toString = function() {
 };
 
 /**
- * Adds c to this
- * @param {module:vanadium.vdl.Complex} c The number to add
- * @returns {module:vanadium.vdl.Complex} this + c
+ * Adds a complex number to this complex number.
+ * @param {module:vanadium.vdl.Complex} c The complex number to add to this
+ * complex number.
+ * @returns {module:vanadium.vdl.Complex} This complex number plus the argument
+ * complex number.
  */
 Complex.prototype.add = function(c){
   return new Complex(this.real + c.real,
@@ -51,9 +53,11 @@ Complex.prototype.add = function(c){
 };
 
 /**
- * Subtracts c from this
- * @param {module:vanadium.vdl.Complex} c The number to subtract
- * @returns {module:vanadium.vdl.Complex} this - c
+ * Subtracts a complex number from this number.
+ * @param {module:vanadium.vdl.Complex} c The complex number to subtract from
+ * this complex number.
+ * @returns {module:vanadium.vdl.Complex} This complex number minus the
+ * argument complex number.
  */
 Complex.prototype.subtract = function(c) {
   return new Complex(this.real - c.real,
@@ -61,9 +65,11 @@ Complex.prototype.subtract = function(c) {
 };
 
 /**
- * Multiply c with this
- * @param {module:vanadium.vdl.Complex} c The number to multiply by
- * @returns {module:vanadium.vdl.Complex} this * c
+ * Multiply a complex number with this number.
+ * @param {module:vanadium.vdl.Complex} c The compler number to multiply this
+ * complex number with.
+ * @returns {module:vanadium.vdl.Complex} This complex number times the
+ * argument complex number.
  */
 Complex.prototype.multiply = function(c) {
   var real = this.real * c.real -
@@ -74,9 +80,11 @@ Complex.prototype.multiply = function(c) {
 };
 
 /**
- * Divde this by c
- * @param {module:vanadium.vdl.Complex} c The number to divide by
- * @returns {module:vanadium.vdl.Complex} this / c
+ * Divide this complex number by another complex number.
+ * @param {module:vanadium.vdl.Complex} c The complex number to divide this
+ * complex number by.
+ * @returns {module:vanadium.vdl.Complex} This complex number divided by the
+ * argument complex number.
  */
 Complex.prototype.divide = function(c) {
   var num = this.multiply(new Complex(c.real, -c.imag));

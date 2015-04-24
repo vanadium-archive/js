@@ -40,7 +40,7 @@ function registerFromWireValue(t, f) {
 /**
  * Registers a converter that converts from native type to wire type.
  * @private
- * @param {constructor} constructor The constructor for the native object.
+ * @param {function} constructor The constructor for the native object.
  * @param {function} f A function that takes in a native object and returns
  * the wire type representation of it.
  * @param {Type} type The wiretype fo the native value.

@@ -20,8 +20,8 @@ module.exports = guessType;
  * Guess the type of a value based on its contents. If _type is not present
  * this returns types.JSValue.
  * @private
- * @param {any} val The value.
- * @return {Type} The guessed type for val.
+ * @param {*} val The value.
+ * @return {module:vanadium.vdl.Type} The guessed type for val.
  */
 function guessType(val) {
   if (typeUtil.isTyped(val)) {

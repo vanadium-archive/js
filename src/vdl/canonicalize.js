@@ -10,6 +10,16 @@
  * @private
  */
 
+/**
+ * @name canonicalize
+ * @summary Namespace canonicalize implements utilities to canonicalize vdl
+ * types for use in encoding and decoding values.
+ * @description Namespace canonicalize implements utilities to canonicalize vdl
+ * types for use in encoding and decoding values.
+ * @namespace
+ * @memberof module:vanadium.vdl
+ */
+
 var BigInt = require('./big-int.js');
 var Complex = require('./complex.js');
 var kind = require('./kind.js');
@@ -44,9 +54,9 @@ var ZERO_BIGINT = new BigInt(0, new Uint8Array());
  * @function
  * @name fill
  * @memberof module:vanadium.vdl.canonicalize
- * @param {*} inValue The value to convert to the wire format
- * @param {module:vanadium.vdl.Type} t The type of inValue
- * @return {*} The canonical wire format of inValue
+ * @param {*} inValue The value to convert to the wire format.
+ * @param {module:vanadium.vdl.Type} t The type of inValue.
+ * @return {*} The canonical wire format of inValue.
  */
 function canonicalizeFill(inValue, t) {
   return canonicalizeExternal(inValue, t, true);
@@ -58,16 +68,16 @@ function canonicalizeFill(inValue, t) {
  * @function
  * @name reduce
  * @memberof module:vanadium.vdl.canonicalize
- * @param {*} inValue The value to convert to the in memory format
- * @param {module:vanadium.vdl.Type} t The type of inValue
- * @return {*} The canonical in-format of inValue
+ * @param {*} inValue The value to convert to the in memory format.
+ * @param {module:vanadium.vdl.Type} t The type of inValue.
+ * @return {*} The canonical in-format of inValue.
  */
 function canonicalizeReduce(inValue, t) {
   return canonicalizeExternal(inValue, t, false);
 }
 
 /**
- * Alias for canonicalizeExternal with inValue = undefined
+ * Alias for canonicalizeExternal with inValue = undefined.
  * @private
  */
 function canonicalizeZero(t, deepWrap) {
@@ -81,10 +91,10 @@ function canonicalizeZero(t, deepWrap) {
  * TODO(alexfandrianto): The performance is on the same order as encode, but it
  * would be a good idea to consider adding more improvements.
  * @private
- * @param {any} inValue The value to be canonicalized
- * @param {Type} t The target type
+ * @param {*} inValue The value to be canonicalized.
+ * @param {module:vanadium.vdl.Type} t The target type.
  * @param {boolean=} deepWrap Whether or not to deeply wrap. Defaults to true.
- * @return {any} The canonicalized value (May potentially refer to v)
+ * @return {*} The canonicalized value. May potentially refer to v.
  */
 function canonicalizeExternal(inValue, t, deepWrap) {
   if (deepWrap === undefined) {
@@ -101,16 +111,16 @@ function canonicalizeExternal(inValue, t, deepWrap) {
  * Keeps track of a Map of old references to new references. This helps clone
  * cycles and preserve shared references.
  * @private
- * @param {any} v The value to be canonicalized
- * @param {Type} inType The inferred type of the value. This type is tracked in
- *                      order to ensure that internal any keys/elems/fields are
- *                      properly filled in with type information.
- * @param {Type} t The target type
+ * @param {*} v The value to be canonicalized.
+ * @param {module:vanadium.vdl.Type} inType The inferred type of the value.
+ * This type is tracked in order to ensure that internal any keys/elems/fields
+ * are properly filled in with type information.
+ * @param {module:vanadium.vdl.Type} t The target type.
  * @param {boolean} deepWrap Whether or not to deeply wrap the contents.
  * @param {object} seen A cache from old to new
  * references that based on type.
- * @param {boolean} isTopLevelValue If true, then the return value is wrapped
- * @return {any} The canonicalized value (May potentially refer to v)
+ * @param {boolean} isTopLevelValue If true, then the return value is wrapped.
+ * @return {*} The canonicalized value. May potentially refer to v.
  */
 function canonicalize(inValue, inType, t, deepWrap, seen, isTopLevelValue) {
   if (!(t instanceof Type)) {
@@ -535,7 +545,7 @@ function canonicalizeInternal(deepWrap, v, inType, t, seen, outValue) {
  * zeroValues need further canonicalization, so it would make sense to have it
  * be a simple initializer instead of being recursive.
  * @param(Type) t The type whose zero value is needed.
- * @return {any} the corresponding zero value for the input type.
+ * @return {*} the corresponding zero value for the input type.
  * @private
  */
 function zeroValue(t) {
@@ -598,10 +608,10 @@ function zeroValue(t) {
 
 /**
  * Constructs an error for the value, type, and custom message.
- * @param {any} value The value
- * @param {Type} type The type
- * @param {string} message The custom error message
- * @return {Error} The constructed error
+ * @param {*} value The value.
+ * @param {module:vanadium.vdl.Type} type The type.
+ * @param {string} message The custom error message.
+ * @return {Error} The constructed error.
  * @private
  */
 function makeError(value, type, message) {
@@ -612,9 +622,9 @@ function makeError(value, type, message) {
 /**
  * Examines the given type and canonicalizes it. If the type is not valid for
  * its kind, then an error is thrown.
- * @param {Type} t The type to be canonicalized
- * @return {Type} The canonicalized type
- * @throws If the type is invalid
+ * @param {module:vanadium.vdl.Type} t The type to be canonicalized.
+ * @return {module:vanadium.vdl.Type} The canonicalized type.
+ * @throws {Error} If the type is invalid.
  * @private
  */
 function canonicalizeTypeExternal(t) {
@@ -746,7 +756,7 @@ function mapToSet(m, t) {
  * @param {type} type The proposed type whose constructor is needed.
  * @param {v} value The value that is passed in.  If v is a native type,
  * its constructor is used instead of looking up in the registry.
- * @return {object} The empty object with correct type
+ * @return {object} The empty object with correct type.
  * @private
  */
 function getObjectWithType(t, v) {
@@ -766,11 +776,12 @@ function getObjectWithType(t, v) {
 }
 
 /**
- * insertIntoSeenCache adds the new reference into the cache.
+ * Adds the new reference into the cache.
  * @param {object} seen Cache of old to new refs by type.
- * @param {object} oldRef The old reference
- * @param {Type} type The type the new reference is being cached under.
- * @param {object} newRef The new reference
+ * @param {object} oldRef The old reference.
+ * @param {module:vanadium.vdl.Type} type The type the new reference is being
+ * cached under.
+ * @param {object} newRef The new reference.
  * @private
  */
 function insertIntoSeenCache(seen, oldRef, type, newRef) {
@@ -781,11 +792,12 @@ function insertIntoSeenCache(seen, oldRef, type, newRef) {
 }
 
 /**
- * getFromSeenCache returns a cached value from the seen cache.
+ * Returns a cached value from the seen cache.
  * If there is no such value, the function returns undefined.
  * @param {object} seen Cache of old to new refs by type.
- * @param {object} oldRef The old reference
- * @param {Type} type The type the new reference is being cached under.
+ * @param {object} oldRef The old reference.
+ * @param {module:vanadium.vdl.Type} type The type the new reference is being
+ * cached under.
  * @return {object | undefined} The cached value or undefined, if not present.
  * @private
  */
@@ -806,7 +818,7 @@ function getFromSeenCache(seen, oldRef, type) {
  * Ex: wrapped primitive =>
        { unwrappedValue: primitive, guessedType: typeOfPrimitiveWrapper }
  * Ex: nativeVal => { unwrappedValue: nativeVal, guessedType: types.JSVALUE }
- * @param{any} v The value which may have nested ANY
+ * @param{*} v The value which may have nested ANY
  * @return{object} Object with guessedType => type and unwrappedValue => value
  * @private
  */

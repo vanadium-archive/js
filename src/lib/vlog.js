@@ -14,29 +14,37 @@
 
 var extend = require('xtend');
 /**
- * The log levels used to configure the vanadium logger.
  * @namespace
+ * @summary Namespace levels defines the log levels used to configure the
+ * vanadium logger.
+ * @description Namespace levels defines the log levels used to configure the
+ * vanadium logger.
  * @memberof module:vanadium.vlog
  */
 var levels = {
   /**
-   * No logs are written
+   * No logs are written.
+   * @const
    */
   NOLOG: 0,
   /**
-   * Only errors are written
+   * Only errors are written.
+   * @const
    */
   ERROR : 1,
   /**
-   * Only errors and warnings are written
+   * Only errors and warnings are written.
+   * @const
    */
   WARN: 2,
   /**
-   * Errors, warnings and debug messages are written
+   * Errors, warnings, and debug messages are written.
+   * @const
    */
   DEBUG : 3,
   /**
-   * All logs are written
+   * All logs are written.
+   * @const
    */
   INFO : 4
 };
@@ -65,32 +73,32 @@ var Vlog = function(options) {
 };
 
 /**
- * Logs arguments as errors to the console if log level is error or higher
- * @param {...*} values The values to log
+ * Logs arguments as errors to the console if log level is error or higher.
+ * @param {...*} values The values to log.
  */
 Vlog.prototype.error = function() {
   this._log(levels.ERROR, arguments);
 };
 
 /**
- * Logs arguments as warnings to the console if log level is warning or higher
- * @param {...*} values The values to log
+ * Logs arguments as warnings to the console if log level is warning or higher.
+ * @param {...*} values The values to log.
  */
 Vlog.prototype.warn = function() {
   this._log(levels.WARN, arguments);
 };
 
 /**
- * Logs arguments as logs to the console if log level is debug or higher
- * @param {...*} values The values to log
+ * Logs arguments as logs to the console if log level is debug or higher.
+ * @param {...*} values The values to log.
  */
 Vlog.prototype.debug = function() {
   this._log(levels.DEBUG, arguments);
 };
 
 /**
- * Logs arguments as info to the console if log level is info or higher
- * @param {...*} values The values to log
+ * Logs arguments as info to the console if log level is info or higher.
+ * @param {...*} values The values to log.
  */
 Vlog.prototype.info = function() {
   this._log(levels.INFO, arguments);

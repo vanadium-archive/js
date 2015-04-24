@@ -53,9 +53,9 @@ function random() {
 }
 
 /**
- * Returns true if the given uniqueid.Id is valid.
+ * Returns true iff the given uniqueid.Id is valid.
  * @param {module:vanadium.uniqueId.Id} A uniqueId.Id instance.
- * @return {bool} true if the given uniqueId.Id is valid.
+ * @return {boolean} true if the given uniqueId.Id is valid.
  * @memberof module:vanadium.uniqueId
  */
 function valid(id) {
@@ -99,12 +99,11 @@ module.exports = {
   /**
    * @summary An Id is a likely globally unique identifier.
    * @description
-   * <p>An Id is a likely globally unique identifier.</p>
    * <p>Use [random]{@link module:vanadium.uniqueId.random} to
-   * create a new one</p>
-   * @property {Uint8array} val 16-byte array
+   * create a new one.</p>
+   * @property {Uint8array} val 16-byte array.
    * @name Id
-   * @param {Uint8Array} bytes 16-byte array
+   * @param {Uint8Array} bytes 16-byte array.
    * @constructor
    * @memberof module:vanadium.uniqueId
    */
