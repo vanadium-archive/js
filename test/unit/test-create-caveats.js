@@ -71,7 +71,7 @@ test('createUnconstrainedUseCaveat', function(t) {
 test('createExpiryCaveat w/ date', function(t) {
   var date = new Date(1920, 3, 4, 9, 10);
   var expiryCav = caveats.createExpiryCaveat(date);
-  t.deepEqual(expiryCav.id, vdlSecurity.ExpiryCaveatX.id, 'Correct id');
+  t.deepEqual(expiryCav.id, vdlSecurity.ExpiryCaveat.id, 'Correct id');
   t.deepEqual(vom.decode(expiryCav.paramVom), date, 'Correct data');
   t.equal(expiryCav._type, (new vdlSecurity.Caveat())._type, 'Correct type');
   t.end();
@@ -88,7 +88,7 @@ test('createExpiryCaveat w/ millisecond representation', function(t) {
 test('createMethodCaveat', function(t) {
   var methodList = ['A', 'B', 'C'];
   var methodCav = caveats.createMethodCaveat(methodList);
-  t.deepEqual(methodCav.id, vdlSecurity.MethodCaveatX.id, 'Correct id');
+  t.deepEqual(methodCav.id, vdlSecurity.MethodCaveat.id, 'Correct id');
   t.deepEqual(vom.decode(methodCav.paramVom), {val: methodList},
     'Correct data');
   t.equal(methodCav._type, (new vdlSecurity.Caveat())._type, 'Correct type');

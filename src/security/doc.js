@@ -66,7 +66,7 @@
 /**
  * Represents a caveat that validates iff the current time is no later
  * than the specified time.  The data should be a date.
- * @name ExpiryCaveatX
+ * @name ExpiryCaveat
  * @type module:vanadium.security.CaveatDescriptor
  * @const
  * @memberof module:vanadium.security
@@ -75,7 +75,7 @@
  * Represents a caveat that validates iff the method being invoked is
  * included in the array of strings passed in.  An empty list means that
  * the holder cannot invoke any methods.
- * @name MethodCaveatX
+ * @name MethodCaveat
  * @type module:vanadium.security.CaveatDescriptor
  * @const
  * @memberof module:vanadium.security
@@ -183,7 +183,7 @@
  */
 /**
  * @summary An error that means that the
- * [ExpiryType]{@link module:vanadium.security.ExpiryCaveatX} failed to
+ * [ExpiryType]{@link module:vanadium.security.ExpiryCaveat} failed to
  * validate.
  * @name ExpiryCaveatValidationError
  * @memberof module:vanadium.security
@@ -197,7 +197,7 @@
  */
 /**
  * @summary An error that means that the
- * [MethodCaveat]{@link module:vanadium.security.MethodCaveatX} failed to
+ * [MethodCaveat]{@link module:vanadium.security.MethodCaveat} failed to
  * validate.
  * @name MethodCaveatValidationError
  * @memberof module:vanadium.security

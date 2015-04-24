@@ -41,7 +41,7 @@ var _typeWireBlessings = new vdl.Type();
 var _typeWireDischarge = new vdl.Type();
 var _typenonce = new vdl.Type();
 var _typepublicKeyDischarge = new vdl.Type();
-var _typepublicKeyThirdPartyCaveat = new vdl.Type();
+var _typepublicKeyThirdPartyCaveatParam = new vdl.Type();
 _type1.kind = vdl.kind.LIST;
 _type1.name = "";
 _type1.elem = _typeCaveat;
@@ -104,9 +104,9 @@ _typenonce.elem = vdl.types.BYTE;
 _typepublicKeyDischarge.kind = vdl.kind.STRUCT;
 _typepublicKeyDischarge.name = "v.io/v23/security.publicKeyDischarge";
 _typepublicKeyDischarge.fields = [{name: "ThirdPartyCaveatId", type: vdl.types.STRING}, {name: "Caveats", type: _type1}, {name: "Signature", type: _typeSignature}];
-_typepublicKeyThirdPartyCaveat.kind = vdl.kind.STRUCT;
-_typepublicKeyThirdPartyCaveat.name = "v.io/v23/security.publicKeyThirdPartyCaveat";
-_typepublicKeyThirdPartyCaveat.fields = [{name: "Nonce", type: _typenonce}, {name: "Caveats", type: _type1}, {name: "DischargerKey", type: _type2}, {name: "DischargerLocation", type: vdl.types.STRING}, {name: "DischargerRequirements", type: _typeThirdPartyRequirements}];
+_typepublicKeyThirdPartyCaveatParam.kind = vdl.kind.STRUCT;
+_typepublicKeyThirdPartyCaveatParam.name = "v.io/v23/security.publicKeyThirdPartyCaveatParam";
+_typepublicKeyThirdPartyCaveatParam.fields = [{name: "Nonce", type: _typenonce}, {name: "Caveats", type: _type1}, {name: "DischargerKey", type: _type2}, {name: "DischargerLocation", type: vdl.types.STRING}, {name: "DischargerRequirements", type: _typeThirdPartyRequirements}];
 _type1.freeze();
 _type2.freeze();
 _type3.freeze();
@@ -128,7 +128,7 @@ _typeWireBlessings.freeze();
 _typeWireDischarge.freeze();
 _typenonce.freeze();
 _typepublicKeyDischarge.freeze();
-_typepublicKeyThirdPartyCaveat.freeze();
+_typepublicKeyThirdPartyCaveatParam.freeze();
 module.exports.BlessingPattern = (vdl.registry.lookupOrCreateConstructor(_typeBlessingPattern));
 module.exports.Caveat = (vdl.registry.lookupOrCreateConstructor(_typeCaveat));
 module.exports.CaveatDescriptor = (vdl.registry.lookupOrCreateConstructor(_typeCaveatDescriptor));
@@ -142,7 +142,7 @@ module.exports.WireBlessings = (vdl.registry.lookupOrCreateConstructor(_typeWire
 module.exports.WireDischarge = (vdl.registry.lookupOrCreateConstructor(_typeWireDischarge));
 module.exports.nonce = (vdl.registry.lookupOrCreateConstructor(_typenonce));
 module.exports.publicKeyDischarge = (vdl.registry.lookupOrCreateConstructor(_typepublicKeyDischarge));
-module.exports.publicKeyThirdPartyCaveat = (vdl.registry.lookupOrCreateConstructor(_typepublicKeyThirdPartyCaveat));
+module.exports.publicKeyThirdPartyCaveatParam = (vdl.registry.lookupOrCreateConstructor(_typepublicKeyThirdPartyCaveatParam));
 
 
 
@@ -171,7 +171,7 @@ module.exports.publicKeyThirdPartyCaveat = (vdl.registry.lookupOrCreateConstruct
   'paramType': vdl.types.BOOL,
 }, true), _typeCaveatDescriptor);
 
-  module.exports.ExpiryCaveatX = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeCaveatDescriptor))({
+  module.exports.ExpiryCaveat = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeCaveatDescriptor))({
   'id': new Uint8Array([
 166,
 76,
@@ -193,7 +193,7 @@ module.exports.publicKeyThirdPartyCaveat = (vdl.registry.lookupOrCreateConstruct
   'paramType': new time.Time()._type,
 }, true), _typeCaveatDescriptor);
 
-  module.exports.MethodCaveatX = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeCaveatDescriptor))({
+  module.exports.MethodCaveat = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeCaveatDescriptor))({
   'id': new Uint8Array([
 84,
 166,
@@ -215,7 +215,7 @@ module.exports.publicKeyThirdPartyCaveat = (vdl.registry.lookupOrCreateConstruct
   'paramType': _type3,
 }, true), _typeCaveatDescriptor);
 
-  module.exports.PublicKeyThirdPartyCaveatX = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeCaveatDescriptor))({
+  module.exports.PublicKeyThirdPartyCaveat = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeCaveatDescriptor))({
   'id': new Uint8Array([
 121,
 114,
@@ -234,7 +234,7 @@ module.exports.publicKeyThirdPartyCaveat = (vdl.registry.lookupOrCreateConstruct
 128,
 0,
 ]),
-  'paramType': _typepublicKeyThirdPartyCaveat,
+  'paramType': _typepublicKeyThirdPartyCaveatParam,
 }, true), _typeCaveatDescriptor);
 
   module.exports.PeerBlessingsCaveat = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeCaveatDescriptor))({

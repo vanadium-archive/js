@@ -12,9 +12,9 @@ module.exports = {
 function registerDefaultCaveats(registry) {
   registry.register(vdlSecurity.ConstCaveat,
     constCaveatValidator);
-  registry.register(vdlSecurity.ExpiryCaveatX,
+  registry.register(vdlSecurity.ExpiryCaveat,
     expiryCaveatValidator);
-  registry.register(vdlSecurity.MethodCaveatX,
+  registry.register(vdlSecurity.MethodCaveat,
     methodCaveatValidator);
 }
 
