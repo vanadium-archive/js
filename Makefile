@@ -284,13 +284,13 @@ serve-docs: docs
 
 .PHONY: docs-template serve-docs
 
-# Builds the jsdoc and then deploys it to https://staging.jsdoc.v.io
-staging-docs: docs
-	gsutil -m rsync -d -r ./docs gs://jsdoc.staging.v.io
-# Builds the jsdoc and then deploys it to https://staging.v.io
-production-docs: docs
-	gsutil -m rsync -d -r ./docs gs://jsdoc.v.io
-.PHONY: staging-docs production-docs
+.PHONY: deploy-docs-production
+deploy-docs-production: docs
+	make -C $(V23_ROOT)/infrastructure/deploy jsdoc-production
+
+.PHONY: deploy-docs-staging
+deploy-docs-staging: docs
+	make -C $(V23_ROOT)/infrastructure/deploy jsdoc-staging
 
 node_modules: package.json  check-that-npm-is-in-path
 ifndef NONPMUPDATE
