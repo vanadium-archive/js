@@ -144,7 +144,7 @@ Controller.prototype.blessingsDebugString = function(ctx, serverCall, handle) {
 };
     
       
-Controller.prototype.bless = function(ctx, serverCall, publicKey, blessingHandle, extension, caveat) {
+Controller.prototype.bless = function(ctx, serverCall, publicKey, handle, extension, caveat) {
   throw new Error('Method Bless not implemented');
 };
     
@@ -154,12 +154,12 @@ Controller.prototype.blessSelf = function(ctx, serverCall, name, caveats) {
 };
     
       
-Controller.prototype.putToBlessingStore = function(ctx, serverCall, blessingHandle, pattern) {
+Controller.prototype.putToBlessingStore = function(ctx, serverCall, handle, pattern) {
   throw new Error('Method PutToBlessingStore not implemented');
 };
     
       
-Controller.prototype.addToRoots = function(ctx, serverCall, blessingHandle) {
+Controller.prototype.addToRoots = function(ctx, serverCall, handle) {
   throw new Error('Method AddToRoots not implemented');
 };
     
@@ -313,7 +313,7 @@ Controller.prototype._serviceDescription = {
       type: vdl.types.STRING
     },
     {
-      name: 'blessingHandle',
+      name: 'handle',
       doc: "",
       type: new principal.BlessingsHandle()._type
     },
@@ -329,12 +329,12 @@ Controller.prototype._serviceDescription = {
     },
     ],
     outArgs: [{
-      name: '',
+      name: 'publicKeyOut',
       doc: "",
       type: vdl.types.STRING
     },
     {
-      name: '',
+      name: 'handleOut',
       doc: "",
       type: new principal.BlessingsHandle()._type
     },
@@ -360,12 +360,12 @@ Controller.prototype._serviceDescription = {
     },
     ],
     outArgs: [{
-      name: '',
+      name: 'publicKeyOut',
       doc: "",
       type: vdl.types.STRING
     },
     {
-      name: '',
+      name: 'handleOut',
       doc: "",
       type: new principal.BlessingsHandle()._type
     },
@@ -380,7 +380,7 @@ Controller.prototype._serviceDescription = {
     name: 'PutToBlessingStore',
     doc: "// PutToBlessingStore puts the specified blessing to the blessing store under the provided pattern.",
     inArgs: [{
-      name: 'blessingHandle',
+      name: 'handle',
       doc: "",
       type: new principal.BlessingsHandle()._type
     },
@@ -406,7 +406,7 @@ Controller.prototype._serviceDescription = {
     name: 'AddToRoots',
     doc: "// AddToRoots adds the provided blessing as a root.",
     inArgs: [{
-      name: 'blessingHandle',
+      name: 'handle',
       doc: "",
       type: new principal.BlessingsHandle()._type
     },
