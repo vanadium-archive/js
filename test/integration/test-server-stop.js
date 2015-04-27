@@ -54,10 +54,6 @@ test('Test stopping a JS service - ' +
   });
 });
 
-// TODO(jasoncampbell): At the time this was written the callback case
-// triggered some hard to trackdown error cases, come back and fix it after
-// the tests get ported: https://paste.googleplex.com/5916393484582912
-// TODO(aghassemi) Look into this.
 test('Test re-serving a stopped JS service - ' +
   'server.stop(callback), runtime.serve(callback)', function(assert) {
   serve(name, dispatcher, function(err, res) {

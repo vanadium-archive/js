@@ -39,8 +39,6 @@ type ErrorThrowerClientMethods interface {
 	ThrowGoError(*context.T, ...rpc.CallOpt) error
 	// Throws custom error created by using Standard
 	ThrowCustomStandardError(*context.T, ...rpc.CallOpt) error
-	// Lists all errors Ids available in v23/verror
-	ListAllBuiltInErrorIds(*context.T, ...rpc.CallOpt) ([]string, error)
 }
 
 // ErrorThrowerClientStub adds universal methods to ErrorThrowerClientMethods.
@@ -108,11 +106,6 @@ func (c implErrorThrowerClientStub) ThrowCustomStandardError(ctx *context.T, opt
 	return
 }
 
-func (c implErrorThrowerClientStub) ListAllBuiltInErrorIds(ctx *context.T, opts ...rpc.CallOpt) (o0 []string, err error) {
-	err = v23.GetClient(ctx).Call(ctx, c.name, "ListAllBuiltInErrorIds", nil, []interface{}{&o0}, opts...)
-	return
-}
-
 // ErrorThrowerServerMethods is the interface a server writer
 // implements for ErrorThrower.
 //
@@ -138,8 +131,6 @@ type ErrorThrowerServerMethods interface {
 	ThrowGoError(*context.T, rpc.ServerCall) error
 	// Throws custom error created by using Standard
 	ThrowCustomStandardError(*context.T, rpc.ServerCall) error
-	// Lists all errors Ids available in v23/verror
-	ListAllBuiltInErrorIds(*context.T, rpc.ServerCall) ([]string, error)
 }
 
 // ErrorThrowerServerStubMethods is the server interface containing
@@ -217,10 +208,6 @@ func (s implErrorThrowerServerStub) ThrowCustomStandardError(ctx *context.T, cal
 	return s.impl.ThrowCustomStandardError(ctx, call)
 }
 
-func (s implErrorThrowerServerStub) ListAllBuiltInErrorIds(ctx *context.T, call rpc.ServerCall) ([]string, error) {
-	return s.impl.ListAllBuiltInErrorIds(ctx, call)
-}
-
 func (s implErrorThrowerServerStub) Globber() *rpc.GlobState {
 	return s.gs
 }
@@ -277,13 +264,6 @@ var descErrorThrower = rpc.InterfaceDesc{
 		{
 			Name: "ThrowCustomStandardError",
 			Doc:  "// Throws custom error created by using Standard",
-		},
-		{
-			Name: "ListAllBuiltInErrorIds",
-			Doc:  "// Lists all errors Ids available in v23/verror",
-			OutArgs: []rpc.ArgDesc{
-				{"", ``}, // []string
-			},
 		},
 	},
 }

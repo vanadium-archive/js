@@ -61,12 +61,3 @@ var customError = verror.Register(pkgPath+".customError", verror.NoRetry, "{1:}{
 func (e *errorThrowerImpl) ThrowCustomStandardError(ctx *context.T, _ rpc.ServerCall) error {
 	return verror.New(customError, ctx)
 }
-
-func (e *errorThrowerImpl) ListAllBuiltInErrorIds(*context.T, rpc.ServerCall) ([]string, error) {
-	// TODO(aghassemi) Use when we have enum for error IDs in IDL
-	// This is not used yet but the idea is to pass all error types in v23/verror to
-	// JavaScript so if a new one is added, this test would break and we add the new one to
-	// JavaScript as well. There is no way to enumerate all error IDs right now since they
-	// are constants and not an Enum. Enum support is coming later.
-	return nil, nil
-}
