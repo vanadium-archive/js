@@ -61,16 +61,73 @@ function deepUnwrapParamList(paramList) {
   });
 }
 
-var unknownError = (new verror.UnknownError(null));
 test('var struct = ec.fromNativeValue(err)', function(assert) {
   var err = new Error(message);
-  var struct = ec.fromNativeValue(err, 'app', 'call');
-  struct.paramList = deepUnwrapParamList(struct.paramList);
+
+  // Add properties that NodeJS errors commonly have.
+  Object.defineProperties(err, {
+    arguments: {
+      value: undefined,
+      writable: true,
+      enumerable: false,
+      configurable: true
+    },
+    type: {
+      value: undefined,
+      writable: true,
+      enumerable: false,
+      configurable: true
+    },
+    errno: {
+      value: 34,
+      writable: true,
+      enumerable: true,
+      configurable: true
+    },
+    code: {
+      value: 'ENOENT',
+      writable: true,
+      enumerable: true,
+      configurable: true
+    },
+    path: {
+      value: '',
+      writable: true,
+      enumerable: true,
+      configurable: true
+    }
+  });
+
+  var verr = ec.fromNativeValue(err, 'app', 'call');
+  verr.paramList = deepUnwrapParamList(verr.paramList);
+
+  // Check that verr has the correct enumerable properties.
   var expectedError = new verror.UnknownError(null);
-  expectedError.message = message;
-  expectedError.msg = message;
-  expectedError.paramList = ['app', 'call', message];
-  assert.deepEqual(struct, expectedError);
+  expectedError.message = err.message;
+  expectedError.msg = err.message;
+  expectedError.paramList = ['app', 'call', err.message];
+  assert.deepEqual(verr, expectedError);
+
+  // Check that verr has the same properties (including non-enumerable
+  // properties) as the native error.
+  Object.getOwnPropertyNames(err).forEach(function(propName) {
+    assert.ok(verr.hasOwnProperty(propName), 'verror has expected property');
+    if (propName !== 'stack') {
+      // err.stack is a getter that returns different strings based on the
+      // error value, so we cannot check equality.
+      assert.equals(verr[propName], err[propName],
+                    'property matches original error');
+    }
+  });
+
+  // Check that 'code' and 'errno' properties are preserved from original
+  // error, and are not enumerable.
+  (['code', 'errno']).forEach(function(prop) {
+    assert.equal(verr[prop], err[prop], 'has the correct value for ' + prop );
+    assert.equal(Object.getOwnPropertyDescriptor(verr, 'code').enumerable,
+                 false, 'property ' + prop + ' is not enumerable');
+  });
+
   assert.end();
 });
 
@@ -99,6 +156,7 @@ test('var struct = ec.fromNativeValue(string)', function(assert) {
 });
 
 test('Error => Struct => Error', function(assert) {
+  var unknownError = new verror.UnknownError(null);
   var message = 'testing JS error conversion';
   var original = new Error(message);
   var struct = ec.fromNativeValue(original);

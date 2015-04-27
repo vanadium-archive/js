@@ -143,7 +143,18 @@ function fromNativeValue(err, appName, operation) {
   var errID = err.id || unknown.id;
   var errRetryCode = err.retryCode || unknown.retryCode;
 
+  var errProps = {};
   if (err instanceof Error) {
+    Object.getOwnPropertyNames(err).forEach(function(propName) {
+      if (propName === 'message') {
+        // Skip 'message' field since we set that ourselves to be enumerable.
+        return;
+      }
+      errProps[propName] = Object.getOwnPropertyDescriptor(err, propName);
+      // Set the property to non-enumerable.
+      errProps[propName].enumerable = false;
+    });
+
     message = err.message;
 
     paramList = ['app', 'call', message];
@@ -169,12 +180,17 @@ function fromNativeValue(err, appName, operation) {
   var EConstructor = errorMap[errID] || verror.UnknownError;
   var e = new EConstructor(args);
 
-  // Fill the remaining error parameters. By using new on an Error, we will have
-  // a stack trace. Add the correct id, retryCode, message, etc.
+  // Add properties from original error.
+  Object.defineProperties(e, errProps);
+
+  // Add verror fields.
   e.id = errID;
   e.retryCode = errRetryCode;
   e.resetArgs.apply(e, paramList);
+
+  // Add message and msg so that they will be enumerable.
   e.message = message;
   e.msg = message;
+
   return e;
 }
