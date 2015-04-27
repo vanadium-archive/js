@@ -138,6 +138,6 @@ function uniqueTypeStr(t, seen) {
       });
       return s + '}';
     default:
-      return s + kind.kindStr(t.kind);
+      return s + t.kind;
   }
 }

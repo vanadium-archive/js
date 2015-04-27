@@ -1040,7 +1040,7 @@ test('canonicalize type - basic functionality', function(t) {
     t.equal(output2Str, expectedStr, name + ' - idempotent');
 
     // Post-canonicalization, the type is still a TypeObject.
-    t.deepEqual(output._type, types.TYPEOBJECT, name + ' - is TypeObject');
+    t.deepEqual(output._type, types.TYPEOBJECT, name + ' - type is TypeObject');
   }
   t.end();
 });

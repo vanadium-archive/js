@@ -31,7 +31,7 @@ Registry.prototype._getBuiltinTypes = function() {
   // constructor for those structs should be Type.
   Object.keys(kind).forEach(function(key) {
     var k = kind[key];
-    if (typeof k === 'number') {
+    if (typeof k === 'string') {
       var typeOfType = typeObjectFromKind(k);
       map.set(typeOfType, Type);
     }

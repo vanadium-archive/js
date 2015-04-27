@@ -11,7 +11,7 @@ var kind = require('./kind.js');
 var Type = require('./type.js');
 var types = require('./types.js');
 
-module.exports = typeObjectFromkind;
+module.exports = typeObjectFromKind;
 
 // All Types below are constructed with 'isValidated' set to true. This avoids a
 // cyclic dependency with canonicalize.js and type.js.
@@ -21,7 +21,7 @@ var _primitiveTypeObject = new Type({
   fields: [
     {
       name: 'Kind',
-      type: types.UINT32
+      type: types.STRING
     },
     {
       name: 'Name',
@@ -36,7 +36,7 @@ var _optionalTypeObject = new Type({
   fields: [
     {
       name: 'Kind',
-      type: types.UINT32
+      type: types.STRING
     },
     {
       name: 'Name',
@@ -55,7 +55,7 @@ var _enumTypeObject = new Type({
   fields: [
     {
       name: 'Kind',
-      type: types.UINT32
+      type: types.STRING
     },
     {
       name: 'Name',
@@ -77,7 +77,7 @@ var _listTypeObject = new Type({
   fields: [
     {
       name: 'Kind',
-      type: types.UINT32
+      type: types.STRING
     },
     {
       name: 'Name',
@@ -96,7 +96,7 @@ var _arrayTypeObject = new Type({
   fields: [
     {
       name: 'Kind',
-      type: types.UINT32
+      type: types.STRING
     },
     {
       name: 'Name',
@@ -119,7 +119,7 @@ var _setTypeObject = new Type({
   fields: [
     {
       name: 'Kind',
-      type: types.UINT32
+      type: types.STRING
     },
     {
       name: 'Name',
@@ -138,7 +138,7 @@ var _mapTypeObject = new Type({
   fields: [
     {
       name: 'Kind',
-      type: types.UINT32
+      type: types.STRING
     },
     {
       name: 'Name',
@@ -161,7 +161,7 @@ var _structTypeObject = new Type({
   fields: [
     {
       name: 'Kind',
-      type: types.UINT32
+      type: types.STRING
     },
     {
       name: 'Name',
@@ -195,7 +195,7 @@ var _unionTypeObject = new Type({
   fields: [
     {
       name: 'Kind',
-      type: types.UINT32
+      type: types.STRING
     },
     {
       name: 'Name',
@@ -229,7 +229,7 @@ var _unionTypeObject = new Type({
  * @param {kind} k The kind.
  * @return {TypeObject} The corresponding type object.
  */
-function typeObjectFromkind(k) {
+function typeObjectFromKind(k) {
   switch (k) {
     case kind.BOOL:
     case kind.BYTE:
