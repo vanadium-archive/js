@@ -34,7 +34,8 @@ var NoTagsError = makeError(
  * @name permissionsAuthorizer
  * @param {module:vanadium.security.access.Permissions} perms The set of
  * permission to apply.
- * @param {function} type The type of tags that this authorizer understands.
+ * @param {function} type The type constructor function of tags that this
+ * authorizer understands.
  * @return {module:vanadium.security.Authorize} An authorizer that applies
  * the perms.
  */
