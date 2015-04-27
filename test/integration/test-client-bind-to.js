@@ -97,7 +97,9 @@ test('Test binding when proxy Url is invalid - ' +
   vanadium.init({ wspr: 'http://bad-address.tld' }, onruntime);
 
   function onruntime(err, runtime) {
-    assert.ok(err instanceof Error);
+    assert.ok(err instanceof Error, 'returns an error');
+    assert.ok(err.message.indexOf('Failed to connect') >= 0,
+              'error is connection error');
     assert.end();
   }
 });
@@ -114,7 +116,9 @@ test('Test binding when wspr Url is invalid - ' +
     assert.error('should not have succeeded');
     assert.end();
   }, function(err) {
-    assert.ok(err instanceof Error);
+    assert.ok(err instanceof Error, 'returns an error');
+    assert.ok(err.message.indexOf('Failed to connect') >= 0,
+              'error is connection error');
     assert.end();
   });
 });

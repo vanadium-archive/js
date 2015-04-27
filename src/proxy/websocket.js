@@ -7,12 +7,13 @@
  * @fileoverview WebSocket client implementation
  */
 
-var WebSocket = require('ws');
-var Deferred = require('./../lib/deferred');
-var vlog = require('./../lib/vlog');
-var Proxy = require('./index');
 var isBrowser = require('is-browser');
+var WebSocket = require('ws');
+
 var byteUtil = require('../vdl/byte-util');
+var Deferred = require('./../lib/deferred');
+var Proxy = require('./index');
+var vlog = require('./../lib/vlog');
 var vom = require('../vom');
 
 /**
@@ -75,13 +76,11 @@ ProxyConnection.prototype.getWebSocket = function() {
     // TODO(jasoncampbell): there can be more errors than just failed
     // connection, additionally there can be more than one error emitted. We
     // should take care to cover these cases.
-    // TODO(nlacasse): Add tests that check for this error when bad wspr url is
-    // provided.
-    var error = new Error('Failed to connect to wspr at url ' + self.url +
-        ': ' + e.message);
+    e.message = 'Failed to connect to wspr at url ' + self.url +
+        ': ' + e.message;
 
-    vlog.logger.error(error);
-    deferred.reject(error);
+    vlog.logger.error(e);
+    deferred.reject(e);
   };
 
   websocket.onmessage = function(frame) {
