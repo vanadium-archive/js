@@ -42,7 +42,7 @@ var JsBlessings =
   require('../gen-vdl/v.io/x/ref/services/wspr/internal/principal').JsBlessings;
 var WireBlessings =
   require('../gen-vdl/v.io/v23/security').WireBlessings;
-
+var SharedContextKeys = require('../runtime/shared-context-keys');
 
 /**
  * A router that handles routing incoming requests to the right
@@ -112,11 +112,14 @@ Router.prototype.handleAuthorizationRequest = function(messageId, request) {
     this._proxy.sendRequest(data, Outgoing.AUTHORIZATION_RESPONSE,
         null, messageId);
   }
+
+  var ctx = this._rootCtx.withValue(SharedContextKeys.LANG_KEY,
+                                    request.context.language);
   var server = this._servers[request.serverId];
   if (!server) {
     var data = JSON.stringify({
       // TODO(bjornick): Use the real context
-      err: new verror.ExistsError(this._rootCtx, 'unknown server')
+      err: new verror.ExistsError(ctx, 'unknown server')
     });
     this._proxy.sendRequest(data, Outgoing.AUTHORIZATION_RESPONSE,
         null, messageId);
@@ -124,7 +127,7 @@ Router.prototype.handleAuthorizationRequest = function(messageId, request) {
   }
   var router = this;
   var call = new SecurityCall(request.call, this._controller);
-  var ctx = this._rootCtx;
+
   server.handleAuthorization(request.handle, ctx, call).then(function() {
     router._proxy.sendRequest('{}', Outgoing.AUTHORIZATION_RESPONSE, null,
         messageId);
@@ -167,7 +170,8 @@ Router.prototype._validateChain = function(ctx, call, cavs) {
 Router.prototype.handleCaveatValidationRequest = function(messageId, request) {
   var resultPromises = new Array(request.cavs.length);
   var call = new SecurityCall(request.call);
-  var ctx = this._rootCtx;
+  var ctx = this._rootCtx.withValue(SharedContextKeys.LANG_KEY,
+                                    request.context.language);
   for (var i = 0; i < request.cavs.length; i++) {
     resultPromises[i] = this._validateChain(ctx, call, request.cavs[i]);
   }
@@ -303,6 +307,8 @@ Router.prototype.handleRPCRequest = function(messageId, vdlRequest) {
   } else {
     ctx = ctx.withCancel();
   }
+  ctx = ctx.withValue(SharedContextKeys.LANG_KEY,
+                      request.call.context.language);
   // Plumb through the vtrace ids
   var suffix = request.call.securityCall.suffix;
   var spanName = '<jsserver>"'+suffix+'".'+request.method;

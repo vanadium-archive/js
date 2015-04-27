@@ -44,7 +44,6 @@ var vtrace = require('../vtrace');
 var Blessings = require('../security/blessings');
 var JsBlessings =
   require('../gen-vdl/v.io/x/ref/services/wspr/internal/principal').JsBlessings;
-var SharedContextKeys = require('../runtime/shared-context-keys');
 
 
 var OutstandingRPC = function(ctx, options, cb) {
@@ -280,6 +279,7 @@ OutstandingRPC.prototype.constructMessage = function() {
     timeout.noDeadline = true;
   }
 
+  var language = this._ctx.value(SharedContextKeys.LANG_KEY) || '';
   var jsonMessage = {
     name: this._name,
     method: this._methodName,
@@ -289,7 +289,10 @@ OutstandingRPC.prototype.constructMessage = function() {
     isStreaming: this._isStreaming,
     traceRequest: vtrace.request(this._ctx),
     deadline: timeout,
-    callOptions: this._callOptions
+    callOptions: this._callOptions,
+    context: {
+      language: language,
+    }
   };
 
   var header = new RpcRequest(jsonMessage);
