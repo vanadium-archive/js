@@ -7,8 +7,6 @@
  * @private
  */
 
-var kindCount = 0;
-
 /**
  * @summary Namespace of constants for VDL kinds.
  * @description Namespace of constants for VDL kinds.
@@ -20,113 +18,98 @@ var kind = {
   /**
    * @const
    */
-  ANY: kindCount++,
+  ANY: 'any',
   /**
    * @const
    */
-  OPTIONAL: kindCount++,
+  OPTIONAL: 'optional',
   // Scalar kinds
   /**
    * @const
    */
-  BOOL: kindCount++,
+  BOOL: 'bool',
   /**
    * @const
    */
-  BYTE: kindCount++,
+  BYTE: 'byte',
   /**
    * @const
    */
-  UINT16: kindCount++,
+  UINT16: 'uint16',
   /**
    * @const
    */
-  UINT32: kindCount++,
+  UINT32: 'uint32',
   /**
    * @const
    */
-  UINT64: kindCount++,
+  UINT64: 'uint64',
   /**
    * @const
    */
-  INT16: kindCount++,
+  INT16: 'int16',
   /**
    * @const
    */
-  INT32: kindCount++,
+  INT32: 'int32',
   /**
    * @const
    */
-  INT64: kindCount++,
+  INT64: 'int64',
   /**
    * @const
    */
-  FLOAT32: kindCount++,
+  FLOAT32: 'float32',
   /**
    * @const
    */
-  FLOAT64: kindCount++,
+  FLOAT64: 'float64',
   /**
    * @const
    */
-  COMPLEX64: kindCount++,
+  COMPLEX64: 'complex64',
   /**
    * @const
    */
-  COMPLEX128: kindCount++,
+  COMPLEX128: 'complex128',
   /**
    * @const
    */
-  STRING: kindCount++,
+  STRING: 'string',
   /**
    * @const
    */
-  ENUM: kindCount++,
+  ENUM: 'enum',
   /**
    * @const
    */
-  TYPEOBJECT: kindCount++,
+  TYPEOBJECT: 'typeobject',
   // Composite kinds
   /**
    * @const
    */
-  ARRAY: kindCount++,
+  ARRAY: 'array',
   /**
    * @const
    */
-  LIST: kindCount++,
+  LIST: 'list',
   /**
    * @const
    */
-  SET: kindCount++,
+  SET: 'set',
   /**
    * @const
    */
-  MAP: kindCount++,
+  MAP: 'map',
   /**
    * @const
    */
-  STRUCT: kindCount++,
+  STRUCT: 'struct',
   /**
    * Union is like struct, but with only 1 field filled in.
    * @const
    */
-  UNION: kindCount++,
-};
-
-/**
- * Returns the human-readable name for a kind.
- * @param {module:vanadium.vdl.kind} k The kind to print out.
- * @return {string} Human-readable name for the kind.
- */
-kind.kindStr = function(k) {
-  var kindKeys = Object.keys(kind).filter(function(key) {
-    return kind[key] === k;
-  });
-  if (kindKeys.length !== 1) {
-    throw new TypeError('kind: ' + k + ' is not a known kind');
-  }
-  return kindKeys[0].toLowerCase(); // There should only be 1 result.
+  UNION: 'union',
 };
 
 module.exports = kind;

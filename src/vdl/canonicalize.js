@@ -33,7 +33,7 @@ var overflow = require('./overflow.js');
 var util = require('./util.js');
 var stringify = require('./stringify.js');
 var typeCompatible = require('./type-compatible.js');
-var typeObjectFromkind = require('./type-object-from-kind.js');
+var typeObjectFromKind = require('./type-object-from-kind.js');
 var nativeTypeRegistry = require('./native-type-registry');
 require('./es6-shim');
 
@@ -654,13 +654,13 @@ function canonicalizeType(type, seen) {
   if (!type.hasOwnProperty('kind')) {
     throw new TypeError('kind not specified');
   }
-  if (typeof type.kind !== 'number') {
+  if (typeof type.kind !== 'string') {
     throw new TypeError('kind expected to be a number. Got ' + type.kind);
   }
 
   // The Type for each kind has its own Type Object.
   // Verify deeply that the given type is in the correct form.
-  var typeOfType = typeObjectFromkind(type.kind);
+  var typeOfType = typeObjectFromKind(type.kind);
 
   // If the type has a field that is not relevant to its kind, then throw.
   Object.keys(type).forEach(function(key) {
