@@ -42,6 +42,7 @@ Blessings.prototype.retain = function() {
 /**
  * Decrements the reference count on the Blessings.  When the reference count
  * goes to zero, the Blessings will be removed from the cache in the go code.
+ * @param {module:vanadium.context.Context} ctx A context.
  */
 Blessings.prototype.release = function(ctx) {
   this._count--;

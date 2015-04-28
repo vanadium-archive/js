@@ -15,8 +15,8 @@
  /**
   * A callback that is called with either an error or a
   * [Blessings]{@link module:vanadium.security~Blessings} object.
-  * @callback module:vanadium.security.BlessingStore~blessingsCb
-  * @param {Error} err If set, the error that occured
+  * @callback module:vanadium.security~BlessingStore~blessingsCb
+  * @param {Error} err If set, the error that occurred.
   * @param {module:vanadium.security~Blessings} blessings The blessings result.
   */
  /**
@@ -40,9 +40,9 @@
   * @param {module:vanadium.context.Context} ctx The context.
   * @param {module:vanadium.security~Blessings} blessings The blessings object.
   * @param {string} pattern The blessing match pattern.
-  * @param {module:vanadium.security.BlessingStore~blessingsCb} cb an optional
+  * @param {module:vanadium.security~BlessingStore~blessingsCb} cb an optional
   * callback that will return the blessing handle.
-  * @return {Promise<module:vanadium.security~Blessings>} a promise that will
+  * @return {Promise<module:vanadium.security~Blessings>} A promise that will
   * be resolved with the blessing handle.
   */
  BlessingStore.prototype.set = function(

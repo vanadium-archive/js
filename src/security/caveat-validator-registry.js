@@ -58,13 +58,11 @@ CaveatValidatorRegistry.prototype._makeKey = function(bytes) {
  */
 
 /**
- * Register a caveat validation function
+ * Register a caveat validation function.
  * @param {module:vanadium.security.CaveatDescriptor} cavDesc The caveat
  * description.
- * See security/types.vdl
  * @param {module:vanadium.security.CaveatValidationFunction} validateFn
  * The validation function.
- * e.g. function validateCaveatA(param) { ...
  */
 CaveatValidatorRegistry.prototype.register = function(cavDesc, validateFn) {
   this.validators.set(
@@ -94,7 +92,7 @@ CaveatValidatorRegistry.prototype.validate =
 };
 
 /**
- * CaveatValidator is a helper object representating a specific caveat
+ * CaveatValidator is a helper object representing a specific caveat
  * description and function pair.
  * @private
  */

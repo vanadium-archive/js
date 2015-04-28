@@ -47,11 +47,12 @@
  * <p>These tags are meant to add a layer of interposition between the set of users
  * (blessings, specifically) and the set of methods, much like "Roles" do in
  * [Role Based Access Control]{@link (http://en.wikipedia.org/wiki/Role-based_access_control)}.
- * @property {map} val An ES6 map of string tags to
- * [AccessList]{@link module:vanadium.security.access.AccessList}
+ * @property {map} permissions An ES6 map of string tags to
+ * [AccessList]{@link module:vanadium.security.access.AccessList}.
  * @name Permissions
  * @constructor
- * @param {map} permissions An ES6 Map of string tags to AccessLists
+ * @param {map} permissions An ES6 Map of string tags to
+ * [AccessList]{@link module:vanadium.security.access.AccessList}.
  * @memberof module:vanadium.security.access
  */
 /*jshint ignore:end*/
@@ -61,7 +62,7 @@
  * [Permissions]{@link module:vanadium.security.access.Permissions}.
  * @name Tag
  * @constructor
- * @param {string} val The value of the tag
+ * @param {string} val The value of the tag.
  * @memberof module:vanadium.security.access
  */
 /**
@@ -72,13 +73,13 @@
  * @memberof module:vanadium.security.access
  */
 /**
- * Used for operations that return debugging information about the object
+ * Used for operations that return debugging information about the object.
  * @name Debug
  * @type module:vanadium.security.access.Tag
  * @memberof module:vanadium.security.access
  */
 /**
- * Used for operations that do not mutate the state of the object
+ * Used for operations that do not mutate the state of the object.
  * @name Read
  * @type module:vanadium.security.access.Tag
  * @memberof module:vanadium.security.access
@@ -90,7 +91,7 @@
  * @memberof module:vanadium.security.access
  */
 /**
- * Used for operations that involve namespace navigation
+ * Used for operations that involve namespace navigation.
  * @name Resolve
  * @type module:vanadium.security.access.Tag
  * @memberof module:vanadium.security.access
@@ -114,26 +115,25 @@
  * @constructor
  * @param {module:vanadium.context.Context} ctx The context the error was
  * created in.
- * @param {array} validBlessings A list of strings that represent valid
- * blessings
- * @param {array} rejectedBlessings A list of blessings that are rejected.
- * The array has [RejectedBlessings]
- * {@link module:vanadium.security.RejectedBlessings}.
+ * @param {string[]} validBlessings A list of strings that represent valid
+ * blessings.
+ * @param {module:vanadium.security.RejectedBlessing[]} rejectedBlessings A
+ * list of blessings that are rejected.
  * @param {...*} params A list of parameters to include in the error message.
  * @augments module:vanadium.verror.VanadiumError
  */
 /**
  * @summary Error that means that no blessings have access to the specified
- * access tag (e.g. No Read Access or No Admin Access)
+ * access tag (e.g. No Read Access or No Admin Access).
  * @name NoPermissionsError
  * @memberof module:vanadium.security.access
  * @constructor
  * @param {module:vanadium.context.Context} ctx The context the error was
  * created in.
- * @param {array} validBlessings A list of strings that represent valid
- * blessings
- * @param {array} rejectedBlessings A list of blessings that are rejected.
- * The array has [RejectedBlessings]
+ * @param {string[]} validBlessings A list of strings that represent valid
+ * blessings.
+ * @param {module:vanadium.security.RejectedBlessing[]} rejectedBlessings A list
+ * of blessings that are rejected.
  * @param {module:vanadium.security.access.Tag} tag Access tag.
  * {@link module:vanadium.security.RejectedBlessings}.
  * @param {...*} params A list of parameters to include in the error message.

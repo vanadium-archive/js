@@ -21,8 +21,8 @@
  *
  * @name BlessingPattern
  * @constructor
- * @property {string} val The blessing pattern
- * @param {string} pattern The pattern
+ * @property {string} val The blessing pattern.
+ * @param {string} pattern The pattern.
  * @memberof module:vanadium.security
  */
 /**
@@ -31,14 +31,14 @@
  * validation function.
  * @name CaveatDescriptor
  * @memberof module:vanadium.security
- * @property {module:vanadium.uniqueId.Id.Id} id The uniqe id for the caveat
- * validation function
+ * @property {module:vanadium.uniqueId.Id} id The unique id for the caveat
+ * validation function.
  * @property {module:vanadium.vdl.Type} paramType The type of
  * the data that will be passed into the function.
  * @constructor
- * @param {object} descriptor The descriptor
- * @param {module:vanadium.uniqueId.Id.Id} descriptor.id The unique id for the
- * caveat validation funciton
+ * @param {object} descriptor The descriptor.
+ * @param {module:vanadium.uniqueId.Id} descriptor.id The unique id for the
+ * caveat validation function.
  * @param {module:vanadium.vdl.Type} descriptor.paramType The type of
  * the data that will be passed into the function.
  */
@@ -47,13 +47,13 @@
  * @name RejectedBlessing
  * @memberof module:vanadium.security
  * @property {string} blessing The blessing that failed validation.
- * @property {module:vanadium.error.VanadiumError} inValue.err The err that
- * occured
+ * @property {module:vanadium.verror.VanadiumError} inValue.err The err that
+ * occurred.
  * @constructor
  * @param {object} inValue
  * @param {string} inValue.blessing The blessing that failed validation.
- * @param {module:vanadium.error.VanadiumError} inValue.err The err that
- * occured
+ * @param {module:vanadium.verror.VanadiumError} inValue.err The err that
+ * occurred.
  */
 /**
  * Represents a caveat that will always succeed or fail.  The data
@@ -81,23 +81,6 @@
  * @memberof module:vanadium.security
  */
 /**
- * @summary Caveat is a condition on the validity of a blessing/discharge.
- * @description These conditions are provided when asking a principal to create
- * a blessing/discharge and are verified when extracting blessings.
- * @name Caveat
- * @memberof module:vanadium.security
- * @constructor
- * @property {module:vanadium.uniqueId.Id} id The identifier of the caveat
- * caveat validation function
- * @property {uint8array} paramVom The vom encoded bytes of the parameters to
- * be provided to the validation function.
- * @param {object} o The json object to construct the caveat from.
- * @param {module:vanadium.uniqueId.Id} o.id The identifier of the caveat
- * caveat validation function
- * @param {uint8array} o.paramVom The vom encoded bytes of the parameters to
- * be provided to the validation function.
- */
-/**
  * PeerBlessingsCaveat represents a caveat that validates iff the peer being
  * communicated with (local end of the call) has a blessing name matching at
  * least one of the patterns in the list. An empty list implies that the caveat
@@ -108,7 +91,24 @@
  * @memberof module:vanadium.security
  */
 /**
- * @summary An error that means that no caveat has been registered
+ * @summary Caveat is a condition on the validity of a blessing/discharge.
+ * @description These conditions are provided when asking a principal to create
+ * a blessing/discharge and are verified when extracting blessings.
+ * @name Caveat
+ * @memberof module:vanadium.security
+ * @constructor
+ * @property {module:vanadium.uniqueId.Id} id The identifier of the caveat
+ * validation function.
+ * @property {uint8array} paramVom The vom encoded bytes of the parameters to
+ * be provided to the validation function.
+ * @param {object} o The json object to construct the caveat from.
+ * @param {module:vanadium.uniqueId.Id} o.id The identifier of the caveat
+ * validation function.
+ * @param {uint8array} o.paramVom The vom encoded bytes of the parameters to
+ * be provided to the validation function.
+ */
+/**
+ * @summary An error that means that no caveat has been registered.
  * @name CaveatNotRegisteredError
  * @memberof module:vanadium.security
  * @constructor
@@ -140,7 +140,7 @@
  * created in.
  * @param {module:vanadium.uniqueId.Id} id The id of the caveat with the
  * problem.
- * @param {module:vanadium.vdl.Type} got The type passed in
+ * @param {module:vanadium.vdl.Type} got The type passed in.
  * @param {module:vanadium.vdl.Type} want The type passed expected.
  * @param {...*} params A list of parameters to include in the error message.
  * @augments module:vanadium.verror.VanadiumError
@@ -165,7 +165,7 @@
  * @constructor
  * @param {module:vanadium.context.Context} ctx The context the error was
  * created in.
- * @param {module:vanadium.error.VanadiumError} err The error that occured.
+ * @param {module:vanadium.verror.VanadiumError} err The error that occurred.
  * @param {...*} params A list of parameters to include in the error message.
  * @augments module:vanadium.verror.VanadiumError
  */
@@ -190,8 +190,8 @@
  * @constructor
  * @param {module:vanadium.context.Context} ctx The context the error was
  * created in.
- * @param {date} expiry The time the caveat expires
- * @param {date} now The current time
+ * @param {date} expiry The time the caveat expires.
+ * @param {date} now The current time.
  * @param {...*} params A list of parameters to include in the error message.
  * @augments module:vanadium.verror.VanadiumError
  */
@@ -227,16 +227,16 @@
  */
 /**
  * @summary An error that means a remote principal is not authorized by a local
- * principal
+ * principal.
  * @name AuthorizationFailedError
  * @memberof module:vanadium.security
  * @constructor
  * @param {module:vanadium.context.Context} ctx The context the error was
  * created in.
- * @param {array<string>} remoteBlessings Remote blessings
+ * @param {array<string>} remoteBlessings Remote blessings.
  * @param {array<module:vanadium.security.RejectedBlessing>} rejectedBlessings
- * Remote rejected blessing
- * @param {array<string>} localBlessings Local blessings
+ * Remote rejected blessing.
+ * @param {array<string>} localBlessings Local blessings.
  * @param {...*} params A list of parameters to include in the error message.
  * @augments module:vanadium.verror.VanadiumError
  */
@@ -245,17 +245,11 @@
  * @callback Authorize
  * @param {module:vanadium.context.Context} context The context of the
  * rpc.
- * @param {module:vanadium.security.Authorize~callback} cb The callback to
+ * @param {module:vanadium~voidCb} cb The callback to
  * call with the result if the rpc is asynchronous.  This can be ignored
  * if the Authorizer returns a promise.
- * @return {Promise} A Promise that will be resolved if the authorization
+ * @return {Promise<void>} A Promise that will be resolved if the authorization
  * succeeded and rejected if it failed.  If no promise is returned, then
  * the callback must be called.
- * @memberof module:vanadium.security
- */
-/**
- * Callback passed into Authorize
- * @callback Authorize~callback
- * @param {Error} err If set, the reason that the authorization failed.
  * @memberof module:vanadium.security
  */
