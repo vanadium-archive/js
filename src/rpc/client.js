@@ -647,20 +647,52 @@ Client.prototype.remoteBlessings = function(ctx, name, method, cb) {
 };
 
 /**
- * Create a ClientCallOption object.
+ * @summary Create a ClientCallOption object.
  *
- * Client call options can be passed to a service method and are used to
- * configure the RPC call.  They are not passed to the Vanadium RPC service.
+ * @description <p>Client call options can be passed to a service method and
+ * are used to configure the RPC call.  They are not passed to the Vanadium RPC
+ * service.</p>
  *
- * Currently the only supported key is 'allowedServersPolicy'.
+ * <p>Supported keys are 'allowedServersPolicy' and 'granter'.</p>
  *
+ * <p>Example of allowedServersPolicy option:</p>
+ * <pre>
+ * var callOpt = client.callOption({
+ *   allowedServersPolicy: ['alice/home/tv']
+ * });
+ * service.get(ctx, 'foo', callOpt, function(err) {
+ *   // err will be non-null if service's blessings do not match
+ *   // ['alice/home/tv'].
+ * });
+ * </pre>
+ *
+ * <p>Example of granter option:</p>
+ * <pre>
+ * var ctx = runtime.getContext();
+ * var granter = function(ctx, call, callback) {
+ *   // Bless the server's public key with the extension 'ext' and 5 second
+ *   // expiration caveat.
+ *   var expCaveat = caveats.createExpiryCaveat(new Date(Date.now() + 5000));
+ *   runtime.principal.bless(ctx, call.remoteBlessings.publicKey,
+ *       call.localBlessings, 'ext', expCaveat, callback);
+ * };
+ *
+ * var callOpt = client.callOption({
+ *   granter: granter
+ * });
+ *
+ * // Make a call on to the service.  Server will be granted blessing.
+ * service.get(ctx, 'foo', callOpt, cb);
+ * </pre>
  * @param {object} opts Map of call options.
- * @param {string[]} opts.allowedServersPolicy Array of blessing patterns that
- * the allowed server must match in order for the RPC to be initiated.
+ * @param {string[]} opts.allowedServersPolicy <p>Array of blessing patterns
+ * that the allowed server must match in order for the RPC to be initiated.</p>
+ * @param {module:vanadium.security~GranterFunction} opts.granter <p>A granter
+ * function.</p>
  */
 Client.prototype.callOption = function(opts) {
   // TODO(nlacasse): Support other CallOption types.
-  var allowedOptions = ['allowedServersPolicy', 'useGranter'];
+  var allowedOptions = ['allowedServersPolicy', 'granter'];
 
   // Validate opts.
   var keys = Object.keys(opts);
@@ -693,7 +725,7 @@ ClientCallOption.prototype._toRpcCallOption = function(ctx, proxy) {
   var keys = Object.keys(this.opts);
   keys.forEach(function(key) {
     var opt = {};
-    if (key === 'useGranter') {
+    if (key === 'granter') {
       var runtime = ctx.value(SharedContextKeys.RUNTIME);
       var granterRouter = runtime._getGranterRouter();
       var fn = this.opts[key];

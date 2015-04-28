@@ -140,7 +140,7 @@ test('Test bless without Caveat from client (with Granter)', function(t) {
       var fiveSecondsInFuture = new Date(Date.now() + 5000);
       var granterCalled = false;
       var granterOption = client.callOption({
-        useGranter: function(ctx, call, cb) {
+        granter: function(ctx, call, cb) {
           granterCalled = true;
           res.runtime.principal.bless(res.runtime.getContext(),
             call.remoteBlessings.publicKey,
