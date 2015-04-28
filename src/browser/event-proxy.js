@@ -44,6 +44,7 @@ function ExtensionEventProxy(timeout){
     // If not installed, emit ExtensionNotInstalledError.
     if (!isInstalled) {
       proxy.emit('error', new errors.ExtensionNotInstalledError());
+      proxy._extensionNotInstalled = true;
       return;
     }
 
@@ -134,6 +135,11 @@ ExtensionEventProxy.prototype.waitForExtension = function(timeout) {
 // Wrapper around 'send' method that will call callback with error and data when
 // extension responds.
 ExtensionEventProxy.prototype.sendRpc = function(type, data, cb) {
+  if (this._extensionNotInstalled) {
+    cb(new errors.ExtensionNotInstalledError());
+    return;
+  }
+
   function onSuccess(data) {
     removeListeners();
     cb(null, data);
