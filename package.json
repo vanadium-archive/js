@@ -3,7 +3,6 @@
   "description": "Vanadium JavaScript API",
   "version": "0.1.0",
   "main": "./src/vanadium",
-  "private": true,
   "dependencies": {
     "bluebird": "^2.3.2",
     "is-browser": "^2.0.1",
