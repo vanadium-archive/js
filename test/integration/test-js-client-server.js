@@ -10,6 +10,10 @@ var vdl = require('../../src/vdl');
 var builtins = require('../../src/vdl/builtins');
 var stringify = require('../../src/vdl/stringify');
 var TypeUtil = require('../../src/vdl/type-util');
+var typeServiceVdl =
+  require('../vdl-out/javascript-test/services/type-service');
+var typedStreamingServiceVdl =
+  require('../vdl-out/javascript-test/services/typed-streaming-service');
 
 // TODO(bprosnitz) Combine CacheService and CacheServicePromises so there
 // isn't as much duplicated code.
@@ -288,106 +292,33 @@ function runCache(options) {
   }
 }
 
-var TypeService = {
-  isTyped: function(context, serverCall, any) {
-    // We expect to receive the internally typed value of the any.
-    // However, clients who send JSValue will not produce a typed value here.
-    return TypeUtil.isTyped(any);
-  },
-  isString: function(context, serverCall, str) {
-    // We expect to receive a native string, if the client sent us one.
-    return (typeof str === 'string');
-  },
-  isStruct: function(context, serverCall, struct) {
-    // A struct should always be typed.
-    if (TypeUtil.isTyped(struct)) {
-      return;
-    }
-    // If it was untyped (a JSValue object), then the code is incorrect.
+function TypeService() {}
+TypeService.prototype = new typeServiceVdl.TypeService();
 
-    throw new Error('did not receive a typed struct' + stringify(struct));
-  },
-  swap: function(context, serverCall, a, b) {
-    return [b, a];
-  },
-  _serviceDescription: {
-    methods: [
-      {
-        name: 'IsTyped',
-        inArgs: [
-          {
-            name: 'any',
-            doc: 'The value can be anything.',
-            type: vdl.types.ANY
-          }
-        ],
-        outArgs: [
-          {
-            type: vdl.types.BOOL
-          }
-        ]
-      },
-      {
-        name: 'IsString',
-        inArgs: [
-          {
-            name: 'str',
-            doc: 'The value should be a string.',
-            type: vdl.types.STRING
-          }
-        ],
-        outArgs: [
-          {
-            type: vdl.types.BOOL
-          }
-        ]
-      },
-      {
-        name: 'IsStruct',
-        inArgs: [
-          {
-            name: 'struct',
-            doc: 'The value should be a struct.',
-            type: new vdl.Type({
-              kind: vdl.kind.STRUCT,
-              fields: []
-            })
-          }
-        ],
-        outArgs: []
-      },
-      {
-        name: 'Swap',
-        inArgs: [
-          {
-            name: 'a',
-            doc: 'The first value',
-            type: vdl.types.ANY
-          },
-          {
-            name: 'b',
-            doc: 'The second value',
-            type: vdl.types.ANY
-          }
-        ],
-        outArgs: [
-          {
-            doc: 'The second value is returned first',
-            type: vdl.types.ANY
-          },
-          {
-            doc: 'The first value is returned second',
-            type: vdl.types.ANY
-          }
-        ]
-      }
-    ]
+TypeService.prototype.isTyped =  function(context, serverCall, any) {
+  // We expect to receive the internally typed value of the any.
+  // However, clients who send JSValue will not produce a typed value here.
+  return TypeUtil.isTyped(any);
+};
+TypeService.prototype.isString = function(context, serverCall, str) {
+  // We expect to receive a native string, if the client sent us one.
+  return (typeof str === 'string');
+};
+TypeService.prototype.isStruct = function(context, serverCall, struct) {
+  // A struct should always be typed.
+  if (TypeUtil.isTyped(struct)) {
+    return;
   }
+  // If it was untyped (a JSValue object), then the code is incorrect.
+  throw new Error('did not receive a typed struct' + stringify(struct));
+};
+TypeService.prototype.swap = function(context, serverCall, a, b) {
+  return [b, a];
 };
 
 runTypeService({
   testName: 'typed, non-async',
-  definition: TypeService,
+  definition: new TypeService(),
   name: 'foo.TypeService'
 });
 
@@ -515,258 +446,150 @@ function runTypeService(options) {
   }
 }
 
-var boolListType = new vdl.Type({
-  kind: vdl.kind.LIST,
-  elem: vdl.types.BOOL
-});
-var numStructType = new vdl.Type({
-  kind: vdl.kind.STRUCT,
-  fields: [
-    {
-      name: 'Number',
-      type: vdl.types.FLOAT64
-    },
-    {
-      name: 'BigInt',
-      type: vdl.types.INT64
-    },
-    {
-      name: 'String',
-      type: vdl.types.STRING
-    }
-  ]
-});
-var typeListType = new vdl.Type({
-  kind: vdl.kind.LIST,
-  elem: vdl.types.TYPEOBJECT
-});
+var boolListType = typedStreamingServiceVdl.BoolList.prototype._type;
+var numStructType = typedStreamingServiceVdl.NumStruct.prototype._type;
+var typeListType = typedStreamingServiceVdl.TypeList.prototype._type;
 
 // TODO(alexfandrianto): Add a callback version of the typed streaming service.
 // See each test case for what the service method tests.
-var TypedStreamingService = {
-  // inStreamOnly verifies that typed inStreams work properly.
-  inStreamOnly: function(ctx, serverCall, numTimes, $stream) {
-    // Receive stream values numTimes
-    var numReceived = 0;
-    var def = new Deferred();
-    $stream.on('end', function() {
-      if (numReceived !== numTimes) {
-        var err = new Error('Got ' + numReceived + '. Wanted ' + numTimes);
-        def.reject(err);
-      }
-      def.resolve(numReceived);
-    });
+function TypedStreamingService() {}
+TypedStreamingService.prototype =
+  new typedStreamingServiceVdl.TypedStreamingService();
 
-    $stream.on('error', function(e) {
-      def.reject(e);
-    });
-    $stream.on('data', function(str) {
-      if (typeof str !== 'string') {
-        def.reject(new Error('Expected a string, but got ' + str));
-      }
-      numReceived++;
-    });
-    $stream.read();
-    $stream.write('No outstream type; this cannot be sent');
-    return def.promise;
-  },
-  // outStreamOnly verifies that typed outStreams work properly.
-  outStreamOnly: function(ctx, serverCall, numTimes, $stream, cb) {
-    // Send stream values numTimes
-    var numSent = 0;
-    while (numSent < numTimes) {
-      $stream.write(numSent); // Despite sending int, we autoconvert to BigInt.
-      numSent++;
+// inStreamOnly verifies that typed inStreams work properly.
+TypedStreamingService.prototype.inStreamOnly =
+  function(ctx, serverCall, numTimes, $stream) {
+
+  // Receive stream values numTimes
+  var numReceived = 0;
+  var def = new Deferred();
+  $stream.on('end', function() {
+    if (numReceived !== numTimes) {
+      var err = new Error('Got ' + numReceived + '. Wanted ' + numTimes);
+      def.reject(err);
     }
-    return cb(null, numSent);
-  },
-  // bidirBoolListNegationsStream tests that bidirectional streams can send
-  // composite types back and forth, as well as modify the data items streamed.
-  bidirBoolListNegationStream: function(ctx, serverCall, $stream) {
-    // Given a list of bool, send the opposite bools back.
-    var numReceived = 0;
-    var def = new Deferred();
-    $stream.on('end', function() {
-      def.resolve(numReceived);
-    });
+    def.resolve(numReceived);
+  });
 
-    $stream.on('error', function(e) {
-      def.reject(e);
-    });
-    $stream.on('data', function(boolList) {
-      numReceived++;
-      var oppList = boolList.map(function(b) {
-        return !b;
-      });
-      $stream.write(oppList);
-    });
-    $stream.read();
-    return def.promise;
-  },
-  // structValueStream converts a number to a struct based on that number.
-  // Ensures that custom-defined types can be sent across the stream.
-  structValueStream: function(ctx, serverCall, $stream) {
-    // Given a number, send a number struct back.
-    var numReceived = 0;
-    var def = new Deferred();
-    $stream.on('end', function() {
-      def.resolve(numReceived);
-    });
-    $stream.on('error', function(e) {
-      def.reject(e);
-    });
-    $stream.on('data', function(num) {
-      numReceived++;
-      $stream.write({
-        'number': num,
-        'bigInt': vdl.BigInt.fromNativeNumber(num),
-        'string': '' + num
-      });
-    });
-    $stream.read();
-    return def.promise;
-  },
-  // anyStream tests that typed values can pass through a bidirectional stream.
-  anyStream: function(ctx, serverCall, types, $stream) {
-    // Given a list of types, listen to a stream of values.
-    // Errors if any of the values received did not match their expected type.
-    // Stream those values back directly.
-    var typesReceived = [];
-    var def = new Deferred();
-    $stream.on('end', function() {
-      def.resolve(typesReceived);
-    });
-    $stream.on('error', function(e) {
-      def.reject(e);
-    });
-    $stream.on('data', function(val) {
-      // Verify that the value has no type if native, or matches, otherwise.
-      var expectedType = types[typesReceived.length];
-      if (expectedType.equals(vdl.types.JSVALUE) && val._type !== undefined) {
-        def.reject(new Error('Native value had a type: ' +
-          JSON.stringify(val)));
-      }
-      if (!expectedType.equals(vdl.types.JSVALUE) &&
-        !expectedType.equals(val._type)) {
-        def.reject(new Error('Value had wrong type: ' +
-          JSON.stringify(val)));
-      }
+  $stream.on('error', function(e) {
+    def.reject(e);
+  });
+  $stream.on('data', function(str) {
+    if (typeof str !== 'string') {
+      def.reject(new Error('Expected a string, but got ' + str));
+    }
+    numReceived++;
+  });
+  $stream.read();
+  $stream.write('No outstream type; this cannot be sent');
+  return def.promise;
+};
 
-      // The value had the corerct type. Write the same value back.
-      // Note: Native values lack types, so use the JSValue type instead.
-      typesReceived.push(val._type || vdl.types.JSVALUE);
-      $stream.write(val);
-    });
-    $stream.read();
-    return def.promise;
-  },
-  _serviceDescription: {
-    methods: [
-      {
-        name: 'InStreamOnly',
-        inArgs: [
-          {
-            name: 'numTimes',
-            doc: '# of strings client must send',
-            type: vdl.types.UINT32
-          }
-        ],
-        outArgs: [
-          {
-            name: 'numReceived',
-            doc: '# of strings received from client',
-            type: vdl.types.UIN32
-          }
-        ],
-        inStream: {
-          type: vdl.types.STRING
-        },
-        outStream: null
-      },
-      {
-        name: 'OutStreamOnly',
-        inArgs: [
-          {
-            name: 'numTimes',
-            doc: '# of ints that the client wants back',
-            type: vdl.types.UINT32
-          }
-        ],
-        outArgs: [
-          {
-            name: 'numSent',
-            doc: '# of ints that service tried to send',
-            type: vdl.types.UINT32
-          }
-        ],
-        inStream: null,
-        outStream: {
-          type: vdl.types.INT64
-        }
-      },
-      {
-        name: 'BidirBoolListNegationStream',
-        inArgs: [],
-        outArgs: [
-          {
-            name: 'numReceived',
-            doc: '# of strings received from client',
-            type: vdl.types.UIN32
-          }
-        ],
-        inStream: {
-          type: boolListType
-        },
-        outStream: {
-          type: boolListType
-        }
-      },
-      {
-        name: 'StructValueStream',
-        outArgs: [
-          {
-            name: 'numReceived',
-            doc: '# of strings received from client',
-            type: vdl.types.UIN32
-          }
-        ],
-        inStream: {
-          type: vdl.types.FLOAT64
-        },
-        outStream: {
-          type: numStructType
-        }
-      },
-      {
-        name: 'AnyStream',
-        inArgs: [
-          {
-            name: 'intypes',
-            doc: 'list of types to be streamed from client',
-            type: typeListType
-          }
-        ],
-        outArgs: [
-          {
-            name: 'outtypes',
-            doc: 'list of types to be streamed to client',
-            type: typeListType
-          }
-        ],
-        inStream: {
-          type: vdl.types.ANY
-        },
-        outStream: {
-          type: vdl.types.ANY
-        }
-      }
-    ]
+// outStreamOnly verifies that typed outStreams work properly.
+TypedStreamingService.prototype.outStreamOnly =
+  function(ctx, serverCall, numTimes, $stream, cb) {
+
+  // Send stream values numTimes
+  var numSent = 0;
+  while (numSent < numTimes) {
+    $stream.write(numSent); // Despite sending int, we autoconvert to BigInt.
+    numSent++;
   }
+  return cb(null, numSent);
+};
+
+// bidirBoolListNegationsStream tests that bidirectional streams can send
+// composite types back and forth, as well as modify the data items streamed.
+TypedStreamingService.prototype.bidirBoolListNegationStream =
+  function(ctx, serverCall, $stream) {
+
+  // Given a list of bool, send the opposite bools back.
+  var numReceived = 0;
+  var def = new Deferred();
+  $stream.on('end', function() {
+    def.resolve(numReceived);
+  });
+
+  $stream.on('error', function(e) {
+    def.reject(e);
+  });
+  $stream.on('data', function(boolList) {
+    numReceived++;
+    var oppList = boolList.map(function(b) {
+      return !b;
+    });
+    $stream.write(oppList);
+  });
+  $stream.read();
+  return def.promise;
+};
+
+// structValueStream converts a number to a struct based on that number.
+// Ensures that custom-defined types can be sent across the stream.
+TypedStreamingService.prototype.structValueStream =
+  function(ctx, serverCall, $stream) {
+
+  // Given a number, send a number struct back.
+  var numReceived = 0;
+  var def = new Deferred();
+  $stream.on('end', function() {
+    def.resolve(numReceived);
+  });
+  $stream.on('error', function(e) {
+    def.reject(e);
+  });
+  $stream.on('data', function(num) {
+    numReceived++;
+    $stream.write({
+      'number': num,
+      'bigInt': vdl.BigInt.fromNativeNumber(num),
+      'string': '' + num
+    });
+  });
+  $stream.read();
+  return def.promise;
+};
+
+// anyStream tests that typed values can pass through a bidirectional stream.
+TypedStreamingService.prototype.anyStream =
+  function(ctx, serverCall, types, $stream) {
+
+  // Given a list of types, listen to a stream of values.
+  // Errors if any of the values received did not match their expected type.
+  // Stream those values back directly.
+  var typesReceived = [];
+  var def = new Deferred();
+  $stream.on('end', function() {
+    def.resolve(typesReceived);
+  });
+  $stream.on('error', function(e) {
+    def.reject(e);
+  });
+  $stream.on('data', function(val) {
+    // Verify that the value has no type if native, or matches, otherwise.
+    var expectedType = types[typesReceived.length];
+    if (expectedType.equals(vdl.types.JSVALUE) && val._type !== undefined) {
+      def.reject(new Error('Native value had a type: ' +
+        JSON.stringify(val)));
+    }
+    if (!expectedType.equals(vdl.types.JSVALUE) &&
+      !expectedType.equals(val._type)) {
+      def.reject(new Error('Value had wrong type: ' +
+        JSON.stringify(val)));
+    }
+
+    // The value had the corerct type. Write the same value back.
+    // Note: Native values lack types, so use the JSValue type instead.
+    typesReceived.push(val._type || vdl.types.JSVALUE);
+    $stream.write(val);
+  });
+  $stream.read();
+  return def.promise;
 };
 
 runTypedStreamingService({
   testName: 'typed, streaming, non-async',
-  definition: TypedStreamingService,
+  definition: new TypedStreamingService(),
   name: 'foo.TypedStreamingService'
 });
 

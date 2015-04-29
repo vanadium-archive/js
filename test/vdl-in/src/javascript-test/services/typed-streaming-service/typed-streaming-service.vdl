@@ -1,0 +1,40 @@
+// Copyright 2015 The Vanadium Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file.
+
+package typedStreamingService
+
+type BoolList []bool
+type NumStruct struct {
+  Number float64
+  BigInt int64
+  String string
+}
+type TypeList []typeobject
+
+type TypedStreamingService interface {
+  // inStreamOnly verifies that typed inStreams work properly.
+  // numTimes: # of strings client must send
+  // numReceived: # of strings received from client
+  InStreamOnly(numTimes uint32) stream<string, _> (numReceived uint32 | error)
+
+  // outStreamOnly verifies that typed outStreams work properly.
+  // numTimes: # of ints that the client wants back
+  // numReceived: # of ints that service tried to send
+  OutStreamOnly(numTimes uint32) stream<_, int64> (numSent uint32 | error)
+
+  // bidirBoolListNegationsStream tests that bidirectional streams can send
+  // composite types back and forth, as well as modify the data items streamed.
+  // numReceived: # of []bool received from client
+  BidirBoolListNegationStream() stream<BoolList, BoolList> (numReceived uint32 | error)
+
+  // structValueStream converts a number to a struct based on that number.
+  // Ensures that custom-defined types can be sent across the stream.
+  // numReceived: # of float64 received from client
+  StructValueStream() stream<float64, NumStruct> (numReceived uint32 | error)
+
+  // anyStream tests that typed values can pass through a bidirectional stream.
+  // intypes: list of types to be streamed from client
+  // outtypes: list of types to be streamed to client
+  AnyStream(intypes TypeList) stream<any, any> (outtypes TypeList | error)
+}

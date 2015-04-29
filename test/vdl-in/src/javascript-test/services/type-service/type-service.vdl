@@ -1,0 +1,24 @@
+// Copyright 2015 The Vanadium Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file.
+
+package typeService
+
+type EmptyStruct struct {}
+
+type TypeService interface {
+  // any: The value can be anything.
+  IsTyped(any any) (bool | error)
+
+  // str: The value should be a string.
+  IsString(str string) (bool | error)
+
+  // structure: The value should be a struct.
+  IsStruct(structure EmptyStruct) error
+
+  // a: The first value
+  // b: The second value
+  // outA: The second value is returned first
+  // outB: The first value is returned second
+  Swap(a any, b any) (outA any, outB any | error)
+}

@@ -34,8 +34,13 @@ BasePartialImpl.prototype.methodB1 = function(ctx, serverCall, a, b, cb) {
 test('Invoker and signature for vdl-generated base.js',
     function(t) {
     var impl = new BasePartialImpl();
-    impl._serviceDescription = base.ServiceB.
-                               prototype._serviceDescription;
+
+    // We attach service description directly because we want to implement only
+    // part of ServiceB. We check the generated signature and see that the
+    // unimplemented methods were properly removed.
+    // The alternative, BasePartialImpl.prototype = new base.ServiceB();
+    // would not work because ServiceB has method stubs on its prototype.
+    impl._serviceDescription = base.ServiceB.prototype._serviceDescription;
     var injections = {
       context: new Context(),
       stream: 'stream'
