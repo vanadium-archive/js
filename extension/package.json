@@ -17,7 +17,8 @@
     "xtend": "^4.0.0",
     "eventemitter2": "~0.4.14",
     "es6-shim": "^0.20.2",
-    "superagent": "~0.21.0"
+    "superagent": "~0.21.0",
+    "inherits": "~2.0.1"
   },
   "devDependencies": {
     "brfs": "^1.2.0",
