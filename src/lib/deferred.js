@@ -27,17 +27,20 @@ function Deferred(cb) {
 
 function addCallback(promise, cb) {
   if (cb) {
-    // Note, this must be a .done() and not a .then().  Errors thrown inside of
-    // a .then() callback are wrapped in a try/catch, whereas errors thrown
-    // inside of a .done() callback will be thrown as an error.
-    promise.done(
+    promise.then(
       function success(value) {
         cb(null, value);
       },
       function error(err) {
         cb(err);
       }
-    );
+    ).catch(function catchError(err) {
+      // Re-throw the error in a process.nextTick so that it won't be caught by
+      // the promise implementation.
+      process.nextTick(function() {
+        throw err;
+      });
+    });
   }
 }
 

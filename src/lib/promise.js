@@ -5,23 +5,32 @@
 /**
  * @fileoverview Vanadium.js promise implementation.
  *
- * Currently this is just bluebird promises.
+ * This uses the native Promise implementation in browsers, and the es6-promise
+ * polyfill in non-browsers.
  *
- * We'd like our promise implementation to follow the es6/A+ promise spec, but
- * the "es6-promises" module eats errors, so we are using bluebird.
+ * WARNING: es6 promises are notorius for eating errors. Make sure to add
+ * 'catch()' to the end of promise chains so that errors can be caught and
+ * handled.
  *
  * See for reference:
  *   http://blog.soareschen.com/the-problem-with-es6-promises
  *   https://github.com/soareschen/es6-promise-debugging
  *   https://github.com/petkaantonov/bluebird#error-handling
  *
- * TODO(nlacasse): Wrap bluebird promises to only expose es6/A+ promise API.
- * Otherwise users might rely on non-A+ parts of the bluebird API, preventing us
- * from switching in the future.
  * @private
  */
 
-var Promise = require('bluebird');
-Promise.longStackTraces();
+var isBrowser = require('is-browser');
 
-module.exports = Promise;
+if (isBrowser) {
+  // Use native Promise implementation in browsers.
+  if (typeof Promise === 'undefined') {
+    throw new Error('No native promise implementation found.');
+  }
+  module.exports = Promise;
+} else {
+  // Use es6-promise polyfill in non-browsers.
+  // The require string is split so that browserify does not bundle es6-promise
+  // library.
+  module.exports = require('es6' + '-promise').Promise;
+}

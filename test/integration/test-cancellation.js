@@ -43,10 +43,11 @@ function run(ctx, err, collector, end, assert, id, runtime) {
       ctx.cancel();
       return collector.waitForStatus(dctx, id, 'cancelled');
     }).then(function(timeout) {
+      dctx.finish();
+      end(assert);
     }).catch(function(err) {
-      assert.error(err);
-    }).finally(function() {
       dctx.cancel();
+      assert.error(err);
       end(assert);
     });
 }

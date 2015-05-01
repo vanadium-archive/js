@@ -7,7 +7,7 @@ var vanadium = require('../../');
 var NoExistError = vanadium.verror.NoExistError;
 var config = require('./default-config');
 var service = require('./get-service');
-var Promise = require('bluebird');
+var Promise = require('../../src/lib/promise');
 
 test('Test set() of Go sample cache service - ' +
   'cache.set(key, value, callback)', function(assert) {
