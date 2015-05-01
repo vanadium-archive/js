@@ -653,7 +653,13 @@ Router.prototype.sendResult = function(messageId, name, results, err,
 Router.prototype.serve = function(name, server, cb) {
   vlog.logger.info('Serving under the name: ', name);
   this._servers[server.id] = server;
-  return this._controller.serve(this._rootCtx, name, server.id, cb);
+  // If using a leaf dispatcher, set the IsLeaf ServerOption.
+  var isLeaf = server.dispatcher && server.dispatcher._isLeaf;
+  if (isLeaf) {
+    server.serverOption._opts.isLeaf = true;
+  }
+  var rpcOpts = server.serverOption._toRpcServerOption();
+  return this._controller.serve(this._rootCtx, name, server.id, rpcOpts, cb);
 };
 
 /**

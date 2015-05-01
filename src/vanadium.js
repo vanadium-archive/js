@@ -51,7 +51,7 @@ module.exports = {
   vom: require('./vom'),
   uniqueId: require('./lib/uniqueid'),
   vtrace: require('./vtrace'),
-  runtimeForContext: require('./runtime/runtime-from-context'),
+  runtimeForContext: require('./runtime/runtime-from-context')
 };
 
 if (isBrowser) {

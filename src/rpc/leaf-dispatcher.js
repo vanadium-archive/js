@@ -9,20 +9,22 @@
 
 /**
  * Returns a dispatcher function that will reuse the same service object
- * for all suffixes
+ * for all suffixes.
  * @private
  * @param {Service} service Service object.
- * @param {Authorizer} authorizer, optional the authorizer to use.
- * @return {function} a dispatcher function that will reuse the same service
+ * @param {Authorizer} [authorizer] Optional authorizer to use.
+ * @return {function} A dispatcher function that will reuse the same service
  * object.
  */
 function createLeafDispatcher(service, authorizer) {
-  return function() {
+  var dispacther = function() {
     return {
       service: service,
       authorizer: authorizer,
     };
   };
+  dispacther._isLeaf = true;
+  return dispacther;
 }
 
 /**

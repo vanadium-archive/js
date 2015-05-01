@@ -27,10 +27,16 @@ test('Test globbing children - glob(' + PREFIX + '*)', function(assert) {
     var ctx = runtime.getContext();
     var rpc = namespace.glob(ctx, PREFIX + '*');
     rpc.catch(end);
-    return readAllNames(rpc.stream);
+    return readAllMountPoints(rpc.stream);
   }).then(function validate(actual) {
-    var expected = [PREFIX + 'cottage', PREFIX + 'house'];
-    assert.deepEqual(actual.sort(), expected.sort());
+    var expected = [{
+      name: PREFIX + 'cottage',
+      isLeaf: false
+    }, {
+      name: PREFIX + 'house',
+      isLeaf: false
+    }];
+    assertResults(actual, expected, assert);
     end();
   }).catch(end);
 
@@ -54,13 +60,16 @@ test('Test globbing nested levels - glob(' + PREFIX + 'cottage/*/*/*)',
       var ctx = runtime.getContext();
       var rpc = namespace.glob(ctx, PREFIX + 'cottage/*/*/*');
       rpc.catch(end);
-      return readAllNames(rpc.stream);
+      return readAllMountPoints(rpc.stream);
     }).then(function validate(actual) {
-      var expected = [
-        PREFIX + 'cottage/lawn/back/sprinkler',
-        PREFIX + 'cottage/lawn/front/sprinkler'
-      ];
-      assert.deepEqual(actual.sort(), expected.sort());
+      var expected = [{
+        name: PREFIX + 'cottage/lawn/back/sprinkler',
+        isLeaf: true
+      }, {
+        name: PREFIX + 'cottage/lawn/front/sprinkler',
+        isLeaf: true
+      }];
+      assertResults(actual, expected, assert);
       end();
     }).catch(end);
 
@@ -84,7 +93,7 @@ test('Test globbing non-existing name - glob(' + PREFIX + 'does/not/exist)',
       var ctx = runtime.getContext();
       var rpc = namespace.glob(ctx, PREFIX + 'does/not/exist');
       rpc.catch(end);
-      return readAllNames(rpc.stream);
+      return readAllMountPoints(rpc.stream);
     }).then(function validate(actual) {
       var expected = [];
       assert.deepEqual(actual.sort(), expected.sort());
@@ -166,7 +175,7 @@ test('Test globbing non-existing rooted name - ' +
     vanadium.init(config).then(function glob(rt) {
       runtime = rt;
       var namespace = rt.namespace();
-      // Note: Glob will always timeout after 30s 
+      // Note: Glob will always timeout after 30s
       // see v.io/x/ref/profiles/internal/naming/namespace/parallelstartcall.go
       // This means we'll get a timeout error on the glob stream before
       // timeouts.long expires.
@@ -372,10 +381,16 @@ test('Test setting roots to valid endpoints - ' +
     }).then(function glob() {
       var rpc = namespace.glob(ctx, PREFIX + '*');
       rpc.catch(end);
-      return readAllNames(rpc.stream);
+      return readAllMountPoints(rpc.stream);
     }).then(function validate(actual) {
-      var expected = [PREFIX + 'cottage', PREFIX + 'house'];
-      assert.deepEqual(actual.sort(), expected.sort());
+      var expected = [{
+        name: PREFIX + 'cottage',
+        isLeaf: false
+      }, {
+        name: PREFIX + 'house',
+        isLeaf: false
+      }];
+      assertResults(actual, expected, assert);
       end();
     }).catch(end);
 
@@ -710,15 +725,15 @@ test('Test delete() on name with children', function(assert) {
  * Given a glob stream, returns a promise that will resolve to an array
  * of glob results after all the results have been collected from the stream.
  */
-function readAllNames(stream) {
-  var names = [];
+function readAllMountPoints(stream) {
+  var mps = [];
   return new Promise(function(resolve, reject) {
     stream.on('data', function(mountPoint) {
-      names.push(mountPoint.name);
+      mps.push(mountPoint);
     });
 
     stream.on('end', function(name) {
-      resolve(names);
+      resolve(mps);
     });
 
     stream.on('error', function(errItem) {
@@ -728,6 +743,21 @@ function readAllNames(stream) {
       }
     });
   });
+}
+
+function assertResults(got, want, assert) {
+  var toEqual = [];
+  got.forEach(function(e) {
+    toEqual.push({
+      name: e.name,
+      isLeaf: e.isLeaf
+    });
+  });
+  assert.deepEqual(want.sort(mpSorter), toEqual.sort(mpSorter));
+
+  function mpSorter(a, b) {
+    return a.name.localeCompare(b.name);
+  }
 }
 
 var SAMPLE_NAMESPACE = [

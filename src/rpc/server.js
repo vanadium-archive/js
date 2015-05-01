@@ -29,6 +29,7 @@ var Invoker = require('./../invocation/invoker');
 var defaultAuthorizer = require('../security/default-authorizer');
 var actions = require('./../verror/actions');
 var makeError = require('../verror/make-errors');
+var ServerOption = require('./server-option');
 
 var nextServerID = 1; // The ID for the next server.
 
@@ -42,7 +43,7 @@ var nextServerID = 1; // The ID for the next server.
  * @constructor
  * @memberof module:vanadium.rpc
  */
-function Server(router) {
+function Server(router, serverOption) {
   if (!(this instanceof Server)) {
     return new Server(router);
   }
@@ -53,6 +54,7 @@ function Server(router) {
   this.id = nextServerID++;
   this.dispatcher = null;
   this.serviceObjectHandles = {};
+  this.serverOption = serverOption || new ServerOption();
 }
 
 /**

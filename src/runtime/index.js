@@ -146,10 +146,15 @@ Runtime.prototype.close = function(cb) {
 /**
  * Creates a new [Server]{@link module:vanadium.rpc~Server} instance.<br>
  * Server allows one to create, publish and stop Vanadium services.
+ * @param {module:vanadium.rpc~Server~ServerOption} [serverOption] Optional
+ * server option that can be specified when creating a new server. serverOption
+ * can be created with the
+ * [vanadium.rpc.serverOption(opts)]{@link module:vanadium.rpc#serverOption}
+ * method.
  * @return {module:vanadium.rpc~Server} A server instance.
  */
-Runtime.prototype.newServer = function() {
-  return new Server(this._getRouter());
+Runtime.prototype.newServer = function(serverOption) {
+  return new Server(this._getRouter(), serverOption);
 };
 
 /**

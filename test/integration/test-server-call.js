@@ -4,10 +4,9 @@
 
 var test = require('prova');
 var serve = require('./serve');
-var leafDispatcher = require('../../src/rpc/leaf-dispatcher');
 
 // Services that handles anything in a/b/* where b is the service name
-var dispatcher = leafDispatcher({
+var service = {
   getSuffix: function(ctx, serverCall) {
     return serverCall.securityCall.suffix;
   },
@@ -24,7 +23,13 @@ var dispatcher = leafDispatcher({
 
     cb(null, results);
   }
-});
+};
+
+function dispatcher(suffix, cb) {
+  cb(null, {
+      service: service
+  });
+}
 
 var expectedContext = {
   suffix: 'suf',

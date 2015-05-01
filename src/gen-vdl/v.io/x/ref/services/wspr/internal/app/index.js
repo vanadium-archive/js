@@ -28,12 +28,14 @@ var _type4 = new vdl.Type();
 var _type5 = new vdl.Type();
 var _type6 = new vdl.Type();
 var _type7 = new vdl.Type();
+var _type8 = new vdl.Type();
 var _typeGranterHandle = new vdl.Type();
 var _typeGranterRequest = new vdl.Type();
 var _typeGranterResponse = new vdl.Type();
 var _typeRpcCallOption = new vdl.Type();
 var _typeRpcRequest = new vdl.Type();
 var _typeRpcResponse = new vdl.Type();
+var _typeRpcServerOption = new vdl.Type();
 _type1.kind = vdl.kind.LIST;
 _type1.name = "";
 _type1.elem = _typeRpcCallOption;
@@ -45,16 +47,19 @@ _type3.name = "";
 _type3.elem = vdl.types.ANY;
 _type4.kind = vdl.kind.LIST;
 _type4.name = "";
-_type4.elem = new security.Caveat()._type;
-_type5.kind = vdl.kind.OPTIONAL;
+_type4.elem = _typeRpcServerOption;
+_type5.kind = vdl.kind.LIST;
 _type5.name = "";
-_type5.elem = new principal.JsBlessings()._type;
-_type6.kind = vdl.kind.LIST;
+_type5.elem = new security.Caveat()._type;
+_type6.kind = vdl.kind.OPTIONAL;
 _type6.name = "";
-_type6.elem = vdl.types.STRING;
+_type6.elem = new principal.JsBlessings()._type;
 _type7.kind = vdl.kind.LIST;
 _type7.name = "";
-_type7.elem = new signature.Interface()._type;
+_type7.elem = vdl.types.STRING;
+_type8.kind = vdl.kind.LIST;
+_type8.name = "";
+_type8.elem = new signature.Interface()._type;
 _typeGranterHandle.kind = vdl.kind.INT32;
 _typeGranterHandle.name = "v.io/x/ref/services/wspr/internal/app.GranterHandle";
 _typeGranterRequest.kind = vdl.kind.STRUCT;
@@ -72,6 +77,9 @@ _typeRpcRequest.fields = [{name: "Name", type: vdl.types.STRING}, {name: "Method
 _typeRpcResponse.kind = vdl.kind.STRUCT;
 _typeRpcResponse.name = "v.io/x/ref/services/wspr/internal/app.RpcResponse";
 _typeRpcResponse.fields = [{name: "OutArgs", type: _type3}, {name: "TraceResponse", type: new vtrace.Response()._type}];
+_typeRpcServerOption.kind = vdl.kind.UNION;
+_typeRpcServerOption.name = "v.io/x/ref/services/wspr/internal/app.RpcServerOption";
+_typeRpcServerOption.fields = [{name: "IsLeaf", type: vdl.types.BOOL}, {name: "ServesMountTable", type: vdl.types.BOOL}];
 _type1.freeze();
 _type2.freeze();
 _type3.freeze();
@@ -79,18 +87,21 @@ _type4.freeze();
 _type5.freeze();
 _type6.freeze();
 _type7.freeze();
+_type8.freeze();
 _typeGranterHandle.freeze();
 _typeGranterRequest.freeze();
 _typeGranterResponse.freeze();
 _typeRpcCallOption.freeze();
 _typeRpcRequest.freeze();
 _typeRpcResponse.freeze();
+_typeRpcServerOption.freeze();
 module.exports.GranterHandle = (vdl.registry.lookupOrCreateConstructor(_typeGranterHandle));
 module.exports.GranterRequest = (vdl.registry.lookupOrCreateConstructor(_typeGranterRequest));
 module.exports.GranterResponse = (vdl.registry.lookupOrCreateConstructor(_typeGranterResponse));
 module.exports.RpcCallOption = (vdl.registry.lookupOrCreateConstructor(_typeRpcCallOption));
 module.exports.RpcRequest = (vdl.registry.lookupOrCreateConstructor(_typeRpcRequest));
 module.exports.RpcResponse = (vdl.registry.lookupOrCreateConstructor(_typeRpcResponse));
+module.exports.RpcServerOption = (vdl.registry.lookupOrCreateConstructor(_typeRpcServerOption));
 
 
 
@@ -114,7 +125,7 @@ module.exports.Controller = Controller;
 
     
       
-Controller.prototype.serve = function(ctx, serverCall, name, serverId) {
+Controller.prototype.serve = function(ctx, serverCall, name, serverId, serverOpts) {
   throw new Error('Method Serve not implemented');
 };
     
@@ -200,6 +211,11 @@ Controller.prototype._serviceDescription = {
       name: 'serverId',
       doc: "",
       type: vdl.types.UINT32
+    },
+    {
+      name: 'serverOpts',
+      doc: "",
+      type: _type4
     },
     ],
     outArgs: [],
@@ -325,7 +341,7 @@ Controller.prototype._serviceDescription = {
     {
       name: 'caveat',
       doc: "",
-      type: _type4
+      type: _type5
     },
     ],
     outArgs: [{
@@ -356,7 +372,7 @@ Controller.prototype._serviceDescription = {
     {
       name: 'caveats',
       doc: "",
-      type: _type4
+      type: _type5
     },
     ],
     outArgs: [{
@@ -393,7 +409,7 @@ Controller.prototype._serviceDescription = {
     outArgs: [{
       name: '',
       doc: "",
-      type: _type5
+      type: _type6
     },
     ],
     inStream: null,
@@ -435,7 +451,7 @@ Controller.prototype._serviceDescription = {
     outArgs: [{
       name: '',
       doc: "",
-      type: _type6
+      type: _type7
     },
     ],
     inStream: null,
@@ -456,7 +472,7 @@ Controller.prototype._serviceDescription = {
     outArgs: [{
       name: '',
       doc: "",
-      type: _type7
+      type: _type8
     },
     ],
     inStream: null,
@@ -472,7 +488,7 @@ Controller.prototype._serviceDescription = {
     outArgs: [{
       name: '',
       doc: "",
-      type: _type5
+      type: _type6
     },
     ],
     inStream: null,

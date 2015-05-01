@@ -47,13 +47,14 @@ module.exports = serve;
 //
 function serve(name, dispatcher, callback) {
   var options = defaults;
-
+  var serverOption;
   // alternate: serve(options, callback)
   if (typeof name === 'object') {
     options = extend(defaults, name);
     callback = dispatcher;
     name = options.name;
     dispatcher = options.dispatcher;
+    serverOption = options.serverOption;
   }
 
   vanadium.init(config, function(err, runtime) {
@@ -68,7 +69,7 @@ function serve(name, dispatcher, callback) {
       return callback(err, basicRes);
     }
 
-    var server = runtime.newServer();
+    var server = runtime.newServer(serverOption);
     server.serveDispatcher(name, dispatcher, function(err) {
       if (err) {
         return callback(err, basicRes);
