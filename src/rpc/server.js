@@ -257,7 +257,7 @@ Server.prototype.handleAuthorization = function(handle, ctx, call) {
 
   var def = new Deferred();
   var inspectableAuthorizer = new InspectableFunction(authorizer);
-  asyncCall(ctx, null, inspectableAuthorizer, 0, [ctx, call],
+  asyncCall(ctx, null, inspectableAuthorizer, [], [ctx, call],
     function(err) {
     if (err) {
       def.reject(err);

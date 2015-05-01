@@ -111,5 +111,5 @@ CaveatValidator.prototype.validate = function(ctx, call, paramForValidator,
   var unwrappedParam = unwrapArg(canonParam, paramType);
 
   var inspectableFn = new InspectableFunction(this.validateFn);
-  asyncCall(ctx, null, inspectableFn, 0, [ctx, call, unwrappedParam], cb);
+  asyncCall(ctx, null, inspectableFn, [], [ctx, call, unwrappedParam], cb);
 };

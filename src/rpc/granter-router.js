@@ -76,7 +76,7 @@ GranterRouter.prototype.handleRequest = function(messageId, type, request) {
   var def = new Deferred();
   var inspectFn = new InspectableFunction(granter);
   var self = this;
-  asyncCall(ctx, null, inspectFn, 1,
+  asyncCall(ctx, null, inspectFn, ['outBlessings'],
     [ctx, securityCall], function(err, outBlessings) {
     if (err) {
       var res = new GranterResponse({

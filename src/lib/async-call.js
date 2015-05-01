@@ -20,13 +20,14 @@ module.exports = asyncCall;
  * @param {Context} ctx Context
  * @param {*} self The object to be "this" during invocation.
  * @param {InspectableFunction} fn The function
- * @param {number} numOutArgs The number of expected output arguments
+ * @param {Array} outArgs The names of the expected output arguments
  * @param {*} args The argument values
  * @param {Function} inputCb callback when finished
  * @return {type} Promise or undefined
  */
-function asyncCall(ctx, self, fn, numOutArgs, args, inputCb) {
+function asyncCall(ctx, self, fn, outArgs, args, inputCb) {
   var cbCalled;
+  var numOutArgs = outArgs.length;
   // Helper to call the callback once
   function callOnceCb(err, results) {
     if (cbCalled) {
@@ -44,12 +45,47 @@ function asyncCall(ctx, self, fn, numOutArgs, args, inputCb) {
 
   // Callback we are injecting into the user's function
   function injectedCb(err /*, args */) {
-    var res = Array.prototype.slice.call(arguments, 1,
-      1 + numOutArgs);
-    var paddingNeeded = numOutArgs - res.length;
-    var paddedRes = res.concat(new Array(paddingNeeded));
-    callOnceCb(err, paddedRes);
+    var res = Array.prototype.slice.call(arguments, 1);
+
+    if (err) {
+      // Error case
+      callOnceCb(err);
+    } else {
+      // Results case
+      var numResults = res.length;
+      if (numResults === numOutArgs) {
+        // Correct number of out args given
+        callOnceCb(null, res);
+      } else {
+        // Internal error: incorrect number of out args
+        asyncFailedCb(makeIncorrectArgCountError(true, outArgs, numResults));
+      }
+    }
   }
+
+  // Creates an error when there are an incorrect number of arguments.
+  // TODO(bjornick): Generate a real verror for this so it can be
+  // internationalized.
+  function makeIncorrectArgCountError(isCb, expectedArgs, numGiven) {
+    var delta = numGiven - expectedArgs.length;
+    var prefix;
+    if (isCb) {
+      prefix = 'Callback of form cb(err,' + expectedArgs + ')';
+    } else {
+      prefix = 'Expected out args ' + expectedArgs + ' but';
+    }
+
+    var suffix;
+    if (delta < 0) {
+      suffix = 'was missing ' + expectedArgs.slice(numGiven);
+    } else {
+      suffix = 'got ' + delta + ' extra arg(s)';
+    }
+
+    return new verror.InternalError(ctx, prefix, suffix);
+  }
+
+
   if (fn.hasCallback()) {
     args.push(injectedCb);
   }
@@ -87,6 +123,7 @@ function asyncCall(ctx, self, fn, numOutArgs, args, inputCb) {
         resAsArray = [];
         break;
       case 1:
+        // Note: If res is undefined, the result is [undefined].
         resAsArray = [res];
         break;
       default:
@@ -98,14 +135,9 @@ function asyncCall(ctx, self, fn, numOutArgs, args, inputCb) {
         resAsArray = res;
         break;
     }
-    if (resAsArray.length !== numOutArgs) {
-      // -1 on outArgs.length ignores error
-      // TODO(bjornick): Generate a real verror for this so it can
-      // internationalized.
-      asyncFailedCb(new verror.InternalError(
-        ctx,
-        'Expected', numOutArgs, 'results, but got',
-        resAsArray.length));
+    var numResults = resAsArray.length;
+    if (numResults !== numOutArgs) {
+      asyncFailedCb(makeIncorrectArgCountError(false, outArgs, numResults));
     }
     callOnceCb(null, resAsArray);
   }).catch(function error(err) {

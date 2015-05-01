@@ -17,18 +17,23 @@ var _fiveOutArgSig = [
         'name': 'FiveOutArgMethod',
         'outArgs': [
           {
+            name: 'A',
             type: vdl.types.ANY
           },
           {
+            name: 'B',
             type: vdl.types.ANY
           },
           {
+            name: 'C',
             type: vdl.types.ANY
           },
           {
+            name: 'D',
             type: vdl.types.ANY
           },
           {
+            name: 'E',
             type: vdl.types.ANY
           }
         ]
@@ -612,8 +617,6 @@ test('invoker.invoke(...) - Error: Empty args expected', function(t) {
   }
 });
 
-// TODO(alexfandrianto): The callback case fills the missing outArgs with
-// undefined instead of throwing an error, so it isn't tested.
 test('invoker.invoke(...) - Error: More outArgs expected [promise]',
   function(t) {
 
@@ -629,11 +632,10 @@ test('invoker.invoke(...) - Error: More outArgs expected [promise]',
     injections: {
       context: context
     }
-  }, function(err, results) {
+  }, function cb(err, results) {
     t.ok(err instanceof verror.InternalError, 'should error');
     t.equal(err.message,
-      'app:op: Internal error: ' +
-      'Expected 5 results, but got 4');
+      'app:op: Internal error: Expected out args a,b,c,d,e but was missing e');
     t.end();
   });
 
@@ -643,9 +645,7 @@ test('invoker.invoke(...) - Error: More outArgs expected [promise]',
   }
 });
 
-// TODO(alexfandrianto): The callback service method implementation throws out
-// any extra return arguments, so it isn't tested.
-test('invoker.invoke(...) - Error: Fewer outArgs expected [promise]',
+test('invoker.invoke(...) - Error: More outArgs expected [callback]',
   function(t) {
 
   var context = new Context();
@@ -660,17 +660,75 @@ test('invoker.invoke(...) - Error: Fewer outArgs expected [promise]',
     injections: {
       context: context
     }
-  }, function(err, results) {
+  }, function cb(err, results) {
     t.ok(err instanceof verror.InternalError, 'should error');
     t.equal(err.message,
       'app:op: Internal error: ' +
-      'Expected 5 results, but got 6');
+      'Callback of form cb(err,a,b,c,d,e) was missing e');
     t.end();
   });
 
   // Hoisted into the service object above.
-  function notEnoughOutArgs(ctx, serverCall, a, b, c, d) {
+  function notEnoughOutArgs(ctx, serverCall, a, b, c, d, cb) {
+    cb(null, a, b, c, d); // needs 5, not 4
+  }
+});
+
+test('invoker.invoke(...) - Error: Fewer outArgs expected [promise]',
+  function(t) {
+
+  var context = new Context();
+
+  invoke({
+    service: {
+      fiveOutArgMethod: tooManyOutArgs,
+      _serviceDescription: _fiveOutArgSig
+    },
+    name: 'FiveOutArgMethod',
+    args: [ 'a', 'b', 'c', 'd' ],
+    injections: {
+      context: context
+    }
+  }, function cb(err, results) {
+    t.ok(err instanceof verror.InternalError, 'should error');
+    t.equal(err.message,
+      'app:op: Internal error: ' +
+      'Expected out args a,b,c,d,e but got 1 extra arg(s)');
+    t.end();
+  });
+
+  // Hoisted into the service object above.
+  function tooManyOutArgs(ctx, serverCall, a, b, c, d) {
     return [ a, b, c, d, d, d ]; // needs 5, not 6
+  }
+});
+
+test('invoker.invoke(...) - Error: Fewer outArgs expected [callback]',
+  function(t) {
+
+  var context = new Context();
+
+  invoke({
+    service: {
+      fiveOutArgMethod: tooManyOutArgs,
+      _serviceDescription: _fiveOutArgSig
+    },
+    name: 'FiveOutArgMethod',
+    args: [ 'a', 'b', 'c', 'd' ],
+    injections: {
+      context: context
+    }
+  }, function cb(err, results) {
+    t.ok(err instanceof verror.InternalError, 'should error');
+    t.equal(err.message,
+      'app:op: Internal error: ' +
+      'Callback of form cb(err,a,b,c,d,e) got 1 extra arg(s)');
+    t.end();
+  });
+
+  // Hoisted into the service object above.
+  function tooManyOutArgs(ctx, serverCall, a, b, c, d, cb) {
+    return cb(null, a, b, c, d, d, d); // needs 5, not 6
   }
 });
 

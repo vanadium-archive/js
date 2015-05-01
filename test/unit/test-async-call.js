@@ -15,7 +15,7 @@ test('Test async validate call that returns a resolving promise',
     return Promise.resolve();
   }
   var inspectFn = new InspectableFunction(promiseResolver);
-  asyncCall(null, null, inspectFn, 0, ['A', 'B'], function(err, res) {
+  asyncCall(null, null, inspectFn, [], ['A', 'B'], function(err, res) {
     t.notOk(err, 'err should be falsy');
     t.deepEqual(res, [], 'Expected empty list result');
     t.end();
@@ -27,7 +27,7 @@ test('Test async call that returns a rejecting promise', function(t) {
     return Promise.reject('BadLuck');
   }
   var inspectFn = new InspectableFunction(promiseRejector);
-  asyncCall(null, null, inspectFn, 0, [], function(err) {
+  asyncCall(null, null, inspectFn, [], [], function(err) {
     t.deepEqual(err, new Error('BadLuck'), 'Expected same rejection result');
     t.end();
   });
@@ -40,7 +40,7 @@ test('Test async call that uses success callback', function(t) {
     cb(null, 'O');
   }
   var inspectFn = new InspectableFunction(succeedingCallback);
-  asyncCall(null, null, inspectFn, 1, ['A', 'B'], function(err, res) {
+  asyncCall(null, null, inspectFn, ['a'], ['A', 'B'], function(err, res) {
     t.notOk(err, 'err should be falsy');
     t.deepEqual(res, ['O'], 'expected single item output');
     t.end();
@@ -52,7 +52,7 @@ test('Test async call that uses failing callback', function(t) {
     cb(new Error('failingMessage'));
   }
   var inspectFn = new InspectableFunction(failingCallback);
-  asyncCall(null, null, inspectFn, 1, [], function(err) {
+  asyncCall(null, null, inspectFn, ['a'], [], function(err) {
     t.deepEqual(err, new Error('failingMessage'),
     'Expected same rejection result');
     t.end();
@@ -64,7 +64,7 @@ test('Test async call that throws', function(t) {
     throw 'thrown val';
   }
   var inspectFn = new InspectableFunction(asyncThrow);
-  asyncCall(null, null, inspectFn, 0, [], function(err) {
+  asyncCall(null, null, inspectFn, [], [], function(err) {
     t.deepEqual(err, new Error('thrown val'),
       'expected to get thrown value as error arg in callback');
       t.end();
@@ -76,7 +76,7 @@ test('Test no results with callback', function(t) {
     cb(null);
   }
   var inspectFn = new InspectableFunction(noResCallback);
-  asyncCall(null, null, inspectFn, 0, [], function(err, res) {
+  asyncCall(null, null, inspectFn, [], [], function(err, res) {
     t.deepEqual(res, [], 'expected empty list when no results');
     t.end();
   });
@@ -87,7 +87,7 @@ test('Test single result with callback', function(t) {
     cb(null, 'A');
   }
   var inspectFn = new InspectableFunction(singleResCallback);
-  asyncCall(null, null, inspectFn, 1, [], function(err, res) {
+  asyncCall(null, null, inspectFn, ['a'], [], function(err, res) {
     t.deepEqual(res, ['A'], 'expected single item list');
     t.end();
   });
@@ -98,7 +98,7 @@ test('Test multiple results with callback', function(t) {
     cb(null, 'A', 'B', 'C');
   }
   var inspectFn = new InspectableFunction(multiCallback);
-  asyncCall(null, null, inspectFn, 3, [], function(err, res) {
+  asyncCall(null, null, inspectFn, ['a', 'b', 'c'], [], function(err, res) {
     t.deepEqual(res, ['A', 'B', 'C'], 'expected all args in array');
     t.end();
   });
@@ -109,9 +109,9 @@ test('Test fewer than expected results with callback', function(t) {
     cb(null, 'A', 'B');
   }
   var inspectFn = new InspectableFunction(fewerCallback);
-  asyncCall(null, null, inspectFn, 3, [], function(err, res) {
-    t.deepEqual(res, ['A', 'B'].concat(new Array(1)),
-    'expected unspecified args to be undefined');
+  asyncCall(null, null, inspectFn, ['a', 'b', 'c'], [], function(err, res) {
+    t.ok(err,
+      'expected error when providing too few results with callback');
     t.end();
   });
 });
@@ -121,9 +121,9 @@ test('Test greater than expected results with callback', function(t) {
     cb(null, 'A', 'B', 'C', 'D');
   }
   var inspectFn = new InspectableFunction(greaterCallback);
-  asyncCall(null, null, inspectFn, 3, [], function(err, res) {
-    t.deepEqual(res, ['A', 'B', 'C'],
-    'expected extra args to be ignored');
+  asyncCall(null, null, inspectFn, ['a', 'b', 'c'], [], function(err, res) {
+    t.ok(err,
+      'expected error when providing too many results with callback');
     t.end();
   });
 });
@@ -133,7 +133,7 @@ test('Test no results with promise', function(t) {
     return Promise.resolve();
   }
   var inspectFn = new InspectableFunction(noResPromise);
-  asyncCall(null, null, inspectFn, 0, [], function(err, res) {
+  asyncCall(null, null, inspectFn, [], [], function(err, res) {
     t.deepEqual(res, [], 'expected empty list when no results');
     t.end();
   });
@@ -144,7 +144,7 @@ test('Test single result with promise', function(t) {
     return Promise.resolve('A');
   }
   var inspectFn = new InspectableFunction(singleResPromise);
-  asyncCall(null, null, inspectFn, 1, [], function(err, res) {
+  asyncCall(null, null, inspectFn, ['a'], [], function(err, res) {
     t.deepEqual(res, ['A'], 'expected single item list');
     t.end();
   });
@@ -155,7 +155,7 @@ test('Test multiple results with promise', function(t) {
     return Promise.resolve(['A', 'B', 'C']);
   }
   var inspectFn = new InspectableFunction(multiPromise);
-  asyncCall(null, null, inspectFn, 3, [], function(err, res) {
+  asyncCall(null, null, inspectFn, ['a', 'b', 'c'], [], function(err, res) {
     t.deepEqual(res, ['A', 'B', 'C'], 'expected all args in array');
     t.end();
   });
@@ -166,9 +166,9 @@ test('Test fewer than expected results with promise', function(t) {
     return Promise.resolve(['A', 'B']);
   }
   var inspectFn = new InspectableFunction(fewerPromise);
-  asyncCall(null, null, inspectFn, 3, [], function(err) {
+  asyncCall(null, null, inspectFn, ['a', 'b', 'c'], [], function(err) {
     t.ok(err,
-      'expected error when providing wrong number of results with promise');
+      'expected error when providing too few results with promise');
     t.end();
   });
 });
@@ -178,9 +178,9 @@ test('Test greater than expected results with promise', function(t) {
     return Promise.resolve(['A', 'B', 'C', 'D']);
   }
   var inspectFn = new InspectableFunction(greaterPromise);
-  asyncCall(null, null, inspectFn, 3, [], function(err, res) {
+  asyncCall(null, null, inspectFn, ['a', 'b', 'c'], [], function(err, res) {
     t.ok(err,
-      'expected error when providing wrong number of results with promise');
+      'expected error when providing too many results with promise');
     t.end();
   });
 });
@@ -190,7 +190,7 @@ test('Test no results returning directly', function(t) {
   function noRes() {
   }
   var inspectFn = new InspectableFunction(noRes);
-  asyncCall(null, null, inspectFn, 0, [], function(err, res) {
+  asyncCall(null, null, inspectFn, [], [], function(err, res) {
     t.deepEqual(res, [], 'expected empty list when no results');
     t.end();
   });
@@ -201,7 +201,7 @@ test('Test single result returning directly', function(t) {
     return 'A';
   }
   var inspectFn = new InspectableFunction(singleRes);
-  asyncCall(null, null, inspectFn, 1, [], function(err, res) {
+  asyncCall(null, null, inspectFn, ['a'], [], function(err, res) {
     t.deepEqual(res, ['A'], 'expected single item list');
     t.end();
   });
@@ -212,7 +212,7 @@ test('Test multiple results returning directly', function(t) {
     return ['A', 'B', 'C'];
   }
   var inspectFn = new InspectableFunction(multiRes);
-  asyncCall(null, null, inspectFn, 3, [], function(err, res) {
+  asyncCall(null, null, inspectFn, ['a', 'b', 'c'], [], function(err, res) {
     t.deepEqual(res, ['A', 'B', 'C'], 'expected all args in array');
     t.end();
   });
@@ -223,9 +223,9 @@ test('Test fewer than expected results returning directly', function(t) {
     return ['A', 'B'];
   }
   var inspectFn = new InspectableFunction(fewerRes);
-  asyncCall(null, null, inspectFn, 3, [], function(err) {
+  asyncCall(null, null, inspectFn, ['a', 'b', 'c'], [], function(err) {
     t.ok(err,
-      'expected error when providing wrong number of results with promise');
+      'expected error when providing too few results with promise');
     t.end();
   });
 });
@@ -235,9 +235,9 @@ test('Test greater than expected results returning directly', function(t) {
     return ['A', 'B', 'C', 'D'];
   }
   var inspectFn = new InspectableFunction(greaterRes);
-  asyncCall(null, null, inspectFn, 3, [], function(err, res) {
+  asyncCall(null, null, inspectFn, ['a', 'b', 'c'], [], function(err, res) {
     t.ok(err,
-      'expected error when providing wrong number of results with promise');
+      'expected error when providing too many results with promise');
     t.end();
   });
 });
@@ -248,7 +248,7 @@ test('Test returning non-undefined to zero out arg function fails',
     return 5;
   }
   var inspectFn = new InspectableFunction(returnNonUndefined);
-  asyncCall(null, null, inspectFn, 0, [], function(err) {
+  asyncCall(null, null, inspectFn, [], [], function(err) {
     t.ok((''+err).indexOf(
       'Non-undefined value returned from function with 0 out args') !== -1,
       'Expected error when non-undefined value returned');
@@ -263,7 +263,7 @@ test('Test callback only called once',
     cb(null, 'B');
   }
   var inspectFn = new InspectableFunction(callbackOnce);
-  asyncCall(null, null, inspectFn, 1, [], function(err, res) {
+  asyncCall(null, null, inspectFn, ['a'], [], function(err, res) {
     t.deepEqual(res, ['A'], 'expected to get result of first callback');
     t.end();
   });
@@ -278,7 +278,7 @@ test('Test setting "this" for invocation', function(t) {
     }
   };
   var inspectFn = new InspectableFunction(obj.f);
-  asyncCall(null, obj, inspectFn, 0, [], function(err) {
+  asyncCall(null, obj, inspectFn, [], [], function(err) {
     t.notOk(err, 'did not expect error');
     t.equal(obj.set, true, 'should set to true');
     t.end();

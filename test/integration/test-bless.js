@@ -68,7 +68,7 @@ test('Test bless without Caveat from server', function(t) {
       rt.principal.bless(ctx, remoteKey, secCall.localBlessings,
        'ext', function(err) {
          t.ok(err, 'Expected at least one caveat must be specfied error');
-         cb();
+         cb(null, null);
        });
     }
   };
@@ -98,7 +98,7 @@ test('Test bless with Caveat from server', function(t) {
        caveats.createConstCaveat(true), function(err, blessings) {
          t.notOk(err, 'No error expected during bless');
          validateBlessings(t, blessings);
-         cb();
+         cb(null, null);
        });
     }
   };

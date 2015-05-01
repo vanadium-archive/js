@@ -13,6 +13,7 @@ var createSignature = require('../vdl/create-signature');
 var isPublicMethod = require('../lib/service-reflection').isPublicMethod;
 var verror = require('../gen-vdl/v.io/v23/verror');
 var capitalize = require('../vdl/util').capitalize;
+var uncapitalize = require('../vdl/util').uncapitalize;
 var isCapitalized = require('../vdl/util').isCapitalized;
 var format = require('format');
 var context = require('../context');
@@ -207,7 +208,10 @@ Invoker.prototype.invoke = function(name, args, injections, cb) {
   }
 
   asyncCall(injections.context, invoker._service, method.fn,
-    methodSig.outArgs.length, clonedArgs, cb);
+    methodSig.outArgs.map(function(outArg) {
+      var name = outArg.name;
+      return name ? uncapitalize(name) : '_';
+    }), clonedArgs, cb);
 };
 
 /**

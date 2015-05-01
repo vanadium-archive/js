@@ -24,7 +24,7 @@ var CacheService = {
     this.cacheMap[key] = value;
 
     process.nextTick(function() {
-      cb();
+      cb(null, undefined);
     });
   },
   get: function(context, serverCall, key, cb) {
@@ -65,7 +65,7 @@ var CacheService = {
     $stream.read();
   },
   doNothingStream: function(ctx, serverCall, $stream, cb) {
-    cb(null);
+    cb(null, undefined);
   },
   nonAsyncFunction: function(ctx, serverCall, cb) {
     cb(null, 'RESULT');
