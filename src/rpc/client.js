@@ -689,6 +689,7 @@ Client.prototype.remoteBlessings = function(ctx, name, method, cb) {
  * that the allowed server must match in order for the RPC to be initiated.</p>
  * @param {module:vanadium.security~GranterFunction} opts.granter <p>A granter
  * function.</p>
+ * @return {module:vanadium.rpc~Client~ClientCallOption}
  */
 Client.prototype.callOption = function(opts) {
   // TODO(nlacasse): Support other CallOption types.
@@ -706,10 +707,15 @@ Client.prototype.callOption = function(opts) {
 };
 
 /**
- * Constructor for ClientCallOption object.
+ * @summary ClientCallOption represents different configurations that can be
+ * specified when making an RPC call.
+ * @description
+ * Private constructor, use
+ * [client.callOption(opts)]{@link module:vanadium.rpc~Client#callOption}
+ * to construct an instance.
  * @constructor
- * @private
- * @param {Object} opts call options.
+ * @inner
+ * @memberof module:vanadium.rpc~Client
  */
 function ClientCallOption(opts) {
   this.opts = opts;

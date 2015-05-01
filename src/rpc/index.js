@@ -40,5 +40,6 @@ module.exports = {
    * @memberof module:vanadium.rpc
    * @namespace reserved
    */
-  reserved: require('../gen-vdl/v.io/v23/rpc/reserved')
+  reserved: require('../gen-vdl/v.io/v23/rpc/reserved'),
+  serverOption: require('./server-option')
 };
