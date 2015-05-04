@@ -8,7 +8,7 @@
  * @private
  */
 
-module.exports = ByteArrayMessageWriter;
+module.exports = ByteStreamMessageWriter;
 
 var RawVomWriter = require('./raw-vom-writer.js');
 
@@ -17,7 +17,7 @@ var RawVomWriter = require('./raw-vom-writer.js');
  * @constructor
  * @memberof module:vanadium.vom
  */
-function ByteArrayMessageWriter() {
+function ByteStreamMessageWriter() {
   this.rawWriter = new RawVomWriter();
   this.rawWriter._writeRawBytes(new Uint8Array([0x80]));
 }
@@ -30,7 +30,7 @@ function ByteArrayMessageWriter() {
  * header, false otherwise.
  * @param {Uint8Array} message The body of the message.
  */
-ByteArrayMessageWriter.prototype.writeValueMessage = function(
+ByteStreamMessageWriter.prototype.writeValueMessage = function(
   typeId, sendLength, message) {
   if (typeId <= 0) {
     throw new Error('Type ids should be positive integers.');
@@ -48,7 +48,7 @@ ByteArrayMessageWriter.prototype.writeValueMessage = function(
  * @param {number} typeId The type ID to define.
  * @param {Uint8Array} message The body of the type description message.
  */
-ByteArrayMessageWriter.prototype.writeTypeMessage = function(typeId, message) {
+ByteStreamMessageWriter.prototype.writeTypeMessage = function(typeId, message) {
   if (typeId <= 0) {
     throw new Error('Type ids should be positive integers.');
   }
@@ -61,10 +61,8 @@ ByteArrayMessageWriter.prototype.writeTypeMessage = function(typeId, message) {
  * Get the written bytes.
  * @return {Uint8Array} The bytes that were written.
  */
-ByteArrayMessageWriter.prototype.getBytes = function() {
-  return this.rawWriter.getBytes();
-};
-
-ByteArrayMessageWriter.prototype.reset = function() {
+ByteStreamMessageWriter.prototype.consumeBytes = function() {
+  var bytes = this.rawWriter.getBytes();
   this.rawWriter = new RawVomWriter();
+  return bytes;
 };
