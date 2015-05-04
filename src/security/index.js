@@ -44,4 +44,5 @@ module.exports = extend(
   createMethodCaveat: require('./caveats').createMethodCaveat,
   unconstrainedUse: require('./caveats').unconstrainedUse,
   createCaveat: require('./caveats').createCaveat,
+  unionOfBlessings: require('./blessings-util').unionOfBlessings
 });

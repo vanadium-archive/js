@@ -29,6 +29,7 @@ var _type5 = new vdl.Type();
 var _type6 = new vdl.Type();
 var _type7 = new vdl.Type();
 var _type8 = new vdl.Type();
+var _type9 = new vdl.Type();
 var _typeGranterHandle = new vdl.Type();
 var _typeGranterRequest = new vdl.Type();
 var _typeGranterResponse = new vdl.Type();
@@ -60,6 +61,9 @@ _type7.elem = vdl.types.STRING;
 _type8.kind = vdl.kind.LIST;
 _type8.name = "";
 _type8.elem = new signature.Interface()._type;
+_type9.kind = vdl.kind.LIST;
+_type9.name = "";
+_type9.elem = new principal.BlessingsHandle()._type;
 _typeGranterHandle.kind = vdl.kind.INT32;
 _typeGranterHandle.name = "v.io/x/ref/services/wspr/internal/app.GranterHandle";
 _typeGranterRequest.kind = vdl.kind.STRUCT;
@@ -88,6 +92,7 @@ _type5.freeze();
 _type6.freeze();
 _type7.freeze();
 _type8.freeze();
+_type9.freeze();
 _typeGranterHandle.freeze();
 _typeGranterRequest.freeze();
 _typeGranterResponse.freeze();
@@ -187,6 +192,11 @@ Controller.prototype.signature = function(ctx, serverCall, name) {
       
 Controller.prototype.getDefaultBlessings = function(ctx, serverCall) {
   throw new Error('Method GetDefaultBlessings not implemented');
+};
+    
+      
+Controller.prototype.unionOfBlessings = function(ctx, serverCall, toJoin) {
+  throw new Error('Method UnionOfBlessings not implemented');
 };
      
 
@@ -485,6 +495,27 @@ Controller.prototype._serviceDescription = {
     name: 'GetDefaultBlessings',
     doc: "// GetDefaultBlessings fetches the default blessings for the principal of the controller.",
     inArgs: [],
+    outArgs: [{
+      name: '',
+      doc: "",
+      type: _type6
+    },
+    ],
+    inStream: null,
+    outStream: null,
+    tags: []
+  },
+    
+      
+    {
+    name: 'UnionOfBlessings',
+    doc: "// UnionOfBlessings returns a Blessings object that carries the union of the provided blessings.",
+    inArgs: [{
+      name: 'toJoin',
+      doc: "",
+      type: _type9
+    },
+    ],
     outArgs: [{
       name: '',
       doc: "",

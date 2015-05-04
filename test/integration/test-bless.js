@@ -29,7 +29,7 @@ test('Test bless self without Caveat', function(t) {
 
     rt = runtime;
 
-    runtime.principal.blessSelf(runtime.getContext(), 'ext')
+    runtime.principal.blessSelf(runtime.getContext(), 'blessedname')
     .then(function(blessings) {
       validateBlessings(t, blessings);
       rt.close(t.end);
@@ -49,7 +49,7 @@ test('Test bless self with Caveat', function(t) {
 
     rt = runtime;
 
-    runtime.principal.blessSelf(runtime.getContext(), 'ext',
+    runtime.principal.blessSelf(runtime.getContext(), 'blessedname',
       caveats.createExpiryCaveat(new Date()),
       function(err, blessings) {
       t.error(err);
@@ -169,7 +169,7 @@ test('Test put to blessing store', function(t) {
       t.end(err);
     }
 
-    runtime.principal.blessSelf(runtime.getContext(), 'ext')
+    runtime.principal.blessSelf(runtime.getContext(), 'blessedname')
     .then(function(blessings) {
       t.ok(blessings instanceof Blessings, 'Got blessings');
       t.ok(blessings._id > 0, 'Should get non-zero blessings');
@@ -205,7 +205,7 @@ test('Test add roots', function(t) {
 
     rt = runtime;
 
-    runtime.principal.blessSelf(runtime.getContext(), 'ext')
+    runtime.principal.blessSelf(runtime.getContext(), 'blessedname')
     .then(function(blessings) {
       t.ok(blessings instanceof Blessings, 'Got blessings');
       t.ok(blessings._id > 0, 'Should get non-zero blessings');
