@@ -44,26 +44,39 @@ test('Test serving a JS service named livingroom/tv - ' +
 });
 
 test('Test serving a JS service when proxy Url is invalid - '+
-  'server.serve(name, service, callback)', function(assert) {
+  'server.serve(name, service, callback)', function(t) {
   if (isBrowser) {
-    return assert.end();
+    return t.end();
   }
 
   vanadium.init({ wspr: 'http://bad-address.tld' }, function(err, runtime) {
-    assert.ok(err);
-    assert.end();
+    t.notOk(err, 'no error expected on init() since wspr isn\'t ' +
+      'contacted');
+    var server = runtime.newServer();
+    server.serve('should/fail', service, function(err) {
+      t.ok(err, 'should get error after attempting to serve with bad proxy');
+      runtime.close(t.end);
+    });
   });
 });
 
 test('Test serving a JS service when proxy Url is invalid - '+
-  'var promise = server.serve(name, service)', function(assert) {
+  'var promise = server.serve(name, service)', function(t) {
   if (isBrowser) {
-    return assert.end();
+    return t.end();
   }
 
   vanadium.init({ wspr: 'http://bad-address.tld' }, function(err, runtime) {
-    assert.ok(err);
-    assert.end();
+    t.notOk(err, 'no error expected on init() since wspr isn\'t ' +
+      'contacted');
+    var server = runtime.newServer();
+    server.serve('should/fail', service).then(function() {
+      t.fail('serve expected to fail but succeeded');
+      runtime.close(t.end);
+    }).catch(function(err) {
+      t.ok(err, 'should get error after attempting to serve with bad proxy');
+      runtime.close(t.end);
+    });
   });
 });
 
@@ -167,4 +180,3 @@ test('Test adding additional names before serving a JS service should fail - ' +
     });
   });
 });
-

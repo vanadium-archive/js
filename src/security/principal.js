@@ -27,8 +27,6 @@ var verror = require('../gen-vdl/v.io/v23/verror');
  * <p>This constructor should not be used explicitly.  Instead, use the
  * principal property on the [runtime]{@link module:vanadium~Runtime}.
  * @constructor
- * @property {module:vanadium.security~Blessings} defaultBlessings The default
- * blessings for this principal.
  * @property {module:vanadium.security~BlessingStore} blessingStore The
  * blessing store.
  * @inner
@@ -84,8 +82,7 @@ Principal.prototype.bless = function(ctx, publicKey, blessings,
   var caveats = args.slice(4);
 
   var controller = this._controller;
-  this._controller.bless.call(controller, ctx, publicKey,
-    blessings._id, extension, caveats)
+  this._controller.bless(ctx, publicKey, blessings._id, extension, caveats)
   .then(function(res) {
     var publicKey = res[0];
     var handle = res[1];
@@ -123,7 +120,7 @@ Principal.prototype.blessSelf = function(ctx, name /*, ...caveats, cb*/) {
   var caveats = args.slice(2);
 
   var controller = this._controller;
-  controller.blessSelf.call(this._controller, ctx, name, caveats)
+  controller.blessSelf(ctx, name, caveats)
   .then(function(res) {
     var publicKey = res[0];
     var handle = res[1];
@@ -153,15 +150,7 @@ Principal.prototype.addToRoots = function(
     return def.promise;
   }
 
-  return this._controller.addToRoots.call(this._controller,
-    ctx, blessings._id, cb);
+  return this._controller.addToRoots(ctx, blessings._id, cb);
 };
 
-Principal.prototype._loadDefaultBlessings = function() {
-  var self = this;
-  return this._controller.getDefaultBlessings(this._ctx).
-    then(function(res) {
-      self.defaultBlessings = res;
-  });
-};
 module.exports = Principal;

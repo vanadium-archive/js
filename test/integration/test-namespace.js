@@ -197,8 +197,10 @@ test('Test globbing non-existing rooted name - ' +
         }
         numErrorItems++;
         assert.ok(errItem, 'Should get one error result item');
-        assert.ok(errItem.error instanceof verror.TimeoutError,
-          'error item should have error field of type TimeoutError');
+        assert.ok(errItem.error instanceof verror.TimeoutError ||
+          errItem.error instanceof verror.NoServersError,
+          'error item should have error field of type TimeoutError or ' +
+          'NoServersError');
         assert.equal(errItem.name, '/RootedBadName.Google.tld:1234',
           'error item should have a name');
       });

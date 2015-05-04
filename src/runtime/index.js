@@ -59,17 +59,13 @@ function init(options, cb) {
     });
   }
 
-  promise = promise.then(function() {
-    return rt.principal._loadDefaultBlessings();
-  }).then(function() {
-    return rt;
-  });
-
-  promise.then(function(rt) {
-    cb(null, rt);
-  }, function(err) {
-    cb(err);
-  });
+  if (cb) {
+    promise.then(function(rt) {
+      cb(null, rt);
+    }, function(err) {
+      cb(err);
+    });
+  }
   return promise;
 }
 

@@ -22,6 +22,7 @@ module.exports = {};
 
 // Types:
 var _type1 = new vdl.Type();
+var _type10 = new vdl.Type();
 var _type2 = new vdl.Type();
 var _type3 = new vdl.Type();
 var _type4 = new vdl.Type();
@@ -40,6 +41,9 @@ var _typeRpcServerOption = new vdl.Type();
 _type1.kind = vdl.kind.LIST;
 _type1.name = "";
 _type1.elem = _typeRpcCallOption;
+_type10.kind = vdl.kind.LIST;
+_type10.name = "";
+_type10.elem = new principal.BlessingsHandle()._type;
 _type2.kind = vdl.kind.LIST;
 _type2.name = "";
 _type2.elem = new security.BlessingPattern()._type;
@@ -58,12 +62,13 @@ _type6.elem = new principal.JsBlessings()._type;
 _type7.kind = vdl.kind.LIST;
 _type7.name = "";
 _type7.elem = vdl.types.STRING;
-_type8.kind = vdl.kind.LIST;
+_type8.kind = vdl.kind.MAP;
 _type8.name = "";
-_type8.elem = new signature.Interface()._type;
+_type8.elem = _type6;
+_type8.key = new security.BlessingPattern()._type;
 _type9.kind = vdl.kind.LIST;
 _type9.name = "";
-_type9.elem = new principal.BlessingsHandle()._type;
+_type9.elem = new signature.Interface()._type;
 _typeGranterHandle.kind = vdl.kind.INT32;
 _typeGranterHandle.name = "v.io/x/ref/services/wspr/internal/app.GranterHandle";
 _typeGranterRequest.kind = vdl.kind.STRUCT;
@@ -85,6 +90,7 @@ _typeRpcServerOption.kind = vdl.kind.UNION;
 _typeRpcServerOption.name = "v.io/x/ref/services/wspr/internal/app.RpcServerOption";
 _typeRpcServerOption.fields = [{name: "IsLeaf", type: vdl.types.BOOL}, {name: "ServesMountTable", type: vdl.types.BOOL}];
 _type1.freeze();
+_type10.freeze();
 _type2.freeze();
 _type3.freeze();
 _type4.freeze();
@@ -170,13 +176,43 @@ Controller.prototype.blessSelf = function(ctx, serverCall, name, caveats) {
 };
     
       
-Controller.prototype.putToBlessingStore = function(ctx, serverCall, handle, pattern) {
-  throw new Error('Method PutToBlessingStore not implemented');
+Controller.prototype.addToRoots = function(ctx, serverCall, handle) {
+  throw new Error('Method AddToRoots not implemented');
 };
     
       
-Controller.prototype.addToRoots = function(ctx, serverCall, handle) {
-  throw new Error('Method AddToRoots not implemented');
+Controller.prototype.blessingStoreSet = function(ctx, serverCall, blessingsHandle, pattern) {
+  throw new Error('Method BlessingStoreSet not implemented');
+};
+    
+      
+Controller.prototype.blessingStoreForPeer = function(ctx, serverCall, peerBlessings) {
+  throw new Error('Method BlessingStoreForPeer not implemented');
+};
+    
+      
+Controller.prototype.blessingStoreSetDefault = function(ctx, serverCall, blessingsHandle) {
+  throw new Error('Method BlessingStoreSetDefault not implemented');
+};
+    
+      
+Controller.prototype.blessingStoreDefault = function(ctx, serverCall) {
+  throw new Error('Method BlessingStoreDefault not implemented');
+};
+    
+      
+Controller.prototype.blessingStorePublicKey = function(ctx, serverCall) {
+  throw new Error('Method BlessingStorePublicKey not implemented');
+};
+    
+      
+Controller.prototype.blessingStorePeerBlessings = function(ctx, serverCall) {
+  throw new Error('Method BlessingStorePeerBlessings not implemented');
+};
+    
+      
+Controller.prototype.blessingStoreDebugString = function(ctx, serverCall) {
+  throw new Error('Method BlessingStoreDebugString not implemented');
 };
     
       
@@ -187,11 +223,6 @@ Controller.prototype.remoteBlessings = function(ctx, serverCall, name, method) {
       
 Controller.prototype.signature = function(ctx, serverCall, name) {
   throw new Error('Method Signature not implemented');
-};
-    
-      
-Controller.prototype.getDefaultBlessings = function(ctx, serverCall) {
-  throw new Error('Method GetDefaultBlessings not implemented');
 };
     
       
@@ -403,10 +434,26 @@ Controller.prototype._serviceDescription = {
     
       
     {
-    name: 'PutToBlessingStore',
-    doc: "// PutToBlessingStore puts the specified blessing to the blessing store under the provided pattern.",
+    name: 'AddToRoots',
+    doc: "// AddToRoots adds the provided blessing as a root.",
     inArgs: [{
       name: 'handle',
+      doc: "",
+      type: new principal.BlessingsHandle()._type
+    },
+    ],
+    outArgs: [],
+    inStream: null,
+    outStream: null,
+    tags: []
+  },
+    
+      
+    {
+    name: 'BlessingStoreSet',
+    doc: "// BlessingStoreSet puts the specified blessing in the blessing store under the provided pattern.",
+    inArgs: [{
+      name: 'blessingsHandle',
       doc: "",
       type: new principal.BlessingsHandle()._type
     },
@@ -429,15 +476,100 @@ Controller.prototype._serviceDescription = {
     
       
     {
-    name: 'AddToRoots',
-    doc: "// AddToRoots adds the provided blessing as a root.",
+    name: 'BlessingStoreForPeer',
+    doc: "// BlessingStoreForPeer retrieves the blessings marked for the given peers.",
     inArgs: [{
-      name: 'handle',
+      name: 'peerBlessings',
+      doc: "",
+      type: _type7
+    },
+    ],
+    outArgs: [{
+      name: '',
+      doc: "",
+      type: _type6
+    },
+    ],
+    inStream: null,
+    outStream: null,
+    tags: []
+  },
+    
+      
+    {
+    name: 'BlessingStoreSetDefault',
+    doc: "// BlessingStoreSetDefault sets the default blessings.",
+    inArgs: [{
+      name: 'blessingsHandle',
       doc: "",
       type: new principal.BlessingsHandle()._type
     },
     ],
     outArgs: [],
+    inStream: null,
+    outStream: null,
+    tags: []
+  },
+    
+      
+    {
+    name: 'BlessingStoreDefault',
+    doc: "// BlessingStoreDefault fetches the default blessings for the principal of the controller.",
+    inArgs: [],
+    outArgs: [{
+      name: '',
+      doc: "",
+      type: _type6
+    },
+    ],
+    inStream: null,
+    outStream: null,
+    tags: []
+  },
+    
+      
+    {
+    name: 'BlessingStorePublicKey',
+    doc: "// BlessingStorePublicKey fetches the public key of the principal for which this store hosts blessings.",
+    inArgs: [],
+    outArgs: [{
+      name: '',
+      doc: "",
+      type: vdl.types.STRING
+    },
+    ],
+    inStream: null,
+    outStream: null,
+    tags: []
+  },
+    
+      
+    {
+    name: 'BlessingStorePeerBlessings',
+    doc: "// BlessingStorePeerBlessings returns all the blessings that the BlessingStore holds.",
+    inArgs: [],
+    outArgs: [{
+      name: '',
+      doc: "",
+      type: _type8
+    },
+    ],
+    inStream: null,
+    outStream: null,
+    tags: []
+  },
+    
+      
+    {
+    name: 'BlessingStoreDebugString',
+    doc: "// BlessingStoreDebugString retrieves a debug string describing the state of the blessing store",
+    inArgs: [],
+    outArgs: [{
+      name: '',
+      doc: "",
+      type: vdl.types.STRING
+    },
+    ],
     inStream: null,
     outStream: null,
     tags: []
@@ -482,23 +614,7 @@ Controller.prototype._serviceDescription = {
     outArgs: [{
       name: '',
       doc: "",
-      type: _type8
-    },
-    ],
-    inStream: null,
-    outStream: null,
-    tags: []
-  },
-    
-      
-    {
-    name: 'GetDefaultBlessings',
-    doc: "// GetDefaultBlessings fetches the default blessings for the principal of the controller.",
-    inArgs: [],
-    outArgs: [{
-      name: '',
-      doc: "",
-      type: _type6
+      type: _type9
     },
     ],
     inStream: null,
@@ -513,7 +629,7 @@ Controller.prototype._serviceDescription = {
     inArgs: [{
       name: 'toJoin',
       doc: "",
-      type: _type9
+      type: _type10
     },
     ],
     outArgs: [{

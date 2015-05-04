@@ -16,10 +16,12 @@ var Blessings = require('../../src/security/blessings');
 var blessingsService = {
   createBlessings: function(ctx, serverCall, publicKey) {
     var principal = runtimeFromContext(ctx).principal;
-    var blessings = principal.defaultBlessings;
     var expiryDate = new Date((new Date()).getTime() + 6000000);
-    return principal.bless(ctx, publicKey, blessings, 'friend',
+
+    return principal.blessingStore.getDefault(ctx).then(function(defaultBless) {
+      return principal.bless(ctx, publicKey, defaultBless, 'friend',
                            caveats.createExpiryCaveat(expiryDate));
+    });
   },
   verifyBlessings: function(ctx, serverCall) {
     var secCall = serverCall.securityCall;
@@ -55,16 +57,18 @@ test('Test blessings are passed as return args', function(assert) {
   serve('testing/blessings', leafDispatcher(blessingsService),
         function(err, res) {
     var principal = res.runtime.principal;
-    var key = principal.defaultBlessings.publicKey;
+
     var ctx = res.runtime.getContext();
-    res.service.createBlessings(ctx, key).then(function(blessings) {
-      assert.ok(blessings instanceof Blessings, 'Is a blessing');
-      return principal.blessingStore.set(ctx, blessings, 'test');
-    }).then(function() {
-      return res.service.verifyBlessings(ctx);
-    }).then(function() {
-      assert.ok(true, 'blessings succeed');
-      res.end(assert);
+    principal.blessingStore.getPublicKey(ctx).then(function(key) {
+      return res.service.createBlessings(ctx, key).then(function(blessings) {
+        assert.ok(blessings instanceof Blessings, 'Is a blessing');
+        return principal.blessingStore.set(ctx, blessings, 'test');
+      }).then(function() {
+        return res.service.verifyBlessings(ctx);
+      }).then(function() {
+        assert.ok(true, 'blessings succeed');
+        res.end(assert);
+      });
     }).catch(function(err) {
       assert.error(err);
       res.end(assert);

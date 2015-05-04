@@ -163,39 +163,6 @@ test('Test bless without Caveat from client (with Granter)', function(t) {
 });
 
 // TODO(bprosnitz) This test is weak. Improve it.
-test('Test put to blessing store', function(t) {
-  vanadium.init(config, function(err, runtime) {
-    if (err) {
-      t.end(err);
-    }
-
-    runtime.principal.blessSelf(runtime.getContext(), 'blessedname')
-    .then(function(blessings) {
-      t.ok(blessings instanceof Blessings, 'Got blessings');
-      t.ok(blessings._id > 0, 'Should get non-zero blessings');
-
-      runtime.principal.blessingStore.set(runtime.getContext(),
-        blessings, 'fake/remote/pattern').then(function(oldBlessing) {
-          t.equal(oldBlessing, null,
-            'Should get null (no previous handle) for pattern not in store');
-          return runtime.principal.blessingStore.set(runtime.getContext(),
-            blessings, 'fake/remote/pattern');
-        }).then(function(firstBlessing) {
-          t.equal(firstBlessing._id, blessings._id,
-            'Should get handle of first blessing back');
-          runtime.close(t.end);
-        }).catch(function(err) {
-          t.notOk(err, 'Shouldn\'t get error putting to blessing store');
-          runtime.close(t.end);
-        });
-    }).catch(function(err) {
-      t.error(err, 'either blessSelf or blessingStore.set errored');
-      runtime.close(t.end);
-    });
-  });
-});
-
-// TODO(bprosnitz) This test is weak. Improve it.
 test('Test add roots', function(t) {
   var rt;
   vanadium.init(config, function(err, runtime) {

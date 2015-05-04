@@ -88,7 +88,7 @@ test('Test binding to a non-existing name - ' +
   });
 });
 
-test('Test binding when proxy Url is invalid - ' +
+test('Test using the proxy when proxy Url is invalid - ' +
   'client.bindTo(name, callback)', function(assert) {
   if (isBrowser) {
     return assert.end();
@@ -97,10 +97,13 @@ test('Test binding when proxy Url is invalid - ' +
   vanadium.init({ wspr: 'http://bad-address.tld' }, onruntime);
 
   function onruntime(err, runtime) {
-    assert.ok(err instanceof Error, 'returns an error');
-    assert.ok(err.message.indexOf('Failed to connect') >= 0,
-              'error is connection error');
-    assert.end();
+    assert.notOk(err);
+    var client = runtime.newClient();
+    client.bindTo(runtime.getContext(), 'test_service/cache', function(err) {
+      assert.ok(err instanceof Error);
+      runtime.close();
+      assert.end();
+    });
   }
 });
 
@@ -110,15 +113,22 @@ test('Test binding when wspr Url is invalid - ' +
     return assert.end();
   }
 
+  var rt;
   vanadium
-  .init({ wspr: 'http://bad-address.tld' }).
-  then(function() {
-    assert.error('should not have succeeded');
+  .init({ wspr: 'http://bad-address.tld' })
+  .catch(function(err) {
+    assert.notOk(err);
     assert.end();
-  }, function(err) {
-    assert.ok(err instanceof Error, 'returns an error');
-    assert.ok(err.message.indexOf('Failed to connect') >= 0,
-              'error is connection error');
+  }).then(function(runtime) {
+    rt = runtime;
+    var client = rt.newClient();
+    return client.bindTo(runtime.getContext(), 'test_service/cache');
+  }).then(function() {
+    rt.close();
+    assert.end('Bind should fail');
+  }).catch(function(err) {
+    assert.ok(err instanceof Error);
+    rt.close();
     assert.end();
   });
 });
