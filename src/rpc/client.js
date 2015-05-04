@@ -13,14 +13,12 @@
  */
 
 var actions = require('../verror/actions');
-var ByteArrayMessageWriter = require('../vom/byte-array-message-writer');
 var byteUtil = require('../vdl/byte-util');
 var Controller =
   require('../gen-vdl/v.io/x/ref/services/wspr/internal/app').Controller;
 var context = require('../context');
 var Deferred = require('../lib/deferred');
 var emitStreamError = require('../lib/emit-stream-error');
-var Encoder = require('../vom/encoder');
 var Incoming = require('../proxy/message-type').Incoming;
 var makeError = require('../verror/make-errors');
 var Outgoing = require('../proxy/message-type').Outgoing;
@@ -44,7 +42,10 @@ var vtrace = require('../vtrace');
 var Blessings = require('../security/blessings');
 var JsBlessings =
   require('../gen-vdl/v.io/x/ref/services/wspr/internal/principal').JsBlessings;
-
+var ByteStreamMessageReader = require('../vom/byte-stream-message-reader');
+var ByteStreamMessageWriter = require('../vom/byte-stream-message-writer');
+var Encoder = require('../vom/encoder');
+var Decoder = require('../vom/decoder');
 
 var OutstandingRPC = function(ctx, options, cb) {
   this._ctx = ctx;
@@ -61,6 +62,8 @@ var OutstandingRPC = function(ctx, options, cb) {
   this._outStreamingType = options.outStreamingType;
   this._callOptions = options.callOptions;
   this._cb = cb;
+  this._encoder = options.encoder;
+  this._decoder = options.decoder;
   this._def = null;
 };
 
@@ -211,7 +214,14 @@ OutstandingRPC.prototype.handleResponse = function(type, data) {
 OutstandingRPC.prototype.handleCompletion = function(data) {
   var response;
   try {
-    response = vom.decode(byteUtil.hex2Bytes(data));
+    var bytes = byteUtil.hex2Bytes(data);
+    if (!this._decoder._messageReader) {
+      this._decoder._messageReader = new ByteStreamMessageReader(bytes);
+    } else {
+      this._decoder._messageReader.clear();
+      this._decoder._messageReader.addBytes(bytes);
+    }
+    response = this._decoder.decode();
   } catch (e) {
     this.handleError(
       new verror.InternalError(this._ctx, 'Failed to decode result: ', e));
@@ -296,9 +306,10 @@ OutstandingRPC.prototype.constructMessage = function() {
   };
 
   var header = new RpcRequest(jsonMessage);
-
-  var writer = new ByteArrayMessageWriter();
-  var encoder = new Encoder(writer);
+  var encoder = this._encoder;
+  if (!encoder._messageWriter) {
+    encoder._messageWriter = new ByteStreamMessageWriter();
+  }
   encoder.encode(header);
   for (var i = 0; i < this._args.length; i++) {
     var o = this._args[i];
@@ -307,7 +318,7 @@ OutstandingRPC.prototype.constructMessage = function() {
     }
     encoder.encode(o);
   }
-  return byteUtil.bytes2Hex(writer.getBytes());
+  return byteUtil.bytes2Hex(encoder._messageWriter.consumeBytes());
 };
 
 /**
@@ -327,6 +338,18 @@ function Client(proxyConnection) {
   }
 
   this._proxyConnection = proxyConnection;
+  if (proxyConnection && proxyConnection.clientEncoder) {
+    this._encoder = proxyConnection.clientEncoder;
+  } else {
+    this._encoder = new Encoder();
+  }
+
+  if (proxyConnection && proxyConnection.clientDecoder) {
+    this._decoder = proxyConnection.clientDecoder;
+  } else {
+    this._decoder = new Decoder();
+  }
+
   this._controller = this.bindWithSignature(
     '__controller', [Controller.prototype._serviceDescription]);
 }
@@ -539,7 +562,9 @@ Client.prototype.bindWithSignature = function(name, signature, cb) {
         isStreaming: isStreaming,
         inStreamingType: inStreaming ? methodSig.inStream.type : null,
         outStreamingType: outStreaming ? methodSig.outStream.type : null,
-        callOptions: callOptions
+        callOptions: callOptions,
+        encoder: client._encoder,
+        decoder: client._decoder,
       }, callback);
 
       return rpc.start();

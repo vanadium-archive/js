@@ -60,3 +60,7 @@ BinaryReader.prototype.readByteArray = function(amt) {
   }
   return arr;
 };
+
+BinaryReader.prototype.hasData = function() {
+  return this.pos < this.buf.length;
+};

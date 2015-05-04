@@ -166,3 +166,7 @@ RawVomReader.prototype.peekByte = function() {
 RawVomReader.prototype._readRawBytes = function(amt) {
   return this._reader.readByteArray(amt);
 };
+
+RawVomReader.prototype.hasData = function() {
+  return this._reader.hasData();
+};
