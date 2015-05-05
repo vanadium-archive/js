@@ -3,24 +3,22 @@
 // license that can be found in the LICENSE file.
 
 var test = require('prova');
+var vanadium = require('../../');
 var serve = require('./serve');
 var leafDispatcher = require('../../src/rpc/leaf-dispatcher');
-var runtimeFromContext = require('../../src/runtime/runtime-from-context');
-var types = require('../../src/vdl/types');
-var WireBlessings =
-  require('../../src/gen-vdl/v.io/v23/security').WireBlessings;
-var caveats = require('../../src/security/caveats');
+var WireBlessings = vanadium.security.WireBlessings;
 var Blessings = require('../../src/security/blessings');
-
+var security = vanadium.security;
+var types = vanadium.vdl.types;
 
 var blessingsService = {
   createBlessings: function(ctx, serverCall, publicKey) {
-    var principal = runtimeFromContext(ctx).principal;
+    var principal = vanadium.runtimeForContext(ctx).principal;
     var expiryDate = new Date((new Date()).getTime() + 6000000);
 
     return principal.blessingStore.getDefault(ctx).then(function(defaultBless) {
       return principal.bless(ctx, publicKey, defaultBless, 'friend',
-                           caveats.createExpiryCaveat(expiryDate));
+                           security.createExpiryCaveat(expiryDate));
     });
   },
   verifyBlessings: function(ctx, serverCall) {

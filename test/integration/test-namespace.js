@@ -5,18 +5,18 @@
 var test = require('prova');
 var Promise = require('../../src/lib/promise');
 
-var access = require('../../src/gen-vdl/v.io/v23/security/access');
-var reserved = require('../../src/gen-vdl/v.io/v23/rpc/reserved');
 var config = require('./default-config');
-var MINUTE = 60 * 1000; // a minute
 var Promise = require('../../src/lib/promise');
 var random = require('../../src/lib/random');
 var timeouts = require('./timeouts');
 var vanadium = require('../../');
 var verror = vanadium.verror;
+var access = vanadium.security.access;
+var reserved = vanadium.rpc.reserved;
 
 var namespaceRoot = process.env.V23_NAMESPACE;
 var PREFIX = 'namespace-testing/';
+var MINUTE = 60 * 1000; // a minute
 
 test('Test globbing children - glob(' + PREFIX + '*)', function(assert) {
   var runtime;

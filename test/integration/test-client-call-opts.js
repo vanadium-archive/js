@@ -3,9 +3,8 @@
 // license that can be found in the LICENSE file.
 
 var test = require('prova');
-
-var config = require('./default-config');
 var vanadium = require('../../');
+var config = require('./default-config');
 var verror = vanadium.verror;
 
 function end(t, rt, err) {

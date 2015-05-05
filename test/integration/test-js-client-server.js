@@ -3,10 +3,11 @@
 // license that can be found in the LICENSE file.
 
 var test = require('prova');
+var vanadium = require('../../');
 var serve = require('./serve');
 var leafDispatcher = require('../../src/rpc/leaf-dispatcher');
 var Deferred = require('../../src/lib/deferred');
-var vdl = require('../../src/vdl');
+
 var builtins = require('../../src/vdl/builtins');
 var stringify = require('../../src/vdl/stringify');
 var TypeUtil = require('../../src/vdl/type-util');
@@ -14,6 +15,8 @@ var typeServiceVdl =
   require('../vdl-out/javascript-test/services/type-service');
 var typedStreamingServiceVdl =
   require('../vdl-out/javascript-test/services/typed-streaming-service');
+
+var vdl = vanadium.vdl;
 
 // TODO(bprosnitz) Combine CacheService and CacheServicePromises so there
 // isn't as much duplicated code.

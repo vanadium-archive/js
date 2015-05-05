@@ -21,73 +21,89 @@ var kind = require('./kind.js');
  */
 var types = {
   /**
+   * @type {module:vanadium.vdl.Type}
    * @const
    */
   ANY: primitiveType(kind.ANY),
   /**
+   * @type {module:vanadium.vdl.Type}
    * @const
    */
   BOOL: primitiveType(kind.BOOL),
   /**
+   * @type {module:vanadium.vdl.Type}
    * @const
    */
   BYTE: primitiveType(kind.BYTE),
   /**
+   * @type {module:vanadium.vdl.Type}
    * @const
    */
   UINT16: primitiveType(kind.UINT16),
   /**
+   * @type {module:vanadium.vdl.Type}
    * @const
    */
   UINT32: primitiveType(kind.UINT32),
   /**
+   * @type {module:vanadium.vdl.Type}
    * @const
    */
   UINT64: primitiveType(kind.UINT64),
   /**
+   * @type {module:vanadium.vdl.Type}
    * @const
    */
   INT16: primitiveType(kind.INT16),
   /**
+   * @type {module:vanadium.vdl.Type}
    * @const
    */
   INT32: primitiveType(kind.INT32),
   /**
+   * @type {module:vanadium.vdl.Type}
    * @const
    */
   INT64: primitiveType(kind.INT64),
   /**
+   * @type {module:vanadium.vdl.Type}
    * @const
    */
   FLOAT32: primitiveType(kind.FLOAT32),
   /**
+   * @type {module:vanadium.vdl.Type}
    * @const
    */
   FLOAT64: primitiveType(kind.FLOAT64),
   /**
+   * @type {module:vanadium.vdl.Type}
    * @const
    */
   COMPLEX64: primitiveType(kind.COMPLEX64),
   /**
+   * @type {module:vanadium.vdl.Type}
    * @const
    */
   COMPLEX128: primitiveType(kind.COMPLEX128),
   /**
+   * @type {module:vanadium.vdl.Type}
    * @const
    */
   STRING: primitiveType(kind.STRING),
   /**
+   * @type {module:vanadium.vdl.Type}
    * @const
    */
   TYPEOBJECT: Type.prototype._type // So that === works for types.TypeObject
 };
 /**
- * Defines the wire error format
+ * @type {module:vanadium.vdl.Type}
  * @const
  */
 types.ERROR = defineOptionalErrorType();
 
 /**
+ * @type {module:vanadium.vdl.Type}
  * @const
  */
 types.JSVALUE = defineJSValueType();

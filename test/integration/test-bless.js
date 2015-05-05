@@ -5,11 +5,10 @@
 var test = require('prova');
 var vanadium = require('../../');
 var config = require('./default-config');
-var caveats = require('../../src/security/caveats');
 var leafDispatcher = require('../../src/rpc/leaf-dispatcher');
-var serve = require('./serve');
 var Blessings = require('../../src/security/blessings');
-var SharedContextKeys = require('../../src/runtime/shared-context-keys');
+var serve = require('./serve');
+var security = vanadium.security;
 
 function validateBlessings(t, blessings) {
   t.ok(blessings instanceof Blessings, 'Blessings have correct type');
@@ -50,7 +49,7 @@ test('Test bless self with Caveat', function(t) {
     rt = runtime;
 
     runtime.principal.blessSelf(runtime.getContext(), 'blessedname',
-      caveats.createExpiryCaveat(new Date()),
+      security.createExpiryCaveat(new Date()),
       function(err, blessings) {
       t.error(err);
       validateBlessings(t, blessings);
@@ -63,11 +62,11 @@ test('Test bless without Caveat from server', function(t) {
   var service = {
     method: function(ctx, serverCall, cb) {
       var secCall = serverCall.securityCall;
-      var rt = ctx.value(SharedContextKeys.RUNTIME);
+      var rt = vanadium.runtimeForContext(ctx);
       var remoteKey = secCall.remoteBlessings.publicKey;
       rt.principal.bless(ctx, remoteKey, secCall.localBlessings,
        'ext', function(err) {
-         t.ok(err, 'Expected at least one caveat must be specfied error');
+         t.ok(err, 'Expected at least one caveat must be specified error');
          cb(null, null);
        });
     }
@@ -90,12 +89,12 @@ test('Test bless without Caveat from server', function(t) {
 test('Test bless with Caveat from server', function(t) {
   var service = {
     method: function(ctx, serverCall, cb) {
-      var rt = ctx.value(SharedContextKeys.RUNTIME);
+      var rt = vanadium.runtimeForContext(ctx);
       var secCall = serverCall.securityCall;
       var remoteKey = secCall.remoteBlessings.publicKey;
       rt.principal.bless(ctx, remoteKey, secCall.localBlessings,
-       'ext', caveats.createExpiryCaveat(new Date(Date.now() - 1000)),
-       caveats.createConstCaveat(true), function(err, blessings) {
+       'ext', security.createExpiryCaveat(new Date(Date.now() - 1000)),
+       security.createConstCaveat(true), function(err, blessings) {
          t.notOk(err, 'No error expected during bless');
          validateBlessings(t, blessings);
          cb(null, null);
@@ -146,7 +145,7 @@ test('Test bless without Caveat from client (with Granter)', function(t) {
             call.remoteBlessings.publicKey,
             call.localBlessings,
             'ext',
-            caveats.createExpiryCaveat(fiveSecondsInFuture),
+            security.createExpiryCaveat(fiveSecondsInFuture),
             function(err, blessing) {
               expectedBlessing = blessing;
               cb(err, blessing);

@@ -3,11 +3,12 @@
 // license that can be found in the LICENSE file.
 
 var test = require('prova');
+var vanadium = require('../../');
 var service = require('./get-service');
 var serve = require('./serve');
 var leafDispatcher = require('../../src/rpc/leaf-dispatcher');
 var NO_TIMEOUT = require('../../src/rpc/constants').NO_TIMEOUT;
-var CanceledError = require('../../src/gen-vdl/v.io/v23/verror').CanceledError;
+var CanceledError = vanadium.verror.CanceledError;
 
 var errorId = new CanceledError(null).id;
 

@@ -5,7 +5,7 @@
 var test = require('prova');
 var vanadium = require('../../');
 var config = require('./default-config');
-var security = require('../../src/security');
+var security = vanadium.security;
 
 test('Test union of blessings (promise case)', function(t) {
   vanadium.init(config, function(err, runtime) {

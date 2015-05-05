@@ -4,9 +4,10 @@
 
 var test = require('prova');
 var service = require('./get-service');
-var vtrace = require('../../src/vtrace');
+var vanadium = require('../../');
 var serve = require('./serve');
 var leafDispatcher = require('../../src/rpc/leaf-dispatcher');
+var vtrace = vanadium.vtrace;
 
 function findSpan(name, trace) {
   for (var i = 0; i < trace.spans.length; i++) {

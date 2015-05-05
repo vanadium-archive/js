@@ -3,9 +3,10 @@
 // license that can be found in the LICENSE file.
 
 var test = require('prova');
+var vanadium = require('../../');
 var service = require('./get-service');
-var verror = require('../../src/gen-vdl/v.io/v23/verror');
-var VanadiumError = require('../../src/verror/vanadium-error');
+var verror = vanadium.verror;
+var VanadiumError = verror.VanadiumError;
 
 test('Test Go service returning Aborted error - ' +
   'errorThrower.method(callback)', function(assert) {

@@ -30,6 +30,13 @@ function createCaveat(cavDesc, data) {
   });
 }
 
+/**
+ * createConstCaveat returns a [Caveat]{@link module:vanadium.security.Caveat}
+ * that validates iff value is true.
+ * @param {boolean} value
+ * @returns module:vanadium.security.Caveat
+ * @memberof module:vanadium.security
+ */
 function createConstCaveat(value) {
   return createCaveat(vdlSecurity.ConstCaveat, value);
 }

@@ -5,10 +5,9 @@
 var test = require('prova');
 var serve = require('./serve');
 var Promise = require('../../src/lib/promise');
-var naming = require('../../src/gen-vdl/v.io/v23/naming');
-var namespaceUtil = require('../../src/naming/util');
-var verror = require('../../src/gen-vdl/v.io/v23/verror');
-
+var vanadium = require('../../');
+var naming = vanadium.naming;
+var verror = vanadium.verror;
 
 var ALBUMS = [
   'public',
@@ -250,7 +249,7 @@ function FullGlobber() {
 
 FullGlobber.prototype.__glob = function(ctx, serverCall, glob, $stream) {
     var mountEntry = new naming.MountEntry({
-      name: namespaceUtil.join(serverCall.securityCall.suffix, glob),
+      name: naming.join(serverCall.securityCall.suffix, glob),
     });
     $stream.write(new naming.GlobReply({
       entry: mountEntry

@@ -3,9 +3,10 @@
 // license that can be found in the LICENSE file.
 
 var test = require('prova');
+var vanadium = require('../../');
 var service = require('./get-service');
-var makeError = require('../../src/verror/make-errors');
-var actions = require('../../src/verror/actions');
+var makeError = vanadium.verror.makeError;
+var actions = vanadium.verror.actions;
 
 var E = makeError('randomPrefix.verror', actions.NO_RETRY,
                   '{1} {2}: RandomError: {_}');

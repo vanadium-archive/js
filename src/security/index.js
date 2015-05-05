@@ -42,6 +42,7 @@ module.exports = extend(
   access: require('./access'),
   createExpiryCaveat: require('./caveats').createExpiryCaveat,
   createMethodCaveat: require('./caveats').createMethodCaveat,
+  createConstCaveat: require('./caveats').createConstCaveat,
   unconstrainedUse: require('./caveats').unconstrainedUse,
   createCaveat: require('./caveats').createCaveat,
   unionOfBlessings: require('./blessings-util').unionOfBlessings

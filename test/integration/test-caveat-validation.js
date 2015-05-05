@@ -3,11 +3,11 @@
 // license that can be found in the LICENSE file.
 
 var test = require('prova');
+var vanadium = require('../../');
 var serve = require('./serve');
-var vdl = require('../../src/vdl');
 var leafDispatcher = require('../../src/rpc/leaf-dispatcher');
-
 var testService = require('../vdl-out/v.io/x/js.core/test_service');
+var vdl = vanadium.vdl;
 
 // Service to be invoked
 function aServiceDef() {

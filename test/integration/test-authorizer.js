@@ -2,22 +2,19 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
+var vanadium = require('../..');
 var test = require('prova');
-var access = require('../../src/gen-vdl/v.io/v23/security/access');
 var Deferred = require('../../src/lib/deferred');
-var permissionsAuthorizer =
-  require('../../src/security/access/permissions-authorizer');
-var allowEveryoneAuthorizer =
-  require('../../src/security/access/allow-everyone-authorizer');
 var serve = require('./serve');
-
+var access = vanadium.security.access;
+var permissionsAuthorizer = vanadium.security.access.permissionsAuthorizer;
+var allowEveryoneAuthorizer = vanadium.security.access.allowEveryoneAuthorizer;
 
 var service = {
   call: function(ctx, serverCall, arg) {
     return Promise.resolve(1);
   }
 };
-
 
 function createPromiseDispatcher(authorizer, tags) {
   function auth(ctx, call) {
