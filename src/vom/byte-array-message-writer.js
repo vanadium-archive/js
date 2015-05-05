@@ -64,7 +64,3 @@ ByteArrayMessageWriter.prototype.writeTypeMessage = function(typeId, message) {
 ByteArrayMessageWriter.prototype.getBytes = function() {
   return this.rawWriter.getBytes();
 };
-
-ByteArrayMessageWriter.prototype.reset = function() {
-  this.rawWriter = new RawVomWriter();
-};

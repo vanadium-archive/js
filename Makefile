@@ -90,8 +90,6 @@ JS_SRC_FILES = $(shell find src -name "*.js" | sed 's/ /\\ /')
 # string with no spaces.
 COMMON_SERVICES := "test_serviced"
 
-LOADTEST_SERVICE := "stressd"
-
 all: gen-vdl lint build docs
 
 build: dist docs extension/vanadium.zip
@@ -216,29 +214,10 @@ test-integration-browser-runner:
 	$(MAKE) -C extension build-test
 	prova test/integration/test-*.js --log=./tmp/chrome.log $(PROVA_OPTS) $(BROWSER_OPTS) $(BROWSER_OUTPUT_LOCAL) $(SAVE_CHROME_LOGS)
 
-test-load-node: test-precheck go/bin
-	node test/integration/runner.js --services=$(LOADTEST_SERVICE)  -- \
-	prova test/load/test-*.js $(PROVA_OPTS) $(NODE_OUTPUT_LOCAL)
-
-
-test-load-browser: test-precheck go/bin
-	node test/integration/runner.js --services=$(LOADTEST_SERVICE)  -- \
-	make test-load-browser-runner
-
-test-load-browser-runner: BROWSER_OPTS := --options="--load-extension=$(PWD)/extension/build-test/,--ignore-certificate-errors,--enable-logging=stderr" $(BROWSER_OPTS)
-test-load-browser-runner:
-	@$(RM) -fr extension/build-test
-	$(MAKE) -C extension build-test
-	prova test/load/test-*.js --log=./tmp/chrome.log $(PROVA_OPTS) $(BROWSER_OPTS) $(BROWSER_OUTPUT_LOCAL) $(SAVE_CHROME_LOGS)
-
-
-
-
 go/bin: $(GO_FILES)
 	@$(VGO) build -o $(GOBIN)/servicerunner -a -tags wspr v.io/x/ref/cmd/servicerunner
 	@$(VGO) build -o $(GOBIN)/principal v.io/x/ref/cmd/principal
 	@$(VGO) build -o $(GOBIN)/test_serviced v.io/x/js.core/test_service/test_serviced
-	@$(VGO) build -o $(GOBIN)/stressd v.io/x/ref/profiles/internal/rpc/stress/stressd
 
 lint: node_modules
 ifdef NOLINT

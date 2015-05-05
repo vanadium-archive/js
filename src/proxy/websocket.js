@@ -88,7 +88,7 @@ ProxyConnection.prototype.getWebSocket = function() {
     try {
       message = vom.decode(byteUtil.hex2Bytes(frame.data));
     } catch (e) {
-      vlog.logger.warn('Failed to parse ' + frame.data + ' err: ' + e);
+      vlog.logger.warn('Failed to parse ' + frame.data);
       return;
     }
 

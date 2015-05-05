@@ -34,7 +34,7 @@ function ProxyConnection() {
     try {
       body = vom.decode(byteUtil.hex2Bytes(msg.body));
     } catch (e) {
-      vlog.logger.warn('Failed to parse ' + msg.body + 'err: ' + e);
+      vlog.logger.warn('Failed to parse ' + msg.body);
       return;
     }
 

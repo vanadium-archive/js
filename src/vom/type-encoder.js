@@ -51,9 +51,7 @@ TypeEncoder.prototype.encodeType = function(messageWriter, type) {
   }
 
   // This isn't a bootstrap type, so it needs to be canonicalized.
-  if (!Object.isFrozen(type)) {
-    type = canonicalize.type(type);
-  }
+  type = canonicalize.type(type);
 
   // Check the cache of types that have been encoded already.
   var stringifiedType = stringify(type);
