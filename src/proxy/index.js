@@ -18,6 +18,9 @@ var vlog = require('./../lib/vlog');
 var byteUtil = require('../vdl/byte-util');
 var vom = require('../vom');
 var unwrap = require('../vdl/type-util').unwrap;
+var Encoder = require('../vom/encoder');
+var Decoder = require('../vom/decoder');
+
 
 // Cache the service signatures for one hour.
 var SIGNATURE_CACHE_TTL = 3600 * 1000;
@@ -41,6 +44,8 @@ function Proxy(senderPromise) {
   });
   this.senderPromise = senderPromise;
   this.incomingRequestHandlers = {};
+  this.clientEncoder = new Encoder();
+  this.clientDecoder = new Decoder();
   EE.call(this);
 }
 inherits(Proxy, EE);
