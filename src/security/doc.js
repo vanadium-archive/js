@@ -233,6 +233,8 @@
  * @constructor
  * @param {module:vanadium.context.Context} ctx The context the error was
  * created in.
+ * @param {module:vanadium.security~SecurityCall} secCall The security call
+ * to validate.
  * @param {array<string>} remoteBlessings Remote blessings.
  * @param {array<module:vanadium.security.RejectedBlessing>} rejectedBlessings
  * Remote rejected blessing.
@@ -243,8 +245,9 @@
 /**
  * A function that returns an error if the operation is not authorized.
  * @callback Authorize
- * @param {module:vanadium.context.Context} context The context of the
+ * @param {module:vanadium.context.Context} ctx The context of the
  * rpc.
+ * @param {module:vanadium.security~SecurityCall} secCall A SecurityCall.
  * @param {module:vanadium~voidCb} cb The callback to
  * call with the result if the rpc is asynchronous.  This can be ignored
  * if the Authorizer returns a promise.
