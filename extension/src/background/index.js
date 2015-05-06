@@ -34,9 +34,9 @@ function BackgroundPage() {
   // port they came from.
   this.ports = {};
 
-  // Map that stores portId -> instanceId so browspr can do cleanup on the
-  // instanceId when the port closes.
-  this.instanceIds = {};
+  // Map that stores port -> instanceId list so browspr can cleanup the
+  // instances corresponding when the port when the port closes.
+  this.instanceIds = new Map();
 
   debug('background script loaded');
 }
@@ -116,8 +116,7 @@ BackgroundPage.prototype.handleNewContentScriptConnection = function(port) {
 
   var bp = this;
   port.onDisconnect.addListener(function() {
-    var pId = portId(port);
-    var instanceIds = bp.instanceIds[pId] || [];
+    var instanceIds = bp.instanceIds.get(port) || [];
     instanceIds.forEach(function(instanceId) {
       bp.handleBrowsprCleanup(port, {body: {instanceId: instanceId}});
     });
@@ -154,8 +153,7 @@ BackgroundPage.prototype.handleBrowsprCleanup = function(port, msg) {
     var end = Date.now();
     console.log('Cleaned up instance: ' + instanceId + ' in ' +
                 (end - now) + ' ms');
-    var pId = portId(port);
-    bp.instanceIds[pId] = _.remove(bp.instanceIds[pId], [instanceId]);
+    bp.instanceIds.set(port, _.remove(bp.instanceIds.get(port), [instanceId]));
     delete bp.ports[instanceId];
     sendCleanupFinishedMessage();
   });
@@ -182,13 +180,12 @@ BackgroundPage.prototype.isValidMessageForPort = function(msg, port) {
 BackgroundPage.prototype.assocPortAndInstanceId = function(port, instanceId) {
   // Store the instanceId->port.
   this.ports[instanceId] = port;
-  // Store the portId->instanceId.
-  var portId = port.sender.tab.id;
-  this.instanceIds[portId] =
-      _.union(this.instanceIds[portId] || [], [instanceId]);
+  // Store the port->instanceId.
+  this.instanceIds.set(port,
+      _.union(this.instanceIds.get(port) || [], [instanceId]));
 
   // Cache the origin on the port object.
-  port.origin = port.origin || getOrigin(port.sender.tab.url);
+  port.origin = port.origin || getOrigin(port.sender.url);
 };
 
 
@@ -231,10 +228,6 @@ BackgroundPage.prototype.handleBrowsprMessage = function(port, msg) {
   };
   return this.nacl.sendMessage(naclMsg);
 };
-
-function portId(port) {
-  return port.sender.tab.id;
-}
 
 // Return true if the nacl plug-in is running.
 BackgroundPage.prototype.naclPluginIsActive = function() {

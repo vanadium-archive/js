@@ -27,7 +27,7 @@ function ExtensionEventProxy(timeout){
   this.onEvent = function(ev) {
     proxy.emit(ev.detail.type, ev.detail.body);
   };
-  window.top.addEventListener(types.TO_PAGE, this.onEvent);
+  window.addEventListener(types.TO_PAGE, this.onEvent);
 
   this.waitingForExtension = true;
 
@@ -69,7 +69,7 @@ inherits(ExtensionEventProxy, EE);
 
 ExtensionEventProxy.prototype.destroy = function() {
   this.removeAllListeners();
-  window.top.removeEventListener(types.TO_PAGE, this.onEvent);
+  window.removeEventListener(types.TO_PAGE, this.onEvent);
 };
 
 ExtensionEventProxy.prototype.send = function(type, body) {
@@ -82,7 +82,7 @@ ExtensionEventProxy.prototype.send = function(type, body) {
     return;
   }
 
-  window.top.dispatchEvent(
+  window.dispatchEvent(
     new window.CustomEvent(types.TO_EXTENSION, {
       detail: {
         type: type,
@@ -96,7 +96,7 @@ ExtensionEventProxy.prototype.send = function(type, body) {
 // If we don't hear back, emit an error.
 ExtensionEventProxy.prototype.waitForExtension = function(timeout) {
   this.waitInterval = setInterval(function() {
-    window.top.dispatchEvent(new window.CustomEvent(types.EXTENSION_IS_READY));
+    window.dispatchEvent(new window.CustomEvent(types.EXTENSION_IS_READY));
   }, 200);
 
   var proxy = this;
@@ -115,7 +115,7 @@ ExtensionEventProxy.prototype.waitForExtension = function(timeout) {
 
   // Once the extension is listening, clear the timeout and interval, and send
   // queued messages.
-  window.top.addEventListener(types.EXTENSION_READY, function() {
+  window.addEventListener(types.EXTENSION_READY, function() {
     if (!proxy.waitingForExtension) {
       return;
     }
