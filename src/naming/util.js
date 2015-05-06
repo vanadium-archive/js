@@ -11,6 +11,8 @@
 
 module.exports = {
   clean: clean,
+  encodeAsNameElement: encodeAsNameElement,
+  decodeAsNameElement: decodeAsNameElement,
   join: join,
   isRooted: isRooted,
   basename: basename,
@@ -28,6 +30,34 @@ module.exports = {
  */
 function clean(name) {
   return _removeTailSlash(_squashMultipleSlashes(name));
+}
+
+/**
+ * Makes a string representable as a name element by escaping slashes.
+ * @param {string} nameElement The vanadium name element to be encoded.
+ * @returns {string} Encoded name element that does not contain slashes.
+ * @memberof module:vanadium.naming
+ */
+function encodeAsNameElement(nameElement) {
+  var output = nameElement.replace(/%/g, '%25').replace(/\//g, '%2F');
+  return output;
+}
+
+/**
+ * Decodes an encoded name element.
+ * Throws exception if encodedNameElement was not properly encoded.
+ * Note that this is more than the inverse of encodeAsNameElement since it can
+ * handle more hex encodings than / and %.
+ * This is intentional since we'll most likely want to add other letters to the
+ * set to be encoded.
+ * @param {string} encodedNameElement The encoded name element to be decoded.
+ * @returns {string} Decoded name element.
+ * @memberof module:vanadium.naming
+ */
+function decodeAsNameElement(encodedNameElement) {
+  // decodeURIComponent handles decoding hex percent encoded UTF-8 strings.
+  var output = decodeURIComponent(encodedNameElement);
+  return output;
 }
 
 /**
@@ -85,8 +115,8 @@ function blessingNamesFromAddress(addr) {
     // Format: [(<blessing name>)]@host:port
     var open = addr.indexOf('(');
     var close = addr.indexOf(')');
-    if (open === 0 && close > 0 && addr.indexOf('@') === (close+1)) {
-      return addr.substr(1, close-1).split(',');
+    if (open === 0 && close > 0 && addr.indexOf('@') === (close + 1)) {
+      return addr.substr(1, close - 1).split(',');
     }
     return [];
   }
@@ -100,14 +130,14 @@ function blessingNamesFromAddress(addr) {
   }
   if (epversion > 5) {
     // This code needs to be updated.
-    throw new Error('endpoint version '+epversion+' not supported');
+    throw new Error('endpoint version ' + epversion + ' not supported');
   }
   var start = 0;
   // blessing names are the blessingNameField position.
   for (var i = 0; i < blessingNameField; i++) {
-    start = addr.indexOf('@', start+1);
+    start = addr.indexOf('@', start + 1);
   }
-  return addr.substr(start+1, addr.length-start-3).split(',');
+  return addr.substr(start + 1, addr.length - start - 3).split(',');
 }
 
 function endpointVersion(addr) {
