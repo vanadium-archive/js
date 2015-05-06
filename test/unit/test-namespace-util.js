@@ -194,3 +194,20 @@ test('names.blessingNamesFromAddress(addr)', function(assert) {
   assert.end();
 });
 
+test('names.[encode/decode]AsNameElement(name)', function(assert) {
+  var tests = [
+    ['', ''],
+    ['/', '%2F'],
+    ['%', '%25'],
+    ['/The % rain in /% Spain', '%2FThe %25 rain in %2F%25 Spain'],
+    ['/%/%', '%2F%25%2F%25'],
+    ['ᚸӲ읔קAل', 'ᚸӲ읔קAل'],
+    ['ᚸ/Ӳ%읔/ק%Aل', 'ᚸ%2FӲ%25읔%2Fק%25Aل'],
+  ];
+
+  tests.forEach(function(t) {
+    assert.equal(names.encodeAsNameElement(t[0]), t[1], t[0] + ' encoding');
+    assert.equal(names.decodeAsNameElement(t[1]), t[0], t[1] + ' decoding');
+  });
+  assert.end();
+});
