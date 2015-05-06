@@ -15,7 +15,7 @@
  * module:vanadium.rpc~Client#callOption}.
  * @callback module:vanadium.security~GranterFunction
  * @param {module:vanadium.context.Context} ctx A context.
- * @param {module:vanadium.security~SecurityCall} call A SecurityCall.
+ * @param {module:vanadium.security~SecurityCall} secCall A SecurityCall.
  * @param {module:vanadium.security~Principal~blessingsCb} cb A callback called
  * with either an error or a [Blessings]{@link
  * module:vanadium.security~Blessings} object.
