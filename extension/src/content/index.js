@@ -8,6 +8,9 @@ var pageEventProxy = require('./event-proxy');
 var random = require('../../../src/lib/random');
 
 // Port to communicate with background js.
+// One content script runs per iframe / tabs so there may be multiple ports
+// per page.
+// TODO(bprosnitz) Change this to lazily connect.
 var backgroundPort = chrome.runtime.connect();
 
 // We generate and send different instanceIds to the background page than those
