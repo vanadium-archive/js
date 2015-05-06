@@ -70,6 +70,13 @@ function init(options, cb) {
 }
 
 /**
+ * Crash event.
+ * <p>Emitted when the runtime crashes in an unexpected way. Recovery from
+ * crash event requires restarting the application.<p>
+ * @event module:vanadium~Runtime#crash
+ */
+
+/**
  * @summary
  * Runtime exposes entry points to create servers, client, namespace client and
  * other Vanadium functionality.
@@ -77,12 +84,10 @@ function init(options, cb) {
  * <p>This constructor should not be used directly, instead use
  * [vanadium.init]{@link module:vanadium.init}</p>
  *
- * <p>Runtime is also an EventEmitter:</p>
- * <p>
- *    Event: 'crash':
- *    Emitted when the runtime crashes in an unexpected way. Recovery from
- *    crash event requires restarting the application.
- * </p>
+ * <p>Runtime is also an EventEmitter and emits
+ * [crash event]{@link module:vanadium~Runtime#event:crash} when it crashes in
+ * an unexpected way.</p>
+ *
  * @property {string} accountName The accountName that the user associated to
  * this runtime.
  * @property {module:vanadium.security~Principal} principal The principal
