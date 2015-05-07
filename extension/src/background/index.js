@@ -77,6 +77,7 @@ BackgroundPage.prototype.handleMessageFromContentScript = function(port, msg) {
 
       // Dispatch on the type of the message.
       switch (msg.type) {
+        // From vanadium app.
         case 'browsprMsg':
           return bp.handleBrowsprMessage(port, msg);
         case 'browsprCleanup':
@@ -85,10 +86,15 @@ BackgroundPage.prototype.handleMessageFromContentScript = function(port, msg) {
           return bp.handleCreateInstance(port, msg);
         case 'auth':
           return bp.authHandler.handleAuthMessage(port);
+
+        // From bless.
         case 'assocAccount:finish':
           return bp.authHandler.handleFinishAuth(port, msg);
-        case 'intentionallyPanic': // Only for tests.
+
+        // ONLY for tests.
+        case 'intentionallyPanic':
           return bp._triggerIntentionalPanic();
+
         default:
           console.error('unknown message.', msg);
       }
@@ -272,8 +278,6 @@ BackgroundPage.prototype.getAllPorts = function() {
   _.forEach(this.ports, function(portArray) {
     ports = ports.concat(portArray);
   });
-  // Add ports in use by the auth handler.
-  ports = ports.concat(this.authHandler.getAllPorts());
   // Sort the ports array so that _.uniq can use a faster search algorithm.
   ports = _.sortBy(ports);
   // The second argument to _.uniq is whether the array is sorted.

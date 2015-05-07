@@ -56,7 +56,7 @@ function sendCaveats(cancel) {
   var backgroundPort = chrome.runtime.connect();
   backgroundPort.postMessage({
     type: 'assocAccount:finish',
-    webappId: parseInt(params.webappId),
+    requestId: parseInt(params.requestId),
     origin: params.origin,
     caveats: caveats,
     authState: params.authState,

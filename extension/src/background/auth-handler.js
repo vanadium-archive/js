@@ -6,8 +6,6 @@
  * @fileoverview Handles auth requests to Nacl.
  */
 
-var _ = require('lodash');
-
 var getOrigin = require('./util').getOrigin;
 var random = require('../../../src/lib/random');
 
@@ -20,9 +18,36 @@ function AuthHandler(channel) {
 
   this._channel = channel;
 
-  // Map for tabIds to ports.
-  this._ports = {};
+  // Auth request id, incremented on each auth request.
+  this._lastRequestId = 0;
+
+  // Map from origins to the Vanadium app ports of tabs with active requests.
+  // This keeps track of existing auth tabs for an origin so new ones are not
+  // started.
+  this._outstandingAuthRequests = {};
+
+  // Map from caveat tab id to origin.
+  this._caveatTabOrigins = {};
+
+  // Handle tabs being closed.
+  chrome.tabs.onRemoved.addListener(this.onRemovedTab.bind(this));
 }
+
+AuthHandler.prototype.onRemovedTab = function(tabId) {
+  var origin = this._caveatTabOrigins[tabId];
+  if (!origin) {
+    return; // Not one of the caveat tabs.
+  }
+
+  delete this._caveatTabOrigins[tabId];
+
+  if (origin in this._outstandingAuthRequests) {
+    this.finishAuth({
+      origin: origin,
+      cancel: true,
+    });
+  }
+};
 
 // Get an access token from the chrome.identity API.
 // See https://developer.chrome.com/apps/app_identity
@@ -100,64 +125,60 @@ AuthHandler.prototype.associateAccount =
 };
 
 // Pop up a new tab asking the user to chose their caveats.
-AuthHandler.prototype.getCaveats = function(account, origin, port) {
-  var tabId = port.sender.tab.id;
-
-  // Check if the port exists and has started an auth flow within the past 5
-  // seconds.
-  if (this._ports[tabId]) {
-    var p = this._ports[tabId];
-    if (p.authTime && (Date.now() - p.authTime) < 5000) {
-      // Authorization is already in progress. Do nothing.
-      console.log('Authorization is already in progress for tab: ' + tabId);
-      return;
-    }
+AuthHandler.prototype.getCaveats = function(account, origin, appPort) {
+  var outstandingAuthRequests = this._outstandingAuthRequests;
+  if (origin in this._outstandingAuthRequests) {
+    outstandingAuthRequests[origin].push(appPort);
+    return;
   }
 
-  // Store the port by its tab id.
-  this._ports[tabId] = port;
+  this._lastRequestId++;
+  var requestId = this._lastRequestId;
 
   // Store the account name, random salt, and timestamp on the port.
-  port.account = account;
-  port.authState = random.hex();
-  port.authTime = Date.now();
+  appPort.account = account;
+  appPort.authState = random.hex();
 
   // Get  currently active tab in the window.
-  var windowId = port.sender.tab.windowId;
+  var windowId = appPort.sender.tab.windowId;
+  var caveatTabOrigins = this._caveatTabOrigins;
   chrome.tabs.query({active: true, windowId: windowId}, function(tabs) {
     // Store the current tab id so we can switch back to it after the addcaveats
     // tab is removed.  Note that the currently active tab might not be the same
     // as the tab that is requesting authentication.
     if (tabs && tabs[0] && tabs[0].id) {
-      port.currentTabId = tabs[0].id;
+      appPort.currentTabId = tabs[0].id;
     }
 
     chrome.tabs.create({
-      url: chrome.extension.getURL('html/addcaveats.html') + '?webappId=' +
-        port.sender.tab.id + '&origin=' + encodeURIComponent(origin) +
-        '&authState=' + port.authState
+      url: chrome.extension.getURL('html/addcaveats.html') + '?requestId=' +
+        requestId + '&origin=' + encodeURIComponent(origin) +
+        '&authState=' + appPort.authState
+    }, function(tab) {
+      outstandingAuthRequests[origin] = [appPort];
+      caveatTabOrigins[tab.id] = origin;
     });
   });
 };
 
 // Handle incoming 'auth' message.
-AuthHandler.prototype.handleAuthMessage = function(port) {
-  port.postMessage({
+AuthHandler.prototype.handleAuthMessage = function(appPort) {
+  appPort.postMessage({
     type: 'auth:received'
   });
 
   var origin;
   try {
-    origin = getOrigin(port.sender.url);
+    origin = getOrigin(appPort.sender.url);
   } catch (err) {
-    return sendErrorToContentScript('auth', port, err);
+    return sendErrorToContentScript('auth', appPort, err);
   }
 
   var ah = this;
 
   this.getAccounts(function(err, accounts) {
     if (err) {
-      return sendErrorToContentScript('auth', port, err);
+      return sendErrorToContentScript('auth', appPort, err);
     }
 
     if (!accounts || accounts.length === 0) {
@@ -189,9 +210,9 @@ AuthHandler.prototype.handleAuthMessage = function(port) {
               ah.createdAccount(createAccountCallback);
             });
           }
-          return sendErrorToContentScript('auth', port, err);
+          return sendErrorToContentScript('auth', appPort, err);
         }
-        ah.getCaveats(createdAccount, origin, port);
+        ah.getCaveats(createdAccount, origin, appPort);
       };
 
       ah.createAccount(createAccountCallback);
@@ -202,18 +223,18 @@ AuthHandler.prototype.handleAuthMessage = function(port) {
       // Check if origin is associated.
       ah.originHasAccount(origin, function(err, hasAccount) {
         if (err) {
-          return sendErrorToContentScript('auth', port, err);
+          return sendErrorToContentScript('auth', appPort, err);
         }
 
         if (hasAccount) {
           // Origin already associated.  Return success.
-          port.postMessage({
+          appPort.postMessage({
             type: 'auth:success',
             account: account
           });
         } else {
           // No origin associated.  Get caveats and then associate.
-          ah.getCaveats(account, origin, port);
+          ah.getCaveats(account, origin, appPort);
         }
       });
     }
@@ -227,60 +248,65 @@ AuthHandler.prototype.handleFinishAuth = function(caveatsPort, msg) {
     return;
   }
 
-  // Remove the caveats tab.
+
+  this.finishAuth(msg);
+
+  // Close the caveats tab.
+  // Note: This triggers a call onRemovedTab().
   chrome.tabs.remove(caveatsPort.sender.tab.id);
-
-  var webappPort = this._ports[msg.webappId];
-  delete this._ports[msg.webappId];
-
-  if (!webappPort) {
-    return console.error('No webapp port found.');
-  }
-
-  // Switch back to the last active tab.
-  if (webappPort.currentTabId) {
-    chrome.tabs.update(webappPort.currentTabId, {active: true});
-  }
-
-  if (msg.cancel) {
-    return sendErrorToContentScript('auth', webappPort,
-        new Error('User declined to bless origin.'));
-  }
-
-  if (msg.origin !== getOrigin(webappPort.sender.url)) {
-    return sendErrorToContentScript('auth', webappPort,
-        new Error('Invalid origin.'));
-  }
-
-  if (msg.authState !== webappPort.authState) {
-    return sendErrorToContentScript('auth', webappPort,
-        new Error('Port not authorized.'));
-  }
-
-  if (!webappPort.account) {
-    return sendErrorToContentScript('auth', webappPort,
-        new Error('No port.account.'));
-  }
-
-  if (!msg.caveats || msg.caveats.length === 0) {
-    return sendErrorToContentScript('auth', webappPort,
-        new Error('No caveats selected'));
-  }
-
-  this.associateAccount(webappPort.account, msg.origin, msg.caveats,
-    function(err) {
-      if (err) {
-        return sendErrorToContentScript('auth', webappPort, err);
-      }
-      webappPort.postMessage({
-        type: 'auth:success',
-        account: webappPort.account
-      });
-    });
 };
 
-AuthHandler.prototype.getAllPorts = function() {
-  return _.values(this._ports);
+AuthHandler.prototype.finishAuth = function(msg) {
+  var appPorts = this._outstandingAuthRequests[msg.origin];
+  delete this._outstandingAuthRequests[msg.origin];
+  if (!Array.isArray(appPorts)) {
+    console.error('Finish auth flow request received for unknown origin');
+    return;
+  }
+
+  var self = this;
+  appPorts.forEach(function(appPort) {
+    if (msg.origin !== getOrigin(appPort.sender.url)) {
+      console.error('Invalid origin.');
+      return;
+    }
+
+    if (msg.cancel) {
+      return sendErrorToContentScript('auth', appPort,
+          new Error('User declined to bless origin.'));
+    }
+
+    if (msg.origin !== getOrigin(appPort.sender.url)) {
+      return sendErrorToContentScript('auth', appPort,
+          new Error('Invalid origin.'));
+    }
+
+    if (msg.authState !== appPort.authState) {
+      return sendErrorToContentScript('auth', appPort,
+          new Error('Port not authorized.'));
+    }
+
+    if (!appPort.account) {
+      return sendErrorToContentScript('auth', appPort,
+          new Error('No port.account.'));
+    }
+
+    if (!msg.caveats || msg.caveats.length === 0) {
+      return sendErrorToContentScript('auth', appPort,
+          new Error('No caveats selected'));
+    }
+
+    self.associateAccount(appPort.account, msg.origin, msg.caveats,
+      function(err) {
+        if (err) {
+          return sendErrorToContentScript('auth', appPort, err);
+        }
+        appPort.postMessage({
+          type: 'auth:success',
+          account: appPort.account
+        });
+      });
+  });
 };
 
 // Convert an Error object into a bare Object with the same properties.  We do
