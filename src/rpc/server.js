@@ -122,13 +122,13 @@ Server.prototype.serve = function(name, serviceObject, options, cb) {
  */
 
 /**
- * A function that returns the service object for a suffix/method pair.
+ * A function that returns the service implementation for the object identified
+ * by the given suffix.
  * @callback module:vanadium.rpc~Server~Dispatcher
  * @param {string} suffix The suffix for the call.
- * @param {string} method The method for the call.
  * @param {module:vanadium.rpc~Server~Dispatcher-callback} cb
  * The callback to call when the dispatch is complete.
- * @return {module:vanadium.rpc~Server~DispatcherResponse | Promise}
+ * @return {Promise<module:vanadium.rpc~Server~DispatcherResponse>}
  * Either the DispatcherResponse object to
  * handle the method call or a Promise that will be resolved the service
  * callback.
