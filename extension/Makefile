@@ -17,10 +17,7 @@ endef
 
 define COMPILE-NACL-PLUGIN
 	mkdir -p $(dir $2)
-	GOARCH=amd64p32 \
-	GOOS=nacl \
-	GOROOT= \
-	v23 xgo --target-go=$(V23_ROOT)/third_party/repos/go_ppapi/bin/go amd64p32-nacl build -o $2 $1
+	GOROOT= V23_PROFILE=nacl v23 go build -o $2 $1
 endef
 
 all: vanadium.zip
