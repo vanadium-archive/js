@@ -11,7 +11,7 @@ import (
 
 	"v.io/v23"
 	"v.io/x/ref/lib/signals"
-	_ "v.io/x/ref/profiles"
+	_ "v.io/x/ref/runtime/factories/generic"
 )
 
 func main() {
