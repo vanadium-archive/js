@@ -25,7 +25,7 @@ type TestCaveatData struct {
 }
 
 func (TestCaveatData) __VDLReflect(struct {
-	Name string "v.io/x/js.core/test_service.TestCaveatData"
+	Name string `vdl:"v.io/x/js.core/test_service.TestCaveatData"`
 }) {
 }
 

@@ -20,7 +20,7 @@ import (
 type KeyPageResult [10]string
 
 func (KeyPageResult) __VDLReflect(struct {
-	Name string "v.io/x/js.core/test_service.KeyPageResult"
+	Name string `vdl:"v.io/x/js.core/test_service.KeyPageResult"`
 }) {
 }
 
@@ -31,7 +31,7 @@ type KeyValuePair struct {
 }
 
 func (KeyValuePair) __VDLReflect(struct {
-	Name string "v.io/x/js.core/test_service.KeyValuePair"
+	Name string `vdl:"v.io/x/js.core/test_service.KeyValuePair"`
 }) {
 }
 
