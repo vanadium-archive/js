@@ -57,6 +57,9 @@ function Server(router, serverOption) {
   this.serverOption = serverOption || new ServerOption();
 }
 
+// TODO(aghassemi) the serviceObject example needs to point to a "Guides" page
+// on the website when we have it. https://github.com/vanadium/issues/issues/444
+/* jshint ignore:start */
 /**
  * ServeOptions is a set of options that are passed to the
  * [serve]{@link module:vanadium.rpc~Server#serve}.
@@ -70,13 +73,6 @@ function Server(router, serverOption) {
  * <p>Serve associates object with name by publishing the address
  * of this server with the mount table under the supplied name and using
  * authorizer to authorize access to it.</p>
- *
- * <p>To serve names of the form "mymedia/*" make the calls:</p>
- * <pre>
- * serve("mymedia", serviceObject, { // optional authorizer
- *   authorizer: serviceAuthorizer
- * });
- * </pre>
  * <p>If name is an empty string, no attempt will made to publish that
  * name to a mount table. It is an error to call
  * {@link module:vanadium.rpc~Server#serve|serve}
@@ -84,6 +80,55 @@ function Server(router, serverOption) {
  * or {@link module:vanadium.rpc~Server.serve|serve} has already been called.
  * To serve the same object under multiple names,
  * {@link module:vanadium.rpc~Server#addName|addName} can be used.</p>
+ * <p>To serve names of the form "mymedia/*" make the calls:</p>
+ * <pre>
+ * serve("mymedia", serviceObject, {
+ *   authorizer: serviceAuthorizer // optional authorizer
+ * });
+ * </pre>
+ * <p>
+ * serviceObject is simply a JavaScript object that implements service methods.
+ * </p>
+ * <p>
+ * <pre>
+ * var serviceObject = new MyService();
+ * function MyService() {}
+ * </pre>
+ * <p>
+ * Each service method must take [ctx]{@link module:vanadium.context.Context}
+ * and [serverCall]{@link module:vanadium.rpc~ServerCall} as the
+ * first two parameters.
+ * </p>
+ * <p>
+ * The output arguments can be given in several forms - through direct return,
+ * return of a promise or calling a callback that is optionally the
+ * last parameter.
+ * </p>
+ * <pre>
+ * // Sync method that echoes the input text immediately.
+ * MyService.prototype.echo = function(ctx, serverCall, text) {
+ *   return 'Echo: ' + text;
+ * };
+ * </pre>
+ * <pre>
+ * // Async method that echoes the input text after 1 second, using Promises.
+ * MyService.prototype.delayedEcho = function(ctx, serverCall, text) {
+ *   return new Promise(function(resolve, reject) {
+ *     setTimeout(function() {
+ *       resolve('Echo: ' + text);
+ *     }, 1000);
+ *   });
+ * };
+ *</pre>
+ *<pre>
+ * // Async method that echoes the input text after 1 second, using Callbacks.
+ * MyService.prototype.delayedEcho = function(ctx, serverCall, text, callback) {
+ *   setTimeout(function() {
+ *     // first argument to the callback is error, second argument is results
+ *     callback(null, 'Echo: ' + text);
+ *   }, 1000);
+ * };
+ *</pre>
  *
  * @public
  * @param {string} name Name to serve under.
@@ -94,6 +139,7 @@ function Server(router, serverOption) {
  * will be called on completion.
  * @return {Promise<void>} Promise to be called when serve completes or fails.
  */
+/* jshint ignore:end */
 Server.prototype.serve = function(name, serviceObject, options, cb) {
   if (typeof options === 'function') {
     cb = options;
