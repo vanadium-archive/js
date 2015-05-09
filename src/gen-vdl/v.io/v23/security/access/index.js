@@ -95,6 +95,19 @@ module.exports.AccessListMatchError = makeError('v.io/v23/security/access.Access
 ]);
 
 
+module.exports.UnenforceablePatternsError = makeError('v.io/v23/security/access.UnenforceablePatterns', actions.NO_RETRY, {
+  'en': '{1:}{2:} AccessList contains the following invalid or unrecognized patterns in the In list: {3}',
+}, [
+  _type1,
+]);
+
+
+module.exports.InvalidOpenAccessListError = makeError('v.io/v23/security/access.InvalidOpenAccessList', actions.NO_RETRY, {
+  'en': '{1:}{2:} AccessList with the pattern ... in its In list must have no other patterns in the In or NotIn lists',
+}, [
+]);
+
+
 
 
 // Services:
