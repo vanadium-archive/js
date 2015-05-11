@@ -238,7 +238,7 @@ go/bin: $(GO_FILES)
 	@$(VGO) build -o $(GOBIN)/servicerunner -a -tags wspr v.io/x/ref/cmd/servicerunner
 	@$(VGO) build -o $(GOBIN)/principal v.io/x/ref/cmd/principal
 	@$(VGO) build -o $(GOBIN)/test_serviced v.io/x/js.core/test_service/test_serviced
-	@$(VGO) build -o $(GOBIN)/stressd v.io/x/ref/profiles/internal/rpc/stress/stressd
+	@$(VGO) build -o $(GOBIN)/stressd v.io/x/ref/runtime/internal/rpc/stress/stressd
 
 lint: node_modules
 ifdef NOLINT

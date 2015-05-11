@@ -176,7 +176,7 @@ test('Test globbing non-existing rooted name - ' +
       runtime = rt;
       var namespace = rt.namespace();
       // Note: Glob will always timeout after 30s
-      // see v.io/x/ref/profiles/internal/naming/namespace/parallelstartcall.go
+      // see v.io/x/ref/runtime/internal/naming/namespace/parallelstartcall.go
       // This means we'll get a timeout error on the glob stream before
       // timeouts.long expires.
       var rpc = namespace.glob(rt.getContext(),
