@@ -5,7 +5,6 @@
  * @fileoverview The Permissions authorizer
  * @private
  */
-var blessingMatches = require('./blessing-matching');
 var unwrap = require('../../vdl/type-util').unwrap;
 var makeError = require('../../verror/make-errors');
 var actions = require('../../verror/actions');
@@ -66,27 +65,9 @@ function authorizer(perms, type) {
 
     var key = unwrap(tags[0]);
     var lists = permissions.get(key);
-    if (!lists || !canAccess(call.remoteBlessingStrings, lists.in,
-                                lists.notIn)) {
+    if (!lists || !lists.includes(call.remoteBlessingStrings)) {
       throw new NoPermissionsError(ctx, call.remoteBlessingStrings, [], key);
     }
     return;
   };
-}
-
-// Returns whether name passed in has permission for the passed in
-// label.
-function canAccess(names, inSet, notInSet) {
-  // Remove the names that are blacklisted.
-  var unblacklistedNames = names.filter(function(name) {
-    return notInSet.every(function(pattern) {
-      return !blessingMatches(name, pattern);
-    });
-  });
-  // Check the remaining names for a match in the white list.
-  return unblacklistedNames.some(function(name) {
-    return inSet.some(function(pattern) {
-      return blessingMatches(name, pattern);
-    });
-  });
 }
