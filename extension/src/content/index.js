@@ -10,8 +10,15 @@ var random = require('../../../src/lib/random');
 // Port to communicate with background js.
 // One content script runs per iframe / tabs so there may be multiple ports
 // per page.
-// TODO(bprosnitz) Change this to lazily connect.
-var backgroundPort = chrome.runtime.connect();
+var _backgroundPort;
+function getBackgroundPort() {
+  // Lazily connect to background port.
+  if (!_backgroundPort) {
+    _backgroundPort = chrome.runtime.connect();
+    _backgroundPort.onMessage.addListener(backgroundPageMessageForwarder);
+  }
+  return _backgroundPort;
+}
 
 // We generate and send different instanceIds to the background page than those
 // coming from the web app. This prevents the web app from intentionally
@@ -69,7 +76,7 @@ pageEventProxy.onAny(function(body) {
   }
 
   try {
-    backgroundPort.postMessage({
+    getBackgroundPort().postMessage({
       type: this.event,
       body: body
     });
@@ -80,7 +87,7 @@ pageEventProxy.onAny(function(body) {
 });
 
 // Forward any messages from the background page to the webApp.
-backgroundPort.onMessage.addListener(function(msg) {
+function backgroundPageMessageForwarder(msg) {
   debug('content script received message of type', msg.type,
     'from background script:', msg.body);
 
@@ -100,6 +107,6 @@ backgroundPort.onMessage.addListener(function(msg) {
   }
 
   pageEventProxy.send(msg.type, msg);
-});
+}
 
 debug('content script loaded');
