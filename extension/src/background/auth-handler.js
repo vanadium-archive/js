@@ -127,8 +127,19 @@ AuthHandler.prototype.associateAccount =
 // Pop up a new tab asking the user to chose their caveats.
 AuthHandler.prototype.getCaveats = function(account, origin, appPort) {
   var outstandingAuthRequests = this._outstandingAuthRequests;
+  var caveatTabOrigins = this._caveatTabOrigins;
   if (origin in this._outstandingAuthRequests) {
     outstandingAuthRequests[origin].push(appPort);
+
+    // Switch to the corresponding open caveat tab.
+    for (var tabId in caveatTabOrigins) {
+      if (caveatTabOrigins[tabId] === origin) {
+        var tabIdAsNumber = +tabId;
+        chrome.tabs.update(tabIdAsNumber, {active: true});
+        break;
+      }
+    }
+
     return;
   }
 
@@ -141,7 +152,6 @@ AuthHandler.prototype.getCaveats = function(account, origin, appPort) {
 
   // Get  currently active tab in the window.
   var windowId = appPort.sender.tab.windowId;
-  var caveatTabOrigins = this._caveatTabOrigins;
   chrome.tabs.query({active: true, windowId: windowId}, function(tabs) {
     // Store the current tab id so we can switch back to it after the addcaveats
     // tab is removed.  Note that the currently active tab might not be the same
