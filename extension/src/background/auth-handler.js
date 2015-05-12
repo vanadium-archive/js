@@ -7,7 +7,6 @@
  */
 
 var getOrigin = require('./util').getOrigin;
-var random = require('../../../src/lib/random');
 
 module.exports = AuthHandler;
 
@@ -17,9 +16,6 @@ function AuthHandler(channel) {
   }
 
   this._channel = channel;
-
-  // Auth request id, incremented on each auth request.
-  this._lastRequestId = 0;
 
   // Map from origins to the Vanadium app ports of tabs with active requests.
   // This keeps track of existing auth tabs for an origin so new ones are not
@@ -126,6 +122,9 @@ AuthHandler.prototype.associateAccount =
 
 // Pop up a new tab asking the user to chose their caveats.
 AuthHandler.prototype.getCaveats = function(account, origin, appPort) {
+  // Store the account name on the appPort.
+  appPort.account = account;
+
   var outstandingAuthRequests = this._outstandingAuthRequests;
   var caveatTabOrigins = this._caveatTabOrigins;
   if (origin in this._outstandingAuthRequests) {
@@ -142,13 +141,7 @@ AuthHandler.prototype.getCaveats = function(account, origin, appPort) {
 
     return;
   }
-
-  this._lastRequestId++;
-  var requestId = this._lastRequestId;
-
-  // Store the account name, random salt, and timestamp on the port.
-  appPort.account = account;
-  appPort.authState = random.hex();
+  outstandingAuthRequests[origin] = [appPort];
 
   // Get  currently active tab in the window.
   var windowId = appPort.sender.tab.windowId;
@@ -161,11 +154,9 @@ AuthHandler.prototype.getCaveats = function(account, origin, appPort) {
     }
 
     chrome.tabs.create({
-      url: chrome.extension.getURL('html/addcaveats.html') + '?requestId=' +
-        requestId + '&origin=' + encodeURIComponent(origin) +
-        '&authState=' + appPort.authState
+      url: chrome.extension.getURL('html/addcaveats.html') + '?origin=' +
+        encodeURIComponent(origin)
     }, function(tab) {
-      outstandingAuthRequests[origin] = [appPort];
       caveatTabOrigins[tab.id] = origin;
     });
   });
@@ -289,11 +280,6 @@ AuthHandler.prototype.finishAuth = function(msg) {
     if (msg.origin !== getOrigin(appPort.sender.url)) {
       return sendErrorToContentScript('auth', appPort,
           new Error('Invalid origin.'));
-    }
-
-    if (msg.authState !== appPort.authState) {
-      return sendErrorToContentScript('auth', appPort,
-          new Error('Port not authorized.'));
     }
 
     if (!appPort.account) {
