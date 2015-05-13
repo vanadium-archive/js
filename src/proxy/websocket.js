@@ -10,11 +10,10 @@
 var isBrowser = require('is-browser');
 var WebSocket = require('ws');
 
-var byteUtil = require('../vdl/byte-util');
 var Deferred = require('./../lib/deferred');
+var hexVom = require('../lib/hex-vom');
 var Proxy = require('./index');
 var vlog = require('./../lib/vlog');
-var vom = require('../vom');
 
 /**
  * A client for the vanadium service using websockets. Connects to the vanadium
@@ -34,7 +33,10 @@ function ProxyConnection(url) {
   // has completed.
   var def = new Deferred();
   Proxy.call(this, def.promise);
-  def.resolve(this.getWebSocket());
+  var proxy = this;
+  this.getWebSocket().then(function success() {
+    def.resolve(proxy);
+  }, def.reject);
 }
 
 ProxyConnection.prototype = Object.create(Proxy.prototype);
@@ -86,7 +88,7 @@ ProxyConnection.prototype.getWebSocket = function() {
   websocket.onmessage = function(frame) {
     var message;
     try {
-      message = vom.decode(byteUtil.hex2Bytes(frame.data));
+      message = hexVom.decode(frame.data);
     } catch (e) {
       vlog.logger.warn('Failed to parse ' + frame.data + ' err: ' + e);
       return;
@@ -98,13 +100,18 @@ ProxyConnection.prototype.getWebSocket = function() {
   return deferred.promise;
 };
 
+ProxyConnection.prototype.send = function(msg) {
+  this.getWebSocket().then(function(ws) {
+    ws.send(JSON.stringify(msg));
+  }).catch(function(err) {
+    throw err;
+  });
+};
+
 ProxyConnection.prototype.close = function(cb) {
-  var proxy = this;
   var deferred = new Deferred(cb);
 
-  proxy
-  .getWebSocket()
-  .then(close, function(err) {
+  this.getWebSocket().then(close, function(err) {
     // TODO(jasoncampbell): Better error handling around websocket connection
     // It's possible that the initial connection failed with
     // "Error: getaddrinfo ENOTFOUND" Since there was not a

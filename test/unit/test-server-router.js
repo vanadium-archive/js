@@ -11,8 +11,7 @@ var Router = require('../../src/rpc/server-router');
 var Server = require('../../src/rpc/server');
 var Outgoing = require('../../src/proxy/message-type').Outgoing;
 var vdl = require('../../src/vdl');
-var byteUtil = require('../../src/vdl/byte-util');
-var vom = require('../../src/vom');
+var hexVom = require('../../src/lib/hex-vom');
 var context = require('../../src/context');
 
 test('Server Router Signature Lookup', function(t) {
@@ -102,11 +101,10 @@ test('Server Router Signature Lookup', function(t) {
     t.equals(responseType, Outgoing.LOOKUP_RESPONSE, 'response type');
     t.equals(responseMessageId, inputMessageId, 'message id');
 
-    var data = JSON.parse(responseData);
-    t.ok(data.hasOwnProperty('handle'), 'has a handle');
-    t.equals(data.hasAuthorizer, true, 'has authorizer');
-    var decodedSignature = vom.decode(byteUtil.hex2Bytes(data.signature));
-    t.deepEquals(decodedSignature.val, expectedSignature, 'signature');
+    var reply = hexVom.decode(responseData);
+    t.ok(reply.hasOwnProperty('handle'), 'has a handle');
+    t.equals(reply.hasAuthorizer, true, 'has authorizer');
+    t.deepEquals(reply.signature, expectedSignature, 'signature');
 
     t.end();
   });

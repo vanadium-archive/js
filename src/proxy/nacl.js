@@ -7,14 +7,13 @@
  * @private
  */
 
-var extensionEventProxy = require('../browser/event-proxy');
-var errors = require('../verror/index');
 var Deferred = require('../lib/deferred');
+var errors = require('../verror/index');
+var extensionEventProxy = require('../browser/event-proxy');
+var hexVom = require('../lib/hex-vom');
 var Proxy = require('./index');
 var random = require('../lib/random');
 var vlog = require('./../lib/vlog');
-var byteUtil = require('../vdl/byte-util');
-var vom = require('../vom');
 
 module.exports = ProxyConnection;
 
@@ -32,7 +31,7 @@ function ProxyConnection() {
   this.onBrowsprMsg = function(msg) {
     var body;
     try {
-      body = vom.decode(byteUtil.hex2Bytes(msg.body));
+      body = hexVom.decode(msg.body);
     } catch (e) {
       vlog.logger.warn('Failed to parse ' + msg.body + 'err: ' + e);
       return;

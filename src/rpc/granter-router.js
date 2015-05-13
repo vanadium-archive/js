@@ -5,8 +5,7 @@
 
 var asyncCall = require('../lib/async-call');
 var Deferred = require('../lib/deferred');
-var vom = require('../vom');
-var byteUtil = require('../vdl/byte-util');
+var hexVom = require('../lib/hex-vom');
 var verror = require('../gen-vdl/v.io/v23/verror');
 var MessageType = require('../proxy/message-type');
 var Incoming = MessageType.Incoming;
@@ -44,7 +43,7 @@ GranterRouter.prototype.handleRequest = function(messageId, type, request) {
   }
 
   try {
-   request = vom.decode(byteUtil.hex2Bytes(request));
+   request = hexVom.decode(request);
    request = request.val;
   } catch (e) {
     // TODO(bjornick): Pass in context here so we can generate useful error
@@ -52,7 +51,7 @@ GranterRouter.prototype.handleRequest = function(messageId, type, request) {
     var res = new GranterResponse({
       err: new verror.NoExistError(this._rootCtx, 'failed to decode message')
     });
-    var data = byteUtil.bytes2Hex(vom.encode(res));
+    var data = hexVom.encode(res);
     this._proxy.sendRequest(data, Outgoing.GRANTER_RESPONSE,
         null, messageId);
   }
@@ -63,7 +62,7 @@ GranterRouter.prototype.handleRequest = function(messageId, type, request) {
     var res = new GranterResponse({
       err: new verror.NoExistError(this._rootCtx, 'unknown granter')
     });
-    var data = byteUtil.bytes2Hex(vom.encode(res));
+    var data = hexVom.encode(res);
     this._proxy.sendRequest(data, Outgoing.GRANTER_RESPONSE,
         null, messageId);
     return;
@@ -83,14 +82,14 @@ GranterRouter.prototype.handleRequest = function(messageId, type, request) {
         err: new verror.NoExistError(this._rootCtx, 'error while granting: ' +
           err)
       });
-      var errData = byteUtil.bytes2Hex(vom.encode(res));
+      var errData = hexVom.encode(res);
       self._proxy.sendRequest(errData, Outgoing.GRANTER_RESPONSE,
           null, messageId);
       def.resolve();
       return;
     }
     var result = new GranterResponse({blessings: outBlessings[0]._id});
-    var data = byteUtil.bytes2Hex(vom.encode(result));
+    var data = hexVom.encode(result);
     self._proxy.sendRequest(data, Outgoing.GRANTER_RESPONSE, null,
       messageId);
     def.resolve();

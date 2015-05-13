@@ -19,6 +19,7 @@ var Controller =
 var context = require('../context');
 var Deferred = require('../lib/deferred');
 var emitStreamError = require('../lib/emit-stream-error');
+var hexVom = require('../lib/hex-vom');
 var Incoming = require('../proxy/message-type').Incoming;
 var makeError = require('../verror/make-errors');
 var Outgoing = require('../proxy/message-type').Outgoing;
@@ -36,7 +37,6 @@ var unwrap = require('../vdl/type-util').unwrap;
 var vdl = require('../vdl');
 var verror = require('../gen-vdl/v.io/v23/verror');
 var vlog = require('../lib/vlog');
-var vom = require('../vom');
 var SharedContextKeys = require('../runtime/shared-context-keys');
 var vtrace = require('../vtrace');
 var Blessings = require('../security/blessings');
@@ -241,7 +241,7 @@ OutstandingRPC.prototype.handleCompletion = function(data) {
 OutstandingRPC.prototype.handleStreamData = function(data) {
   if (this._def.stream) {
     try {
-      data = vom.decode(byteUtil.hex2Bytes(data));
+      data = hexVom.decode(data);
     } catch (e) {
       this.handleError(
         new verror.InternalError(this._ctx, 'Failed to decode result: ', e));
