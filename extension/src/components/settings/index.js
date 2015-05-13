@@ -19,7 +19,7 @@ module.exports = create;
 module.exports.render = render;
 
 var defaults = {
-  identityd: 'identity/dev.v.io/root/google',
+  identityd: 'identity/dev.v.io/u/google',
   identitydBlessingUrl: 'https://dev.v.io/auth/blessing-root',
   namespaceRoot: '/(dev.v.io/role/vprod/service/mounttabled)@ns.dev.v.io:8101',
   proxy: 'proxy',
