@@ -3,15 +3,13 @@
 // license that can be found in the LICENSE file.
 
 var Incoming = require('./message-type').Incoming;
-var byteUtil = require('../vdl/byte-util');
-var vom = require('../vom');
 var emitStreamError = require('../lib/emit-stream-error');
 var vError = require('../gen-vdl/v.io/v23/verror');
 var SharedContextKeys = require('../runtime/shared-context-keys');
 var Blessings = require('../security/blessings');
 var JsBlessings =
   require('../gen-vdl/v.io/x/ref/services/wspr/internal/principal').JsBlessings;
-
+var hexVom = require('../lib/hex-vom');
 
 module.exports = Handler;
 
@@ -32,7 +30,7 @@ Handler.prototype.handleResponse = function(type, data) {
   switch (type) {
     case Incoming.STREAM_RESPONSE:
       try {
-        data = vom.decode(byteUtil.hex2Bytes(data));
+        data = hexVom.decode(data);
       } catch (e) {
         emitStreamError(this._stream,
           new vError.InternalError(this._ctx,

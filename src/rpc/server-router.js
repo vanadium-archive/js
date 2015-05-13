@@ -19,21 +19,20 @@ var verror = require('../gen-vdl/v.io/v23/verror');
 var SecurityCall = require('../security/call');
 var ServerCall = require('./server-call');
 var vdl = require('../vdl');
-var byteUtil = require('../vdl/byte-util');
 var typeUtil = require('../vdl/type-util');
 var Deferred = require('../lib/deferred');
 var capitalize = require('../vdl/util').capitalize;
-var vom = require('../vom');
-var vdlsig = require('../gen-vdl/v.io/v23/vdlroot/signature');
 var namespaceUtil = require('../naming/util');
 var naming = require('../gen-vdl/v.io/v23/naming');
 var Glob = require('./glob');
 var GlobStream = require('./glob-stream');
 var ServerRpcReply =
   require('../gen-vdl/v.io/x/ref/services/wspr/internal/lib').ServerRpcReply;
-var CaveatValidationResponse =
-  require('../gen-vdl/v.io/x/ref/services/wspr/internal/rpc/server').
-  CaveatValidationResponse;
+var serverVdl =
+  require('../gen-vdl/v.io/x/ref/services/wspr/internal/rpc/server');
+var CaveatValidationResponse = serverVdl.CaveatValidationResponse;
+var AuthReply = serverVdl.AuthReply;
+var LookupReply = serverVdl.LookupReply;
 var vtrace = require('../vtrace');
 var lib =
   require('../gen-vdl/v.io/x/ref/services/wspr/internal/lib');
@@ -43,6 +42,7 @@ var JsBlessings =
 var WireBlessings =
   require('../gen-vdl/v.io/v23/security').WireBlessings;
 var SharedContextKeys = require('../runtime/shared-context-keys');
+var hexVom = require('../lib/hex-vom');
 
 /**
  * A router that handles routing incoming requests to the right
@@ -101,43 +101,50 @@ Router.prototype.handleRequest = function(messageId, type, request) {
 };
 
 Router.prototype.handleAuthorizationRequest = function(messageId, request) {
+  var authReply;
   try {
-   request = vom.decode(byteUtil.hex2Bytes(request));
+   request = hexVom.decode(request);
   } catch (e) {
-    JSON.stringify({
+    authReply = new AuthReply({
       // TODO(bjornick): Use the real context
-      err: new verror.InternalError(this._rootCtx,
-                                    'Failed to decode ', e)
+      err: new verror.InternalError(this._rootCtx, 'Failed to decode ', e)
     });
-    this._proxy.sendRequest(data, Outgoing.AUTHORIZATION_RESPONSE,
-        null, messageId);
+
+    this._proxy.sendRequest(hexVom.encode(authReply),
+                            Outgoing.AUTHORIZATION_RESPONSE, null, messageId);
+    return;
   }
 
   var ctx = this._rootCtx.withValue(SharedContextKeys.LANG_KEY,
                                     request.context.language);
   var server = this._servers[request.serverId];
   if (!server) {
-    var data = JSON.stringify({
+    authReply = new AuthReply({
       // TODO(bjornick): Use the real context
       err: new verror.ExistsError(ctx, 'unknown server')
     });
-    this._proxy.sendRequest(data, Outgoing.AUTHORIZATION_RESPONSE,
-        null, messageId);
+
+    this._proxy.sendRequest(hexVom.encode(authReply),
+                            Outgoing.AUTHORIZATION_RESPONSE, null, messageId);
     return;
   }
   var router = this;
   var call = new SecurityCall(request.call, this._controller);
 
+  authReply = new AuthReply({});
+
   server.handleAuthorization(request.handle, ctx, call).then(function() {
-    router._proxy.sendRequest('{}', Outgoing.AUTHORIZATION_RESPONSE, null,
-        messageId);
+    router._proxy.sendRequest(hexVom.encode(authReply),
+                              Outgoing.AUTHORIZATION_RESPONSE, null,
+                              messageId);
   }).catch(function(e) {
-    var data = JSON.stringify({
+    var authReply = new AuthReply({
       err: ErrorConversion.fromNativeValue(e, this._appName,
-                                          request.call.method)
+                                              request.call.method)
     });
-    router._proxy.sendRequest(data, Outgoing.AUTHORIZATION_RESPONSE, null,
-        messageId);
+    router._proxy.sendRequest(hexVom.encode(authReply),
+                              Outgoing.AUTHORIZATION_RESPONSE, null,
+                              messageId);
   });
 };
 
@@ -180,9 +187,9 @@ Router.prototype.handleCaveatValidationRequest = function(messageId, request) {
     var response = new CaveatValidationResponse({
       results: results
     });
-    var data = byteUtil.bytes2Hex(vom.encode(response));
-    self._proxy.sendRequest(data, Outgoing.CAVEAT_VALIDATION_RESPONSE, null,
-      messageId);
+    self._proxy.sendRequest(hexVom.encode(response),
+                            Outgoing.CAVEAT_VALIDATION_RESPONSE, null,
+                            messageId);
   }).catch(function(err) {
     throw new Error('Unexpected error (all promises should resolve): ' + err);
   });
@@ -193,49 +200,33 @@ Router.prototype.handleLookupRequest = function(messageId, request) {
   if (!server) {
     // TODO(bjornick): Pass in context here so we can generate useful error
     // messages.
-    var data = JSON.stringify({
+    var reply = new LookupReply({
       err: new verror.NoExistError(this._rootCtx, 'unknown server')
     });
-    this._proxy.sendRequest(data, Outgoing.LOOKUP_RESPONSE,
-        null, messageId);
+    this._proxy.sendRequest(hexVom.encode(reply), Outgoing.LOOKUP_RESPONSE,
+                            null, messageId);
     return;
   }
 
   var self = this;
   return server._handleLookup(request.suffix).then(function(value) {
     var signatureList = value.invoker.signature();
-    var res;
-    try {
-      // TODO(alexfandrianto): Define []signature.Interface in VDL.
-      // See dispatcher.go lookupReply's signature field.
-      // Also see dispatcher.go lookupIntermediateReply's signature field.
-      // We have to pre-encode the signature list into a string.
-      var canonicalSignatureList = vdl.canonicalize.fill(signatureList, {
-        kind: vdl.kind.LIST,
-        elem: vdlsig.Interface.prototype._type
-      });
-      res = byteUtil.bytes2Hex(vom.encode(canonicalSignatureList));
-    } catch (e) {
-      return Promise.reject(e);
-    }
-
     var hasAuthorizer = (typeof value.authorizer === 'function');
     var hasGlobber = value.invoker.hasGlobber();
-    var data = {
+    var reply = new LookupReply({
       handle: value._handle,
-      signature: res,
+      signature: signatureList,
       hasAuthorizer: hasAuthorizer,
       hasGlobber: hasGlobber
-    };
-    self._proxy.sendRequest(JSON.stringify(data), Outgoing.LOOKUP_RESPONSE,
-        null, messageId);
-  }).catch(function(err) {
-    var data = JSON.stringify({
-      err: ErrorConversion.fromNativeValue(err, self._appName,
-                                          '__Signature'),
     });
-    self._proxy.sendRequest(data, Outgoing.LOOKUP_RESPONSE,
-        null, messageId);
+    self._proxy.sendRequest(hexVom.encode(reply), Outgoing.LOOKUP_RESPONSE,
+                            null, messageId);
+  }).catch(function(err) {
+    var reply = new LookupReply({
+      err: ErrorConversion.fromNativeValue(err, self._appName, '__Signature')
+    });
+    self._proxy.sendRequest(hexVom.encode(reply), Outgoing.LOOKUP_RESPONSE,
+                            null, messageId);
   });
 };
 
@@ -270,7 +261,7 @@ Router.prototype.handleRPCRequest = function(messageId, vdlRequest) {
   var err;
   var request;
   try {
-   request = vom.decode(byteUtil.hex2Bytes(vdlRequest));
+   request = hexVom.decode(vdlRequest);
   } catch (e) {
     err = new Error('Failed to decode args: ' + e);
     this.sendResult(messageId, '', null, err);
@@ -633,9 +624,8 @@ Router.prototype.sendResult = function(messageId, name, results, err,
       err: errorStruct,
       traceResponse: traceResponse
     });
-    var responseDataVOM = byteUtil.bytes2Hex(vom.encode(responseData));
-    this._proxy.sendRequest(responseDataVOM, Outgoing.RESPONSE, null,
-        messageId);
+    this._proxy.sendRequest(hexVom.encode(responseData), Outgoing.RESPONSE,
+                            null, messageId);
   }
 };
 

@@ -15,12 +15,10 @@ var MessageType = require('./message-type');
 var Incoming = MessageType.Incoming;
 var Outgoing = MessageType.Outgoing;
 var vlog = require('./../lib/vlog');
-var byteUtil = require('../vdl/byte-util');
-var vom = require('../vom');
 var unwrap = require('../vdl/type-util').unwrap;
 var Encoder = require('../vom/encoder');
 var Decoder = require('../vom/decoder');
-
+var hexVom = require('../lib/hex-vom');
 
 // Cache the service signatures for one hour.
 var SIGNATURE_CACHE_TTL = 3600 * 1000;
@@ -68,7 +66,7 @@ Proxy.prototype.process = function(message) {
 
   var payload;
   try {
-    payload = vom.decode(byteUtil.hex2Bytes(message.data));
+    payload = hexVom.decode(message.data);
     payload.message = unwrap(payload.message);
   } catch (e) {
     vlog.logger.error(e);
@@ -147,7 +145,11 @@ Proxy.prototype.sendRequest = function(message, type, handler, id) {
   if (handler) {
     this.outstandingRequests[id] = handler;
   }
-  var body = JSON.stringify({ id: id, data: message, type: type });
+  var body = {
+    id: id,
+    data: message,
+    type: type
+  };
 
   var self = this;
   this.senderPromise.then(function(sender) {

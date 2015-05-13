@@ -11,14 +11,13 @@ var Outgoing = require('./message-type').Outgoing;
 var Duplex = require('stream').Duplex;
 var vlog = require('../lib/vlog');
 var inherits = require('inherits');
-var byteUtil = require('../vdl/byte-util');
-var vom = require('../vom');
 var fill = require('../vdl/canonicalize').fill;
 var reduce = require('../vdl/canonicalize').reduce;
 var unwrap = require('../vdl/type-util').unwrap;
 var Blessings = require('../security/blessings');
 var ServerRpcReply =
   require('../gen-vdl/v.io/x/ref/services/wspr/internal/lib').ServerRpcReply;
+var hexVom = require('../lib/hex-vom');
 
 /**
  * @summary
@@ -79,11 +78,11 @@ Stream.prototype.serverClose = function(results, err, traceResponse) {
   var object = {
     id: this.flowId,
     type: Outgoing.RESPONSE,
-    data: byteUtil.bytes2Hex(vom.encode(new ServerRpcReply({
+    data: hexVom.encode(new ServerRpcReply({
       results: results,
       err: err || null,
       traceResponse: traceResponse
-    })))
+    }))
   };
   Duplex.prototype.write.call(this, object);
 };
@@ -171,7 +170,7 @@ Stream.prototype.write = function(chunk, encoding, cb) {
   var canonChunk = fill(chunk, this.writeType);
   var object = {
     id: this.flowId,
-    data: byteUtil.bytes2Hex(vom.encode(canonChunk)),
+    data: hexVom.encode(canonChunk),
     type: Outgoing.STREAM_VALUE
   };
   return Duplex.prototype.write.call(this, object, encoding, cb);
@@ -179,7 +178,7 @@ Stream.prototype.write = function(chunk, encoding, cb) {
 
 Stream.prototype._write = function(chunk, encoding, cb) {
   this.webSocketPromise.then(function(websocket) {
-    websocket.send(JSON.stringify(chunk));
+    websocket.send(chunk);
     cb();
   });
 };
