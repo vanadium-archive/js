@@ -131,9 +131,14 @@ Runner.prototype._setup = function(cb) {
 };
 
 Runner.prototype.stop = function(cb) {
+
   var runner = this;
   if (runner._stopCalled) {
-    debug('warning: stop called multiple times');
+    var errText = 'stop called multiple times';
+    debug(errText);
+    if (cb) {
+      cb(new Error(errText));
+    }
     return;
   }
   runner._stopCalled = true;
