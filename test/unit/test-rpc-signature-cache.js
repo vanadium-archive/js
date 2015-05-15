@@ -18,6 +18,8 @@ var app = require('../../src/gen-vdl/v.io/x/ref/services/wspr/internal/app');
 var vtrace = require('../../src/vtrace');
 var vdlsig = require('../../src/gen-vdl/v.io/v23/vdlroot/signature');
 var SharedContextKeys = require('../../src/runtime/shared-context-keys');
+var vom = require('../../src/vom');
+var byteUtil = require('../../src/vdl/byte-util');
 
 var freshSig = [ new vdlsig.Interface({ doc: 'fresh signature' }) ];
 var cachedSig = [ new vdlsig.Interface({ doc: 'cached signature'}) ];
@@ -28,13 +30,15 @@ var CACHE_TTL = 100; // we set the signature cache TTL to 100ms for tests.
 function createProxy() {
   return createMockProxy(function(message, type) {
     if (type === Outgoing.REQUEST) {
-      var decodedData = hexVom.decode(message);
-      if (decodedData.method !== 'Signature') {
-        throw new Error('Unexpected method call');
-      }
-      var response = new app.RpcResponse();
-      response.outArgs = [freshSig];
-      return hexVom.encode(response);
+      var bytes = byteUtil.hex2Bytes(message);
+      return vom.decode(bytes).then(function(decodedData) {
+        if (decodedData.method !== 'Signature') {
+          throw new Error('Unexpected method call');
+        }
+        var response = new app.RpcResponse();
+        response.outArgs = [freshSig];
+        return hexVom.encode(response);
+      });
     }
     throw new Error('Unexpected message type');
   }, CACHE_TTL);

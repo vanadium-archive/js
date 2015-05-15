@@ -7,10 +7,12 @@
  */
 
 var vom = require('../../../src/vom');
+var TaskSequence = require('../../../src/lib/task-sequence');
 var channelVdl =
   require('../../vdl/v.io/x/ref/services/wspr/internal/channel');
 var browsprVdl =
   require('../../vdl/v.io/x/ref/services/wspr/internal/browspr');
+var vlog = require('../../../src/lib/vlog');
 
 module.exports = RpcChannel;
 
@@ -26,6 +28,7 @@ function RpcChannel(sendMessage) {
   this.lastSeq = 0;
   this.handlers = {};
   this.pendingCallbacks = {};
+  this.decodeQueue = new TaskSequence();
 }
 
 RpcChannel.prototype.registerRpcHandler = function(type, func) {
@@ -127,22 +130,32 @@ RpcChannel.prototype._handleResponse = function(resp) {
   cb(null, body);
 };
 
-RpcChannel.prototype.handleMessage = function(msg) {
+RpcChannel.prototype._handleMessageTask = function(msg) {
   var msgBytes = new Uint8Array(msg);
   var reader = new vom.ByteArrayMessageReader(msgBytes);
   var dec = new vom.Decoder(reader);
-  var jsMsg = dec.decode();
-  if (jsMsg._type.name === channelVdl.Message.name) {
-    throw new Error('Message does not have correct Message type: ' +
-      JSON.stringify(jsMsg));
-  } else if (jsMsg.request) {
-    return this._handleRequest(jsMsg.request);
-  } else if (jsMsg.response) {
-    return this._handleResponse(jsMsg.response);
-  } else {
-    throw new Error('Message has Message type, but no "request" or ' +
-        '"response" fields: ' + JSON.stringify(jsMsg));
-  }
+  var channel = this;
+  return dec.decode().then(function(jsMsg) {
+    if (jsMsg._type.name === channelVdl.Message.name) {
+      throw new Error('Message does not have correct Message type: ' +
+                      JSON.stringify(jsMsg));
+    } else if (jsMsg.request) {
+      return channel._handleRequest(jsMsg.request);
+    } else if (jsMsg.response) {
+      return channel._handleResponse(jsMsg.response);
+    } else {
+      var err = new Error('Message has Message type, but no "request" or ' +
+                          '"response" fields: ' + JSON.stringify(jsMsg));
+      vlog.logger.error(err + ': ' + err.stack);
+    }
+  }, function(err) {
+    vlog.logger.error(err + ': ' + err.stack);
+  });
+};
+RpcChannel.prototype.handleMessage = function(msg) {
+  // We add this to the task queue to make sure that the decode callback for
+  // all the messages are peformed in order.
+  this.decodeQueue.addTask(this._handleMessageTask.bind(this, msg));
 };
 
 RpcChannel.prototype._postMessage = function(msg) {

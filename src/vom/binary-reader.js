@@ -7,6 +7,8 @@
  * @private
  */
 
+var Promise = require('../lib/promise');
+var byteUtil = require('../vdl/byte-util');
 module.exports = BinaryReader;
 
 /**
@@ -23,44 +25,51 @@ function BinaryReader(buf) {
 
 /**
  * Reads a byte from the bufer.
- * @return {number} The byte value. EOF is represented by null.
+ * @return {Promise<number>} The byte value. EOF is represented by null.
  */
 BinaryReader.prototype.readByte = function() {
   var val = this.buf[this.pos];
   this.pos++;
   if (val === undefined) {
-  	throw new Error('Failed to read byte, reached end of buffer');
+    return Promise.reject(
+      new Error('Failed to read byte, reached end of buffer'));
   }
-  return val;
+  return Promise.resolve(val);
 };
 
 /**
  * Returns the next byte from the buffer without advancing the reader
- * @return {number} The byte value. EOF is represented by null.
+ * @return {Promise<number>} The byte value. EOF is represented by null.
  */
 BinaryReader.prototype.peekByte = function() {
   var val = this.buf[this.pos];
   if (val === undefined) {
-  	throw new Error('Failed to read byte, reached end of buffer');
+    return Promise.reject(
+      new Error('Failed to read byte, reached end of buffer'));
   }
-  return val;
+  return Promise.resolve(val);
 };
 
 /**
  * Reads an array of bytes from the buffer.
  * @param {number} amt. The number of bytes to read.
- * @return {Uint8Array} The byte array. If the whole size cannot be read, null
- * (representing EOF) is returned.
+ * @return {Promise<Uint8Array>} The byte array. If the whole size cannot be
+ * read, null (representing EOF) is returned.
  */
 BinaryReader.prototype.readByteArray = function(amt) {
   var arr = this.buf.subarray(this.pos, this.pos + amt);
   this.pos += amt;
   if (this.pos > this.buf) {
-  	throw new Error('Failed to read ' + amt + ' bytes. Hit EOF.');
+    return Promise.reject(
+      new Error('Failed to read ' + amt + ' bytes. Hit EOF.'));
   }
-  return arr;
+  return Promise.resolve(arr);
 };
 
 BinaryReader.prototype.hasData = function() {
   return this.pos < this.buf.length;
+};
+
+BinaryReader.prototype.getHexBytes = function() {
+  return byteUtil.bytes2Hex(this.buf.slice(this.pos));
 };

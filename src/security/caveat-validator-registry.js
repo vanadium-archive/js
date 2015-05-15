@@ -88,7 +88,12 @@ CaveatValidatorRegistry.prototype.validate =
     return cb(new vdlSecurity.CaveatNotRegisteredError(ctx,
       'Unknown caveat id: ' + this._makeKey(caveat.id)));
   }
-  return validator.validate(ctx, call, vom.decode(caveat.paramVom), cb);
+  return vom.decode(caveat.paramVom, false, function(err, val) {
+    if (err) {
+      return cb(err);
+    }
+    return validator.validate(ctx, call, val, cb);
+  });
 };
 
 /**

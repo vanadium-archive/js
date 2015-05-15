@@ -4,7 +4,9 @@
 
 
 var asyncCall = require('../lib/async-call');
-var Deferred = require('../lib/deferred');
+var Promise = require('../lib/promise');
+var vom = require('../vom');
+var byteUtil = require('../vdl/byte-util');
 var hexVom = require('../lib/hex-vom');
 var verror = require('../gen-vdl/v.io/v23/verror');
 var MessageType = require('../proxy/message-type');
@@ -42,59 +44,62 @@ GranterRouter.prototype.handleRequest = function(messageId, type, request) {
     return;
   }
 
+
   try {
-   request = hexVom.decode(request);
-   request = request.val;
+   request = byteUtil.hex2Bytes(request);
   } catch (e) {
-    // TODO(bjornick): Pass in context here so we can generate useful error
-    // messages.
-    var res = new GranterResponse({
-      err: new verror.NoExistError(this._rootCtx, 'failed to decode message')
-    });
-    var data = hexVom.encode(res);
-    this._proxy.sendRequest(data, Outgoing.GRANTER_RESPONSE,
-        null, messageId);
+    returnFailure(
+      new verror.NoExistError(this._rootCtx, 'failed to decode message'));
+    return Promise.resolve();
   }
-  var granter = this.activeGranters[request.granterHandle];
-  if (!granter) {
-    // TODO(bjornick): Pass in context here so we can generate useful error
-    // messages.
-    var res = new GranterResponse({
-      err: new verror.NoExistError(this._rootCtx, 'unknown granter')
-    });
-    var data = hexVom.encode(res);
-    this._proxy.sendRequest(data, Outgoing.GRANTER_RESPONSE,
-        null, messageId);
-    return;
-  }
-  delete this.activeGranters[request.granterHandle];
 
-
-  var securityCall = new SecurityCall(request.call, this._controller);
-  var ctx = this._rootCtx;
-  var def = new Deferred();
-  var inspectFn = new InspectableFunction(granter);
-  var self = this;
-  asyncCall(ctx, null, inspectFn, ['outBlessings'],
-    [ctx, securityCall], function(err, outBlessings) {
-    if (err) {
-      var res = new GranterResponse({
-        err: new verror.NoExistError(this._rootCtx, 'error while granting: ' +
-          err)
-      });
-      var errData = hexVom.encode(res);
-      self._proxy.sendRequest(errData, Outgoing.GRANTER_RESPONSE,
-          null, messageId);
-      def.resolve();
-      return;
+  var router = this;
+  return vom.decode(request).then(function(request) {
+    request = request.val;
+    var granter = router.activeGranters[request.granterHandle];
+    if (!granter) {
+      // TODO(bjornick): Pass in context here so we can generate useful error
+      // messages
+      return Promise.reject(
+        new verror.NoExistError(router._rootCtx, 'unknown granter'));
     }
+    delete router.activeGranters[request.granterHandle];
+    var securityCall = new SecurityCall(request.call, router._controller);
+    var ctx = router._rootCtx;
+    var inspectFn = new InspectableFunction(granter);
+    var resolve;
+    var reject;
+    var promise = new Promise(function(a, b) {
+      resolve = a;
+      reject = b;
+    });
+    asyncCall(ctx, null, inspectFn, ['outBlessings'],
+              [ctx, securityCall], function(err, res) {
+                if(err) {
+                  return reject(err);
+                }
+                return resolve(res);
+              });
+    return promise;
+  }, function(e) {
+    return Promise.reject(
+      new verror.NoExistError(router._rootCtx, 'failed to decode message'));
+  }).then(function(outBlessings) {
     var result = new GranterResponse({blessings: outBlessings[0]._id});
     var data = hexVom.encode(result);
-    self._proxy.sendRequest(data, Outgoing.GRANTER_RESPONSE, null,
+    router._proxy.sendRequest(data, Outgoing.GRANTER_RESPONSE, null,
       messageId);
-    def.resolve();
-  });
-  return def.promise;
+  }, function(e) {
+    return Promise.reject(
+      new verror.NoExistError(router._rootCtx, 'error while granting: ' + e));
+  }).catch(returnFailure);
+
+  function returnFailure(e) {
+    var res = new GranterResponse({err: e});
+    var data = byteUtil.bytes2Hex(vom.encode(res));
+    router._proxy.sendRequest(data, Outgoing.GRANTER_RESPONSE,
+        null, messageId);
+  }
 };
 
 /**

@@ -12,6 +12,7 @@ var BigInt = require('./../../src/vdl/big-int.js');
 var RawVomWriter = require('./../../src/vom/raw-vom-writer');
 var RawVomReader = require('./../../src/vom/raw-vom-reader');
 var ByteUtil = require('./../../src/vdl/byte-util.js');
+var Promise = require('../../src/lib/promise');
 
 var testTypes = {
   UINT: {
@@ -139,14 +140,18 @@ test('Raw writer compatibility', function(t) {
 });
 
 test('Raw reader compatibility', function(t) {
-  for (var i = 0; i < tests.length; i++) {
-    var test = tests[i];
-
+  var promises = [];
+  function runTest(test) {
     var rr = new RawVomReader(ByteUtil.hex2Bytes(test.hexString));
-    var result = rr[test.type.read]();
-
-    t.equal(ByteUtil.bytes2Hex(result), ByteUtil.bytes2Hex(test.val),
-      'type: ' + test.type.name + ' input: ' + test.hexString);
+    promises.push(rr[test.type.read]().then(function(result) {
+      t.equal(ByteUtil.bytes2Hex(result), ByteUtil.bytes2Hex(test.val),
+              'type: ' + test.type.name + ' input: ' + test.hexString);
+    }));
   }
-  t.end();
+  for (var i = 0; i < tests.length; i++) {
+    runTest(tests[i]);
+  }
+  Promise.all(promises).then(function() {
+    t.end();
+  }, t.end);
 });

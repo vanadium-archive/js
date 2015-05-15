@@ -240,7 +240,6 @@ function runCache(options) {
       Promise
       .all(jobs)
       .then(function() {
-
         // 2. Add a listener or create a stream reader to receive the values
         var promise = cache.multiGet(ctx);
         var stream = promise.stream;

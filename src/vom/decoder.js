@@ -18,6 +18,11 @@ var util = require('../vdl/util.js');
 var unwrap = require('../vdl/type-util').unwrap;
 var wiretype = require('../gen-vdl/v.io/v23/vom');
 var nativeTypeRegistry = require('../vdl/native-type-registry');
+var Deferred = require('../lib/deferred');
+var Promise = require('../lib/promise');
+var TaskSequence = require('../lib/task-sequence');
+var promiseFor = require('../lib/async-helper').promiseFor;
+var promiseWhile = require('../lib/async-helper').promiseWhile;
 
 var endByte = unwrap(wiretype.WireCtrlEnd);
 var nilByte = unwrap(wiretype.WireCtrlNil);
@@ -36,6 +41,7 @@ function Decoder(messageReader, deepWrap) {
   this._messageReader = messageReader;
   this._typeDecoder = new TypeDecoder();
   this._deepWrap = deepWrap || false;
+  this._tasks = new TaskSequence();
 }
 
 /*
@@ -46,32 +52,43 @@ function Decoder(messageReader, deepWrap) {
  * Decodes the next object off of the message reader.
  * @return {object} The next object or null if no more objects are available.
  */
-Decoder.prototype.decode = function() {
-  var type = this._messageReader.nextMessageType(this._typeDecoder);
-  if (type === null) {
-    return null;
-  }
-  var reader = this._messageReader.rawReader;
-  return this._decodeValue(type, reader, true);
+Decoder.prototype.decode = function(cb) {
+  var def = new Deferred(cb);
+  var decoder = this;
+  this._tasks.addTask(function() {
+    return decoder._messageReader.nextMessageType(decoder._typeDecoder).
+      then(function(type) {
+      if (type === null) {
+        return null;
+      }
+      var reader = decoder._messageReader.rawReader;
+      return decoder._decodeValue(type, reader, true);
+    }).then(function(v) {
+      def.resolve(v);
+    }, function(err) {
+      def.reject(err);
+    });
+  });
+  return def.promise;
 };
 
 Decoder.prototype._decodeValue = function(t, reader, shouldWrap) {
-  var value = this._decodeUnwrappedValue(t, reader);
+  return this._decodeUnwrappedValue(t, reader).then(function(value) {
+    // Special: JSValue should be reduced and returned as a native value.
+    if (types.JSVALUE.equals(t)) {
+      return canonicalize.reduce(value, types.JSVALUE);
+    }
 
-  // Special: JSValue should be reduced and returned as a native value.
-  if (types.JSVALUE.equals(t)) {
-    return canonicalize.reduce(value, types.JSVALUE);
-  }
-
-  if (nativeTypeRegistry.hasNativeType(t)) {
-    return canonicalize.reduce(value, t);
-  }
-  // If this value should be wrapped, apply the constructor.
-  if (t.kind !== kind.TYPEOBJECT && shouldWrap) {
-    var Ctor = Registry.lookupOrCreateConstructor(t);
-    return new Ctor(value, this._deepWrap);
-  }
-  return value;
+    if (nativeTypeRegistry.hasNativeType(t)) {
+      return canonicalize.reduce(value, t);
+    }
+    // If this value should be wrapped, apply the constructor.
+    if (t.kind !== kind.TYPEOBJECT && shouldWrap) {
+      var Ctor = Registry.lookupOrCreateConstructor(t);
+      return new Ctor(value, this._deepWrap);
+    }
+    return value;
+  });
 };
 
 Decoder.prototype._decodeUnwrappedValue = function(t, reader) {
@@ -95,10 +112,14 @@ Decoder.prototype._decodeUnwrappedValue = function(t, reader) {
       return reader.readFloat();
     case kind.COMPLEX64:
     case kind.COMPLEX128:
-      return {
-        real: reader.readFloat(),
-        imag: reader.readFloat()
-      };
+      return reader.readFloat().then(function(real) {
+         return reader.readFloat().then(function(imag) {
+           return {
+             real: real,
+             imag: imag
+           };
+         });
+      });
     case kind.STRING:
       return reader.readString();
     case kind.ENUM:
@@ -120,38 +141,46 @@ Decoder.prototype._decodeUnwrappedValue = function(t, reader) {
     case kind.OPTIONAL:
       return this._decodeOptional(t, reader);
     case kind.TYPEOBJECT:
-      var typeId = reader.readUint();
-      var type = this._typeDecoder.lookupType(typeId);
-      if (type === undefined) {
-        throw new Error('Undefined type for TYPEOBJECT id ' + typeId);
-      }
-      return type;
+      var decoder = this;
+      return reader.readUint().then(function(typeId) {
+        var type = decoder._typeDecoder.lookupType(typeId);
+        if (type === undefined) {
+          throw new Error('Undefined type for TYPEOBJECT id ' + typeId);
+        }
+        return type;
+      });
+
     default:
-      throw new Error('Support for decoding kind ' + t.kind +
-        ' not yet implemented');
+      return Promise.reject(new Error('Support for decoding kind ' + t.kind +
+        ' not yet implemented'));
   }
 };
 
 Decoder.prototype._decodeEnum = function(t, reader) {
-  var index = reader.readUint();
-  if (t.labels.length <= index) {
-    throw new Error('Invalid enum index ' + index);
-  }
-  return t.labels[index];
+  return reader.readUint().then(function(index) {
+    if (t.labels.length <= index) {
+      throw new Error('Invalid enum index ' + index);
+    }
+    return t.labels[index];
+  });
 };
 
 Decoder.prototype._decodeList = function(t, reader) {
-  var len = reader.readUint();
-  return this._readSequence(t, len, reader);
+  var decoder = this;
+  return reader.readUint().then(function(len) {
+    return decoder._readSequence(t, len, reader);
+  });
 };
 
 Decoder.prototype._decodeArray = function(t, reader) {
+  var decoder = this;
   // Consume the zero byte at the beginning of the array.
-  var b = reader.readByte();
-  if (b !== 0) {
-    throw new Error('Unexpected length ' + b);
-  }
-  return this._readSequence(t, t.len, reader);
+  return reader.readByte().then(function(b) {
+    if (b !== 0) {
+      throw new Error('Unexpected length ' + b);
+    }
+    return decoder._readSequence(t, t.len, reader);
+  });
 };
 
 Decoder.prototype._readSequence = function(t, len, reader) {
@@ -161,99 +190,143 @@ Decoder.prototype._readSequence = function(t, len, reader) {
     // The Uint8Array is created by calling subarray. In node, this means that
     // its buffer points to the whole binary_reader buffer. To fix this, we
     // recreate the Uint8Array here to avoid exposing it.
-    return new Uint8Array(reader._readRawBytes(len));
+    return reader._readRawBytes(len).then(function(b) {
+      return new Uint8Array(b);
+    });
   }
 
   var arr = new Array(len);
-  for (var i = 0; i < len; i++) {
-    arr[i] = this._decodeValue(t.elem, reader, false);
-  }
-  return arr;
+  var i = 0;
+  var decoder = this;
+  return promiseFor(len, function() {
+    return decoder._decodeValue(t.elem, reader, false).then(function(val) {
+      arr[i] = val;
+      i++;
+    });
+  }).then(function() {
+    return arr;
+  });
 };
 
 Decoder.prototype._decodeSet = function(t, reader) {
-  var len = reader.readUint();
+  var decoder = this;
   var s = new Set();
-  for (var i = 0; i < len; i++) {
-    var key = this._decodeValue(t.key, reader, false);
-    s.add(key);
-  }
-  return s;
+  return reader.readUint().then(function(len) {
+    return promiseFor(len, function() {
+      return decoder._decodeValue(t.key, reader, false).then(function(key) {
+        s.add(key);
+      });
+    });
+  }).then(function() {
+    return s;
+  });
 };
 
 Decoder.prototype._decodeMap = function(t, reader) {
-  var len = reader.readUint();
-  var m = new Map();
-  for (var i = 0; i < len; i++) {
-    var key = this._decodeValue(t.key, reader, false);
-    var val = this._decodeValue(t.elem, reader, false);
-    m.set(key, val);
-  }
-  return m;
+  var decoder = this;
+  return reader.readUint().then(function(len) {
+    var m = new Map();
+    var i = 0;
+    if (len > 0) {
+      return decoder._decodeValue(t.key, reader, false).then(handleKey);
+    }
+    return m;
+
+    function handleKey(key) {
+      return decoder._decodeValue(t.elem, reader, false).then(function(value) {
+        m.set(key, value);
+        i++;
+        if (i < len) {
+          return decoder._decodeValue(t.key, reader, false).then(handleKey);
+        }
+        return m;
+      });
+    }
+  });
 };
 
 Decoder.prototype._decodeStruct = function(t, reader) {
+  var decoder = this;
   var Ctor = Registry.lookupOrCreateConstructor(t);
   var obj = Object.create(Ctor.prototype);
-  while (true) {
-    var ctrl = reader.tryReadControlByte();
-    if (ctrl === endByte) {
-      break;
+
+  return promiseWhile(notEndByte, readField).then(function() {
+    return obj;
+  });
+  function notEndByte() {
+    return reader.tryReadControlByte().then(function(ctrl) {
+      if (ctrl === endByte) {
+        return false;
+      }
+
+      if (ctrl) {
+        throw new Error('Unexpected control byte ' + ctrl);
+      }
+      return true;
+    });
+  }
+  function readField() {
+    var name = '';
+    return reader.readUint().then(function(nextIndex) {
+      if (t.fields.length <= nextIndex) {
+        throw new Error('Struct index ' + nextIndex + ' out of bounds');
+      }
+      var field = t.fields[nextIndex];
+      name = util.uncapitalize(field.name);
+      return decoder._decodeValue(field.type, reader, false);
+    }).then(function(val) {
+      obj[name] = val;
+    });
+  }
+};
+
+Decoder.prototype._decodeOptional = function(t, reader) {
+  var decoder = this;
+  return reader.peekByte().then(function(isNil) {
+    if (isNil === nilByte) {
+      // We don't have to wait for the read to finish.
+      reader.readByte();
+      return null;
+    }
+    return decoder._decodeValue(t.elem, reader, false);
+  });
+};
+
+Decoder.prototype._decodeAny = function(reader) {
+  var decoder = this;
+  return reader.tryReadControlByte().then(function(ctrl) {
+    if (ctrl === nilByte) {
+      return null;
     }
 
     if (ctrl) {
       throw new Error('Unexpected control byte ' + ctrl);
     }
-
-    var nextIndex = reader.readUint();
-    if (t.fields.length <= nextIndex) {
-      throw new Error('Struct index ' + nextIndex + ' out of bounds');
-    }
-    var field = t.fields[nextIndex];
-    var val = this._decodeValue(field.type, reader, false);
-    obj[util.uncapitalize(field.name)] = val;
-  }
-  return obj;
-};
-
-Decoder.prototype._decodeOptional = function(t, reader) {
-  var isNil = reader.peekByte();
-  if (isNil === nilByte) {
-    reader.readByte();
-    return null;
-  }
-  return this._decodeValue(t.elem, reader, false);
-};
-
-Decoder.prototype._decodeAny = function(reader) {
-  var ctrl = reader.tryReadControlByte();
-  if (ctrl === nilByte) {
-    return null;
-  }
-
-  if (ctrl) {
-    throw new Error('Unexpected control byte ' + ctrl);
-  }
-  var typeId = reader.readUint();
-  var type = this._typeDecoder.lookupType(typeId);
-  if (type === undefined) {
-    throw new Error('Undefined typeid ' + typeId);
-  }
-  return this._decodeValue(type, reader, true);
+    return reader.readUint().then(function(typeId) {
+      var type = decoder._typeDecoder.lookupType(typeId);
+      if (type === undefined) {
+        throw new Error('Undefined typeid ' + typeId);
+      }
+      return decoder._decodeValue(type, reader, true);
+    });
+  });
 };
 
 Decoder.prototype._decodeUnion = function(t, reader) {
+  var decoder = this;
+  var field;
   // Find the Union field that was set and decode its value.
-  var fieldIndex = reader.readUint();
-  if (t.fields.length <= fieldIndex) {
-    throw new Error('Union index ' + fieldIndex + ' out of bounds');
-  }
-  var field = t.fields[fieldIndex];
-  var val = this._decodeValue(field.type, reader, false);
-
-  // Return the Union with a single field set to its decoded value.
-  var Ctor = Registry.lookupOrCreateConstructor(t);
-  var obj = Object.create(Ctor.prototype);
-  obj[util.uncapitalize(field.name)] = val;
-  return obj;
+  return reader.readUint().then(function(fieldIndex) {
+    if (t.fields.length <= fieldIndex) {
+      throw new Error('Union index ' + fieldIndex + ' out of bounds');
+    }
+    field = t.fields[fieldIndex];
+    return decoder._decodeValue(field.type, reader, false);
+  }).then(function(val) {
+    // Return the Union with a single field set to its decoded value.
+    var Ctor = Registry.lookupOrCreateConstructor(t);
+    var obj = Object.create(Ctor.prototype);
+    obj[util.uncapitalize(field.name)] = val;
+    return obj;
+  });
 };

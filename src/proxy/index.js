@@ -15,13 +15,24 @@ var MessageType = require('./message-type');
 var Incoming = MessageType.Incoming;
 var Outgoing = MessageType.Outgoing;
 var vlog = require('./../lib/vlog');
+var vom = require('../vom');
+var byteUtil = require('../vdl/byte-util');
 var unwrap = require('../vdl/type-util').unwrap;
 var Encoder = require('../vom/encoder');
 var Decoder = require('../vom/decoder');
-var hexVom = require('../lib/hex-vom');
+var ByteStreamMessageReader = require('../vom/byte-stream-message-reader');
+var TaskSequence = require('../lib/task-sequence');
 
 // Cache the service signatures for one hour.
 var SIGNATURE_CACHE_TTL = 3600 * 1000;
+
+// HandlerState is an object that contains the state for a given flow.  This
+// includes an optional handler for incoming messages and a task sequencer for
+// decoding incoming messages.
+function HandlerState(handler) {
+  this.handler = handler;
+  this._tasks = new TaskSequence();
+}
 
 /**
  * A client for the native vanadium implementation.
@@ -43,7 +54,7 @@ function Proxy(senderPromise) {
   this.senderPromise = senderPromise;
   this.incomingRequestHandlers = {};
   this.clientEncoder = new Encoder();
-  this.clientDecoder = new Decoder();
+  this.clientDecoder = new Decoder(new ByteStreamMessageReader());
   EE.call(this);
 }
 inherits(Proxy, EE);
@@ -56,39 +67,65 @@ inherits(Proxy, EE);
 Proxy.prototype.process = function(message) {
   // Messages originating from server are even numbers
   var isServerOriginatedMessage = (message.id % 2) === 0;
-  var handler = this.outstandingRequests[message.id];
+  var handlerState = this.outstandingRequests[message.id];
 
   // If we don't know about this flow, just drop the message. Unless it
   // originated from the sever.
-  if (!isServerOriginatedMessage && !handler) {
+  if (!isServerOriginatedMessage && !handlerState) {
     return;
   }
 
-  var payload;
+  if (!handlerState) {
+    // This is an server originated message that we are seeing for the
+    // first time.  We need to create a handler state so we have the task
+    // sequence for the input data.  If a handler gets added later, then
+    // it will attached to this state.
+    handlerState = new HandlerState();
+    this.outstandingRequests[message.id] = handlerState;
+  }
+  var bytes;
   try {
-    payload = hexVom.decode(message.data);
-    payload.message = unwrap(payload.message);
+    bytes = byteUtil.hex2Bytes(message.data);
   } catch (e) {
     vlog.logger.error(e);
     if (!isServerOriginatedMessage) {
-      handler.handleResponse(Incoming.ERROR_RESPONSE, message.data);
+      handlerState.handler.handleResponse(Incoming.ERROR_RESPONSE,
+                                          message.data);
     }
     return;
   }
 
-  if (!handler) {
-    handler = this.incomingRequestHandlers[payload.type];
+  var proxy = this;
+  handlerState._tasks.addTask(function() {
+    return proxy.processRead(message.id, handlerState.handler, bytes);
+  });
+};
+
+Proxy.prototype.processRead = function(id, handler, bytes) {
+  var proxy = this;
+  var isServerOriginatedMessage = (id % 2) === 0;
+  return vom.decode(bytes).then(function(payload) {
+    payload.message = unwrap(payload.message);
     if (!handler) {
-      // TODO(bprosnitz) There is a race condition where we receive STREAM_CLOSE
-      // before a method is invoked in js and see this warning.
-      vlog.logger.warn('Dropping message for unknown invoke payload ' +
-        payload.type + ' (message id: ' + message.id + ')');
-      return;
+      handler = proxy.incomingRequestHandlers[payload.type];
+      if (!handler) {
+        // TODO(bprosnitz) There is a race condition where we receive
+        // STREAM_CLOSE before a method is invoked in js and see this warning.
+        vlog.logger.warn('Dropping message for unknown invoke payload ' +
+                         payload.type + ' (message id: ' + id + ')');
+        return;
+      }
+      handler.handleRequest(id, payload.type, payload.message);
+    } else {
+      handler.handleResponse(payload.type, payload.message);
     }
-    handler.handleRequest(message.id, payload.type, payload.message);
-  } else {
-    handler.handleResponse(payload.type, payload.message);
-  }
+  }).catch(function(e) {
+    vlog.logger.error(e.stack);
+    if (!isServerOriginatedMessage) {
+      handler.handleResponse(Incoming.ERROR_RESPONSE,
+                             byteUtil.bytes2Hex(bytes));
+    }
+  });
 };
 
 Proxy.prototype.dequeue = function(id) {
@@ -107,7 +144,11 @@ Proxy.prototype.addIncomingHandler = function(type, handler) {
 };
 
 Proxy.prototype.addIncomingStreamHandler = function(id, handler) {
-  this.outstandingRequests[id] = handler;
+  if (!this.outstandingRequests[id]) {
+    this.outstandingRequests[id] = new HandlerState(handler);
+  } else {
+    this.outstandingRequests[id].handler = handler;
+  }
 };
 
 /**
@@ -121,8 +162,8 @@ Proxy.prototype.cancelFromContext = function(ctx, id) {
   ctx.waitUntilDone().catch(function(error) {
     var h = proxy.outstandingRequests[id];
     proxy.sendRequest(null, Outgoing.CANCEL, null, id);
-    if (h) {
-      h.handleResponse(Incoming.ERROR_RESPONSE, error);
+    if (h && h.handler) {
+      h.handler.handleResponse(Incoming.ERROR_RESPONSE, error);
       delete proxy.outstandingRequests[id];
     }
   });
@@ -143,7 +184,7 @@ Proxy.prototype.cancelFromContext = function(ctx, id) {
  */
 Proxy.prototype.sendRequest = function(message, type, handler, id) {
   if (handler) {
-    this.outstandingRequests[id] = handler;
+    this.addIncomingStreamHandler(id, handler);
   }
   var body = {
     id: id,
@@ -160,8 +201,8 @@ Proxy.prototype.sendRequest = function(message, type, handler, id) {
     // in node.
     var h = self.outstandingRequests[id];
 
-    if (h) {
-      h.handleResponse(Incoming.ERROR_RESPONSE, err);
+    if (h && h.handler) {
+      h.handler.handleResponse(Incoming.ERROR_RESPONSE, err);
       delete self.outstandingRequests[id];
     }
   });

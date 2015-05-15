@@ -11,9 +11,11 @@ var isBrowser = require('is-browser');
 var WebSocket = require('ws');
 
 var Deferred = require('./../lib/deferred');
-var hexVom = require('../lib/hex-vom');
+var TaskSequence = require('./../lib/task-sequence');
 var Proxy = require('./index');
 var vlog = require('./../lib/vlog');
+var vom = require('../vom');
+var byteUtil = require('../vdl/byte-util');
 
 /**
  * A client for the vanadium service using websockets. Connects to the vanadium
@@ -37,6 +39,7 @@ function ProxyConnection(url) {
   this.getWebSocket().then(function success() {
     def.resolve(proxy);
   }, def.reject);
+  this._tasks = new TaskSequence();
 }
 
 ProxyConnection.prototype = Object.create(Proxy.prototype);
@@ -88,13 +91,19 @@ ProxyConnection.prototype.getWebSocket = function() {
   websocket.onmessage = function(frame) {
     var message;
     try {
-      message = hexVom.decode(frame.data);
+      message = byteUtil.hex2Bytes(frame.data);
     } catch (e) {
       vlog.logger.warn('Failed to parse ' + frame.data + ' err: ' + e);
       return;
     }
 
-    self.process(message);
+    self._tasks.addTask(function() {
+      return vom.decode(message).then(function(message) {
+        self.process(message);
+      }, function(e) {
+        vlog.logger.warn('Failed to parse ' + frame.data + ' err: ' + e);
+      });
+    });
   };
 
   return deferred.promise;

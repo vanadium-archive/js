@@ -22,6 +22,13 @@ function createMockProxy(requestHandler, signatureCacheTTL) {
     },
     sendRequest: function(data, type, handler, id) {
       var result = requestHandler(data, type);
+      if (result && result.then) {
+        return result.then(function(result) {
+          handler.handleResponse(0, result);
+        }, function(err) {
+          console.log(err + ' ' + err.stack);
+        });
+      }
       handler.handleResponse(0, result);
     },
     dequeue: function() {}

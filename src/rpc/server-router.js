@@ -43,6 +43,8 @@ var WireBlessings =
   require('../gen-vdl/v.io/v23/security').WireBlessings;
 var SharedContextKeys = require('../runtime/shared-context-keys');
 var hexVom = require('../lib/hex-vom');
+var vom = require('../vom');
+var byteUtil = require('../vdl/byte-util');
 
 /**
  * A router that handles routing incoming requests to the right
@@ -101,11 +103,10 @@ Router.prototype.handleRequest = function(messageId, type, request) {
 };
 
 Router.prototype.handleAuthorizationRequest = function(messageId, request) {
-  var authReply;
   try {
-   request = hexVom.decode(request);
+   request = byteUtil.hex2Bytes(request);
   } catch (e) {
-    authReply = new AuthReply({
+    var authReply = new AuthReply({
       // TODO(bjornick): Use the real context
       err: new verror.InternalError(this._rootCtx, 'Failed to decode ', e)
     });
@@ -115,32 +116,36 @@ Router.prototype.handleAuthorizationRequest = function(messageId, request) {
     return;
   }
 
-  var ctx = this._rootCtx.withValue(SharedContextKeys.LANG_KEY,
-                                    request.context.language);
-  var server = this._servers[request.serverId];
-  if (!server) {
-    authReply = new AuthReply({
-      // TODO(bjornick): Use the real context
-      err: new verror.ExistsError(ctx, 'unknown server')
-    });
-
-    this._proxy.sendRequest(hexVom.encode(authReply),
-                            Outgoing.AUTHORIZATION_RESPONSE, null, messageId);
-    return;
-  }
   var router = this;
-  var call = new SecurityCall(request.call, this._controller);
+  var call;
+  vom.decode(request).then(function(request) {
+    var ctx = router._rootCtx.withValue(SharedContextKeys.LANG_KEY,
+                                      request.context.language);
+    var server = router._servers[request.serverId];
+    if (!server) {
+      var authReply = new AuthReply({
+        // TODO(bjornick): Use the real context
+        err: new verror.ExistsError(ctx, 'unknown server')
+      });
+      router._proxy.sendRequest(hexVom.encode(authReply),
+                                Outgoing.AUTHORIZATION_RESPONSE,
+                                null, messageId);
+      return;
+    }
+    call = new SecurityCall(request.call, router._controller);
 
-  authReply = new AuthReply({});
-
-  server.handleAuthorization(request.handle, ctx, call).then(function() {
+    return server.handleAuthorization(request.handle, ctx, call);
+  }, function(e) {
+    return Promise.reject(new verror.InternalError(router._rootCtx,
+                                                   'Failed to decode ', e));
+  }).then(function() {
+    var authReply = new AuthReply({});
     router._proxy.sendRequest(hexVom.encode(authReply),
-                              Outgoing.AUTHORIZATION_RESPONSE, null,
-                              messageId);
+                              Outgoing.AUTHORIZATION_RESPONSE, null, messageId);
   }).catch(function(e) {
     var authReply = new AuthReply({
-      err: ErrorConversion.fromNativeValue(e, this._appName,
-                                              request.call.method)
+      err: ErrorConversion.fromNativeValue(e, router._appName,
+                                           call.method)
     });
     router._proxy.sendRequest(hexVom.encode(authReply),
                               Outgoing.AUTHORIZATION_RESPONSE, null,
@@ -149,18 +154,17 @@ Router.prototype.handleAuthorizationRequest = function(messageId, request) {
 };
 
 Router.prototype._validateChain = function(ctx, call, cavs) {
-  var promises = new Array(cavs.length);
-  for (var j = 0; j < cavs.length; j++) {
+  var router = this;
+  var promises = cavs.map(function(cav) {
     var def = new Deferred();
-    this._caveatRegistry.validate(ctx, call, cavs[j],
-      function(err) {
-        if (err) {
-          return def.reject(err);
-        }
-        def.resolve();
-    }); // jshint ignore:line
-    promises[j] = def.promise;
-  }
+    router._caveatRegistry.validate(ctx, call, cav, function(err) {
+      if (err) {
+        return def.reject(err);
+      }
+      return def.resolve();
+    });
+    return def.promise;
+  });
   return Promise.all(promises).then(function(results) {
     return undefined;
   }).catch(function(err) {
@@ -169,7 +173,7 @@ Router.prototype._validateChain = function(ctx, call, cavs) {
         'Non-error value returned from caveat validator: ' +
         err);
     }
-    return ErrorConversion.fromNativeValue(err, this._appName,
+    return ErrorConversion.fromNativeValue(err, router._appName,
       'caveat validation');
   });
 };
@@ -191,7 +195,8 @@ Router.prototype.handleCaveatValidationRequest = function(messageId, request) {
                             Outgoing.CAVEAT_VALIDATION_RESPONSE, null,
                             messageId);
   }).catch(function(err) {
-    throw new Error('Unexpected error (all promises should resolve): ' + err);
+    vlog.logger.error(
+      new Error('Unexpected error (all promises should resolve): ' + err));
   });
 };
 
@@ -243,51 +248,7 @@ Router.prototype.handleCancel = function(messageId) {
   }
 };
 
-/**
- * Handles incoming requests from the server to invoke methods on registered
- * services in JavaScript.
- * @private
- * @param {string} messageId Message Id set by the server.
- * @param {Object} vdlRequest VOM encoded request. Request's structure is
- * {
- *   serverId: number // the server id
- *   method: string // Name of the method on the service to call
- *   args: [] // Array of positional arguments to be passed into the method
- *            // Note: This array contains wrapped arguments!
- * }
- */
-Router.prototype.handleRPCRequest = function(messageId, vdlRequest) {
-  // TODO(bjornick): Break this method up into smaller methods.
-  var err;
-  var request;
-  try {
-   request = hexVom.decode(vdlRequest);
-  } catch (e) {
-    err = new Error('Failed to decode args: ' + e);
-    this.sendResult(messageId, '', null, err);
-    return;
-  }
-  var methodName = capitalize(request.method);
-
-  var server = this._servers[request.serverId];
-
-  if (!server) {
-    // TODO(bprosnitz) What error type should this be.
-    err = new Error('Request for unknown server ' + request.serverId);
-    this.sendResult(messageId, methodName, null, err);
-    return;
-  }
-
-  var invoker = server.getInvokerForHandle(request.handle);
-  if (!invoker) {
-    vlog.logger.error('No invoker found: ', request);
-    err = new Error('No service found');
-    this.sendResult(messageId, methodName, null, err);
-    return;
-  }
-
-  var self = this;
-  var stream;
+Router.prototype.createRPCContext = function(request) {
   var ctx = this._rootCtx;
   // Setup the context passed in the context info passed in from wspr.
   if (!request.call.deadline.noDeadline) {
@@ -304,9 +265,47 @@ Router.prototype.handleRPCRequest = function(messageId, vdlRequest) {
   var suffix = request.call.securityCall.suffix;
   var spanName = '<jsserver>"'+suffix+'".'+request.method;
   // TODO(mattr): We need to enforce some security on trace responses.
-  ctx = vtrace.withContinuedTrace(ctx, spanName,
-                                  request.call.traceRequest);
+  return vtrace.withContinuedTrace(ctx, spanName,
+                                   request.call.traceRequest);
+};
 
+/**
+ * Performs the rpc request.  Unlike handleRPCRequest, this function works on
+ * the decoded message.
+ * @private
+ * @param {string} messageId Message Id set by the server.
+ * @param {Object} request Request's structure is
+ * {
+ *   serverId: number // the server id
+ *   method: string // Name of the method on the service to call
+ *   args: [] // Array of positional arguments to be passed into the method
+ *            // Note: This array contains wrapped arguments!
+ * }
+ */
+Router.prototype._handleRPCRequestInternal = function(messageId, request) {
+  // TODO(bjornick): Break this method up into smaller methods.
+  var methodName = capitalize(request.method);
+  var server = this._servers[request.serverId];
+  var err;
+
+  if (!server) {
+    // TODO(bprosnitz) What error type should this be.
+    err = new Error('Request for unknown server ' + request.serverId);
+    this.sendResult(messageId, methodName, null, err);
+    return;
+  }
+
+  var invoker = server.getInvokerForHandle(request.handle);
+  if (!invoker) {
+    vlog.logger.error('No invoker found: ', request);
+    err = new Error('No service found');
+    this.sendResult(messageId, methodName, null, err);
+    return;
+  }
+
+  var ctx = this.createRPCContext(request);
+  var self = this;
+  var stream;
   var call = new ServerCall(request, this._controller);
   if (request.method === 'Glob__') {
     if (!invoker.hasGlobber()) {
@@ -410,6 +409,38 @@ Router.prototype.handleRPCRequest = function(messageId, vdlRequest) {
     });
     self.sendResult(messageId, methodName, canonResults, undefined,
                     methodSig.outArgs.length);
+  });
+
+};
+/**
+ * Handles incoming requests from the server to invoke methods on registered
+ * services in JavaScript.
+ * @private
+ * @param {string} messageId Message Id set by the server.
+ * @param {string} vdlRequest VOM encoded request. Request's structure is
+ * {
+ *   serverId: number // the server id
+ *   method: string // Name of the method on the service to call
+ *   args: [] // Array of positional arguments to be passed into the method
+ *            // Note: This array contains wrapped arguments!
+ * }
+ */
+Router.prototype.handleRPCRequest = function(messageId, vdlRequest) {
+  var err;
+  var request;
+  var router = this;
+  try {
+   request = byteUtil.hex2Bytes(vdlRequest);
+  } catch (e) {
+    err = new Error('Failed to decode args: ' + e);
+    this.sendResult(messageId, '', null, err);
+    return;
+  }
+  vom.decode(request).then(function(request) {
+    router._handleRPCRequestInternal(messageId, request);
+  }, function(e) {
+    err = new Error('Failed to decode args: ' + e);
+    router.sendResult(messageId, '', null, err);
   });
 };
 

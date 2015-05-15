@@ -40,6 +40,8 @@ var BootstrapTypes = require('./bootstrap-types.js');
 var RawVomReader = require('./raw-vom-reader.js');
 var unwrap = require('../vdl/type-util').unwrap;
 var wiretype = require('../gen-vdl/v.io/v23/vom');
+var promiseFor = require('../lib/async-helper').promiseFor;
+var promiseWhile = require('../lib/async-helper').promiseWhile;
 
 var endByte = unwrap(wiretype.WireCtrlEnd);
 
@@ -81,7 +83,7 @@ TypeDecoder.prototype._lookupTypeImpl = function(typeId, definePartialTypes) {
 /**
  * Add a new type definition to the type cache.
  * @param {number} typeId The id of the type.
- * @param {Uint8Array} The raw bytes that describe the type structure.
+ * @param {Promise<Uint8Array>} The raw bytes that describe the type structure.
  */
 TypeDecoder.prototype.defineType = function(typeId, messageBytes) {
   if (typeId < 0) {
@@ -93,7 +95,10 @@ TypeDecoder.prototype.defineType = function(typeId, messageBytes) {
   }
 
   // Read the type in and add it to the partial type set.
-  this._partialTypes[typeId] = this._readPartialType(messageBytes);
+  var td = this;
+  return this._readPartialType(messageBytes).then(function(type) {
+    td._partialTypes[typeId] = type;
+  });
 };
 
 /**
@@ -262,217 +267,192 @@ TypeDecoder.prototype._tryBuildPartialType = function(typeId) {
 };
 
 /**
+ * Reads a type off of the wire.
+ * @param {RawVomReader} reader The reader with the data
+ * @param {module:vanadium.vdl.kind} kind The kind that is being read.
+ * @param {string} wireName The name of the type.  This is used to generate
+ * error messages
+ * @param {object[]} indexMap An array of options specifying how to read the
+ * fields of the type object.  The index in the array is the index in the wire
+ * structure for the wire type.  Each object in the array should have a key
+ * field which is the name of the field in the wire struct and a fn field with
+ * a function that will be called with this set to reader and returns a promise
+ * with its value.  For instance:<br>
+ * <pre>[{key: 'name', fn: reader.readString)}]</pre>
+ * <br>
+ * Means the value at index 0 will correspond to the name field and should
+ * be read by reader.readString
+ * @returns {Promise<object>} A promise with the constructed wire type as the
+ * result.
+ */
+TypeDecoder.prototype._readTypeHelper = function(
+  reader, kind, wireName, indexMap) {
+  var partialType = {
+    name: '',
+  };
+  if (kind) {
+    partialType.kind = kind;
+  }
+
+  function notEndByte() {
+    return reader.tryReadControlByte().then(function(b) {
+      if (b === endByte) {
+        return false;
+      }
+
+      if (b !== null) {
+        return Promise.reject('Unknown control byte ' + b);
+      }
+      return true;
+    });
+  }
+
+  function readField() {
+    var entry;
+    return reader.readUint().then(function(nextIndex) {
+      entry = indexMap[nextIndex];
+      if (!entry) {
+        throw Error('Unexpected index for ' + wireName + ': ' + nextIndex);
+      }
+      return entry.fn.bind(reader)();
+    }).then(function(val) {
+      partialType[entry.key] = val;
+    });
+  }
+  return promiseWhile(notEndByte, readField).then(function() {
+    return partialType;
+  });
+};
+
+TypeDecoder.prototype._readNamedType = function(reader) {
+  return this._readTypeHelper(reader, null, 'WireNamed', [
+    {key: 'name', fn: reader.readString },
+    {key: 'namedTypeId', fn: reader.readUint },
+  ]);
+};
+
+TypeDecoder.prototype._readEnumType = function(reader) {
+  var labels = [];
+  var i = 0;
+  return this._readTypeHelper(reader, kind.ENUM, 'WireEnum',[
+    { key: 'name', fn: reader.readString },
+    { key: 'labels', fn: readLabels },
+  ]);
+  function readLabels() {
+    return reader.readUint().then(function(length) {
+      labels = new Array(length);
+      return reader.readString().then(handleLabel);
+    });
+  }
+  function handleLabel(s) {
+    labels[i] = s;
+    i++;
+    if (i < labels.length) {
+      return reader.readString().then(handleLabel);
+    }
+    return labels;
+  }
+};
+
+TypeDecoder.prototype._readArrayType = function(reader) {
+  return this._readTypeHelper(reader, kind.ARRAY, 'WireArray', [
+    {key: 'name', fn: reader.readString },
+    {key: 'elemTypeId', fn: reader.readUint },
+    {key: 'len', fn: reader.readUint },
+  ]);
+};
+
+TypeDecoder.prototype._readListType = function(reader) {
+  return this._readTypeHelper(reader, kind.LIST, 'WireList', [
+    {key: 'name', fn: reader.readString },
+    {key: 'elemTypeId', fn: reader.readUint },
+  ]);
+};
+
+TypeDecoder.prototype._readOptionalType = function(reader) {
+  return this._readTypeHelper(reader, kind.OPTIONAL, 'WireList', [
+    {key: 'name', fn: reader.readString },
+    {key: 'elemTypeId', fn: reader.readUint },
+  ]);
+};
+
+TypeDecoder.prototype._readSetType = function(reader) {
+  return this._readTypeHelper(reader, kind.SET, 'WireSet', [
+    {key: 'name', fn: reader.readString },
+    {key: 'keyTypeId', fn: reader.readUint },
+  ]);
+};
+
+TypeDecoder.prototype._readMapType = function(reader) {
+  return this._readTypeHelper(reader, kind.MAP, 'WireMap', [
+    {key: 'name', fn: reader.readString },
+    {key: 'keyTypeId', fn: reader.readUint },
+    {key: 'elemTypeId', fn: reader.readUint },
+  ]);
+};
+
+TypeDecoder.prototype._readStructOrUnionType = function(reader, kind) {
+  var fields = [];
+  var i = 0;
+  var td = this;
+  return this._readTypeHelper(reader, kind, 'WireStruct', [
+    {key: 'name', fn: reader.readString },
+    {key: 'fields', fn: readFields },
+  ]).then(function(res) {
+    res.fields = res.fields || [];
+    return res;
+  });
+
+  function readFields() {
+    return reader.readUint().then(function(numFields) {
+      fields = new Array(numFields);
+      return promiseFor(numFields, readField);
+    }).then(function() {
+      return fields;
+    });
+  }
+
+  function readField() {
+    return td._readTypeHelper(reader, null, 'WireField', [
+      {key: 'name', fn: reader.readString },
+      {key: 'typeId', fn: reader.readUint },
+    ]).then(function(field) {
+      fields[i] = field;
+      i++;
+    });
+  }
+};
+
+/**
  * Read the binary type description into a partial type description.
  * @param {Uint8Array} messageBytes The binary type message.
  * @return {PartialType} The type that was read.
  */
 TypeDecoder.prototype._readPartialType = function(messageBytes) {
   var reader = new RawVomReader(messageBytes);
-  var unionId = reader.readUint();
-  var partialType = {};
-  var nextIndex;
-  var i;
-  switch (unionId) {
-    case BootstrapTypes.unionIds.NAMED_TYPE:
-      endDef:
-      while (true) {
-        if (reader.tryReadControlByte() === endByte) {
-          break endDef;
-        }
-        nextIndex = reader.readUint();
-        switch(nextIndex) {
-          case 0:
-            partialType.name = reader.readString();
-            break;
-          case 1:
-            partialType.namedTypeId = reader.readUint();
-            break;
-          default:
-            throw new Error('Unexpected index for WireNamed: ' + nextIndex);
-          }
-      }
-      break;
-    case BootstrapTypes.unionIds.ENUM_TYPE:
-      partialType.kind = kind.ENUM;
-      endDef2:
-      while (true) {
-        if (reader.tryReadControlByte() === endByte) {
-          break endDef2;
-        }
-
-        nextIndex = reader.readUint();
-        switch(nextIndex) {
-          case 0:
-            partialType.name = reader.readString();
-            break;
-          case 1:
-            partialType.labels = new Array(reader.readUint());
-            for (i = 0; i < partialType.labels.length; i++) {
-              partialType.labels[i] = reader.readString();
-            }
-            break;
-          default:
-            throw new Error('Unexpected index for WireEnum: ' + nextIndex);
-          }
-      }
-      break;
-    case BootstrapTypes.unionIds.ARRAY_TYPE:
-      partialType.kind = kind.ARRAY;
-      endDef3:
-      while (true) {
-        if (reader.tryReadControlByte() === endByte) {
-          break endDef3;
-        }
-        nextIndex = reader.readUint();
-        switch(nextIndex) {
-          case 0:
-            partialType.name = reader.readString();
-            break;
-          case 1:
-            partialType.elemTypeId = reader.readUint();
-            break;
-          case 2:
-            partialType.len = reader.readUint();
-            break;
-          default:
-            throw new Error('Unexpected index for WireArray: ' + nextIndex);
-          }
-      }
-      break;
-    case BootstrapTypes.unionIds.LIST_TYPE:
-      partialType.kind = kind.LIST;
-      endDef4:
-      while (true) {
-        if (reader.tryReadControlByte() === endByte) {
-          break endDef4;
-        }
-        nextIndex = reader.readUint();
-        switch(nextIndex) {
-          case 0:
-            partialType.name = reader.readString();
-            break;
-          case 1:
-            partialType.elemTypeId = reader.readUint();
-            break;
-          default:
-            throw new Error('Unexpected index for WireList: ' + nextIndex);
-          }
-      }
-      break;
-    case BootstrapTypes.unionIds.SET_TYPE:
-      partialType.kind = kind.SET;
-      endDef5:
-      while (true) {
-        if (reader.tryReadControlByte() === endByte) {
-          break endDef5;
-        }
-        nextIndex = reader.readUint();
-        switch(nextIndex) {
-          case 0:
-            partialType.name = reader.readString();
-            break;
-          case 1:
-            partialType.keyTypeId = reader.readUint();
-            break;
-          default:
-            throw new Error('Unexpected index for WireSet: ' + nextIndex);
-          }
-      }
-      break;
-    case BootstrapTypes.unionIds.MAP_TYPE:
-      partialType.kind = kind.MAP;
-      endDef6:
-      while (true) {
-        if (reader.tryReadControlByte() === endByte) {
-          break endDef6;
-        }
-        nextIndex = reader.readUint();
-        switch(nextIndex) {
-          case 0:
-            partialType.name = reader.readString();
-            break;
-          case 1:
-            partialType.keyTypeId = reader.readUint();
-            break;
-          case 2:
-            partialType.elemTypeId = reader.readUint();
-            break;
-          default:
-            throw new Error('Unexpected index for WireMap: ' + nextIndex);
-          }
-      }
-      break;
-    case BootstrapTypes.unionIds.STRUCT_TYPE:
-    case BootstrapTypes.unionIds.UNION_TYPE:
-      if (unionId === BootstrapTypes.unionIds.STRUCT_TYPE) {
-        partialType.kind = kind.STRUCT;
-      } else {
-        partialType.kind = kind.UNION;
-      }
-      endDef7:
-      while (true) {
-        if (reader.tryReadControlByte() === endByte) {
-          break endDef7;
-        }
-        nextIndex = reader.readUint();
-        switch(nextIndex) {
-          case 0:
-            partialType.name = reader.readString();
-            break;
-          case 1:
-            partialType.fields = new Array(reader.readUint());
-            for (i = 0; i < partialType.fields.length; i++) {
-              partialType.fields[i] = {};
-              sfEndDef:
-              while(true) {
-                if (reader.tryReadControlByte() === endByte) {
-                  break sfEndDef;
-                }
-                var sfNextIndex = reader.readUint();
-                switch(sfNextIndex) {
-                  case 0:
-                    var s = reader.readString();
-                    partialType.fields[i].name = s;
-                    break;
-                  case 1:
-                    partialType.fields[i].typeId = reader.readUint();
-                    break;
-                }
-              }
-            }
-            break;
-          default:
-            throw new Error('Unexpected index for WireStruct: ' + nextIndex);
-          }
-      }
-      // We allow struct{} definitions.
-      if (partialType.kind === kind.STRUCT) {
-        partialType.fields = partialType.fields || [];
-      }
-      break;
-    case BootstrapTypes.unionIds.OPTIONAL_TYPE:
-      partialType.kind = kind.OPTIONAL;
-      endDef9:
-      while (true) {
-        if (reader.tryReadControlByte() === endByte) {
-          break endDef9;
-        }
-        nextIndex = reader.readUint();
-        switch(nextIndex) {
-          case 0:
-            partialType.name = reader.readString();
-            break;
-          case 1:
-            partialType.elemTypeId = reader.readUint();
-            break;
-          default:
-            throw new Error('Unexpected index for WireOptional: ' + nextIndex);
-          }
-      }
-      break;
-    default:
-      throw new Error('Unknown wire type id ' + unionId);
-  }
-  partialType.name = partialType.name || '';
-  return partialType;
+  var td = this;
+  return reader.readUint().then(function(unionId) {
+    switch (unionId) {
+      case BootstrapTypes.unionIds.NAMED_TYPE:
+        return td._readNamedType(reader);
+      case BootstrapTypes.unionIds.ENUM_TYPE:
+        return td._readEnumType(reader);
+      case BootstrapTypes.unionIds.ARRAY_TYPE:
+        return td._readArrayType(reader);
+      case BootstrapTypes.unionIds.LIST_TYPE:
+        return td._readListType(reader);
+      case BootstrapTypes.unionIds.SET_TYPE:
+        return td._readSetType(reader);
+      case BootstrapTypes.unionIds.MAP_TYPE:
+        return td._readMapType(reader);
+      case BootstrapTypes.unionIds.STRUCT_TYPE:
+        return td._readStructOrUnionType(reader, kind.STRUCT);
+      case BootstrapTypes.unionIds.UNION_TYPE:
+        return td._readStructOrUnionType(reader, kind.UNION);
+      case BootstrapTypes.unionIds.OPTIONAL_TYPE:
+        return td._readOptionalType(reader);
+      default:
+        throw new Error('Unknown wire type id ' + unionId);
+    }
+  });
 };

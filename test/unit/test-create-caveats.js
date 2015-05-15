@@ -17,9 +17,11 @@ test('createCaveat with any-type param', function(t) {
   };
   var cav = caveats.createCaveat(desc, 9);
   t.deepEqual(cav.id, desc.id, 'Correct id');
-  t.deepEqual(vom.decode(cav.paramVom), {val: 9}, 'Correct data');
-  t.equal(cav._type, (new vdlSecurity.Caveat())._type, 'Correct type');
-  t.end();
+  vom.decode(cav.paramVom).then(function(res) {
+    t.deepEqual(res, {val: 9}, 'Correct data');
+    t.equal(cav._type, (new vdlSecurity.Caveat())._type, 'Correct type');
+    t.end();
+  }).catch(t.end);
 });
 
 test('createCaveat with incompatible param', function(t) {
@@ -45,36 +47,43 @@ test('createCaveat with type coversion', function(t) {
   };
   var cav = caveats.createCaveat(desc, 9);
   t.deepEqual(cav.id, desc.id, 'Correct id');
-  t.deepEqual(vom.decode(cav.paramVom), {val: 9}, 'Correct data');
-  t.deepEqual(vom.decode(cav.paramVom)._type, desc.paramType,
-    'Correct data type');
-  t.equal(cav._type, (new vdlSecurity.Caveat())._type, 'Correct type');
-  t.end();
+  vom.decode(cav.paramVom).then(function(res) {
+    t.deepEqual(res, {val: 9}, 'Correct data');
+    t.deepEqual(res._type, desc.paramType, 'Correct data type');
+    t.equal(cav._type, (new vdlSecurity.Caveat())._type, 'Correct type');
+    t.end();
+  }).catch(t.end);
 });
 
 test('createConstCaveat', function(t) {
   var trueCav = caveats.createConstCaveat(false);
   t.deepEqual(trueCav.id, vdlSecurity.ConstCaveat.id, 'Correct id');
-  t.deepEqual(vom.decode(trueCav.paramVom), {val: false}, 'Correct data');
-  t.equal(trueCav._type, (new vdlSecurity.Caveat())._type, 'Correct type');
-  t.end();
+  vom.decode(trueCav.paramVom).then(function(res) {
+    t.deepEqual(res, {val: false}, 'Correct data');
+    t.equal(trueCav._type, (new vdlSecurity.Caveat())._type, 'Correct type');
+    t.end();
+  }).catch(t.end);
 });
 
 test('createUnconstrainedUseCaveat', function(t) {
   var unCon = caveats.unconstrainedUse;
   t.deepEqual(unCon.id, vdlSecurity.ConstCaveat.id, 'Correct id');
-  t.deepEqual(vom.decode(unCon.paramVom), {val: true}, 'Correct data');
-  t.equal(unCon._type, (new vdlSecurity.Caveat())._type, 'Correct type');
-  t.end();
+  vom.decode(unCon.paramVom).then(function(res) {
+    t.deepEqual(res, {val: true}, 'Correct data');
+    t.equal(unCon._type, (new vdlSecurity.Caveat())._type, 'Correct type');
+    t.end();
+  }).catch(t.end);
 });
 
 test('createExpiryCaveat w/ date', function(t) {
   var date = new Date(1920, 3, 4, 9, 10);
   var expiryCav = caveats.createExpiryCaveat(date);
   t.deepEqual(expiryCav.id, vdlSecurity.ExpiryCaveat.id, 'Correct id');
-  t.deepEqual(vom.decode(expiryCav.paramVom), date, 'Correct data');
-  t.equal(expiryCav._type, (new vdlSecurity.Caveat())._type, 'Correct type');
-  t.end();
+  vom.decode(expiryCav.paramVom).then(function(res) {
+    t.deepEqual(res, date, 'Correct data');
+    t.equal(expiryCav._type, (new vdlSecurity.Caveat())._type, 'Correct type');
+    t.end();
+  }).catch(t.end);
 });
 
 test('createExpiryCaveat w/ millisecond representation', function(t) {
@@ -89,8 +98,9 @@ test('createMethodCaveat', function(t) {
   var methodList = ['A', 'B', 'C'];
   var methodCav = caveats.createMethodCaveat(methodList);
   t.deepEqual(methodCav.id, vdlSecurity.MethodCaveat.id, 'Correct id');
-  t.deepEqual(vom.decode(methodCav.paramVom), {val: methodList},
-    'Correct data');
-  t.equal(methodCav._type, (new vdlSecurity.Caveat())._type, 'Correct type');
-  t.end();
+  vom.decode(methodCav.paramVom).then(function(res) {
+    t.deepEqual(res, {val: methodList}, 'Correct data');
+    t.equal(methodCav._type, (new vdlSecurity.Caveat())._type, 'Correct type');
+    t.end();
+  }).catch(t.end);
 });

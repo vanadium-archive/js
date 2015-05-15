@@ -50,23 +50,25 @@ testdata.Tests.val.forEach(function(t, i) {
     var data = util.hex2Bytes(t.hex);
     var messageReader = new ByteArrayMessageReader(data);
     var decoder = new Decoder(messageReader, false);
-    var result = decoder.decode();
-    assert.equal(stringify(result), stringify(t.value), t.name +
-      ' value comparison');
-    assert.deepEqual(result._type, t.value._type, t.name + ' type comparison');
-    assert.deepEqual(result._type.toString(), t.typeString,
-      t.name + ' type string ok');
-    assert.deepEqual(result.prototype, t.value.prototype,
-        t.name + ' prototype comparison');
+    decoder.decode().then(function(result) {
+      assert.equal(stringify(result), stringify(t.value), t.name +
+        ' value comparison');
+      assert.deepEqual(result._type, t.value._type, t.name +
+                       ' type comparison');
+      assert.deepEqual(result._type.toString(), t.typeString,
+        t.name + ' type string ok');
+      assert.deepEqual(result.prototype, t.value.prototype,
+          t.name + ' prototype comparison');
 
-    // Ensure that we lost no information; encode(decode(t.hex)) === t.hex.
-    var messageWriter = new ByteArrayMessageWriter();
-    var encoder = new Encoder(messageWriter);
-    encoder.encode(result);
-    var hex = util.bytes2Hex(messageWriter.getBytes());
-    assert.equal(hex, t.hex, t.name + ' hex comparison');
+      // Ensure that we lost no information; encode(decode(t.hex)) === t.hex.
+      var messageWriter = new ByteArrayMessageWriter();
+      var encoder = new Encoder(messageWriter);
+      encoder.encode(result);
+      var hex = util.bytes2Hex(messageWriter.getBytes());
+      assert.equal(hex, t.hex, t.name + ' hex comparison');
 
-    assert.end();
+      assert.end();
+    }).catch(assert.end);
   });
 });
 

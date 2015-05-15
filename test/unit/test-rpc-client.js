@@ -8,6 +8,8 @@ var context = require('../../src/context');
 var createSignature = require('../../src/vdl/create-signature');
 var createMockProxy = require('./mock-proxy');
 var vdl = require('../../src/vdl');
+var byteUtil = require('../../src/vdl/byte-util');
+var vom = require('../../src/vom');
 var hexVom = require('../../src/lib/hex-vom');
 var vtrace = require('../../src/vtrace');
 var app = require('../../src/gen-vdl/v.io/x/ref/services/wspr/internal/app');
@@ -49,17 +51,18 @@ function testContext() {
 }
 
 var mockProxy = createMockProxy(function(data, type) {
-  var decodedData = hexVom.decode(data);
-  var response = new app.RpcResponse();
+  return vom.decode(byteUtil.hex2Bytes(data)).then(function(decodedData) {
+    var response = new app.RpcResponse();
 
-  if (decodedData instanceof app.RpcRequest &&
-      decodedData.method === 'Signature') {
-    response.outArgs = [mockSignature];
-  } else {
-    // Take the first arg and return it in a result list.
-    response.outArgs = [decodedData];
-  }
-  return hexVom.encode(response);
+    if (decodedData instanceof app.RpcRequest &&
+        decodedData.method === 'Signature') {
+      response.outArgs = [mockSignature];
+    } else {
+      // Take the first arg and return it in a result list.
+      response.outArgs = [decodedData];
+    }
+    return hexVom.encode(response);
+  });
 });
 
 test('creating instances', function(assert) {

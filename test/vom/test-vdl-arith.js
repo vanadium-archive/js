@@ -6,6 +6,7 @@ var test = require('prova');
 var vom = require('../../src/vom');
 var ifaceSigType =
   require('../../src/gen-vdl/v.io/v23/vdlroot/signature').Interface;
+var Promise = require('../../src/lib/promise');
 
 test('import paths work', function(assert) {
   // We just need to require the arith package to make sure that
@@ -21,15 +22,9 @@ test('import paths work', function(assert) {
 test('method signature encode-decode match', function(assert) {
   var arith = require('../vdl-out/v.io/x/ref/lib/vdl/testdata/arith');
 
-  var writer;
-  var encoder;
-  var reader;
-  var decoder;
-  var sigEncode;
-  var sigDecode;
-
   // For every service signature defined...
   var serviceNames = ['Arith', 'Calculator'];
+  var promises = [];
   serviceNames.forEach(function(serviceName) {
     if (!arith.hasOwnProperty(serviceName)) {
       assert.fail('Expected interface ' + serviceName + ' to be defined');
@@ -39,39 +34,41 @@ test('method signature encode-decode match', function(assert) {
                     _serviceDescription;
 
     // Encode the signature using the type defined in VDL-generated .js file
-    writer = new vom.ByteArrayMessageWriter();
-    encoder = new vom.Encoder(writer);
+    var writer = new vom.ByteArrayMessageWriter();
+    var encoder = new vom.Encoder(writer);
     encoder.encode(signature, ifaceSigType.prototype._type);
-    sigEncode = writer.getBytes();
+    var sigEncode = writer.getBytes();
 
     // Decode the signature.
-    reader = new vom.ByteArrayMessageReader(sigEncode);
-    decoder = new vom.Decoder(reader);
-    sigDecode = decoder.decode();
+    var reader = new vom.ByteArrayMessageReader(sigEncode);
+    var decoder = new vom.Decoder(reader);
+    promises.push(decoder.decode().then(function(sigDecode) {
+      // Ensure that what was decoded matches the original signature deeply.
+      assert.deepEqual(sigDecode, signature, serviceName + ' signature match');
 
-    // Ensure that what was decoded matches the original signature deeply.
-    assert.deepEqual(sigDecode, signature, serviceName + ' signature match');
+      // TODO The signature type should be attached to the generated signature
+      // This is currently problematic (Issue 432), so manually attaching type
+      // for now and NOT passing the type into the encoder.
+      var wrappedSignature = new ifaceSigType(signature);
 
-    // TODO The signature type should be attached to the generated signature
-    // This is currently problematic (Issue 432), so manually attaching type
-    // for now and NOT passing the type into the encoder.
-    var wrappedSignature = new ifaceSigType(signature);
+      // Encode the signature as a wrapped struct.
+      var writer = new vom.ByteArrayMessageWriter();
+      var encoder = new vom.Encoder(writer);
+      encoder.encode(wrappedSignature);
+      var sigEncode = writer.getBytes();
 
-    // Encode the signature as a wrapped struct.
-    writer = new vom.ByteArrayMessageWriter();
-    encoder = new vom.Encoder(writer);
-    encoder.encode(wrappedSignature);
-    sigEncode = writer.getBytes();
-
-    // Decode the signature.
-    reader = new vom.ByteArrayMessageReader(sigEncode);
-    decoder = new vom.Decoder(reader);
-    sigDecode = decoder.decode();
-
-    assert.deepEqual(sigDecode, wrappedSignature, serviceName +
-      ' wrapped signature match');
+      // Decode the signature.
+      var reader = new vom.ByteArrayMessageReader(sigEncode);
+      var decoder = new vom.Decoder(reader);
+      return decoder.decode().then(function(sigDecode) {
+        assert.deepEqual(sigDecode, wrappedSignature, serviceName +
+                         ' wrapped signature match');
+      });
+    }));
   });
-  assert.end();
+  Promise.all(promises).then(function() {
+    assert.end();
+  }, assert.end);
 });
 
 var expectedAdvancedMathDescription =

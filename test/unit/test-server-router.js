@@ -101,11 +101,11 @@ test('Server Router Signature Lookup', function(t) {
     t.equals(responseType, Outgoing.LOOKUP_RESPONSE, 'response type');
     t.equals(responseMessageId, inputMessageId, 'message id');
 
-    var reply = hexVom.decode(responseData);
+    return hexVom.decode(responseData);
+  }).then(function(reply) {
     t.ok(reply.hasOwnProperty('handle'), 'has a handle');
     t.equals(reply.hasAuthorizer, true, 'has authorizer');
     t.deepEquals(reply.signature, expectedSignature, 'signature');
-
     t.end();
-  });
+  }).catch(t.end);
 });

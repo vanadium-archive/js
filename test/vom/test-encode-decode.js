@@ -15,6 +15,7 @@ var types = require('./../../src/vdl/types.js');
 var typeUtil = require('./../../src/vdl/type-util.js');
 var stringify = require('./../../src/vdl/stringify.js');
 var canonicalize = require('./../../src/vdl/canonicalize.js');
+var Deferred = require('../../src/lib/deferred');
 
 var ByteArrayMessageWriter = require(
     './../../src/vom/byte-array-message-writer.js');
@@ -1033,43 +1034,71 @@ test('encode and decode', function(t) {
       expectedOutput: new (registry.lookupOrCreateConstructor(types.BOOL))(true)
     },
   ];
-  for (var i = 0; i < tests.length; i++) {
-    var test = tests[i];
-
+  var promises = [];
+  function runTestCase(test, useCb) {
     var messageWriter = new ByteArrayMessageWriter();
     var encoder = new Encoder(messageWriter);
     encoder.encode(test.v, test.t); // encode to messageWriter
 
     var messageReader = new ByteArrayMessageReader(messageWriter.getBytes());
+
     var decoder = new Decoder(messageReader);
-    var result = decoder.decode(); // decode the written bytes
-    var resultStr = stringify(result);
-    var expected = test.expectedOutput || test.v;
-    var expectedStr = stringify(expected);
-    t.equals(resultStr, expectedStr, test.n  + ' - decode value match');
-
-    // Then validate that we were given a canonicalized value.
-    // Note that some results are native post-decode; if so, use types.JSVALUE.
-    var resulttype = types.JSVALUE;
-    if (typeUtil.isTyped(result)) {
-      resulttype = result._type;
+    if (useCb) {
+      var def = new Deferred();
+      decoder.decode(function(err, result) {
+        def.resolve();
+        if (err) {
+          return t.fail(test.n + ' (cb) failed with ' + err.stack);
+        }
+        handleResult(result);
+      });
+      promises.push(def.promise);
+    } else {
+      promises.push(decoder.decode().then(handleResult, function(err) {
+        t.fail(test.n + ' (promise) failed with ' + err.stack);
+      }));
     }
-    t.deepEqual(
-      canonicalize.reduce(result, resulttype),
-      expected,
-      test.n + ' - decode value validation'
-    );
 
-    // If given a type, check that the decoded object's type matches it.
-    // TODO(bprosnitz) Even if test.t isn't defined, we should still know what
-    // the expected type ought to be.
-    if (test.t) {
-      var resulttypeStr = stringify(resulttype);
-      var expectedtypeStr = stringify(canonicalize.type(test.t));
-      t.equals(resulttypeStr, expectedtypeStr, test.n + ' - decode type match');
+
+    function handleResult(result) {
+      var asyncType = useCb ? ' (cb)' : ' (promise)';
+      var resultStr = stringify(result);
+      var expected = test.expectedOutput || test.v;
+      var expectedStr = stringify(expected);
+      t.equals(resultStr, expectedStr, test.n + asyncType +
+               ' - decode value match');
+
+      // Then validate that we were given a canonicalized value.
+      // Note that some results are native post-decode; if so, use
+      // types.JSVALUE.
+      var resultType = types.JSVALUE;
+      if (typeUtil.isTyped(result)) {
+        resultType = result._type;
+      }
+      t.deepEqual(
+        canonicalize.reduce(result, resultType),
+        expected,
+        test.n + asyncType + ' - decode value validation'
+      );
+
+      // If given a type, check that the decoded object's type matches it.
+      // TODO(bprosnitz) Even if test.t isn't defined, we should still know
+      // what the expected type ought to be.
+      if (test.t) {
+        var resultTypeStr = stringify(resultType);
+        var expectedTypeStr = stringify(canonicalize.type(test.t));
+        t.equals(resultTypeStr, expectedTypeStr, test.n + asyncType +
+                 ' - decode type match');
+      }
     }
   }
-  t.end();
+  for (var i = 0; i < tests.length; i++) {
+    runTestCase(tests[i], false);
+    runTestCase(tests[i], true);
+  }
+  Promise.all(promises).then(function() {
+    t.end();
+  }, t.end);
 });
 
 test('encode error cases', function(t) {

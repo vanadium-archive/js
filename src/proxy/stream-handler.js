@@ -9,7 +9,10 @@ var SharedContextKeys = require('../runtime/shared-context-keys');
 var Blessings = require('../security/blessings');
 var JsBlessings =
   require('../gen-vdl/v.io/x/ref/services/wspr/internal/principal').JsBlessings;
-var hexVom = require('../lib/hex-vom');
+var TaskSequence = require('../lib/task-sequence');
+var Promise = require('../lib/promise');
+var vom = require('../vom');
+var byteUtil = require('../vdl/byte-util');
 
 module.exports = Handler;
 
@@ -24,38 +27,59 @@ function Handler(ctx, stream) {
   this._stream = stream;
   this._controller = ctx.value(SharedContextKeys.RUNTIME)._controller;
   this._pendingBlessings = [];
+  this._tasks = new TaskSequence();
 }
 
 Handler.prototype.handleResponse = function(type, data) {
   switch (type) {
     case Incoming.STREAM_RESPONSE:
-      try {
-        data = hexVom.decode(data);
-      } catch (e) {
-        emitStreamError(this._stream,
-          new vError.InternalError(this._ctx,
-                                   'Failed to decode result: ', e));
-        return true;
-      }
-      if (data instanceof JsBlessings) {
-        data = new Blessings(data.handle, data.publicKey, this._controller);
-        data.retain();
-      }
-      this._stream._queueRead(data);
-      return true;
+      this._tasks.addTask(this.handleStreamData.bind(this, data));
+     return true;
     case Incoming.STREAM_CLOSE:
-      this.cleanupBlessings();
-      this._stream._queueClose();
+      this._tasks.addTask(this.handleStreamClose.bind(this, data));
       return true;
     case Incoming.ERROR_RESPONSE:
-      this.cleanupBlessings();
-      emitStreamError(this._stream, data);
-      this._stream._queueClose();
+      this._tasks.addTask(this.handleStreamError.bind(this, data));
       return true;
   }
 
   // can't handle the given type
   return false;
+};
+
+Handler.prototype.handleStreamData = function(data) {
+  try {
+    data = byteUtil.hex2Bytes(data);
+  } catch (e) {
+    emitStreamError(this._stream,
+                    new vError.InternalError(this._ctx,
+                                             'Failed to decode result: ', e));
+    return Promise.resolve();
+  }
+  var handler = this;
+  return vom.decode(data).then(function(data) {
+    if (data instanceof JsBlessings) {
+      data = new Blessings(data.handle, data.publicKey,
+                           handler._controller);
+                           data.retain();
+    }
+    handler._stream._queueRead(data);
+  }, function(e) {
+    emitStreamError(handler._stream,
+                    new vError.InternalError(
+                      handler._ctx, 'Failed to decode result: ', e));
+  });
+};
+
+Handler.prototype.handleStreamClose = function() {
+  this.cleanupBlessings();
+  this._stream._queueClose();
+  return Promise.resolve();
+};
+
+Handler.prototype.handleStreamError = function(data) {
+  emitStreamError(this._stream, data);
+  return this.handleStreamClose();
 };
 
 Handler.prototype.cleanupBlessings = function() {

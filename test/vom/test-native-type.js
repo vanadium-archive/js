@@ -32,20 +32,22 @@ function encodeDecodeDate(encodeType) {
 // TODO(bprosnitz) Implement native type guessing and enable this test.
 test('date - test encoding and decoding without type',
   function(t) {
-  var result = encodeDecodeDate();
-  t.ok(result instanceof Date, 'Decoded date should be a date object');
-  var diff = Math.abs(expectedDate - result);
-  t.ok(diff < 1, 'Should decode to the expected date');
-  t.end();
+  encodeDecodeDate().then(function(result) {
+    t.ok(result instanceof Date, 'Decoded date should be a date object');
+    var diff = Math.abs(expectedDate - result);
+    t.ok(diff < 1, 'Should decode to the expected date');
+    t.end();
+  }).catch(t.end);
 });
 
 test('date - test encoding and decoding with type',
   function(t) {
-  var result = encodeDecodeDate(Time.prototype._type);
-  t.ok(result instanceof Date, 'Decoded date should be a date object');
-  t.equal(result.getTime(), expectedDate.getTime(),
-    'Should decode to the expected date');
-  t.end();
+  encodeDecodeDate(Time.prototype._type).then(function(result) {
+    t.ok(result instanceof Date, 'Decoded date should be a date object');
+    t.equal(result.getTime(), expectedDate.getTime(),
+      'Should decode to the expected date');
+    t.end();
+  }).catch(t.end);
 });
 
 test('date - test fromWireValue', function(t) {

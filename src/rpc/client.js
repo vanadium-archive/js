@@ -19,7 +19,6 @@ var Controller =
 var context = require('../context');
 var Deferred = require('../lib/deferred');
 var emitStreamError = require('../lib/emit-stream-error');
-var hexVom = require('../lib/hex-vom');
 var Incoming = require('../proxy/message-type').Incoming;
 var makeError = require('../verror/make-errors');
 var Outgoing = require('../proxy/message-type').Outgoing;
@@ -42,10 +41,12 @@ var vtrace = require('../vtrace');
 var Blessings = require('../security/blessings');
 var JsBlessings =
   require('../gen-vdl/v.io/x/ref/services/wspr/internal/principal').JsBlessings;
-var ByteStreamMessageReader = require('../vom/byte-stream-message-reader');
 var ByteStreamMessageWriter = require('../vom/byte-stream-message-writer');
+var ByteStreamMessageReader = require('../vom/byte-stream-message-reader');
 var Encoder = require('../vom/encoder');
 var Decoder = require('../vom/decoder');
+var TaskSequence = require('../lib/task-sequence');
+var vom = require('../vom');
 
 var OutstandingRPC = function(ctx, options, cb) {
   this._ctx = ctx;
@@ -65,6 +66,7 @@ var OutstandingRPC = function(ctx, options, cb) {
   this._encoder = options.encoder;
   this._decoder = options.decoder;
   this._def = null;
+  this._tasks = new TaskSequence();
 };
 
 // Helper function to convert an out argument to the given type.
@@ -190,74 +192,91 @@ OutstandingRPC.prototype.start = function() {
 };
 
 OutstandingRPC.prototype.handleResponse = function(type, data) {
+  var rpc = this;
   switch (type) {
     case Incoming.FINAL_RESPONSE:
-      this.handleCompletion(data);
+      this._tasks.addTask(function() {
+        return rpc.handleCompletion(data);
+      });
       break;
     case Incoming.STREAM_RESPONSE:
-      this.handleStreamData(data);
+      this._tasks.addTask(function() {
+        return rpc.handleStreamData(data);
+      });
       break;
     case Incoming.ERROR_RESPONSE:
-      this.handleError(data);
+      this._tasks.addTask(function() {
+        return rpc.handleError(data);
+      });
       break;
     case Incoming.STREAM_CLOSE:
-      this.handleStreamClose();
+      this._tasks.addTask(function() {
+        return rpc.handleStreamClose();
+      });
       break;
     default:
-      this.handleError(
-          new verror.InternalError(
-            this._ctx, 'Received unknown response type from wspr'));
+      this._tasks.addTask(function() {
+        return rpc.handleError(
+            new verror.InternalError(
+              rpc._ctx, 'Received unknown response type from wspr'));
+      });
       break;
   }
 };
 
 OutstandingRPC.prototype.handleCompletion = function(data) {
-  var response;
   try {
     var bytes = byteUtil.hex2Bytes(data);
-    if (!this._decoder._messageReader) {
-      this._decoder._messageReader = new ByteStreamMessageReader(bytes);
-    } else {
-      this._decoder._messageReader.clear();
-      this._decoder._messageReader.addBytes(bytes);
+    this._decoder._messageReader.addBytes(bytes);
+  } catch (e) {
+    this.handleError(
+      new verror.InternalError(this._ctx, 'Failed to decode result: ', e));
+      return Promise.resolve();
+  }
+  var rpc = this;
+  return this._decoder.decode().then(function(response) {
+    vtrace.getStore(rpc._ctx).merge(response.traceResponse);
+    vtrace.getSpan(rpc._ctx).finish();
+
+    rpc._def.resolve(response.outArgs);
+    if (rpc._def.stream) {
+      rpc._def.stream._queueClose();
     }
-    response = this._decoder.decode();
+    rpc._proxy.dequeue(this._id);
+  }).catch(function(e) {
+    rpc.handleError(
+      new verror.InternalError(rpc._ctx, 'Failed to decode result: ', e));
+    return;
+  });
+};
+
+OutstandingRPC.prototype.handleStreamData = function(data) {
+  if (!this._def.stream) {
+    vlog.logger.warn('Ignoring streaming message for non-streaming flow : ' +
+        this._id);
+    return Promise.resolve();
+  }
+  try {
+    data = byteUtil.hex2Bytes(data);
   } catch (e) {
     this.handleError(
       new verror.InternalError(this._ctx, 'Failed to decode result: ', e));
       return;
   }
-
-  vtrace.getStore(this._ctx).merge(response.traceResponse);
-  vtrace.getSpan(this._ctx).finish();
-
-  this._def.resolve(response.outArgs);
-  if (this._def.stream) {
-    this._def.stream._queueClose();
-  }
-  this._proxy.dequeue(this._id);
-};
-
-OutstandingRPC.prototype.handleStreamData = function(data) {
-  if (this._def.stream) {
-    try {
-      data = hexVom.decode(data);
-    } catch (e) {
-      this.handleError(
-        new verror.InternalError(this._ctx, 'Failed to decode result: ', e));
-        return;
-    }
-    this._def.stream._queueRead(data);
-  } else {
-    vlog.logger.warn('Ignoring streaming message for non-streaming flow : ' +
-        this._id);
-  }
+  var rpc = this;
+  return vom.decode(data).then(function(data) {
+    rpc._def.stream._queueRead(data);
+  }).catch(function(e) {
+    rpc.handleError(
+      new verror.InternalError(rpc._ctx, 'Failed to decode result: ', e));
+  });
 };
 
 OutstandingRPC.prototype.handleStreamClose = function() {
   if (this._def.stream) {
     this._def.stream._queueClose();
   }
+  return Promise.resolve();
 };
 
 OutstandingRPC.prototype.handleError = function(err) {
@@ -267,6 +286,7 @@ OutstandingRPC.prototype.handleError = function(err) {
   }
   this._def.reject(err);
   this._proxy.dequeue(this._id);
+  return Promise.resolve();
 };
 
 
@@ -340,16 +360,10 @@ function Client(proxyConnection) {
   this._proxyConnection = proxyConnection;
   if (proxyConnection && proxyConnection.clientEncoder) {
     this._encoder = proxyConnection.clientEncoder;
-  } else {
-    this._encoder = new Encoder();
   }
-
   if (proxyConnection && proxyConnection.clientDecoder) {
     this._decoder = proxyConnection.clientDecoder;
-  } else {
-    this._decoder = new Decoder();
   }
-
   this._controller = this.bindWithSignature(
     '__controller', [Controller.prototype._serviceDescription]);
 }
@@ -563,8 +577,10 @@ Client.prototype.bindWithSignature = function(name, signature, cb) {
         inStreamingType: inStreaming ? methodSig.inStream.type : null,
         outStreamingType: outStreaming ? methodSig.outStream.type : null,
         callOptions: callOptions,
-        encoder: client._encoder,
-        decoder: client._decoder,
+        // If there isn't an encoder or decoder cached, we just use a new one.
+        // This only really happens in unit tests.
+        encoder: client._encoder || new Encoder(),
+        decoder: client._decoder || new Decoder(new ByteStreamMessageReader()),
       }, callback);
 
       return rpc.start();

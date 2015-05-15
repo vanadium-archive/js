@@ -10,65 +10,61 @@
 
 module.exports = ByteStreamMessageReader;
 
+var StreamReader = require('./stream-reader.js');
 var RawVomReader = require('./raw-vom-reader.js');
 var TypeUtil = require('../vdl/type-util.js');
 
 /**
  * Create a VOM message reader backed by a byte stream.
- * @param {Uint8Array} bytes The initial byte stream.
  * @constructor
  * @memberof module:vanadium.vom
  */
-function ByteStreamMessageReader(bytes) {
-  this.rawReader = new RawVomReader(bytes);
-  var header = this.rawReader._readRawBytes(1);
-  if (header[0] !== 0x80) {
-    throw new Error('Improperly formatted bytes. Must start with 0x80');
-  }
+function ByteStreamMessageReader() {
+  this.rawReader = new RawVomReader(new StreamReader());
+  // Consume the header byte.
+  this.headerPromise = this.rawReader.readByte(1).then(function(byte) {
+    if (byte !== 0x80) {
+      throw new Error('Improperly formatted bytes. Must start with 0x80');
+    }
+  });
 }
 
 /**
  * Get the the type of the next value message.
  * @private
  * @param {TypeDecoder} typeDecoder The current type decoder.
- * @return {Type} The type of the next message or null if the stream has ended.
+ * @return {Promise<Type>} The type of the next message or null if the stream
+ * has ended.
  */
 ByteStreamMessageReader.prototype.nextMessageType = function(typeDecoder) {
-  while (true) {
-    var typeId;
-    try {
-      typeId = this.rawReader.readInt();
-    } catch (error) {
-      // Hopefully EOF.
-      // TODO(bprosnitz) Make this a more accurate check.
-      return null;
-    }
+  var bsmr = this;
+  return this.headerPromise.then(function() {
+    return bsmr.rawReader.readInt();
+  }).then(function(typeId) {
     if (typeId < 0) {
-      // Type message.
-      var len = this.rawReader.readUint();
-      var body = this.rawReader._readRawBytes(len);
-      typeDecoder.defineType(-typeId, body);
-    } else {
-      // Value message.
-      var type = typeDecoder.lookupType(typeId);
-      if (TypeUtil.shouldSendLength(type)) {
-        // length
-        this.rawReader.readUint();
-      }
-      return type;
+      // Type message.  We add the type to the typeDecoder and continue reading
+      // trying to find a value message.
+      return  bsmr.rawReader.readUint().then(function(len) {
+        return bsmr.rawReader._readRawBytes(len);
+      }).then(function(body) {
+        return typeDecoder.defineType(-typeId, body);
+      }).then(function() {
+        return bsmr.nextMessageType(typeDecoder);
+      });
     }
-  }
-};
-
-ByteStreamMessageReader.prototype.clear = function() {
-  this.rawReader = null;
+    var type = typeDecoder.lookupType(typeId);
+    if (TypeUtil.shouldSendLength(type)) {
+      return bsmr.rawReader.readUint().then(function() {
+        return type;
+      });
+    }
+    return type;
+  }, function(err) {
+    // Hopefull this is an eof.
+    return null;
+  });
 };
 
 ByteStreamMessageReader.prototype.addBytes = function(bytes) {
-  // TODO(bjornick): Implement a real stream reader.
-  if (this.rawReader && this.rawReader.hasData()) {
-    throw new Error('Can\'t addBytes if all the previous bytes ' +
-                    'haven\'t been read');
-  }
-  this.rawReader = new RawVomReader(bytes);
+  this.rawReader._reader.addBytes(bytes);
 };

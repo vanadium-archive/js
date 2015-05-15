@@ -11,6 +11,7 @@ var test = require('prova');
 var stringify = require('./../../src/vdl/stringify.js');
 var types = require('./../../src/vdl/types.js');
 var kind = require('./../../src/vdl/kind.js');
+var Promise = require('./../../src/lib/promise');
 
 var TypeEncoder = require('./../../src/vom/type-encoder.js');
 var TypeDecoder = require('./../../src/vom/type-decoder.js');
@@ -25,9 +26,11 @@ var RawVomReader = require('./../../src/vom/raw-vom-reader.js');
  * @constructor
  */
 function TypeMessageReader(bytes) {
+  var header = bytes[0];
   this.rawReader = new RawVomReader(bytes);
-  var header = this.rawReader._readRawBytes(1);
-  if (header[0] !== 0x80) {
+  // consume the header byte.
+  this.rawReader._readRawBytes(1);
+  if (header !== 0x80) {
     throw new Error('Improperly formatted bytes. Must start with 0x80');
   }
 }
@@ -36,32 +39,33 @@ function TypeMessageReader(bytes) {
  * Read the next type message.
  */
 TypeMessageReader.prototype.nextMessage = function(typeDecoder) {
-  var typeId;
-  try {
-    typeId = this.rawReader.readInt();
-  } catch (error) {
-    // Hopefully EOF.
-    // TODO(bprosnitz) Make this a more accurate check.
+  var reader = this;
+  return this.rawReader.readInt().then(function(typeId) {
+    if (typeId >= 0) {
+      throw new Error('Value messages not implemented.');
+    }
+    return reader.rawReader.readUint().then(function(len) {
+      return reader.rawReader._readRawBytes(len);
+    }).then(function(bytes) {
+      return {
+        typeId: -typeId,
+        messageBytes: bytes,
+      };
+    });
+  }, function(err) {
     return null;
-  }
-  if (typeId < 0) {
-    var len = this.rawReader.readUint();
-    var body = this.rawReader._readRawBytes(len);
-    return {
-      typeId: -typeId,
-      messageBytes: body
-    };
-  }
-  throw new Error('Value messages not implemented.');
+  });
 };
 
 test('type encoding encode and decode (optional fields filled)', function(t) {
   var tests = require('../vdl/type-test-cases.js');
-
+  var promises = [];
   for (var i = 0; i < tests.length; i++) {
-    encodeDecodeType(t, tests[i].type);
+    promises.push(encodeDecodeType(t, tests[i].type));
   }
-  t.end();
+  Promise.all(promises).then(function() {
+    t.end();
+  }, t.end);
 });
 
 test('type encoding encode and decode (optional fields omitted)',
@@ -159,10 +163,13 @@ test('type encoding encode and decode (optional fields omitted)',
     }
   ];
 
-  for (var j = 0; j < tests.length; j++) {
-    encodeDecodeType(t, tests[j].test, tests[j].expected);
+  var promises = [];
+  for (var i = 0; i < tests.length; i++) {
+    promises.push(encodeDecodeType(t, tests[i].test, tests[i].expected));
   }
-  t.end();
+  Promise.all(promises).then(function() {
+    t.end();
+  }, t.end);
 });
 
 var UPPER_LOOP_LIMIT = 100;
@@ -176,21 +183,24 @@ function encodeDecodeType(t, test, expected) {
 
   var typeDecoder = new TypeDecoder();
   var reader = new TypeMessageReader(writer.getBytes());
-  for (var j = 0; j < UPPER_LOOP_LIMIT; j++) {
-    var message = reader.nextMessage();
-    if (message === null) {
-      break;
-    }
-    typeDecoder.defineType(message.typeId, message.messageBytes);
+  var j = 1;
+  return readMessage();
+  function readMessage() {
+    return reader.nextMessage().then(function(message) {
+      if (message === null) {
+        var resultType = typeDecoder.lookupType(id);
+        var resultStr = stringify(resultType);
+        var expectedStr = stringify(expected);
+        return t.equals(resultStr, expectedStr);
+      }
+      if (j === UPPER_LOOP_LIMIT) {
+        return t.fail('read too many messages');
+      }
+      j++;
+      return typeDecoder.defineType(message.typeId, message.messageBytes).
+        then(readMessage);
+    });
   }
-  if (j === UPPER_LOOP_LIMIT) {
-    t.fail('read too many messages');
-  }
-
-  var resultType = typeDecoder.lookupType(id);
-  var resultStr = stringify(resultType);
-  var expectedStr = stringify(expected);
-  t.equals(resultStr, expectedStr);
 }
 
 // This tests a subset of potential type encoding errors.

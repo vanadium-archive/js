@@ -11,6 +11,7 @@ var test = require('prova');
 var BigInt = require('./../../src/vdl/big-int.js');
 var RawVomWriter = require('./../../src/vom/raw-vom-writer');
 var RawVomReader = require('./../../src/vom/raw-vom-reader');
+var Promise = require('../../src/lib/promise');
 
 test('Reading and writing big uint', function(t) {
   var testVals = [
@@ -29,15 +30,21 @@ test('Reading and writing big uint', function(t) {
       new Uint8Array([0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff]))
   ];
 
-  for (var i = 0; i < testVals.length; i++) {
-    var testVal = testVals[i];
+  var promises = [];
+  function runTest(testVal) {
     var rw = new RawVomWriter();
     rw.writeUint(testVal);
     var rr = new RawVomReader(rw.getBytes());
-    var result = rr.readBigUint();
-    t.ok(testVal.equals(result), 'expected ' + testVal + ' got ' + result);
+    promises.push(rr.readBigUint().then(function(result) {
+      t.ok(testVal.equals(result), 'expected ' + testVal + ' got ' + result);
+    }));
   }
-  t.end();
+  for (var i = 0; i < testVals.length; i++) {
+    runTest(testVals[i]);
+  }
+  Promise.all(promises).then(function() {
+    t.end();
+  }, t.end);
 });
 
 test('Reading and writing big int', function(t) {
@@ -67,15 +74,22 @@ test('Reading and writing big int', function(t) {
       new Uint8Array([0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00]))
   ];
 
-  for (var i = 0; i < testVals.length; i++) {
-    var testVal = testVals[i];
+  var promises = [];
+  function runTest(testVal) {
     var rw = new RawVomWriter();
     rw.writeInt(testVal);
     var rr = new RawVomReader(rw.getBytes());
-    var result = rr.readBigInt();
-    t.ok(testVal.equals(result), 'expected ' + testVal + ' got ' + result);
+    promises.push(rr.readBigInt().then(function(result) {
+      t.ok(testVal.equals(result), 'expected ' + testVal + ' got ' + result);
+    }));
   }
-  t.end();
+
+  for (var i = 0; i < testVals.length; i++) {
+    runTest(testVals[i]);
+  }
+  Promise.all(promises).then(function() {
+    t.end();
+  }, t.end);
 });
 
 test('Reading and writing uint', function(t) {
@@ -89,15 +103,22 @@ test('Reading and writing uint', function(t) {
     0xffffffff
   ];
 
-  for (var i = 0; i < testVals.length; i++) {
-    var testVal = testVals[i];
+  var promises = [];
+  function runTest(testVal) {
     var rw = new RawVomWriter();
     rw.writeUint(testVal);
     var rr = new RawVomReader(rw.getBytes());
-    var result = rr.readUint();
-    t.equals(result, testVal, 'expected ' + testVal + ' got ' + result);
+    promises.push(rr.readUint().then(function(result) {
+      t.equals(result, testVal, 'expected ' + testVal + ' got ' + result);
+    }));
   }
-  t.end();
+
+  for (var i = 0; i < testVals.length; i++) {
+    runTest(testVals[i]);
+  }
+  Promise.all(promises).then(function() {
+    t.end();
+  }, t.end);
 });
 
 test('Reading and writing int', function(t) {
@@ -117,15 +138,21 @@ test('Reading and writing int', function(t) {
     -0x80000000
   ];
 
-  for (var i = 0; i < testVals.length; i++) {
-    var testVal = testVals[i];
+  var promises = [];
+  function runTest(testVal) {
     var rw = new RawVomWriter();
     rw.writeInt(testVal);
     var rr = new RawVomReader(rw.getBytes());
-    var result = rr.readInt();
-    t.equals(result, testVal, 'expected ' + testVal + ' got ' + result);
+    promises.push(rr.readInt().then(function(result) {
+      t.equals(result, testVal, 'expected ' + testVal + ' got ' + result);
+    }));
   }
-  t.end();
+  for (var i = 0; i < testVals.length; i++) {
+    runTest(testVals[i]);
+  }
+  Promise.all(promises).then(function() {
+    t.end();
+  }, t.end);
 });
 
 test('Reading and writing float', function(t) {
@@ -143,15 +170,21 @@ test('Reading and writing float', function(t) {
     Number.POSITIVE_INFINITY
   ];
 
-  for (var i = 0; i < testVals.length; i++) {
-    var testVal = testVals[i];
+  var promises = [];
+  function runTest(testVal) {
     var rw = new RawVomWriter();
     rw.writeFloat(testVal);
     var rr = new RawVomReader(rw.getBytes());
-    var result = rr.readFloat();
-    t.equals(result, testVal, 'expected ' + testVal + ' got ' + result);
+    promises.push(rr.readFloat().then(function(result) {
+      t.equals(result, testVal, 'expected ' + testVal + ' got ' + result);
+    }));
   }
-  t.end();
+  for (var i = 0; i < testVals.length; i++) {
+    runTest(testVals[i]);
+  }
+  Promise.all(promises).then(function() {
+    t.end();
+  }, t.end);
 });
 
 test('Reading and writing string', function(t) {
@@ -161,15 +194,22 @@ test('Reading and writing string', function(t) {
     'ଆ➓龥𐇐𒅑'
   ];
 
-  for (var i = 0; i < testVals.length; i++) {
-    var testVal = testVals[i];
+  var promises = [];
+  function runTest(testVal) {
     var rw = new RawVomWriter();
     rw.writeString(testVal);
     var rr = new RawVomReader(rw.getBytes());
-    var result = rr.readString();
-    t.equals(result, testVal, 'expected ' + testVal + ' got ' + result);
+    promises.push(rr.readString().then(function(result) {
+      t.equals(result, testVal, 'expected ' + testVal + ' got ' + result);
+    }));
   }
-  t.end();
+
+  for (var i = 0; i < testVals.length; i++) {
+    runTest(testVals[i]);
+  }
+  Promise.all(promises).then(function() {
+    t.end();
+  }, t.end);
 });
 
 test('Reading and writing bool', function(t) {
@@ -178,15 +218,21 @@ test('Reading and writing bool', function(t) {
     false
   ];
 
-  for (var i = 0; i < testVals.length; i++) {
-    var testVal = testVals[i];
+  var promises = [];
+  function runTest(testVal) {
     var rw = new RawVomWriter();
     rw.writeBool(testVal);
     var rr = new RawVomReader(rw.getBytes());
-    var result = rr.readBool();
+    promises.push(rr.readBool().then(function(result) {
     t.equals(result, testVal, 'expected ' + testVal + ' got ' + result);
+    }));
   }
-  t.end();
+  for (var i = 0; i < testVals.length; i++) {
+    runTest(testVals[i]);
+  }
+  Promise.all(promises).then(function() {
+    t.end();
+  }, t.end);
 });
 
 test('Reading and writing multiple values', function(t) {
@@ -197,9 +243,17 @@ test('Reading and writing multiple values', function(t) {
   rw.writeUint(8);
 
   var rr = new RawVomReader(rw.getBytes());
-  t.equals(rr.readString(), 'test');
-  t.equals(rr.readFloat(), 9.4);
-  t.equals(rr.readInt(), -4);
-  t.equals(rr.readUint(), 8);
-  t.end();
+  rr.readString().then(function(val) {
+    t.equals(val, 'test');
+    return rr.readFloat();
+  }).then(function(val) {
+    t.equals(val, 9.4);
+    return rr.readInt();
+  }).then(function(val) {
+    t.equals(val, -4);
+    return rr.readUint();
+  }).then(function(val) {
+    t.equals(val, 8);
+    t.end();
+  }).catch(t.end);
 });
