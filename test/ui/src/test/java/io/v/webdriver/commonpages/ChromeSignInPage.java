@@ -40,7 +40,6 @@ public class ChromeSignInPage extends PageBase {
     RobotHelper robotHelper = RobotHelper.sharedInstance();
     robotHelper.enterText(username);
     robotHelper.tab();
-    robotHelper.enter();
     robotHelper.enterText(password);
     robotHelper.tab();
     Util.takeScreenshot((TakesScreenshot)driver, "before-chrome-signin.png", "Before Signing In Chrome", htmlReportData);
