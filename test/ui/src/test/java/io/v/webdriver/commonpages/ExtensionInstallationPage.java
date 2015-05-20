@@ -5,6 +5,7 @@
 package io.v.webdriver.commonpages;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -37,7 +38,7 @@ public class ExtensionInstallationPage extends PageBase {
     WebElement btnSignin = wait.until(ExpectedConditions.elementToBeClickable(By.id("signIn")));
     WebElement passwdTextField = driver.findElement(By.id("Passwd"));
     passwdTextField.sendKeys(password);
-    Util.takeScreenshot("google-account-signin.png", "Google Account Sign-In", htmlReportData);
+    Util.takeScreenshot((TakesScreenshot)driver, "google-account-signin.png", "Google Account Sign-In", htmlReportData);
     btnSignin.click();
   }
 
@@ -45,7 +46,7 @@ public class ExtensionInstallationPage extends PageBase {
     log("Install extension");
     WebElement btnAddToChrome = wait.until(
         ExpectedConditions.elementToBeClickable(By.cssSelector("div[aria-label='Add to Chrome']")));
-    Util.takeScreenshot("before-install-extension.png", "Before Installing Extension",
+    Util.takeScreenshot((TakesScreenshot)driver, "before-install-extension.png", "Before Installing Extension",
         htmlReportData);
     btnAddToChrome.click();
     Util.sleep(2000);
@@ -60,7 +61,7 @@ public class ExtensionInstallationPage extends PageBase {
         By.cssSelector("div[aria-label='Added to Chrome']")));
     // It might take some time for the extension to actually be installed.
     Util.sleep(3000);
-    Util.takeScreenshot("after-install-extension.png", "After Installing Extension",
+    Util.takeScreenshot((TakesScreenshot)driver, "after-install-extension.png", "After Installing Extension",
         htmlReportData);
   }
 }

@@ -6,6 +6,7 @@ package io.v.webdriver;
 
 import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
+import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriverService;
 
@@ -32,7 +33,7 @@ public class TestFailureWatcher extends TestWatcher {
   protected void failed(Throwable e, Description description) {
     // Take a screenshot for the current screen and write the html report.
     HTMLReportData data = uiTest.getCurrentHTMLReportData();
-    Util.takeScreenshot("test-failed.png", "Test Failed", data);
+    Util.takeScreenshot((TakesScreenshot)driver, "test-failed.png", "Test Failed", data);
     HTMLReporter reporter = new HTMLReporter(data);
     try {
       reporter.generateReport();

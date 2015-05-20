@@ -5,6 +5,7 @@
 package io.v.webdriver.commonpages;
 
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.TakesScreenshot;
 
 import io.v.webdriver.RobotHelper;
 import io.v.webdriver.Util;
@@ -42,7 +43,7 @@ public class ChromeSignInPage extends PageBase {
     robotHelper.enter();
     robotHelper.enterText(password);
     robotHelper.tab();
-    Util.takeScreenshot("before-chrome-signin.png", "Before Signing In Chrome", htmlReportData);
+    Util.takeScreenshot((TakesScreenshot)driver, "before-chrome-signin.png", "Before Signing In Chrome", htmlReportData);
     robotHelper.enter();
     Util.sleep(2000);
 
@@ -50,6 +51,6 @@ public class ChromeSignInPage extends PageBase {
     // This popup is not accessible by WebDriver.
     log("Dismiss 'Sign-in successful' prompt");
     robotHelper.enter();
-    Util.takeScreenshot("after-chrome-signin.png", "After Signing In Chrome", htmlReportData);
+    Util.takeScreenshot((TakesScreenshot)driver, "after-chrome-signin.png", "After Signing In Chrome", htmlReportData);
   }
 }

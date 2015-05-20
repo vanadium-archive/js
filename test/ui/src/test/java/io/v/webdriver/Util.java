@@ -6,6 +6,12 @@ package io.v.webdriver;
 
 import io.v.webdriver.htmlreport.HTMLReportData;
 
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
+import org.openqa.selenium.WebDriver;
+
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
@@ -56,27 +62,28 @@ public class Util {
   /**
    * Takes a screenshot.
    *
-   * <p>It uses the "import" command, saves it to the given file, and records it in the given
-   * htmlReportData.
+   * <p>It uses the WebDriver to grab the screenshot data, saves it to the given file,
+   * and records it in the given htmlReportData.
    *
+   * @param TakesScreenshot a driver that can getScreenshotAs, such as a ChromeDriver.
    * @param fileName the file to save the screenshot to.
    * @param caption the caption of the screenshot.
    * @param htmlReportData the data model to add screenshot data to.
    */
-  public static void takeScreenshot(String fileName, String caption,
-      HTMLReportData htmlReportData) {
+  public static void takeScreenshot(TakesScreenshot taker, String fileName,
+    String caption, HTMLReportData htmlReportData) {
+
     String fullFileName =
-        String.format("%s-%s", getSafeFilename(htmlReportData.getTestName()), fileName);
+      String.format("%s-%s", getSafeFilename(htmlReportData.getTestName()), fileName);
     Runtime rt = Runtime.getRuntime();
     try {
-      String imagePath = String.format("%s/%s", htmlReportData.getReportDir(), fullFileName);
-      Process pr = rt.exec(
-          String.format("import -window root -crop 1004x748+10+10 -resize 800 %s", imagePath));
-      int retValue = pr.waitFor();
-      if (retValue != 0) {
-        System.err.println(String.format("Failed to capture screenshot: %s", imagePath));
-      }
+      byte[] imageData = taker.getScreenshotAs(OutputType.BYTES); // throws WebDriverException
+      File imageFile = new File(htmlReportData.getReportDir(), fullFileName);
+      FileOutputStream fos = new FileOutputStream(imageFile);
+      fos.write(imageData);
+      fos.close();
     } catch (Exception e) {
+      System.err.printf("Failed to copy screenshot to %s/%s\n", htmlReportData.getReportDir(), fullFileName);
       e.printStackTrace();
     }
 

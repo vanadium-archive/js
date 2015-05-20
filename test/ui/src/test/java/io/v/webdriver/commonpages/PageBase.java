@@ -4,6 +4,7 @@
 
 package io.v.webdriver.commonpages;
 
+import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -64,7 +65,7 @@ public class PageBase {
    * Takes a screenshot for the current page and names it using pageName.
    */
   protected void takeScreenshotUsingPageName() {
-    Util.takeScreenshot(String.format("%s.png", Util.getSafeFilename(pageName)), pageName,
+    Util.takeScreenshot((TakesScreenshot)driver, String.format("%s.png", Util.getSafeFilename(pageName)), pageName,
         htmlReportData);
   }
 }
