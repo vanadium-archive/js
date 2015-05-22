@@ -453,7 +453,7 @@ Client.prototype.bindTo = function(ctx, name, cb) {
  * @param {string} name The vanadium name of the service to bind to.
  * @param {module:vanadium.vdl.signature.Interface} signature The service
  * signature of a vanadium service.
- * @return {object} Object The stub object containing
+ * @return {object} The stub object containing
  * the exported methods of the remote service.
  */
 Client.prototype.bindWithSignature = function(name, signature) {
