@@ -5,9 +5,9 @@
 var blessingMatches = require('./access/blessing-matching');
 var vError = require('./../gen-vdl/v.io/v23/verror');
 
-module.exports = authorizer;
+module.exports = defaultAuthorizer;
 
-function authorizer(ctx, call, cb) {
+function defaultAuthorizer(ctx, call, cb) {
   // If the remoteBlessings has a public key, and it refers to ourselves
   // (i.e a self rpc), then we always authorize.
   if (call.remoteBlessings.publicKey &&

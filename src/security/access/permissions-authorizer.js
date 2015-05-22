@@ -12,7 +12,7 @@ var vdlAccess = require('../../gen-vdl/v.io/v23/security/access');
 var NoPermissionsError = vdlAccess.NoPermissionsError;
 var Permissions = vdlAccess.Permissions;
 
-module.exports = authorizer;
+module.exports = permissionsAuthorizer;
 var pkgPath = 'v.io/v23/security/access';
 var MultipleTagsError = makeError(
   pkgPath + '.errMultipleMethodTags',
@@ -38,7 +38,7 @@ var NoTagsError = makeError(
  * @return {module:vanadium.security.Authorize} An authorizer that applies
  * the perms.
  */
-function authorizer(perms, type) {
+function permissionsAuthorizer(perms, type) {
   // Force the Permissions to have the correct Permissions format.
   var permissions = unwrap(new Permissions(perms));
 

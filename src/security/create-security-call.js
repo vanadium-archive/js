@@ -3,11 +3,42 @@
 // license that can be found in the LICENSE file.
 
 /**
- * @fileoverview A context passed to the authorizer
+ * @fileoverview A security information passes to authorizer and validator.
  * @private
  */
-var Blessings = require('./blessings.js');
-module.exports = Call;
+module.exports = createSecurityCall;
+
+/**
+ * Create a security call object. This exists so that we can resolve blessings
+ * before the user is given the object.
+ * @private
+ */
+function createSecurityCall(input, blessingsManager) {
+  var call = new Call();
+  call.method = input.method;
+  call.suffix = input.suffix;
+  call.methodTags = input.methodTags;
+  call.localBlessingStrings = input.localBlessingStrings;
+  call.remoteBlessingStrings = input.remoteBlessingStrings;
+  // TODO(bjornick): Create endpoints.
+  call.localEndpoint = input.localEndpoint;
+  call.remoteEndpoint = input.remoteEndpoint;
+
+  var promises = [];
+  promises.push(blessingsManager.blessingsFromId(input.localBlessings)
+  .then(function(localBlessings) {
+    call.localBlessings = localBlessings;
+  }));
+  promises.push(blessingsManager.blessingsFromId(input.remoteBlessings)
+  .then(function(remoteBlessings) {
+    call.remoteBlessings = remoteBlessings;
+    return call;
+  }));
+
+  return Promise.all(promises).then(function() {
+    return call;
+  });
+}
 
 /**
  * @summary Call defines the state available for authorizing a principal.
@@ -27,27 +58,7 @@ module.exports = Call;
  * @inner
  * @memberof module:vanadium.security
  */
-function Call(call, controller) {
-  this.method = call.method;
-  this.suffix = call.suffix;
-  // TODO(bjornick): Use the enums.
-  this.methodTags = call.methodTags;
-  this.localBlessings = new Blessings(call.localBlessings.handle,
-                                      call.localBlessings.publicKey,
-                                      controller);
-  this.remoteBlessings = new Blessings(call.remoteBlessings.handle,
-                                       call.remoteBlessings.publicKey,
-                                       controller);
-  if (call.grantedBlessings) {
-    this.grantedBlessings = new Blessings(call.grantedBlessings.handle,
-                                          call.grantedBlessings.publicKey,
-                                          controller);
-  }
-  this.localBlessingStrings = call.localBlessingStrings;
-  this.remoteBlessingStrings = call.remoteBlessingStrings;
-  // TODO(bjornick): Create endpoints.
-  this.localEndpoint = call.localEndpoint;
-  this.remoteEndpoint = call.remoteEndpoint;
+function Call() {
 }
 
 Call.prototype.clone = function() {

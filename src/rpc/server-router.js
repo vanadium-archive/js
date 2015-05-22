@@ -16,8 +16,8 @@ var ErrorConversion = require('../vdl/error-conversion');
 var vlog = require('./../lib/vlog');
 var StreamHandler = require('../proxy/stream-handler');
 var verror = require('../gen-vdl/v.io/v23/verror');
-var SecurityCall = require('../security/call');
-var ServerCall = require('./server-call');
+var createSecurityCall = require('../security/create-security-call');
+var createServerCall = require('./create-server-call');
 var vdl = require('../vdl');
 var typeUtil = require('../vdl/type-util');
 var Deferred = require('../lib/deferred');
@@ -37,8 +37,8 @@ var vtrace = require('../vtrace');
 var lib =
   require('../gen-vdl/v.io/x/ref/services/wspr/internal/lib');
 var Blessings = require('../security/blessings');
-var JsBlessings =
-  require('../gen-vdl/v.io/x/ref/services/wspr/internal/principal').JsBlessings;
+var BlessingsId =
+  require('../gen-vdl/v.io/x/ref/services/wspr/internal/principal').BlessingsId;
 var WireBlessings =
   require('../gen-vdl/v.io/v23/security').WireBlessings;
 var SharedContextKeys = require('../runtime/shared-context-keys');
@@ -52,7 +52,8 @@ var byteUtil = require('../vdl/byte-util');
  * @constructor
  * @private
  */
-var Router = function(proxy, appName, rootCtx, controller, caveatRegistry) {
+var Router = function(
+  proxy, appName, rootCtx, controller, caveatRegistry, blessingsManager) {
   this._servers = {};
   this._proxy = proxy;
   this._streamMap = {};
@@ -62,6 +63,7 @@ var Router = function(proxy, appName, rootCtx, controller, caveatRegistry) {
   this._caveatRegistry = caveatRegistry;
   this._outstandingRequestForId = {};
   this._controller = controller;
+  this._blessingsManager = blessingsManager;
 
   proxy.addIncomingHandler(Incoming.INVOKE_REQUEST, this);
   proxy.addIncomingHandler(Incoming.LOOKUP_REQUEST, this);
@@ -117,11 +119,15 @@ Router.prototype.handleAuthorizationRequest = function(messageId, request) {
   }
 
   var router = this;
-  var call;
-  vom.decode(request).then(function(request) {
+  var decodedRequest;
+  vom.decode(request).catch(function(e) {
+    return Promise.reject(new verror.InternalError(router._rootCtx,
+      'Failed to decode ', e));
+  }).then(function(req) {
+    decodedRequest = req;
     var ctx = router._rootCtx.withValue(SharedContextKeys.LANG_KEY,
-                                      request.context.language);
-    var server = router._servers[request.serverId];
+                                        decodedRequest.context.language);
+    var server = router._servers[decodedRequest.serverId];
     if (!server) {
       var authReply = new AuthReply({
         // TODO(bjornick): Use the real context
@@ -132,22 +138,20 @@ Router.prototype.handleAuthorizationRequest = function(messageId, request) {
                                 null, messageId);
       return;
     }
-    call = new SecurityCall(request.call, router._controller);
-
-    return server.handleAuthorization(request.handle, ctx, call);
-  }, function(e) {
-    return Promise.reject(new verror.InternalError(router._rootCtx,
-                                                   'Failed to decode ', e));
+    return createSecurityCall(decodedRequest.call, router._blessingsManager)
+    .then(function(call) {
+      return server.handleAuthorization(decodedRequest.handle, ctx, call);
+    });
   }).then(function() {
     var authReply = new AuthReply({});
     router._proxy.sendRequest(hexVom.encode(authReply),
                               Outgoing.AUTHORIZATION_RESPONSE, null, messageId);
   }).catch(function(e) {
-    var authReply = new AuthReply({
-      err: ErrorConversion.fromNativeValue(e, router._appName,
-                                           call.method)
-    });
-    router._proxy.sendRequest(hexVom.encode(authReply),
+    var errMsg = {
+      err: ErrorConversion.fromNativeValue(e, this._appName,
+                                           decodedRequest.call.method)
+    };
+    router._proxy.sendRequest(hexVom.encode(errMsg),
                               Outgoing.AUTHORIZATION_RESPONSE, null,
                               messageId);
   });
@@ -179,24 +183,24 @@ Router.prototype._validateChain = function(ctx, call, cavs) {
 };
 
 Router.prototype.handleCaveatValidationRequest = function(messageId, request) {
-  var resultPromises = new Array(request.cavs.length);
-  var call = new SecurityCall(request.call);
-  var ctx = this._rootCtx.withValue(SharedContextKeys.LANG_KEY,
-                                    request.context.language);
-  for (var i = 0; i < request.cavs.length; i++) {
-    resultPromises[i] = this._validateChain(ctx, call, request.cavs[i]);
-  }
-  var self = this;
-  Promise.all(resultPromises).then(function(results) {
-    var response = new CaveatValidationResponse({
-      results: results
+  var router = this;
+  createSecurityCall(request.call, this._blessingsManager)
+  .then(function(call) {
+    var ctx = router._rootCtx.withValue(SharedContextKeys.LANG_KEY,
+      request.context.language);
+    var resultPromises = request.cavs.map(function(cav) {
+      return router._validateChain(ctx, call, cav);
     });
-    self._proxy.sendRequest(hexVom.encode(response),
-                            Outgoing.CAVEAT_VALIDATION_RESPONSE, null,
-                            messageId);
+    return Promise.all(resultPromises).then(function(results) {
+      var response = new CaveatValidationResponse({
+        results: results
+      });
+      var data = hexVom.encode(response);
+      router._proxy.sendRequest(data, Outgoing.CAVEAT_VALIDATION_RESPONSE, null,
+        messageId);
+    });
   }).catch(function(err) {
-    vlog.logger.error(
-      new Error('Unexpected error (all promises should resolve): ' + err));
+    throw new Error('Unexpected error (all promises should resolve): ' + err);
   });
 };
 
@@ -215,24 +219,24 @@ Router.prototype.handleLookupRequest = function(messageId, request) {
 
   var self = this;
   return server._handleLookup(request.suffix).then(function(value) {
-    var signatureList = value.invoker.signature();
-    var hasAuthorizer = (typeof value.authorizer === 'function');
-    var hasGlobber = value.invoker.hasGlobber();
-    var reply = new LookupReply({
-      handle: value._handle,
-      signature: signatureList,
-      hasAuthorizer: hasAuthorizer,
-      hasGlobber: hasGlobber
-    });
-    self._proxy.sendRequest(hexVom.encode(reply), Outgoing.LOOKUP_RESPONSE,
-                            null, messageId);
-  }).catch(function(err) {
-    var reply = new LookupReply({
-      err: ErrorConversion.fromNativeValue(err, self._appName, '__Signature')
-    });
-    self._proxy.sendRequest(hexVom.encode(reply), Outgoing.LOOKUP_RESPONSE,
-                            null, messageId);
-  });
+   var signatureList = value.invoker.signature();
+   var hasAuthorizer = (typeof value.authorizer === 'function');
+   var hasGlobber = value.invoker.hasGlobber();
+   var reply = new LookupReply({
+     handle: value._handle,
+     signature: signatureList,
+     hasAuthorizer: hasAuthorizer,
+     hasGlobber: hasGlobber
+   });
+   self._proxy.sendRequest(hexVom.encode(reply), Outgoing.LOOKUP_RESPONSE,
+                           null, messageId);
+ }).catch(function(err) {
+   var reply = new LookupReply({
+     err: ErrorConversion.fromNativeValue(err, self._appName, '__Signature')
+   });
+   self._proxy.sendRequest(hexVom.encode(reply), Outgoing.LOOKUP_RESPONSE,
+                           null, messageId);
+ });
 };
 
 /**
@@ -306,111 +310,118 @@ Router.prototype._handleRPCRequestInternal = function(messageId, request) {
   var ctx = this.createRPCContext(request);
   var self = this;
   var stream;
-  var call = new ServerCall(request, this._controller);
-  if (request.method === 'Glob__') {
-    if (!invoker.hasGlobber()) {
-      err = new Error('Glob is not implemented');
-      self.sendResult(messageId, 'Glob__', null, err);
-      return;
-    }
-    // Glob takes no streaming input and has GlobReply as output.
-    stream = new Stream(messageId, this._proxy.senderPromise, false,
-      null, naming.GlobReply.prototype._type);
-    this._streamMap[messageId] = stream;
-    this._contextMap[messageId] = ctx;
-    this._outstandingRequestForId[messageId] = 0;
-    this.incrementOutstandingRequestForId(messageId);
-    var globPattern = typeUtil.unwrap(request.args[0]);
-    this.handleGlobRequest(messageId, call.securityCall.suffix,
-                           server, new Glob(globPattern), ctx, call, invoker,
-                           completion);
-    return;
-  }
-
-  function completion() {
-    // There is no results to a glob method.  Everything is sent back
-    // through the stream.
-    self.sendResult(messageId, methodName, null, undefined, 1);
-  }
-
-  // Find the method signature.
-  var signature = invoker.signature();
-  var methodSig;
-  signature.forEach(function(ifaceSig) {
-    ifaceSig.methods.forEach(function(method) {
-      if (method.name === methodName) {
-        methodSig = method;
+  createServerCall(request, this._blessingsManager).then(function(call) {
+    if (request.method === 'Glob__') {
+      if (!invoker.hasGlobber()) {
+        err = new Error('Glob is not implemented');
+        self.sendResult(messageId, 'Glob__', null, err);
+        return;
       }
-    });
-  });
-  if (methodSig === undefined) {
-    err = new verror.NoExistError(
-      call, 'Requested method', methodName, 'not found on');
-    this.sendResult(messageId, methodName, null, err);
-    return;
-  }
-
-  // Unwrap the RPC arguments sent to the JS server.
-  var unwrappedArgs = request.args.map(function(arg, i) {
-    // If an any type was expected, unwrapping is not needed.
-    if (methodSig.inArgs[i].type.kind === vdl.kind.ANY) {
-      return arg;
-    }
-    var unwrapped = typeUtil.unwrap(arg);
-    if (unwrapped instanceof JsBlessings) {
-      return new Blessings(unwrapped.handle, unwrapped.publicKey,
-                           self._controller);
-    }
-    return unwrapped;
-  });
-  var options = {
-    methodName: methodName,
-    args: unwrappedArgs,
-    methodSig: methodSig,
-    ctx: ctx,
-    call: call,
-  };
-
-  this._contextMap[messageId] = options.ctx;
-  if (methodIsStreaming(methodSig)) {
-    var readType = (methodSig.inStream ? methodSig.inStream.type : null);
-    var writeType = (methodSig.outStream ? methodSig.outStream.type : null);
-    stream = new Stream(messageId, this._proxy.senderPromise, false, readType,
-      writeType);
-    this._streamMap[messageId] = stream;
-    var rpc = new StreamHandler(options.ctx, stream);
-    this._proxy.addIncomingStreamHandler(messageId, rpc);
-    options.stream = stream;
-  }
-
-  // Invoke the method;
-  this.invokeMethod(invoker, options, function(err, results) {
-    if (err) {
-      var stackTrace;
-      if (err instanceof Error && err.stack !== undefined) {
-        stackTrace = err.stack;
-      }
-      vlog.logger.debug('Requested method ' + methodName +
-          ' threw an exception on invoke: ', err, stackTrace);
-
-      // The error case has no results; only send the error.
-      self.sendResult(messageId, methodName, undefined, err,
-          methodSig.outArgs.length);
+      // Glob takes no streaming input and has GlobReply as output.
+      stream = new Stream(messageId, self._proxy.senderPromise, false,
+        null, naming.GlobReply.prototype._type);
+      self._streamMap[messageId] = stream;
+      self._contextMap[messageId] = ctx;
+      self._outstandingRequestForId[messageId] = 0;
+      self.incrementOutstandingRequestForId(messageId);
+      var globPattern = typeUtil.unwrap(request.args[0]);
+      self.handleGlobRequest(messageId, call.securityCall.suffix,
+                             server, new Glob(globPattern), ctx, call, invoker,
+                             completion);
       return;
     }
 
-    // Has results; associate the types of the outArgs.
-    var canonResults = results.map(function(result, i) {
-      var t = methodSig.outArgs[i].type;
-      if (t.equals(WireBlessings.prototype._type)) {
-        return result;
-      }
-      return vdl.canonicalize.fill(result, t);
-    });
-    self.sendResult(messageId, methodName, canonResults, undefined,
-                    methodSig.outArgs.length);
-  });
+    function completion() {
+      // There is no results to a glob method.  Everything is sent back
+      // through the stream.
+      self.sendResult(messageId, methodName, null, undefined, 1);
+    }
 
+    // Find the method signature.
+    var signature = invoker.signature();
+    var methodSig;
+    signature.forEach(function(ifaceSig) {
+      ifaceSig.methods.forEach(function(method) {
+        if (method.name === methodName) {
+          methodSig = method;
+        }
+      });
+    });
+    if (methodSig === undefined) {
+      err = new verror.NoExistError(
+        call, 'Requested method', methodName, 'not found on');
+      self.sendResult(messageId, methodName, null, err);
+      return;
+    }
+
+    // Unwrap the RPC arguments sent to the JS server.
+    var unwrappedArgPromises = request.args.map(function(arg, i) {
+      // If an any type was expected, unwrapping is not needed.
+      if (methodSig.inArgs[i].type.kind === vdl.kind.ANY) {
+        return Promise.resolve(arg);
+      }
+      var unwrapped = typeUtil.unwrap(arg);
+      if (unwrapped instanceof BlessingsId) {
+        return self._blessingsManager.blessingsFromId(unwrapped);
+      }
+      return Promise.resolve(unwrapped);
+    });
+
+    return Promise.all(unwrappedArgPromises).then(function(unwrappedArgs) {
+      var options = {
+        methodName: methodName,
+        args: unwrappedArgs,
+        methodSig: methodSig,
+        ctx: ctx,
+        call: call,
+      };
+
+      self._contextMap[messageId] = options.ctx;
+      if (methodIsStreaming(methodSig)) {
+        var readType = (methodSig.inStream ? methodSig.inStream.type : null);
+        var writeType = (methodSig.outStream ? methodSig.outStream.type : null);
+        stream = new Stream(messageId, self._proxy.senderPromise, false,
+          readType, writeType);
+        self._streamMap[messageId] = stream;
+        var rpc = new StreamHandler(options.ctx, stream);
+        self._proxy.addIncomingStreamHandler(messageId, rpc);
+        options.stream = stream;
+      }
+
+      // Invoke the method;
+      self.invokeMethod(invoker, options, function(err, results) {
+        if (err) {
+          var stackTrace;
+          if (err instanceof Error && err.stack !== undefined) {
+            stackTrace = err.stack;
+          }
+          vlog.logger.debug('Requested method ' + methodName +
+              ' threw an exception on invoke: ', err, stackTrace);
+
+          // The error case has no results; only send the error.
+          self.sendResult(messageId, methodName, undefined, err,
+              methodSig.outArgs.length);
+          return;
+        }
+
+        // Has results; associate the types of the outArgs.
+        var canonResults = results.map(function(result, i) {
+          var t = methodSig.outArgs[i].type;
+          if (t.equals(WireBlessings.prototype._type)) {
+            if (!(result instanceof Blessings)) {
+              vlog.logger.error(
+                'Encoding non-blessings value as wire blessings');
+                return null;
+            }
+            return result;
+          }
+          return vdl.canonicalize.fill(result, t);
+        });
+        self.sendResult(messageId, methodName, canonResults, undefined,
+                        methodSig.outArgs.length);
+      });
+    });
+  });
 };
 /**
  * Handles incoming requests from the server to invoke methods on registered
@@ -550,10 +561,13 @@ Router.prototype.handleGlobRequest = function(messageId, name, server, glob,
 
       var suffix = namespaceUtil.join(name, child);
       self.incrementOutstandingRequestForId(messageId);
-      var subCall = new ServerCall(call);
-      subCall.securityCall.suffix = suffix;
       var nextInvoker;
-      server._handleLookup(suffix).then(function(value) {
+      var subCall;
+      createServerCall(call, this._blessingsManager).then(function(servCall) {
+        subCall = servCall;
+        subCall.securityCall.suffix = suffix;
+        return server._handleLookup(suffix);
+      }).then(function(value) {
         nextInvoker = value.invoker;
         return server.handleAuthorization(value._handle, context,
                                           subCall.securityCall);
