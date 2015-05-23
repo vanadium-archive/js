@@ -8,6 +8,7 @@
  */
 
 var Deferred = require('../lib/deferred');
+var Blessings = require('./blessings');
 var BlessingStore = require('./blessingstore');
 var verror = require('../gen-vdl/v.io/v23/verror');
 
@@ -80,9 +81,12 @@ Principal.prototype.bless = function(ctx, publicKey, blessings,
 
   var caveats = args.slice(4);
 
+  var controller = this._controller;
   this._controller.bless(ctx, publicKey, blessings._id, extension, caveats)
-  .then(function(blessings) {
-    def.resolve(blessings);
+  .then(function(res) {
+    var publicKey = res[0];
+    var handle = res[1];
+    def.resolve(new Blessings(handle, publicKey, controller));
   }).catch(function(err) {
     def.reject(err);
   });
@@ -117,11 +121,14 @@ Principal.prototype.blessSelf = function(ctx, name /*, ...caveats, cb*/) {
 
   var controller = this._controller;
   controller.blessSelf(ctx, name, caveats)
-  .then(function(blessings) {
-    def.resolve(blessings);
+  .then(function(res) {
+    var publicKey = res[0];
+    var handle = res[1];
+    def.resolve(new Blessings(handle, publicKey, controller));
   }).catch(function(err) {
     def.reject(err);
   });
+
   return def.promise;
 };
 

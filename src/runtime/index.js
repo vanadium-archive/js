@@ -23,8 +23,6 @@ var SharedContextKeys = require('./shared-context-keys');
 var vtrace = require('../vtrace');
 var Controller =
   require('../gen-vdl/v.io/x/ref/services/wspr/internal/app').Controller;
-var BlessingsManager = require('../security/blessings-manager');
-var BlessingsRouter = require('../security/blessings-router');
 
 module.exports = {
   init: init
@@ -119,9 +117,6 @@ function Runtime(options) {
   this._name = options.appName;
   this._language = options.language;
   this.caveatRegistry = new CaveatValidatorRegistry();
-  this.blessingsManager = new BlessingsManager(this._controller);
-  this._blessingsRouter = new BlessingsRouter(this._getProxyConnection(),
-    this.blessingsManager);
 }
 
 inherits(Runtime, EE);
@@ -254,8 +249,7 @@ Runtime.prototype._getRouter = function() {
       this._name,
       this.getContext(),
       this._controller,
-      this.caveatRegistry,
-      this.blessingsManager);
+      this.caveatRegistry);
   }
   return this._router;
 };
@@ -269,8 +263,7 @@ Runtime.prototype._getGranterRouter = function() {
   if (!this._granterRouter) {
     this._granterRouter = new GranterRouter(
       this._getProxyConnection(),
-      this.getContext(),
-      this.blessingsManager);
+      this.getContext());
   }
   return this._granterRouter;
 };

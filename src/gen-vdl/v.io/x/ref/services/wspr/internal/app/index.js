@@ -22,6 +22,7 @@ module.exports = {};
 
 // Types:
 var _type1 = new vdl.Type();
+var _type10 = new vdl.Type();
 var _type2 = new vdl.Type();
 var _type3 = new vdl.Type();
 var _type4 = new vdl.Type();
@@ -40,6 +41,9 @@ var _typeRpcServerOption = new vdl.Type();
 _type1.kind = vdl.kind.LIST;
 _type1.name = "";
 _type1.elem = _typeRpcCallOption;
+_type10.kind = vdl.kind.LIST;
+_type10.name = "";
+_type10.elem = new principal.BlessingsHandle()._type;
 _type2.kind = vdl.kind.LIST;
 _type2.name = "";
 _type2.elem = new security.BlessingPattern()._type;
@@ -52,19 +56,19 @@ _type4.elem = _typeRpcServerOption;
 _type5.kind = vdl.kind.LIST;
 _type5.name = "";
 _type5.elem = new security.Caveat()._type;
-_type6.kind = vdl.kind.LIST;
+_type6.kind = vdl.kind.OPTIONAL;
 _type6.name = "";
-_type6.elem = vdl.types.STRING;
-_type7.kind = vdl.kind.MAP;
+_type6.elem = new principal.JsBlessings()._type;
+_type7.kind = vdl.kind.LIST;
 _type7.name = "";
-_type7.elem = new principal.BlessingsId()._type;
-_type7.key = new security.BlessingPattern()._type;
-_type8.kind = vdl.kind.LIST;
+_type7.elem = vdl.types.STRING;
+_type8.kind = vdl.kind.MAP;
 _type8.name = "";
-_type8.elem = new signature.Interface()._type;
+_type8.elem = _type6;
+_type8.key = new security.BlessingPattern()._type;
 _type9.kind = vdl.kind.LIST;
 _type9.name = "";
-_type9.elem = new principal.BlessingsHandle()._type;
+_type9.elem = new signature.Interface()._type;
 _typeGranterHandle.kind = vdl.kind.INT32;
 _typeGranterHandle.name = "v.io/x/ref/services/wspr/internal/app.GranterHandle";
 _typeGranterRequest.kind = vdl.kind.STRUCT;
@@ -86,6 +90,7 @@ _typeRpcServerOption.kind = vdl.kind.UNION;
 _typeRpcServerOption.name = "v.io/x/ref/services/wspr/internal/app.RpcServerOption";
 _typeRpcServerOption.fields = [{name: "IsLeaf", type: vdl.types.BOOL}, {name: "ServesMountTable", type: vdl.types.BOOL}];
 _type1.freeze();
+_type10.freeze();
 _type2.freeze();
 _type3.freeze();
 _type4.freeze();
@@ -381,9 +386,14 @@ Controller.prototype._serviceDescription = {
     },
     ],
     outArgs: [{
-      name: '',
+      name: 'publicKeyOut',
       doc: "",
-      type: new principal.BlessingsId()._type
+      type: vdl.types.STRING
+    },
+    {
+      name: 'handleOut',
+      doc: "",
+      type: new principal.BlessingsHandle()._type
     },
     ],
     inStream: null,
@@ -407,9 +417,14 @@ Controller.prototype._serviceDescription = {
     },
     ],
     outArgs: [{
-      name: '',
+      name: 'publicKeyOut',
       doc: "",
-      type: new principal.BlessingsId()._type
+      type: vdl.types.STRING
+    },
+    {
+      name: 'handleOut',
+      doc: "",
+      type: new principal.BlessingsHandle()._type
     },
     ],
     inStream: null,
@@ -451,7 +466,7 @@ Controller.prototype._serviceDescription = {
     outArgs: [{
       name: '',
       doc: "",
-      type: new principal.BlessingsId()._type
+      type: _type6
     },
     ],
     inStream: null,
@@ -466,13 +481,13 @@ Controller.prototype._serviceDescription = {
     inArgs: [{
       name: 'peerBlessings',
       doc: "",
-      type: _type6
+      type: _type7
     },
     ],
     outArgs: [{
       name: '',
       doc: "",
-      type: new principal.BlessingsId()._type
+      type: _type6
     },
     ],
     inStream: null,
@@ -504,7 +519,7 @@ Controller.prototype._serviceDescription = {
     outArgs: [{
       name: '',
       doc: "",
-      type: new principal.BlessingsId()._type
+      type: _type6
     },
     ],
     inStream: null,
@@ -536,7 +551,7 @@ Controller.prototype._serviceDescription = {
     outArgs: [{
       name: '',
       doc: "",
-      type: _type7
+      type: _type8
     },
     ],
     inStream: null,
@@ -578,7 +593,7 @@ Controller.prototype._serviceDescription = {
     outArgs: [{
       name: '',
       doc: "",
-      type: _type6
+      type: _type7
     },
     ],
     inStream: null,
@@ -599,7 +614,7 @@ Controller.prototype._serviceDescription = {
     outArgs: [{
       name: '',
       doc: "",
-      type: _type8
+      type: _type9
     },
     ],
     inStream: null,
@@ -614,13 +629,13 @@ Controller.prototype._serviceDescription = {
     inArgs: [{
       name: 'toJoin',
       doc: "",
-      type: _type9
+      type: _type10
     },
     ],
     outArgs: [{
       name: '',
       doc: "",
-      type: new principal.BlessingsId()._type
+      type: _type6
     },
     ],
     inStream: null,

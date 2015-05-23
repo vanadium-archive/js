@@ -6,12 +6,13 @@ var test = require('prova');
 var CaveatValidatorRegistry =
   require('../../src/security/caveat-validator-registry');
 var context = require('../../src/context');
+var SecurityCall = require('../../src/security/call');
 var caveats = require('../../src/security/caveats');
 
 var testCaveats = require('../vdl-out/javascript-test/security/caveat');
 
 function getMockSecurityCall() {
-  return {
+  return new SecurityCall({
     method: '',
     suffix: '',
     methodTags: [],
@@ -27,7 +28,9 @@ function getMockSecurityCall() {
     remoteBlessingStrings: [],
     localEndpoint: '',
     remoteEndpoint: ''
-  };
+  },
+  null, // controller
+  context.Context());
 }
 
 

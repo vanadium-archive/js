@@ -39,14 +39,13 @@ var vlog = require('../lib/vlog');
 var SharedContextKeys = require('../runtime/shared-context-keys');
 var vtrace = require('../vtrace');
 var Blessings = require('../security/blessings');
-var BlessingsId =
-  require('../gen-vdl/v.io/x/ref/services/wspr/internal/principal').BlessingsId;
-var ByteStreamMessageReader = require('../vom/byte-stream-message-reader');
+var JsBlessings =
+  require('../gen-vdl/v.io/x/ref/services/wspr/internal/principal').JsBlessings;
 var ByteStreamMessageWriter = require('../vom/byte-stream-message-writer');
+var ByteStreamMessageReader = require('../vom/byte-stream-message-reader');
 var Encoder = require('../vom/encoder');
 var Decoder = require('../vom/decoder');
 var TaskSequence = require('../lib/task-sequence');
-var runtimeFromContext = require('../runtime/runtime-from-context');
 var vom = require('../vom');
 
 var OutstandingRPC = function(ctx, options, cb) {
@@ -71,34 +70,37 @@ var OutstandingRPC = function(ctx, options, cb) {
 };
 
 // Helper function to convert an out argument to the given type.
-function convertOutArg(ctx, arg, type, controller) {
-  if (arg instanceof BlessingsId) {
-    var runtime = runtimeFromContext(ctx);
-    return runtime.blessingsManager.blessingsFromId(arg)
-    .then(function(blessings) {
-      if (blessings) {
-        blessings.retain();
-      }
-      return blessings;
-    });
+function convertOutArg(arg, type, controller) {
+  var canonOutArg = arg;
+  var unwrappedArg = unwrap(arg);
+  if (unwrappedArg instanceof JsBlessings) {
+    var res =
+      new Blessings(unwrappedArg.handle, unwrappedArg.publicKey, controller);
+    res.retain();
+    return res;
   }
 
   // There's no protection against bad out args if it's a JSValue.
   // Otherwise, convert to the out arg type to ensure type correctness.
   if (!type.equals(vdl.types.JSVALUE)) {
-    try {
-      return Promise.resolve(unwrap(vdl.canonicalize.reduce(arg, type)));
-    } catch(err) {
-      return Promise.reject(err);
-    }
+    canonOutArg = vdl.canonicalize.reduce(arg, type);
   }
 
-  return Promise.resolve(unwrap(arg));
+  return unwrap(canonOutArg);
+}
+
+// Helper function to safely convert an out argument.
+// The returned error, if any is useful for a callback.
+function convertOutArgSafe(arg, type, controller) {
+  try {
+    return [undefined, convertOutArg(arg, type, controller)];
+  } catch(err) {
+    return [err, undefined];
+  }
 }
 
 OutstandingRPC.prototype.start = function() {
   this._id = this._proxy.nextId();
-  var ctx = this._ctx;
   var self = this;
 
   var cb;
@@ -111,25 +113,25 @@ OutstandingRPC.prototype.start = function() {
     cb = function convertToMultiArgs(err, results) { // jshint ignore:line
       // If called from a deferred, the results are undefined.
 
-      if (err) {
-        origCb(err);
-        return;
-      }
-
       // Each out argument should also be unwrapped. (results was []any)
-      results = results || [];
-      var resultPromises = results.map(function(res, i) {
-        return convertOutArg(ctx, res, outArgTypes[i], self._controller);
-      });
-      Promise.all(resultPromises)
-      .then(function(results) {
-        results.unshift(null);
-        origCb.apply(null, results);
-      }).catch(origCb);
+      results = results ? results.map(function(res, i) {
+        var errOrArg = convertOutArgSafe(res, outArgTypes[i], self._controller);
+        if (errOrArg[0] && !err) {
+          err = errOrArg[0];
+        }
+        return errOrArg[1];
+      }) : [];
+
+      // TODO(alexfandrianto): Callbacks seem to be able to get both error and
+      // results, but I think we want to limit it to one or the other.
+      var resultsCopy = results.slice();
+      resultsCopy.unshift(err);
+      origCb.apply(null, resultsCopy);
     };
   }
 
   var def = new Deferred(cb);
+  var ctx = this._ctx;
 
   if (!this._cb) {
     // If we are using a promise, strip single args out of the arg array.
@@ -140,29 +142,26 @@ OutstandingRPC.prototype.start = function() {
           'Internal error: incorrectly formatted out args in client');
       }
 
-
       // Each out argument should also be unwrapped. (args was []any)
-      var unwrappedArgPromises = args.map(function(outArg, i) {
-        return convertOutArg(ctx, outArg, outArgTypes[i], self._controller);
+      var unwrappedArgs = args.map(function(outArg, i) {
+        return convertOutArg(outArg, outArgTypes[i], self._controller);
       });
 
-      return Promise.all(unwrappedArgPromises).then(function(unwrappedArgs) {
-        // We expect:
-        // 0 args - return; // NOT return [];
-        // 1 args - return a; // NOT return [a];
-        // 2 args - return [a, b] ;
-        //
-        // Convert the results from array style to the expected return style.
-        // undefined, a, [a, b], [a, b, c] etc
-        switch(unwrappedArgs.length) {
-          case 0:
-            return undefined;
-          case 1:
-            return unwrappedArgs[0];
-          default:
-            return unwrappedArgs;
-        }
-      });
+      // We expect:
+      // 0 args - return; // NOT return [];
+      // 1 args - return a; // NOT return [a];
+      // 2 args - return [a, b] ;
+      //
+      // Convert the results from array style to the expected return style.
+      // undefined, a, [a, b], [a, b, c] etc
+      switch(unwrappedArgs.length) {
+        case 0:
+          return undefined;
+        case 1:
+          return unwrappedArgs[0];
+        default:
+          return unwrappedArgs;
+      }
     });
   }
 

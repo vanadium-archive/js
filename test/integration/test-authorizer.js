@@ -56,9 +56,10 @@ function testErrorCase(assert, authorizer, tags, isPromise) {
     var ctx = res.runtime.getContext();
     client.bindTo(ctx, 'authorizerTestService/auth').then(function(service) {
       service.call(ctx, 'foo').then(function(value) {
-        assert.error(new Error('call should not have succeeded. res:' + value));
+        assert.error(new Error('call should not have succeeded' + value));
         res.end(assert);
       }).catch(function(err) {
+        // We expect to get to the error case.
         assert.ok(err);
         res.end(assert);
       });

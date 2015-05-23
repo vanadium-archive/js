@@ -8,11 +8,12 @@ var CaveatValidatorRegistry =
 var caveats = require('../../src/security/caveats');
 var vdlSecurity = require('../../src/gen-vdl/v.io/v23/security');
 var context = require('../../src/context');
+var SecurityCall = require('../../src/security/call');
 var Time = require('../../src/gen-vdl/v.io/v23/vdlroot/time').Time;
 var vdl = require('../../src/vdl');
 
 function getMockSecurityCall() {
-  return {
+  return new SecurityCall({
     method: 'aMethod', // only field currently used
     suffix: '',
     methodTags: [],
@@ -28,7 +29,9 @@ function getMockSecurityCall() {
     remoteBlessingStrings: [],
     localEndpoint: '',
     remoteEndpoint: ''
-  };
+  },
+  null, // controller
+  context.Context());
 }
 
 function assertValidation(t, cavType, val, cb) {

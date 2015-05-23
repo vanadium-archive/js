@@ -12,7 +12,7 @@ var verror = require('../gen-vdl/v.io/v23/verror');
 var MessageType = require('../proxy/message-type');
 var Incoming = MessageType.Incoming;
 var Outgoing = MessageType.Outgoing;
-var createSecurityCall = require('../security/create-security-call');
+var SecurityCall = require('../security/call');
 var InspectableFunction = require('../lib/inspectable-function');
 var GranterResponse =
 require('../gen-vdl/v.io/x/ref/services/wspr/internal/app').GranterResponse;
@@ -25,14 +25,13 @@ module.exports = GranterRouter;
  * grant requests.
  * @private
  */
-function GranterRouter(proxy, rootCtx, blessingsManager) {
+function GranterRouter(proxy, rootCtx) {
   proxy.addIncomingHandler(Incoming.GRANTER_REQUEST, this);
 
   this._proxy = proxy;
   this._rootCtx = rootCtx;
   this.nextGranterId = 0;
   this.activeGranters = {};
-  this._blessingsManager = blessingsManager;
 }
 
 /**
@@ -55,10 +54,9 @@ GranterRouter.prototype.handleRequest = function(messageId, type, request) {
   }
 
   var router = this;
-  var granter;
   return vom.decode(request).then(function(request) {
     request = request.val;
-    granter = router.activeGranters[request.granterHandle];
+    var granter = router.activeGranters[request.granterHandle];
     if (!granter) {
       // TODO(bjornick): Pass in context here so we can generate useful error
       // messages
@@ -66,11 +64,7 @@ GranterRouter.prototype.handleRequest = function(messageId, type, request) {
         new verror.NoExistError(router._rootCtx, 'unknown granter'));
     }
     delete router.activeGranters[request.granterHandle];
-    return createSecurityCall(request.call, router._blessingsManager);
-  }, function(e) {
-    return Promise.reject(
-      new verror.NoExistError(router._rootCtx, 'failed to decode message'));
-  }).then(function(securityCall) {
+    var securityCall = new SecurityCall(request.call, router._controller);
     var ctx = router._rootCtx;
     var inspectFn = new InspectableFunction(granter);
     var resolve;
@@ -87,6 +81,9 @@ GranterRouter.prototype.handleRequest = function(messageId, type, request) {
                 return resolve(res);
               });
     return promise;
+  }, function(e) {
+    return Promise.reject(
+      new verror.NoExistError(router._rootCtx, 'failed to decode message'));
   }).then(function(outBlessings) {
     var result = new GranterResponse({blessings: outBlessings[0]._id});
     var data = hexVom.encode(result);

@@ -6,9 +6,9 @@ var Incoming = require('./message-type').Incoming;
 var emitStreamError = require('../lib/emit-stream-error');
 var vError = require('../gen-vdl/v.io/v23/verror');
 var SharedContextKeys = require('../runtime/shared-context-keys');
-var BlessingsId =
-  require('../gen-vdl/v.io/x/ref/services/wspr/internal/principal').BlessingsId;
-var runtimeFromContext = require('../runtime/runtime-from-context');
+var Blessings = require('../security/blessings');
+var JsBlessings =
+  require('../gen-vdl/v.io/x/ref/services/wspr/internal/principal').JsBlessings;
 var TaskSequence = require('../lib/task-sequence');
 var Promise = require('../lib/promise');
 var vom = require('../vom');
@@ -58,16 +58,12 @@ Handler.prototype.handleStreamData = function(data) {
   }
   var handler = this;
   return vom.decode(data).then(function(data) {
-    if (data instanceof BlessingsId) {
-      var runtime = runtimeFromContext(handler._ctx);
-      runtime.blessingsManager.blessingsFromId(data)
-      .then(function(blessings) {
-        blessings.retain();
-        handler._stream._queueRead(blessings);
-      });
-    } else {
-      handler._stream._queueRead(data);
+    if (data instanceof JsBlessings) {
+      data = new Blessings(data.handle, data.publicKey,
+                           handler._controller);
+                           data.retain();
     }
+    handler._stream._queueRead(data);
   }, function(e) {
     emitStreamError(handler._stream,
                     new vError.InternalError(
