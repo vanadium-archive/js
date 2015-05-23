@@ -30,7 +30,6 @@ module.exports = {
     CANCEL: 7, // A request to cancel a previously invoked JS method.
     CAVEAT_VALIDATION_REQUEST: 8, // A request to validate a set of caveats
     LOG_MESSAGE: 9,  // A request to log a message.
-    GRANTER_REQUEST: 10, // A request to call a granter
-    BLESSINGS_CACHE_MESSAGE: 11, // A request to update the blessings cache
+    GRANTER_REQUEST: 10 // A request to call a granter
   }
 };

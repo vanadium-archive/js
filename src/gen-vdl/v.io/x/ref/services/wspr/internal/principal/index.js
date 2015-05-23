@@ -16,39 +16,16 @@ module.exports = {};
 
 
 // Types:
-var _typeBlessingsCacheAddMessage = new vdl.Type();
-var _typeBlessingsCacheDeleteMessage = new vdl.Type();
-var _typeBlessingsCacheMessage = new vdl.Type();
 var _typeBlessingsHandle = new vdl.Type();
-var _typeBlessingsId = new vdl.Type();
 var _typeJsBlessings = new vdl.Type();
-_typeBlessingsCacheAddMessage.kind = vdl.kind.STRUCT;
-_typeBlessingsCacheAddMessage.name = "v.io/x/ref/services/wspr/internal/principal.BlessingsCacheAddMessage";
-_typeBlessingsCacheAddMessage.fields = [{name: "CacheId", type: _typeBlessingsId}, {name: "Blessings", type: _typeJsBlessings}];
-_typeBlessingsCacheDeleteMessage.kind = vdl.kind.STRUCT;
-_typeBlessingsCacheDeleteMessage.name = "v.io/x/ref/services/wspr/internal/principal.BlessingsCacheDeleteMessage";
-_typeBlessingsCacheDeleteMessage.fields = [{name: "CacheId", type: _typeBlessingsId}, {name: "DeleteAfter", type: vdl.types.UINT32}];
-_typeBlessingsCacheMessage.kind = vdl.kind.UNION;
-_typeBlessingsCacheMessage.name = "v.io/x/ref/services/wspr/internal/principal.BlessingsCacheMessage";
-_typeBlessingsCacheMessage.fields = [{name: "Add", type: _typeBlessingsCacheAddMessage}, {name: "Delete", type: _typeBlessingsCacheDeleteMessage}];
 _typeBlessingsHandle.kind = vdl.kind.INT32;
 _typeBlessingsHandle.name = "v.io/x/ref/services/wspr/internal/principal.BlessingsHandle";
-_typeBlessingsId.kind = vdl.kind.UINT32;
-_typeBlessingsId.name = "v.io/x/ref/services/wspr/internal/principal.BlessingsId";
 _typeJsBlessings.kind = vdl.kind.STRUCT;
 _typeJsBlessings.name = "v.io/x/ref/services/wspr/internal/principal.JsBlessings";
 _typeJsBlessings.fields = [{name: "Handle", type: _typeBlessingsHandle}, {name: "PublicKey", type: vdl.types.STRING}];
-_typeBlessingsCacheAddMessage.freeze();
-_typeBlessingsCacheDeleteMessage.freeze();
-_typeBlessingsCacheMessage.freeze();
 _typeBlessingsHandle.freeze();
-_typeBlessingsId.freeze();
 _typeJsBlessings.freeze();
-module.exports.BlessingsCacheAddMessage = (vdl.registry.lookupOrCreateConstructor(_typeBlessingsCacheAddMessage));
-module.exports.BlessingsCacheDeleteMessage = (vdl.registry.lookupOrCreateConstructor(_typeBlessingsCacheDeleteMessage));
-module.exports.BlessingsCacheMessage = (vdl.registry.lookupOrCreateConstructor(_typeBlessingsCacheMessage));
 module.exports.BlessingsHandle = (vdl.registry.lookupOrCreateConstructor(_typeBlessingsHandle));
-module.exports.BlessingsId = (vdl.registry.lookupOrCreateConstructor(_typeBlessingsId));
 module.exports.JsBlessings = (vdl.registry.lookupOrCreateConstructor(_typeJsBlessings));
 
 
@@ -65,8 +42,6 @@ module.exports.JsBlessings = (vdl.registry.lookupOrCreateConstructor(_typeJsBles
 
 
 // Services:
-
-   
 
    
  
