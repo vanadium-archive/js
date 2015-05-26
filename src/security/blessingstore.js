@@ -8,7 +8,7 @@
  */
 
  var Deferred = require('../lib/deferred');
- var Blessings = require('./blessings');
+ var runtimeFromContext = require('../../src/runtime/runtime-from-context');
  var verror = require('../gen-vdl/v.io/v23/verror');
 
  module.exports = BlessingStore;
@@ -185,14 +185,17 @@
    controller.blessingStorePeerBlessings(ctx)
    .then(function(peerBlessings) {
      var outPeerBlessings = new Map();
-     peerBlessings.forEach(function(jsBlessings, pattern) {
-       var blessingObj = new Blessings(
-         jsBlessings.handle,
-         jsBlessings.publicKey,
-         controller);
-       outPeerBlessings.set(pattern, blessingObj);
+     var promises = [];
+     peerBlessings.forEach(function(blessId, pattern) {
+       var runtime = runtimeFromContext(ctx);
+       promises.push(runtime.blessingsManager.blessingsFromId(blessId)
+       .then(function(blessingsObj) {
+         outPeerBlessings.set(pattern, blessingsObj);
+       }));
      });
-     def.resolve(outPeerBlessings);
+     return Promise.all(promises).then(function() {
+       def.resolve(outPeerBlessings);
+     });
    }).catch(function(err) {
      def.reject(err);
    });
