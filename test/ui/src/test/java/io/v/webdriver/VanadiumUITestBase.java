@@ -10,7 +10,6 @@ import org.junit.Rule;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeDriverService;
-import org.openqa.selenium.chrome.ChromeOptions;
 
 import io.v.webdriver.htmlreport.HTMLReportData;
 import io.v.webdriver.commonpages.ChromeSignInPage;
@@ -92,9 +91,7 @@ public class VanadiumUITestBase {
         .usingAnyFreePort().build();
     service.stop();
     service.start();
-    ChromeOptions options = new ChromeOptions();
-    options.addArguments("--no-sandbox");
-    driver = new ChromeDriver(service, options);
+    driver = new ChromeDriver(service);
     driver.manage().window().maximize();
 
     testFailureWatcher.setup(this, driver, service);
