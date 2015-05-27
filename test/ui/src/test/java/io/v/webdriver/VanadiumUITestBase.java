@@ -11,6 +11,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeDriverService;
 
+import io.v.webdriver.Util;
 import io.v.webdriver.htmlreport.HTMLReportData;
 import io.v.webdriver.commonpages.ChromeSignInPage;
 import io.v.webdriver.commonpages.ExtensionInstallationPage;
@@ -143,5 +144,8 @@ public class VanadiumUITestBase {
     // Check Vanadium extension option page.
     ExtensionOptionPage extensionOptionPage = new ExtensionOptionPage(driver, reportData);
     extensionOptionPage.go();
+
+    // Wait a little bit to allow the extension to get ready.
+    Util.sleep(5000);
   }
 }
