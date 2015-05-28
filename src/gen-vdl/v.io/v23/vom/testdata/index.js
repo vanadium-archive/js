@@ -22,6 +22,8 @@ var _type11 = new vdl.Type();
 var _type12 = new vdl.Type();
 var _type13 = new vdl.Type();
 var _type14 = new vdl.Type();
+var _type15 = new vdl.Type();
+var _type16 = new vdl.Type();
 var _type2 = new vdl.Type();
 var _type3 = new vdl.Type();
 var _type4 = new vdl.Type();
@@ -85,6 +87,8 @@ var _typeSetOnlyB2 = new vdl.Type();
 var _typeSetOnlyMap = new vdl.Type();
 var _typeSetStructMap = new vdl.Type();
 var _typeSometimesSetMap = new vdl.Type();
+var _typeStructAny = new vdl.Type();
+var _typeStructMap = new vdl.Type();
 var _typeStructOnlyMap = new vdl.Type();
 var _typeTestCase = new vdl.Type();
 var _typeVomdataStruct = new vdl.Type();
@@ -94,22 +98,29 @@ var _typeZStruct = new vdl.Type();
 _type1.kind = vdl.kind.LIST;
 _type1.name = "";
 _type1.elem = _typeTestCase;
-_type10.kind = vdl.kind.LIST;
+_type10.kind = vdl.kind.MAP;
 _type10.name = "";
-_type10.elem = vdl.types.INT32;
+_type10.elem = _type11;
+_type10.key = vdl.types.STRING;
 _type11.kind = vdl.kind.LIST;
 _type11.name = "";
-_type11.elem = vdl.types.STRING;
-_type12.kind = vdl.kind.MAP;
+_type11.elem = vdl.types.TYPEOBJECT;
+_type12.kind = vdl.kind.LIST;
 _type12.name = "";
-_type12.elem = _type13;
-_type12.key = vdl.types.STRING;
+_type12.elem = vdl.types.INT32;
 _type13.kind = vdl.kind.LIST;
 _type13.name = "";
-_type13.elem = _typeConvertGroup;
-_type14.kind = vdl.kind.LIST;
+_type13.elem = vdl.types.STRING;
+_type14.kind = vdl.kind.MAP;
 _type14.name = "";
-_type14.elem = vdl.types.ANY;
+_type14.elem = _type15;
+_type14.key = vdl.types.STRING;
+_type15.kind = vdl.kind.LIST;
+_type15.name = "";
+_type15.elem = _typeConvertGroup;
+_type16.kind = vdl.kind.LIST;
+_type16.name = "";
+_type16.elem = vdl.types.ANY;
 _type2.kind = vdl.kind.LIST;
 _type2.name = "";
 _type2.elem = vdl.types.BYTE;
@@ -131,11 +142,11 @@ _type7.name = "";
 _type7.elem = _typeRecStruct;
 _type8.kind = vdl.kind.MAP;
 _type8.name = "";
-_type8.elem = _type9;
-_type8.key = vdl.types.STRING;
-_type9.kind = vdl.kind.LIST;
+_type8.elem = vdl.types.INT64;
+_type8.key = vdl.types.INT64;
+_type9.kind = vdl.kind.OPTIONAL;
 _type9.name = "";
-_type9.elem = vdl.types.TYPEOBJECT;
+_type9.elem = _typeStructAny;
 _typeAbcStruct.kind = vdl.kind.STRUCT;
 _typeAbcStruct.name = "v.io/v23/vom/testdata.AbcStruct";
 _typeAbcStruct.fields = [{name: "A", type: vdl.types.BOOL}, {name: "B", type: vdl.types.STRING}, {name: "C", type: vdl.types.INT64}];
@@ -161,7 +172,7 @@ _typeBrieEnum.name = "v.io/v23/vom/testdata.BrieEnum";
 _typeBrieEnum.labels = ["Glee", "Brie", "Three"];
 _typeConvertGroup.kind = vdl.kind.STRUCT;
 _typeConvertGroup.name = "v.io/v23/vom/testdata.ConvertGroup";
-_typeConvertGroup.fields = [{name: "Name", type: vdl.types.STRING}, {name: "PrimaryType", type: vdl.types.TYPEOBJECT}, {name: "Values", type: _type14}];
+_typeConvertGroup.fields = [{name: "Name", type: vdl.types.STRING}, {name: "PrimaryType", type: vdl.types.TYPEOBJECT}, {name: "Values", type: _type16}];
 _typeFoodEnum.kind = vdl.kind.ENUM;
 _typeFoodEnum.name = "v.io/v23/vom/testdata.FoodEnum";
 _typeFoodEnum.labels = ["Bean", "Brie", "Cherry"];
@@ -300,6 +311,12 @@ _typeSometimesSetMap.kind = vdl.kind.MAP;
 _typeSometimesSetMap.name = "v.io/v23/vom/testdata.SometimesSetMap";
 _typeSometimesSetMap.elem = vdl.types.ANY;
 _typeSometimesSetMap.key = vdl.types.FLOAT64;
+_typeStructAny.kind = vdl.kind.STRUCT;
+_typeStructAny.name = "v.io/v23/vom/testdata.StructAny";
+_typeStructAny.fields = [{name: "Any", type: vdl.types.ANY}];
+_typeStructMap.kind = vdl.kind.STRUCT;
+_typeStructMap.name = "v.io/v23/vom/testdata.StructMap";
+_typeStructMap.fields = [{name: "Map", type: _type8}];
 _typeStructOnlyMap.kind = vdl.kind.MAP;
 _typeStructOnlyMap.name = "v.io/v23/vom/testdata.StructOnlyMap";
 _typeStructOnlyMap.elem = vdl.types.UINT64;
@@ -309,7 +326,7 @@ _typeTestCase.name = "v.io/v23/vom/testdata.TestCase";
 _typeTestCase.fields = [{name: "Name", type: vdl.types.STRING}, {name: "Value", type: vdl.types.ANY}, {name: "TypeString", type: vdl.types.STRING}, {name: "Hex", type: vdl.types.STRING}, {name: "HexVersion", type: vdl.types.STRING}, {name: "HexType", type: vdl.types.STRING}, {name: "HexValue", type: vdl.types.STRING}];
 _typeVomdataStruct.kind = vdl.kind.STRUCT;
 _typeVomdataStruct.name = "v.io/v23/vom/testdata.VomdataStruct";
-_typeVomdataStruct.fields = [{name: "EncodeDecodeData", type: _type14}, {name: "CompatData", type: _type8}, {name: "ConvertData", type: _type12}];
+_typeVomdataStruct.fields = [{name: "EncodeDecodeData", type: _type16}, {name: "CompatData", type: _type10}, {name: "ConvertData", type: _type14}];
 _typeXyzStruct.kind = vdl.kind.STRUCT;
 _typeXyzStruct.name = "v.io/v23/vom/testdata.XyzStruct";
 _typeXyzStruct.fields = [{name: "X", type: vdl.types.BOOL}, {name: "Y", type: _typeMBool}, {name: "Z", type: vdl.types.STRING}];
@@ -325,6 +342,8 @@ _type11.freeze();
 _type12.freeze();
 _type13.freeze();
 _type14.freeze();
+_type15.freeze();
+_type16.freeze();
 _type2.freeze();
 _type3.freeze();
 _type4.freeze();
@@ -388,6 +407,8 @@ _typeSetOnlyB2.freeze();
 _typeSetOnlyMap.freeze();
 _typeSetStructMap.freeze();
 _typeSometimesSetMap.freeze();
+_typeStructAny.freeze();
+_typeStructMap.freeze();
 _typeStructOnlyMap.freeze();
 _typeTestCase.freeze();
 _typeVomdataStruct.freeze();
@@ -463,6 +484,8 @@ module.exports.SetOnlyB2 = (vdl.registry.lookupOrCreateConstructor(_typeSetOnlyB
 module.exports.SetOnlyMap = (vdl.registry.lookupOrCreateConstructor(_typeSetOnlyMap));
 module.exports.SetStructMap = (vdl.registry.lookupOrCreateConstructor(_typeSetStructMap));
 module.exports.SometimesSetMap = (vdl.registry.lookupOrCreateConstructor(_typeSometimesSetMap));
+module.exports.StructAny = (vdl.registry.lookupOrCreateConstructor(_typeStructAny));
+module.exports.StructMap = (vdl.registry.lookupOrCreateConstructor(_typeStructMap));
 module.exports.StructOnlyMap = (vdl.registry.lookupOrCreateConstructor(_typeStructOnlyMap));
 module.exports.TestCase = (vdl.registry.lookupOrCreateConstructor(_typeTestCase));
 module.exports.VomdataStruct = (vdl.registry.lookupOrCreateConstructor(_typeVomdataStruct));
@@ -2796,9 +2819,116 @@ new vdl.BigInt(1, new Uint8Array([0x3])),
   'hexType': "513407001c762e696f2f7632332f766f6d2f74657374646174612e4e556e696f6e01030001410101e10001420103e10001430109e1e1",
   'hexValue': "1c29",
 },
+{
+  'name': "StructAny{}",
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeStructAny))({
+  'any': null,
+}, true), _typeStructAny),
+  'typeString': "v.io/v23/vom/testdata.StructAny struct{Any any}",
+  'hex': "80512d06001f762e696f2f7632332f766f6d2f74657374646174612e537472756374416e7901010003416e79010fe1e15201e1",
+  'hexVersion': "80",
+  'hexType': "512d06001f762e696f2f7632332f766f6d2f74657374646174612e537472756374416e7901010003416e79010fe1e1",
+  'hexValue': "5201e1",
+},
+{
+  'name': "StructAny{Any: false}",
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeStructAny))({
+  'any': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.BOOL))(false, true), vdl.types.BOOL),
+}, true), _typeStructAny),
+  'typeString': "v.io/v23/vom/testdata.StructAny struct{Any any}",
+  'hex': "80512d06001f762e696f2f7632332f766f6d2f74657374646174612e537472756374416e7901010003416e79010fe1e15204000100e1",
+  'hexVersion': "80",
+  'hexType': "512d06001f762e696f2f7632332f766f6d2f74657374646174612e537472756374416e7901010003416e79010fe1e1",
+  'hexValue': "5204000100e1",
+},
+{
+  'name': "StructAny{Any: StructMap{}}",
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeStructAny))({
+  'any': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeStructMap))({
+  'map': new Map([]),
+}, true), _typeStructMap),
+}, true), _typeStructAny),
+  'typeString': "v.io/v23/vom/testdata.StructAny struct{Any any}",
+  'hex': "80512d06001f762e696f2f7632332f766f6d2f74657374646174612e537472756374416e7901010003416e79010fe1e155060501090209e1532d06001f762e696f2f7632332f766f6d2f74657374646174612e5374727563744d6170010100034d6170012be1e15204002ae1e1",
+  'hexVersion': "80",
+  'hexType': "512d06001f762e696f2f7632332f766f6d2f74657374646174612e537472756374416e7901010003416e79010fe1e155060501090209e1532d06001f762e696f2f7632332f766f6d2f74657374646174612e5374727563744d6170010100034d6170012be1e1",
+  'hexValue': "5204002ae1e1",
+},
+{
+  'name': "StructAny{Any: StructMap{Map: {0: 0}}}",
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeStructAny))({
+  'any': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeStructMap))({
+  'map': new Map([
+  [new vdl.BigInt(0, new Uint8Array([])), new vdl.BigInt(0, new Uint8Array([]))]]),
+}, true), _typeStructMap),
+}, true), _typeStructAny),
+  'typeString': "v.io/v23/vom/testdata.StructAny struct{Any any}",
+  'hex': "80512d06001f762e696f2f7632332f766f6d2f74657374646174612e537472756374416e7901010003416e79010fe1e155060501090209e1532d06001f762e696f2f7632332f766f6d2f74657374646174612e5374727563744d6170010100034d6170012be1e15208002a00010000e1e1",
+  'hexVersion': "80",
+  'hexType': "512d06001f762e696f2f7632332f766f6d2f74657374646174612e537472756374416e7901010003416e79010fe1e155060501090209e1532d06001f762e696f2f7632332f766f6d2f74657374646174612e5374727563744d6170010100034d6170012be1e1",
+  'hexValue': "5208002a00010000e1e1",
+},
+{
+  'name': "?StructAny(nil)",
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_type9))(null, true), _type9),
+  'typeString': "?v.io/v23/vom/testdata.StructAny struct{Any any}",
+  'hex': "80532d06001f762e696f2f7632332f766f6d2f74657374646174612e537472756374416e7901010003416e79010fe1e1510408012ae15201e0",
+  'hexVersion': "80",
+  'hexType': "532d06001f762e696f2f7632332f766f6d2f74657374646174612e537472756374416e7901010003416e79010fe1e1510408012ae1",
+  'hexValue': "5201e0",
+},
+{
+  'name': "?StructAny{}",
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_type9))({
+  'any': null,
+}, true), _type9),
+  'typeString': "?v.io/v23/vom/testdata.StructAny struct{Any any}",
+  'hex': "80532d06001f762e696f2f7632332f766f6d2f74657374646174612e537472756374416e7901010003416e79010fe1e1510408012ae15201e1",
+  'hexVersion': "80",
+  'hexType': "532d06001f762e696f2f7632332f766f6d2f74657374646174612e537472756374416e7901010003416e79010fe1e1510408012ae1",
+  'hexValue': "5201e1",
+},
+{
+  'name': "?StructAny{Any: false}",
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_type9))({
+  'any': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.BOOL))(false, true), vdl.types.BOOL),
+}, true), _type9),
+  'typeString': "?v.io/v23/vom/testdata.StructAny struct{Any any}",
+  'hex': "80532d06001f762e696f2f7632332f766f6d2f74657374646174612e537472756374416e7901010003416e79010fe1e1510408012ae15204000100e1",
+  'hexVersion': "80",
+  'hexType': "532d06001f762e696f2f7632332f766f6d2f74657374646174612e537472756374416e7901010003416e79010fe1e1510408012ae1",
+  'hexValue': "5204000100e1",
+},
+{
+  'name': "?StructAny{Any: StructMap{}}",
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_type9))({
+  'any': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeStructMap))({
+  'map': new Map([]),
+}, true), _typeStructMap),
+}, true), _type9),
+  'typeString': "?v.io/v23/vom/testdata.StructAny struct{Any any}",
+  'hex': "80532d06001f762e696f2f7632332f766f6d2f74657374646174612e537472756374416e7901010003416e79010fe1e1510408012ae157060501090209e1552d06001f762e696f2f7632332f766f6d2f74657374646174612e5374727563744d6170010100034d6170012ce1e15204002be1e1",
+  'hexVersion': "80",
+  'hexType': "532d06001f762e696f2f7632332f766f6d2f74657374646174612e537472756374416e7901010003416e79010fe1e1510408012ae157060501090209e1552d06001f762e696f2f7632332f766f6d2f74657374646174612e5374727563744d6170010100034d6170012ce1e1",
+  'hexValue': "5204002be1e1",
+},
+{
+  'name': "?StructAny{Any: StructMap{Map: {0: 0}}}",
+  'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_type9))({
+  'any': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeStructMap))({
+  'map': new Map([
+  [new vdl.BigInt(0, new Uint8Array([])), new vdl.BigInt(0, new Uint8Array([]))]]),
+}, true), _typeStructMap),
+}, true), _type9),
+  'typeString': "?v.io/v23/vom/testdata.StructAny struct{Any any}",
+  'hex': "80532d06001f762e696f2f7632332f766f6d2f74657374646174612e537472756374416e7901010003416e79010fe1e1510408012ae157060501090209e1552d06001f762e696f2f7632332f766f6d2f74657374646174612e5374727563744d6170010100034d6170012ce1e15208002b00010000e1e1",
+  'hexVersion': "80",
+  'hexType': "532d06001f762e696f2f7632332f766f6d2f74657374646174612e537472756374416e7901010003416e79010fe1e1510408012ae157060501090209e1552d06001f762e696f2f7632332f766f6d2f74657374646174612e5374727563744d6170010100034d6170012ce1e1",
+  'hexValue': "5208002b00010000e1e1",
+},
 ], true), _type1);
 
-  module.exports.CompatTests = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_type8))(new Map([
+  module.exports.CompatTests = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_type10))(new Map([
   ["bool", [
 vdl.types.BOOL,
 _typeNBool,
@@ -2819,7 +2949,7 @@ _typeSetStructMap,
 _typeMapStructSet,
 ]],
   ["number list/array", [
-_type10,
+_type12,
 _typeNArray2Uint64,
 _typeNListUint64,
 ]],
@@ -2846,7 +2976,7 @@ _typeNComplex64,
 _typeNComplex128,
 ]],
   ["string list/array", [
-_type11,
+_type13,
 _typeListString,
 _typeArray3String,
 _typeArray4String,
@@ -2875,9 +3005,9 @@ vdl.types.TYPEOBJECT,
   ["union B", [
 _typeNUnion,
 _typeBdeUnion,
-]]]), true), _type8);
+]]]), true), _type10);
 
-  module.exports.ConvertTests = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_type12))(new Map([
+  module.exports.ConvertTests = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_type14))(new Map([
   ["array/list", [
 {
   'name': "[3]string",
@@ -2888,11 +3018,11 @@ canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeArray3Strin
 "B",
 "C",
 ], true), _typeArray3String),
-canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_type11))([
+canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_type13))([
 "A",
 "B",
 "C",
-], true), _type11),
+], true), _type13),
 ],
 },
 {
@@ -3247,7 +3377,7 @@ canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeNUnion))({ 
 canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeNUnion))({ "a": true }, true), _typeNUnion),
 ],
 },
-]]]), true), _type12);
+]]]), true), _type14);
 
 
 
