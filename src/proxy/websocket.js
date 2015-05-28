@@ -14,8 +14,6 @@ var Deferred = require('./../lib/deferred');
 var TaskSequence = require('./../lib/task-sequence');
 var Proxy = require('./index');
 var vlog = require('./../lib/vlog');
-var vom = require('../vom');
-var byteUtil = require('../vdl/byte-util');
 
 /**
  * A client for the vanadium service using websockets. Connects to the vanadium
@@ -89,21 +87,7 @@ ProxyConnection.prototype.getWebSocket = function() {
   };
 
   websocket.onmessage = function(frame) {
-    var message;
-    try {
-      message = byteUtil.hex2Bytes(frame.data);
-    } catch (e) {
-      vlog.logger.warn('Failed to parse ' + frame.data + ' err: ' + e);
-      return;
-    }
-
-    self._tasks.addTask(function() {
-      return vom.decode(message).then(function(message) {
-        self.process(message);
-      }, function(e) {
-        vlog.logger.warn('Failed to parse ' + frame.data + ' err: ' + e);
-      });
-    });
+    self.process(frame.data);
   };
 
   return deferred.promise;
@@ -119,6 +103,7 @@ ProxyConnection.prototype.send = function(msg) {
 
 ProxyConnection.prototype.close = function(cb) {
   var deferred = new Deferred(cb);
+  this.cleanup();
 
   this.getWebSocket().then(close, function(err) {
     // TODO(jasoncampbell): Better error handling around websocket connection

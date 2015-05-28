@@ -9,13 +9,15 @@ module.exports = encode;
 /**
  * Encode encodes the provided value using a new instance of an Encoder.
  * @param  {*} v value to encode
- * @param {Type=} t optional type to convert to
+ * @param {module:vanadium.vom.Type=} t optional type to convert to
+ * @param {module:vanadium.vom.TypeEncoder} te optional type encoder to
+ * use.
  * @return {Uint8Array} encoded bytes
  * @memberof module:vanadium.vom
  */
-function encode(v, t) {
+function encode(v, t, te) {
   var writer = new ByteArrayMessageWriter();
-  var encoder = new Encoder(writer);
+  var encoder = new Encoder(writer, te);
   encoder.encode(v, t);
   return writer.getBytes();
 }

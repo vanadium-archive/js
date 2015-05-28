@@ -29,9 +29,10 @@ module.exports = TypeDecoder;
  */
 function TypeDecoder() {
   this._definedTypes = {};
-  // Partial types are similar to definedTypes but have type ids for child types
-  // rather than fully defined type structures.
+  // Partial types are similar to definedTypes but have type ids for child
+  // types rather than fully defined type structures.
   this._partialTypes = {};
+  this._waiters = {};
 }
 
 var kind = require('../vdl/kind.js');
@@ -42,28 +43,12 @@ var unwrap = require('../vdl/type-util').unwrap;
 var wiretype = require('../gen-vdl/v.io/v23/vom');
 var promiseFor = require('../lib/async-helper').promiseFor;
 var promiseWhile = require('../lib/async-helper').promiseWhile;
+var Promise = require('../lib/promise');
+var Deferred = require('../lib/deferred');
 
 var endByte = unwrap(wiretype.WireCtrlEnd);
 
-/**
- * Looks up a type in the decoded types cache by id.
- * @param {number} typeId The type id.
- * @return {Type} The decoded type or undefined.
- */
-TypeDecoder.prototype.lookupType = function(typeId) {
-  return this._lookupTypeImpl(typeId, true);
-};
-
-/**
- * Looks up a type in the decoded types cache by id.
- * @param {number} typeId The type id.
- * @param {boolean} defineUndefined True if partial types that this method
- * resolves to should be built. False otherwise.
- * Partial types should only be built when this is called through lookupType so
- * that they are built lazily.
- * @return {Type} The decoded type or undefined.
- */
-TypeDecoder.prototype._lookupTypeImpl = function(typeId, definePartialTypes) {
+TypeDecoder.prototype._tryLookupType = function(typeId) {
   if (typeId < 0) {
     throw new Error('invalid negative type id.');
   }
@@ -73,11 +58,29 @@ TypeDecoder.prototype._lookupTypeImpl = function(typeId, definePartialTypes) {
     return type;
   }
 
-  if (definePartialTypes && this._partialTypes.hasOwnProperty(typeId)) {
-    this._tryBuildPartialType(typeId, this._partialTypes[typeId]);
-  }
-
   return this._definedTypes[typeId];
+};
+
+/**
+ * Looks up a type in the decoded types cache by id.
+ * @param {number} typeId The type id.
+ * @return {Promise<Type>} The decoded type or undefined.
+ */
+TypeDecoder.prototype.lookupType = function(typeId) {
+  try {
+    var type = this._tryLookupType(typeId);
+    if (type) {
+      return Promise.resolve(type);
+    }
+  } catch(e) {
+    return Promise.reject(e);
+  }
+  if (this._partialTypes.hasOwnProperty(typeId)) {
+    this._tryBuildPartialType(typeId, this._partialTypes[typeId]);
+    return Promise.resolve(this._definedTypes[typeId]);
+  }
+  this._waiters[typeId] = this._waiters[typeId] || new Deferred();
+  return this._waiters[typeId].promise;
 };
 
 /**
@@ -98,6 +101,18 @@ TypeDecoder.prototype.defineType = function(typeId, messageBytes) {
   var td = this;
   return this._readPartialType(messageBytes).then(function(type) {
     td._partialTypes[typeId] = type;
+    // If there was another caller waiting on this partialTypeId,
+    // then we fully build the type and wake up all the waiters.
+    var def = td._waiters[typeId];
+    if (def) {
+      try {
+        td._tryBuildPartialType(typeId, td._partialTypes[typeId]);
+        def.resolve(td._definedTypes[typeId]);
+      } catch(e) {
+        def.reject(e);
+      }
+      delete td._waiters[typeId];
+    }
   });
 };
 
@@ -112,7 +127,7 @@ TypeDecoder.prototype._flattenTypeDepGraph = function(typeId, typeDeps) {
     return;
   }
   // Already defined?
-  if (this._lookupTypeImpl(typeId, false) !== undefined) {
+  if (this._tryLookupType(typeId) !== undefined) {
     return;
   }
   // Allocate a type for the partial type.
@@ -168,7 +183,7 @@ TypeDecoder.prototype._tryBuildPartialType = function(typeId) {
 
   var self = this;
   var getType = function(id) {
-    var type = self._lookupTypeImpl(id, false);
+    var type = self._tryLookupType(id);
     if (type !== undefined) {
       return type;
     }

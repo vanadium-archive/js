@@ -52,13 +52,14 @@ ByteStreamMessageReader.prototype.nextMessageType = function(typeDecoder) {
         return bsmr.nextMessageType(typeDecoder);
       });
     }
-    var type = typeDecoder.lookupType(typeId);
-    if (TypeUtil.shouldSendLength(type)) {
-      return bsmr.rawReader.readUint().then(function() {
-        return type;
-      });
-    }
-    return type;
+    return typeDecoder.lookupType(typeId).then(function(type) {
+      if (TypeUtil.shouldSendLength(type)) {
+        return bsmr.rawReader.readUint().then(function() {
+          return type;
+        });
+      }
+      return type;
+    });
   }, function(err) {
     // Hopefull this is an eof.
     return null;

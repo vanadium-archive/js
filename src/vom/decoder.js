@@ -34,12 +34,14 @@ var nilByte = unwrap(wiretype.WireCtrlNil);
  * @param {module:vanadium.vom.ByteArrayMessageReader} reader The message
  * reader.
  * @param {boolean=} deepWrap Whether to deeply wrap. Defaults to false.
+ * @param {module:vanadium.vom.TypeDecoder} typeDecoder The type decoder to
+ * use.  This can be null.
  * @memberof module:vanadium.vom
  * @constructor
  */
-function Decoder(messageReader, deepWrap) {
+function Decoder(messageReader, deepWrap, typeDecoder) {
   this._messageReader = messageReader;
-  this._typeDecoder = new TypeDecoder();
+  this._typeDecoder = typeDecoder || new TypeDecoder();
   this._deepWrap = deepWrap || false;
   this._tasks = new TaskSequence();
 }
@@ -142,8 +144,11 @@ Decoder.prototype._decodeUnwrappedValue = function(t, reader) {
       return this._decodeOptional(t, reader);
     case kind.TYPEOBJECT:
       var decoder = this;
-      return reader.readUint().then(function(typeId) {
-        var type = decoder._typeDecoder.lookupType(typeId);
+      var typeId;
+      return reader.readUint().then(function(tId) {
+        typeId = tId;
+        return decoder._typeDecoder.lookupType(typeId);
+      }).then(function(type) {
         if (type === undefined) {
           throw new Error('Undefined type for TYPEOBJECT id ' + typeId);
         }
@@ -302,8 +307,11 @@ Decoder.prototype._decodeAny = function(reader) {
     if (ctrl) {
       throw new Error('Unexpected control byte ' + ctrl);
     }
-    return reader.readUint().then(function(typeId) {
-      var type = decoder._typeDecoder.lookupType(typeId);
+    var typeId;
+    return reader.readUint().then(function(tId) {
+      typeId = tId;
+      return decoder._typeDecoder.lookupType(typeId);
+    }).then(function(type) {
       if (type === undefined) {
         throw new Error('Undefined typeid ' + typeId);
       }
