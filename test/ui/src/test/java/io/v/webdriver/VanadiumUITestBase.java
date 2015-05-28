@@ -10,6 +10,7 @@ import org.junit.Rule;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeDriverService;
+import org.openqa.selenium.chrome.ChromeOptions;
 
 import io.v.webdriver.Util;
 import io.v.webdriver.htmlreport.HTMLReportData;
@@ -42,6 +43,12 @@ public class VanadiumUITestBase {
    */
   private static final String PROPERTY_GOOGLE_BOT_USERNAME = "googleBotUsername";
   private static final String PROPERTY_GOOGLE_BOT_PASSWORD = "googleBotPassword";
+
+  /**
+   * System property name for the path to the Vanadium extension. Optional.
+   */
+  private static final String PROPERTY_VANADIUM_EXTENSION_PATH = "vanadiumExtensionPath";
+  protected boolean hasExtension;
 
   /**
    * The base dir to store html reports
@@ -92,7 +99,16 @@ public class VanadiumUITestBase {
         .usingAnyFreePort().build();
     service.stop();
     service.start();
-    driver = new ChromeDriver(service);
+    String vanadiumExtensionPath = System.getProperty(PROPERTY_VANADIUM_EXTENSION_PATH);
+    if (vanadiumExtensionPath == null) {
+      driver = new ChromeDriver(service);
+    } else {
+      ChromeOptions options = new ChromeOptions();
+      options.addArguments("load-extension=" + System.getProperty("vanadiumExtensionPath"));
+      driver = new ChromeDriver(service, options);
+      hasExtension = true;
+    }
+
     driver.manage().window().maximize();
 
     testFailureWatcher.setup(this, driver, service);
@@ -115,7 +131,7 @@ public class VanadiumUITestBase {
     File reportsFile = new File(reportsDir);
     if (!reportsFile.exists()) {
       if (reportsFile.mkdirs()) {
-        System.out.println(String.format("Reports dir '%s' creatred", reportsDir));
+        System.out.println(String.format("Reports dir '%s' created", reportsDir));
       } else {
         throw new RuntimeException(String.format("Failed to create reports dir '%s'", reportsDir));
       }
@@ -124,16 +140,32 @@ public class VanadiumUITestBase {
   }
 
   /**
-   * UI tests will commonly need to install the extension.
-   * The process involves signing into Chrome, installing the extension, and
-   * verifying that it was installed successfully.
+   * Sign in and install the extension, if necessary.
+   * A simple wrapper around signIn and installExtension.
    */
-  protected void installExtension(HTMLReportData reportData) throws Exception {
+  protected void signInAndInstallExtension(HTMLReportData reportData) throws Exception {
+    signIn(reportData);
+    if (!this.hasExtension) {
+      installExtension(reportData);
+    }
+  }
+
+  /**
+   * Sign into Chrome. This is needed to use the extension.
+   */
+  protected void signIn(HTMLReportData reportData) throws Exception {
     // Sign into Chrome.
     ChromeSignInPage chromeSignInPage = new ChromeSignInPage(driver, reportData);
     chromeSignInPage.go();
     chromeSignInPage.signIn(botUsername, botPassword);
+  }
 
+  /**
+   * UI tests will commonly need to install the extension.
+   * The process involves installing the extension and
+   * verifying that it was installed successfully.
+   */
+  protected void installExtension(HTMLReportData reportData) throws Exception {
     // Install Vanadium extension.
     ExtensionInstallationPage extensionInstallationPage =
         new ExtensionInstallationPage(driver, URL_EXTENSION, reportData);
@@ -141,11 +173,10 @@ public class VanadiumUITestBase {
     extensionInstallationPage.login(botPassword);
     extensionInstallationPage.install();
 
+    hasExtension = true;
+
     // Check Vanadium extension option page.
     ExtensionOptionPage extensionOptionPage = new ExtensionOptionPage(driver, reportData);
     extensionOptionPage.go();
-
-    // Wait a little bit to allow the extension to get ready.
-    Util.sleep(5000);
   }
 }
