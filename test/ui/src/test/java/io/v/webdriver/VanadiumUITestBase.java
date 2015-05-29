@@ -11,15 +11,24 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeDriverService;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.logging.LogEntries;
+import org.openqa.selenium.logging.LogEntry;
+import org.openqa.selenium.logging.LogType;
+import org.openqa.selenium.logging.LoggingPreferences;
+import org.openqa.selenium.remote.CapabilityType;
+import org.openqa.selenium.remote.DesiredCapabilities;
 
 import io.v.webdriver.Util;
 import io.v.webdriver.htmlreport.HTMLReportData;
 import io.v.webdriver.commonpages.ChromeSignInPage;
+import io.v.webdriver.commonpages.CaveatTabPage;
 import io.v.webdriver.commonpages.ExtensionInstallationPage;
 import io.v.webdriver.commonpages.ExtensionOptionPage;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Date;
+import java.util.logging.Level;
 
 /**
  * The base class for all Vanadium UI tests.
@@ -91,6 +100,9 @@ public class VanadiumUITestBase {
    */
   @Before
   public void setup() throws IOException {
+    // TODO(alexfandrianto): Used to debug the IP address of the machine. Possibly remove.
+    Util.printIPAddresses();
+
     String chromeDriverBin = System.getProperty(PROPERTY_CHROME_DRIVER_BIN);
     botUsername = System.getProperty(PROPERTY_GOOGLE_BOT_USERNAME);
     botPassword = System.getProperty(PROPERTY_GOOGLE_BOT_PASSWORD);
@@ -99,16 +111,25 @@ public class VanadiumUITestBase {
         .usingAnyFreePort().build();
     service.stop();
     service.start();
+
+    // Set up the ability to grab the console.log from the browser.
+    DesiredCapabilities capabilities = DesiredCapabilities.chrome();
+    LoggingPreferences logPrefs = new LoggingPreferences();
+    logPrefs.enable(LogType.BROWSER, Level.ALL);
+    capabilities.setCapability(CapabilityType.LOGGING_PREFS, logPrefs);
+
+    // If an extension was chosen, use that.
     String vanadiumExtensionPath = System.getProperty(PROPERTY_VANADIUM_EXTENSION_PATH);
-    if (vanadiumExtensionPath == null) {
-      driver = new ChromeDriver(service);
-    } else {
+    if (vanadiumExtensionPath != null) {
       ChromeOptions options = new ChromeOptions();
       options.addArguments("load-extension=" + System.getProperty("vanadiumExtensionPath"));
-      driver = new ChromeDriver(service, options);
+
+      capabilities.setCapability(ChromeOptions.CAPABILITY, options);
       hasExtension = true;
     }
 
+    // Create the driver and start using it.
+    driver = new ChromeDriver(service, capabilities);
     driver.manage().window().maximize();
 
     testFailureWatcher.setup(this, driver, service);
@@ -137,6 +158,16 @@ public class VanadiumUITestBase {
       }
     }
     return reportsDir;
+  }
+
+  /**
+   * Grab all of the log entries from the browser and print them out.
+   */
+  public void printConsoleLogs() {
+    LogEntries logEntries = driver.manage().logs().get(LogType.BROWSER);
+    for (LogEntry entry : logEntries) {
+        System.out.println(new Date(entry.getTimestamp()) + " " + entry.getLevel() + " " + entry.getMessage());
+    }
   }
 
   /**
@@ -178,5 +209,13 @@ public class VanadiumUITestBase {
     // Check Vanadium extension option page.
     ExtensionOptionPage extensionOptionPage = new ExtensionOptionPage(driver, reportData);
     extensionOptionPage.go();
+  }
+
+  /**
+   * UI tests will commonly need to bypass a caveat page.
+   */
+  protected void handleCaveatTab(HTMLReportData reportData) throws Exception {
+    CaveatTabPage caveatTabPage = new CaveatTabPage(driver, reportData);
+    caveatTabPage.bless();
   }
 }

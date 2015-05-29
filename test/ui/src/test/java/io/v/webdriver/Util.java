@@ -14,6 +14,10 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
+import java.util.Enumeration;
 
 /**
  * Utility functions.
@@ -88,5 +92,28 @@ public class Util {
     }
 
     htmlReportData.addScreenshotData(fullFileName, caption);
+  }
+
+  /**
+   * Prints the address of each network interface on the machine.
+   * Taken from http://stackoverflow.com/questions/9481865/getting-the-ip-address-of-the-current-machine-using-java
+   */
+  public static void printIPAddresses() {
+    try {
+      Enumeration<NetworkInterface> e = NetworkInterface.getNetworkInterfaces();
+      while(e.hasMoreElements())
+      {
+          NetworkInterface n = e.nextElement();
+          Enumeration<InetAddress> ee = n.getInetAddresses();
+          while (ee.hasMoreElements())
+          {
+              InetAddress i = ee.nextElement();
+              System.out.println(i.getHostAddress());
+          }
+      }
+    } catch(SocketException e) {
+      System.err.println("Could not print IP addresses");
+      e.printStackTrace();
+    }
   }
 }

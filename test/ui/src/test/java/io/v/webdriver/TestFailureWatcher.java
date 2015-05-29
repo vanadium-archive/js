@@ -31,6 +31,9 @@ public class TestFailureWatcher extends TestWatcher {
 
   @Override
   protected void failed(Throwable e, Description description) {
+    // Grab all the browser logs and print them out.
+    uiTest.printConsoleLogs();
+
     // Take a screenshot for the current screen and write the html report.
     HTMLReportData data = uiTest.getCurrentHTMLReportData();
     Util.takeScreenshot((TakesScreenshot)driver, "test-failed.png", "Test Failed", data);
