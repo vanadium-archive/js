@@ -15,8 +15,8 @@ module.exports = {
   encode: encode
 };
 
-function encode(x) {
-  return byteUtil.bytes2Hex(vom.encode(x));
+function encode(x, t, typeEnc) {
+  return byteUtil.bytes2Hex(vom.encode(x, t, typeEnc));
 }
 
 function decode(x) {

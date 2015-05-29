@@ -65,6 +65,8 @@ var Router = function(
   this._outstandingRequestForId = {};
   this._controller = controller;
   this._blessingsManager = blessingsManager;
+  this._typeEncoder = proxy.typeEncoder;
+  this._typeDecoder = proxy.typeDecoder;
 
   proxy.addIncomingHandler(Incoming.INVOKE_REQUEST, this);
   proxy.addIncomingHandler(Incoming.LOOKUP_REQUEST, this);
@@ -276,9 +278,9 @@ Router.prototype._setupStream = function(messageId, ctx, methodSig) {
     var readType = (methodSig.inStream ? methodSig.inStream.type : null);
     var writeType = (methodSig.outStream ? methodSig.outStream.type : null);
     var stream = new Stream(messageId, this._proxy.senderPromise, false,
-                        readType, writeType);
+                        readType, writeType, this._typeEncoder);
     this._streamMap[messageId] = stream;
-    var rpc = new StreamHandler(ctx, stream);
+    var rpc = new StreamHandler(ctx, stream, this._typeDecoder);
     this._proxy.addIncomingStreamHandler(messageId, rpc);
   } else {
     this._proxy.addIncomingStreamHandler(messageId,
@@ -388,7 +390,6 @@ Router.prototype._handleRPCRequestInternal = function(messageId, request) {
         call: call,
         stream: self._streamMap[messageId],
       };
-
 
       // Invoke the method;
       self.invokeMethod(invoker, options, function(err, results) {

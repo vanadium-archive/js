@@ -170,7 +170,7 @@ OutstandingRPC.prototype.start = function() {
     // Clients read data of type outStreamingType and write data of type
     // inStreamingType.
     def.stream = new Stream(this._id, streamingDeferred.promise, true,
-      this._outStreamingType, this._inStreamingType);
+      this._outStreamingType, this._inStreamingType, this._typeEncoder);
     def.promise.stream = def.stream;
   }
 
@@ -263,7 +263,7 @@ OutstandingRPC.prototype.handleStreamData = function(data) {
       return;
   }
   var rpc = this;
-  return vom.decode(data).then(function(data) {
+  return vom.decode(data, false, this._typeDecoder).then(function(data) {
     rpc._def.stream._queueRead(data);
   }).catch(function(e) {
     rpc.handleError(

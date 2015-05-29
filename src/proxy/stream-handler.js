@@ -22,12 +22,13 @@ module.exports = Handler;
  * @param {Stream} Stream instance
  * @constructor
  */
-function Handler(ctx, stream) {
+function Handler(ctx, stream, typeDecoder) {
   this._ctx = ctx;
   this._stream = stream;
   this._controller = ctx.value(SharedContextKeys.RUNTIME)._controller;
   this._pendingBlessings = [];
   this._tasks = new TaskSequence();
+  this._typeDecoder = typeDecoder;
 }
 
 Handler.prototype.handleResponse = function(type, data) {
@@ -60,7 +61,7 @@ Handler.prototype.handleStreamData = function(data) {
     return Promise.resolve();
   }
   var handler = this;
-  return vom.decode(data).then(function(data) {
+  return vom.decode(data, false, this._typeDecoder).then(function(data) {
     if (data instanceof BlessingsId) {
       var runtime = runtimeFromContext(handler._ctx);
       runtime.blessingsManager.blessingsFromId(data)

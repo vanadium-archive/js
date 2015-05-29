@@ -95,7 +95,7 @@ Namespace.prototype.glob = function(ctx, pattern, cb) {
  * @param {string} server Server object address
  * @param {number} ttl Expiry time for the mount in milliseconds. ttl of zero
  * implies never expire.
- * @param {boolean} Optional replaceMount Whether the previous mount should
+ * @param {boolean} [replaceMount] Whether the previous mount should
  * be replaced by the new server object address. False by default.
  * @param {function} cb(error) Optional callback
  * @return {Promise} A promise to be resolved when mount is complete or rejected

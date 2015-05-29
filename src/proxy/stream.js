@@ -11,7 +11,6 @@ var Outgoing = require('./message-type').Outgoing;
 var Duplex = require('stream').Duplex;
 var vlog = require('../lib/vlog');
 var inherits = require('inherits');
-var fill = require('../vdl/canonicalize').fill;
 var reduce = require('../vdl/canonicalize').reduce;
 var unwrap = require('../vdl/type-util').unwrap;
 var Blessings = require('../security/blessings');
@@ -43,7 +42,8 @@ var hexVom = require('../lib/hex-vom');
  * @inner
  * @memberof module:vanadium.rpc
  */
-var Stream = function(flowId, webSocketPromise, isClient, readType, writeType) {
+var Stream = function(flowId, webSocketPromise, isClient, readType, writeType,
+                      typeEncoder) {
   Duplex.call(this, { objectMode: true });
   this.flowId = flowId;
   this.isClient = isClient;
@@ -51,6 +51,7 @@ var Stream = function(flowId, webSocketPromise, isClient, readType, writeType) {
   this.writeType = writeType;
   this.webSocketPromise = webSocketPromise;
   this.onmessage = null;
+  this._typeEncoder = typeEncoder;
 
   // The buffer of messages that will be passed to push
   // when the internal buffer has room.
@@ -167,10 +168,9 @@ Stream.prototype.write = function(chunk, encoding, cb) {
   if (chunk instanceof Blessings) {
     chunk = chunk.convertToJsBlessings();
   }
-  var canonChunk = fill(chunk, this.writeType);
   var object = {
     id: this.flowId,
-    data: hexVom.encode(canonChunk),
+    data: hexVom.encode(chunk, this.writeType, this._typeEncoder),
     type: Outgoing.STREAM_VALUE
   };
   return Duplex.prototype.write.call(this, object, encoding, cb);
