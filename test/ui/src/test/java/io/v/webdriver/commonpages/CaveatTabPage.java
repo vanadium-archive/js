@@ -57,7 +57,7 @@ public class CaveatTabPage extends PageBase {
       Util.takeScreenshot((TakesScreenshot)driver, "found-caveats-no.png", "Found Caveats? No", htmlReportData);
       log("Attempt #2");
       // Refresh the page and try again.
-      driver.navigate().refresh(); 
+      driver.navigate().refresh();
       selectCaveatsTabHandle = waitForCaveatTab(mainTabHandle);
     }
 
