@@ -16,17 +16,22 @@ var TypeUtil = require('../vdl/type-util.js');
 
 /**
  * Create a VOM message reader backed by a byte array.
- * @param {Uint8Array} bytes The byte array.
+ * @param {Uint8Array|RawVomReader} bytes The byte array.
  * @constructor
  * @memberof module:vanadium.vom
  */
 function ByteArrayMessageReader(bytes) {
-  if (bytes[0] !== 0x80) {
-    throw new Error('Improperly formatted bytes. Must start with 0x80');
+  if (!(bytes instanceof RawVomReader)) {
+    this.rawReader = new RawVomReader(bytes);
+  } else {
+    this.rawReader = bytes;
   }
-  this.rawReader = new RawVomReader(bytes);
-  // Consume the header byte.
-  this.rawReader._readRawBytes(1);
+
+  this._headerPromise = this.rawReader.readByte().then(function(b) {
+    if (b !== 0x80) {
+      throw new Error('Improperly formatted bytes. Must start with 0x80 ' + b);
+    }
+  });
 }
 
 /**
@@ -38,27 +43,30 @@ function ByteArrayMessageReader(bytes) {
  */
 ByteArrayMessageReader.prototype.nextMessageType = function(typeDecoder) {
   var bamr = this;
-  return this.rawReader.readInt().then(function(typeId) {
-    if (typeId < 0) {
-      // Type message.  We add the type to the typeDecoder and continue reading
-      // trying to find a value message.
-      return  bamr.rawReader.readUint().then(function(len) {
-        return bamr.rawReader._readRawBytes(len);
-      }).then(function(body) {
-        return typeDecoder.defineType(-typeId, body);
-      }).then(function() {
-        return bamr.nextMessageType(typeDecoder);
-      });
-    }
-    var type = typeDecoder.lookupType(typeId);
-    if (TypeUtil.shouldSendLength(type)) {
-      return bamr.rawReader.readUint().then(function() {
+  return this._headerPromise.then(function() {
+    return bamr.rawReader.readInt().then(function(typeId) {
+      if (typeId < 0) {
+        // Type message.  We add the type to the typeDecoder and continue
+        // reading trying to find a value message.
+        return  bamr.rawReader.readUint().then(function(len) {
+          return bamr.rawReader._readRawBytes(len);
+        }).then(function(body) {
+          return typeDecoder.defineType(-typeId, body);
+        }).then(function() {
+          return bamr.nextMessageType(typeDecoder);
+        });
+      }
+      return typeDecoder.lookupType(typeId).then(function (type) {
+        if (TypeUtil.shouldSendLength(type)) {
+          return bamr.rawReader.readUint().then(function() {
+            return type;
+          });
+        }
         return type;
       });
-    }
-    return type;
-  }, function(err) {
-    // Hopefull this is an eof.
-    return null;
+    }, function(err) {
+      // Hopefull this is an eof.
+      return null;
+    });
   });
 };

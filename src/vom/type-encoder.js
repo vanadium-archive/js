@@ -25,22 +25,28 @@ var endByte = unwrap(wiretype.WireCtrlEnd);
  * Create a type encoder to help encode types and associate already sent types
  * to their type ids.
  * @constructor
- * @private
+ * @param {module:vanadium.vom.ByteArrayMessageWriter} messageWriter The message
+ * writer to write to.
+ * @param {function} flush A function that will be called every time a type
+ * message has been written.  An example is to write copy the bytes in
+ * messageWriter to the wire every time a type message is written.
+ * @memberof module:vanadium.vom
  */
-function TypeEncoder() {
+function TypeEncoder(messageWriter, flush) {
   this._typeIds = {};
   // TODO(bjornick): Use the vdl output after we fix:
   // https://github.com/veyron/release-issues/issues/1109
   this._nextId = unwrap(wiretype.WireIdFirstUserType);
+  this._messageWriter = messageWriter;
+  this._flush = flush;
 }
 
 /**
  * Encode a type on the specified message writer.
- * @param {MessageWriter} The message writer.
- * @param {Type} The type to encode.
+ * @param {module:vanadium.vom.Type} type The type to encode.
  * @return {number} The type id of the encoded type.
  */
-TypeEncoder.prototype.encodeType = function(messageWriter, type) {
+TypeEncoder.prototype.encodeType = function(type) {
   if (typeof type !== 'object') {
     throw new Error('Type must be an object, but instead had value ' + type);
   }
@@ -65,7 +71,10 @@ TypeEncoder.prototype.encodeType = function(messageWriter, type) {
   // This type wasn't in the cache. Update it, and encode the type.
   var typeId = this._nextId++;
   this._typeIds[stringifiedType] = typeId;
-  this._encodeWireType(messageWriter, type, typeId);
+  this._encodeWireType(type, typeId);
+  if (this._flush) {
+    this._flush();
+  }
   return typeId;
 };
 
@@ -108,11 +117,12 @@ var kindToBootstrapType = function(k) {
 
 /**
  * Write a wiretype description to the message writer.
+ * @private
  * @param {MessageWriter} messageWriter the message writer.
  * @param {Type} type the type of the message.
  * @param {number} typeId the type id for the type.
  */
-TypeEncoder.prototype._encodeWireType = function(messageWriter, type, typeId) {
+TypeEncoder.prototype._encodeWireType = function(type, typeId) {
   var rawWriter = new RawVomWriter();
   var i;
   var elemId;
@@ -143,7 +153,7 @@ TypeEncoder.prototype._encodeWireType = function(messageWriter, type, typeId) {
       rawWriter.writeByte(endByte);
       break;
     case kind.OPTIONAL:
-      elemId = this.encodeType(messageWriter, type.elem);
+      elemId = this.encodeType(type.elem);
       rawWriter.writeUint(BootstrapTypes.unionIds.OPTIONAL_TYPE);
       if (type.name !== '') {
         rawWriter.writeUint(0);
@@ -167,7 +177,7 @@ TypeEncoder.prototype._encodeWireType = function(messageWriter, type, typeId) {
       rawWriter.writeByte(endByte);
       break;
     case kind.ARRAY:
-      elemId = this.encodeType(messageWriter, type.elem);
+      elemId = this.encodeType(type.elem);
       rawWriter.writeUint(BootstrapTypes.unionIds.ARRAY_TYPE);
       if (type.name !== '') {
         rawWriter.writeUint(0);
@@ -180,7 +190,7 @@ TypeEncoder.prototype._encodeWireType = function(messageWriter, type, typeId) {
       rawWriter.writeByte(endByte);
       break;
     case kind.LIST:
-      elemId = this.encodeType(messageWriter, type.elem);
+      elemId = this.encodeType(type.elem);
       rawWriter.writeUint(BootstrapTypes.unionIds.LIST_TYPE);
       if (type.name !== '') {
         rawWriter.writeUint(0);
@@ -191,7 +201,7 @@ TypeEncoder.prototype._encodeWireType = function(messageWriter, type, typeId) {
       rawWriter.writeByte(endByte);
       break;
     case kind.SET:
-      keyId = this.encodeType(messageWriter, type.key);
+      keyId = this.encodeType(type.key);
       rawWriter.writeUint(BootstrapTypes.unionIds.SET_TYPE);
       if (type.name !== '') {
         rawWriter.writeUint(0);
@@ -202,8 +212,8 @@ TypeEncoder.prototype._encodeWireType = function(messageWriter, type, typeId) {
       rawWriter.writeByte(endByte);
       break;
     case kind.MAP:
-      keyId = this.encodeType(messageWriter, type.key);
-      elemId = this.encodeType(messageWriter, type.elem);
+      keyId = this.encodeType(type.key);
+      elemId = this.encodeType(type.elem);
       rawWriter.writeUint(BootstrapTypes.unionIds.MAP_TYPE);
       if (type.name !== '') {
         rawWriter.writeUint(0);
@@ -221,7 +231,7 @@ TypeEncoder.prototype._encodeWireType = function(messageWriter, type, typeId) {
       for (i = 0; i < type.fields.length; i++) {
         fieldInfo.push({
           name: util.capitalize(type.fields[i].name),
-          id: this.encodeType(messageWriter, type.fields[i].type)
+          id: this.encodeType(type.fields[i].type)
         });
       }
       if (type.kind === kind.STRUCT) {
@@ -249,5 +259,5 @@ TypeEncoder.prototype._encodeWireType = function(messageWriter, type, typeId) {
     default:
       throw new Error('encodeWireType with unknown kind: ' + type.kind);
   }
-  messageWriter.writeTypeMessage(typeId, rawWriter.getBytes());
+  this._messageWriter.writeTypeMessage(typeId, rawWriter.getBytes());
 };

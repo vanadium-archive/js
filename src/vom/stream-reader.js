@@ -31,7 +31,10 @@ StreamReader.prototype.addBytes = function(bytes) {
     return;
   }
   this._bufs.push(bytes);
-  this._bytesAvailableDef.resolve();
+  if (this._bytesAvailableDef) {
+    this._bytesAvailableDef.resolve();
+  }
+  this._bytesAvailableDef = null;
 };
 
 /**
@@ -40,7 +43,10 @@ StreamReader.prototype.addBytes = function(bytes) {
  */
 StreamReader.prototype.close = function() {
   this._closed = true;
-  this._bytesAvailableDef.resolve();
+  if (this._bytesAvailableDef) {
+    this._bytesAvailableDef.resolve();
+  }
+  this._bytesAvailableDef = null;
 };
 
 StreamReader.prototype._waitForData = function() {
@@ -125,7 +131,7 @@ StreamReader.prototype.readByteArray = function(amt) {
     return reader._waitForData().then(function() {
       var currentBuf = reader._bufs[0];
       while (bytesNeeded > 0 && currentBuf) {
-        if (currentBuf.length < bytesNeeded) {
+        if (currentBuf.length <= bytesNeeded) {
           // Consume the whole array.
           buf.set(currentBuf, pos);
           pos += currentBuf.length;

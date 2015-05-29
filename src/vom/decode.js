@@ -14,12 +14,14 @@ module.exports = decode;
  * @param  {boolean} [deepWrap=false] true if the values on the object should
  * remain wrapped with type information deeply, false (default) to strip
  * deep type information and obtain a more usage-friendly value
+ * @param {module:vanadium.vom.TypeDecoder} typeDecoder The type decoder to
+ * use.  This can be null.
  * @param  {module:vanadium.vom.decode~cb} cb
  * @return {Promise<*>} decoded value
  * @memberof module:vanadium.vom
  */
-function decode(bytes, deepWrap, cb) {
+function decode(bytes, deepWrap, typeDecoder, cb) {
   var reader = new ByteArrayMessageReader(bytes);
-  var decoder = new Decoder(reader, deepWrap);
+  var decoder = new Decoder(reader, deepWrap, typeDecoder);
   return decoder.decode(cb);
 }

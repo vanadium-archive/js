@@ -88,7 +88,7 @@ CaveatValidatorRegistry.prototype.validate =
     return cb(new vdlSecurity.CaveatNotRegisteredError(ctx,
       'Unknown caveat id: ' + this._makeKey(caveat.id)));
   }
-  return vom.decode(caveat.paramVom, false, function(err, val) {
+  return vom.decode(caveat.paramVom, false, null, function(err, val) {
     if (err) {
       return cb(err);
     }

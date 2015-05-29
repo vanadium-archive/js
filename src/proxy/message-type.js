@@ -17,7 +17,8 @@ module.exports = {
     AUTHORIZATION_RESPONSE: 12, // Response from an authorization call to JS.
     CANCEL: 17, // Cancel an ongoing JS initiated call.
     CAVEAT_VALIDATION_RESPONSE: 21, // Response to a caveat validation request.
-    GRANTER_RESPONSE: 22 // Response from a granter
+    GRANTER_RESPONSE: 22, // Response from a granter
+    TYPE_MESSAGE: 23,  // A type message from javascript.
   },
   Incoming: {
     INVOKE_REQUEST: 3, // Request to invoke a method on a JS server.
@@ -32,5 +33,6 @@ module.exports = {
     LOG_MESSAGE: 9,  // A request to log a message.
     GRANTER_REQUEST: 10, // A request to call a granter
     BLESSINGS_CACHE_MESSAGE: 11, // A request to update the blessings cache
+    TYPE_MESSAGE: 12,  // A type message from go.
   }
 };

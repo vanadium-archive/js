@@ -23,7 +23,9 @@ module.exports = {
   Encoder: require('./encoder'),
   Decoder: require('./decoder'),
   encode: require('./encode'),
-  decode: require('./decode')
+  decode: require('./decode'),
+  TypeDecoder: require('./type-decoder'),
+  TypeEncoder: require('./type-encoder')
 };
 
 require('./native-types'); // Register standard native types.

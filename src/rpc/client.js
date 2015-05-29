@@ -39,12 +39,10 @@ var vlog = require('../lib/vlog');
 var SharedContextKeys = require('../runtime/shared-context-keys');
 var vtrace = require('../vtrace');
 var Blessings = require('../security/blessings');
+var ByteArrayMessageWriter = require('../vom/byte-array-message-writer');
 var BlessingsId =
   require('../gen-vdl/v.io/x/ref/services/wspr/internal/principal').BlessingsId;
-var ByteStreamMessageReader = require('../vom/byte-stream-message-reader');
-var ByteStreamMessageWriter = require('../vom/byte-stream-message-writer');
 var Encoder = require('../vom/encoder');
-var Decoder = require('../vom/decoder');
 var TaskSequence = require('../lib/task-sequence');
 var runtimeFromContext = require('../runtime/runtime-from-context');
 var vom = require('../vom');
@@ -64,8 +62,8 @@ var OutstandingRPC = function(ctx, options, cb) {
   this._outStreamingType = options.outStreamingType;
   this._callOptions = options.callOptions;
   this._cb = cb;
-  this._encoder = options.encoder;
-  this._decoder = options.decoder;
+  this._typeEncoder = options.typeEncoder;
+  this._typeDecoder = options.typeDecoder;
   this._def = null;
   this._tasks = new TaskSequence();
 };
@@ -226,16 +224,16 @@ OutstandingRPC.prototype.handleResponse = function(type, data) {
 };
 
 OutstandingRPC.prototype.handleCompletion = function(data) {
+  var bytes;
   try {
-    var bytes = byteUtil.hex2Bytes(data);
-    this._decoder._messageReader.addBytes(bytes);
+    bytes = byteUtil.hex2Bytes(data);
   } catch (e) {
     this.handleError(
       new verror.InternalError(this._ctx, 'Failed to decode result: ', e));
       return Promise.resolve();
   }
   var rpc = this;
-  return this._decoder.decode().then(function(response) {
+  return vom.decode(bytes, false, this._typeDecoder).then(function(response) {
     vtrace.getStore(rpc._ctx).merge(response.traceResponse);
     vtrace.getSpan(rpc._ctx).finish();
 
@@ -243,7 +241,7 @@ OutstandingRPC.prototype.handleCompletion = function(data) {
     if (rpc._def.stream) {
       rpc._def.stream._queueClose();
     }
-    rpc._proxy.dequeue(this._id);
+    rpc._proxy.dequeue(rpc._id);
   }).catch(function(e) {
     rpc.handleError(
       new verror.InternalError(rpc._ctx, 'Failed to decode result: ', e));
@@ -327,10 +325,8 @@ OutstandingRPC.prototype.constructMessage = function() {
   };
 
   var header = new RpcRequest(jsonMessage);
-  var encoder = this._encoder;
-  if (!encoder._messageWriter) {
-    encoder._messageWriter = new ByteStreamMessageWriter();
-  }
+  var writer = new ByteArrayMessageWriter();
+  var encoder = new Encoder(writer, this._typeEncoder);
   encoder.encode(header);
   for (var i = 0; i < this._args.length; i++) {
     var o = this._args[i];
@@ -339,7 +335,7 @@ OutstandingRPC.prototype.constructMessage = function() {
     }
     encoder.encode(o);
   }
-  return byteUtil.bytes2Hex(encoder._messageWriter.consumeBytes());
+  return byteUtil.bytes2Hex(writer.getBytes());
 };
 
 /**
@@ -359,11 +355,11 @@ function Client(proxyConnection) {
   }
 
   this._proxyConnection = proxyConnection;
-  if (proxyConnection && proxyConnection.clientEncoder) {
-    this._encoder = proxyConnection.clientEncoder;
+  if (proxyConnection && proxyConnection.typeEncoder) {
+    this._typeEncoder = proxyConnection.typeEncoder;
   }
-  if (proxyConnection && proxyConnection.clientDecoder) {
-    this._decoder = proxyConnection.clientDecoder;
+  if (proxyConnection && proxyConnection.typeDecoder) {
+    this._typeDecoder = proxyConnection.typeDecoder;
   }
   this._controller = this.bindWithSignature(
     '__controller', [Controller.prototype._serviceDescription]);
@@ -576,10 +572,8 @@ Client.prototype.bindWithSignature = function(name, signature) {
         inStreamingType: inStreaming ? methodSig.inStream.type : null,
         outStreamingType: outStreaming ? methodSig.outStream.type : null,
         callOptions: callOptions,
-        // If there isn't an encoder or decoder cached, we just use a new one.
-        // This only really happens in unit tests.
-        encoder: client._encoder || new Encoder(),
-        decoder: client._decoder || new Decoder(new ByteStreamMessageReader()),
+        typeEncoder: client._typeEncoder,
+        typeDecoder: client._typeDecoder,
       }, callback);
 
       return rpc.start();

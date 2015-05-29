@@ -178,8 +178,8 @@ function encodeDecodeType(t, test, expected) {
   expected = expected || test;
 
   var writer = new ByteArrayMessageWriter();
-  var typeEncoder = new TypeEncoder();
-  var id = typeEncoder.encodeType(writer, test);
+  var typeEncoder = new TypeEncoder(writer);
+  var id = typeEncoder.encodeType(test);
 
   var typeDecoder = new TypeDecoder();
   var reader = new TypeMessageReader(writer.getBytes());
@@ -188,10 +188,11 @@ function encodeDecodeType(t, test, expected) {
   function readMessage() {
     return reader.nextMessage().then(function(message) {
       if (message === null) {
-        var resultType = typeDecoder.lookupType(id);
-        var resultStr = stringify(resultType);
-        var expectedStr = stringify(expected);
-        return t.equals(resultStr, expectedStr);
+        return typeDecoder.lookupType(id).then(function(resultType) {
+          var resultStr = stringify(resultType);
+          var expectedStr = stringify(expected);
+          return t.equals(resultStr, expectedStr);
+        });
       }
       if (j === UPPER_LOOP_LIMIT) {
         return t.fail('read too many messages');
@@ -245,9 +246,9 @@ test('type encoding encode errors', function(t) {
       var test = badTypes[testName];
 
       var writer = new ByteArrayMessageWriter();
-      var typeEncoder = new TypeEncoder();
+      var typeEncoder = new TypeEncoder(writer);
       t.throws(
-        typeEncoder.encodeType.bind(typeEncoder, writer, test),
+        typeEncoder.encodeType.bind(typeEncoder, test),
         testName
       );
     }

@@ -33,12 +33,19 @@ require('../vdl/es6-shim');
  * values to the other side of a connection.
  * @param {module:vanadium.vom.ByteArrayMessageWriter} messageWriter The
  * message writer to write to.
+ * @param {module:vanadim.vom.TypeEncoder} typeEncoder If set, the passed
+ * in type encoder will be used and the type messages will not appear in
+ * messageWriter's output.
  * @constructor
  * @memberof module:vanadium.vom
  */
-function Encoder(messageWriter) {
+function Encoder(messageWriter, typeEncoder) {
   this._messageWriter = messageWriter;
-  this._typeEncoder = new TypeEncoder();
+  if (typeEncoder) {
+    this._typeEncoder = typeEncoder;
+  } else {
+    this._typeEncoder = new TypeEncoder(messageWriter);
+  }
 }
 
 /**
@@ -54,7 +61,7 @@ Encoder.prototype.encode = function(val, type) {
   // Canonicalize and validate the value. This prepares the value for encoding.
   val = canonicalize.fill(val, type);
 
-  var typeId = this._typeEncoder.encodeType(this._messageWriter, type);
+  var typeId = this._typeEncoder.encodeType(type);
   var writer = new RawVomWriter();
   this._encodeValue(val, type, writer, false);
   this._messageWriter.writeValueMessage(typeId,
@@ -149,7 +156,7 @@ Encoder.prototype._encodeValue = function(v, t, writer, omitEmpty) {
     case kind.OPTIONAL:
       return this._encodeOptional(v, t, writer, omitEmpty);
     case kind.TYPEOBJECT:
-      var typeId = this._typeEncoder.encodeType(this._messageWriter, v);
+      var typeId = this._typeEncoder.encodeType(v);
       if (typeId === BootstrapTypes.definitions.ANY.id && omitEmpty) {
         return false;
       }
@@ -264,7 +271,7 @@ Encoder.prototype._encodeAny = function(v, writer, omitEmpty) {
     return true;
   }
   var t = guessType(v);
-  var typeId = this._typeEncoder.encodeType(this._messageWriter, t);
+  var typeId = this._typeEncoder.encodeType(t);
   writer.writeUint(typeId);
   this._encodeValue(v, t, writer, false);
   return true;
