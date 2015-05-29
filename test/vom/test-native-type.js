@@ -83,3 +83,30 @@ test('date - test toWireValue', function(t) {
   });
   t.end();
 });
+
+test('time - direct construction', function(t) {
+  var seconds = 10;
+  var nanos = 345000000;
+  var dateStr = '0001-01-01T00:00:10.345Z';
+  var time = new Time({
+    seconds: seconds,
+    nanos: nanos
+  });
+
+  // Time was constructed properly.
+  t.ok(time.seconds, 'seconds exists');
+  t.equal(time.seconds.toNativeNumberApprox(), seconds, 'seconds match');
+  t.equal(time.nanos, nanos, 'nanos match');
+
+  // Time, like a wire time, converts to date properly.
+  var date = registry.fromWireValue(Time.prototype._type, time);
+  t.equal(date.getTime(), Date.parse(dateStr), 'date matches');
+
+  // Wire time has the same fields, but wrapped.
+  var wireTime = registry.fromNativeValue(Time.prototype._type, date);
+  t.equal(wireTime.seconds.val.toNativeNumberApprox(),
+    time.seconds.toNativeNumberApprox(), 'seconds match');
+  t.equal(wireTime.nanos.val, time.nanos, 'nanos match');
+
+  t.end();
+});

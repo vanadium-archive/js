@@ -78,7 +78,9 @@ function createStructConstructor() {
       return new StructConstructor(val, deepWrap);
     }
     // Canonicalize the given value and copy the resultant fields.
-    var cpy = canonicalize.value(val, this._type, deepWrap);
+    var cpy = deepWrap ?
+      canonicalize.fill(val, this._type) :
+      canonicalize.construct(val, this._type);
 
     for (var fieldName in cpy) {
       if (!cpy.hasOwnProperty(fieldName)) {
@@ -103,7 +105,9 @@ function createWrappedConstructor() {
     if (!(this instanceof WrappedConstructor)) {
       return new WrappedConstructor(val, deepWrap);
     }
-    var ideal = canonicalize.value(val, this._type, deepWrap);
+    var ideal = deepWrap ?
+      canonicalize.fill(val, this._type) :
+      canonicalize.reduce(val, this._type);
     this.val = ideal.val;
   };
   constructor.prototype._wrappedType = true;
