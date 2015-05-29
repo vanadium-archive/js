@@ -41,6 +41,7 @@ module.exports = {
   value: canonicalizeExternal,
   type: canonicalizeTypeExternal,
   zero: canonicalizeZero,
+  construct: canonicalizeConstruct,
   fill: canonicalizeFill,
   reduce: canonicalizeReduce
 };
@@ -59,7 +60,21 @@ var ZERO_BIGINT = new BigInt(0, new Uint8Array());
  * @return {*} The canonical wire format of inValue.
  */
 function canonicalizeFill(inValue, t) {
-  return canonicalizeExternal(inValue, t, true);
+  return canonicalizeExternal(inValue, t, true, false);
+}
+
+/**
+ * Creates a new copy of inValue that is a constructor's in-memory format of
+ * inValue. Unlike reduce, it does not convert the copy to its native form.
+ * @function
+ * @name construct
+ * @memberof module:vanadium.vdl.canonicalize
+ * @param {*} inValue The value to convert to the flattened wire format.
+ * @param {module:vanadium.vdl.Type} t The type of inValue.
+ * @return {*} The canonical in-format of inValue.
+ */
+function canonicalizeConstruct(inValue, t) {
+  return canonicalizeExternal(inValue, t, false, false);
 }
 
 /**
@@ -73,15 +88,15 @@ function canonicalizeFill(inValue, t) {
  * @return {*} The canonical in-format of inValue.
  */
 function canonicalizeReduce(inValue, t) {
-  return canonicalizeExternal(inValue, t, false);
+  return canonicalizeExternal(inValue, t, false, true);
 }
 
 /**
  * Alias for canonicalizeExternal with inValue = undefined.
  * @private
  */
-function canonicalizeZero(t, deepWrap) {
-  return canonicalizeExternal(undefined, t, deepWrap);
+function canonicalizeZero(t, deepWrap, toNative) {
+  return canonicalizeExternal(undefined, t, deepWrap, toNative);
 }
 
 /**
@@ -93,17 +108,22 @@ function canonicalizeZero(t, deepWrap) {
  * @private
  * @param {*} inValue The value to be canonicalized.
  * @param {module:vanadium.vdl.Type} t The target type.
- * @param {boolean=} deepWrap Whether or not to deeply wrap. Defaults to true.
+ * @param {boolean=} deepWrap Whether or not to deeply wrap the contents.
+ * @param {boolean=} toNative Whether or not the final result needs to be
+ * converted to a native value.
  * @return {*} The canonicalized value. May potentially refer to v.
  */
-function canonicalizeExternal(inValue, t, deepWrap) {
+function canonicalizeExternal(inValue, t, deepWrap, toNative) {
   if (deepWrap === undefined) {
     deepWrap = true;
+  }
+  if (toNative === undefined) {
+    toNative = !deepWrap;
   }
 
   // Canonicalize the given value as a top-level value.
   var inType = TypeUtil.isTyped(inValue) ? inValue._type : undefined;
-  return canonicalize(inValue, inType, t, deepWrap, new Map(), true);
+  return canonicalize(inValue, inType, t, deepWrap, new Map(), true, toNative);
 }
 
 /**
@@ -119,16 +139,18 @@ function canonicalizeExternal(inValue, t, deepWrap) {
  * @param {boolean} deepWrap Whether or not to deeply wrap the contents.
  * @param {object} seen A cache from old to new
  * references that based on type.
- * @param {boolean} isTopLevelValue If true, then the return value is wrapped.
+ * @param {boolean} topLevel If true, then the return value is wrapped.
+ * @param {boolean} toNative Whether or not the final result needs to be
+ * converted to a native value.
  * @return {*} The canonicalized value. May potentially refer to v.
  */
-function canonicalize(inValue, inType, t, deepWrap, seen, isTopLevelValue) {
+function canonicalize(inValue, inType, t, deepWrap, seen, topLevel, toNative) {
   if (!(t instanceof Type)) {
     t = new Type(t);
   }
 
   // This value needs a wrapper if either flag is set.
-  var needsWrap = deepWrap || isTopLevelValue;
+  var needsWrap = deepWrap || topLevel;
 
   // Special case JSValue. Convert the inValue to JSValue form.
   var isJSValue = types.JSVALUE.equals(t);
@@ -155,7 +177,7 @@ function canonicalize(inValue, inType, t, deepWrap, seen, isTopLevelValue) {
     types.ANY.equals(inValue._type)) {
 
     return canonicalize(TypeUtil.unwrap(inValue), inValue._type, t, deepWrap,
-      seen, isTopLevelValue);
+      seen, topLevel, toNative);
   }
 
   // Special case TypeObject. See canonicalizeType.
@@ -217,11 +239,11 @@ function canonicalize(inValue, inType, t, deepWrap, seen, isTopLevelValue) {
     } else {
       // The value inside an ANY needs to be canonicalized as a top-level value.
       canonValue = canonicalize(v, guessedType, guessedType, deepWrap, seen,
-        true);
+        true, toNative);
     }
   } else {
     v = TypeUtil.unwrap(inValue);
-    canonValue = canonicalizeInternal(deepWrap, v, inType, t, seen, outValue);
+    canonValue = canonicalizeInternal(v, inType, t, deepWrap, seen, outValue);
   }
 
   // We need to copy the msg field of WireError to the message property of
@@ -242,12 +264,12 @@ function canonicalize(inValue, inType, t, deepWrap, seen, isTopLevelValue) {
     return outValue;
   }
 
-  // Special case JSValue. If !deepWrap, convert the canonValue to native form.
-  if (isJSValue && !deepWrap) {
+  // Special case JSValue. If toNative, convert the canonValue to native form.
+  if (isJSValue && toNative) {
     return jsValueConvert.toNative(canonValue);
   }
-  // Special case Native Value. If !deepWrap, return to native form.
-  if (isNative && !deepWrap) {
+  // Special case Native Value. If toNative, return to native form.
+  if (isNative && toNative) {
     return nativeTypeRegistry.fromWireValue(t, canonValue);
   }
 
@@ -259,7 +281,8 @@ function canonicalize(inValue, inType, t, deepWrap, seen, isTopLevelValue) {
  * unwrapped value.
  * @private
  */
-function canonicalizeInternal(deepWrap, v, inType, t, seen, outValue) {
+function canonicalizeInternal(v, inType, t, deepWrap, seen, outValue) {
+
   // Any undefined value obtains its zero-value.
   if (v === undefined) {
     var zero = zeroValue(t);
@@ -267,12 +290,14 @@ function canonicalizeInternal(deepWrap, v, inType, t, seen, outValue) {
     // The deepWrap flag affects whether the zero value needs internal wrapping.
     // Without it, the zero value is correct.
     if (!deepWrap) {
-      return TypeUtil.unwrap(canonicalize(zero, inType, t, false, seen, false));
+      return TypeUtil.unwrap(canonicalize(zero, inType, t, false, seen, false,
+        true));
     }
 
     // Otherwise, canonicalize but remove the top-level wrapping.
     // The top-level will be reapplied by this function's caller.
-    return TypeUtil.unwrap(canonicalize(zero, inType, t, true, seen, false));
+    return TypeUtil.unwrap(canonicalize(zero, inType, t, true, seen, false,
+      false));
   } else if (v === null && (t.kind !== kind.ANY && t.kind !== kind.OPTIONAL)) {
     throw makeError(v, t, 'value is null for non-optional type');
   }
@@ -293,7 +318,8 @@ function canonicalizeInternal(deepWrap, v, inType, t, seen, outValue) {
       if (v === null) {
         return null;
       }
-      return canonicalize(v, inElemType, t.elem, deepWrap, seen, false);
+      return canonicalize(v, inElemType, t.elem, deepWrap, seen, false,
+        !deepWrap);
     case kind.BOOL:
       // Verify the value is a boolean.
       if (typeof v !== 'boolean') {
@@ -405,7 +431,7 @@ function canonicalizeInternal(deepWrap, v, inType, t, seen, outValue) {
       outValue = new Array(neededLen);
       for (var arri = 0; arri < neededLen; arri++) {
         outValue[arri] = canonicalize(v[arri], inElemType, t.elem, deepWrap,
-          seen, false);
+          seen, false, !deepWrap);
       }
       return outValue;
     case kind.SET:
@@ -428,7 +454,7 @@ function canonicalizeInternal(deepWrap, v, inType, t, seen, outValue) {
       outValue = new Set();
       v.forEach(function(value) {
         outValue.add(canonicalize(value, inKeyType, t.key, deepWrap, seen,
-          false));
+          false, !deepWrap));
       });
 
       return outValue;
@@ -460,8 +486,9 @@ function canonicalizeInternal(deepWrap, v, inType, t, seen, outValue) {
           inElemType = lookupFieldType(inType, key);
         }
         outValue.set(
-          canonicalize(key, inKeyType, t.key, deepWrap, seen, false),
-          canonicalize(val, inElemType, t.elem, deepWrap, seen, false)
+          canonicalize(key, inKeyType, t.key, deepWrap, seen, false, !deepWrap),
+          canonicalize(val, inElemType, t.elem, deepWrap, seen, false,
+            !deepWrap)
         );
       });
 
@@ -494,7 +521,7 @@ function canonicalizeInternal(deepWrap, v, inType, t, seen, outValue) {
 
         // Each entry needs to be canonicalized too.
         outValue[fieldNameLower] = canonicalize(fieldVal, inFieldType,
-          fieldType, deepWrap, seen, false);
+          fieldType, deepWrap, seen, false, !deepWrap);
       }
 
       return outValue;
@@ -518,7 +545,7 @@ function canonicalizeInternal(deepWrap, v, inType, t, seen, outValue) {
             // The field indexes may not match, so get the field type by name.
             inFieldType = lookupFieldType(inType, key);
             outValue[lowerKey] = canonicalize(v[lowerKey], inFieldType,
-              t.fields[i].type, deepWrap, seen, false);
+              t.fields[i].type, deepWrap, seen, false, !deepWrap);
             isSet = true;
           }
         }
@@ -676,7 +703,7 @@ function canonicalizeType(type, seen) {
 
   // Call canonicalize with this typeOfType. Even though typeOfType is a Struct,
   // behind the scenes, canonType will be a TypeObject.
-  var canonType = canonicalize(type, typeOfType, typeOfType, false, seen,
+  var canonType = canonicalize(type, typeOfType, typeOfType, false, seen, false,
     false);
 
   // Certain types may not be named.
