@@ -103,7 +103,7 @@ Proxy.prototype._parseAndHandleMessage = function(message) {
       // sequence for the input data.  If a handler gets added later, then
       // it will attached to this state.
       handlerState = new HandlerState();
-      proxy.outstandingRequests[message.id] = handlerState;
+      proxy.outstandingRequests[messageId] = handlerState;
     }
 
     return reader.readUint().then(function(type) {
@@ -151,20 +151,23 @@ Proxy.prototype.processRead = function(id, messageType, handler, decoder) {
     if (!handler) {
       handler = proxy.incomingRequestHandlers[messageType];
       if (!handler) {
-        // TODO(bprosnitz) There is a race condition where we receive
-        // STREAM_CLOSE before a method is invoked in js and see this warning.
+        // There is a race condition where we receive STREAM_CLOSE after we
+        // finish sending the response.  This is ok, because if we sent the
+        // response, then we didn't care about the stream close message.
+        // This will probably go away when we move more of the rpc code into
+        // JS.
         vlog.logger.warn('Dropping message for unknown invoke payload ' +
                          messageType + ' (message id: ' + id + ')');
         return;
       }
-      handler.handleRequest(id, messageType, message);
+      return handler.handleRequest(id, messageType, message);
     } else {
-      handler.handleResponse(messageType, message);
+      return handler.handleResponse(messageType, message);
     }
   }).catch(function(e) {
     vlog.logger.error(e.stack);
     if (!isServerOriginatedMessage) {
-      handler.handleResponse(Incoming.ERROR_RESPONSE, e);
+      return handler.handleResponse(Incoming.ERROR_RESPONSE, e);
     }
   });
 };

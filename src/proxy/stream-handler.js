@@ -41,6 +41,9 @@ Handler.prototype.handleResponse = function(type, data) {
     case Incoming.ERROR_RESPONSE:
       this._tasks.addTask(this.handleStreamError.bind(this, data));
       return true;
+    case Incoming.CANCEL:
+      this._tasks.addTask(this.handleCancel.bind(this));
+      return true;
   }
 
   // can't handle the given type
@@ -89,5 +92,11 @@ Handler.prototype.handleStreamError = function(data) {
 Handler.prototype.cleanupBlessings = function() {
   for (var i = 0; i < this._pendingBlessings; i++) {
     this._pendingBlessings[i].release();
+  }
+};
+
+Handler.prototype.handleCancel = function() {
+  if (this.ctx && this.ctx.cancel) {
+    this.ctx.cancel();
   }
 };

@@ -45,6 +45,7 @@ var SharedContextKeys = require('../runtime/shared-context-keys');
 var hexVom = require('../lib/hex-vom');
 var vom = require('../vom');
 var byteUtil = require('../vdl/byte-util');
+var StreamCloseHandler = require('./stream-close-handler');
 
 /**
  * A router that handles routing incoming requests to the right
@@ -68,7 +69,6 @@ var Router = function(
   proxy.addIncomingHandler(Incoming.INVOKE_REQUEST, this);
   proxy.addIncomingHandler(Incoming.LOOKUP_REQUEST, this);
   proxy.addIncomingHandler(Incoming.AUTHORIZATION_REQUEST, this);
-  proxy.addIncomingHandler(Incoming.CANCEL, this);
   proxy.addIncomingHandler(Incoming.CAVEAT_VALIDATION_REQUEST, this);
   proxy.addIncomingHandler(Incoming.LOG_MESSAGE, this);
 };
@@ -76,16 +76,12 @@ var Router = function(
 Router.prototype.handleRequest = function(messageId, type, request) {
   switch (type) {
     case Incoming.INVOKE_REQUEST:
-      this.handleRPCRequest(messageId, request);
-      break;
+      return this.handleRPCRequest(messageId, request);
     case Incoming.LOOKUP_REQUEST:
       this.handleLookupRequest(messageId, request);
       break;
     case Incoming.AUTHORIZATION_REQUEST:
       this.handleAuthorizationRequest(messageId, request);
-      break;
-    case Incoming.CANCEL:
-      this.handleCancel(messageId, request);
       break;
     case Incoming.CAVEAT_VALIDATION_REQUEST:
       this.handleCaveatValidationRequest(messageId, request);
@@ -239,19 +235,6 @@ Router.prototype.handleLookupRequest = function(messageId, request) {
  });
 };
 
-/**
- * Handles cancellations of in-progress requests againsts JavaScript service
- * invokations.
- * @private
- * @param {string} messageId Message Id set by the server.
- */
-Router.prototype.handleCancel = function(messageId) {
-  var ctx = this._contextMap[messageId];
-  if (ctx && ctx.cancel) {
-    ctx.cancel();
-  }
-};
-
 Router.prototype.createRPCContext = function(request) {
   var ctx = this._rootCtx;
   // Setup the context passed in the context info passed in from wspr.
@@ -271,6 +254,44 @@ Router.prototype.createRPCContext = function(request) {
   // TODO(mattr): We need to enforce some security on trace responses.
   return vtrace.withContinuedTrace(ctx, spanName,
                                    request.call.traceRequest);
+};
+
+function getMethodSignature(invoker, methodName) {
+  var methodSig;
+  // Find the method signature.
+  var signature = invoker.signature();
+  signature.forEach(function(ifaceSig) {
+    ifaceSig.methods.forEach(function(method) {
+      if (method.name === methodName) {
+        methodSig = method;
+      }
+    });
+  });
+  return methodSig;
+}
+
+Router.prototype._setupStream = function(messageId, ctx, methodSig) {
+  this._contextMap[messageId] = ctx;
+  if (methodIsStreaming(methodSig)) {
+    var readType = (methodSig.inStream ? methodSig.inStream.type : null);
+    var writeType = (methodSig.outStream ? methodSig.outStream.type : null);
+    var stream = new Stream(messageId, this._proxy.senderPromise, false,
+                        readType, writeType);
+    this._streamMap[messageId] = stream;
+    var rpc = new StreamHandler(ctx, stream);
+    this._proxy.addIncomingStreamHandler(messageId, rpc);
+  } else {
+    this._proxy.addIncomingStreamHandler(messageId,
+                                         new StreamCloseHandler(ctx));
+  }
+};
+
+var globSig = {
+  inArgs: [],
+  outArgs: [],
+  outStream: {
+    type: naming.GlobReply.prototype._type
+  }
 };
 
 /**
@@ -309,51 +330,42 @@ Router.prototype._handleRPCRequestInternal = function(messageId, request) {
 
   var ctx = this.createRPCContext(request);
   var self = this;
-  var stream;
-  createServerCall(request, this._blessingsManager).then(function(call) {
-    if (request.method === 'Glob__') {
-      if (!invoker.hasGlobber()) {
-        err = new Error('Glob is not implemented');
-        self.sendResult(messageId, 'Glob__', null, err);
-        return;
-      }
-      // Glob takes no streaming input and has GlobReply as output.
-      stream = new Stream(messageId, self._proxy.senderPromise, false,
-        null, naming.GlobReply.prototype._type);
-      self._streamMap[messageId] = stream;
-      self._contextMap[messageId] = ctx;
-      self._outstandingRequestForId[messageId] = 0;
-      self.incrementOutstandingRequestForId(messageId);
-      var globPattern = typeUtil.unwrap(request.args[0]);
+  function completion() {
+    // There are no results to a glob method.  Everything is sent back
+    // through the stream.
+    self.sendResult(messageId, methodName, null, undefined, 1);
+  }
+
+  if (request.method === 'Glob__') {
+    if (!invoker.hasGlobber()) {
+      err = new Error('Glob is not implemented');
+      self.sendResult(messageId, 'Glob__', null, err);
+      return;
+    }
+
+    this._setupStream(messageId, ctx, globSig);
+    this._outstandingRequestForId[messageId] = 0;
+    this.incrementOutstandingRequestForId(messageId);
+    var globPattern = typeUtil.unwrap(request.args[0]);
+    return createServerCall(request, this._blessingsManager)
+    .then(function(call) {
       self.handleGlobRequest(messageId, call.securityCall.suffix,
                              server, new Glob(globPattern), ctx, call, invoker,
                              completion);
-      return;
-    }
-
-    function completion() {
-      // There is no results to a glob method.  Everything is sent back
-      // through the stream.
-      self.sendResult(messageId, methodName, null, undefined, 1);
-    }
-
-    // Find the method signature.
-    var signature = invoker.signature();
-    var methodSig;
-    signature.forEach(function(ifaceSig) {
-      ifaceSig.methods.forEach(function(method) {
-        if (method.name === methodName) {
-          methodSig = method;
-        }
-      });
     });
-    if (methodSig === undefined) {
-      err = new verror.NoExistError(
-        call, 'Requested method', methodName, 'not found on');
-      self.sendResult(messageId, methodName, null, err);
-      return;
-    }
+  }
+  var methodSig = getMethodSignature(invoker, methodName);
 
+  if (methodSig === undefined) {
+    err = new verror.NoExistError(
+      ctx, 'Requested method', methodName, 'not found on');
+      this.sendResult(messageId, methodName, null, err);
+      return;
+  }
+
+  this._setupStream(messageId, ctx, methodSig);
+
+  return createServerCall(request, this._blessingsManager).then(function(call) {
     // Unwrap the RPC arguments sent to the JS server.
     var unwrappedArgPromises = request.args.map(function(arg, i) {
       // If an any type was expected, unwrapping is not needed.
@@ -374,19 +386,9 @@ Router.prototype._handleRPCRequestInternal = function(messageId, request) {
         methodSig: methodSig,
         ctx: ctx,
         call: call,
+        stream: self._streamMap[messageId],
       };
 
-      self._contextMap[messageId] = options.ctx;
-      if (methodIsStreaming(methodSig)) {
-        var readType = (methodSig.inStream ? methodSig.inStream.type : null);
-        var writeType = (methodSig.outStream ? methodSig.outStream.type : null);
-        stream = new Stream(messageId, self._proxy.senderPromise, false,
-          readType, writeType);
-        self._streamMap[messageId] = stream;
-        var rpc = new StreamHandler(options.ctx, stream);
-        self._proxy.addIncomingStreamHandler(messageId, rpc);
-        options.stream = stream;
-      }
 
       // Invoke the method;
       self.invokeMethod(invoker, options, function(err, results) {
@@ -447,8 +449,8 @@ Router.prototype.handleRPCRequest = function(messageId, vdlRequest) {
     this.sendResult(messageId, '', null, err);
     return;
   }
-  vom.decode(request).then(function(request) {
-    router._handleRPCRequestInternal(messageId, request);
+  return vom.decode(request).then(function(request) {
+    return router._handleRPCRequestInternal(messageId, request);
   }, function(e) {
     err = new Error('Failed to decode args: ' + e);
     router.sendResult(messageId, '', null, err);
