@@ -54,13 +54,11 @@ public class CaveatTabPage extends PageBase {
       e.printStackTrace();
     }
     if (selectCaveatsTabHandle == null) {
-      Util.takeScreenshot((TakesScreenshot)driver, "found-caveats.png", "Found Caveats? No", htmlReportData);
+      Util.takeScreenshot((TakesScreenshot)driver, "found-caveats-no.png", "Found Caveats? No", htmlReportData);
       log("Attempt #2");
       // Refresh the page and try again.
       driver.navigate().refresh(); 
       selectCaveatsTabHandle = waitForCaveatTab(mainTabHandle);
-    } else {
-      Util.takeScreenshot((TakesScreenshot)driver, "found-caveats.png", "Found Caveats? Yes", htmlReportData);
     }
 
     driver.switchTo().window(selectCaveatsTabHandle);
