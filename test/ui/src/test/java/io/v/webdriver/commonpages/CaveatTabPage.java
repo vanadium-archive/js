@@ -35,7 +35,7 @@ public class CaveatTabPage extends PageBase {
     super(driver, "", htmlReportData);
   }
 
-  private static final int WAIT_TIME = 60; // 60s wait time
+  private static final int WAIT_TIME = 70; // 70s wait time; allow time for an error to appear and to grab a screenshot of it
 
   public void bless() {
     log("Waiting for Caveat Tab...");
