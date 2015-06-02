@@ -5,11 +5,16 @@
 // This file defines a async calling convention intended used to call
 // user-defined functions.
 
-var verror = require('../gen-vdl/v.io/v23/verror');
 var logger = require('../lib/vlog').logger;
+var makeError = require('../verror/make-errors');
+var actions = require('../verror/actions');
 
 module.exports = asyncCall;
 
+var IncorrectResultCountError = makeError(
+  'v.io/core/javascript.IncorrectResultCount',
+  actions.NO_RETRY,
+  '{1:}{2:} IncorrectResultCount: Expected {3} results, but got {4}{:_}');
 /**
  * asyncCall performs a call and calls a callback with the result.
  *
@@ -34,57 +39,29 @@ function asyncCall(ctx, self, fn, outArgs, args, inputCb) {
       logger.error('Callback called multiple times');
       return;
     }
-    inputCb.apply(this, arguments);
+    inputCb.apply(self, arguments);
     cbCalled = true;
   }
-  // Call the callback and log the error. Used for internal errors.
-  function asyncFailedCb(err) {
+  function handleResult(err, res) {
+    if (err) {
+      // Error case
+      return callOnceCb(err);
+    }
+    // Results case
+    var numResults = res.length;
+    if (numResults === numOutArgs) {
+      // Correct number of out args given
+      return callOnceCb(null, res);
+    }
+    // Internal error: incorrect number of out args
+    err = new IncorrectResultCountError(ctx, numOutArgs, numResults);
     logger.error(err);
     callOnceCb(err);
   }
-
   // Callback we are injecting into the user's function
   function injectedCb(err /*, args */) {
-    var res = Array.prototype.slice.call(arguments, 1);
-
-    if (err) {
-      // Error case
-      callOnceCb(err);
-    } else {
-      // Results case
-      var numResults = res.length;
-      if (numResults === numOutArgs) {
-        // Correct number of out args given
-        callOnceCb(null, res);
-      } else {
-        // Internal error: incorrect number of out args
-        asyncFailedCb(makeIncorrectArgCountError(true, outArgs, numResults));
-      }
-    }
+    handleResult(err, Array.prototype.slice.call(arguments, 1));
   }
-
-  // Creates an error when there are an incorrect number of arguments.
-  // TODO(bjornick): Generate a real verror for this so it can be
-  // internationalized.
-  function makeIncorrectArgCountError(isCb, expectedArgs, numGiven) {
-    var delta = numGiven - expectedArgs.length;
-    var prefix;
-    if (isCb) {
-      prefix = 'Callback of form cb(err,' + expectedArgs + ')';
-    } else {
-      prefix = 'Expected out args ' + expectedArgs + ' but';
-    }
-
-    var suffix;
-    if (delta < 0) {
-      suffix = 'was missing ' + expectedArgs.slice(numGiven);
-    } else {
-      suffix = 'got ' + delta + ' extra arg(s)';
-    }
-
-    return new verror.InternalError(ctx, prefix, suffix);
-  }
-
 
   if (fn.hasCallback()) {
     args.push(injectedCb);
@@ -113,35 +90,31 @@ function asyncCall(ctx, self, fn, outArgs, args, inputCb) {
     //
     // Convert the results to always be in array style:
     // [], [a], [a, b], etc
-    var resAsArray;
+    // Note that the arity checking isn't done here, but at a later point
+    // sharing the logic between the callback and promise case.
     switch (numOutArgs) {
       case 0:
         if (res !== undefined) {
-          return asyncFailedCb(new verror.InternalError(ctx,
-            'Non-undefined value returned from function with 0 out args'));
+          return Promise.reject(
+            new IncorrectResultCountError(ctx, 0, 1,
+                                          'expected undefined result ' +
+                                          'for void function'));
         }
-        resAsArray = [];
-        break;
+        return [];
       case 1:
         // Note: If res is undefined, the result is [undefined].
-        resAsArray = [res];
-        break;
+        return [res];
       default:
         if (!Array.isArray(res)) {
-          asyncFailedCb(new verror.InternalError(
-            ctx,
-            'Expected multiple out arguments to be returned in an array.'));
+          return Promise.reject(
+            new IncorrectResultCountError(ctx, numOutArgs, 1));
         }
-        resAsArray = res;
-        break;
+        return res;
     }
-    var numResults = resAsArray.length;
-    if (numResults !== numOutArgs) {
-      asyncFailedCb(makeIncorrectArgCountError(false, outArgs, numResults));
-    }
-    callOnceCb(null, resAsArray);
-  }).catch(function error(err) {
-    callOnceCb(wrapError(err));
+  }).then(function(res) {
+    handleResult(null, res);
+  }).catch(function(err) {
+    handleResult(wrapError(err));
   });
 }
 
@@ -150,13 +123,12 @@ function asyncCall(ctx, self, fn, outArgs, args, inputCb) {
  * This is used in cases where values are known to be errors even if they
  * are not of error type such as if they are thrown or rejected.
  * @private
- * @param {Error} err The error or other value.
+ * @param {*} err The error or other value.
  * @return {Error} An error or type Error.
  */
 function wrapError(err) {
-  if (!(err instanceof Error)) {
-    return new Error(err);
-  } else {
+  if (err instanceof Error) {
     return err;
   }
+  return new Error(err);
 }

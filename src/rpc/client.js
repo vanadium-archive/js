@@ -99,68 +99,61 @@ OutstandingRPC.prototype.start = function() {
   var ctx = this._ctx;
   var self = this;
 
-  var cb;
   var outArgTypes = this._outArgTypes;
 
-  if (this._cb) {
-    // Wrap the callback to call with multiple arguments cb(err, a, b, c)
-    // rather than cb(err, [a, b, c]).
-    var origCb = this._cb;
-    cb = function convertToMultiArgs(err, results) { // jshint ignore:line
-      // If called from a deferred, the results are undefined.
+  var def = new Deferred();
+  var cb = this._cb;
+  var promise = def.promise.then(function(args) {
+    if (!Array.isArray(args)) {
+      throw new verror.InternalError(
+        ctx, 'Internal error: incorrectly formatted out args in client');
+    }
 
-      if (err) {
-        origCb(err);
-        return;
+    return Promise.all(args.map(function(outArg, i) {
+      return convertOutArg(ctx, outArg, outArgTypes[i], self._controller);
+    }));
+  }).then(function(results) {
+    if (cb) {
+      // Make a copy the results to so we can push a null for the
+      // error onto the front of the arg list.
+      var cbArgs = results.slice();
+      cbArgs.unshift(null);
+      try {
+        cb.apply(null, cbArgs);
+      } catch (e) {
+        process.nextTick(function() {
+          throw e;
+        });
       }
-
-      // Each out argument should also be unwrapped. (results was []any)
-      results = results || [];
-      var resultPromises = results.map(function(res, i) {
-        return convertOutArg(ctx, res, outArgTypes[i], self._controller);
-      });
-      Promise.all(resultPromises)
-      .then(function(results) {
-        results.unshift(null);
-        origCb.apply(null, results);
-      }).catch(origCb);
-    };
-  }
-
-  var def = new Deferred(cb);
-
-  if (!this._cb) {
+    }
     // If we are using a promise, strip single args out of the arg array.
     // e.g. [ arg1 ] -> arg1
-    def.promise = def.promise.then(function(args) {
-      if (!Array.isArray(args)) {
-        throw new verror.InternalError(ctx,
-          'Internal error: incorrectly formatted out args in client');
+    switch(results.length) {
+      // We expect:
+      // 0 args - return; // NOT return [];
+      // 1 args - return a; // NOT return [a];
+      // 2 args - return [a, b] ;
+      //
+      // Convert the results from array style to the expected return style.
+      // undefined, a, [a, b], [a, b, c] etc
+      case 0:
+        return undefined;
+      case 1:
+        return results[0];
+      default:
+        return results;
+    }
+  });
+
+  if (cb) {
+    promise.catch(function(err) {
+      try {
+        cb(err);
+      } catch(e) {
+        process.nextTick(function() {
+          throw e;
+        });
       }
-
-
-      // Each out argument should also be unwrapped. (args was []any)
-      var unwrappedArgPromises = args.map(function(outArg, i) {
-        return convertOutArg(ctx, outArg, outArgTypes[i], self._controller);
-      });
-
-      return Promise.all(unwrappedArgPromises).then(function(unwrappedArgs) {
-        // We expect:
-        // 0 args - return; // NOT return [];
-        // 1 args - return a; // NOT return [a];
-        // 2 args - return [a, b] ;
-        //
-        // Convert the results from array style to the expected return style.
-        // undefined, a, [a, b], [a, b, c] etc
-        switch(unwrappedArgs.length) {
-          case 0:
-            return undefined;
-          case 1:
-            return unwrappedArgs[0];
-          default:
-            return unwrappedArgs;
-        }
-      });
     });
   }
 
@@ -171,7 +164,7 @@ OutstandingRPC.prototype.start = function() {
     // inStreamingType.
     def.stream = new Stream(this._id, streamingDeferred.promise, true,
       this._outStreamingType, this._inStreamingType, this._typeEncoder);
-    def.promise.stream = def.stream;
+    promise.stream = def.stream;
   }
 
   var message = this.constructMessage();
@@ -187,7 +180,7 @@ OutstandingRPC.prototype.start = function() {
     });
   }
 
-  return def.promise;
+  return promise;
 };
 
 OutstandingRPC.prototype.handleResponse = function(type, data) {

@@ -250,7 +250,7 @@ test('Test returning non-undefined to zero out arg function fails',
   var inspectFn = new InspectableFunction(returnNonUndefined);
   asyncCall(null, null, inspectFn, [], [], function(err) {
     t.ok((''+err).indexOf(
-      'Non-undefined value returned from function with 0 out args') !== -1,
+      'Expected 0 results, but got 1') !== -1,
       'Expected error when non-undefined value returned');
     t.end();
   });

@@ -633,9 +633,9 @@ test('invoker.invoke(...) - Error: More outArgs expected [promise]',
       context: context
     }
   }, function cb(err, results) {
-    t.ok(err instanceof verror.InternalError, 'should error');
+    t.ok(err instanceof verror.VanadiumError, 'should error');
     t.equal(err.message,
-      'app:op: Internal error: Expected out args a,b,c,d,e but was missing e');
+      'app:op: IncorrectResultCount: Expected 5 results, but got 4');
     t.end();
   });
 
@@ -661,10 +661,9 @@ test('invoker.invoke(...) - Error: More outArgs expected [callback]',
       context: context
     }
   }, function cb(err, results) {
-    t.ok(err instanceof verror.InternalError, 'should error');
+    t.ok(err instanceof verror.VanadiumError, 'should error');
     t.equal(err.message,
-      'app:op: Internal error: ' +
-      'Callback of form cb(err,a,b,c,d,e) was missing e');
+      'app:op: IncorrectResultCount: Expected 5 results, but got 4');
     t.end();
   });
 
@@ -690,10 +689,9 @@ test('invoker.invoke(...) - Error: Fewer outArgs expected [promise]',
       context: context
     }
   }, function cb(err, results) {
-    t.ok(err instanceof verror.InternalError, 'should error');
+    t.ok(err instanceof verror.VanadiumError, 'should error');
     t.equal(err.message,
-      'app:op: Internal error: ' +
-      'Expected out args a,b,c,d,e but got 1 extra arg(s)');
+      'app:op: IncorrectResultCount: Expected 5 results, but got 6');
     t.end();
   });
 
@@ -719,10 +717,9 @@ test('invoker.invoke(...) - Error: Fewer outArgs expected [callback]',
       context: context
     }
   }, function cb(err, results) {
-    t.ok(err instanceof verror.InternalError, 'should error');
+    t.ok(err instanceof verror.VanadiumError, 'should error');
     t.equal(err.message,
-      'app:op: Internal error: ' +
-      'Callback of form cb(err,a,b,c,d,e) got 1 extra arg(s)');
+      'app:op: IncorrectResultCount: Expected 5 results, but got 6');
     t.end();
   });
 

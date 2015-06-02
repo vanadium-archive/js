@@ -136,7 +136,7 @@ test('Returning error in validation function fails due to more than expected ' +
       testCaveats.CaveatDoesntValidateExpectedData), function(err) {
     t.ok(err, 'Got an error');
     t.ok((''+err).indexOf(
-      'Non-undefined value returned from function with 0 out args') !== -1,
+      'Expected 0 results, but got 1') !== -1,
       'Error due to non-undefined value returned from 0-arg function');
     t.end();
   });
