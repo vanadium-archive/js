@@ -316,7 +316,7 @@ deploy-docs-staging: docs
 node_modules: package.json  check-that-npm-is-in-path
 ifndef NONPMUPDATE
 	@npm prune
-	@npm install --quiet
+	@npm install --quiet || (rm -fr $(HOME)/.npm && npm install --quiet) 
 	@touch node_modules
 endif
 
