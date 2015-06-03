@@ -297,10 +297,72 @@ var globSig = {
 };
 
 /**
+ * Handles the processing for reserved methods.  If this request is not
+ * a reserved method call, this method does nothing.
+ *
+ * @private
+ * @param {module:vanadium.context.Context} ctx The context of the request
+ * @param {number} messageId The flow id
+ * @param {module:vanadium.rpc~Server} server The server instance that is
+ * handling the request.
+ * @param {Invoker} invoker The invoker for this request
+ * @param {string} methodName The name of the method.
+ * @param {object} request The request
+ * @returns Promise A promise that will be resolved when the method is
+ * dispatched or null if this is not a reserved method
+ */
+Router.prototype._maybeHandleReservedMethod = function(
+  ctx, messageId, server, invoker, methodName, request) {
+  var self = this;
+  function globCompletion() {
+    // There are no results to a glob method.  Everything is sent back
+    // through the stream.
+    self.sendResult(messageId, methodName, null, undefined, 1);
+  }
+
+  if (request.method === 'Glob__') {
+    if (!invoker.hasGlobber()) {
+      var err = new Error('Glob is not implemented');
+      this.sendResult(messageId, 'Glob__', null, err);
+      return;
+    }
+
+    this._setupStream(messageId, ctx, globSig);
+    this._outstandingRequestForId[messageId] = 0;
+    this.incrementOutstandingRequestForId(messageId);
+    var globPattern = typeUtil.unwrap(request.args[0]);
+    return createServerCall(request, this._blessingsManager)
+    .then(function(call) {
+      self.handleGlobRequest(messageId, call.securityCall.suffix,
+                             server, new Glob(globPattern), ctx, call, invoker,
+                             globCompletion);
+    });
+  }
+  return null;
+};
+
+Router.prototype._unwrapArgs = function(args, methodSig) {
+  var self = this;
+  // Unwrap the RPC arguments sent to the JS server.
+  var unwrappedArgPromises = args.map(function(arg, i) {
+    // If an any type was expected, unwrapping is not needed.
+    if (methodSig.inArgs[i].type.kind === vdl.kind.ANY) {
+      return Promise.resolve(arg);
+    }
+    var unwrapped = typeUtil.unwrap(arg);
+    if (unwrapped instanceof BlessingsId) {
+      return self._blessingsManager.blessingsFromId(unwrapped);
+    }
+    return Promise.resolve(unwrapped);
+  });
+  return Promise.all(unwrappedArgPromises);
+};
+
+/**
  * Performs the rpc request.  Unlike handleRPCRequest, this function works on
  * the decoded message.
  * @private
- * @param {string} messageId Message Id set by the server.
+ * @param {number} messageId Message Id set by the server.
  * @param {Object} request Request's structure is
  * {
  *   serverId: number // the server id
@@ -310,7 +372,6 @@ var globSig = {
  * }
  */
 Router.prototype._handleRPCRequestInternal = function(messageId, request) {
-  // TODO(bjornick): Break this method up into smaller methods.
   var methodName = capitalize(request.method);
   var server = this._servers[request.serverId];
   var err;
@@ -331,31 +392,15 @@ Router.prototype._handleRPCRequestInternal = function(messageId, request) {
   }
 
   var ctx = this.createRPCContext(request);
+
+  var reservedPromise = this._maybeHandleReservedMethod(
+    ctx, messageId, server, invoker, methodName, request);
+
+  if (reservedPromise) {
+    return;
+  }
+
   var self = this;
-  function completion() {
-    // There are no results to a glob method.  Everything is sent back
-    // through the stream.
-    self.sendResult(messageId, methodName, null, undefined, 1);
-  }
-
-  if (request.method === 'Glob__') {
-    if (!invoker.hasGlobber()) {
-      err = new Error('Glob is not implemented');
-      self.sendResult(messageId, 'Glob__', null, err);
-      return;
-    }
-
-    this._setupStream(messageId, ctx, globSig);
-    this._outstandingRequestForId[messageId] = 0;
-    this.incrementOutstandingRequestForId(messageId);
-    var globPattern = typeUtil.unwrap(request.args[0]);
-    return createServerCall(request, this._blessingsManager)
-    .then(function(call) {
-      self.handleGlobRequest(messageId, call.securityCall.suffix,
-                             server, new Glob(globPattern), ctx, call, invoker,
-                             completion);
-    });
-  }
   var methodSig = getMethodSignature(invoker, methodName);
 
   if (methodSig === undefined) {
@@ -366,63 +411,48 @@ Router.prototype._handleRPCRequestInternal = function(messageId, request) {
   }
 
   this._setupStream(messageId, ctx, methodSig);
+  var args;
+  this._unwrapArgs(request.args, methodSig).then(function(unwrapped) {
+    args = unwrapped;
+    return createServerCall(request, self._blessingsManager);
+  }).then(function(call) {
+    var options = {
+      methodName: methodName,
+      args: args,
+      methodSig: methodSig,
+      ctx: ctx,
+      call: call,
+      stream: self._streamMap[messageId],
+    };
 
-  return createServerCall(request, this._blessingsManager).then(function(call) {
-    // Unwrap the RPC arguments sent to the JS server.
-    var unwrappedArgPromises = request.args.map(function(arg, i) {
-      // If an any type was expected, unwrapping is not needed.
-      if (methodSig.inArgs[i].type.kind === vdl.kind.ANY) {
-        return Promise.resolve(arg);
-      }
-      var unwrapped = typeUtil.unwrap(arg);
-      if (unwrapped instanceof BlessingsId) {
-        return self._blessingsManager.blessingsFromId(unwrapped);
-      }
-      return Promise.resolve(unwrapped);
-    });
-
-    return Promise.all(unwrappedArgPromises).then(function(unwrappedArgs) {
-      var options = {
-        methodName: methodName,
-        args: unwrappedArgs,
-        methodSig: methodSig,
-        ctx: ctx,
-        call: call,
-        stream: self._streamMap[messageId],
-      };
-
-      // Invoke the method;
-      self.invokeMethod(invoker, options, function(err, results) {
-        if (err) {
-          var stackTrace;
-          if (err instanceof Error && err.stack !== undefined) {
-            stackTrace = err.stack;
+    // Invoke the method;
+    self.invokeMethod(invoker, options).then(function(results) {
+      // Has results; associate the types of the outArgs.
+      var canonResults = results.map(function(result, i) {
+        var t = methodSig.outArgs[i].type;
+        if (t.equals(WireBlessings.prototype._type)) {
+          if (!(result instanceof Blessings)) {
+            vlog.logger.error(
+              'Encoding non-blessings value as wire blessings');
+              return null;
           }
-          vlog.logger.debug('Requested method ' + methodName +
-              ' threw an exception on invoke: ', err, stackTrace);
-
-          // The error case has no results; only send the error.
-          self.sendResult(messageId, methodName, undefined, err,
-              methodSig.outArgs.length);
-          return;
+          return result;
         }
-
-        // Has results; associate the types of the outArgs.
-        var canonResults = results.map(function(result, i) {
-          var t = methodSig.outArgs[i].type;
-          if (t.equals(WireBlessings.prototype._type)) {
-            if (!(result instanceof Blessings)) {
-              vlog.logger.error(
-                'Encoding non-blessings value as wire blessings');
-                return null;
-            }
-            return result;
-          }
-          return vdl.canonicalize.fill(result, t);
-        });
-        self.sendResult(messageId, methodName, canonResults, undefined,
-                        methodSig.outArgs.length);
+        return vdl.canonicalize.fill(result, t);
       });
+      self.sendResult(messageId, methodName, canonResults, undefined,
+                      methodSig.outArgs.length);
+    }, function(err) {
+      var stackTrace;
+      if (err instanceof Error && err.stack !== undefined) {
+        stackTrace = err.stack;
+      }
+      vlog.logger.debug('Requested method ' + methodName +
+          ' threw an exception on invoke: ', err, stackTrace);
+
+      // The error case has no results; only send the error.
+      self.sendResult(messageId, methodName, undefined, err,
+          methodSig.outArgs.length);
     });
   });
 };
@@ -467,7 +497,7 @@ function methodIsStreaming(methodSig) {
 /**
  * Invokes a method with a methodSig
  */
-Router.prototype.invokeMethod = function(invoker, options, cb) {
+Router.prototype.invokeMethod = function(invoker, options) {
   var methodName = options.methodName;
   var args = options.args;
   var ctx = options.ctx;
@@ -480,15 +510,20 @@ Router.prototype.invokeMethod = function(invoker, options, cb) {
   };
 
   var rootCtx = this._rootCtx;
+  var def = new Deferred();
   function InvocationFinishedCallback(err, results) {
     // Note: We use the rootCtx here because we want to make this
     // call to clean up the blessings even if the method invocation
     // is cancelled.
     call.securityCall.remoteBlessings.release(rootCtx);
-    cb(err, results);
+    if (err) {
+      return def.reject(err);
+    }
+    def.resolve(results);
   }
 
   invoker.invoke(methodName, args, injections, InvocationFinishedCallback);
+  return def.promise;
 };
 
 function createGlobReply(name) {
@@ -510,6 +545,19 @@ Router.prototype.handleGlobRequest = function(messageId, name, server, glob,
                                               context, call, invoker, cb) {
   var self = this;
   var options;
+
+  function invokeAndCleanup(invoker, options, method) {
+    self.invokeMethod(invoker, options).catch(function(err) {
+      var verr = new verror.InternalError(context,
+         method +'() failed', glob, err);
+      var errReply = createGlobErrorReply(name, verr, self._appName);
+      self._streamMap[messageId].write(errReply);
+      vlog.logger.info(verr);
+    }).then(function() {
+      // Always decrement the outstanding request counter.
+      self.decrementOutstandingRequestForId(messageId, cb);
+    });
+  }
   if (invoker.hasMethod('__glob')) {
     options = {
       methodName: '__glob',
@@ -517,20 +565,11 @@ Router.prototype.handleGlobRequest = function(messageId, name, server, glob,
       methodSig: { outArgs: [] },
       ctx: context,
       call: call,
-      // For the glob__ method we just write the
+      // For the __glob method we just write the
       // results directly out to the rpc stream.
       stream: this._streamMap[messageId]
     };
-    this.invokeMethod(invoker, options, function(err, results) {
-      if (err) {
-        var verr = new verror.InternalError(context,
-          '__glob() failed', glob, err);
-        var errReply = createGlobErrorReply(name, verr, self._appName);
-        self._streamMap[messageId].write(errReply);
-        vlog.logger.info(verr);
-      }
-      self.decrementOutstandingRequestForId(messageId, cb);
-    });
+    invokeAndCleanup(invoker, options, '__glob');
   } else if (invoker.hasMethod('__globChildren')) {
     if (glob.length() === 0) {
       // This means we match the current object.
@@ -591,16 +630,7 @@ Router.prototype.handleGlobRequest = function(messageId, name, server, glob,
       });
     });
 
-    this.invokeMethod(invoker, options, function(err, results) {
-      if (err) {
-        var verr = new verror.InternalError(context,
-          '__globChildren() failed', glob, err);
-        var errReply = createGlobErrorReply(name, verr, self._appName);
-        this._streamMap[messageId].write(errReply);
-        vlog.logger.info(verr);
-      }
-      self.decrementOutstandingRequestForId(messageId, cb);
-    });
+    invokeAndCleanup(invoker, options, '__globChildren');
   } else {
     // This is a leaf of the globChildren call so we return this as
     // a result.
@@ -625,10 +655,10 @@ Router.prototype.decrementOutstandingRequestForId = function(id, cb) {
 /**
  * Sends the result of a requested invocation back to jspr
  * @private
- * @param {string} messageId Message id of the original invocation request
+ * @param {number} messageId Message id of the original invocation request
  * @param {string} name Name of method
  * @param {Object} results Result of the call
- * @param {Object} err Error from the call
+ * @param {Error} err Error from the call
  */
 Router.prototype.sendResult = function(messageId, name, results, err,
   numOutArgs) {
