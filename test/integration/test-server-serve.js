@@ -6,6 +6,8 @@ var isBrowser = require('is-browser');
 var test = require('prova');
 var vanadium = require('../../');
 var config = require('./default-config');
+var Deferred = require('../../src/lib/deferred');
+var promiseWhile = require('../../src/lib/async-helper').promiseWhile;
 var service = {
   changeChannel: function(ctx, serverCall) {
     throw new Error('NotImplemented');
@@ -150,9 +152,33 @@ test('Test serving a JS service under multiple names - ' +
     .then(function removeSecondName() {
       return server.removeName('bedroom/tv');
     })
-    .then(function bindToRemovedSecondName() {
+    .then(function waitForNameToBeRemoved() {
+      var numTries = 0;
+      function tryBindTo() {
+        numTries++;
+        if (numTries > 5) {
+          return Promise.resolve(false);
+        }
+        var shortCtx = runtime.getContext().withTimeout(200);
+        return runtime.namespace().resolve(shortCtx, 'bedroom/tv')
+        .then(function() {
+          return true;
+        }).catch(function(err) {
+          return false;
+        });
+      }
+      // Resolve every 100ms until the name is removed, or 5 tries are
+      // attempted.
+      return promiseWhile(tryBindTo, function() {
+        var def = new Deferred();
+        setTimeout(function() {
+          def.resolve();
+        }, 100);
+        return def.promise;
+      });
+    }).then(function bindToRemovedSecondName() {
       var shortCtx = runtime.getContext().withTimeout(100);
-      return client.bindTo(shortCtx, 'bedroom/tv')
+      client.bindTo(shortCtx, 'bedroom/tv')
       .then(function verifyRemovedSecondName(a) {
         assert.fail('should not be able to bind to a removed name');
         runtime.close(assert.end);
