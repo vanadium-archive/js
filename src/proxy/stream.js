@@ -83,7 +83,7 @@ Stream.prototype.serverClose = function(results, err, traceResponse) {
       results: results,
       err: err || null,
       traceResponse: traceResponse
-    }))
+    }), undefined, this._typeEncoder)
   };
   Duplex.prototype.write.call(this, object);
 };

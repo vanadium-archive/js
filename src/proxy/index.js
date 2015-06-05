@@ -69,6 +69,9 @@ function Proxy(senderPromise) {
   }, function() {
     return proxy._messageReader.nextMessageType(proxy.typeDecoder)
     .then(function(typeId) {
+      if (typeId === null) {
+        return proxy.cleanup();
+      }
       vlog.logger.error('Unexpected type id ' + typeId);
     }).catch(function(err) {
       vlog.logger.error('Type decoder failed' + err + ': ' + err.stack);
@@ -147,6 +150,11 @@ Proxy.prototype.processRead = function(id, messageType, handler, decoder) {
     if (messageType === Incoming.TYPE_MESSAGE) {
       proxy._messageReader.addBytes(message);
       return;
+    }
+    // The handler could have been added after we did the lookup but before
+    // this decode ran.
+    if (!handler) {
+      handler = proxy.outstandingRequests[id].handler;
     }
     if (!handler) {
       handler = proxy.incomingRequestHandlers[messageType];

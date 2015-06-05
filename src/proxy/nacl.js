@@ -29,7 +29,9 @@ function ProxyConnection() {
   this._tasks = new TaskSequence();
 
   this.onBrowsprMsg = function(msg) {
-    self.process(msg.body);
+    if (self.instanceId === msg.instanceId) {
+      self.process(msg.body);
+    }
   };
 
   extensionEventProxy.on('browsprMsg', this.onBrowsprMsg);

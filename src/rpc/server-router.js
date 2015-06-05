@@ -111,14 +111,15 @@ Router.prototype.handleAuthorizationRequest = function(messageId, request) {
       err: new verror.InternalError(this._rootCtx, 'Failed to decode ', e)
     });
 
-    this._proxy.sendRequest(hexVom.encode(authReply),
+    this._proxy.sendRequest(hexVom.encode(authReply, undefined,
+                                          this._typeEncoder),
                             Outgoing.AUTHORIZATION_RESPONSE, null, messageId);
     return;
   }
 
   var router = this;
   var decodedRequest;
-  vom.decode(request).catch(function(e) {
+  vom.decode(request, false, this._typeDecoder).catch(function(e) {
     return Promise.reject(new verror.InternalError(router._rootCtx,
       'Failed to decode ', e));
   }).then(function(req) {
@@ -131,7 +132,8 @@ Router.prototype.handleAuthorizationRequest = function(messageId, request) {
         // TODO(bjornick): Use the real context
         err: new verror.ExistsError(ctx, 'unknown server')
       });
-      router._proxy.sendRequest(hexVom.encode(authReply),
+      var bytes = hexVom.encode(authReply, undefined, router._typeEncoder);
+      router._proxy.sendRequest(bytes,
                                 Outgoing.AUTHORIZATION_RESPONSE,
                                 null, messageId);
       return;
@@ -142,14 +144,16 @@ Router.prototype.handleAuthorizationRequest = function(messageId, request) {
     });
   }).then(function() {
     var authReply = new AuthReply({});
-    router._proxy.sendRequest(hexVom.encode(authReply),
+    router._proxy.sendRequest(hexVom.encode(authReply, undefined,
+                                            router._typeEncoder),
                               Outgoing.AUTHORIZATION_RESPONSE, null, messageId);
   }).catch(function(e) {
     var errMsg = {
-      err: ErrorConversion.fromNativeValue(e, this._appName,
+      err: ErrorConversion.fromNativeValue(e, router._appName,
                                            decodedRequest.call.method)
     };
-    router._proxy.sendRequest(hexVom.encode(errMsg),
+    router._proxy.sendRequest(hexVom.encode(errMsg, undefined,
+                                            router._typeEncoder),
                               Outgoing.AUTHORIZATION_RESPONSE, null,
                               messageId);
   });
@@ -193,11 +197,12 @@ Router.prototype.handleCaveatValidationRequest = function(messageId, request) {
       var response = new CaveatValidationResponse({
         results: results
       });
-      var data = hexVom.encode(response);
+      var data = hexVom.encode(response, undefined, router._typeEncoder);
       router._proxy.sendRequest(data, Outgoing.CAVEAT_VALIDATION_RESPONSE, null,
         messageId);
     });
   }).catch(function(err) {
+    vlog.logger.error('Got err ' + err + ': ' + err.stack);
     throw new Error('Unexpected error (all promises should resolve): ' + err);
   });
 };
@@ -210,7 +215,8 @@ Router.prototype.handleLookupRequest = function(messageId, request) {
     var reply = new LookupReply({
       err: new verror.NoExistError(this._rootCtx, 'unknown server')
     });
-    this._proxy.sendRequest(hexVom.encode(reply), Outgoing.LOOKUP_RESPONSE,
+    this._proxy.sendRequest(hexVom.encode(reply, undefined, this._typeEncoder),
+                            Outgoing.LOOKUP_RESPONSE,
                             null, messageId);
     return;
   }
@@ -226,13 +232,15 @@ Router.prototype.handleLookupRequest = function(messageId, request) {
      hasAuthorizer: hasAuthorizer,
      hasGlobber: hasGlobber
    });
-   self._proxy.sendRequest(hexVom.encode(reply), Outgoing.LOOKUP_RESPONSE,
+   self._proxy.sendRequest(hexVom.encode(reply, undefined, self._typeEncoder),
+                           Outgoing.LOOKUP_RESPONSE,
                            null, messageId);
  }).catch(function(err) {
    var reply = new LookupReply({
      err: ErrorConversion.fromNativeValue(err, self._appName, '__Signature')
    });
-   self._proxy.sendRequest(hexVom.encode(reply), Outgoing.LOOKUP_RESPONSE,
+   self._proxy.sendRequest(hexVom.encode(reply, undefined, self._typeEncoder),
+                           Outgoing.LOOKUP_RESPONSE,
                            null, messageId);
  });
 };
@@ -447,7 +455,7 @@ Router.prototype._handleRPCRequestInternal = function(messageId, request) {
       if (err instanceof Error && err.stack !== undefined) {
         stackTrace = err.stack;
       }
-      vlog.logger.debug('Requested method ' + methodName +
+      vlog.logger.error('Requested method ' + methodName +
           ' threw an exception on invoke: ', err, stackTrace);
 
       // The error case has no results; only send the error.
@@ -480,9 +488,11 @@ Router.prototype.handleRPCRequest = function(messageId, vdlRequest) {
     this.sendResult(messageId, '', null, err);
     return;
   }
-  return vom.decode(request).then(function(request) {
+  return vom.decode(request, false, this._typeDecoder)
+  .then(function(request) {
     return router._handleRPCRequestInternal(messageId, request);
   }, function(e) {
+    vlog.logger.error('Failed to decode args : ' + e + ': ' + e.stack);
     err = new Error('Failed to decode args: ' + e);
     router.sendResult(messageId, '', null, err);
   });
@@ -702,7 +712,9 @@ Router.prototype.sendResult = function(messageId, name, results, err,
       err: errorStruct,
       traceResponse: traceResponse
     });
-    this._proxy.sendRequest(hexVom.encode(responseData), Outgoing.RESPONSE,
+    this._proxy.sendRequest(hexVom.encode(responseData, undefined,
+                                          this._typeEncoder),
+                            Outgoing.RESPONSE,
                             null, messageId);
   }
 };
