@@ -13,7 +13,6 @@ var vlog = require('../lib/vlog');
 var inherits = require('inherits');
 var reduce = require('../vdl/canonicalize').reduce;
 var unwrap = require('../vdl/type-util').unwrap;
-var Blessings = require('../security/blessings');
 var ServerRpcReply =
   require('../gen-vdl/v.io/x/ref/services/wspr/internal/lib').ServerRpcReply;
 var hexVom = require('../lib/hex-vom');
@@ -164,9 +163,6 @@ Stream.prototype.write = function(chunk, encoding, cb) {
       'lacks an',
       this.isClient ? 'inStream' : 'outStream', 'type. Tried to queue', chunk);
     return;
-  }
-  if (chunk instanceof Blessings) {
-    chunk = chunk.convertToJsBlessings();
   }
   var object = {
     id: this.flowId,

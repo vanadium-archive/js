@@ -5,6 +5,7 @@
 var uniqueid = require('../lib/uniqueid');
 var context = require('../context');
 var vdl = require('../gen-vdl/v.io/v23/vtrace');
+var vlog = require('../lib/vlog');
 
 var spanKey = context.ContextKey();
 var storeKey = context.ContextKey();
@@ -409,6 +410,10 @@ function request(ctx) {
  * @memberof module:vanadium.vtrace
  */
 function response(ctx) {
+  if (!ctx) {
+    vlog.logger.warn('Cannot perform vtrace without valid context');
+    return;
+  }
   var store = ctx.value(storeKey);
   var span = ctx.value(spanKey);
   return vdl.Response({

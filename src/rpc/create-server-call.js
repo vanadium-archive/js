@@ -11,7 +11,7 @@ module.exports = createServerCall;
  * before the user is given the object.
  * @private
  */
-function createServerCall(request, blessingsManager) {
+function createServerCall(request, blessingsCache) {
   var serverCall = new ServerCall();
   if (request instanceof ServerCall) {
     serverCall.securityCall = request.securityCall.clone();
@@ -20,12 +20,12 @@ function createServerCall(request, blessingsManager) {
   } else {
     var promises = [];
     promises.push(createSecurityCall(request.call.securityCall,
-      blessingsManager).then(function(securityCall) {
+      blessingsCache).then(function(securityCall) {
       serverCall.securityCall = securityCall;
     }));
     if (request.call.grantedBlessings) {
       promises.push(
-        blessingsManager.blessingsFromId(request.call.grantedBlessings)
+        blessingsCache.blessingsFromId(request.call.grantedBlessings)
         .then(function(grantedBlessings) {
           serverCall.grantedBlessings = grantedBlessings;
         })

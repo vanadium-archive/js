@@ -13,7 +13,7 @@ module.exports = createSecurityCall;
  * before the user is given the object.
  * @private
  */
-function createSecurityCall(input, blessingsManager) {
+function createSecurityCall(input, blessingsCache) {
   var call = new Call();
   call.method = input.method;
   call.suffix = input.suffix;
@@ -25,11 +25,11 @@ function createSecurityCall(input, blessingsManager) {
   call.remoteEndpoint = input.remoteEndpoint;
 
   var promises = [];
-  promises.push(blessingsManager.blessingsFromId(input.localBlessings)
+  promises.push(blessingsCache.blessingsFromId(input.localBlessings)
   .then(function(localBlessings) {
     call.localBlessings = localBlessings;
   }));
-  promises.push(blessingsManager.blessingsFromId(input.remoteBlessings)
+  promises.push(blessingsCache.blessingsFromId(input.remoteBlessings)
   .then(function(remoteBlessings) {
     call.remoteBlessings = remoteBlessings;
     return call;

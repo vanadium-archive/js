@@ -6,12 +6,17 @@
 var test = require('prova');
 var permissionsAuthorizer =
   require('../../src/security/access/permissions-authorizer');
-var Blessings = require('../../src/security/blessings');
 var access = require('../../src/gen-vdl/v.io/v23/security/access');
 var unwrap = require('../../src/vdl/type-util').unwrap;
 var createConstructor = require('../../src/vdl/create-constructor');
 var kind = require('../../src/vdl/kind');
 var Context = require('../../src/context').Context;
+
+function makeFakeBlessings(str) {
+  return {
+    publicKey: str,
+  };
+}
 
 require('es6-shim');
 var rootCtx = new Context();
@@ -20,8 +25,8 @@ var allTags = [
 test('allow same public key access with no other permissions',
      function(assert) {
   var call = {
-    localBlessings: new Blessings(undefined, 'me', undefined),
-    remoteBlessings: new Blessings(undefined, 'me', undefined)
+    localBlessings: makeFakeBlessings('sameKey'),
+    remoteBlessings: makeFakeBlessings('sameKey')
   };
 
   var auth = permissionsAuthorizer({}, access.Tag);
@@ -168,12 +173,8 @@ function checkExpectations(auth, expectations, assert) {
       continue;
     }
     var call = {
-      localBlessings: {
-        publicKey: 'me',
-      },
-      remoteBlessings: {
-        publicKey: 'otherkey',
-      },
+      localBlessings: makeFakeBlessings('localBlessingsMe'),
+      remoteBlessings: makeFakeBlessings('remoteBlessingsOther'),
       remoteBlessingStrings: [name],
     };
     var exp = expectations[name];
@@ -200,8 +201,8 @@ test('tags of different types', function(assert) {
   });
   var myAdmin = new MyTag('Admin');
   var call = {
-    localBlessings: new Blessings(undefined, 'me', undefined),
-    remoteBlessings: new Blessings(undefined, 'otherKey', undefined),
+    localBlessings: makeFakeBlessings('localBlessingsMe'),
+    remoteBlessings: 'localBlessingsOther',
     remoteBlessingStrings: ['server/alice', 'server/bob/friend'],
   };
 
@@ -229,8 +230,8 @@ test('no tags of a type - error', function(assert) {
   });
   var myAdmin = new MyTag('Admin');
   var call = {
-    localBlessings: new Blessings(undefined, 'me', undefined),
-    remoteBlessings: new Blessings(undefined, 'otherKey', undefined),
+    localBlessings: makeFakeBlessings('localBlessingsMe'),
+    remoteBlessings: 'localBlessingsOther',
     remoteBlessingStrings: ['server/alice', 'server/bob/friend'],
   };
 
@@ -250,8 +251,8 @@ test('no tags of a type - error', function(assert) {
 
 test('multiple tags of a type - error', function(assert) {
   var call = {
-    localBlessings: new Blessings(undefined, 'me', undefined),
-    remoteBlessings: new Blessings(undefined, 'otherKey', undefined),
+    localBlessings: makeFakeBlessings('localBlessingsMe'),
+    remoteBlessings: 'localBlessingsOther',
     remoteBlessingStrings: ['server/alice', 'server/bob/friend'],
   };
 

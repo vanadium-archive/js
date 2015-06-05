@@ -14,17 +14,13 @@ function defaultAuthorizer(ctx, call, cb) {
     call.localBlessings.publicKey === call.remoteBlessings.publicKey) {
     return cb();
   }
-  var matchesLocal = call.localBlessingStrings.some(function(l) {
-    return blessingMatches(l, call.remoteBlessingStrings);
+  var matches = call.localBlessingStrings.some(function(l) {
+    return call.remoteBlessingStrings.some(function(r) {
+      return blessingMatches(l, r) || blessingMatches(r, l);
+    });
   });
-  if (matchesLocal) {
-    return cb();
-  }
 
-  var matchesRemote = call.remoteBlessingStrings.some(function(l) {
-    return blessingMatches(l, call.localBlessingStrings);
-  });
-  if (matchesRemote) {
+  if (matches) {
     return cb();
   }
   return cb(new vError.NoAccessError(ctx, 'authorization failed'));

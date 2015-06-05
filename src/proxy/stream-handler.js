@@ -64,7 +64,7 @@ Handler.prototype.handleStreamData = function(data) {
   return vom.decode(data, false, this._typeDecoder).then(function(data) {
     if (data instanceof BlessingsId) {
       var runtime = runtimeFromContext(handler._ctx);
-      runtime.blessingsManager.blessingsFromId(data)
+      runtime.blessingsCache.blessingsFromId(data)
       .then(function(blessings) {
         blessings.retain();
         handler._stream._queueRead(blessings);

@@ -9,11 +9,8 @@ var config = require('./default-config');
 
 function validateBlessings(t, blessings) {
   t.ok(blessings instanceof Blessings, 'Blessings have correct type');
-  t.ok(typeof blessings._id === 'number' && blessings._id !== 0,
-    'Blessing has non-zero id');
-  t.ok(typeof blessings.publicKey === 'string' && blessings.publicKey !== '',
-    'Blessing has public key');
-  t.ok(blessings._controller, 'Blessing object has controller attached');
+  t.ok(blessings.chains.length > 0, 'Non-empty chains');
+  t.ok(blessings.publicKey, 'Public key is set');
 }
 
 test('Test blessing store set (promise case)', function(t) {
@@ -33,8 +30,8 @@ test('Test blessing store set (promise case)', function(t) {
       return runtime.principal.blessingStore.set(runtime.getContext(),
         blessSelfResult, 'fake/remote/pattern');
     }).then(function(firstBlessing) {
-      t.equal(firstBlessing._id, blessSelfResult._id,
-        'Should get handle of first blessing back');
+      t.deepEqual(firstBlessing, blessSelfResult,
+        'Should get first blessings back');
       validateBlessings(t, firstBlessing);
       runtime.close(t.end);
     }).catch(function(err) {
@@ -76,8 +73,8 @@ test('Test blessing store set (callback case)', function(t) {
             runtime.close(t.end);
             return;
           }
-          t.equal(firstBlessing._id, blessSelfResult._id,
-            'Should get handle of first blessing back');
+          t.deepEqual(firstBlessing, blessSelfResult,
+            'Should get first blessings back');
           validateBlessings(t, firstBlessing);
           runtime.close(t.end);
         });
@@ -168,8 +165,8 @@ test('Test blessing store set/get default (promise case)', function(t) {
       return runtime.principal.blessingStore.getDefault(runtime.getContext());
     }).then(function(defaultBlessings) {
       validateBlessings(t, defaultBlessings);
-      t.equal(defaultBlessings._id, blessSelfResult._id,
-        'Should get handle of default blessing back');
+      t.deepEqual(defaultBlessings, blessSelfResult,
+        'Should get default blessings back');
 
       // Restore original default blessings
       return runtime.principal.blessingStore.setDefault(
@@ -221,8 +218,8 @@ test('Test blessing store set/get default (callback case)', function(t) {
               return;
             }
             validateBlessings(t, defaultBlessings);
-            t.equal(defaultBlessings._id, blessSelfResult._id,
-              'Should get handle of default blessing back');
+            t.deepEqual(defaultBlessings, blessSelfResult,
+              'Should get default blessings back');
 
             // Restore original default blessings
             runtime.principal.blessingStore.setDefault(runtime.getContext(),
@@ -245,7 +242,8 @@ test('Test blessing store get public key (promise case)', function(t) {
 
     runtime.principal.blessingStore.getPublicKey(runtime.getContext())
     .then(function(publicKey) {
-      t.ok(typeof publicKey === 'string' && publicKey !== '', 'got public key');
+      t.ok(publicKey instanceof Uint8Array && publicKey.length > 0,
+        'got public key');
       runtime.close(t.end);
     }).catch(function(err) {
       t.error(err, 'error in getPublicKey()');
@@ -267,7 +265,8 @@ test('Test blessing store get public key (callback case)', function(t) {
         runtime.close(t.end);
         return;
       }
-      t.ok(typeof publicKey === 'string' && publicKey !== '', 'got public key');
+      t.ok(publicKey instanceof Uint8Array && publicKey.length > 0,
+        'got public key');
       runtime.close(t.end);
     });
   });

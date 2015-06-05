@@ -38,7 +38,6 @@ var verror = require('../gen-vdl/v.io/v23/verror');
 var vlog = require('../lib/vlog');
 var SharedContextKeys = require('../runtime/shared-context-keys');
 var vtrace = require('../vtrace');
-var Blessings = require('../security/blessings');
 var ByteArrayMessageWriter = require('../vom/byte-array-message-writer');
 var BlessingsId =
   require('../gen-vdl/v.io/x/ref/services/wspr/internal/principal').BlessingsId;
@@ -72,13 +71,7 @@ var OutstandingRPC = function(ctx, options, cb) {
 function convertOutArg(ctx, arg, type, controller) {
   if (arg instanceof BlessingsId) {
     var runtime = runtimeFromContext(ctx);
-    return runtime.blessingsManager.blessingsFromId(arg)
-    .then(function(blessings) {
-      if (blessings) {
-        blessings.retain();
-      }
-      return blessings;
-    });
+    return runtime.blessingsCache.blessingsFromId(arg);
   }
 
   // There's no protection against bad out args if it's a JSValue.
@@ -322,11 +315,7 @@ OutstandingRPC.prototype.constructMessage = function() {
   var encoder = new Encoder(writer, this._typeEncoder);
   encoder.encode(header);
   for (var i = 0; i < this._args.length; i++) {
-    var o = this._args[i];
-    if (o instanceof Blessings) {
-      o = o.convertToJsBlessings();
-    }
-    encoder.encode(o);
+    encoder.encode(this._args[i]);
   }
   return byteUtil.bytes2Hex(writer.getBytes());
 };

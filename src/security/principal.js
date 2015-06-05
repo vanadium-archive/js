@@ -80,7 +80,7 @@ Principal.prototype.bless = function(ctx, publicKey, blessings,
 
   var caveats = args.slice(4);
 
-  this._controller.bless(ctx, publicKey, blessings._id, extension, caveats)
+  this._controller.bless(ctx, publicKey, blessings, extension, caveats)
   .then(function(blessings) {
     def.resolve(blessings);
   }).catch(function(err) {
@@ -143,7 +143,7 @@ Principal.prototype.addToRoots = function(
     return def.promise;
   }
 
-  return this._controller.addToRoots(ctx, blessings._id, cb);
+  return this._controller.addToRoots(ctx, blessings, cb);
 };
 
 module.exports = Principal;

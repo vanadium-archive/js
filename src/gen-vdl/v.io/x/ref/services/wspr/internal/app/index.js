@@ -22,6 +22,7 @@ module.exports = {};
 
 // Types:
 var _type1 = new vdl.Type();
+var _type10 = new vdl.Type();
 var _type2 = new vdl.Type();
 var _type3 = new vdl.Type();
 var _type4 = new vdl.Type();
@@ -40,6 +41,9 @@ var _typeRpcServerOption = new vdl.Type();
 _type1.kind = vdl.kind.LIST;
 _type1.name = "";
 _type1.elem = _typeRpcCallOption;
+_type10.kind = vdl.kind.LIST;
+_type10.name = "";
+_type10.elem = new security.WireBlessings()._type;
 _type2.kind = vdl.kind.LIST;
 _type2.name = "";
 _type2.elem = new security.BlessingPattern()._type;
@@ -51,20 +55,20 @@ _type4.name = "";
 _type4.elem = _typeRpcServerOption;
 _type5.kind = vdl.kind.LIST;
 _type5.name = "";
-_type5.elem = new security.Caveat()._type;
+_type5.elem = vdl.types.BYTE;
 _type6.kind = vdl.kind.LIST;
 _type6.name = "";
-_type6.elem = vdl.types.STRING;
-_type7.kind = vdl.kind.MAP;
+_type6.elem = new security.Caveat()._type;
+_type7.kind = vdl.kind.LIST;
 _type7.name = "";
-_type7.elem = new principal.BlessingsId()._type;
-_type7.key = new security.BlessingPattern()._type;
-_type8.kind = vdl.kind.LIST;
+_type7.elem = vdl.types.STRING;
+_type8.kind = vdl.kind.MAP;
 _type8.name = "";
-_type8.elem = new signature.Interface()._type;
+_type8.elem = new principal.BlessingsId()._type;
+_type8.key = new security.BlessingPattern()._type;
 _type9.kind = vdl.kind.LIST;
 _type9.name = "";
-_type9.elem = new principal.BlessingsHandle()._type;
+_type9.elem = new signature.Interface()._type;
 _typeGranterHandle.kind = vdl.kind.INT32;
 _typeGranterHandle.name = "v.io/x/ref/services/wspr/internal/app.GranterHandle";
 _typeGranterRequest.kind = vdl.kind.STRUCT;
@@ -72,7 +76,7 @@ _typeGranterRequest.name = "v.io/x/ref/services/wspr/internal/app.GranterRequest
 _typeGranterRequest.fields = [{name: "GranterHandle", type: _typeGranterHandle}, {name: "Call", type: new server.SecurityCall()._type}];
 _typeGranterResponse.kind = vdl.kind.STRUCT;
 _typeGranterResponse.name = "v.io/x/ref/services/wspr/internal/app.GranterResponse";
-_typeGranterResponse.fields = [{name: "Blessings", type: new principal.BlessingsHandle()._type}, {name: "Err", type: vdl.types.ERROR}];
+_typeGranterResponse.fields = [{name: "Blessings", type: new security.WireBlessings()._type}, {name: "Err", type: vdl.types.ERROR}];
 _typeRpcCallOption.kind = vdl.kind.UNION;
 _typeRpcCallOption.name = "v.io/x/ref/services/wspr/internal/app.RpcCallOption";
 _typeRpcCallOption.fields = [{name: "AllowedServersPolicy", type: _type2}, {name: "RetryTimeout", type: new time.Duration()._type}, {name: "Granter", type: _typeGranterHandle}];
@@ -86,6 +90,7 @@ _typeRpcServerOption.kind = vdl.kind.UNION;
 _typeRpcServerOption.name = "v.io/x/ref/services/wspr/internal/app.RpcServerOption";
 _typeRpcServerOption.fields = [{name: "IsLeaf", type: vdl.types.BOOL}, {name: "ServesMountTable", type: vdl.types.BOOL}];
 _type1.freeze();
+_type10.freeze();
 _type2.freeze();
 _type3.freeze();
 _type4.freeze();
@@ -151,17 +156,7 @@ Controller.prototype.removeName = function(ctx, serverCall, serverId, name) {
 };
     
       
-Controller.prototype.unlinkBlessings = function(ctx, serverCall, handle) {
-  throw new Error('Method UnlinkBlessings not implemented');
-};
-    
-      
-Controller.prototype.blessingsDebugString = function(ctx, serverCall, handle) {
-  throw new Error('Method BlessingsDebugString not implemented');
-};
-    
-      
-Controller.prototype.bless = function(ctx, serverCall, publicKey, handle, extension, caveat) {
+Controller.prototype.bless = function(ctx, serverCall, publicKey, blessings, extension, caveat) {
   throw new Error('Method Bless not implemented');
 };
     
@@ -171,12 +166,12 @@ Controller.prototype.blessSelf = function(ctx, serverCall, name, caveats) {
 };
     
       
-Controller.prototype.addToRoots = function(ctx, serverCall, handle) {
+Controller.prototype.addToRoots = function(ctx, serverCall, blessings) {
   throw new Error('Method AddToRoots not implemented');
 };
     
       
-Controller.prototype.blessingStoreSet = function(ctx, serverCall, blessingsHandle, pattern) {
+Controller.prototype.blessingStoreSet = function(ctx, serverCall, blessingsblessings, pattern) {
   throw new Error('Method BlessingStoreSet not implemented');
 };
     
@@ -186,7 +181,7 @@ Controller.prototype.blessingStoreForPeer = function(ctx, serverCall, peerBlessi
 };
     
       
-Controller.prototype.blessingStoreSetDefault = function(ctx, serverCall, blessingsHandle) {
+Controller.prototype.blessingStoreSetDefault = function(ctx, serverCall, blessingsblessings) {
   throw new Error('Method BlessingStoreSetDefault not implemented');
 };
     
@@ -320,54 +315,17 @@ Controller.prototype._serviceDescription = {
     
       
     {
-    name: 'UnlinkBlessings',
-    doc: "// UnlinkBlessings removes the given blessings from the blessings store.",
-    inArgs: [{
-      name: 'handle',
-      doc: "",
-      type: new principal.BlessingsHandle()._type
-    },
-    ],
-    outArgs: [],
-    inStream: null,
-    outStream: null,
-    tags: []
-  },
-    
-      
-    {
-    name: 'BlessingsDebugString',
-    doc: "// BlessingsDebugString gets a string useful for debugging blessings.",
-    inArgs: [{
-      name: 'handle',
-      doc: "",
-      type: new principal.BlessingsHandle()._type
-    },
-    ],
-    outArgs: [{
-      name: '',
-      doc: "",
-      type: vdl.types.STRING
-    },
-    ],
-    inStream: null,
-    outStream: null,
-    tags: []
-  },
-    
-      
-    {
     name: 'Bless',
     doc: "// Bless binds extensions of blessings held by this principal to\n// another principal (represented by its public key).",
     inArgs: [{
       name: 'publicKey',
       doc: "",
-      type: vdl.types.STRING
+      type: _type5
     },
     {
-      name: 'handle',
+      name: 'blessings',
       doc: "",
-      type: new principal.BlessingsHandle()._type
+      type: new security.WireBlessings()._type
     },
     {
       name: 'extension',
@@ -377,7 +335,7 @@ Controller.prototype._serviceDescription = {
     {
       name: 'caveat',
       doc: "",
-      type: _type5
+      type: _type6
     },
     ],
     outArgs: [{
@@ -403,7 +361,7 @@ Controller.prototype._serviceDescription = {
     {
       name: 'caveats',
       doc: "",
-      type: _type5
+      type: _type6
     },
     ],
     outArgs: [{
@@ -422,9 +380,9 @@ Controller.prototype._serviceDescription = {
     name: 'AddToRoots',
     doc: "// AddToRoots adds the provided blessing as a root.",
     inArgs: [{
-      name: 'handle',
+      name: 'blessings',
       doc: "",
-      type: new principal.BlessingsHandle()._type
+      type: new security.WireBlessings()._type
     },
     ],
     outArgs: [],
@@ -438,9 +396,9 @@ Controller.prototype._serviceDescription = {
     name: 'BlessingStoreSet',
     doc: "// BlessingStoreSet puts the specified blessing in the blessing store under the provided pattern.",
     inArgs: [{
-      name: 'blessingsHandle',
+      name: 'blessingsblessings',
       doc: "",
-      type: new principal.BlessingsHandle()._type
+      type: new security.WireBlessings()._type
     },
     {
       name: 'pattern',
@@ -466,7 +424,7 @@ Controller.prototype._serviceDescription = {
     inArgs: [{
       name: 'peerBlessings',
       doc: "",
-      type: _type6
+      type: _type7
     },
     ],
     outArgs: [{
@@ -485,9 +443,9 @@ Controller.prototype._serviceDescription = {
     name: 'BlessingStoreSetDefault',
     doc: "// BlessingStoreSetDefault sets the default blessings.",
     inArgs: [{
-      name: 'blessingsHandle',
+      name: 'blessingsblessings',
       doc: "",
-      type: new principal.BlessingsHandle()._type
+      type: new security.WireBlessings()._type
     },
     ],
     outArgs: [],
@@ -520,7 +478,7 @@ Controller.prototype._serviceDescription = {
     outArgs: [{
       name: '',
       doc: "",
-      type: vdl.types.STRING
+      type: _type5
     },
     ],
     inStream: null,
@@ -536,7 +494,7 @@ Controller.prototype._serviceDescription = {
     outArgs: [{
       name: '',
       doc: "",
-      type: _type7
+      type: _type8
     },
     ],
     inStream: null,
@@ -578,7 +536,7 @@ Controller.prototype._serviceDescription = {
     outArgs: [{
       name: '',
       doc: "",
-      type: _type6
+      type: _type7
     },
     ],
     inStream: null,
@@ -599,7 +557,7 @@ Controller.prototype._serviceDescription = {
     outArgs: [{
       name: '',
       doc: "",
-      type: _type8
+      type: _type9
     },
     ],
     inStream: null,
@@ -614,7 +572,7 @@ Controller.prototype._serviceDescription = {
     inArgs: [{
       name: 'toJoin',
       doc: "",
-      type: _type9
+      type: _type10
     },
     ],
     outArgs: [{

@@ -12,11 +12,8 @@ var security = vanadium.security;
 
 function validateBlessings(t, blessings) {
   t.ok(blessings instanceof Blessings, 'Blessings have correct type');
-  t.ok(typeof blessings._id === 'number' && blessings._id !== 0,
-    'Blessing has non-zero id');
-  t.ok(typeof blessings.publicKey === 'string' && blessings.publicKey !== '',
-    'Blessing has public key');
-  t.ok(blessings._controller, 'Blessing object has controller attached');
+  t.ok(blessings.chains.length > 0, 'Non-empty chains');
+  t.ok(blessings.publicKey, 'Public key is set');
 }
 
 test('Test bless self without Caveat', function(t) {
@@ -122,11 +119,12 @@ test('Test bless without Caveat from client (with Granter)', function(t) {
   var service = {
     method: function(ctx, serverCall) {
       t.ok(serverCall.grantedBlessings, 'Expect to get granted blessing');
-      t.equal(serverCall.grantedBlessings._id, expectedBlessing._id,
+      t.deepEqual(serverCall.grantedBlessings, expectedBlessing,
         'Expect to get blessing that was granted.');
       return 'aResponse';
     }
   };
+
 
   serve('testing/clientblessgranter', leafDispatcher(service),
     function(err, res) {
@@ -173,14 +171,13 @@ test('Test add roots', function(t) {
 
     runtime.principal.blessSelf(runtime.getContext(), 'blessedname')
     .then(function(blessings) {
-      t.ok(blessings instanceof Blessings, 'Got blessings');
-      t.ok(blessings._id > 0, 'Should get non-zero blessings');
+      validateBlessings(t, blessings);
 
       return runtime.principal.addToRoots(runtime.getContext(), blessings);
     }).then(function() {
       rt.close(t.end);
     }).catch(function(err) {
-      t.error(err, 'either blessSelf or addToRoots errored');
+      t.error(err, 'either blessSelf or addToRoots errored ' + err);
       rt.close(t.end);
     });
   });
@@ -197,9 +194,8 @@ test('Test fetching blessing debug string', function(t) {
 
     runtime.principal.blessSelf(runtime.getContext(), 'blessedname')
     .then(function(blessings) {
-      return blessings._debugString(runtime.getContext());
-    }).then(function(debugString) {
-      t.ok(debugString === 'blessedname', 'Got blessed name as debug string');
+      t.ok(blessings.chains[0][0].extension === 'blessedname',
+        'Blessing had correct extension');
       rt.close(t.end);
     }).catch(function(err) {
       t.error(err);

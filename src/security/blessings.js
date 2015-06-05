@@ -7,9 +7,16 @@
  * @private
  */
 
-var vlog = require('../lib/vlog');
-var JsBlessings =
-  require('../gen-vdl/v.io/x/ref/services/wspr/internal/principal').JsBlessings;
+var unwrap = require('../vdl/type-util').unwrap;
+var nativeTypeRegistry = require('../vdl/native-type-registry');
+var vdlSecurity = require('../gen-vdl/v.io/v23/security');
+
+module.exports = Blessings;
+
+var wireBlessingsType = vdlSecurity.WireBlessings.prototype._type;
+nativeTypeRegistry.registerFromNativeValue(Blessings, toWireBlessings,
+  wireBlessingsType);
+nativeTypeRegistry.registerFromWireValue(wireBlessingsType, fromWireBlessings);
 
 /**
  * @summary Blessings encapsulates all cryptographic operations
@@ -20,60 +27,80 @@ var JsBlessings =
  * bound to a principal in a specific call.</p>
  * <p>Blessings objects are meant to be presented to other principals to
  * authenticate and authorize actions.</p>
+ * @property {module:vanadium.security.Certificate[]} chains Certificate chains.
+ * @property {module:vanadium.security.PublicKey} publicKey The public key.
  * @constructor
  * @memberof module:vanadium.security
  * @inner
  */
-function Blessings(id, publicKey, controller) {
-  this._id = id;
-  this._count = 1;
-  this._controller = controller;
-  this.publicKey = publicKey;
+function Blessings(wireblessings) {
+  var unwrappedWireBlessings = unwrap(wireblessings);
+  this.chains = unwrappedWireBlessings.certificateChains;
+  if (this.chains.length === 0) {
+    throw new Error('Refusing to create empty blessings object');
+  }
+  if (this.chains[0].length === 0) {
+    throw new Error('First chain should be non-null');
+  }
+  this.publicKey = this.chains[0][this.chains[0].length - 1].publicKey;
 }
 
 /**
- * Increments the reference count on the Blessings.  When the reference count
- * goes to zero, the Blessings will be removed from the cache in the go code.
- */
-Blessings.prototype.retain = function() {
-  this._count++;
-};
-
-/**
- * Decrements the reference count on the Blessings.  When the reference count
- * goes to zero, the Blessings will be removed from the cache in the go code.
- * @param {module:vanadium.context.Context} ctx A context.
- */
-Blessings.prototype.release = function(ctx) {
-  this._count--;
-  if (this._count === 0) {
-    this._controller.unlinkBlessings(ctx, this._id).catch(function(err) {
-      vlog.logger.warn('Ignoring failure while cleaning up blessings: ' + err);
-    });
-  }
-};
-
-Blessings.prototype.toJSON = function() {
-  return {
-    id: this._id,
-    publicKey: this.publicKey,
-  };
-};
-
-/**
  * Get a string that describes this blessings object.
- * @return {Promise} A promise to a string describing the blessings.
+ * @return {string} A string describing the blessings.
  * @private
  */
-Blessings.prototype._debugString = function(ctx) {
-  return this._controller.blessingsDebugString(ctx, this._id);
+Blessings.prototype.toString = function() {
+  var parts = [];
+  for (var chainidx = 0; chainidx < this.chains.length; chainidx++) {
+    var chainParts = [];
+    var chain = this.chains[chainidx];
+    for (var certidx = 0; certidx < chain.length; certidx++) {
+      var cert = chain[certidx];
+      chainParts.push(cert.extension);
+    }
+    parts.push(chainParts.join(vdlSecurity.ChainSeparator));
+  }
+  return parts.join(' ');
 };
 
-Blessings.prototype.convertToJsBlessings = function() {
-  return new JsBlessings({
-    handle: this._id,
-    publicKey: this.publicKey
-  }, true);
-};
+function toWireBlessings(blessings) {
+  if (!blessings) {
+    // null is used for zero blessings
+    return new vdlSecurity.WireBlessings({
+      certificateChains: []
+    });
+  }
 
-module.exports = Blessings;
+  if (typeof blessings !== 'object') {
+    throw new Error('Expected blessings to be an object');
+  }
+
+  if (blessings.hasOwnProperty('certificateChains')) {
+    // Assume this is a WireBlessings object. It isn't possible to directly
+    // construct WireBlessings due to the way that native types are set up so
+    // this check is used in place of instance of.
+    // TODO(bprosnitz) Fix the way that native type conversion works.
+    return blessings;
+  }
+
+  return new vdlSecurity.WireBlessings({
+    certificateChains: blessings.chains
+  });
+}
+
+function fromWireBlessings(wireblessings) {
+  if (typeof wireblessings !== 'object') {
+    throw new Error('Expected wire blessings to be an object');
+  }
+
+  if (wireblessings instanceof Blessings) {
+    return wireblessings;
+  }
+
+  if (wireblessings.certificateChains.length === 0) {
+    return null;
+  }
+
+  return new Blessings(wireblessings);
+}

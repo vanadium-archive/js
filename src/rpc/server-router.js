@@ -54,7 +54,7 @@ var StreamCloseHandler = require('./stream-close-handler');
  * @private
  */
 var Router = function(
-  proxy, appName, rootCtx, controller, caveatRegistry, blessingsManager) {
+  proxy, appName, rootCtx, controller, caveatRegistry, blessingsCache) {
   this._servers = {};
   this._proxy = proxy;
   this._streamMap = {};
@@ -64,7 +64,7 @@ var Router = function(
   this._caveatRegistry = caveatRegistry;
   this._outstandingRequestForId = {};
   this._controller = controller;
-  this._blessingsManager = blessingsManager;
+  this._blessingsCache = blessingsCache;
   this._typeEncoder = proxy.typeEncoder;
   this._typeDecoder = proxy.typeDecoder;
 
@@ -138,7 +138,7 @@ Router.prototype.handleAuthorizationRequest = function(messageId, request) {
                                 null, messageId);
       return;
     }
-    return createSecurityCall(decodedRequest.call, router._blessingsManager)
+    return createSecurityCall(decodedRequest.call, router._blessingsCache)
     .then(function(call) {
       return server.handleAuthorization(decodedRequest.handle, ctx, call);
     });
@@ -186,7 +186,7 @@ Router.prototype._validateChain = function(ctx, call, cavs) {
 
 Router.prototype.handleCaveatValidationRequest = function(messageId, request) {
   var router = this;
-  createSecurityCall(request.call, this._blessingsManager)
+  createSecurityCall(request.call, this._blessingsCache)
   .then(function(call) {
     var ctx = router._rootCtx.withValue(SharedContextKeys.LANG_KEY,
       request.context.language);
@@ -339,7 +339,7 @@ Router.prototype._maybeHandleReservedMethod = function(
     this._outstandingRequestForId[messageId] = 0;
     this.incrementOutstandingRequestForId(messageId);
     var globPattern = typeUtil.unwrap(request.args[0]);
-    return createServerCall(request, this._blessingsManager)
+    return createServerCall(request, this._blessingsCache)
     .then(function(call) {
       self.handleGlobRequest(messageId, call.securityCall.suffix,
                              server, new Glob(globPattern), ctx, call, invoker,
@@ -359,7 +359,7 @@ Router.prototype._unwrapArgs = function(args, methodSig) {
     }
     var unwrapped = typeUtil.unwrap(arg);
     if (unwrapped instanceof BlessingsId) {
-      return self._blessingsManager.blessingsFromId(unwrapped);
+      return self._blessingsCache.blessingsFromId(unwrapped);
     }
     return Promise.resolve(unwrapped);
   });
@@ -422,7 +422,7 @@ Router.prototype._handleRPCRequestInternal = function(messageId, request) {
   var args;
   this._unwrapArgs(request.args, methodSig).then(function(unwrapped) {
     args = unwrapped;
-    return createServerCall(request, self._blessingsManager);
+    return createServerCall(request, self._blessingsCache);
   }).then(function(call) {
     var options = {
       methodName: methodName,
@@ -519,13 +519,8 @@ Router.prototype.invokeMethod = function(invoker, options) {
     stream: options.stream
   };
 
-  var rootCtx = this._rootCtx;
   var def = new Deferred();
   function InvocationFinishedCallback(err, results) {
-    // Note: We use the rootCtx here because we want to make this
-    // call to clean up the blessings even if the method invocation
-    // is cancelled.
-    call.securityCall.remoteBlessings.release(rootCtx);
     if (err) {
       return def.reject(err);
     }
@@ -615,7 +610,7 @@ Router.prototype.handleGlobRequest = function(messageId, name, server, glob,
       self.incrementOutstandingRequestForId(messageId);
       var nextInvoker;
       var subCall;
-      createServerCall(call, this._blessingsManager).then(function(servCall) {
+      createServerCall(call, this._blessingsCache).then(function(servCall) {
         subCall = servCall;
         subCall.securityCall.suffix = suffix;
         return server._handleLookup(suffix);
@@ -691,12 +686,6 @@ Router.prototype.sendResult = function(messageId, name, results, err,
 
   var traceResponse = vtrace.response(ctx);
 
-  // Convert any Blessings to JsBlessings
-  for (var i = 0; i < results.length; ++i) {
-    if (results[i] instanceof Blessings) {
-      results[i] = results[i].convertToJsBlessings();
-    }
-  }
   // If this is a streaming request, queue up the final response after all
   // the other stream requests are done.
   var stream = this._streamMap[messageId];

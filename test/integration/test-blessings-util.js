@@ -22,11 +22,10 @@ test('Test union of blessings (promise case)', function(t) {
       });
     })
     .then(function(unionedBlessings) {
-      return unionedBlessings._debugString(runtime.getContext());
-    })
-    .then(function(debugStr) {
-      t.ok(debugStr.indexOf('blessedname1') >= 0, 'first blessing in union');
-      t.ok(debugStr.indexOf('blessedname2') >= 0, 'second blessing in union');
+      t.ok(unionedBlessings.toString().indexOf('blessedname1') >= 0,
+          'first blessing in union');
+      t.ok(unionedBlessings.toString().indexOf('blessedname2') >= 0,
+          'second blessing in union');
       runtime.close(t.end);
     }).catch(function(err) {
       runtime.close();
@@ -62,17 +61,11 @@ test('Test union of blessings (callback case)', function(t) {
             runtime.close(t.end);
             return;
           }
-          unionedBlessings._debugString(runtime.getContext())
-          .then(function(debugStr) {
-            t.ok(debugStr.indexOf('blessedname1') >= 0,
+          t.ok(unionedBlessings.toString().indexOf('blessedname1') >= 0,
               'first blessing in union');
-            t.ok(debugStr.indexOf('blessedname2') >= 0,
+          t.ok(unionedBlessings.toString().indexOf('blessedname2') >= 0,
               'second blessing in union');
             runtime.close(t.end);
-          }).catch(function(err) {
-            t.error(err);
-            runtime.close(t.end);
-          });
         });
       });
     });

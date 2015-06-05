@@ -6,10 +6,19 @@ var test = require('prova');
 var BlessingsCache = require('../../src/security/blessings-cache');
 var principal =
   require('../../src/gen-vdl/v.io/x/ref/services/wspr/internal/principal');
+var security = require('../../src/gen-vdl/v.io/v23/security');
+var nativeTypeRegistry =
+  require('../../src/vdl/native-type-registry');
 
 test('Blessing cache - add before use', function(t) {
   var blessingsA = {
-    publicKey: 'A'
+    certificateChains: [
+      [
+        new security.Certificate({
+          extension: 'A'
+        })
+      ]
+    ]
   };
   var messages = [
     {
@@ -31,7 +40,13 @@ test('Blessing cache - add before use', function(t) {
 
 test('Blessing cache - add after use', function(t) {
   var blessingsA = {
-    publicKey: 'A'
+    certificateChains: [
+      [
+        new security.Certificate({
+          extension: 'A'
+        })
+      ]
+    ]
   };
   var messages = [
     {
@@ -54,7 +69,13 @@ test('Blessing cache - add after use', function(t) {
 
 test('Blessing cache - delete after add', function(t) {
   var blessingsA = {
-    publicKey: 'A'
+    certificateChains: [
+      [
+        new security.Certificate({
+          extension: 'A'
+        })
+      ]
+    ]
   };
   var messages = [
     {
@@ -82,7 +103,13 @@ test('Blessing cache - delete after add', function(t) {
 
 test('Blessing cache - reference counting delete', function(t) {
   var blessingsA = {
-    publicKey: 'A'
+    certificateChains: [
+      [
+        new security.Certificate({
+          extension: 'A'
+        })
+      ]
+    ]
   };
   var messages = [
     {
@@ -120,7 +147,13 @@ test('Blessing cache - reference counting delete', function(t) {
 
 test('Blessing cache - add after delete', function(t) {
   var blessingsA = {
-    publicKey: 'A'
+    certificateChains: [
+      [
+        new security.Certificate({
+          extension: 'A'
+        })
+      ]
+    ]
   };
   var messages = [
     {
@@ -153,13 +186,31 @@ test('Blessing cache - add after delete', function(t) {
 
 test('Blessing cache - multiple entries', function(t) {
   var blessingsA = {
-    publicKey: 'A'
+    certificateChains: [
+      [
+        new security.Certificate({
+          extension: 'A'
+        })
+      ]
+    ]
   };
   var blessingsB = {
-    publicKey: 'B'
+    certificateChains: [
+      [
+        new security.Certificate({
+          extension: 'B'
+        })
+      ]
+    ]
   };
   var blessingsC = {
-    publicKey: 'C'
+    certificateChains: [
+      [
+        new security.Certificate({
+          extension: 'C'
+        })
+      ]
+    ]
   };
   var messages = [
     {
@@ -248,7 +299,13 @@ test('Blessing cache - multiple entries', function(t) {
 
 test('Blessing cache handles typed BlessingsId objects', function(t) {
   var blessingsA = {
-    publicKey: 'A'
+    certificateChains: [
+      [
+        new security.Certificate({
+          extension: 'A'
+        })
+      ]
+    ]
   };
   var messages = [
     {
@@ -325,8 +382,10 @@ function handleCacheTestMessage(t, cache, message, index) {
   } else if (message.type === 'blessingsFromId') {
     return cache.blessingsFromId(message.cacheId).then(function(blessings) {
       var expected = null;
-      if (message.expected !== null) {
-        expected = new principal.JsBlessings(message.expected);
+      if (message.expected) {
+        expected = nativeTypeRegistry.fromWireValue(
+          security.WireBlessings.prototype._type,
+          message.expected);
       }
       t.deepEqual(blessings, expected,
         'Should get expected blessings on message ' + index);

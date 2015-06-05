@@ -19,8 +19,8 @@ module.exports = BlessingsRouter;
  * @constructor
  * @private
  */
-function BlessingsRouter(proxy, blessingsManager) {
-  this._blessingsManager = blessingsManager;
+function BlessingsRouter(proxy, blessingsCache) {
+  this._blessingsCache = blessingsCache;
 
   proxy.addIncomingHandler(Incoming.BLESSINGS_CACHE_MESSAGE, this);
 }
@@ -39,9 +39,9 @@ BlessingsRouter.prototype.handleBlessingsCacheMessages = function(messages) {
   for (var i = 0; i < messages.length; i++) {
     var message = messages[i];
     if (message.hasOwnProperty('add')) {
-      this._blessingsManager.addBlessings(message.add);
+      this._blessingsCache.addBlessings(message.add);
     } else if (message.hasOwnProperty('delete')) {
-      this._blessingsManager.deleteBlessings(message.delete);
+      this._blessingsCache.deleteBlessings(message.delete);
     } else {
       vlog.logger.error('Unknown blessings cache message: ', message);
     }

@@ -25,14 +25,14 @@ module.exports = GranterRouter;
  * grant requests.
  * @private
  */
-function GranterRouter(proxy, rootCtx, blessingsManager) {
+function GranterRouter(proxy, rootCtx, blessingsCache) {
   proxy.addIncomingHandler(Incoming.GRANTER_REQUEST, this);
 
   this._proxy = proxy;
   this._rootCtx = rootCtx;
   this.nextGranterId = 0;
   this.activeGranters = {};
-  this._blessingsManager = blessingsManager;
+  this._blessingsCache = blessingsCache;
 }
 
 /**
@@ -66,7 +66,7 @@ GranterRouter.prototype.handleRequest = function(messageId, type, request) {
         new verror.NoExistError(router._rootCtx, 'unknown granter'));
     }
     delete router.activeGranters[request.granterHandle];
-    return createSecurityCall(request.call, router._blessingsManager);
+    return createSecurityCall(request.call, router._blessingsCache);
   }, function(e) {
     return Promise.reject(
       new verror.NoExistError(router._rootCtx, 'failed to decode message'));
@@ -88,7 +88,7 @@ GranterRouter.prototype.handleRequest = function(messageId, type, request) {
               });
     return promise;
   }).then(function(outBlessings) {
-    var result = new GranterResponse({blessings: outBlessings[0]._id});
+    var result = new GranterResponse({blessings: outBlessings[0]});
     var data = hexVom.encode(result);
     router._proxy.sendRequest(data, Outgoing.GRANTER_RESPONSE, null,
       messageId);

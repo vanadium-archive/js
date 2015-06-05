@@ -40,12 +40,8 @@ function unionOfBlessings(ctx /*, blessingsA, blessingsB, ..., cb*/) {
    if (args.length > 0 && typeof args[args.length - 1] === 'function') {
      cb = args.pop();
    }
-
    var blessingsList = args;
-   var handleList = blessingsList.map(function(blessings) {
-     return blessings._id;
-   });
 
    var runtime = runtimeFromContext(ctx);
-   return runtime._controller.unionOfBlessings(ctx, handleList, cb);
+   return runtime._controller.unionOfBlessings(ctx, blessingsList, cb);
 }

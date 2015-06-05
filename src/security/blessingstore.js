@@ -81,7 +81,7 @@
      return def.promise;
    }
 
-   return this._controller.blessingStoreSet(ctx, blessings._id, pattern, cb);
+   return this._controller.blessingStoreSet(ctx, blessings, pattern, cb);
  };
 
  /**
@@ -124,8 +124,7 @@
   * @return {Promise} A promise that will be resolved without an output
   * value.
   */
- BlessingStore.prototype.setDefault = function(
-   ctx, blessings, cb) {
+ BlessingStore.prototype.setDefault = function(ctx, blessings, cb) {
    if (blessings === undefined) {
      var def = new Deferred(cb);
      def.reject(new verror.BadArgError(ctx,
@@ -133,7 +132,7 @@
      return def.promise;
    }
 
-   return this._controller.blessingStoreSetDefault(ctx, blessings._id, cb);
+   return this._controller.blessingStoreSetDefault(ctx, blessings, cb);
  };
 
  /**
@@ -149,8 +148,7 @@
   * @return {Promise<module:vanadium.security~Blessings>} A promise that will
   * be resolved with the blessing.
   */
- BlessingStore.prototype.getDefault = function(
-   ctx, cb) {
+ BlessingStore.prototype.getDefault = function(ctx, cb) {
    return this._controller.blessingStoreDefault(ctx, cb);
  };
 
@@ -163,8 +161,7 @@
   * @return {Promise<string>} A promise that will
   * be resolved with the public key as a string.
   */
- BlessingStore.prototype.getPublicKey = function(
-   ctx, cb) {
+ BlessingStore.prototype.getPublicKey = function(ctx, cb) {
    return this._controller.blessingStorePublicKey(ctx, cb);
  };
 
@@ -178,8 +175,7 @@
   * module:vanadium.security~Blessings>>} A promise that will
   * be resolved with the peer blessings.
   */
- BlessingStore.prototype.getPeerBlessings = function(
-   ctx, cb) {
+ BlessingStore.prototype.getPeerBlessings = function(ctx, cb) {
    var def = new Deferred(cb);
    var controller = this._controller;
    controller.blessingStorePeerBlessings(ctx)
@@ -188,7 +184,7 @@
      var promises = [];
      peerBlessings.forEach(function(blessId, pattern) {
        var runtime = runtimeFromContext(ctx);
-       promises.push(runtime.blessingsManager.blessingsFromId(blessId)
+       promises.push(runtime.blessingsCache.blessingsFromId(blessId)
        .then(function(blessingsObj) {
          outPeerBlessings.set(pattern, blessingsObj);
        }));
@@ -210,7 +206,6 @@
   * @return {Promise<string>} A promise that will
   * be resolved with the debug string.
   */
- BlessingStore.prototype.getDebugString = function(
-   ctx, cb) {
+ BlessingStore.prototype.getDebugString = function(ctx, cb) {
    return this._controller.blessingStoreDebugString(ctx, cb);
  };
