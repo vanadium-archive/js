@@ -22,7 +22,6 @@ module.exports = {};
 
 // Types:
 var _type1 = new vdl.Type();
-var _type10 = new vdl.Type();
 var _type2 = new vdl.Type();
 var _type3 = new vdl.Type();
 var _type4 = new vdl.Type();
@@ -41,9 +40,6 @@ var _typeRpcServerOption = new vdl.Type();
 _type1.kind = vdl.kind.LIST;
 _type1.name = "";
 _type1.elem = _typeRpcCallOption;
-_type10.kind = vdl.kind.LIST;
-_type10.name = "";
-_type10.elem = new security.WireBlessings()._type;
 _type2.kind = vdl.kind.LIST;
 _type2.name = "";
 _type2.elem = new security.BlessingPattern()._type;
@@ -90,7 +86,6 @@ _typeRpcServerOption.kind = vdl.kind.UNION;
 _typeRpcServerOption.name = "v.io/x/ref/services/wspr/internal/app.RpcServerOption";
 _typeRpcServerOption.fields = [{name: "IsLeaf", type: vdl.types.BOOL}, {name: "ServesMountTable", type: vdl.types.BOOL}];
 _type1.freeze();
-_type10.freeze();
 _type2.freeze();
 _type3.freeze();
 _type4.freeze();
@@ -213,11 +208,6 @@ Controller.prototype.remoteBlessings = function(ctx, serverCall, name, method) {
       
 Controller.prototype.signature = function(ctx, serverCall, name) {
   throw new Error('Method Signature not implemented');
-};
-    
-      
-Controller.prototype.unionOfBlessings = function(ctx, serverCall, toJoin) {
-  throw new Error('Method UnionOfBlessings not implemented');
 };
      
 
@@ -558,27 +548,6 @@ Controller.prototype._serviceDescription = {
       name: '',
       doc: "",
       type: _type9
-    },
-    ],
-    inStream: null,
-    outStream: null,
-    tags: []
-  },
-    
-      
-    {
-    name: 'UnionOfBlessings',
-    doc: "// UnionOfBlessings returns a Blessings object that carries the union of the provided blessings.",
-    inArgs: [{
-      name: 'toJoin',
-      doc: "",
-      type: _type10
-    },
-    ],
-    outArgs: [{
-      name: '',
-      doc: "",
-      type: new principal.BlessingsId()._type
     },
     ],
     inStream: null,
