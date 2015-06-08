@@ -14,7 +14,8 @@ function assertBlessings(blessings, t) {
   t.ok(Array.isArray(blessings), 'blessings is an array');
   t.ok(blessings.length > 0, 'blessings has at least one blessing');
   t.ok(defaultBlessingRegex.test(blessings[0]),
-      'blessings[0] matches the default blessing regex.');
+      'blessings[0]: ' + blessings[0] +
+      ' should match the default blessings regex ' + defaultBlessingRegex);
 }
 
 var serverName = 'foo';

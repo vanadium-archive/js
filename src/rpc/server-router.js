@@ -148,11 +148,11 @@ Router.prototype.handleAuthorizationRequest = function(messageId, request) {
                                             router._typeEncoder),
                               Outgoing.AUTHORIZATION_RESPONSE, null, messageId);
   }).catch(function(e) {
-    var errMsg = {
+    var authReply = new AuthReply({
       err: ErrorConversion.fromNativeValue(e, router._appName,
                                            decodedRequest.call.method)
-    };
-    router._proxy.sendRequest(hexVom.encode(errMsg, undefined,
+    });
+    router._proxy.sendRequest(hexVom.encode(authReply, undefined,
                                             router._typeEncoder),
                               Outgoing.AUTHORIZATION_RESPONSE, null,
                               messageId);
