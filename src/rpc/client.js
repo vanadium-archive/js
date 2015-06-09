@@ -310,10 +310,9 @@ OutstandingRPC.prototype.constructMessage = function() {
     }
   };
 
-  var header = new RpcRequest(jsonMessage);
   var writer = new ByteArrayMessageWriter();
   var encoder = new Encoder(writer, this._typeEncoder);
-  encoder.encode(header);
+  encoder.encode(jsonMessage, RpcRequest.prototype._type);
   for (var i = 0; i < this._args.length; i++) {
     encoder.encode(this._args[i]);
   }

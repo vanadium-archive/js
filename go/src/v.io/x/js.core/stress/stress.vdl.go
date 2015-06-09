@@ -40,6 +40,8 @@ func init() {
 type StressClientMethods interface {
 	// Echo returns the payload that it receives.
 	Echo(ctx *context.T, Payload []byte, opts ...rpc.CallOpt) ([]byte, error)
+	// ServerEcho runs as many calls to Echo on the name provided in the duration
+	// specified and returns the peformance results.
 	ServerEcho(ctx *context.T, totalTime time.Duration, name string, opts ...rpc.CallOpt) (StressResults, error)
 }
 
@@ -73,6 +75,8 @@ func (c implStressClientStub) ServerEcho(ctx *context.T, i0 time.Duration, i1 st
 type StressServerMethods interface {
 	// Echo returns the payload that it receives.
 	Echo(ctx *context.T, call rpc.ServerCall, Payload []byte) ([]byte, error)
+	// ServerEcho runs as many calls to Echo on the name provided in the duration
+	// specified and returns the peformance results.
 	ServerEcho(ctx *context.T, call rpc.ServerCall, totalTime time.Duration, name string) (StressResults, error)
 }
 
@@ -148,6 +152,7 @@ var descStress = rpc.InterfaceDesc{
 		},
 		{
 			Name: "ServerEcho",
+			Doc:  "// ServerEcho runs as many calls to Echo on the name provided in the duration\n// specified and returns the peformance results.",
 			InArgs: []rpc.ArgDesc{
 				{"totalTime", ``}, // time.Duration
 				{"name", ``},      // string

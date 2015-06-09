@@ -51,18 +51,19 @@ TypeEncoder.prototype.encodeType = function(type) {
     throw new Error('Type must be an object, but instead had value ' + type);
   }
 
-  var id = BootstrapTypes.typeToId(type);
-  if (id !== undefined) {
-    return id;
-  }
-
   // This isn't a bootstrap type, so it needs to be canonicalized.
   if (!Object.isFrozen(type)) {
     type = canonicalize.type(type);
   }
 
-  // Check the cache of types that have been encoded already.
   var stringifiedType = stringify(type);
+
+  var id = BootstrapTypes.typeStringToId(stringifiedType);
+  if (id !== undefined) {
+    return id;
+  }
+
+  // Check the cache of types that have been encoded already.
   id = this._typeIds[stringifiedType];
   if (id !== undefined) {
     return id;

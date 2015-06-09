@@ -42,7 +42,7 @@ var nilByte = unwrap(wiretype.WireCtrlNil);
 function Decoder(messageReader, deepWrap, typeDecoder) {
   this._messageReader = messageReader;
   this._typeDecoder = typeDecoder || new TypeDecoder();
-  this._deepWrap = deepWrap || false;
+  this._deepWrap = false;
   this._tasks = new TaskSequence();
 }
 
@@ -87,7 +87,14 @@ Decoder.prototype._decodeValue = function(t, reader, shouldWrap) {
     // If this value should be wrapped, apply the constructor.
     if (t.kind !== kind.TYPEOBJECT && shouldWrap) {
       var Ctor = Registry.lookupOrCreateConstructor(t);
-      return new Ctor(value, this._deepWrap);
+      if (Ctor.prototype._wrappedType) {
+        return new Ctor(value);
+      }
+      if (value !== null && value !== undefined) {
+        Object.defineProperty(value, 'constructor', {
+          value: Ctor,
+        });
+      }
     }
     return value;
   });
@@ -256,6 +263,14 @@ Decoder.prototype._decodeStruct = function(t, reader) {
   var obj = Object.create(Ctor.prototype);
 
   return promiseWhile(notEndByte, readField).then(function() {
+    return obj;
+  }).then(function(obj) {
+    t.fields.forEach(function(field) {
+      var name = util.uncapitalize(field.name);
+      if (!obj.hasOwnProperty(name)) {
+        obj[name] = unwrap(canonicalize.zero(field.type));
+      }
+    });
     return obj;
   });
   function notEndByte() {

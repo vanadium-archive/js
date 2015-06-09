@@ -12,6 +12,7 @@ module.exports = {
   definitions: undefined,
   idToType: idToType,
   typeToId: typeToId,
+  typeStringToId: typeStringToId,
   unionIds: {
     NAMED_TYPE: 0,
     ENUM_TYPE: 1,
@@ -134,6 +135,18 @@ for (var key in bootstrapTypes) {
 function typeToId(type) {
   return typeToIdMap[stringify(type)];
 }
+
+/**
+ * Type to ID finds the bootstrap id for a type.
+ * @private
+ * @param {Type} type The type to search for.
+ * @return {number} The bootstrap id or undefined if no boostrap type is found.
+ */
+function typeStringToId(typeStr) {
+  return typeToIdMap[typeStr];
+}
+
+
 
 /**
  * ID to type looks up the boostrap type for a given ID.

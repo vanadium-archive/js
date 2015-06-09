@@ -226,13 +226,14 @@ Router.prototype.handleLookupRequest = function(messageId, request) {
    var signatureList = value.invoker.signature();
    var hasAuthorizer = (typeof value.authorizer === 'function');
    var hasGlobber = value.invoker.hasGlobber();
-   var reply = new LookupReply({
+   var reply = {
      handle: value._handle,
      signature: signatureList,
      hasAuthorizer: hasAuthorizer,
      hasGlobber: hasGlobber
-   });
-   self._proxy.sendRequest(hexVom.encode(reply, undefined, self._typeEncoder),
+   };
+   self._proxy.sendRequest(hexVom.encode(reply, LookupReply.prototype._type,
+                                         self._typeEncoder),
                            Outgoing.LOOKUP_RESPONSE,
                            null, messageId);
  }).catch(function(err) {
