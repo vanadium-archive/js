@@ -2,7 +2,7 @@ PATH := node_modules/.bin:${V23_ROOT}/third_party/cout/node/bin:$(PATH)
 
 NODE_BIN := $(V23_ROOT)/release/javascript/core/node_modules/.bin
 GOPATH := $(V23_ROOT)/release/javascript/core/go
-VDLPATH := $(GOPATH)
+VDLPATH := $(V23_ROOT)/release/go/src:$(GOPATH)/src
 GOBIN := $(V23_ROOT)/release/javascript/core/go/bin
 VGO := GOPATH="$(GOPATH)" VDLPATH="$(VDLPATH)" v23 go
 GO_FILES := $(shell find go/src $(V23_ROOT)/release/go/src/v.io -name "*.go")
@@ -138,7 +138,7 @@ gen-vdl: gen-vdl-impl
 # The command will generate all the dependent files as well.
 gen-vdl-test: JS_VDL_DIR := "$(V23_ROOT)/release/javascript/core/test/vdl-out"
 gen-vdl-test: EXTRA_VDL_PATHS := "javascript-test/..." "v.io/x/js.core/..." 
-gen-vdl-test: VDLPATH := "$(V23_ROOT)/release/javascript/core/test/vdl-in:$(V23_ROOT)/release/javascript/core/go"
+gen-vdl-test: VDLPATH := "$(V23_ROOT)/release/javascript/core/test/vdl-in/src:$(V23_ROOT)/release/javascript/core/go/src"
 gen-vdl-test: JS_VDL_PATH_TO_CORE := "../../src"
 gen-vdl-test: gen-vdl-impl
 
