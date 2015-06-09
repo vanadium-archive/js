@@ -1,0 +1,25 @@
+// Copyright 2015 The Vanadium Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file.
+
+package stress
+
+import (
+	"time"
+	"v.io/v23/security/access"
+)
+
+type StressResults struct {
+	Iterations int64
+	Qps        float64
+	MsecsPerRpc float64
+}
+
+type Stress interface {
+	// Echo returns the payload that it receives.
+	Echo(Payload []byte) ([]byte | error) {access.Read}
+
+	// ServerEcho runs as many calls to Echo on the name provided in the duration
+	// specified and returns the peformance results.
+	ServerEcho(totalTime time.Duration, name string) (StressResults | error) {access.Read}
+}

@@ -137,7 +137,7 @@ gen-vdl: gen-vdl-impl
 # This generates the output of the vdl files in test/vdl-out/gen-vdl/v.io/<package-path>
 # The command will generate all the dependent files as well.
 gen-vdl-test: JS_VDL_DIR := "$(V23_ROOT)/release/javascript/core/test/vdl-out"
-gen-vdl-test: EXTRA_VDL_PATHS := "javascript-test/..." "v.io/x/js.core/test_service/..."
+gen-vdl-test: EXTRA_VDL_PATHS := "javascript-test/..." "v.io/x/js.core/..." 
 gen-vdl-test: VDLPATH := "$(V23_ROOT)/release/javascript/core/test/vdl-in:$(V23_ROOT)/release/javascript/core/go"
 gen-vdl-test: JS_VDL_PATH_TO_CORE := "../../src"
 gen-vdl-test: gen-vdl-impl
@@ -238,7 +238,7 @@ go/bin: $(GO_FILES)
 	@$(VGO) build -o $(GOBIN)/servicerunner -a -tags wspr v.io/x/ref/cmd/servicerunner
 	@$(VGO) build -o $(GOBIN)/principal v.io/x/ref/cmd/principal
 	@$(VGO) build -o $(GOBIN)/test_serviced v.io/x/js.core/test_service/test_serviced
-	@$(VGO) build -o $(GOBIN)/stressd v.io/x/ref/runtime/internal/rpc/stress/stressd
+	@$(VGO) build -o $(GOBIN)/stressd v.io/x/js.core/stress/stressd
 
 lint: node_modules
 ifdef NOLINT
