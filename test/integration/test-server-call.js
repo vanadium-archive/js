@@ -88,6 +88,23 @@ test('Test non-empty suffix is available in context', function(assert) {
   });
 });
 
+test('Test Unicode suffix is available in context', function(assert) {
+  serve('a/b', dispatcher, function(err, res, end) {
+    assert.error(err, 'should not error on serve(...)');
+    var client = res.runtime.newClient();
+    var ctx = res.runtime.getContext();
+    client.bindTo(ctx, 'a/b/چשઑᜰ', function(err, service) {
+      assert.error(err, 'should not error on runtime.bindTo(...)');
+
+      service.getSuffix(ctx, function(err, suffix) {
+        assert.error(err, 'should not error on getSuffix(...)');
+        assert.equal(suffix, 'چשઑᜰ');
+        end(assert);
+      });
+    });
+  });
+});
+
 test('Test empty suffix is available in context - ', function(assert) {
   serve('a/b', dispatcher, function(err, res, end) {
     assert.error(err, 'should not error on serve(...)');

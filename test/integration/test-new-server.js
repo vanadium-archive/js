@@ -8,7 +8,7 @@ var Promise = require('../../src/lib/promise');
 var config = require('./default-config');
 var timeouts = require('./timeouts');
 
-var NAME_PREFIX = 'new-server-testing/';
+var NAME_PREFIX = 'new-server-testing-چשઑᜰ/';
 
 var fooService = {
   foo: function(ctx, serverCall) {
