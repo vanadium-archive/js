@@ -163,7 +163,7 @@
  * @param {module:vanadium.context.Context} ctx The context the error was
  * created in.
  * @param {...*} params A list of parameters to include in the error message.
- * @name NotAccessError
+ * @name NoAccessError
  * @constructor
  * @memberof module:vanadium.verror
  * @augments module:vanadium.verror.VanadiumError
