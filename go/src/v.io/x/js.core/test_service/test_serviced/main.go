@@ -10,20 +10,22 @@ import (
 	"log"
 
 	"v.io/v23"
+	"v.io/x/ref/lib/flags"
 	"v.io/x/ref/lib/signals"
+	"v.io/x/ref/lib/xrpc"
 	_ "v.io/x/ref/runtime/factories/generic"
 )
 
 func main() {
+	flags.SetDefaultHostPort("127.0.0.1:0")
 	ctx, shutdown := v23.Init()
 	defer shutdown()
 
-	s, endpoint, err := StartServer(ctx)
+	s, err := xrpc.NewDispatchingServer(ctx, "test_service", NewDispatcher())
 	if err != nil {
-		log.Fatal("", err)
+		log.Fatalf("failure creating server: %v", err)
 	}
-	defer s.Stop()
-
+	endpoint := s.Status().Endpoints[0]
 	fmt.Printf("Listening at: %v\n", endpoint)
 	<-signals.ShutdownOnSignals(ctx)
 }

@@ -8,7 +8,10 @@ import (
 	"runtime"
 
 	"v.io/v23"
+	"v.io/v23/security"
+	"v.io/x/lib/vlog"
 	"v.io/x/ref/lib/signals"
+	"v.io/x/ref/lib/xrpc"
 	_ "v.io/x/ref/runtime/factories/generic"
 )
 
@@ -17,8 +20,9 @@ func main() {
 	ctx, shutdown := v23.Init()
 	defer shutdown()
 
-	s := startServer(ctx, v23.GetListenSpec(ctx))
-	defer s.Stop()
-
+	_, err := xrpc.NewServer(ctx, "", NewStressService(), security.AllowEveryone())
+	if err != nil {
+		vlog.Fatalf("NewServer failed: %v", err)
+	}
 	<-signals.ShutdownOnSignals(ctx)
 }
