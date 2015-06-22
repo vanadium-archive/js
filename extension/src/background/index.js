@@ -160,8 +160,12 @@ BackgroundPage.prototype.handleBrowsprCleanup = function(port, msg) {
     console.log('Cleaned up instance: ' + instanceId + ' in ' +
                 (end - now) + ' ms');
     bp.instanceIds.set(port, _.remove(bp.instanceIds.get(port), [instanceId]));
+    if (bp.instanceIds.get(port).length === 0) {
+      bp.instanceIds.delete(port);
+    }
     delete bp.ports[instanceId];
     sendCleanupFinishedMessage();
+    bp.stopNaclPluginIfUnused();
   });
 };
 
@@ -256,9 +260,15 @@ BackgroundPage.prototype.startNaclPlugin = function(cb) {
   bp.nacl.once('ready', cb.bind(bp));
 };
 
+// Stop the nacl plugin if it is not currently used.
+BackgroundPage.prototype.stopNaclPluginIfUnused = function() {
+  if (Object.keys(this.ports).length === 0) {
+    this.stopNaclPlugin();
+  }
+};
+
 // Stop the nacl plug-in - remove it from the page and clean up state.
 BackgroundPage.prototype.stopNaclPlugin = function() {
-  // TODO(bprosnitz) Should we call nacl.cleanupInstance()?
   this.nacl.destroy();
   delete this.nacl;
 };
