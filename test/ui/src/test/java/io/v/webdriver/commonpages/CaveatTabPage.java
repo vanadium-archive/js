@@ -41,26 +41,9 @@ public class CaveatTabPage extends PageBase {
     log("Waiting for Caveat Tab...");
     Util.takeScreenshot((TakesScreenshot)driver, "waiting-caveats.png", "Waiting for Caveats", htmlReportData);
     final String mainTabHandle = driver.getWindowHandle();
+
     // Wait until the corresponding tab is there, which means we should get two window handles.
-    // Wait at most 1 minute, then try again once.
-
-
-    String selectCaveatsTabHandle = null;
-    try {
-      log("Attempt #1");
-      selectCaveatsTabHandle = waitForCaveatTab(mainTabHandle);
-    } catch(TimeoutException e) {
-      log("Timeout occurred");
-      e.printStackTrace();
-    }
-    if (selectCaveatsTabHandle == null) {
-      Util.takeScreenshot((TakesScreenshot)driver, "found-caveats-no.png", "Found Caveats? No", htmlReportData);
-      log("Attempt #2");
-      // Refresh the page and try again.
-      driver.navigate().refresh();
-      selectCaveatsTabHandle = waitForCaveatTab(mainTabHandle);
-    }
-
+    String selectCaveatsTabHandle = waitForCaveatTab(mainTabHandle);
     driver.switchTo().window(selectCaveatsTabHandle);
 
     log("Accept blessing");
