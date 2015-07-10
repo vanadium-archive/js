@@ -41,7 +41,7 @@ func NewDispatcher() rpc.Dispatcher {
 	return disp
 }
 
-func (sd *testServiceDispatcher) Lookup(suffix string) (interface{}, security.Authorizer, error) {
+func (sd *testServiceDispatcher) Lookup(_ *context.T, suffix string) (interface{}, security.Authorizer, error) {
 	authorizer := openAuthorizer{}
 
 	if strings.HasPrefix(suffix, "cache") {
