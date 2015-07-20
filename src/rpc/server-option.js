@@ -17,7 +17,7 @@ module.exports = serverOption;
  * service. This option is automatically set to true if
  * [server.serve()]{@link module:vanadium.rpc~Server#serve} is used.
  * It defaults to false if
- * [server.serveDispacther()]{@link module:vanadium.rpc~Server#serveDispatcher}
+ * [server.serveDispatcher()]{@link module:vanadium.rpc~Server#serveDispatcher}
  * is used instead.
  * @param {bool} opts.servesMountTable Indicates server will be used to serve
  * a MountTable. This server cannot be used for any other purpose.
