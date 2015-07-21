@@ -17,14 +17,14 @@
  * object.
  */
 function createLeafDispatcher(service, authorizer) {
-  var dispacther = function() {
+  var dispatcher = function() {
     return {
       service: service,
       authorizer: authorizer,
     };
   };
-  dispacther._isLeaf = true;
-  return dispacther;
+  dispatcher._isLeaf = true;
+  return dispatcher;
 }
 
 /**
