@@ -123,7 +123,15 @@ Nacl.prototype._sendQueuedMessages = function() {
   console.log('Sent queued messages');
 };
 
+// Cache blessind root so we don't fetch it every time we start NaCl.
+var cachedBlessingRoot = null;
 Nacl.prototype.getBlessingRoot = function(url, cb) {
+  if (cachedBlessingRoot) {
+    return process.nextTick(function() {
+      cb(null, cachedBlessingRoot);
+    });
+  }
+
   console.log('Requesting blessing root from ' + url);
   var request = require('superagent');
   request
@@ -135,7 +143,8 @@ Nacl.prototype.getBlessingRoot = function(url, cb) {
         } else if (res.error) {
           cb(new Error('' + res.status + ': ' + res.message));
         } else {
-          cb(null, res.body);
+          cachedBlessingRoot = res.body;
+          cb(null, cachedBlessingRoot);
         }
       });
 };
