@@ -49,9 +49,9 @@ public class ExtensionInstallationPage extends PageBase {
     Util.takeScreenshot((TakesScreenshot)driver, "before-install-extension.png", "Before Installing Extension",
         htmlReportData);
     btnAddToChrome.click();
-    Util.sleep(2000);
+    Util.sleep(4000); // This sleep gives the page time to pop up a confirm box.
 
-    // Click on the "Add" button in the extension installation popup.
+    // Tab+Enter activates the "Add" button in the extension installation popup.
     // This popup is not accessible by WebDriver.
     log("Confirm adding extension to Chrome");
     RobotHelper robotHelper = RobotHelper.sharedInstance();
