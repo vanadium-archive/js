@@ -375,6 +375,13 @@ module.exports.AuthorizationFailedError = makeError('v.io/v23/security.Authoriza
 ]);
 
 
+module.exports.InvalidSigningBlessingCaveatError = makeError('v.io/v23/security.InvalidSigningBlessingCaveat', actions.NO_RETRY, {
+  'en': '{1:}{2:} blessing has caveat with UUID {3} which makes it unsuitable for signing -- please use blessings with just Expiry caveats',
+}, [
+  new uniqueid.Id()._type,
+]);
+
+
 
 
 // Services:
