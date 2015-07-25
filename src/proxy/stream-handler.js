@@ -76,6 +76,10 @@ Handler.prototype.handleStreamData = function(data) {
     emitStreamError(handler._stream,
                     new vError.InternalError(
                       handler._ctx, 'Failed to decode result: ', e));
+  }).catch(function(e) {
+    process.nextTick(function() {
+      throw e;
+    });
   });
 };
 
