@@ -251,9 +251,13 @@ OutstandingRPC.prototype.handleStreamData = function(data) {
   var rpc = this;
   return vom.decode(data, false, this._typeDecoder).then(function(data) {
     rpc._def.stream._queueRead(data);
-  }).catch(function(e) {
+  }, function(e) {
     rpc.handleError(
       new verror.InternalError(rpc._ctx, 'Failed to decode result: ', e));
+  }).catch(function(e) {
+    process.nextTick(function() {
+      throw e;
+    });
   });
 };
 

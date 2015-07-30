@@ -984,3 +984,52 @@ function streamTest(t, ctx, testdata, end) {
   // 5. End the stream.
   stream.end();
 }
+
+test('Test server stream exception handling', function(assert) {
+  var exception;
+
+  if (typeof window === 'undefined') {
+    process.on('uncaughtException', function setexception(err) {
+      exception = err;
+      process.removeListener('uncaughtException', setexception);
+    });
+  } else {
+    window.onerror = function(message, url, line, column, err) {
+      exception = err;
+      // Put it back to the default
+      window.onerror = null;
+    };
+  }
+
+  var service = {
+    get: function get(context, serverCall, $stream, cb) {
+      $stream.on('end', cb.bind(null, null, {}));
+      $stream.on('error', cb);
+      $stream.on('data', function ondata(buffer) {
+        throw new Error('Woah!');
+      });
+    }
+  };
+
+  setup(service, function ready(err, context, remote, end) {
+    assert.error(err, 'should not error on setup');
+
+    var stream = remote.get(context, function(err) {
+      assert.error(err);
+      assert.ok(exception, 'stream exceptions should be raised');
+      end(assert);
+    }).stream;
+
+    stream.write('foo');
+    stream.end();
+  });
+
+  function setup(service, cb) {
+    var dispatcher = leafDispatcher(service);
+    var name = 'test/server-stream-exception';
+
+    serve(name, dispatcher, function(err, res) {
+      cb(err, res.runtime.getContext(), res.service, res.end);
+    });
+  }
+});

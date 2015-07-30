@@ -50,6 +50,60 @@ test('Test globbing children - glob(' + PREFIX + '*)', function(assert) {
   }
 });
 
+test('Test glob().stream - exception handling', function(assert) {
+  vanadium.init(function onruntime(err, runtime) {
+    if (err) {
+      return end(err);
+    }
+
+    var namespace = runtime.namespace();
+    var context = runtime.getContext();
+    var promise = namespace.glob(context, '*');
+    var stream = promise.stream;
+    var exception;
+
+    promise.catch(function(err) {
+      assert.error(err, 'should not catch expceptions in stream');
+    });
+
+    if (typeof window === 'undefined') {
+      process.on('uncaughtException', function setexception(err) {
+        exception = err;
+        process.removeListener('uncaughtException', setexception);
+      });
+    } else {
+      window.onerror = function(message, url, line, column, err) {
+        exception = err;
+        // Put it back to the default
+        window.onerror = null;
+      };
+    }
+
+    // NOTE: Using assert.throws(fn) here is not possible since the fix is to
+    // use process.nextTick(...) wich will have the raised exception bypass the
+    // try/catch stack around where assert.throws(...) calls the passed in fn.
+    stream.once('data', function onentry(entry) {
+      throw new Error('Woah!');
+    });
+
+    stream.on('end', end);
+
+    function end(err) {
+      if (err) {
+        assert.error(err, 'should not error');
+      }
+
+      assert.ok(exception, 'glob-stream exceptions should be raised');
+
+      if (runtime) {
+        runtime.close(assert.end);
+      } else {
+        assert.end();
+      }
+    }
+  });
+});
+
 test('Test globbing nested levels - glob(' + PREFIX + 'cottage/*/*/*)',
   function(assert) {
     var runtime;
