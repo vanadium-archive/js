@@ -17,14 +17,19 @@ module.exports = {};
 
 // Types:
 var _type1 = new vdl.Type();
+var _type2 = new vdl.Type();
 var _typeBlessingRootResponse = new vdl.Type();
 _type1.kind = vdl.kind.LIST;
 _type1.name = "";
 _type1.elem = vdl.types.STRING;
+_type2.kind = vdl.kind.LIST;
+_type2.name = "";
+_type2.elem = new security.Caveat()._type;
 _typeBlessingRootResponse.kind = vdl.kind.STRUCT;
 _typeBlessingRootResponse.name = "v.io/x/ref/services/identity.BlessingRootResponse";
 _typeBlessingRootResponse.fields = [{name: "Names", type: _type1}, {name: "PublicKey", type: vdl.types.STRING}];
 _type1.freeze();
+_type2.freeze();
 _typeBlessingRootResponse.freeze();
 module.exports.BlessingRootResponse = (vdl.registry.lookupOrCreateConstructor(_typeBlessingRootResponse));
 
@@ -51,6 +56,11 @@ module.exports.OAuthBlesser = OAuthBlesser;
 OAuthBlesser.prototype.blessUsingAccessToken = function(ctx, serverCall, token) {
   throw new Error('Method BlessUsingAccessToken not implemented');
 };
+    
+      
+OAuthBlesser.prototype.blessUsingAccessTokenWithCaveats = function(ctx, serverCall, token, caveats) {
+  throw new Error('Method BlessUsingAccessTokenWithCaveats not implemented');
+};
      
 
     
@@ -69,6 +79,37 @@ OAuthBlesser.prototype._serviceDescription = {
       name: 'token',
       doc: "",
       type: vdl.types.STRING
+    },
+    ],
+    outArgs: [{
+      name: 'blessing',
+      doc: "",
+      type: new security.WireBlessings()._type
+    },
+    {
+      name: 'email',
+      doc: "",
+      type: vdl.types.STRING
+    },
+    ],
+    inStream: null,
+    outStream: null,
+    tags: []
+  },
+    
+      
+    {
+    name: 'BlessUsingAccessTokenWithCaveats',
+    doc: "",
+    inArgs: [{
+      name: 'token',
+      doc: "",
+      type: vdl.types.STRING
+    },
+    {
+      name: 'caveats',
+      doc: "",
+      type: _type2
     },
     ],
     outArgs: [{
