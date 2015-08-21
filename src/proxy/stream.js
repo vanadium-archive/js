@@ -93,20 +93,23 @@ Stream.prototype.serverClose = function(results, err, traceResponse) {
  * sense in object mode.
  * @private
  */
-Stream.prototype._read = function() {
+Stream.prototype._read = function(size) {
   // On a call to read, copy any objects in the websocket buffer into
   // the internal stream buffer.  If we exhaust the websocket buffer
   // and still have more room in the internal buffer, we set shouldQueue
   // so we directly write to the internal buffer.
-  var i = 0;
-  while (i < this.wsBuffer.length && this.push(this.wsBuffer[i])) {
-    ++i;
-  }
-  if (i > 0) {
-    this.wsBuffer = this.wsBuffer.splice(i);
+  var stream = this;
+  var next = stream.wsBuffer.shift();
+
+  // There could be a null value in stream.wsBuffer marking the end of the
+  // stream, the explicit undefined check is to ensure empty values from the
+  // stream.wsBuffer.shift() call above (marking an empty stream.wsBuffer array)
+  // don't get pushed into the stream pipeline.
+  if (typeof next !== 'undefined') {
+    stream.push(next);
   }
 
-  this.shouldQueue = this.wsBuffer.length === 0;
+  stream.shouldQueue = stream.wsBuffer.length === 0;
 };
 
 /**
