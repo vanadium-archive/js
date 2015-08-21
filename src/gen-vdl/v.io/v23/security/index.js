@@ -279,12 +279,6 @@ module.exports.publicKeyThirdPartyCaveatParam = (vdl.registry.lookupOrCreateCons
 
   module.exports.SignatureForDischarge = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.STRING))("D1", true), vdl.types.STRING);
 
-  module.exports.SignatureForMessageSigningV0 = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.STRING))("S", true), vdl.types.STRING);
-
-  module.exports.SignatureForBlessingCertificatesV0 = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.STRING))("B", true), vdl.types.STRING);
-
-  module.exports.SignatureForDischargeV0 = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.STRING))("D", true), vdl.types.STRING);
-
 
 
 // Errors:
