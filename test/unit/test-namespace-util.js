@@ -4,7 +4,7 @@
 
 var test = require('prova');
 var names = require('../../src/naming/util');
-var ep = '@4@tcp@127.0.0.1:22@@@@s@dev.v.io/blessing,v.io/blessing/b2@@';
+var ep = '@6@tcp@127.0.0.1:22@@@@@s@dev.v.io/blessing,v.io/blessing/b2@@';
 var rootedEp = '/' + ep;
 
 test('names.join(...)', function(assert) {
@@ -141,13 +141,13 @@ test('names.splitAddressName(name)', function(assert) {
     ['/(dev.v.io/services/mounttabled)@host:1234/', '(dev.v.io/services/mounttabled)@host:1234', ''], // jshint ignore:line
     ['/(dev.v.io/services/mounttabled)@host:1234', '(dev.v.io/services/mounttabled)@host:1234', ''], // jshint ignore:line
     // the next two tests have malformed endpoint, doesn't end in a @@
-    ['/@4@tcp@127.0.0.1:22@@@@s@dev.v.io/', '@4@tcp@127.0.0.1:22@@@@s@dev.v.io', ''], // jshint ignore:line
-    ['/@4@tcp@127.0.0.1:22@@@@s@dev.v.io', '@4@tcp@127.0.0.1:22@@@@s@dev.v.io', ''],  // jshint ignore:line
-    ['/@4@tcp@127.0.0.1:22@@@@s@dev.v.io/services/mounttabled@@/foo/bar', '@4@tcp@127.0.0.1:22@@@@s@dev.v.io/services/mounttabled@@', 'foo/bar'],  // jshint ignore:line
-    ['/@4@tcp@127.0.0.1:22@@@@s@dev.v.io/services/mounttabled,staging.v.io/services/nsroot@@/foo/bar', '@4@tcp@127.0.0.1:22@@@@s@dev.v.io/services/mounttabled,staging.v.io/services/nsroot@@', 'foo/bar'],  // jshint ignore:line
+    ['/@6@tcp@127.0.0.1:22@@@@@s@dev.v.io/', '@6@tcp@127.0.0.1:22@@@@@s@dev.v.io', ''], // jshint ignore:line
+    ['/@6@tcp@127.0.0.1:22@@@@@s@dev.v.io', '@6@tcp@127.0.0.1:22@@@@@s@dev.v.io', ''],  // jshint ignore:line
+    ['/@6@tcp@127.0.0.1:22@@@@@s@dev.v.io/services/mounttabled@@/foo/bar', '@6@tcp@127.0.0.1:22@@@@@s@dev.v.io/services/mounttabled@@', 'foo/bar'],  // jshint ignore:line
+    ['/@6@tcp@127.0.0.1:22@@@@@s@dev.v.io/services/mounttabled,staging.v.io/services/nsroot@@/foo/bar', '@6@tcp@127.0.0.1:22@@@@@s@dev.v.io/services/mounttabled,staging.v.io/services/nsroot@@', 'foo/bar'],  // jshint ignore:line
     ['/@@@127.0.0.1:22@@@@/foo/bar', '@@@127.0.0.1:22@@@@', 'foo/bar'], // jshint ignore:line
-    ['/@4@tcp@127.0.0.1:22@@@@s@dev.v.io/services/mounttabled,staging.v.io/services/nsroot@@', '@4@tcp@127.0.0.1:22@@@@s@dev.v.io/services/mounttabled,staging.v.io/services/nsroot@@', ''],  // jshint ignore:line
-    ['/@4@tcp@127.0.0.1:22@@@@s@dev.v.io/services/mounttabled@@/foo/bar', '@4@tcp@127.0.0.1:22@@@@s@dev.v.io/services/mounttabled@@', 'foo/bar'],  // jshint ignore:line
+    ['/@6@tcp@127.0.0.1:22@@@@@s@dev.v.io/services/mounttabled,staging.v.io/services/nsroot@@', '@6@tcp@127.0.0.1:22@@@@@s@dev.v.io/services/mounttabled,staging.v.io/services/nsroot@@', ''],  // jshint ignore:line
+    ['/@6@tcp@127.0.0.1:22@@@@@s@dev.v.io/services/mounttabled@@/foo/bar', '@6@tcp@127.0.0.1:22@@@@@s@dev.v.io/services/mounttabled@@', 'foo/bar'],  // jshint ignore:line
     [rootedEp, ep, ''],
     [rootedEp + '/b', ep, 'b'],
     [ep, '', ep],
@@ -163,27 +163,19 @@ test('names.splitAddressName(name)', function(assert) {
 
 test('names.blessingNamesFromAddress(addr)', function(assert) {
   var tests = [
-    // Valid v4 endpoints
-    ['@4@tcp@127.0.0.1:22@@@@s@@@', ['']],
-    ['@4@tcp@127.0.0.1:22@@@@s@dev.v.io/services/mounttabled@@',
+    // Valid v6 endpoints
+    ['@6@tcp@127.0.0.1:22@@@s@dev.v.io/services/mounttabled@@',
       ['dev.v.io/services/mounttabled']],
-    ['@5@tcp@127.0.0.1:22@@s@dev.v.io/services/mounttabled@@',
-      ['dev.v.io/services/mounttabled']],
-    ['@4@tcp@127.0.0.1:22@@@@s@dev.v.io/services/mounttabled,foo/bar,batman@dccomics.com/car@@',  // jshint ignore:line
+    ['@6@tcp@127.0.0.1:22@@@s@dev.v.io/services/mounttabled,foo/bar,batman@dccomics.com/car@@',  // jshint ignore:line
       ['dev.v.io/services/mounttabled', 'foo/bar', 'batman@dccomics.com/car']],
-    ['@5@tcp@127.0.0.1:22@@s@dev.v.io/services/mounttabled,foo/bar,batman@dccomics.com/car@@',  // jshint ignore:line
-      ['dev.v.io/services/mounttabled', 'foo/bar', 'batman@dccomics.com/car']],
-    // Well-formed endpoints of old versions.
-    ['@2@tcp@127.0.0.1:21@@@@@', []],
-    ['@3@tcp@127.0.0.1:21@@@@m@@', []],
     // Host:port endpoints
     ['ns.dev.v.io:8101', []],
     ['(dev.v.io/service/mounttabled)@ns.dev.v.io:8101',
       ['dev.v.io/service/mounttabled']],
     // Invalid strings:
     // invalid endpoints since they do not end in @@.
-    ['@4@tcp@127.0.0.1:22@@@@s@dev.v.io/', []],
-    ['@4@tcp@127.0.0.1:22@@@@s@dev.v.io', []],
+    ['@6@tcp@127.0.0.1:22@@@@@s@dev.v.io/', []],
+    ['@6@tcp@127.0.0.1:22@@@@@s@dev.v.io', []],
     // malformed version number
     ['@4c@tcp@127.0.0.1:22@@@@s@foo@@', []],
     ['@-4@tcp@127.0.0.1:22@@@@s@foo@@', []],

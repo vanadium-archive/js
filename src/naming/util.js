@@ -120,18 +120,19 @@ function blessingNamesFromAddress(addr) {
     }
     return [];
   }
-  if (epversion < 4) {
-    // Versions less than 4 do not support blessing names in the endpoint.
-    return [];
+
+  var blessingNameField = 0;
+  switch(epversion) {
+    case 5:
+      blessingNameField = 5;
+      break;
+    case 6:
+      blessingNameField = 6;
+      break;
+    default:
+      throw new Error('endpoint version ' + epversion + ' not supported');
   }
-  var blessingNameField = 7;
-  if (epversion === 5) {
-    blessingNameField = 5;
-  }
-  if (epversion > 5) {
-    // This code needs to be updated.
-    throw new Error('endpoint version ' + epversion + ' not supported');
-  }
+
   var start = 0;
   // blessing names are the blessingNameField position.
   for (var i = 0; i < blessingNameField; i++) {
