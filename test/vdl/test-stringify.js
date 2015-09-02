@@ -106,6 +106,18 @@ test('stableCircularStringify', function(t) {
         repeatedObject, repeatedObject
       ],
       expected: '[{"a":5},{"a":5}]'
+    },
+    {
+      input: new Uint8Array([4, 10]),
+      expected: '[4,10]'
+    },
+    {
+      input: new Uint16Array([2560, 10]),
+      expected: '[2560,10]'
+    },
+    {
+      input: new Date(0),
+      expected: 'Wed Dec 31 1969 16:00:00 GMT-0800 (PST)'
     }
   ];
   for (var i = 0; i < tests.length; i++) {

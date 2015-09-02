@@ -59,7 +59,7 @@ BinaryReader.prototype.peekByte = function() {
 BinaryReader.prototype.readByteArray = function(amt) {
   var arr = this.buf.subarray(this.pos, this.pos + amt);
   this.pos += amt;
-  if (this.pos > this.buf) {
+  if (this.pos > this.buf.length) {
     return Promise.reject(
       new Error('Failed to read ' + amt + ' bytes. Hit EOF.'));
   }

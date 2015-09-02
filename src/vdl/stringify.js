@@ -35,7 +35,13 @@ function stableCircularStringifyInternal(val, seen) {
   var seenObj = { id: seen.size };
   seen.set(val, seenObj);
 
-  if (Array.isArray(val)) {
+  // TODO(alexfandrianto): UintXArray and the other TypedArray seem to be in
+  // flux right now, with respect to their node and browser implementations.
+  // TypedArray doesn't seem to exist in 'node', but it looks like it's being
+  // added in the browser. For now, we will check if the internal buffer is an
+  // ArrayBuffer to identify TypedArray in both node and browser.
+  // https://github.com/vanadium/issues/issues/692
+  if (Array.isArray(val) || val.buffer instanceof ArrayBuffer) {
     var arrStr = '[';
     for (var ai = 0; ai < val.length; ai++) {
       if (ai > 0) {
@@ -52,7 +58,7 @@ function stableCircularStringifyInternal(val, seen) {
   // Extract val's keys and values in a consistent order.
   var keys = [];
   var values = [];
-  if (val.forEach !== undefined) {
+  if (val instanceof Set || val instanceof Map) {
     // We have to make sure to print maps and sets in sorted key order.
     // While Set and Map have an iteration order equivalent to their insertion
     // order, we still want non-matching insertion orders to have matching
