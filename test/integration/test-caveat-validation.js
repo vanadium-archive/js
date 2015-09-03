@@ -10,13 +10,13 @@ var testService = require('../vdl-out/v.io/x/js.core/test_service');
 var vdl = vanadium.vdl;
 
 // Service to be invoked
-function aServiceDef() {
+function AServiceDef() {
   this.aMethod = function(ctx, serverCall) {
     return 'aResult';
   };
 }
-aServiceDef.prototype = new testService.InvokableTestMethod();
-var aService = new aServiceDef();
+AServiceDef.prototype = new testService.InvokableTestMethod();
+var aService = new AServiceDef();
 
 
 test('caveatValidation', function(t) {

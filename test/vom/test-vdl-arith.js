@@ -4,7 +4,7 @@
 
 var test = require('prova');
 var vom = require('../../src/vom');
-var ifaceSigType =
+var IfaceSigType =
   require('../../src/gen-vdl/v.io/v23/vdlroot/signature').Interface;
 var Promise = require('../../src/lib/promise');
 
@@ -36,7 +36,7 @@ test('method signature encode-decode match', function(assert) {
     // Encode the signature using the type defined in VDL-generated .js file
     var writer = new vom.ByteArrayMessageWriter();
     var encoder = new vom.Encoder(writer);
-    encoder.encode(signature, ifaceSigType.prototype._type);
+    encoder.encode(signature, IfaceSigType.prototype._type);
     var sigEncode = writer.getBytes();
 
     // Decode the signature.
@@ -49,7 +49,7 @@ test('method signature encode-decode match', function(assert) {
       // TODO The signature type should be attached to the generated signature
       // This is currently problematic (Issue 432), so manually attaching type
       // for now and NOT passing the type into the encoder.
-      var wrappedSignature = new ifaceSigType(signature);
+      var wrappedSignature = new IfaceSigType(signature);
 
       // Encode the signature as a wrapped struct.
       var writer = new vom.ByteArrayMessageWriter();
