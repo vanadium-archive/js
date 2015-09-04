@@ -11,7 +11,6 @@ import (
 	"v.io/v23/security"
 	"v.io/x/lib/vlog"
 	"v.io/x/ref/lib/signals"
-	"v.io/x/ref/lib/xrpc"
 	_ "v.io/x/ref/runtime/factories/generic"
 )
 
@@ -20,7 +19,7 @@ func main() {
 	ctx, shutdown := v23.Init()
 	defer shutdown()
 
-	_, err := xrpc.NewServer(ctx, "", NewStressService(), security.AllowEveryone())
+	ctx, _, err := v23.WithNewServer(ctx, "", NewStressService(), security.AllowEveryone())
 	if err != nil {
 		vlog.Fatalf("NewServer failed: %v", err)
 	}

@@ -12,7 +12,6 @@ import (
 	"v.io/v23"
 	"v.io/x/ref/lib/flags"
 	"v.io/x/ref/lib/signals"
-	"v.io/x/ref/lib/xrpc"
 	_ "v.io/x/ref/runtime/factories/generic"
 )
 
@@ -21,7 +20,7 @@ func main() {
 	ctx, shutdown := v23.Init()
 	defer shutdown()
 
-	s, err := xrpc.NewDispatchingServer(ctx, "test_service", NewDispatcher())
+	ctx, s, err := v23.WithNewDispatchingServer(ctx, "test_service", NewDispatcher())
 	if err != nil {
 		log.Fatalf("failure creating server: %v", err)
 	}
