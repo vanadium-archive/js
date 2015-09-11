@@ -5,6 +5,7 @@
 package main
 
 import (
+	"sync"
 	"fmt"
 	"reflect"
 	"sort"
@@ -23,6 +24,7 @@ var errIndexOutOfBounds = verror.Register(pkgPath+".errIndexOutOfBounds", verror
 
 // A simple in-memory implementation of a Cache service.
 type cacheImpl struct {
+	mu             sync.Mutex
 	cache          map[string]*vdl.Value
 	mostRecent     test_service.KeyValuePair
 	lastUpdateTime time.Time
@@ -34,16 +36,21 @@ func NewCached() test_service.CacheServerMethods {
 }
 
 // Set sets a value for a key.  This should never return an error.
-func (c *cacheImpl) Set(_ *context.T, _ rpc.ServerCall, key string, value *vdl.Value) error {
+func (c *cacheImpl) Set(ctx *context.T, _ rpc.ServerCall, key string, value *vdl.Value) error {
+	c.mu.Lock()
+	ctx.VI(0).Info("Set called with %v", key)
 	c.cache[key] = value
 	c.mostRecent = test_service.KeyValuePair{Key: key, Value: value}
 	c.lastUpdateTime = time.Now()
+	c.mu.Unlock()
 	return nil
 }
 
 // Get returns the value for a key.  If the key is not in the map, it returns
 // an error.
 func (c *cacheImpl) Get(ctx *context.T, _ rpc.ServerCall, key string) (*vdl.Value, error) {
+	c.mu.Lock()
+	defer c.mu.Unlock()
 	if value, ok := c.cache[key]; ok {
 		return value, nil
 	}
@@ -132,10 +139,12 @@ func (c *cacheImpl) AsMap(*context.T, rpc.ServerCall) (map[string]*vdl.Value, er
 
 // KeyValuePairs returns the full contents of the cache as a slice of pairs.
 func (c *cacheImpl) KeyValuePairs(*context.T, rpc.ServerCall) ([]test_service.KeyValuePair, error) {
+	c.mu.Lock()
 	kvp := make([]test_service.KeyValuePair, 0, len(c.cache))
 	for key, val := range c.cache {
 		kvp = append(kvp, test_service.KeyValuePair{key, val})
 	}
+	c.mu.Unlock()
 	return kvp, nil
 }
 
@@ -144,6 +153,8 @@ func (c *cacheImpl) KeyValuePairs(*context.T, rpc.ServerCall) ([]test_service.Ke
 // TODO(bprosnitz) support type types and change time to native time type
 func (c *cacheImpl) MostRecentSet(ctx *context.T, _ rpc.ServerCall) (test_service.KeyValuePair, int64, error) {
 	var err error
+	c.mu.Lock()
+	defer c.mu.Unlock()
 	if c.lastUpdateTime.IsZero() {
 		err = verror.New(verror.ErrNoExist, ctx)
 	}
@@ -155,10 +166,12 @@ func (c *cacheImpl) MostRecentSet(ctx *context.T, _ rpc.ServerCall) (test_servic
 func (c *cacheImpl) KeyPage(ctx *context.T, _ rpc.ServerCall, index int64) (test_service.KeyPageResult, error) {
 	results := test_service.KeyPageResult{}
 
+	c.mu.Lock()
 	keys := sort.StringSlice{}
 	for key, _ := range c.cache {
 		keys = append(keys, key)
 	}
+	c.mu.Unlock()
 	keys.Sort()
 
 	lowIndex := int(index) * 10
@@ -188,7 +201,9 @@ func (c *cacheImpl) Size(*context.T, rpc.ServerCall) (int64, error) {
 func (c *cacheImpl) MultiGet(ctx *context.T, call test_service.CacheMultiGetServerCall) error {
 	for call.RecvStream().Advance() {
 		key := call.RecvStream().Value()
+		c.mu.Lock()
 		value, ok := c.cache[key]
+		c.mu.Unlock()
 		if !ok {
 			return verror.New(verror.ErrNoExist, ctx, key)
 		}
