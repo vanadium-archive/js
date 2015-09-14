@@ -13,6 +13,7 @@ var Outgoing = require('../../src/proxy/message-type').Outgoing;
 var vdl = require('../../src/vdl');
 var hexVom = require('../../src/lib/hex-vom');
 var context = require('../../src/context');
+var leafDispatcher = require('../../src/rpc/leaf-dispatcher');
 
 test('Server Router Signature Lookup', function(t) {
   var inputName = 'aName';
@@ -78,7 +79,7 @@ test('Server Router Signature Lookup', function(t) {
     nextId: function() { return inputMessageId; }
   };
   var mockController = {
-    serve: function(){}
+    newServer: function(){}
   };
   var mockRuntime = {
     newContext: function() {
@@ -88,10 +89,9 @@ test('Server Router Signature Lookup', function(t) {
   var router = new Router(mockProxy, 'TestAppName',
                           mockRuntime, mockController);
   var server = new Server(router);
-  var options = {
-    authorizer: function(){}
-  };
-  server.serve(inputName, inputService, options, function(){});
+  var authorizer = function(){};
+  var dispatcher = leafDispatcher(inputService, authorizer);
+  server._init(inputName, dispatcher, null, function(){});
 
   var request = {
     serverId: server.id,

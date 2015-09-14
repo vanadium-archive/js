@@ -23,7 +23,7 @@ test('Test globbing children - glob(' + PREFIX + '*)', function(assert) {
 
   init(config).then(function glob(rt) {
     runtime = rt;
-    var namespace = rt.namespace();
+    var namespace = rt.getNamespace();
     var ctx = runtime.getContext();
     var rpc = namespace.glob(ctx, PREFIX + '*');
     rpc.catch(end);
@@ -56,7 +56,7 @@ test('Test glob().stream - exception handling', function(assert) {
       return end(err);
     }
 
-    var namespace = runtime.namespace();
+    var namespace = runtime.getNamespace();
     var context = runtime.getContext();
     var promise = namespace.glob(context, '*');
     var stream = promise.stream;
@@ -110,7 +110,7 @@ test('Test globbing nested levels - glob(' + PREFIX + 'cottage/*/*/*)',
 
     init(config).then(function glob(rt) {
       runtime = rt;
-      var namespace = rt.namespace();
+      var namespace = rt.getNamespace();
       var ctx = runtime.getContext();
       var rpc = namespace.glob(ctx, PREFIX + 'cottage/*/*/*');
       rpc.catch(end);
@@ -143,7 +143,7 @@ test('Test globbing non-existing name - glob(' + PREFIX + 'does/not/exist)',
 
     init(config).then(function glob(rt) {
       runtime = rt;
-      var namespace = rt.namespace();
+      var namespace = rt.getNamespace();
       var ctx = runtime.getContext();
       var rpc = namespace.glob(ctx, PREFIX + 'does/not/exist');
       rpc.catch(end);
@@ -171,7 +171,7 @@ test('Test glob\'s promise is resolved when glob finishes.' +
 
     init(config).then(function glob(rt) {
       runtime = rt;
-      var namespace = rt.namespace();
+      var namespace = rt.getNamespace();
       var ctx = runtime.getContext();
       return namespace.glob(ctx, PREFIX + '*');
     }).then(function(finalResult) {
@@ -197,7 +197,7 @@ test('Test glob\'s callback is called when glob finishes.' +
 
     init(config).then(function glob(rt) {
       runtime = rt;
-      var namespace = rt.namespace();
+      var namespace = rt.getNamespace();
       var ctx = runtime.getContext();
       namespace.glob(ctx, PREFIX + '*', function(err, finalResult) {
         assert.error(err);
@@ -228,7 +228,7 @@ test('Test globbing non-existing rooted name - ' +
     var runtime;
     vanadium.init(config).then(function glob(rt) {
       runtime = rt;
-      var namespace = rt.namespace();
+      var namespace = rt.getNamespace();
       // Note: Glob will always timeout after 30s
       // see v.io/x/ref/runtime/internal/naming/namespace/parallelstartcall.go
       // This means we'll get a timeout error on the glob stream before
@@ -286,13 +286,11 @@ test('Test mounting and unmounting - ' +
     var secondaryName = PREFIX + 'new/name';
 
     var ctx;
-    var server;
     vanadium.init(config).then(function createServer(rt) {
         runtime = rt;
-        namespace = rt.namespace();
+        namespace = rt.getNamespace();
         ctx = rt.getContext();
-        server = rt.newServer();
-        return server.serve(initialName, {});
+        return rt.newServer(initialName, {});
       })
       .then(function() {
         return waitForPublish(initialName, runtime);
@@ -340,7 +338,7 @@ test('Test resolving to mounttable - ' +
     init(config).then(function resolveToMountTable(rt) {
       runtime = rt;
       ctx = runtime.getContext();
-      var namespace = rt.namespace();
+      var namespace = rt.getNamespace();
       return namespace.resolveToMounttable(ctx, PREFIX + 'cottage');
     }).then(function validate(mounttableNames) {
       assert.equals(mounttableNames.length, 1);
@@ -368,7 +366,7 @@ test('Test flushing cache entry - ' +
 
     init(config).then(function flushCacheEntry(rt) {
       runtime = rt;
-      namespace = rt.namespace();
+      namespace = rt.getNamespace();
       return namespace.flushCacheEntry(name);
     }).then(function validate() {
       // We don't check the return result of flushCachEntry since there is no
@@ -400,7 +398,7 @@ test('Test disabling cache - disableCache(true)', function(assert) {
   init(config).then(function disableCache(rt) {
     runtime = rt;
     ctx = rt.getContext();
-    namespace = rt.namespace();
+    namespace = rt.getNamespace();
     return namespace.disableCache(true);
   }).then(function resolveButItShouldNotGetCached(rt) {
     return namespace.resolve(ctx, name);
@@ -430,7 +428,7 @@ test('Test setting roots to valid endpoints - ' +
 
     init(config).then(function setRoots(rt) {
       runtime = rt;
-      namespace = rt.namespace();
+      namespace = rt.getNamespace();
       ctx = rt.getContext();
       // Set the roots to a valid root, we expect normal glob results.
       return namespace.setRoots(namespaceRoot);
@@ -472,14 +470,14 @@ test('Test setting roots to invalid endpoint - ' +
     var ctx;
     vanadium.init(config).then(function setRoots(rt) {
       runtime = rt;
-      namespace = rt.namespace();
+      namespace = rt.getNamespace();
       ctx = rt.getContext();
       // Set the roots to a invalid roots, then we don't expect resolution.
       return namespace.setRoots(['/bad-root-1.tld:80', '/bad-root-2.tld:1234']);
     }).then(function bind() {
       // Since setRoots changes runtimes Namespace roots, binding to any name
       // should now fail
-      var client = runtime.newClient();
+      var client = runtime.getClient();
       ctx = ctx.withTimeout(timeouts.short);
       return client.bindTo(ctx, PREFIX + 'house/kitchen/lights')
         .then(function() {
@@ -507,7 +505,7 @@ test('Test getting roots - roots()', function(assert) {
 
   init(config).then(function roots(rt) {
     runtime = rt;
-    var namespace = rt.namespace();
+    var namespace = rt.getNamespace();
     return namespace.roots();
   }).then(function validate(roots) {
     assert.equals(roots.length, 1);
@@ -536,7 +534,7 @@ test('Test setting and getting roots - ' +
     function onInit(err, rt) {
       assert.error(err);
       runtime = rt;
-      namespace = rt.namespace();
+      namespace = rt.getNamespace();
       namespace.setRoots('/root1:80', '/root2:1234', onSetRoots);
     }
 
@@ -562,7 +560,7 @@ test('Test getPermissions() on non-existant name', function(assert) {
     }
 
     var ctx = rt.getContext();
-    var ns = rt.namespace();
+    var ns = rt.getNamespace();
     var name = 'non/existant/name';
 
     ns.getPermissions(ctx, name, function(err) {
@@ -581,7 +579,7 @@ test('Test setting and getting permissions - ' +
       }
 
       var ctx = rt.getContext();
-      var ns = rt.namespace();
+      var ns = rt.getNamespace();
       // Note: we use a random name here so we can run the test multiple times
       // with the same mounttable without getting locked out of a name.
       var name = 'path/to/some/name/' + random.hex();
@@ -642,7 +640,7 @@ test('Test delete() on non-existant name', function(assert) {
     }
 
     var ctx = rt.getContext();
-    var ns = rt.namespace();
+    var ns = rt.getNamespace();
     var name = 'non/existant/name';
 
     ns.delete(ctx, name, true, function(err) {
@@ -660,7 +658,7 @@ test('Test delete() unmounts a name', function(assert) {
     }
 
     var ctx = rt.getContext();
-    var ns = rt.namespace();
+    var ns = rt.getNamespace();
     var name = 'name/that/will/be/deleted';
     var ep = '/@6@ws@2.2.2.2:2222@@e8972f90fe028674f78a164f001d07c5@s@@';
 
@@ -702,7 +700,7 @@ test('Test delete() on name with no children', function(assert) {
     }
 
     var ctx = rt.getContext();
-    var ns = rt.namespace();
+    var ns = rt.getNamespace();
     var name = 'path/to/name/with/no/children';
 
     var perms = new access.Permissions(new Map([
@@ -733,7 +731,7 @@ test('Test delete() on name with children', function(assert) {
     }
 
     var ctx = rt.getContext();
-    var ns = rt.namespace();
+    var ns = rt.getNamespace();
     var name = 'path/to/name/with/children';
     var childName1 = vanadium.naming.join(name, 'child1');
     var childName2 = vanadium.naming.join(name, 'node/child2');
@@ -828,14 +826,12 @@ var SAMPLE_NAMESPACE = [
 
 function init(config) {
   var runtime;
-  var server;
   return vanadium.init(config)
     .then(function serveEmptyService(rt) {
       runtime = rt;
-      server = rt.newServer();
-      return server.serve('', {});
+      return rt.newServer('', {});
     })
-    .then(function publishUnderMultipleNames() {
+    .then(function publishUnderMultipleNames(server) {
       var addNamesRequests = SAMPLE_NAMESPACE.map(function(name) {
         return server.addName(PREFIX + name);
       });
@@ -867,7 +863,7 @@ function wait(name, runtime, waitForUnpublish) {
   var WAIT_TIME = 100;
   var MAX_TRIES = 50;
   return new Promise(function(resolve, reject) {
-    var ns = runtime.namespace();
+    var ns = runtime.getNamespace();
     var count = 0;
     runResolve();
 

@@ -52,7 +52,7 @@ function testErrorCase(assert, authorizer, tags, isPromise) {
     if (err) {
       return assert.end(err);
     }
-    var client = res.runtime.newClient();
+    var client = res.runtime.getClient();
     var ctx = res.runtime.getContext();
     client.bindTo(ctx, 'authorizerTestService/auth').then(function(service) {
       service.call(ctx, 'foo').then(function(value) {
@@ -116,7 +116,7 @@ function testSuccessCase(assert, authorizer, tags, isPromise) {
     if (err) {
       return assert.end(err);
     }
-    var client = res.runtime.newClient();
+    var client = res.runtime.getClient();
     var ctx = res.runtime.getContext();
     client.bindTo(ctx, 'authorizerTestService/auth').then(function(service) {
       return service.call(ctx, 'foo');

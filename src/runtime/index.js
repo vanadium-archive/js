@@ -13,6 +13,7 @@ var inherits = require('inherits');
 var Server = require('../rpc/server');
 var ServerRouter = require('../rpc/server-router');
 var GranterRouter = require('../rpc/granter-router');
+var leafDispatcher = require('../rpc/leaf-dispatcher');
 var Client = require('../rpc/client');
 var Namespace = require('../naming/namespace');
 var CaveatValidatorRegistry = require('../security/caveat-validator-registry');
@@ -112,8 +113,8 @@ function Runtime(options) {
 
   this.accountName = options.accountName;
   this._wspr = options.wspr;
-  var client = this.newClient();
-  this._controller = client.bindWithSignature(
+  this._client = new Client(this._getProxyConnection());
+  this._controller = this._client.bindWithSignature(
     '__controller', [Controller.prototype._serviceDescription]);
   this.principal = new Principal(this.getContext(), this._controller);
   this._name = options.appName;
@@ -145,31 +146,206 @@ Runtime.prototype.close = function(cb) {
   var router = this._getRouter();
   var proxy = this._getProxyConnection();
   return router.cleanup().then(function() {
-      return proxy.close(cb);
+    return proxy.close(cb);
   });
 };
 
+/* jshint ignore:start */
 /**
- * Creates a new [Server]{@link module:vanadium.rpc~Server} instance.<br>
- * Server allows one to create, publish and stop Vanadium services.
- * @param {module:vanadium.rpc~Server~ServerOption} [serverOption] Optional
- * server option that can be specified when creating a new server. serverOption
- * can be created with the
+ * NewServerOptionalArgs is a set of options that are passed to the
+ * [serve]{@link module:vanadium~Runtime#newServer}.
+ * @typedef module:vanadium.rpc~Server~NewServerOptionalArgs
+ * @property {module:vanadium.security.Authorize} authorizer An Authorizer
+ * that will handle the authorization for the method call.  If null, then the
+ * default strict authorizer will be used.
+ * @property {module:vanadium.rpc~Server~ServerOption} serverOption Optional
+ * server configuration such as whether the server is a mount table or
+ * represents a leaf server. serverOption can be created with the
  * [vanadium.rpc.serverOption(opts)]{@link module:vanadium.rpc#serverOption}
  * method.
- * @return {module:vanadium.rpc~Server} A server instance.
  */
-Runtime.prototype.newServer = function(serverOption) {
-  return new Server(this._getRouter(), serverOption);
+
+/**
+ * Callback passed into NewServer and NewDispatchingServer
+ * @callback module:vanadium.rpc~Server~NewServer-callback
+ * @param {Error} err An error if one occurred.
+ * @param {module:vanadium.rpc~Server} server The server object.
+ */
+
+// TODO(aghassemi) the serviceObject example needs to point to a "Guides" page
+// on the website when we have it. https://github.com/vanadium/issues/issues/444
+/**
+ * <p>Asynchronously creates a server and associates object with name by
+ * publishing the address of the server with the mount table under the supplied
+ * name and using authorizer to authorize access to it.</p>
+ * <p>If name is an empty string, no attempt will made to publish that
+ * name to a mount table.
+ * To publish the same object under multiple names,
+ * {@link module:vanadium.rpc~Server#addName|addName} can be used.</p>
+ * <p>Simple usage:</p>
+ * <pre>
+ * rt.newServer('service/name', serviceObject, {
+ *   authorizer: serviceAuthorizer
+ * }, function(server) {
+ *   // server is now active and listening for RPC calls.
+ * });
+ * </pre>
+ * <p>
+ * serviceObject is simply a JavaScript object that implements service methods.
+ * </p>
+ * <p>
+ * <pre>
+ * var serviceObject = new MyService();
+ * function MyService() {}
+ * </pre>
+ * <p>
+ * Each service method must take [ctx]{@link module:vanadium.context.Context}
+ * and [serverCall]{@link module:vanadium.rpc~ServerCall} as the
+ * first two parameters.
+ * </p>
+ * <p>
+ * The output arguments can be given in several forms - through direct return,
+ * return of a promise or calling a callback that is optionally the
+ * last parameter.
+ * </p>
+ * <pre>
+ * // Sync method that echoes the input text immediately.
+ * MyService.prototype.echo = function(ctx, serverCall, text) {
+ *   return 'Echo: ' + text;
+ * };
+ * </pre>
+ * <pre>
+ * // Async method that echoes the input text after 1 second, using Promises.
+ * MyService.prototype.delayedEcho = function(ctx, serverCall, text) {
+ *   return new Promise(function(resolve, reject) {
+ *     setTimeout(function() {
+ *       resolve('Echo: ' + text);
+ *     }, 1000);
+ *   });
+ * };
+ *</pre>
+ *<pre>
+ * // Async method that echoes the input text after 1 second, using Callbacks.
+ * MyService.prototype.delayedEcho = function(ctx, serverCall, text, callback) {
+ *   setTimeout(function() {
+ *     // first argument to the callback is error, second argument is results
+ *     callback(null, 'Echo: ' + text);
+ *   }, 1000);
+ * };
+ *</pre>
+ *
+ * @public
+ * @param {string} name Name to publish under.
+ * @param {object} serviceObject The service object that has a set of
+ * exported methods.
+ * @param {module:vanadium.rpc~Server~NewServerOptionalArgs} [optionalArgs]
+ * Optional arguments for newServer such as 'authorizer' or 'serverOptions'.
+ * @param {module:vanadium.rpc~Server~NewServer-callback} [cb] If provided,
+ * the function will be called when server is ready and listening for RPC calls.
+ * @return {Promise<module:vanadium.rpc~Server>} Promise to be called when
+ * server is ready and listening for RPC calls.
+ */
+/* jshint ignore:end */
+Runtime.prototype.newServer = function(name, serviceObject, optionalArgs, cb) {
+  if (typeof optionalArgs === 'function') {
+    cb = optionalArgs;
+    optionalArgs = undefined;
+  }
+  optionalArgs = optionalArgs || {};
+  var dispatcher = leafDispatcher(serviceObject, optionalArgs.authorizer);
+  return this.newDispatchingServer(name, dispatcher,
+    optionalArgs.serverOption, cb);
 };
 
 /**
- * Creates a new [Client]{@link module:vanadium.rpc~Client} instance.<br>
+ * @typedef module:vanadium.rpc~Server~ServerDispatcherResponse
+ * @type {object}
+ * @property {object} service The Invoker that will handle
+ * method call.
+ * @property {module:vanadium.security.Authorize} authorizer An Authorizer that
+ * will handle the authorization for the method call.  If null, then the default
+ * authorizer will be used.
+ */
+
+/**
+ * A function that returns the service implementation for the object identified
+ * by the given suffix.
+ * @callback module:vanadium.rpc~Server~ServerDispatcher
+ * @param {string} suffix The suffix for the call.
+ * @param {module:vanadium.rpc~Server~ServerDispatcher-callback} cb
+ * The callback to call when the dispatch is complete.
+ * @return {Promise<module:vanadium.rpc~Server~ServerDispatcherResponse>}
+ * Either the DispatcherResponse object to
+ * handle the method call or a Promise that will be resolved the service
+ * callback.
+ */
+
+/**
+ * Callback passed into Dispatcher.
+ * @callback module:vanadium.rpc~Server~ServerDispatcher-callback
+ * @param {Error} err An error if one occurred.
+ * @param {object} object The object that will handle the method call.
+ */
+
+/**
+ * <p>Asynchronously creates a server and associates dispatcher with the
+ * portion of the mount table's name space for which name is a prefix, by
+ * publishing the address of this dispatcher with the mount table under the
+ * supplied name.
+ * RPCs invoked on the supplied name will be delivered to the supplied
+ * Dispatcher's lookup method which will in turn return the object. </p>
+ * <p>Simple usage:</p>
+ * <pre>
+ * rt.newDispatchingServer('service/name', dispatcher, function(server) {
+ *   // server is now active and listening for RPC calls.
+ * });
+ * </pre>
+ *
+ * <p>If name is an empty string, no attempt will made to publish that
+ * name to a mount table.
+ * To publish the same object under multiple names,
+ * {@link module:vanadium.rpc~Server#addName|addName} can be used.</p>
+ *
+ * @public
+ * @param {string} name Name to publish under.
+ * @param {module:vanadium.rpc~Server~ServerDispatcher} dispatcher A function
+ * that will take in the suffix and the method to be called and return the
+ * service object for that suffix.
+ * @property {module:vanadium.rpc~Server~ServerOption} [serverOption] Optional
+ * server configuration such as whether the server is a mount table or
+ * represents a leaf server. serverOption can be created with the
+ * [vanadium.rpc.serverOption(opts)]{@link module:vanadium.rpc#serverOption}
+ * method.
+ * @param {module:vanadium.rpc~Server~NewServer-callback} [cb] If provided,
+ * the function will be called when server is ready and listening for RPC calls.
+ * @return {Promise<module:vanadium.rpc~Server>} Promise to be called when
+ * server is ready and listening for RPC calls.
+ */
+Runtime.prototype.newDispatchingServer = function(name, dispatcher,
+  serverOption, cb) {
+
+  if (typeof serverOption === 'function') {
+    cb = serverOption;
+    serverOption = undefined;
+  }
+
+  var def = new Deferred(cb);
+  var server = new Server(this._getRouter());
+
+  server._init(name, dispatcher, serverOption).then(function() {
+    def.resolve(server);
+  }).catch(def.reject);
+
+  return def.promise;
+};
+
+/**
+ * Returns a [Client]{@link module:vanadium.rpc~Client} instance.<br>
  * Client allows one to bind to Vanadium names and call methods on them.
  * @return {module:vanadium.rpc~Client} A Client instance.
  */
-Runtime.prototype.newClient = function() {
-  return new Client(this._getProxyConnection());
+Runtime.prototype.getClient = function() {
+  return this._client;
 };
 
 /**
@@ -205,8 +381,8 @@ Runtime.prototype.getContext = function() {
  * </p>
  * @return {module:vanadium.naming~Namespace} A namespace client instance.
  */
-Runtime.prototype.namespace = function() {
-  this._ns = this._ns || new Namespace(this.newClient(),
+Runtime.prototype.getNamespace = function() {
+  this._ns = this._ns || new Namespace(this.getClient(),
     this.getContext());
   return this._ns;
 };

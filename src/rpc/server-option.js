@@ -15,10 +15,9 @@ module.exports = serverOption;
  * @param {object} opts Server options.
  * @param {bool} opts.isLeaf Indicates server will be used to serve a leaf
  * service. This option is automatically set to true if
- * [server.serve()]{@link module:vanadium.rpc~Server#serve} is used.
- * It defaults to false if
- * [server.serveDispatcher()]{@link module:vanadium.rpc~Server#serveDispatcher}
- * is used instead.
+ * [rt.newServer()]{@link module:vanadium~Runtime#newServer} is used.
+ * but defaults to false if [rt.newDispatchingServer()]
+ * {@link module:vanadium~Runtime#newDispatchingServer} is used.
  * @param {bool} opts.servesMountTable Indicates server will be used to serve
  * a MountTable. This server cannot be used for any other purpose.
  * @return {module:vanadium.rpc~Server~ServerOption}

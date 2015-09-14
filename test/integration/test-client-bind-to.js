@@ -17,7 +17,7 @@ test('Test binding to a Go service named test_service/cache - ' +
     assert.error(err);
 
     rt = runtime;
-    var client = rt.newClient();
+    var client = rt.getClient();
     var ctx = rt.getContext();
     client.bindTo(ctx, 'test_service/cache', onbind);
   }
@@ -39,7 +39,7 @@ test('Test binding to a Go service named test_service/cache - ' +
 
   function bindTo(runtime) {
     var ctx = runtime.getContext();
-    return runtime.newClient()
+    return runtime.getClient()
     .bindTo(ctx, 'test_service/cache')
     .then(function(service) {
       assert.ok(service);
@@ -53,7 +53,7 @@ test('Test binding to a non-existing name - ' +
   vanadium.init(config, function(err, runtime) {
     assert.error(err);
 
-    var client = runtime.newClient();
+    var client = runtime.getClient();
     var ctx = runtime.getContext().withTimeout(100);
     client.bindTo(ctx, 'does-not/exist', function(err, service) {
       assert.ok(err instanceof Error);
@@ -71,7 +71,7 @@ test('Test binding to a non-existing name - ' +
   .init(config)
   .then(function(runtime) {
     rt = runtime;
-    var client = rt.newClient();
+    var client = rt.getClient();
     var ctx = runtime.getContext().withTimeout(100);
     return client.bindTo(ctx, 'does-not/exist');
   })
@@ -98,7 +98,7 @@ test('Test using the proxy when proxy Url is invalid - ' +
 
   function onruntime(err, runtime) {
     assert.notOk(err);
-    var client = runtime.newClient();
+    var client = runtime.getClient();
     client.bindTo(runtime.getContext(), 'test_service/cache', function(err) {
       assert.ok(err instanceof Error);
       runtime.close();
@@ -121,7 +121,7 @@ test('Test binding when wspr Url is invalid - ' +
     assert.end();
   }).then(function(runtime) {
     rt = runtime;
-    var client = rt.newClient();
+    var client = rt.getClient();
     return client.bindTo(runtime.getContext(), 'test_service/cache');
   }).then(function() {
     rt.close();

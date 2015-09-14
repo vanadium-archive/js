@@ -18,7 +18,7 @@ test('Test passing valid options to client.callOption()', function(t) {
       return t.end(err);
     }
 
-    var client = rt.newClient();
+    var client = rt.getClient();
 
     var opts = client.callOption({ });
     t.ok(opts, 'with no options should succeed');
@@ -38,7 +38,7 @@ test('Test passing invalid options to client.callOption()', function(t) {
       return t.end(err);
     }
 
-    var client = rt.newClient();
+    var client = rt.getClient();
 
     t.throws(function() {
       client.callOption({
@@ -69,7 +69,7 @@ test('Test passing allowedServersPolicy that matches server blessings',
     }
 
     var ctx = rt.getContext();
-    var client = rt.newClient();
+    var client = rt.getClient();
 
     client.bindTo(ctx, 'test_service/cache', function(err, cache) {
       if (err) {
@@ -95,7 +95,7 @@ test('Test passing allowedServersPolicy that does not match server blessings',
     }
 
     var ctx = rt.getContext();
-    var client = rt.newClient();
+    var client = rt.getClient();
 
     client.bindTo(ctx, 'test_service/cache', function(err, cache) {
       if (err) {

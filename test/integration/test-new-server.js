@@ -5,10 +5,19 @@
 var test = require('prova');
 var vanadium = require('../../');
 var Promise = require('../../src/lib/promise');
+var Deferred = require('../../src/lib/deferred');
 var config = require('./default-config');
 var timeouts = require('./timeouts');
+var isBrowser = require('is-browser');
+var promiseWhile = require('../../src/lib/async-helper').promiseWhile;
 
 var NAME_PREFIX = 'new-server-testing-چשઑᜰ/';
+
+var service = {
+  changeChannel: function(ctx, serverCall) {
+    throw new Error('NotImplemented');
+  }
+};
 
 var fooService = {
   foo: function(ctx, serverCall) {
@@ -21,6 +30,135 @@ var barService = {
     return 'bar result';
   }
 };
+
+test('Test creating a JS service named livingroom/tv - ' +
+  'rt.newServer(name, service, callback)', function(assert) {
+  vanadium.init(config, function(err, runtime) {
+    assert.error(err);
+
+    runtime.newServer('livingroom/tv', service, function(err) {
+      assert.error(err);
+      runtime.close(assert.end);
+    });
+  });
+});
+
+test('Test creating a JS service named livingroom/tv - ' +
+  'var promise = rt.newServer(name, service)', function(assert) {
+  vanadium.init(config, function(err, runtime) {
+    assert.error(err);
+
+    runtime.newServer('livingroom/tv', service)
+    .then(function() {
+      runtime.close(assert.end);
+    })
+    .catch(function(err) {
+      assert.error(err);
+      runtime.close(assert.end);
+    });
+  });
+});
+
+test('Test creating a JS service when proxy Url is invalid - '+
+  'rt.newServer(name, service, callback)', function(t) {
+  if (isBrowser) {
+    return t.end();
+  }
+
+  vanadium.init({ wspr: 'http://bad-address.tld' }, function(err, runtime) {
+    t.notOk(err, 'no error expected on init() since wspr isn\'t ' +
+      'contacted');
+    runtime.newServer('should/fail', service, function(err) {
+      t.ok(err, 'should get error after attempting to serve with bad proxy');
+      runtime.close(t.end);
+    });
+  });
+});
+
+test('Test creating a JS service when proxy Url is invalid - '+
+  'var promise = runtime.newServer(name, service)', function(t) {
+  if (isBrowser) {
+    return t.end();
+  }
+
+  vanadium.init({ wspr: 'http://bad-address.tld' }, function(err, runtime) {
+    t.notOk(err, 'no error expected on init() since wspr isn\'t ' +
+      'contacted');
+    runtime.newServer('should/fail', service).then(function() {
+      t.fail('serve expected to fail but succeeded');
+      runtime.close(t.end);
+    }).catch(function(err) {
+      t.ok(err, 'should get error after attempting to serve with bad proxy');
+      runtime.close(t.end);
+    });
+  });
+});
+
+test('Test creating a JS service under multiple names - ' +
+  'runtime.addName(name), runtime.removeName(name)', function(assert) {
+  var ctx;
+
+  vanadium.init(config, function(err, runtime) {
+    assert.error(err);
+
+    var client = runtime.getClient();
+    ctx = runtime.getContext();
+    var server;
+    runtime.newServer('livingroom/tv', service)
+    .then(function addSecondName(s) {
+      server = s;
+      return server.addName('bedroom/tv');
+    })
+    .then(function bindToSecondName() {
+      return client.bindTo(ctx, 'bedroom/tv');
+    })
+    .then(function verifySecondName(newObject){
+      assert.ok(newObject && newObject.changeChannel, 'new name works');
+    })
+    .then(function removeSecondName() {
+      return server.removeName('bedroom/tv');
+    })
+    .then(function waitForNameToBeRemoved() {
+      var numTries = 0;
+      function tryBindTo() {
+        numTries++;
+        if (numTries > 5) {
+          return Promise.resolve(false);
+        }
+        var shortCtx = runtime.getContext().withTimeout(200);
+        return runtime.getNamespace().resolve(shortCtx, 'bedroom/tv')
+        .then(function() {
+          return true;
+        }).catch(function(err) {
+          return false;
+        });
+      }
+      // Resolve every 100ms until the name is removed, or 5 tries are
+      // attempted.
+      return promiseWhile(tryBindTo, function() {
+        var def = new Deferred();
+        setTimeout(function() {
+          def.resolve();
+        }, 100);
+        return def.promise;
+      });
+    }).then(function bindToRemovedSecondName() {
+      var shortCtx = runtime.getContext().withTimeout(100);
+      client.bindTo(shortCtx, 'bedroom/tv')
+      .then(function verifyRemovedSecondName(a) {
+        assert.fail('should not be able to bind to a removed name');
+        runtime.close(assert.end);
+      }, function verifyRemovedSecondName(err) {
+        assert.ok(err instanceof Error, 'should fail');
+        runtime.close(assert.end);
+      });
+    })
+    .catch(function(err) {
+      assert.error(err);
+      runtime.close(assert.end);
+    });
+  });
+});
 
 test('Test running several JS servers concurrently and under multiple ' +
   'names', function(assert) {
@@ -39,18 +177,16 @@ test('Test running several JS servers concurrently and under multiple ' +
   return vanadium.init(config)
   .then(function createTwoServers(rt) {
     runtime = rt;
-    client = rt.newClient();
+    client = rt.getClient();
     ctx = rt.getContext();
-    fooServer = rt.newServer();
-    barServer = rt.newServer();
-  })
-  .then(function serveFooAndBarServices(){
     return Promise.all([
-      fooServer.serve(NAME_PREFIX + 'foo', fooService ),
-      barServer.serve(NAME_PREFIX + 'bar', barService )
+      rt.newServer(NAME_PREFIX + 'foo', fooService ),
+      rt.newServer(NAME_PREFIX + 'bar', barService )
     ]);
   })
-  .then(function publishFooAndBarUnderAdditionalNames() {
+  .then(function publishFooAndBarUnderAdditionalNames(servers) {
+    fooServer = servers[0];
+    barServer = servers[1];
     return Promise.all([
       fooServer.addName(NAME_PREFIX + 'foo-fighter'),
       barServer.addName(NAME_PREFIX + 'bar-baz')

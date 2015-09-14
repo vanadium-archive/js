@@ -87,7 +87,7 @@ test('load test echo server', function(assert) {
     // In order to run a performance test where we have a go client send
     // a bunch of tests to the server, we tell the stressd server to run
     // a peformance test against the server we just started.
-    var client = res.runtime.newClient();
+    var client = res.runtime.getClient();
     var ctx = res.runtime.getContext();
     client.bindTo(ctx, '/localhost:8141').then(function(stub) {
       ctx = ctx.withTimeout(DURATION * 2);

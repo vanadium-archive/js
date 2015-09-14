@@ -32,7 +32,7 @@ test('Test remote blessings with no method name ' +
       return t.end(err);
     }
 
-    var client = res.runtime.newClient();
+    var client = res.runtime.getClient();
     var ctx = res.runtime.getContext();
 
     client.remoteBlessings(ctx, serverName, function(err, blessings) {
@@ -55,7 +55,7 @@ test('Test remote blessings with known method ' +
       return t.end(err);
     }
 
-    var client = res.runtime.newClient();
+    var client = res.runtime.getClient();
     var ctx = res.runtime.getContext();
 
     client.remoteBlessings(ctx, serverName, 'bar', function(err, blessings) {
@@ -78,7 +78,7 @@ test('Test remote blessings with unknown method ' +
       return t.end(err);
     }
 
-    var client = res.runtime.newClient();
+    var client = res.runtime.getClient();
     var ctx = res.runtime.getContext();
 
     client.remoteBlessings(ctx, serverName, 'baz', function(err, blessings) {
@@ -100,7 +100,7 @@ test('Test remote blessings with non-existant server ' +
     if (err) {
       return t.end(err);
     }
-    var client = rt.newClient();
+    var client = rt.getClient();
     var ctx = rt.getContext();
 
     client.remoteBlessings(ctx, 'unknown', function(err, blessings) {

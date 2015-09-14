@@ -17,7 +17,7 @@ test('Test sync dispatcher the echos suffixes - ' +
       return assert.end(err);
     }
 
-    var client = res.runtime.newClient();
+    var client = res.runtime.getClient();
     var ctx = res.runtime.getContext();
     client.bindTo(ctx, 'dispatcherServiceName/echo/bar',
       function(err, service) {
@@ -48,7 +48,7 @@ test('Test sync dispatcher that counts length of suffix - ' +
       return assert.end(err);
     }
 
-    var client = res.runtime.newClient();
+    var client = res.runtime.getClient();
     var ctx = res.runtime.getContext();
     client.bindTo(ctx, 'dispatcherServiceName/count/bar',
       function(err, service) {
@@ -78,7 +78,7 @@ test('Test sync dispatcher that counts length of suffix - ' +
       return assert.end(err);
     }
 
-    var client = res.runtime.newClient();
+    var client = res.runtime.getClient();
     var ctx = res.runtime.getContext();
     var promises = [
       client.bindTo(ctx, 'dispatcherServiceName/count/bar')
@@ -114,7 +114,7 @@ test('Test unknown suffix should return error - ' +
       return assert.end(err);
     }
 
-    var client = res.runtime.newClient();
+    var client = res.runtime.getClient();
     var ctx = res.runtime.getContext();
     client.bindTo(ctx, 'dispatcherServiceName/unknown',
       function(err, service) {
@@ -138,7 +138,7 @@ test('Test async dispatcher using promises - ' +
 
     var ctx = res.runtime.getContext();
     var name = 'dispatcherServiceName/promise/whatever';
-    var client = res.runtime.newClient();
+    var client = res.runtime.getClient();
     client.bindTo(ctx, name, function(err, service) {
       if (err) {
         return assert.end(err);
@@ -165,7 +165,7 @@ test('Test async dispatcher using promises - ' +
       return assert.end(err);
     }
 
-    var client = res.runtime.newClient();
+    var client = res.runtime.getClient();
     var ctx = res.runtime.getContext();
     client.bindTo(ctx, 'dispatcherServiceName/promise/fail',
       function(err, service) {
@@ -190,7 +190,7 @@ test('Test async dispatcher using callbacks - ' +
     var ctx = res.runtime.getContext();
 
     var name = 'dispatcherServiceName/callback/whatever';
-    var client = res.runtime.newClient();
+    var client = res.runtime.getClient();
     client.bindTo(ctx, name, function(err, service) {
       if (err) {
         return assert.end(err);
@@ -217,7 +217,7 @@ test('Test async dispatcher using callbacks - '+
       return assert.end(err);
     }
 
-    var client = res.runtime.newClient();
+    var client = res.runtime.getClient();
     var ctx = res.runtime.getContext();
     client.bindTo(ctx, 'dispatcherServiceName/callback/fail',
       function(err, service) {

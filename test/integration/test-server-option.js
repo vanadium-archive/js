@@ -33,7 +33,7 @@ test('Test IsLeaf=True Server Option', function(t) {
     t.error(err);
 
     var rt = res.runtime;
-    var ns = rt.namespace();
+    var ns = rt.getNamespace();
     var stream = ns.glob(rt.getContext(), name).stream;
     stream.on('data', function(mp) {
       t.error(err);
@@ -62,7 +62,7 @@ test('Test IsLeaf=False Server Option', function(t) {
     t.error(err);
 
     var rt = res.runtime;
-    var ns = rt.namespace();
+    var ns = rt.getNamespace();
     var stream = ns.glob(rt.getContext(), name).stream;
     stream.on('data', function(mp) {
       t.error(err);
@@ -91,7 +91,7 @@ test('Test ServesMountTable=True Server Option', function(t) {
     t.error(err);
 
     var rt = res.runtime;
-    var ns = rt.namespace();
+    var ns = rt.getNamespace();
     var stream = ns.glob(rt.getContext(), name).stream;
     stream.on('data', function(mp) {
       t.error(err);
@@ -120,7 +120,7 @@ test('Test ServesMountTable=false server option', function(t) {
     t.error(err);
 
     var rt = res.runtime;
-    var ns = rt.namespace();
+    var ns = rt.getNamespace();
     var stream = ns.glob(rt.getContext(), name).stream;
     stream.on('data', function(mp) {
       t.error(err);
@@ -151,7 +151,7 @@ test('Test ServesMountTable=ture and IsLeaf=true server option',
       t.error(err);
 
       var rt = res.runtime;
-      var ns = rt.namespace();
+      var ns = rt.getNamespace();
       var stream = ns.glob(rt.getContext(), name).stream;
       stream.on('data', function(mp) {
         t.error(err);

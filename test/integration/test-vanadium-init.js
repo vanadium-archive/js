@@ -128,7 +128,7 @@ test('Test passing namespaceRoots to vanadium.init() sets the namespaceRoots',
       return t.end();
     }
 
-    rt.namespace().roots(function(err, gotRoots) {
+    rt.getNamespace().roots(function(err, gotRoots) {
       if (err) {
         t.error(err);
         return rt.close(t.end);
@@ -149,7 +149,7 @@ function remount(from, to, cb) {
     if (err) {
       return cb(err);
     }
-    var ns = rt.namespace();
+    var ns = rt.getNamespace();
     var ctx = rt.getContext().withTimeout(5000);
 
     ns.resolve(ctx, from, function(err, servers) {
@@ -201,13 +201,12 @@ test('Test passing proxy to vanadium.init() sets the proxy',
           return 'pong';
         }
       };
-      var server = rt.newServer();
-      server.serve(serverName, service, function(err) {
+      rt.newServer(serverName, service, function(err) {
         if (err) {
           return end(err);
         }
 
-        var client = rt.newClient();
+        var client = rt.getClient();
         var ctx = rt.getContext().withTimeout(5000);
         client.bindTo(ctx, serverName, function(err, pingpong) {
           if (err) {

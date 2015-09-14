@@ -18,7 +18,7 @@ var dispatcher = leafDispatcher({
 test('Test language in context', function(assert) {
   serve('context', dispatcher, function(err, res, end) {
     assert.error(err, 'should not error on serve(...)');
-    var client = res.runtime.newClient();
+    var client = res.runtime.getClient();
     var ctx = res.runtime.getContext().withValue(LANG_KEY, 'my-lang');
     client.bindTo(ctx, 'context').then(function(service) {
       return service.test(ctx);

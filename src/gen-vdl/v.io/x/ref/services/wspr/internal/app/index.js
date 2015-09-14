@@ -131,8 +131,8 @@ module.exports.Controller = Controller;
 
     
       
-Controller.prototype.serve = function(ctx, serverCall, name, serverId, serverOpts) {
-  throw new Error('Method Serve not implemented');
+Controller.prototype.newServer = function(ctx, serverCall, name, serverId, serverOpts) {
+  throw new Error('Method NewServer not implemented');
 };
     
       
@@ -221,8 +221,8 @@ Controller.prototype._serviceDescription = {
     
       
     {
-    name: 'Serve',
-    doc: "// Serve instructs WSPR to start listening for calls on behalf\n// of a javascript server.",
+    name: 'NewServer',
+    doc: "// NewServer instructs WSPR to create a server and start listening for calls on\n// behalf of a JavaScript server.",
     inArgs: [{
       name: 'name',
       doc: "",

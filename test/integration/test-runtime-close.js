@@ -14,7 +14,7 @@ test('Test closing runtime - runtime.close(cb)', function(assert) {
     rt = runtime;
     var ctx = runtime.getContext();
     assert.error(err);
-    var client = runtime.newClient();
+    var client = runtime.getClient();
     client.bindTo(ctx, 'test_service/cache', onbind);
   }
 
@@ -36,7 +36,7 @@ test('Test closing runtime - var promise = runtime.close()', function(assert) {
 
   function bindTo(runtime) {
     rt = runtime;
-    var client = runtime.newClient();
+    var client = runtime.getClient();
     var ctx = runtime.getContext();
     return client.bindTo(ctx, 'test_service/cache');
   }

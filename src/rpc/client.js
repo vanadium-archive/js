@@ -329,7 +329,7 @@ OutstandingRPC.prototype.constructMessage = function() {
  *
  * @description
  * <p>Private Constructor, use
- * [Runtime#newClient]{@link module:vanadium~Runtime#newClient}</p>
+ * [Runtime#getClient]{@link module:vanadium~Runtime#getClient}</p>
  * @inner
  * @constructor
  * @memberof module:vanadium.rpc

@@ -60,7 +60,7 @@ test('caveatValidation', function(t) {
       caveatValidator);
 
     // Bind to the go process that will invoke aMethod.
-    var client = res.runtime.newClient();
+    var client = res.runtime.getClient();
     client.bindTo(res.runtime.getContext(), invokerName, function(err, stub) {
       if (err) {
         res.end(t, 'error in bindTo: ' + err);

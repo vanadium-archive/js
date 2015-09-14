@@ -219,7 +219,7 @@ test('Test getting signature of Go sample cache service - ' +
   vanadium.init(config)
   .then(function(runtime) {
     var ctx = runtime.getContext();
-    var client = runtime.newClient();
+    var client = runtime.getClient();
     client.signature(ctx, 'test_service/cache')
     .then(function(sigs) {
       assert.ok(sigs, 'received something');
@@ -240,7 +240,7 @@ test('Test getting signature of Go sample cache service - ' +
     }
 
     var ctx = runtime.getContext();
-    var client = runtime.newClient();
+    var client = runtime.getClient();
     client.signature(ctx, 'test_service/cache', function(err, sigs) {
       assert.error(err);
       assert.ok(sigs, 'received something');

@@ -89,7 +89,7 @@ Router.prototype.handleRequest = function(messageId, type, request) {
       this.handleCaveatValidationRequest(messageId, request);
       break;
     case Incoming.LOG_MESSAGE:
-      if (request.level ===  typeUtil.unwrap(lib.LogLevel.INFO)) {
+      if (request.level === typeUtil.unwrap(lib.LogLevel.INFO)) {
         vlog.logger.info(request.message);
       } else if (request.level === typeUtil.unwrap(lib.LogLevel.ERROR)) {
         vlog.logger.error(request.message);
@@ -104,7 +104,7 @@ Router.prototype.handleRequest = function(messageId, type, request) {
 
 Router.prototype.handleAuthorizationRequest = function(messageId, request) {
   try {
-   request = byteUtil.hex2Bytes(request);
+    request = byteUtil.hex2Bytes(request);
   } catch (e) {
     var authReply = new AuthReply({
       // TODO(bjornick): Use the real context
@@ -112,8 +112,8 @@ Router.prototype.handleAuthorizationRequest = function(messageId, request) {
     });
 
     this._proxy.sendRequest(hexVom.encode(authReply, undefined,
-                                          this._typeEncoder),
-                            Outgoing.AUTHORIZATION_RESPONSE, null, messageId);
+        this._typeEncoder),
+      Outgoing.AUTHORIZATION_RESPONSE, null, messageId);
     return;
   }
 
@@ -125,7 +125,7 @@ Router.prototype.handleAuthorizationRequest = function(messageId, request) {
   }).then(function(req) {
     decodedRequest = req;
     var ctx = router._rootCtx.withValue(SharedContextKeys.LANG_KEY,
-                                        decodedRequest.context.language);
+      decodedRequest.context.language);
     var server = router._servers[decodedRequest.serverId];
     if (!server) {
       var authReply = new AuthReply({
@@ -134,28 +134,28 @@ Router.prototype.handleAuthorizationRequest = function(messageId, request) {
       });
       var bytes = hexVom.encode(authReply, undefined, router._typeEncoder);
       router._proxy.sendRequest(bytes,
-                                Outgoing.AUTHORIZATION_RESPONSE,
-                                null, messageId);
+        Outgoing.AUTHORIZATION_RESPONSE,
+        null, messageId);
       return;
     }
     return createSecurityCall(decodedRequest.call, router._blessingsCache)
-    .then(function(call) {
-      return server.handleAuthorization(decodedRequest.handle, ctx, call);
-    });
+      .then(function(call) {
+        return server._handleAuthorization(decodedRequest.handle, ctx, call);
+      });
   }).then(function() {
     var authReply = new AuthReply({});
     router._proxy.sendRequest(hexVom.encode(authReply, undefined,
-                                            router._typeEncoder),
-                              Outgoing.AUTHORIZATION_RESPONSE, null, messageId);
+        router._typeEncoder),
+      Outgoing.AUTHORIZATION_RESPONSE, null, messageId);
   }).catch(function(e) {
     var authReply = new AuthReply({
       err: ErrorConversion.fromNativeValue(e, router._appName,
-                                           decodedRequest.call.method)
+        decodedRequest.call.method)
     });
     router._proxy.sendRequest(hexVom.encode(authReply, undefined,
-                                            router._typeEncoder),
-                              Outgoing.AUTHORIZATION_RESPONSE, null,
-                              messageId);
+        router._typeEncoder),
+      Outgoing.AUTHORIZATION_RESPONSE, null,
+      messageId);
   });
 };
 
@@ -187,24 +187,24 @@ Router.prototype._validateChain = function(ctx, call, cavs) {
 Router.prototype.handleCaveatValidationRequest = function(messageId, request) {
   var router = this;
   createSecurityCall(request.call, this._blessingsCache)
-  .then(function(call) {
-    var ctx = router._rootCtx.withValue(SharedContextKeys.LANG_KEY,
-      request.context.language);
-    var resultPromises = request.cavs.map(function(cav) {
-      return router._validateChain(ctx, call, cav);
-    });
-    return Promise.all(resultPromises).then(function(results) {
-      var response = new CaveatValidationResponse({
-        results: results
+    .then(function(call) {
+      var ctx = router._rootCtx.withValue(SharedContextKeys.LANG_KEY,
+        request.context.language);
+      var resultPromises = request.cavs.map(function(cav) {
+        return router._validateChain(ctx, call, cav);
       });
-      var data = hexVom.encode(response, undefined, router._typeEncoder);
-      router._proxy.sendRequest(data, Outgoing.CAVEAT_VALIDATION_RESPONSE, null,
-        messageId);
+      return Promise.all(resultPromises).then(function(results) {
+        var response = new CaveatValidationResponse({
+          results: results
+        });
+        var data = hexVom.encode(response, undefined, router._typeEncoder);
+        router._proxy.sendRequest(data, Outgoing.CAVEAT_VALIDATION_RESPONSE,
+          null, messageId);
+      });
+    }).catch(function(err) {
+      vlog.logger.error('Got err ' + err + ': ' + err.stack);
+      throw new Error('Unexpected error (all promises should resolve): ' + err);
     });
-  }).catch(function(err) {
-    vlog.logger.error('Got err ' + err + ': ' + err.stack);
-    throw new Error('Unexpected error (all promises should resolve): ' + err);
-  });
 };
 
 Router.prototype.handleLookupRequest = function(messageId, request) {
@@ -216,34 +216,34 @@ Router.prototype.handleLookupRequest = function(messageId, request) {
       err: new verror.NoExistError(this._rootCtx, 'unknown server')
     });
     this._proxy.sendRequest(hexVom.encode(reply, undefined, this._typeEncoder),
-                            Outgoing.LOOKUP_RESPONSE,
-                            null, messageId);
+      Outgoing.LOOKUP_RESPONSE,
+      null, messageId);
     return;
   }
 
   var self = this;
   return server._handleLookup(request.suffix).then(function(value) {
-   var signatureList = value.invoker.signature();
-   var hasAuthorizer = (typeof value.authorizer === 'function');
-   var hasGlobber = value.invoker.hasGlobber();
-   var reply = {
-     handle: value._handle,
-     signature: signatureList,
-     hasAuthorizer: hasAuthorizer,
-     hasGlobber: hasGlobber
-   };
-   self._proxy.sendRequest(hexVom.encode(reply, LookupReply.prototype._type,
-                                         self._typeEncoder),
-                           Outgoing.LOOKUP_RESPONSE,
-                           null, messageId);
- }).catch(function(err) {
-   var reply = new LookupReply({
-     err: ErrorConversion.fromNativeValue(err, self._appName, '__Signature')
-   });
-   self._proxy.sendRequest(hexVom.encode(reply, undefined, self._typeEncoder),
-                           Outgoing.LOOKUP_RESPONSE,
-                           null, messageId);
- });
+    var signatureList = value.invoker.signature();
+    var hasAuthorizer = (typeof value.authorizer === 'function');
+    var hasGlobber = value.invoker.hasGlobber();
+    var reply = {
+      handle: value._handle,
+      signature: signatureList,
+      hasAuthorizer: hasAuthorizer,
+      hasGlobber: hasGlobber
+    };
+    self._proxy.sendRequest(hexVom.encode(reply, LookupReply.prototype._type,
+        self._typeEncoder),
+      Outgoing.LOOKUP_RESPONSE,
+      null, messageId);
+  }).catch(function(err) {
+    var reply = new LookupReply({
+      err: ErrorConversion.fromNativeValue(err, self._appName, '__Signature')
+    });
+    self._proxy.sendRequest(hexVom.encode(reply, undefined, self._typeEncoder),
+      Outgoing.LOOKUP_RESPONSE,
+      null, messageId);
+  });
 };
 
 Router.prototype.createRPCContext = function(request) {
@@ -258,13 +258,13 @@ Router.prototype.createRPCContext = function(request) {
     ctx = ctx.withCancel();
   }
   ctx = ctx.withValue(SharedContextKeys.LANG_KEY,
-                      request.call.context.language);
+    request.call.context.language);
   // Plumb through the vtrace ids
   var suffix = request.call.securityCall.suffix;
-  var spanName = '<jsserver>"'+suffix+'".'+request.method;
+  var spanName = '<jsserver>"' + suffix + '".' + request.method;
   // TODO(mattr): We need to enforce some security on trace responses.
   return vtrace.withContinuedTrace(ctx, spanName,
-                                   request.call.traceRequest);
+    request.call.traceRequest);
 };
 
 function getMethodSignature(invoker, methodName) {
@@ -287,13 +287,13 @@ Router.prototype._setupStream = function(messageId, ctx, methodSig) {
     var readType = (methodSig.inStream ? methodSig.inStream.type : null);
     var writeType = (methodSig.outStream ? methodSig.outStream.type : null);
     var stream = new Stream(messageId, this._proxy.senderPromise, false,
-                        readType, writeType, this._typeEncoder);
+      readType, writeType, this._typeEncoder);
     this._streamMap[messageId] = stream;
     var rpc = new StreamHandler(ctx, stream, this._typeDecoder);
     this._proxy.addIncomingStreamHandler(messageId, rpc);
   } else {
     this._proxy.addIncomingStreamHandler(messageId,
-                                         new StreamCloseHandler(ctx));
+      new StreamCloseHandler(ctx));
   }
 };
 
@@ -323,6 +323,7 @@ var globSig = {
 Router.prototype._maybeHandleReservedMethod = function(
   ctx, messageId, server, invoker, methodName, request) {
   var self = this;
+
   function globCompletion() {
     // There are no results to a glob method.  Everything is sent back
     // through the stream.
@@ -341,11 +342,11 @@ Router.prototype._maybeHandleReservedMethod = function(
     this.incrementOutstandingRequestForId(messageId);
     var globPattern = typeUtil.unwrap(request.args[0]);
     return createServerCall(request, this._blessingsCache)
-    .then(function(call) {
-      self.handleGlobRequest(messageId, call.securityCall.suffix,
-                             server, new Glob(globPattern), ctx, call, invoker,
-                             globCompletion);
-    });
+      .then(function(call) {
+        self.handleGlobRequest(messageId, call.securityCall.suffix,
+          server, new Glob(globPattern), ctx, call, invoker,
+          globCompletion);
+      });
   }
   return null;
 };
@@ -392,7 +393,7 @@ Router.prototype._handleRPCRequestInternal = function(messageId, request) {
     return;
   }
 
-  var invoker = server.getInvokerForHandle(request.handle);
+  var invoker = server._getInvokerForHandle(request.handle);
   if (!invoker) {
     vlog.logger.error('No invoker found: ', request);
     err = new Error('No service found');
@@ -415,8 +416,8 @@ Router.prototype._handleRPCRequestInternal = function(messageId, request) {
   if (methodSig === undefined) {
     err = new verror.NoExistError(
       ctx, 'Requested method', methodName, 'not found on');
-      this.sendResult(messageId, methodName, null, err);
-      return;
+    this.sendResult(messageId, methodName, null, err);
+    return;
   }
 
   this._setupStream(messageId, ctx, methodSig);
@@ -443,25 +444,25 @@ Router.prototype._handleRPCRequestInternal = function(messageId, request) {
           if (!(result instanceof Blessings)) {
             vlog.logger.error(
               'Encoding non-blessings value as wire blessings');
-              return null;
+            return null;
           }
           return result;
         }
         return vdl.canonicalize.fill(result, t);
       });
       self.sendResult(messageId, methodName, canonResults, undefined,
-                      methodSig.outArgs.length);
+        methodSig.outArgs.length);
     }, function(err) {
       var stackTrace;
       if (err instanceof Error && err.stack !== undefined) {
         stackTrace = err.stack;
       }
       vlog.logger.error('Requested method ' + methodName +
-          ' threw an exception on invoke: ', err, stackTrace);
+        ' threw an exception on invoke: ', err, stackTrace);
 
       // The error case has no results; only send the error.
       self.sendResult(messageId, methodName, undefined, err,
-          methodSig.outArgs.length);
+        methodSig.outArgs.length);
     });
   });
 };
@@ -483,20 +484,20 @@ Router.prototype.handleRPCRequest = function(messageId, vdlRequest) {
   var request;
   var router = this;
   try {
-   request = byteUtil.hex2Bytes(vdlRequest);
+    request = byteUtil.hex2Bytes(vdlRequest);
   } catch (e) {
     err = new Error('Failed to decode args: ' + e);
     this.sendResult(messageId, '', null, err);
     return;
   }
   return vom.decode(request, false, this._typeDecoder)
-  .then(function(request) {
-    return router._handleRPCRequestInternal(messageId, request);
-  }, function(e) {
-    vlog.logger.error('Failed to decode args : ' + e + ': ' + e.stack);
-    err = new Error('Failed to decode args: ' + e);
-    router.sendResult(messageId, '', null, err);
-  });
+    .then(function(request) {
+      return router._handleRPCRequestInternal(messageId, request);
+    }, function(e) {
+      vlog.logger.error('Failed to decode args : ' + e + ': ' + e.stack);
+      err = new Error('Failed to decode args: ' + e);
+      router.sendResult(messageId, '', null, err);
+    });
 };
 
 function methodIsStreaming(methodSig) {
@@ -521,6 +522,7 @@ Router.prototype.invokeMethod = function(invoker, options) {
   };
 
   var def = new Deferred();
+
   function InvocationFinishedCallback(err, results) {
     if (err) {
       return def.reject(err);
@@ -535,7 +537,9 @@ Router.prototype.invokeMethod = function(invoker, options) {
 function createGlobReply(name) {
   name = name || '';
   return new naming.GlobReply({
-    'entry': new naming.MountEntry({ name: name })
+    'entry': new naming.MountEntry({
+      name: name
+    })
   });
 }
 
@@ -543,19 +547,22 @@ function createGlobErrorReply(name, err, appName) {
   name = name || '';
   var convertedError = ErrorConversion.fromNativeValue(err, appName, 'glob');
   return new naming.GlobReply({
-    'error': new naming.GlobError({ name: name, error: convertedError })
+    'error': new naming.GlobError({
+      name: name,
+      error: convertedError
+    })
   });
 }
 
 Router.prototype.handleGlobRequest = function(messageId, name, server, glob,
-                                              context, call, invoker, cb) {
+  context, call, invoker, cb) {
   var self = this;
   var options;
 
   function invokeAndCleanup(invoker, options, method) {
     self.invokeMethod(invoker, options).catch(function(err) {
       var verr = new verror.InternalError(context,
-         method +'() failed', glob, err);
+        method + '() failed', glob, err);
       var errReply = createGlobErrorReply(name, verr, self._appName);
       self._streamMap[messageId].write(errReply);
       vlog.logger.info(verr);
@@ -568,7 +575,9 @@ Router.prototype.handleGlobRequest = function(messageId, name, server, glob,
     options = {
       methodName: '__glob',
       args: [glob.toString()],
-      methodSig: { outArgs: [] },
+      methodSig: {
+        outArgs: []
+      },
       ctx: context,
       call: call,
       // For the __glob method we just write the
@@ -591,7 +600,9 @@ Router.prototype.handleGlobRequest = function(messageId, name, server, glob,
     options = {
       methodName: '__globChildren',
       args: [],
-      methodSig: { outArgs: [] },
+      methodSig: {
+        outArgs: []
+      },
       ctx: context,
       call: call,
       stream: globStream
@@ -617,13 +628,13 @@ Router.prototype.handleGlobRequest = function(messageId, name, server, glob,
         return server._handleLookup(suffix);
       }).then(function(value) {
         nextInvoker = value.invoker;
-        return server.handleAuthorization(value._handle, context,
-                                          subCall.securityCall);
+        return server._handleAuthorization(value._handle, context,
+          subCall.securityCall);
       }).then(function() {
         var match = glob.matchInitialSegment(child);
         if (match.match) {
           self.handleGlobRequest(messageId, suffix, server, match.remainder,
-                                 context, subCall, nextInvoker, cb);
+            context, subCall, nextInvoker, cb);
         } else {
           self.decrementOutstandingRequestForId(messageId, cb);
         }
@@ -675,7 +686,7 @@ Router.prototype.sendResult = function(messageId, name, results, err,
   var errorStruct = null;
   if (err !== undefined && err !== null) {
     errorStruct = ErrorConversion.fromNativeValue(err, this._appName,
-                                                 name);
+      name);
   }
 
   // Clean up the context map.
@@ -703,14 +714,15 @@ Router.prototype.sendResult = function(messageId, name, results, err,
       traceResponse: traceResponse
     });
     this._proxy.sendRequest(hexVom.encode(responseData, undefined,
-                                          this._typeEncoder),
-                            Outgoing.RESPONSE,
-                            null, messageId);
+        this._typeEncoder),
+      Outgoing.RESPONSE,
+      null, messageId);
   }
 };
 
 /**
- * Serves the server under the given name
+ * Instructs WSPR to create a server and start listening for calls on
+ * behalf of the given JavaScript server.
  * @private
  * @param {string} name Name to serve under
  * @param {Vanadium.Server} server The server who will handle the requests for
@@ -720,8 +732,8 @@ Router.prototype.sendResult = function(messageId, name, results, err,
  * was any.
  * @return {Promise} Promise to be called when serve completes or fails.
  */
-Router.prototype.serve = function(name, server, cb) {
-  vlog.logger.info('Serving under the name: ', name);
+Router.prototype.newServer = function(name, server, cb) {
+  vlog.logger.info('New server under the name: ', name);
   this._servers[server.id] = server;
   // If using a leaf dispatcher, set the IsLeaf ServerOption.
   var isLeaf = server.dispatcher && server.dispatcher._isLeaf;
@@ -729,7 +741,8 @@ Router.prototype.serve = function(name, server, cb) {
     server.serverOption._opts.isLeaf = true;
   }
   var rpcOpts = server.serverOption._toRpcServerOption();
-  return this._controller.serve(this._rootCtx, name, server.id, rpcOpts, cb);
+  return this._controller.newServer(this._rootCtx, name, server.id,
+    rpcOpts, cb);
 };
 
 /**

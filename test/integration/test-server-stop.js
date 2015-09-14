@@ -54,64 +54,6 @@ test('Test stopping a JS service - ' +
   });
 });
 
-test('Test re-serving a stopped JS service - ' +
-  'server.stop(callback), runtime.serve(callback)', function(assert) {
-  serve(name, dispatcher, function(err, res) {
-    assert.error(err);
-
-    var server = res.server;
-    var client = res.runtime.newClient();
-    var ctx = res.runtime.getContext();
-    server.stop(function(err) {
-      assert.error(err);
-
-      server.serveDispatcher(name, dispatcher, function(err) {
-        assert.error(err);
-
-        client.bindTo(ctx, name, function(err, service) {
-          assert.error(err);
-
-          service.foo(ctx, function(err, result) {
-            assert.error(err);
-
-            assert.equal(result, 'bar');
-            res.end(assert);
-          });
-        });
-      });
-    });
-  });
-});
-
-test('Test re-serving a stopped JS service - ' +
-  'var promise = server.stop(), runtime.serve()', function(assert) {
-  serve(name, dispatcher, function(err, res) {
-    assert.error(err);
-
-    var server = res.server;
-    var client = res.runtime.newClient();
-    var ctx = res.runtime.getContext();
-    server.stop()
-    .then(function() {
-      return server.serveDispatcher(name, dispatcher);
-    })
-    .then(function() {
-      return client.bindTo(ctx, name);
-    })
-    .then(function(service) {
-      return service.foo(ctx);
-    })
-    .then(function(result) {
-      assert.equal(result, 'bar');
-      res.end(assert);
-    })
-    .catch(function(err) {
-      assert.error(err);
-      res.end(assert);
-    });
-  });
-});
-
 test('Test stopping a JS service twice - ' +
   'server.stop(callback)', function(assert) {
   serve(name, dispatcher, function(err, res) {

@@ -69,67 +69,70 @@ function serve(name, dispatcher, callback) {
       return callback(err, basicRes);
     }
 
-    var server = runtime.newServer(serverOption);
-    server.serveDispatcher(name, dispatcher, function(err) {
-      if (err) {
-        return callback(err, basicRes);
-      }
+    runtime.newDispatchingServer(name, dispatcher, serverOption,
+      function(err, server) {
 
-      var ctx = runtime.getContext();
+        if (err) {
+          return callback(err, basicRes);
+        }
 
-      waitUntilResolve();
+        var ctx = runtime.getContext();
 
-      // The server is not gauranteed to be mounted by the time the serve
-      // call finishes.  We should wait until the name resolves before calling
-      // the callback.  As a side a benefit, this also speeds up the browser
-      // tests, because browspr is quicker than wspr and so it is more likely
-      // to return before the server is mounted.  The normal backoff for bindTo
-      // starts at 100ms, but this code only waits a few milliseconds.
-      function waitUntilResolve() {
-        var ns = runtime.namespace();
-        var count = 0;
-        runResolve();
-        function runResolve() {
-          ns.resolve(ctx, name, function(err, s) {
-            if (err || s.length === 0) {
-              count++;
-              if (count === 10) {
-                return callback(
-                  new Error(
-                    'Timed out waiting for resolve in serve.js: ' + err),
-                  basicRes);
+        waitUntilResolve();
+
+        // The server is not gauranteed to be mounted by the time the serve
+        // call finishes.  We should wait until the name resolves before calling
+        // the callback.  As a side a benefit, this also speeds up the browser
+        // tests, because browspr is quicker than wspr and so it is more likely
+        // to return before the server is mounted.  The normal backoff for
+        // bindTo starts at 100ms, but this code only waits a few milliseconds.
+        function waitUntilResolve() {
+          var ns = runtime.getNamespace();
+          var count = 0;
+          runResolve();
+
+          function runResolve() {
+            ns.resolve(ctx, name, function(err, s) {
+              if (err || s.length === 0) {
+                count++;
+                if (count === 10) {
+                  return callback(
+                    new Error(
+                      'Timed out waiting for resolve in serve.js: ' + err),
+                    basicRes);
+                }
+                return setTimeout(runResolve, 10);
               }
-              return setTimeout(runResolve, 10);
-            }
-            completeServe();
-          });
-        }
-      }
-      function completeServe() {
-        var res = {
-          runtime: runtime,
-          config: config,
-          close: close,
-          end: end,
-          server: server
-        };
-
-        if (options.autoBind === false) {
-          return callback(err, res, end);
+              completeServe();
+            });
+          }
         }
 
-        function onBind(err, service) {
-          if (err) {
-            return callback(err, basicRes);
+        function completeServe() {
+          var res = {
+            runtime: runtime,
+            config: config,
+            close: close,
+            end: end,
+            server: server
+          };
+
+          if (options.autoBind === false) {
+            return callback(err, res, end);
           }
 
-          res.service = service;
-          callback(err, res, end);
+          function onBind(err, service) {
+            if (err) {
+              return callback(err, basicRes);
+            }
+
+            res.service = service;
+            callback(err, res, end);
+          }
+          var client = runtime.getClient();
+          client.bindTo(ctx, name, onBind);
         }
-        var client = runtime.newClient();
-        client.bindTo(ctx, name, onBind);
-      }
-    });
+      });
 
     function close(callback) {
       return runtime.close(callback);
@@ -137,7 +140,7 @@ function serve(name, dispatcher, callback) {
 
     // hoisted and passed as the last argument to the callback argument.
     function end(assert, errorMsg) {
-      if (!! assert.end && typeof assert.end === 'function') {
+      if (!!assert.end && typeof assert.end === 'function') {
         return close(function(err) {
           assert.error(err, 'should not error on runtime.close(...)');
           assert.end(errorMsg);

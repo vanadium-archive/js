@@ -153,7 +153,7 @@ test('Test bless without Caveat from client (with Granter)', function(t) {
         return;
       }
 
-      var client = res.runtime.newClient();
+      var client = res.runtime.getClient();
       var fiveSecondsInFuture = new Date(Date.now() + 5000);
       var granterCalled = false;
       var granterOption = client.callOption({

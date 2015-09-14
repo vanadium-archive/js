@@ -116,7 +116,7 @@ function runGlobTest(pattern, expectedResults, dispatcher, expectedErrors,
       return assert.end(err);
     }
 
-    var namespace = res.runtime.namespace();
+    var namespace = res.runtime.getNamespace();
     var ctx = res.runtime.getContext();
     var globRPC = namespace.glob(ctx, pattern);
     var stream = globRPC.stream;
