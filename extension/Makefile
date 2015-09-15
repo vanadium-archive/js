@@ -17,7 +17,7 @@ endef
 
 define COMPILE-NACL-PLUGIN
 	mkdir -p $(dir $2)
-	GOROOT= V23_PROFILE=nacl v23 go build -o $2 $1
+	GOROOT= JIRI_PROFILE=nacl v23 go build -o $2 $1
 endef
 
 all: vanadium.zip
