@@ -452,7 +452,7 @@ Client.prototype.bindWithSignature = function(name, signature) {
 
       // Callback is the last function argument, pull it out of the args
       var lastType = typeof args[args.length - 1];
-      if (lastType === 'function' || lastType === 'undefined') {
+      if (lastType === 'function') {
         callback = args.pop();
       }
 
@@ -482,7 +482,16 @@ Client.prototype.bindWithSignature = function(name, signature) {
 
       ctx = vtrace.withNewSpan(ctx, '<jsclient>"'+name+'".'+method);
 
+      // If the last value was undefined, and there is 1 too many args, the
+      // undefined is an undefined cb, not an undefined arg.
+      if (args.length === methodSig.inArgs.length + 1 &&
+        lastType === 'undefined') {
+
+        args.pop();
+      }
+
       if (args.length !== methodSig.inArgs.length) {
+
         var expectedArgs = methodSig.inArgs.map(function(arg) {
           return arg.name;
         });
@@ -500,7 +509,7 @@ Client.prototype.bindWithSignature = function(name, signature) {
 
         // The given arguments exclude the ctx and (optional) cb.
         var givenArgs = Array.prototype.slice.call(arguments, 1);
-        if (typeof givenArgs[givenArgs.length - 1] === 'function') {
+        if (lastType === 'function') {
           givenArgs.pop();
         }
         err = new IncorrectArgCount(

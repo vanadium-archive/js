@@ -353,6 +353,63 @@ function runTypeService(options) {
     });
   });
 
+  test(namePrefix + 'typeService.isTyped(...) - promise', function(t) {
+    setup(options, function(err, ctx, typeService, end) {
+      t.error(err, 'should not error on setup');
+
+      typeService.isTyped(ctx, 'glue').then(function(res) {
+        t.error(err, 'should not error on isTyped(...)');
+        // Use equal instead of notOk to ensure that res is not wrapped.
+        t.equal(res, false, '\'glue\' is an untyped string');
+
+        var VomStr = vdl.registry.lookupOrCreateConstructor(vdl.types.STRING);
+        var typedString = new VomStr('glued');
+        typeService.isTyped(ctx, typedString, function(err, res) {
+          t.error(err, 'should not error on isTyped(...)');
+          // Use equal instead of ok to ensure that res is not wrapped.
+          t.equal(res, true, 'VomStr(\'glued\') is a typed string');
+          end(t);
+        });
+      }).catch(function error(err) {
+        t.error(err, 'should not error');
+        end(t);
+      });
+    });
+  });
+
+  test(namePrefix + 'typeService.isTyped(undefined) - promise', function(t) {
+    setup(options, function(err, ctx, typeService, end) {
+      t.error(err, 'should not error on setup');
+
+      // Check that you can leave an optional (or any) inArg as undefined.
+      // It should not be mistaken for a callback.
+      typeService.isTyped(ctx, undefined).then(function(res) {
+        t.error(err, 'should not error on isTyped(undefined)');
+        t.equal(res, false, 'undefined is treated like JSValue null');
+
+        // Lenient: Having both arg and cb as undefined is fine too.
+        typeService.isTyped(ctx, undefined, undefined).then(function(res) {
+          t.error(err, 'should not error on isTyped(undefined, undefined)');
+          t.equal(res, false, 'undefined is treated like JSValue null');
+
+          // Having any more undefined's is an error (too many args).
+          typeService.isTyped(ctx, undefined, undefined, undefined).then(
+            function(res) {
+
+            t.fail(err, 'should have errored');
+            end(t);
+          }).catch(function(err) {
+            t.ok(err, 'should error');
+            end(t);
+          });
+        });
+      }).catch(function error(err) {
+        t.error(err, 'should not error');
+        end(t);
+      });
+    });
+  });
+
   // This test ensures that typed values sent between JS server and client are
   // unwrapped when being processed. Further, the client disallows sending the
   // wrong type to the server.
