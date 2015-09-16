@@ -1,6 +1,6 @@
 # Vanadium JavaScript
 
-This repository defines the JavaScript API for [Vanadium].
+This repository defines the JavaScript API for Vanadium.
 The client and server APIs defined here work both in [Node.js] and the browser.
 
 ## Install
@@ -16,7 +16,6 @@ first and then use npm to install directly from GitHub:
 ## Usage
 
 Documentation for this API is available at https://jsdoc.v.io/
-Tutorials can be found at https://v.io/tutorials/javascript/
 
 The entry point to the API is through a module called `vanadium`, everything
 else is considered private and should not be accessed by the users of the API.
@@ -31,8 +30,8 @@ in both [Node.js] and browsers. Therefore, specific build and testing steps
 have been designed in the project to ensure this goal.
 
 When run in a browser, `vanadium.js` expects that the [vanadium
-extension](https://v.io/tools/vanadium-chrome-extension.html) will be
-installed.
+extension](https://github.com/vanadium/docs/blob/master/tools/vanadium-chrome-extension.md)
+will be installed.
 
 ## Bugs and feature requests
 
@@ -40,7 +39,7 @@ Bugs and feature requests should be filed in the [Vanadium issue tracker](https:
 
 ## Building and testing
 
-GNU Make is used to build and test [Vanadium].
+GNU Make is used to build and test Vanadium.
 
 Build everything:
 
@@ -64,6 +63,5 @@ Remove all build and testing artifacts:
 
     make clean
 
-[Vanadium]: https://v.io/
 [Node.js]: https://nodejs.org/
 [Browserify]: http://browserify.org/

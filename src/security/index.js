@@ -2,11 +2,13 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 /**
- * @summary Namespace security provides an API for the Vanadium
- * security concepts defined in {@link https://v.io/concepts/security.html}.
+ * @summary Namespace security provides an API for the Vanadium security
+ * concepts defined in
+ * {@link https://github.com/vanadium/docs/blob/master/concepts/security.md}.
  * @description
- * <p>Namespace security provides an API for the Vanadium
- * security concepts defined in {@link https://v.io/concepts/security.html}.
+ * <p>Namespace security provides an API for the Vanadium security concepts
+ * defined in
+ * {@link https://github.com/vanadium/docs/blob/master/concepts/security.md}.
  * </p>
  *
  * <p>The primitives and APIs defined in this package enable bi-directional,

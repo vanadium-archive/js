@@ -35,7 +35,7 @@ var defaults = {
  * backwards compatibility we can't guarantee that until we reach the '1.0'
  * milestone.
  * For more details about the Vanadium project,
- * please visit {@link https://v.io}.</p>
+ * please visit {@link https://github.com/vanadium/docs}.</p>
  * @module vanadium
 */
 
