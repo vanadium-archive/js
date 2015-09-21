@@ -194,7 +194,7 @@ test('names.[encode/decode]AsNameElement(name)', function(assert) {
     ['/The % rain in /% Spain', '%2FThe %25 rain in %2F%25 Spain'],
     ['/%/%', '%2F%25%2F%25'],
     ['ᚸӲ읔קAل', 'ᚸӲ읔קAل'],
-    ['ᚸ/Ӳ%읔/ק%Aل', 'ᚸ%2FӲ%25읔%2Fק%25Aل'],
+    ['ᚸ/Ӳ%읔/ק%A+ل', 'ᚸ%2FӲ%25읔%2Fק%25A+ل'],
   ];
 
   tests.forEach(function(t) {
