@@ -116,15 +116,17 @@ build-test/nacl: build-test/nacl/main.nmf build-test/nacl/main-64.nexe
 build-test: build-test/html build-test/images build-test/manifest.json build-test/js build-test/nacl
 
 gen-vdl: $(WSPR_ROOT)/internal/channel/channel.vdl $(WSPR_ROOT)/internal/browspr/browspr.vdl $(WSPR_ROOT)/internal/account/account.vdl
-	v23 go run $(V23_ROOT)/release/go/src/v.io/x/ref/cmd/vdl/main.go \
-	generate -lang=javascript -js-out-dir="$(V23_ROOT)/release/javascript/core/extension/vdl" -js-relative-path-to-core=../../src $(dir $^)
+	VDLPATH=$(V23_ROOT)/release/go/src vdl generate \
+		 -lang=javascript \
+		 -js-out-dir="$(V23_ROOT)/release/javascript/core/extension/vdl" \
+		 -js-relative-path-to-core=../../src $(dir $^)
 	# TODO(bjornick): We build the vdlroot stuff with a different set of command line options because the package
 	# path does not equal the directory path of the source file.  This is not ideal, but bjornick and toddw will
 	# discuss how to fix this later.
-	v23 go run $(V23_ROOT)/release/go/src/v.io/x/ref/cmd/vdl/main.go generate -lang=javascript \
-					-js-relative-path-to-core=../../../../../src \
-					-js-out-dir="$(V23_ROOT)/release/javascript/core/extension/vdl" \
-					$(V23_ROOT)/release/go/src/v.io/v23/vdlroot/...
+	VDLPATH=$(V23_ROOT)/release/go/src vdl generate -lang=javascript \
+	        -js-relative-path-to-core=../../../../../src \
+	        -js-out-dir="$(V23_ROOT)/release/javascript/core/extension/vdl" \
+	        $(V23_ROOT)/release/go/src/v.io/v23/vdlroot/...
 
 example-server: example/index.bundle.js
 	static "example" -H '{"Cache-Control": "no-cache, must-revalidate"}'

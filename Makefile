@@ -137,8 +137,8 @@ gen-vdl: gen-vdl-impl
 # This generates the output of the vdl files in test/vdl-out/gen-vdl/v.io/<package-path>
 # The command will generate all the dependent files as well.
 gen-vdl-test: JS_VDL_DIR := "$(V23_ROOT)/release/javascript/core/test/vdl-out"
-gen-vdl-test: EXTRA_VDL_PATHS := "javascript-test/..." "v.io/x/js.core/..." 
-gen-vdl-test: VDLPATH := "$(V23_ROOT)/release/javascript/core/test/vdl-in/src:$(V23_ROOT)/release/javascript/core/go/src"
+gen-vdl-test: EXTRA_VDL_PATHS := "javascript-test/..." "v.io/x/js.core/..."
+gen-vdl-test: VDLPATH := "$(V23_ROOT)/release/go/src:$(V23_ROOT)/release/javascript/core/test/vdl-in/src:$(V23_ROOT)/release/javascript/core/go/src"
 gen-vdl-test: JS_VDL_PATH_TO_CORE := "../../src"
 gen-vdl-test: gen-vdl-impl
 
@@ -153,7 +153,7 @@ gen-vdl-test-expected: gen-vdl-test-expected-impl
 gen-vdl-test-expected-impl:
 	rm -rf $(JS_VDL_DIR)
 	echo $(VDLPATH)
-	VDLPATH=$(VDLPATH) v23 go run $(V23_ROOT)/release/go/src/v.io/x/ref/cmd/vdl/main.go generate -lang=javascript \
+	VDLPATH=$(VDLPATH) vdl generate -lang=javascript \
 		-js-relative-path-to-core=$(JS_VDL_PATH_TO_CORE) \
 		-js-out-dir=$(JS_VDL_DIR) \
 		v.io/x/ref/lib/vdl/testdata/...
@@ -161,7 +161,7 @@ gen-vdl-test-expected-impl:
 gen-vdl-impl:
 ifndef NOVDLGEN
 	rm -rf $(JS_VDL_DIR)
-	VDLPATH=$(VDLPATH) v23 go run $(V23_ROOT)/release/go/src/v.io/x/ref/cmd/vdl/main.go generate -lang=javascript \
+	VDLPATH=$(VDLPATH) vdl generate -lang=javascript \
 		-js-relative-path-to-core=$(JS_VDL_PATH_TO_CORE) \
 		-js-out-dir=$(JS_VDL_DIR) \
 		v.io/x/ref/lib/vdl/testdata/... \
@@ -174,10 +174,10 @@ ifndef NOVDLGEN
 	# TODO(bjornick): We build the vdlroot stuff with a different set of command line options because the package
 	# path does not equal the directory path of the source file.  This is not ideal, but bjornick and toddw will
 	# discuss how to fix this later.
-	VDLPATH=$(VDLPATH) v23 go run $(V23_ROOT)/release/go/src/v.io/x/ref/cmd/vdl/main.go generate -lang=javascript \
-					-js-relative-path-to-core=../../../$(JS_VDL_PATH_TO_CORE) \
-					-js-out-dir=$(JS_VDL_DIR) \
-					$(V23_ROOT)/release/go/src/v.io/v23/vdlroot/...
+	VDLPATH=$(VDLPATH) vdl generate -lang=javascript \
+			-js-relative-path-to-core=../../../$(JS_VDL_PATH_TO_CORE) \
+			-js-out-dir=$(JS_VDL_DIR) \
+			$(V23_ROOT)/release/go/src/v.io/v23/vdlroot/...
 endif
 
 test-vdl-node: test-precheck
