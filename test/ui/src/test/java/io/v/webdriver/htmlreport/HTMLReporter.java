@@ -40,7 +40,7 @@ public class HTMLReporter {
     cfg.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
 
     // Figure out where the report.ftl file is.
-    File f = new File(System.getenv("V23_ROOT") + "/release/javascript/core/test/ui/src/test/java/io/v/webdriver/htmlreport");
+    File f = new File(System.getenv("JIRI_ROOT") + "/release/javascript/core/test/ui/src/test/java/io/v/webdriver/htmlreport");
     String path = f.getAbsolutePath();
     cfg.setDirectoryForTemplateLoading(new File(path));
 

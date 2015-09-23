@@ -1,11 +1,11 @@
-PATH := node_modules/.bin:${V23_ROOT}/third_party/cout/node/bin:$(PATH)
+PATH := node_modules/.bin:${JIRI_ROOT}/third_party/cout/node/bin:$(PATH)
 
-NODE_BIN := $(V23_ROOT)/release/javascript/core/node_modules/.bin
-GOPATH := $(V23_ROOT)/release/javascript/core/go
-VDLPATH := $(V23_ROOT)/release/go/src:$(GOPATH)/src
-GOBIN := $(V23_ROOT)/release/javascript/core/go/bin
+NODE_BIN := $(JIRI_ROOT)/release/javascript/core/node_modules/.bin
+GOPATH := $(JIRI_ROOT)/release/javascript/core/go
+VDLPATH := $(JIRI_ROOT)/release/go/src:$(GOPATH)/src
+GOBIN := $(JIRI_ROOT)/release/javascript/core/go/bin
 VGO := GOPATH="$(GOPATH)" VDLPATH="$(VDLPATH)" v23 go
-GO_FILES := $(shell find go/src $(V23_ROOT)/release/go/src/v.io -name "*.go")
+GO_FILES := $(shell find go/src $(JIRI_ROOT)/release/go/src/v.io -name "*.go")
 
 NODE_MODULE_JS_FILES := $(shell find node_modules -name *.js | sed 's/ /\\ /')
 
@@ -130,15 +130,15 @@ test-vom: test-vom-node test-vom-browser
 
 # This generates the output of the vdl files in src/gen-vdl/v.io/<package-path>
 # The command will generate all the dependent files as well.
-gen-vdl: JS_VDL_DIR := "$(V23_ROOT)/release/javascript/core/src/gen-vdl"
+gen-vdl: JS_VDL_DIR := "$(JIRI_ROOT)/release/javascript/core/src/gen-vdl"
 gen-vdl: JS_VDL_PATH_TO_CORE := ".."
 gen-vdl: gen-vdl-impl
 
 # This generates the output of the vdl files in test/vdl-out/gen-vdl/v.io/<package-path>
 # The command will generate all the dependent files as well.
-gen-vdl-test: JS_VDL_DIR := "$(V23_ROOT)/release/javascript/core/test/vdl-out"
+gen-vdl-test: JS_VDL_DIR := "$(JIRI_ROOT)/release/javascript/core/test/vdl-out"
 gen-vdl-test: EXTRA_VDL_PATHS := "javascript-test/..." "v.io/x/js.core/..."
-gen-vdl-test: VDLPATH := "$(V23_ROOT)/release/go/src:$(V23_ROOT)/release/javascript/core/test/vdl-in/src:$(V23_ROOT)/release/javascript/core/go/src"
+gen-vdl-test: VDLPATH := "$(JIRI_ROOT)/release/go/src:$(JIRI_ROOT)/release/javascript/core/test/vdl-in/src:$(JIRI_ROOT)/release/javascript/core/go/src"
 gen-vdl-test: JS_VDL_PATH_TO_CORE := "../../src"
 gen-vdl-test: gen-vdl-impl
 
@@ -146,7 +146,7 @@ gen-vdl-test: gen-vdl-impl
 # They are placed in test/vdl/expected-gen/v.io/<package-path>.
 # This command is not normally run by the tests. It should only be run when the
 # expected vdl files need to be updated.
-gen-vdl-test-expected: JS_VDL_DIR := "$(V23_ROOT)/release/javascript/core/test/vdl/expected-gen"
+gen-vdl-test-expected: JS_VDL_DIR := "$(JIRI_ROOT)/release/javascript/core/test/vdl/expected-gen"
 gen-vdl-test-expected: JS_VDL_PATH_TO_CORE := "../../../src"
 gen-vdl-test-expected: gen-vdl-test-expected-impl
 
@@ -177,7 +177,7 @@ ifndef NOVDLGEN
 	VDLPATH=$(VDLPATH) vdl generate -lang=javascript \
 			-js-relative-path-to-core=../../../$(JS_VDL_PATH_TO_CORE) \
 			-js-out-dir=$(JS_VDL_DIR) \
-			$(V23_ROOT)/release/go/src/v.io/v23/vdlroot/...
+			$(JIRI_ROOT)/release/go/src/v.io/v23/vdlroot/...
 endif
 
 test-vdl-node: test-precheck
@@ -307,11 +307,11 @@ serve-docs: docs
 
 .PHONY: deploy-docs-production
 deploy-docs-production: docs
-	make -C $(V23_ROOT)/infrastructure/deploy jsdoc-production
+	make -C $(JIRI_ROOT)/infrastructure/deploy jsdoc-production
 
 .PHONY: deploy-docs-staging
 deploy-docs-staging: docs
-	make -C $(V23_ROOT)/infrastructure/deploy jsdoc-staging
+	make -C $(JIRI_ROOT)/infrastructure/deploy jsdoc-staging
 
 node_modules: package.json  check-that-npm-is-in-path
 ifndef NONPMUPDATE

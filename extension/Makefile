@@ -1,5 +1,5 @@
-PATH := node_modules/.bin:${V23_ROOT}/third_party/cout/node/bin:$(PATH)
-WSPR_ROOT := $(V23_ROOT)/release/go/src/v.io/x/ref/services/wspr
+PATH := node_modules/.bin:${JIRI_ROOT}/third_party/cout/node/bin:$(PATH)
+WSPR_ROOT := $(JIRI_ROOT)/release/go/src/v.io/x/ref/services/wspr
 SHELL := /bin/bash -e -o pipefail
 .DEFAULT_GOAL := all
 
@@ -52,7 +52,7 @@ build/nacl/main.nmf: nacl
 	mkdir -p $(dir $@)
 	cp -r nacl/main.nmf $@
 
-build/nacl/main-64.nexe: $(V23_ROOT)/release/go/src/v.io/x/ref/services/wspr/browsprd/main_nacl.go
+build/nacl/main-64.nexe: $(JIRI_ROOT)/release/go/src/v.io/x/ref/services/wspr/browsprd/main_nacl.go
 	$(call COMPILE-NACL-PLUGIN,$<,$@)
 
 build/nacl: build/nacl/main.nmf build/nacl/main-64.nexe
@@ -116,17 +116,17 @@ build-test/nacl: build-test/nacl/main.nmf build-test/nacl/main-64.nexe
 build-test: build-test/html build-test/images build-test/manifest.json build-test/js build-test/nacl
 
 gen-vdl: $(WSPR_ROOT)/internal/channel/channel.vdl $(WSPR_ROOT)/internal/browspr/browspr.vdl $(WSPR_ROOT)/internal/account/account.vdl
-	VDLPATH=$(V23_ROOT)/release/go/src vdl generate \
+	VDLPATH=$(JIRI_ROOT)/release/go/src vdl generate \
 		 -lang=javascript \
-		 -js-out-dir="$(V23_ROOT)/release/javascript/core/extension/vdl" \
+		 -js-out-dir="$(JIRI_ROOT)/release/javascript/core/extension/vdl" \
 		 -js-relative-path-to-core=../../src $(dir $^)
 	# TODO(bjornick): We build the vdlroot stuff with a different set of command line options because the package
 	# path does not equal the directory path of the source file.  This is not ideal, but bjornick and toddw will
 	# discuss how to fix this later.
-	VDLPATH=$(V23_ROOT)/release/go/src vdl generate -lang=javascript \
+	VDLPATH=$(JIRI_ROOT)/release/go/src vdl generate -lang=javascript \
 	        -js-relative-path-to-core=../../../../../src \
-	        -js-out-dir="$(V23_ROOT)/release/javascript/core/extension/vdl" \
-	        $(V23_ROOT)/release/go/src/v.io/v23/vdlroot/...
+	        -js-out-dir="$(JIRI_ROOT)/release/javascript/core/extension/vdl" \
+	        $(JIRI_ROOT)/release/go/src/v.io/v23/vdlroot/...
 
 example-server: example/index.bundle.js
 	static "example" -H '{"Cache-Control": "no-cache, must-revalidate"}'

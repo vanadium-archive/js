@@ -11,10 +11,10 @@ var which = require('which');
 var PassThrough = require('stream').PassThrough;
 var fs = require('fs');
 
-var V23_ROOT = process.env.V23_ROOT;
+var JIRI_ROOT = process.env.JIRI_ROOT;
 var VANADIUM_BINS = [
-  path.join(V23_ROOT, 'release/javascript/core/go/bin'),
-  path.join(V23_ROOT, 'release/javascript/core/nacl/scripts')
+  path.join(JIRI_ROOT, 'release/javascript/core/go/bin'),
+  path.join(JIRI_ROOT, 'release/javascript/core/nacl/scripts')
 ];
 var DEFAULT_FLAGS = {
   v: 3,
@@ -52,8 +52,8 @@ Service.prototype.spawn = function(args) {
 
   args = args || service.args;
 
-  if (!V23_ROOT) {
-    var err = new Error('Please export $V23_ROOT to proceed');
+  if (!JIRI_ROOT) {
+    var err = new Error('Please export $JIRI_ROOT to proceed');
     return service.emit('error', err);
   }
 
