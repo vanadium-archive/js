@@ -199,7 +199,7 @@ test('names.[encode/decode]AsNameElement(name)', function(assert) {
 
   tests.forEach(function(t) {
     assert.equal(names.encodeAsNameElement(t[0]), t[1], t[0] + ' encoding');
-    assert.equal(names.decodeAsNameElement(t[1]), t[0], t[1] + ' decoding');
+    assert.equal(names.decodeFromNameElement(t[1]), t[0], t[1] + ' decoding');
   });
   assert.end();
 });

@@ -12,7 +12,7 @@
 module.exports = {
   clean: clean,
   encodeAsNameElement: encodeAsNameElement,
-  decodeAsNameElement: decodeAsNameElement,
+  decodeFromNameElement: decodeFromNameElement,
   join: join,
   isRooted: isRooted,
   basename: basename,
@@ -54,7 +54,7 @@ function encodeAsNameElement(nameElement) {
  * @returns {string} Decoded name element.
  * @memberof module:vanadium.naming
  */
-function decodeAsNameElement(encodedNameElement) {
+function decodeFromNameElement(encodedNameElement) {
   // decodeURIComponent handles decoding hex percent encoded UTF-8 strings.
   var output = decodeURIComponent(encodedNameElement);
   return output;
