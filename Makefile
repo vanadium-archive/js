@@ -4,7 +4,7 @@ NODE_BIN := $(JIRI_ROOT)/release/javascript/core/node_modules/.bin
 GOPATH := $(JIRI_ROOT)/release/javascript/core/go
 VDLPATH := $(JIRI_ROOT)/release/go/src:$(GOPATH)/src
 GOBIN := $(JIRI_ROOT)/release/javascript/core/go/bin
-VGO := GOPATH="$(GOPATH)" VDLPATH="$(VDLPATH)" v23 go
+VGO := GOPATH="$(GOPATH)" VDLPATH="$(VDLPATH)" jiri go
 GO_FILES := $(shell find go/src $(JIRI_ROOT)/release/go/src/v.io -name "*.go")
 
 NODE_MODULE_JS_FILES := $(shell find node_modules -name *.js | sed 's/ /\\ /')
@@ -321,7 +321,7 @@ ifndef NONPMUPDATE
 endif
 
 check-that-npm-is-in-path:
-	@which npm > /dev/null || { echo "npm is not in the path. Did you remember to run 'v23 profile install nodejs'?"; exit 1; }
+	@which npm > /dev/null || { echo "npm is not in the path. Did you remember to run 'jiri profile install nodejs'?"; exit 1; }
 
 .PHONY: all build clean dependency-check lint test
 .PHONY: test-integration test-integration-node test-integration-browser

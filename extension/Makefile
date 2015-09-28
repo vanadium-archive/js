@@ -17,7 +17,7 @@ endef
 
 define COMPILE-NACL-PLUGIN
 	mkdir -p $(dir $2)
-	GOROOT= JIRI_PROFILE=nacl v23 go build -o $2 $1
+	GOROOT= JIRI_PROFILE=nacl jiri go build -o $2 $1
 endef
 
 all: vanadium.zip
@@ -149,7 +149,7 @@ node_modules: package.json | check-that-npm-is-in-path
 	@npm install --quiet
 
 check-that-npm-is-in-path:
-	@which npm > /dev/null || { echo "npm is not in the path. Did you remember to run 'v23 profile install nodejs'?"; exit 1; }
+	@which npm > /dev/null || { echo "npm is not in the path. Did you remember to run 'jiri profile install nodejs'?"; exit 1; }
 
 .PHONY: all build build-dev clean dependency-check gen-vdl lint
 
