@@ -17,7 +17,18 @@ endef
 
 define COMPILE-NACL-PLUGIN
 	mkdir -p $(dir $2)
-	GOROOT= JIRI_PROFILE=nacl jiri go build -o $2 $1
+	nacl=$(shell jiri xprofile list nacl)
+	if [ ! -z "$(nacl)" ]; then \
+		echo ">>>>>>> new nacl profile installed"; \
+	fi
+	if [ -f "$(JIRI_ROOT)/.jiri_xprofiles" -a ! -z "$(nacl)" ]; then \
+		echo ">>>>>>> using new profiles"; \
+		echo ""; \
+		jiri go --target=nacl build -o $2 $1; \
+	else \
+		echo ">>>>>>> using old profiles"; \
+		GOROOT= JIRI_PROFILE=nacl jiri go build -o $2 $1; \
+	fi
 endef
 
 all: vanadium.zip

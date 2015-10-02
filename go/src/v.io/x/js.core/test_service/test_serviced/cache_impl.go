@@ -5,10 +5,10 @@
 package main
 
 import (
-	"sync"
 	"fmt"
 	"reflect"
 	"sort"
+	"sync"
 	"time"
 
 	"v.io/v23/context"
