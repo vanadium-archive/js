@@ -1,4 +1,5 @@
-PATH := node_modules/.bin:${JIRI_ROOT}/third_party/cout/node/bin:$(PATH)
+NODE_DIR := $(shell jiri v23-profile env --profile=nodejs V23_TARGET_INSTALLATION_DIR|sed -e 's/V23_TARGET_INSTALLATION_DIR=//' -e 's/"//g')
+PATH := node_modules/.bin:$(NODE_DIR)/bin:$(PATH)
 
 NODE_BIN := $(JIRI_ROOT)/release/javascript/core/node_modules/.bin
 GOPATH := $(JIRI_ROOT)/release/javascript/core/go
@@ -316,7 +317,7 @@ deploy-docs-staging: docs
 node_modules: package.json  check-that-npm-is-in-path
 ifndef NONPMUPDATE
 	@npm prune
-	@npm install --quiet || (rm -fr $(HOME)/.npm && npm install --quiet) 
+	@npm install --quiet || (rm -fr $(HOME)/.npm && npm install --quiet)
 	@touch node_modules
 endif
 
