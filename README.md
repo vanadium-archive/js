@@ -5,17 +5,9 @@ The client and server APIs defined here work both in [Node.js] and the browser.
 
 ## Install
 
-## Install
-Since Vanadium is currently hosted in private repositories, you would need to
-[setup SSH keys for Github]
-(https://help.github.com/articles/generating-ssh-keys/)
-first and then use npm to install directly from GitHub:
-
-    npm install --save git+ssh://git@github.com:vanadium/js.git
+    npm install --save vanadium/js
 
 ## Usage
-
-Documentation for this API is available at https://jsdoc.v.io/
 
 The entry point to the API is through a module called `vanadium`, everything
 else is considered private and should not be accessed by the users of the API.
