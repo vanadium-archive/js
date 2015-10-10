@@ -376,6 +376,23 @@ module.exports.InvalidSigningBlessingCaveatError = makeError('v.io/v23/security.
 ]);
 
 
+module.exports.PublicKeyNotAllowedError = makeError('v.io/v23/security.PublicKeyNotAllowed', actions.NO_RETRY, {
+  'en': '{1:}{2:} peer has public key {3}, not the authorized public key {4}',
+}, [
+  vdl.types.STRING,
+  vdl.types.STRING,
+]);
+
+
+module.exports.EndpointAuthorizationFailedError = makeError('v.io/v23/security.EndpointAuthorizationFailed', actions.NO_RETRY, {
+  'en': '{1:}{2:} blessings in endpoint {3} not matched by blessings presented: {4} (rejected {5})',
+}, [
+  vdl.types.STRING,
+  _type3,
+  _type8,
+]);
+
+
 
 
 // Services:
