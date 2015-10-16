@@ -188,6 +188,10 @@ module.exports.wireUnion = (vdl.registry.lookupOrCreateConstructor(_typewireUnio
 
   module.exports.WireCtrlEnd = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.BYTE))(225, true), vdl.types.BYTE);
 
+  module.exports.WireCtrlTypeCont = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.BYTE))(226, true), vdl.types.BYTE);
+
+  module.exports.WireCtrlValueCont = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.BYTE))(227, true), vdl.types.BYTE);
+
 
 
 // Errors:

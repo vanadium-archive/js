@@ -8,7 +8,7 @@
 
 var test = require('prova');
 
-var testdata = require('../vdl-out/v.io/v23/vom/testdata');
+var testdata = require('../vdl-out/v.io/v23/vom/testdata/data80');
 
 var ByteArrayMessageReader = require(
     './../../src/vom/byte-array-message-reader.js');
@@ -16,13 +16,21 @@ var ByteArrayMessageWriter = require(
     './../../src/vom/byte-array-message-writer.js');
 var Decoder = require('./../../src/vom/decoder.js');
 var Encoder = require('./../../src/vom/encoder.js');
+var vdl = require('./../../src/vdl');
 var canonicalize = require('./../../src/vdl/canonicalize.js');
 var typeCompatible = require('./../../src/vdl/type-compatible.js');
 var util = require('./../../src/vdl/byte-util.js');
 var stringify = require('./../../src/vdl/stringify.js');
 
+var nullAny = new (vdl.registry.lookupOrCreateConstructor(vdl.types.ANY))
+  (null, true);
+
 // Test that the received type matches the expected type.
 testdata.Tests.val.forEach(function(t) {
+  if (t.value === null) {
+    // null any (not wrapped) because it is within TestCase struct
+    t.value = nullAny;
+  }
   test('type toString compatibility - ' + t.name, function(assert) {
     var typeStr = t.typeString;
     var type = t.value._type;
