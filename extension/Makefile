@@ -17,16 +17,18 @@ endef
 
 define COMPILE-NACL-PLUGIN
 	mkdir -p $(dir $2)
-	nacl=$(shell jiri xprofile list nacl)
-	if [ ! -z "$(nacl)" ]; then \
+	if [ ! -z "`jiri v23-profile list nacl`" ]; then \
 		echo ">>>>>>> new nacl profile installed"; \
-	fi
-	if [ -f "$(JIRI_ROOT)/.jiri_xprofiles" -a ! -z "$(nacl)" ]; then \
+	else \
+		echo ">>>>>>> new nacl profile NOT installed"; \
+	fi; \
+	if [ -f "$(JIRI_ROOT)/.jiri_v23_profiles" -a ! -z "`jiri v23-profile list nacl`" ]; then \
 		echo ">>>>>>> using new profiles"; \
-		echo ""; \
-		jiri go --target=nacl build -o $2 $1; \
+		echo jiri go --profiles=nacl build -o $2 $1; \
+		jiri -v go -v --profiles=nacl build -v -o $2 $1; \
 	else \
 		echo ">>>>>>> using old profiles"; \
+		echo GOROOT= JIRI_PROFILE=nacl jiri go build -o $2 $1; \
 		GOROOT= JIRI_PROFILE=nacl jiri go build -o $2 $1; \
 	fi
 endef
@@ -64,7 +66,7 @@ build/nacl/main.nmf: nacl
 	cp -r nacl/main.nmf $@
 
 build/nacl/main-64.nexe: $(JIRI_ROOT)/release/go/src/v.io/x/ref/services/wspr/browsprd/main_nacl.go
-	$(call COMPILE-NACL-PLUGIN,$<,$@)
+	@$(call COMPILE-NACL-PLUGIN,$<,$@)
 
 build/nacl: build/nacl/main.nmf build/nacl/main-64.nexe
 
