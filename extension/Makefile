@@ -24,8 +24,8 @@ define COMPILE-NACL-PLUGIN
 	fi; \
 	if [ -f "$(JIRI_ROOT)/.jiri_v23_profiles" -a ! -z "`jiri v23-profile list nacl`" ]; then \
 		echo ">>>>>>> using new profiles"; \
-		echo jiri go --profiles=nacl build -o $2 $1; \
-		jiri -v go -v --profiles=nacl build -v -o $2 $1; \
+ 		echo GOOS=nacl GOARCH=amd64p32 jiri go --profiles=nacl --target=amd64p32-nacl build -o $2 $1; \
+		GOOS=nacl GOARCH=amd64p32 jiri -v go -v --profiles=nacl --target=amd64p32-nacl build -v -o $2 $1; \
 	else \
 		echo ">>>>>>> using old profiles"; \
 		echo GOROOT= JIRI_PROFILE=nacl jiri go build -o $2 $1; \
