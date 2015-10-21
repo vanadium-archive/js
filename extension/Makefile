@@ -1,4 +1,5 @@
-PATH := node_modules/.bin:${JIRI_ROOT}/third_party/cout/node/bin:$(PATH)
+NODE_DIR := $(shell jiri v23-profile env --profile=nodejs V23_TARGET_INSTALLATION_DIR=)
+PATH := node_modules/.bin:${NODE_DIR}/bin:$(PATH)
 WSPR_ROOT := $(JIRI_ROOT)/release/go/src/v.io/x/ref/services/wspr
 SHELL := /bin/bash -e -o pipefail
 .DEFAULT_GOAL := all
