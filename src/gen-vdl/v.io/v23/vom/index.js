@@ -188,9 +188,17 @@ module.exports.wireUnion = (vdl.registry.lookupOrCreateConstructor(_typewireUnio
 
   module.exports.WireCtrlEnd = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.BYTE))(225, true), vdl.types.BYTE);
 
-  module.exports.WireCtrlTypeCont = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.BYTE))(226, true), vdl.types.BYTE);
+  module.exports.WireCtrlValueFirstChunk = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.BYTE))(226, true), vdl.types.BYTE);
 
-  module.exports.WireCtrlValueCont = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.BYTE))(227, true), vdl.types.BYTE);
+  module.exports.WireCtrlValueChunk = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.BYTE))(227, true), vdl.types.BYTE);
+
+  module.exports.WireCtrlValueLastChunk = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.BYTE))(228, true), vdl.types.BYTE);
+
+  module.exports.WireCtrlTypeFirstChunk = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.BYTE))(229, true), vdl.types.BYTE);
+
+  module.exports.WireCtrlTypeChunk = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.BYTE))(230, true), vdl.types.BYTE);
+
+  module.exports.WireCtrlTypeLastChunk = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.BYTE))(231, true), vdl.types.BYTE);
 
 
 
