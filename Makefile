@@ -1,4 +1,4 @@
-NODE_DIR := $(shell jiri v23-profile env --profile=nodejs V23_TARGET_INSTALLATION_DIR=)
+NODE_DIR := $(shell jiri v23-profile list --info Target.InstallationDir nodejs)
 PATH := node_modules/.bin:$(NODE_DIR)/bin:$(PATH)
 
 NODE_BIN := $(JIRI_ROOT)/release/javascript/core/node_modules/.bin

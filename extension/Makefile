@@ -1,4 +1,4 @@
-NODE_DIR := $(shell jiri v23-profile env --profile=nodejs V23_TARGET_INSTALLATION_DIR=)
+NODE_DIR := $(shell jiri v23-profile list --info Target.InstallationDir nodejs)
 PATH := node_modules/.bin:${NODE_DIR}/bin:$(PATH)
 WSPR_ROOT := $(JIRI_ROOT)/release/go/src/v.io/x/ref/services/wspr
 SHELL := /bin/bash -e -o pipefail
@@ -25,8 +25,8 @@ define COMPILE-NACL-PLUGIN
 	fi; \
 	if [ -f "$(JIRI_ROOT)/.jiri_v23_profiles" -a ! -z "`jiri v23-profile list nacl`" ]; then \
 		echo ">>>>>>> using new profiles"; \
- 		echo GOOS=nacl GOARCH=amd64p32 jiri go --profiles=nacl --target=amd64p32-nacl build -o $2 $1; \
-		GOOS=nacl GOARCH=amd64p32 jiri -v go -v --profiles=nacl --target=amd64p32-nacl build -v -o $2 $1; \
+ 		echo "unset GOARCH GOOS; jiri go --profiles=nacl --target=amd64p32-nacl build -o $2 $1"; \
+		unset GOARCH GOOS; jiri -v go -v --profiles=nacl --target=amd64p32-nacl build -v -o $2 $1; \
 	else \
 		echo ">>>>>>> using old profiles"; \
 		echo GOROOT= JIRI_PROFILE=nacl jiri go build -o $2 $1; \
