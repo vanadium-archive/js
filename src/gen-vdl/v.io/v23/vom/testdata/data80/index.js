@@ -144,17 +144,17 @@ _type9.freeze();
   'hexValue': "4e00",
 },
 {
-  'name': "[]byte(\"\\x01\\x02\\x03\")",
+  'name': "[]byte(\"\\xff\\x00\\x01\")",
   'value': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_type2))(new Uint8Array([
+255,
+0,
 1,
-2,
-3,
 ]), true), _type2),
   'typeString': "[]byte",
-  'hex': "804e03010203",
+  'hex': "804e03ff0001",
   'hexVersion': "80",
   'hexType': "",
-  'hexValue': "4e03010203",
+  'hexValue': "4e03ff0001",
 },
 {
   'name': "[]byte(\"adef\")",
@@ -1306,17 +1306,17 @@ _type9.freeze();
   'hexValue': "5200",
 },
 {
-  'name': "types.NByteSlice(\"\\x01\\x02\\x03\")",
+  'name': "types.NByteSlice(\"\\xff\\x00\\x01\")",
   'value': canonicalize.reduce(new types.NByteSlice(new Uint8Array([
+255,
+0,
 1,
-2,
-3,
 ]), true), new types.NByteSlice()._type),
   'typeString': "v.io/v23/vom/testdata/types.NByteSlice []byte",
-  'hex': "80512c030026762e696f2f7632332f766f6d2f74657374646174612f74797065732e4e42797465536c6963650102e15203010203",
+  'hex': "80512c030026762e696f2f7632332f766f6d2f74657374646174612f74797065732e4e42797465536c6963650102e15203ff0001",
   'hexVersion': "80",
   'hexType': "512c030026762e696f2f7632332f766f6d2f74657374646174612f74797065732e4e42797465536c6963650102e1",
-  'hexValue': "5203010203",
+  'hexValue': "5203ff0001",
 },
 {
   'name': "types.NByteSlice(\"abc\")",
@@ -1346,18 +1346,18 @@ _type9.freeze();
   'hexValue': "520000000000",
 },
 {
-  'name': "types.NByteArray(\"\\x01\\x02\\x03\\x00\")",
+  'name': "types.NByteArray(\"\\xff\\x00\\x01\\x00\")",
   'value': canonicalize.reduce(new types.NByteArray(new Uint8Array([
+255,
+0,
 1,
-2,
-3,
 0,
 ]), true), new types.NByteArray()._type),
   'typeString': "v.io/v23/vom/testdata/types.NByteArray [4]byte",
-  'hex': "80512e020026762e696f2f7632332f766f6d2f74657374646174612f74797065732e4e42797465417272617901020204e1520001020300",
+  'hex': "80512e020026762e696f2f7632332f766f6d2f74657374646174612f74797065732e4e42797465417272617901020204e15200ff000100",
   'hexVersion': "80",
   'hexType': "512e020026762e696f2f7632332f766f6d2f74657374646174612f74797065732e4e42797465417272617901020204e1",
-  'hexValue': "520001020300",
+  'hexValue': "5200ff000100",
 },
 {
   'name': "types.NByteArray(\"abcd\")",
@@ -3793,7 +3793,7 @@ canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.COMPLE
 ],
 },
 ]],
-  ["string, []byte, [n]byte, and enum", [
+  ["string and enum", [
 {
   'name': "enum (A)",
   'primaryType': types.NEnum.A._type,
@@ -3801,9 +3801,6 @@ canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.COMPLE
 canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.STRING))("A", true), vdl.types.STRING),
 canonicalize.reduce(new types.NString("A", true), new types.NString()._type),
 types.NEnum.A,
-canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_type2))(new Uint8Array([
-65,
-]), true), _type2),
 ],
 },
 {
@@ -3814,40 +3811,6 @@ canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.STRING
 canonicalize.reduce(new types.NString("Brie", true), new types.NString()._type),
 types.BrieEnum.BRIE,
 types.FoodEnum.BRIE,
-canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_type2))(new Uint8Array([
-66,
-114,
-105,
-101,
-]), true), _type2),
-canonicalize.reduce(new types.NByteArray(new Uint8Array([
-66,
-114,
-105,
-101,
-]), true), new types.NByteArray()._type),
-],
-},
-{
-  'name': "[4]byte",
-  'primaryType': new types.NByteArray()._type,
-  'values': [
-canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.STRING))("Bean", true), vdl.types.STRING),
-canonicalize.reduce(new types.NString("Bean", true), new types.NString()._type),
-types.BeanEnum.BEAN,
-types.FoodEnum.BEAN,
-canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_type2))(new Uint8Array([
-66,
-101,
-97,
-110,
-]), true), _type2),
-canonicalize.reduce(new types.NByteArray(new Uint8Array([
-66,
-101,
-97,
-110,
-]), true), new types.NByteArray()._type),
 ],
 },
 {
@@ -3857,22 +3820,6 @@ canonicalize.reduce(new types.NByteArray(new Uint8Array([
 canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.STRING))("Cherry", true), vdl.types.STRING),
 canonicalize.reduce(new types.NString("Cherry", true), new types.NString()._type),
 types.FoodEnum.CHERRY,
-canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_type2))(new Uint8Array([
-67,
-104,
-101,
-114,
-114,
-121,
-]), true), _type2),
-canonicalize.reduce(new types.NByteSlice(new Uint8Array([
-67,
-104,
-101,
-114,
-114,
-121,
-]), true), new types.NByteSlice()._type),
 ],
 },
 ]],

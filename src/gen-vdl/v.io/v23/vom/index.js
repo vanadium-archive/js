@@ -178,6 +178,8 @@ module.exports.wireUnion = (vdl.registry.lookupOrCreateConstructor(_typewireUnio
 
   module.exports.WireIdAny = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typetypeId))(new vdl.BigInt(1, new Uint8Array([0xf])), true), _typetypeId);
 
+  module.exports.WireIdInt8 = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typetypeId))(new vdl.BigInt(1, new Uint8Array([0x10])), true), _typetypeId);
+
   module.exports.WireIdByteList = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typetypeId))(new vdl.BigInt(1, new Uint8Array([0x27])), true), _typetypeId);
 
   module.exports.WireIdStringList = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typetypeId))(new vdl.BigInt(1, new Uint8Array([0x28])), true), _typetypeId);

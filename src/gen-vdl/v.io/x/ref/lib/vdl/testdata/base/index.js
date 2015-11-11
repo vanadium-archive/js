@@ -51,6 +51,7 @@ var _typeNamedFloat64 = new vdl.Type();
 var _typeNamedInt16 = new vdl.Type();
 var _typeNamedInt32 = new vdl.Type();
 var _typeNamedInt64 = new vdl.Type();
+var _typeNamedInt8 = new vdl.Type();
 var _typeNamedList = new vdl.Type();
 var _typeNamedMap = new vdl.Type();
 var _typeNamedSet = new vdl.Type();
@@ -136,7 +137,7 @@ _typeCompositesArray.len = 2;
 _typeCompositesArray.elem = _typeComposites;
 _typeKeyScalars.kind = vdl.kind.STRUCT;
 _typeKeyScalars.name = "v.io/x/ref/lib/vdl/testdata/base.KeyScalars";
-_typeKeyScalars.fields = [{name: "A0", type: vdl.types.BOOL}, {name: "A1", type: vdl.types.BYTE}, {name: "A2", type: vdl.types.UINT16}, {name: "A3", type: vdl.types.UINT32}, {name: "A4", type: vdl.types.UINT64}, {name: "A5", type: vdl.types.INT16}, {name: "A6", type: vdl.types.INT32}, {name: "A7", type: vdl.types.INT64}, {name: "A8", type: vdl.types.FLOAT32}, {name: "A9", type: vdl.types.FLOAT64}, {name: "A10", type: vdl.types.COMPLEX64}, {name: "A11", type: vdl.types.COMPLEX128}, {name: "A12", type: vdl.types.STRING}, {name: "B0", type: _typeNamedBool}, {name: "B1", type: _typeNamedByte}, {name: "B2", type: _typeNamedUint16}, {name: "B3", type: _typeNamedUint32}, {name: "B4", type: _typeNamedUint64}, {name: "B5", type: _typeNamedInt16}, {name: "B6", type: _typeNamedInt32}, {name: "B7", type: _typeNamedInt64}, {name: "B8", type: _typeNamedFloat32}, {name: "B9", type: _typeNamedFloat64}, {name: "B10", type: _typeNamedComplex64}, {name: "B11", type: _typeNamedComplex128}, {name: "B12", type: _typeNamedString}];
+_typeKeyScalars.fields = [{name: "A0", type: vdl.types.BOOL}, {name: "A1", type: vdl.types.BYTE}, {name: "A2", type: vdl.types.UINT16}, {name: "A3", type: vdl.types.UINT32}, {name: "A4", type: vdl.types.UINT64}, {name: "A5", type: vdl.types.INT8}, {name: "A6", type: vdl.types.INT16}, {name: "A7", type: vdl.types.INT32}, {name: "A8", type: vdl.types.INT64}, {name: "A9", type: vdl.types.FLOAT32}, {name: "A10", type: vdl.types.FLOAT64}, {name: "A11", type: vdl.types.COMPLEX64}, {name: "A12", type: vdl.types.COMPLEX128}, {name: "A13", type: vdl.types.STRING}, {name: "B0", type: _typeNamedBool}, {name: "B1", type: _typeNamedByte}, {name: "B2", type: _typeNamedUint16}, {name: "B3", type: _typeNamedUint32}, {name: "B4", type: _typeNamedUint64}, {name: "B5", type: _typeNamedInt8}, {name: "B6", type: _typeNamedInt16}, {name: "B7", type: _typeNamedInt32}, {name: "B8", type: _typeNamedInt64}, {name: "B9", type: _typeNamedFloat32}, {name: "B10", type: _typeNamedFloat64}, {name: "B11", type: _typeNamedComplex64}, {name: "B12", type: _typeNamedComplex128}, {name: "B13", type: _typeNamedString}];
 _typeNamedArray.kind = vdl.kind.ARRAY;
 _typeNamedArray.name = "v.io/x/ref/lib/vdl/testdata/base.NamedArray";
 _typeNamedArray.len = 2;
@@ -162,6 +163,8 @@ _typeNamedInt32.kind = vdl.kind.INT32;
 _typeNamedInt32.name = "v.io/x/ref/lib/vdl/testdata/base.NamedInt32";
 _typeNamedInt64.kind = vdl.kind.INT64;
 _typeNamedInt64.name = "v.io/x/ref/lib/vdl/testdata/base.NamedInt64";
+_typeNamedInt8.kind = vdl.kind.INT8;
+_typeNamedInt8.name = "v.io/x/ref/lib/vdl/testdata/base.NamedInt8";
 _typeNamedList.kind = vdl.kind.LIST;
 _typeNamedList.name = "v.io/x/ref/lib/vdl/testdata/base.NamedList";
 _typeNamedList.elem = vdl.types.UINT32;
@@ -191,7 +194,7 @@ _typeNestedArgs.name = "v.io/x/ref/lib/vdl/testdata/base.NestedArgs";
 _typeNestedArgs.fields = [{name: "Args", type: _typeArgs}];
 _typeScalars.kind = vdl.kind.STRUCT;
 _typeScalars.name = "v.io/x/ref/lib/vdl/testdata/base.Scalars";
-_typeScalars.fields = [{name: "A0", type: vdl.types.BOOL}, {name: "A1", type: vdl.types.BYTE}, {name: "A2", type: vdl.types.UINT16}, {name: "A3", type: vdl.types.UINT32}, {name: "A4", type: vdl.types.UINT64}, {name: "A5", type: vdl.types.INT16}, {name: "A6", type: vdl.types.INT32}, {name: "A7", type: vdl.types.INT64}, {name: "A8", type: vdl.types.FLOAT32}, {name: "A9", type: vdl.types.FLOAT64}, {name: "A10", type: vdl.types.COMPLEX64}, {name: "A11", type: vdl.types.COMPLEX128}, {name: "A12", type: vdl.types.STRING}, {name: "A13", type: vdl.types.ERROR}, {name: "A14", type: vdl.types.ANY}, {name: "A15", type: vdl.types.TYPEOBJECT}, {name: "B0", type: _typeNamedBool}, {name: "B1", type: _typeNamedByte}, {name: "B2", type: _typeNamedUint16}, {name: "B3", type: _typeNamedUint32}, {name: "B4", type: _typeNamedUint64}, {name: "B5", type: _typeNamedInt16}, {name: "B6", type: _typeNamedInt32}, {name: "B7", type: _typeNamedInt64}, {name: "B8", type: _typeNamedFloat32}, {name: "B9", type: _typeNamedFloat64}, {name: "B10", type: _typeNamedComplex64}, {name: "B11", type: _typeNamedComplex128}, {name: "B12", type: _typeNamedString}, {name: "B13", type: _typeNamedEnum}, {name: "B14", type: _typeNamedUnion}];
+_typeScalars.fields = [{name: "A0", type: vdl.types.BOOL}, {name: "A1", type: vdl.types.BYTE}, {name: "A2", type: vdl.types.UINT16}, {name: "A3", type: vdl.types.UINT32}, {name: "A4", type: vdl.types.UINT64}, {name: "A5", type: vdl.types.INT8}, {name: "A6", type: vdl.types.INT16}, {name: "A7", type: vdl.types.INT32}, {name: "A8", type: vdl.types.INT64}, {name: "A9", type: vdl.types.FLOAT32}, {name: "A10", type: vdl.types.FLOAT64}, {name: "A11", type: vdl.types.COMPLEX64}, {name: "A12", type: vdl.types.COMPLEX128}, {name: "A13", type: vdl.types.STRING}, {name: "A14", type: vdl.types.ERROR}, {name: "A15", type: vdl.types.ANY}, {name: "A16", type: vdl.types.TYPEOBJECT}, {name: "B0", type: _typeNamedBool}, {name: "B1", type: _typeNamedByte}, {name: "B2", type: _typeNamedUint16}, {name: "B3", type: _typeNamedUint32}, {name: "B4", type: _typeNamedUint64}, {name: "B5", type: _typeNamedInt8}, {name: "B6", type: _typeNamedInt16}, {name: "B7", type: _typeNamedInt32}, {name: "B8", type: _typeNamedInt64}, {name: "B9", type: _typeNamedFloat32}, {name: "B10", type: _typeNamedFloat64}, {name: "B11", type: _typeNamedComplex64}, {name: "B12", type: _typeNamedComplex128}, {name: "B13", type: _typeNamedString}, {name: "B14", type: _typeNamedEnum}, {name: "B15", type: _typeNamedUnion}];
 _typeScalarsArray.kind = vdl.kind.ARRAY;
 _typeScalarsArray.name = "v.io/x/ref/lib/vdl/testdata/base.ScalarsArray";
 _typeScalarsArray.len = 2;
@@ -229,6 +232,7 @@ _typeNamedFloat64.freeze();
 _typeNamedInt16.freeze();
 _typeNamedInt32.freeze();
 _typeNamedInt64.freeze();
+_typeNamedInt8.freeze();
 _typeNamedList.freeze();
 _typeNamedMap.freeze();
 _typeNamedSet.freeze();
@@ -261,6 +265,7 @@ module.exports.NamedFloat64 = (vdl.registry.lookupOrCreateConstructor(_typeNamed
 module.exports.NamedInt16 = (vdl.registry.lookupOrCreateConstructor(_typeNamedInt16));
 module.exports.NamedInt32 = (vdl.registry.lookupOrCreateConstructor(_typeNamedInt32));
 module.exports.NamedInt64 = (vdl.registry.lookupOrCreateConstructor(_typeNamedInt64));
+module.exports.NamedInt8 = (vdl.registry.lookupOrCreateConstructor(_typeNamedInt8));
 module.exports.NamedList = (vdl.registry.lookupOrCreateConstructor(_typeNamedList));
 module.exports.NamedMap = (vdl.registry.lookupOrCreateConstructor(_typeNamedMap));
 module.exports.NamedSet = (vdl.registry.lookupOrCreateConstructor(_typeNamedSet));
@@ -347,15 +352,16 @@ false,
   'a4': new vdl.BigInt(1, new Uint8Array([0x4])),
   'a5': 5,
   'a6': 6,
-  'a7': new vdl.BigInt(1, new Uint8Array([0x7])),
-  'a8': 8,
+  'a7': 7,
+  'a8': new vdl.BigInt(1, new Uint8Array([0x8])),
   'a9': 9,
-  'a10': new vdl.Complex(10.000000, 0.000000),
+  'a10': 10,
   'a11': new vdl.Complex(11.000000, 0.000000),
-  'a12': "abc",
-  'a13': null,
-  'a14': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.BOOL))(false, true), vdl.types.BOOL),
-  'a15': vdl.types.BOOL,
+  'a12': new vdl.Complex(12.000000, 0.000000),
+  'a13': "abc",
+  'a14': null,
+  'a15': canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.BOOL))(false, true), vdl.types.BOOL),
+  'a16': vdl.types.BOOL,
   'b0': true,
   'b1': 1,
   'b2': 2,
@@ -363,14 +369,15 @@ false,
   'b4': new vdl.BigInt(1, new Uint8Array([0x4])),
   'b5': 5,
   'b6': 6,
-  'b7': new vdl.BigInt(1, new Uint8Array([0x7])),
-  'b8': 8,
+  'b7': 7,
+  'b8': new vdl.BigInt(1, new Uint8Array([0x8])),
   'b9': 9,
-  'b10': new vdl.Complex(10.000000, 0.000000),
+  'b10': 10,
   'b11': new vdl.Complex(11.000000, 0.000000),
-  'b12': "abc",
-  'b13': 'B',
-  'b14': { "c": 123 },
+  'b12': new vdl.Complex(12.000000, 0.000000),
+  'b13': "abc",
+  'b14': 'B',
+  'b15': { "c": 123 },
 }, true), _typeScalars);
 
   module.exports.True = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.BOOL))(true, true), vdl.types.BOOL);
@@ -394,6 +401,8 @@ false,
   module.exports.CTypeObject_byte = vdl.types.BYTE;
 
   module.exports.CTypeObject_uint16 = vdl.types.UINT16;
+
+  module.exports.CTypeObject_int8 = vdl.types.INT8;
 
   module.exports.CTypeObject_int16 = vdl.types.INT16;
 

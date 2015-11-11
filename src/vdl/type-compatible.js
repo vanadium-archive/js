@@ -235,6 +235,7 @@ function isNumber(t) {
     case kind.UINT16:
     case kind.UINT32:
     case kind.UINT64:
+    case kind.INT8:
     case kind.INT16:
     case kind.INT32:
     case kind.INT64:

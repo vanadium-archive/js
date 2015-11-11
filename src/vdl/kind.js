@@ -55,6 +55,11 @@ var kind = {
    * @type {string}
    * @const
    */
+  INT8: 'int8',
+  /**
+   * @type {string}
+   * @const
+   */
   INT16: 'int16',
   /**
    * @type {string}
