@@ -329,7 +329,7 @@ module.exports.ConstCaveatValidationError = makeError('v.io/v23/security.ConstCa
 
 
 module.exports.ExpiryCaveatValidationError = makeError('v.io/v23/security.ExpiryCaveatValidation', actions.NO_RETRY, {
-  'en': '{1:}{2:} now({4}) is after expiry({3})',
+  'en': '{1:}{2:} now({3}) is after expiry({4})',
 }, [
   new time.Time()._type,
   new time.Time()._type,
