@@ -329,6 +329,7 @@ function canonicalizeInternal(v, inType, t, deepWrap, seen, outValue) {
     case kind.BYTE:
     case kind.UINT16:
     case kind.UINT32:
+    case kind.INT8:
     case kind.INT16:
     case kind.INT32:
     case kind.FLOAT32:
@@ -585,6 +586,7 @@ function zeroValue(t) {
     case kind.BYTE:
     case kind.UINT16:
     case kind.UINT32:
+    case kind.INT8:
     case kind.INT16:
     case kind.INT32:
     case kind.FLOAT32:
@@ -957,6 +959,7 @@ function assertInteger(v, t) {
     case kind.UINT16:
     case kind.UINT32:
     case kind.UINT64:
+    case kind.INT8:
     case kind.INT16:
     case kind.INT32:
     case kind.INT64:

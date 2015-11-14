@@ -48,6 +48,13 @@ test('named primitive types', function(assert) {
   });
   assert.deepEqual(res.val, BigInt.fromNativeNumber(1));
 
+  res = new base.NamedInt8(1);
+  assert.deepEqual(res._type, {
+    kind: kind.INT8,
+    name: 'v.io/x/ref/lib/vdl/testdata/base.NamedInt8',
+  });
+  assert.equal(res.val, 1);
+
   res = new base.NamedInt16(1);
   assert.deepEqual(res._type, {
     kind: kind.INT16,

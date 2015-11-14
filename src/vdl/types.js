@@ -54,6 +54,11 @@ var types = {
    * @type {module:vanadium.vdl.Type}
    * @const
    */
+  INT8: primitiveType(kind.INT8),
+  /**
+   * @type {module:vanadium.vdl.Type}
+   * @const
+   */
   INT16: primitiveType(kind.INT16),
   /**
    * @type {module:vanadium.vdl.Type}

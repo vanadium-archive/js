@@ -17,6 +17,8 @@ function getMax(k) {
       return 0xffff;
     case kind.UINT32:
       return 0xffffffff;
+    case kind.INT8:
+      return 0x7f;
     case kind.INT16:
       return 0x7fff;
     case kind.INT32:
@@ -38,6 +40,8 @@ function getMin(k) {
       return 0;
     case kind.UINT32:
       return 0;
+    case kind.INT8:
+      return -0x80;
     case kind.INT16:
       return -0x8000;
     case kind.INT32:
