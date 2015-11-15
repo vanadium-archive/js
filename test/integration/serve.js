@@ -80,12 +80,20 @@ function serve(name, dispatcher, callback) {
 
         waitUntilResolve();
 
-        // The server is not gauranteed to be mounted by the time the serve
-        // call finishes.  We should wait until the name resolves before calling
-        // the callback.  As a side a benefit, this also speeds up the browser
-        // tests, because browspr is quicker than wspr and so it is more likely
-        // to return before the server is mounted.  The normal backoff for
-        // bindTo starts at 100ms, but this code only waits a few milliseconds.
+        // The server is not gauranteed to be mounted by the time the
+        // serve call finishes.  We should wait until the name
+        // resolves before calling the callback.  As a side a benefit,
+        // this also speeds up the browser tests, because browspr is
+        // quicker than wspr and so it is more likely to return before
+        // the server is mounted.  The normal backoff for bindTo
+        // starts at 100ms, but this code only waits a few
+        // milliseconds.  TODO(mattr): I have temporarily set this to
+        // retry at longer intervals. In practice this previous code
+        // (which checked every 10ms) allowed the server up to 0.5s or
+        // so to mount through the proxy.  In the new RPC system it
+        // can take a bit longer.  I upped the number of attempts and
+        // retry time to compensate.  We will eventually optimize this
+        // time back down.
         function waitUntilResolve() {
           var ns = runtime.getNamespace();
           var count = 0;
@@ -95,13 +103,13 @@ function serve(name, dispatcher, callback) {
             ns.resolve(ctx, name, function(err, s) {
               if (err || s.length === 0) {
                 count++;
-                if (count === 10) {
+                if (count === 20) {
                   return callback(
                     new Error(
                       'Timed out waiting for resolve in serve.js: ' + err),
                     basicRes);
                 }
-                return setTimeout(runResolve, 10);
+                return setTimeout(runResolve, 100);
               }
               completeServe();
             });
