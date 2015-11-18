@@ -154,7 +154,7 @@ var descInvokableTestMethod = rpc.InterfaceDesc{
 // InvokeMethodWithCaveatedIdentityClientMethods is the client interface
 // containing InvokeMethodWithCaveatedIdentity methods.
 type InvokeMethodWithCaveatedIdentityClientMethods interface {
-	Invoke(ctx *context.T, name string, cavDesc security.CaveatDescriptor, cavParam *vdl.Value, opts ...rpc.CallOpt) error
+	Invoke(_ *context.T, name string, cavDesc security.CaveatDescriptor, cavParam *vdl.Value, _ ...rpc.CallOpt) error
 }
 
 // InvokeMethodWithCaveatedIdentityClientStub adds universal methods to InvokeMethodWithCaveatedIdentityClientMethods.
@@ -180,7 +180,7 @@ func (c implInvokeMethodWithCaveatedIdentityClientStub) Invoke(ctx *context.T, i
 // InvokeMethodWithCaveatedIdentityServerMethods is the interface a server writer
 // implements for InvokeMethodWithCaveatedIdentity.
 type InvokeMethodWithCaveatedIdentityServerMethods interface {
-	Invoke(ctx *context.T, call rpc.ServerCall, name string, cavDesc security.CaveatDescriptor, cavParam *vdl.Value) error
+	Invoke(_ *context.T, _ rpc.ServerCall, name string, cavDesc security.CaveatDescriptor, cavParam *vdl.Value) error
 }
 
 // InvokeMethodWithCaveatedIdentityServerStubMethods is the server interface containing

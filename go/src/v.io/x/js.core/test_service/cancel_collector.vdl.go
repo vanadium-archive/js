@@ -20,11 +20,11 @@ import (
 // CancelCollector is a test interface for use in testing cancellation and deadlines.
 type CancelCollectorClientMethods interface {
 	// A function that never returns, but records the status of the given key.
-	NeverReturn(ctx *context.T, key int64, opts ...rpc.CallOpt) error
+	NeverReturn(_ *context.T, key int64, _ ...rpc.CallOpt) error
 	// Wait for the call with the given key to have the given status.  Possible statuses are:
 	// "running", and, "cancelled".  Returns the number of nanoseconds left on
 	// the deadline of the specified call when the call first began.
-	WaitForStatus(ctx *context.T, key int64, status string, opts ...rpc.CallOpt) (timeout int64, err error)
+	WaitForStatus(_ *context.T, key int64, status string, _ ...rpc.CallOpt) (timeout int64, _ error)
 }
 
 // CancelCollectorClientStub adds universal methods to CancelCollectorClientMethods.
@@ -58,11 +58,11 @@ func (c implCancelCollectorClientStub) WaitForStatus(ctx *context.T, i0 int64, i
 // CancelCollector is a test interface for use in testing cancellation and deadlines.
 type CancelCollectorServerMethods interface {
 	// A function that never returns, but records the status of the given key.
-	NeverReturn(ctx *context.T, call rpc.ServerCall, key int64) error
+	NeverReturn(_ *context.T, _ rpc.ServerCall, key int64) error
 	// Wait for the call with the given key to have the given status.  Possible statuses are:
 	// "running", and, "cancelled".  Returns the number of nanoseconds left on
 	// the deadline of the specified call when the call first began.
-	WaitForStatus(ctx *context.T, call rpc.ServerCall, key int64, status string) (timeout int64, err error)
+	WaitForStatus(_ *context.T, _ rpc.ServerCall, key int64, status string) (timeout int64, _ error)
 }
 
 // CancelCollectorServerStubMethods is the server interface containing

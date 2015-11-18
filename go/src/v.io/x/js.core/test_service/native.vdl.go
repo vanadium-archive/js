@@ -21,8 +21,8 @@ import (
 // NativeTestClientMethods is the client interface
 // containing NativeTest methods.
 type NativeTestClientMethods interface {
-	PassTime(ctx *context.T, t time.Time, opts ...rpc.CallOpt) (time.Time, error)
-	PassError(ctx *context.T, e error, opts ...rpc.CallOpt) error
+	PassTime(_ *context.T, t time.Time, _ ...rpc.CallOpt) (time.Time, error)
+	PassError(_ *context.T, e error, _ ...rpc.CallOpt) error
 }
 
 // NativeTestClientStub adds universal methods to NativeTestClientMethods.
@@ -53,8 +53,8 @@ func (c implNativeTestClientStub) PassError(ctx *context.T, i0 error, opts ...rp
 // NativeTestServerMethods is the interface a server writer
 // implements for NativeTest.
 type NativeTestServerMethods interface {
-	PassTime(ctx *context.T, call rpc.ServerCall, t time.Time) (time.Time, error)
-	PassError(ctx *context.T, call rpc.ServerCall, e error) error
+	PassTime(_ *context.T, _ rpc.ServerCall, t time.Time) (time.Time, error)
+	PassError(_ *context.T, _ rpc.ServerCall, e error) error
 }
 
 // NativeTestServerStubMethods is the server interface containing

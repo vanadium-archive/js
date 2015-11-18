@@ -39,10 +39,10 @@ func init() {
 // containing Stress methods.
 type StressClientMethods interface {
 	// Echo returns the payload that it receives.
-	Echo(ctx *context.T, Payload []byte, opts ...rpc.CallOpt) ([]byte, error)
+	Echo(_ *context.T, Payload []byte, _ ...rpc.CallOpt) ([]byte, error)
 	// ServerEcho runs as many calls to Echo on the name provided in the duration
 	// specified and returns the peformance results.
-	ServerEcho(ctx *context.T, totalTime time.Duration, name string, opts ...rpc.CallOpt) (StressResults, error)
+	ServerEcho(_ *context.T, totalTime time.Duration, name string, _ ...rpc.CallOpt) (StressResults, error)
 }
 
 // StressClientStub adds universal methods to StressClientMethods.
@@ -74,10 +74,10 @@ func (c implStressClientStub) ServerEcho(ctx *context.T, i0 time.Duration, i1 st
 // implements for Stress.
 type StressServerMethods interface {
 	// Echo returns the payload that it receives.
-	Echo(ctx *context.T, call rpc.ServerCall, Payload []byte) ([]byte, error)
+	Echo(_ *context.T, _ rpc.ServerCall, Payload []byte) ([]byte, error)
 	// ServerEcho runs as many calls to Echo on the name provided in the duration
 	// specified and returns the peformance results.
-	ServerEcho(ctx *context.T, call rpc.ServerCall, totalTime time.Duration, name string) (StressResults, error)
+	ServerEcho(_ *context.T, _ rpc.ServerCall, totalTime time.Duration, name string) (StressResults, error)
 }
 
 // StressServerStubMethods is the server interface containing
