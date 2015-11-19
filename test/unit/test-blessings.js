@@ -70,6 +70,6 @@ test('Encode and decode of blessings', function(t) {
 
 test('Blessings toString', function(t) {
   var blessings = makeTestBlessings();
-  t.equals(blessings.toString(), 'A/B C');
+  t.equals(blessings.toString(), 'A:B C');
   t.end();
 });

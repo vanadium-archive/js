@@ -15,20 +15,20 @@
  * of blessings that should be granted access, unless blacklisted by notIn.</p>
  * <p>For example:</p>
  * <code>
- *    in: ['alice/family']
+ *    in: ['alice:family']
  * </code><p>
- * grants access to a principal that presents at least one of 'alice/family',
- * 'alice/family/friend', 'alice/family/friend/spouse', etc.</p>
+ * grants access to a principal that presents at least one of 'alice:family',
+ * 'alice:family:friend', 'alice:family:friend:spouse', etc.</p>
  * @property {array} notIn <p>An array of strings that denotes the set of
  * blessings (and their delegates) that have been explicitly blacklisted
  * from the in set.
  * <p>For example:</p>
  * <code>
- *    in: ['alice/friend'], notIn: ['alice/friend/bob']
+ *    in: ['alice:friend'], notIn: ['alice:friend:bob']
  * </code><p>
- * grants access to a principal that presents at least one of 'alice/friend',
- * 'alice/friend/carol', etc, but NOT to a principal that presents
- * 'alice/friend/bob or 'alice/friend/bob/spouse' etc.</p>
+ * grants access to a principal that presents at least one of 'alice:friend',
+ * 'alice:friend:carol', etc, but NOT to a principal that presents
+ * 'alice:friend:bob or 'alice:friend:bob:spouse' etc.</p>
  * @param {object} al The value to construct from.
  * @param {array} al.in An array of [BlessingPatterns]{@link
  * module:vanadium.security.BlessingPatterns}/strings that denotes the set

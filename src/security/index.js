@@ -21,14 +21,14 @@
  * <p> A blessing is a binding of a human-readable name to a principal, valid
  * under some caveats, given by another principal. A principal can have
  * multiple blessings bound to it. For instance, a television principal may
- * have a blessing from the manufacturer (e.g., popularcorp/products/tv) as
- * well as from the owner (e.g., alice/devices/hometv). Principals are
+ * have a blessing from the manufacturer (e.g., popularcorp:products:tv) as
+ * well as from the owner (e.g., alice:devices:hometv). Principals are
  * authorized for operations based on the blessings bound to them.<p>
  * <p> A principal can "bless" another principal by binding an extension of one
  * of its own blessings to the other principal. This enables delegation of
  * authority. For example, a principal with the blessing "johndoe" can delegate
- * to his phone by blessing the phone as "johndoe/phone", which in-turn can
- * delegate to the headset by blessing it as "johndoe/phone/headset".</p>
+ * to his phone by blessing the phone as "johndoe:phone", which in-turn can
+ * delegate to the headset by blessing it as "johndoe:phone:headset".</p>
  * <p> Caveats can be added to a blessing in order to restrict the contexts in
  * which it can be used. Amongst other things, caveats can restrict the
  * duration of use and the set of peers that can be communicated with using

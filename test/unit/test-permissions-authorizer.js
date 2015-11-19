@@ -52,22 +52,22 @@ function tryAuthorize(ctx, call, auth) {
 test('full suite of go tests - permissions', function(assert) {
   var perms = new Map();
   perms.set(access.Read, {
-    in: ['server/alice', 'server/che/$', '...'],
+    in: ['server:alice', 'server:che:$', '...'],
     notIn: []
   });
 
   perms.set(access.Write, {
-    in: ['server/alice', 'server/che/$', 'server/che'],
-    notIn: [ 'server/che/friend' ]
+    in: ['server:alice', 'server:che:$', 'server:che'],
+    notIn: [ 'server:che:friend' ]
   });
 
   perms.set(access.Admin, {
-    in: ['server/alice/$'],
+    in: ['server:alice:$'],
     notIn: []
   });
 
   perms.set(access.Debug, {
-    in: ['server/alice/$', 'server/bob'],
+    in: ['server:alice:$', 'server:bob'],
     notIn: []
   });
 
@@ -76,11 +76,11 @@ test('full suite of go tests - permissions', function(assert) {
     'alice': [access.Read],
     'bob': [access.Read],
     'che': [access.Read],
-    'server/alice': [access.Read, access.Write, access.Admin, access.Debug],
-    'server/bob': [access.Read, access.Debug],
-    'server/alice/friend': [access.Read, access.Write],
-    'server/che': [access.Read, access.Write],
-    'server/che/friend': [access.Read],
+    'server:alice': [access.Read, access.Write, access.Admin, access.Debug],
+    'server:bob': [access.Read, access.Debug],
+    'server:alice:friend': [access.Read, access.Write],
+    'server:che': [access.Read, access.Write],
+    'server:che:friend': [access.Read],
     '': [access.Read],
   };
 
@@ -92,19 +92,19 @@ test('full suite of go tests - permissions', function(assert) {
 test('full suite of go tests - object', function(assert) {
   var perms = {};
   perms[unwrap(access.Read)] = {
-    in: ['server/alice', 'server/che/$', '...'],
+    in: ['server:alice', 'server:che:$', '...'],
     notIn: []
   };
   perms[unwrap(access.Write)] = {
-    in: ['server/alice', 'server/che/$', 'server/che'],
-    notIn: [ 'server/che/friend' ]
+    in: ['server:alice', 'server:che:$', 'server:che'],
+    notIn: [ 'server:che:friend' ]
   };
   perms[unwrap(access.Admin)] = {
-    in: ['server/alice/$'],
+    in: ['server:alice:$'],
     notIn: []
   };
   perms[unwrap(access.Debug)] = {
-    in: ['server/alice/$', 'server/bob'],
+    in: ['server:alice:$', 'server:bob'],
     notIn: []
   };
 
@@ -113,11 +113,11 @@ test('full suite of go tests - object', function(assert) {
     'alice': [access.Read],
     'bob': [access.Read],
     'che': [access.Read],
-    'server/alice': [access.Read, access.Write, access.Admin, access.Debug],
-    'server/bob': [access.Read, access.Debug],
-    'server/alice/friend': [access.Read, access.Write],
-    'server/che': [access.Read, access.Write],
-    'server/che/friend': [access.Read],
+    'server:alice': [access.Read, access.Write, access.Admin, access.Debug],
+    'server:bob': [access.Read, access.Debug],
+    'server:alice:friend': [access.Read, access.Write],
+    'server:che': [access.Read, access.Write],
+    'server:che:friend': [access.Read],
     '': [access.Read],
   };
 
@@ -130,22 +130,22 @@ test('full suite of go tests - object', function(assert) {
 test('full suite of go tests - Permissions', function(assert) {
   var perms = new Map();
   perms.set(access.Read, {
-    in: ['server/alice', 'server/che/$', '...'],
+    in: ['server:alice', 'server:che:$', '...'],
     notIn: []
   });
 
   perms.set(access.Write, {
-    in: ['server/alice', 'server/che/$', 'server/che'],
-    notIn: [ 'server/che/friend' ]
+    in: ['server:alice', 'server:che:$', 'server:che'],
+    notIn: [ 'server:che:friend' ]
   });
 
   perms.set(access.Admin, {
-    in: ['server/alice/$'],
+    in: ['server:alice:$'],
     notIn: []
   });
 
   perms.set(access.Debug, {
-    in: ['server/alice/$', 'server/bob'],
+    in: ['server:alice:$', 'server:bob'],
     notIn: []
   });
   var permissions = new access.Permissions(perms);
@@ -155,11 +155,11 @@ test('full suite of go tests - Permissions', function(assert) {
     'alice': [access.Read],
     'bob': [access.Read],
     'che': [access.Read],
-    'server/alice': [access.Read, access.Write, access.Admin, access.Debug],
-    'server/bob': [access.Read, access.Debug],
-    'server/alice/friend': [access.Read, access.Write],
-    'server/che': [access.Read, access.Write],
-    'server/che/friend': [access.Read],
+    'server:alice': [access.Read, access.Write, access.Admin, access.Debug],
+    'server:bob': [access.Read, access.Debug],
+    'server:alice:friend': [access.Read, access.Write],
+    'server:che': [access.Read, access.Write],
+    'server:che:friend': [access.Read],
     '': [access.Read],
   };
 
@@ -203,12 +203,12 @@ test('tags of different types', function(assert) {
   var call = {
     localBlessings: makeFakeBlessings('localBlessingsMe'),
     remoteBlessings: 'localBlessingsOther',
-    remoteBlessingStrings: ['server/alice', 'server/bob/friend'],
+    remoteBlessingStrings: ['server:alice', 'server:bob:friend'],
   };
 
   var perms = new Map();
   perms.set('Admin', {
-    in: ['server/alice'],
+    in: ['server:alice'],
     notIn: []
   });
   var tagAuthorizer = permissionsAuthorizer(perms, access.Tag);
@@ -232,12 +232,12 @@ test('no tags of a type - error', function(assert) {
   var call = {
     localBlessings: makeFakeBlessings('localBlessingsMe'),
     remoteBlessings: 'localBlessingsOther',
-    remoteBlessingStrings: ['server/alice', 'server/bob/friend'],
+    remoteBlessingStrings: ['server:alice', 'server:bob:friend'],
   };
 
   var perms = new Map();
   perms.set('Admin', {
-    in: ['server/alice'],
+    in: ['server:alice'],
     notIn: []
   });
   var tagAuthorizer = permissionsAuthorizer(perms, access.Tag);
@@ -253,12 +253,12 @@ test('multiple tags of a type - error', function(assert) {
   var call = {
     localBlessings: makeFakeBlessings('localBlessingsMe'),
     remoteBlessings: 'localBlessingsOther',
-    remoteBlessingStrings: ['server/alice', 'server/bob/friend'],
+    remoteBlessingStrings: ['server:alice', 'server:bob:friend'],
   };
 
   var perms = new Map();
   perms.set('Admin', {
-    in: ['server/alice'],
+    in: ['server:alice'],
     notIn: []
   });
   var tagAuthorizer = permissionsAuthorizer(perms, access.Tag);
@@ -280,7 +280,7 @@ test('bad permissions - throws', function(assert) {
   assert.throws(function() {
     permissionsAuthorizer(new Map([
       [1, {
-        in: ['server/alice']
+        in: ['server:alice']
       }],
     ]), access.Tag);
   }, 'cannot construct permissionsAuthorizer with non-string tag perms');

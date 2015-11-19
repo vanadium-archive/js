@@ -27,7 +27,7 @@ var blessingsService = {
     // have different root blessings.  Instead of looking for a particular
     // blessing, we try to find the extension blessing string.
     var hasGeneratedBlessing = secCall.remoteBlessingStrings.some(function(s) {
-      return s.indexOf('/friend') !== -1;
+      return s.indexOf(':friend') !== -1;
     });
     if (!hasGeneratedBlessing) {
       throw new Error('bad blessings ' + secCall.remoteBlessingStrings);

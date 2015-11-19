@@ -25,10 +25,10 @@ test('Test blessing store set (promise case)', function(t) {
       blessSelfResult = blessings;
 
       return runtime.principal.blessingStore.set(runtime.getContext(),
-        blessings, 'fake/remote/pattern');
+        blessings, 'fake:remote:pattern');
     }).then(function() {
       return runtime.principal.blessingStore.set(runtime.getContext(),
-        blessSelfResult, 'fake/remote/pattern');
+        blessSelfResult, 'fake:remote:pattern');
     }).then(function(firstBlessing) {
       t.deepEqual(firstBlessing, blessSelfResult,
         'Should get first blessings back');
@@ -58,7 +58,7 @@ test('Test blessing store set (callback case)', function(t) {
       blessSelfResult = blessings;
 
       runtime.principal.blessingStore.set(runtime.getContext(),
-        blessings, 'fake/remote/pattern',
+        blessings, 'fake:remote:pattern',
         function(err) {
         if (err) {
           t.error(err);
@@ -66,7 +66,7 @@ test('Test blessing store set (callback case)', function(t) {
           return;
         }
         runtime.principal.blessingStore.set(runtime.getContext(),
-          blessSelfResult, 'fake/remote/pattern',
+          blessSelfResult, 'fake:remote:pattern',
           function(err, firstBlessing) {
           if (err) {
             t.error(err);
@@ -94,10 +94,10 @@ test('Test blessing store for peer (promise case)', function(t) {
       validateBlessings(t, blessings);
 
       return runtime.principal.blessingStore.set(runtime.getContext(),
-        blessings, 'fake/remote/pattern');
+        blessings, 'fake:remote:pattern');
     }).then(function() {
       return runtime.principal.blessingStore.forPeer(runtime.getContext(),
-        'fake/remote/pattern');
+        'fake:remote:pattern');
     }).then(function(firstBlessing) {
       validateBlessings(t, firstBlessing);
       runtime.close(t.end);
@@ -124,7 +124,7 @@ test('Test blessing store for peer (callback case)', function(t) {
       validateBlessings(t, blessings);
 
       runtime.principal.blessingStore.set(runtime.getContext(),
-        blessings, 'fake/remote/pattern',
+        blessings, 'fake:remote:pattern',
         function(err) {
           if (err) {
             t.error(err);
@@ -132,7 +132,7 @@ test('Test blessing store for peer (callback case)', function(t) {
             return;
           }
           return runtime.principal.blessingStore.forPeer(runtime.getContext(),
-            'fake/remote/pattern',
+            'fake:remote:pattern',
             function(err, firstBlessing) {
               validateBlessings(t, firstBlessing);
               runtime.close(t.end);
@@ -282,7 +282,7 @@ test('Test peer blessings (promise case)', function(t) {
       validateBlessings(t, blessings);
 
       return runtime.principal.blessingStore.set(runtime.getContext(),
-        blessings, 'fake/remote/pattern');
+        blessings, 'fake:remote:pattern');
     }).then(function() {
       return runtime.principal.blessingStore.getPeerBlessings(
         runtime.getContext());
@@ -317,7 +317,7 @@ test('Test peer blessings (callback case)', function(t) {
       validateBlessings(t, blessings);
 
       runtime.principal.blessingStore.set(runtime.getContext(),
-        blessings, 'fake/remote/pattern', function(err){
+        blessings, 'fake:remote:pattern', function(err){
         if (err) {
           t.error(err);
           runtime.close(t.end);

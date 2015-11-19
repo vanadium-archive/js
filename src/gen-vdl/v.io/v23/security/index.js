@@ -263,7 +263,7 @@ module.exports.publicKeyThirdPartyCaveatParam = (vdl.registry.lookupOrCreateCons
 
   module.exports.AllPrincipals = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeBlessingPattern))("...", true), _typeBlessingPattern);
 
-  module.exports.ChainSeparator = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.STRING))("/", true), vdl.types.STRING);
+  module.exports.ChainSeparator = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.STRING))(":", true), vdl.types.STRING);
 
   module.exports.SHA1Hash = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeHash))("SHA1", true), _typeHash);
 

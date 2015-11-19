@@ -686,11 +686,11 @@ Client.prototype.remoteBlessings = function(ctx, name, method, cb) {
  * <p>Example of allowedServersPolicy option:</p>
  * <pre>
  * var callOpt = client.callOption({
- *   allowedServersPolicy: ['alice/home/tv']
+ *   allowedServersPolicy: ['alice:home:tv']
  * });
  * service.get(ctx, 'foo', callOpt, function(err) {
  *   // err will be non-null if service's blessings do not match
- *   // ['alice/home/tv'].
+ *   // ['alice:home:tv'].
  * });
  * </pre>
  *

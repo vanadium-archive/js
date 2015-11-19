@@ -41,11 +41,11 @@ function Principal(ctx, controller) {
  * <p>Bless binds extensions of blessings held by this principal to
  * another principal (represented by its public key).</p>
  *
- * <p>For example, a principal with the blessings "google/alice"
- * and "v23/alice" can bind the blessings "google/alice/friend"
- * and "v23/alice/friend" to another principal using:</p>
+ * <p>For example, a principal with the blessings "google:alice"
+ * and "v23:alice" can bind the blessings "google:alice:friend"
+ * and "v23:alice:friend" to another principal using:</p>
  * <pre>
- * bless(ctx, <other public key>, <google/alice, v23/alice>, 'friend', ...)
+ * bless(ctx, <other public key>, <google:alice, v23:alice>, 'friend', ...)
  * </pre>
  * @param {module:vanadium.context.Context} ctx The context.
  * @param {string} publicKey The public key to bless.
