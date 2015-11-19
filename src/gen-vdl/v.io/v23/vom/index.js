@@ -202,6 +202,8 @@ module.exports.wireUnion = (vdl.registry.lookupOrCreateConstructor(_typewireUnio
 
   module.exports.WireCtrlTypeLastChunk = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.BYTE))(231, true), vdl.types.BYTE);
 
+  module.exports.WireCtrlTypeIncomplete = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(vdl.types.BYTE))(232, true), vdl.types.BYTE);
+
 
 
 // Errors:
