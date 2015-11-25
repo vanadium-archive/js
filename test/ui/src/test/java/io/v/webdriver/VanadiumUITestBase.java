@@ -207,6 +207,7 @@ public class VanadiumUITestBase {
     hasExtension = true;
 
     // Check Vanadium extension option page.
+    Util.sleep(4000);
     ExtensionOptionPage extensionOptionPage = new ExtensionOptionPage(driver, reportData);
     extensionOptionPage.go();
   }
