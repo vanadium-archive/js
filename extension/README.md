@@ -1,7 +1,7 @@
 # The Veyron Extension
 
 ## Developing with an unpacked extension:
-    $ make
+    $ make clean && make
 
 This will build an unpacked extension in the ./extension directory.
 
