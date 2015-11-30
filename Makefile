@@ -3,8 +3,9 @@ PATH := node_modules/.bin:$(NODE_DIR)/bin:$(PATH)
 
 NODE_BIN := $(JIRI_ROOT)/release/javascript/core/node_modules/.bin
 GOPATH := $(JIRI_ROOT)/release/javascript/core/go
-VDLPATH := $(JIRI_ROOT)/release/go/src:$(GOPATH)/src
 GOBIN := $(JIRI_ROOT)/release/javascript/core/go/bin
+VDLPATH := $(JIRI_ROOT)/release/go/src:$(GOPATH)/src
+VDLROOT := $(JIRI_ROOT)/release/go/src/v.io/v23/vdlroot
 VGO := GOPATH="$(GOPATH)" VDLPATH="$(VDLPATH)" jiri go
 GO_FILES := $(shell find go/src $(JIRI_ROOT)/release/go/src/v.io -name "*.go")
 
@@ -154,7 +155,7 @@ gen-vdl-test-expected: gen-vdl-test-expected-impl
 gen-vdl-test-expected-impl:
 	rm -rf $(JS_VDL_DIR)
 	echo $(VDLPATH)
-	VDLPATH=$(VDLPATH) vdl generate -lang=javascript \
+	VDLPATH=$(VDLPATH) VDLROOT=$(VDLROOT) vdl generate -lang=javascript \
 		-js-relative-path-to-core=$(JS_VDL_PATH_TO_CORE) \
 		-js-out-dir=$(JS_VDL_DIR) \
 		v.io/x/ref/lib/vdl/testdata/...
@@ -162,7 +163,7 @@ gen-vdl-test-expected-impl:
 gen-vdl-impl:
 ifndef NOVDLGEN
 	rm -rf $(JS_VDL_DIR)
-	VDLPATH=$(VDLPATH) vdl generate -lang=javascript \
+	VDLPATH=$(VDLPATH) VDLROOT=$(VDLROOT) vdl generate -lang=javascript \
 		-js-relative-path-to-core=$(JS_VDL_PATH_TO_CORE) \
 		-js-out-dir=$(JS_VDL_DIR) \
 		v.io/x/ref/lib/vdl/testdata/... \
@@ -175,10 +176,10 @@ ifndef NOVDLGEN
 	# TODO(bjornick): We build the vdlroot stuff with a different set of command line options because the package
 	# path does not equal the directory path of the source file.  This is not ideal, but bjornick and toddw will
 	# discuss how to fix this later.
-	VDLPATH=$(VDLPATH) vdl generate -lang=javascript \
-			-js-relative-path-to-core=../../../$(JS_VDL_PATH_TO_CORE) \
-			-js-out-dir=$(JS_VDL_DIR) \
-			$(JIRI_ROOT)/release/go/src/v.io/v23/vdlroot/...
+	VDLPATH=$(VDLPATH) VDLROOT=$(VDLROOT) vdl generate -lang=javascript \
+		-js-relative-path-to-core=../../../$(JS_VDL_PATH_TO_CORE) \
+		-js-out-dir=$(JS_VDL_DIR) \
+		$(VDLROOT)/...
 endif
 
 test-vdl-node: test-precheck

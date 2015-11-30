@@ -1,5 +1,7 @@
 NODE_DIR := $(shell jiri v23-profile list --info Target.InstallationDir nodejs)
 PATH := node_modules/.bin:${NODE_DIR}/bin:$(PATH)
+VDLPATH := $(JIRI_ROOT)/release/go/src
+VDLROOT := $(JIRI_ROOT)/release/go/src/v.io/v23/vdlroot
 WSPR_ROOT := $(JIRI_ROOT)/release/go/src/v.io/x/ref/services/wspr
 SHELL := /bin/bash -e -o pipefail
 .DEFAULT_GOAL := all
@@ -25,7 +27,7 @@ define COMPILE-NACL-PLUGIN
 	fi; \
 	if [ -f "$(JIRI_ROOT)/.jiri_v23_profiles" -a ! -z "`jiri v23-profile list nacl`" ]; then \
 		echo ">>>>>>> using new profiles"; \
- 		echo "unset GOARCH GOOS; jiri go --profiles=nacl --target=amd64p32-nacl build -o $2 $1"; \
+		echo "unset GOARCH GOOS; jiri go --profiles=nacl --target=amd64p32-nacl build -o $2 $1"; \
 		unset GOARCH GOOS; jiri -v go -v --profiles=nacl --target=amd64p32-nacl build -v -o $2 $1; \
 	else \
 		echo ">>>>>>> using old profiles"; \
@@ -130,17 +132,16 @@ build-test/nacl: build-test/nacl/main.nmf build-test/nacl/main-64.nexe
 build-test: build-test/html build-test/images build-test/manifest.json build-test/js build-test/nacl
 
 gen-vdl: $(WSPR_ROOT)/internal/channel/channel.vdl $(WSPR_ROOT)/internal/browspr/browspr.vdl $(WSPR_ROOT)/internal/account/account.vdl
-	VDLPATH=$(JIRI_ROOT)/release/go/src vdl generate \
-		 -lang=javascript \
-		 -js-out-dir="$(JIRI_ROOT)/release/javascript/core/extension/vdl" \
-		 -js-relative-path-to-core=../../src $(dir $^)
+	VDLPATH=$(VDLPATH) VDLROOT=$(VDLROOT) vdl generate -lang=javascript \
+		-js-out-dir="$(JIRI_ROOT)/release/javascript/core/extension/vdl" \
+		-js-relative-path-to-core=../../src $(dir $^)
 	# TODO(bjornick): We build the vdlroot stuff with a different set of command line options because the package
 	# path does not equal the directory path of the source file.  This is not ideal, but bjornick and toddw will
 	# discuss how to fix this later.
-	VDLPATH=$(JIRI_ROOT)/release/go/src vdl generate -lang=javascript \
-	        -js-relative-path-to-core=../../../../../src \
-	        -js-out-dir="$(JIRI_ROOT)/release/javascript/core/extension/vdl" \
-	        $(JIRI_ROOT)/release/go/src/v.io/v23/vdlroot/...
+	VDLPATH=$(VDLPATH) VDLROOT=$(VDLROOT) vdl generate -lang=javascript \
+		-js-relative-path-to-core=../../../../../src \
+		-js-out-dir="$(JIRI_ROOT)/release/javascript/core/extension/vdl" \
+		$(VDLROOT)/...
 
 example-server: example/index.bundle.js
 	static "example" -H '{"Cache-Control": "no-cache, must-revalidate"}'
