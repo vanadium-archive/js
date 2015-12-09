@@ -20,20 +20,7 @@ endef
 
 define COMPILE-NACL-PLUGIN
 	mkdir -p $(dir $2)
-	if [ ! -z "`jiri v23-profile list nacl`" ]; then \
-		echo ">>>>>>> new nacl profile installed"; \
-	else \
-		echo ">>>>>>> new nacl profile NOT installed"; \
-	fi; \
-	if [ -f "$(JIRI_ROOT)/.jiri_v23_profiles" -a ! -z "`jiri v23-profile list nacl`" ]; then \
-		echo ">>>>>>> using new profiles"; \
-		echo "unset GOARCH GOOS; jiri go --profiles=nacl --target=amd64p32-nacl build -o $2 $1"; \
-		unset GOARCH GOOS; jiri -v go -v --profiles=nacl --target=amd64p32-nacl build -v -o $2 $1; \
-	else \
-		echo ">>>>>>> using old profiles"; \
-		echo GOROOT= JIRI_PROFILE=nacl jiri go build -o $2 $1; \
-		GOROOT= JIRI_PROFILE=nacl jiri go build -o $2 $1; \
-	fi
+	unset GOARCH GOOS; jiri -v go -v --profiles=nacl --target=amd64p32-nacl build -v -o $2 $1
 endef
 
 all: vanadium.zip
@@ -164,7 +151,7 @@ node_modules: package.json | check-that-npm-is-in-path
 	@npm install --quiet
 
 check-that-npm-is-in-path:
-	@which npm > /dev/null || { echo "npm is not in the path. Did you remember to run 'jiri profile install nodejs'?"; exit 1; }
+	@which npm > /dev/null || { echo "npm is not in the path. Did you remember to run 'jiri v23-profile install nodejs'?"; exit 1; }
 
 .PHONY: all build build-dev clean dependency-check gen-vdl lint
 
