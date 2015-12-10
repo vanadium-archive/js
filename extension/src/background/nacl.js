@@ -10,6 +10,15 @@ var Channel = require('./channel');
 var QueuedRpcChannelWrapper = require('./queued_channel');
 var state = require('../state');
 
+// Clean the extension blessing whenever the extension is updated.
+// See https://developer.chrome.com/extensions/runtime#event-onInstalled
+var cleanBlessingsOnStart = false;
+chrome.runtime.onInstalled.addListener(function(details) {
+  if (details.reason === 'update') {
+    cleanBlessingsOnStart = true;
+  }
+});
+
 module.exports = Nacl;
 
 function Nacl() {
@@ -92,6 +101,7 @@ Nacl.prototype._start = function() {
       }
 
       var body = {
+        cleanupBlessings: cleanBlessingsOnStart,
         identitydBlessingRoot: identityBlessingRoot,
         identityd: settings.identityd.value,
         namespaceRoot: settings.namespaceRoot.value,
@@ -99,6 +109,8 @@ Nacl.prototype._start = function() {
         logLevel: parseInt(settings.logLevel.value) || 0,
         logModule: settings.logModule.value || ''
       };
+
+      cleanBlessingsOnStart = false;
 
       nacl._directChannel.performRpc('start', body, function(err) {
         if (err) {

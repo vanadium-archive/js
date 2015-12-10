@@ -52,7 +52,7 @@ _typeOriginHasAccountMessage.name = "v.io/x/ref/services/wspr/internal/browspr.O
 _typeOriginHasAccountMessage.fields = [{name: "Origin", type: vdl.types.STRING}];
 _typeStartMessage.kind = vdl.kind.STRUCT;
 _typeStartMessage.name = "v.io/x/ref/services/wspr/internal/browspr.StartMessage";
-_typeStartMessage.fields = [{name: "Identityd", type: vdl.types.STRING}, {name: "IdentitydBlessingRoot", type: new identity.BlessingRootResponse()._type}, {name: "Proxy", type: vdl.types.STRING}, {name: "NamespaceRoot", type: vdl.types.STRING}, {name: "LogLevel", type: vdl.types.INT32}, {name: "LogModule", type: vdl.types.STRING}];
+_typeStartMessage.fields = [{name: "CleanupBlessings", type: vdl.types.BOOL}, {name: "Identityd", type: vdl.types.STRING}, {name: "IdentitydBlessingRoot", type: new identity.BlessingRootResponse()._type}, {name: "Proxy", type: vdl.types.STRING}, {name: "NamespaceRoot", type: vdl.types.STRING}, {name: "LogLevel", type: vdl.types.INT32}, {name: "LogModule", type: vdl.types.STRING}];
 _type1.freeze();
 _type2.freeze();
 _typeAssociateAccountMessage.freeze();
