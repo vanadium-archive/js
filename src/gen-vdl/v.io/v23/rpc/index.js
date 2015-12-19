@@ -19,32 +19,16 @@ module.exports = {};
 
 
 // Types:
-var _type1 = new vdl.Type();
-var _type2 = new vdl.Type();
-var _typeBlessingsRequest = new vdl.Type();
 var _typeRequest = new vdl.Type();
 var _typeResponse = new vdl.Type();
-_type1.kind = vdl.kind.OPTIONAL;
-_type1.name = "";
-_type1.elem = new security.WireBlessings()._type;
-_type2.kind = vdl.kind.LIST;
-_type2.name = "";
-_type2.elem = new security.WireDischarge()._type;
-_typeBlessingsRequest.kind = vdl.kind.STRUCT;
-_typeBlessingsRequest.name = "v.io/v23/rpc.BlessingsRequest";
-_typeBlessingsRequest.fields = [{name: "Key", type: vdl.types.UINT64}, {name: "Blessings", type: _type1}];
 _typeRequest.kind = vdl.kind.STRUCT;
 _typeRequest.name = "v.io/v23/rpc.Request";
-_typeRequest.fields = [{name: "Suffix", type: vdl.types.STRING}, {name: "Method", type: vdl.types.STRING}, {name: "NumPosArgs", type: vdl.types.UINT64}, {name: "EndStreamArgs", type: vdl.types.BOOL}, {name: "Deadline", type: new time.WireDeadline()._type}, {name: "GrantedBlessings", type: new security.WireBlessings()._type}, {name: "Blessings", type: _typeBlessingsRequest}, {name: "Discharges", type: _type2}, {name: "TraceRequest", type: new vtrace.Request()._type}, {name: "Language", type: vdl.types.STRING}];
+_typeRequest.fields = [{name: "Suffix", type: vdl.types.STRING}, {name: "Method", type: vdl.types.STRING}, {name: "NumPosArgs", type: vdl.types.UINT64}, {name: "EndStreamArgs", type: vdl.types.BOOL}, {name: "Deadline", type: new time.WireDeadline()._type}, {name: "GrantedBlessings", type: new security.WireBlessings()._type}, {name: "TraceRequest", type: new vtrace.Request()._type}, {name: "Language", type: vdl.types.STRING}];
 _typeResponse.kind = vdl.kind.STRUCT;
 _typeResponse.name = "v.io/v23/rpc.Response";
 _typeResponse.fields = [{name: "Error", type: vdl.types.ERROR}, {name: "EndStreamResults", type: vdl.types.BOOL}, {name: "NumPosResults", type: vdl.types.UINT64}, {name: "TraceResponse", type: new vtrace.Response()._type}, {name: "AckBlessings", type: vdl.types.BOOL}];
-_type1.freeze();
-_type2.freeze();
-_typeBlessingsRequest.freeze();
 _typeRequest.freeze();
 _typeResponse.freeze();
-module.exports.BlessingsRequest = (vdl.registry.lookupOrCreateConstructor(_typeBlessingsRequest));
 module.exports.Request = (vdl.registry.lookupOrCreateConstructor(_typeRequest));
 module.exports.Response = (vdl.registry.lookupOrCreateConstructor(_typeResponse));
 
