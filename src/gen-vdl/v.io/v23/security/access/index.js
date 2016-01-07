@@ -13,6 +13,7 @@ var canonicalize = require('../../../../../vdl/canonicalize');
 
 
 var security = require('./..');
+var uniqueid = require('./../../uniqueid');
 
 module.exports = {};
 
@@ -22,6 +23,7 @@ module.exports = {};
 var _type1 = new vdl.Type();
 var _type2 = new vdl.Type();
 var _type3 = new vdl.Type();
+var _type4 = new vdl.Type();
 var _typeAccessList = new vdl.Type();
 var _typePermissions = new vdl.Type();
 var _typeTag = new vdl.Type();
@@ -33,7 +35,10 @@ _type2.name = "";
 _type2.elem = vdl.types.STRING;
 _type3.kind = vdl.kind.LIST;
 _type3.name = "";
-_type3.elem = new security.RejectedBlessing()._type;
+_type3.elem = _typeTag;
+_type4.kind = vdl.kind.LIST;
+_type4.name = "";
+_type4.elem = new security.RejectedBlessing()._type;
 _typeAccessList.kind = vdl.kind.STRUCT;
 _typeAccessList.name = "v.io/v23/security/access.AccessList";
 _typeAccessList.fields = [{name: "In", type: _type1}, {name: "NotIn", type: _type2}];
@@ -46,6 +51,7 @@ _typeTag.name = "v.io/v23/security/access.Tag";
 _type1.freeze();
 _type2.freeze();
 _type3.freeze();
+_type4.freeze();
 _typeAccessList.freeze();
 _typePermissions.freeze();
 _typeTag.freeze();
@@ -68,6 +74,28 @@ module.exports.Tag = (vdl.registry.lookupOrCreateConstructor(_typeTag));
 
   module.exports.Resolve = canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeTag))("Resolve", true), _typeTag);
 
+  module.exports.AccessTagCaveat = canonicalize.reduce(new security.CaveatDescriptor({
+  'id': new Uint8Array([
+239,
+205,
+227,
+117,
+20,
+22,
+199,
+59,
+24,
+156,
+232,
+156,
+204,
+147,
+128,
+0,
+]),
+  'paramType': _type3,
+}, true), new security.CaveatDescriptor()._type);
+
 
 
 // Errors:
@@ -82,7 +110,7 @@ module.exports.NoPermissionsError = makeError('v.io/v23/security/access.NoPermis
   'en': '{1:}{2:} {3} does not have {5} access (rejected blessings: {4})',
 }, [
   _type2,
-  _type3,
+  _type4,
   vdl.types.STRING,
 ]);
 
@@ -91,7 +119,7 @@ module.exports.AccessListMatchError = makeError('v.io/v23/security/access.Access
   'en': '{1:}{2:} {3} does not match the access list (rejected blessings: {4})',
 }, [
   _type2,
-  _type3,
+  _type4,
 ]);
 
 
@@ -105,6 +133,14 @@ module.exports.UnenforceablePatternsError = makeError('v.io/v23/security/access.
 module.exports.InvalidOpenAccessListError = makeError('v.io/v23/security/access.InvalidOpenAccessList', actions.NO_RETRY, {
   'en': '{1:}{2:} AccessList with the pattern ... in its In list must have no other patterns in the In or NotIn lists',
 }, [
+]);
+
+
+module.exports.AccessTagCaveatValidationError = makeError('v.io/v23/security/access.AccessTagCaveatValidation', actions.NO_RETRY, {
+  'en': '{1:}{2:} access tags on method ({3}) do not include any of the ones in the caveat ({4}), or the method is using a different tag type',
+}, [
+  _type2,
+  _type3,
 ]);
 
 
