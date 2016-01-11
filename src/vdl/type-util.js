@@ -11,6 +11,7 @@ var kind = require('./kind.js');
 
 module.exports = {
   shouldSendLength: shouldSendLength,
+  hasAnyOrTypeObject: hasAnyOrTypeObject,
   unwrap: unwrap,
   unwrapNonDefault: unwrapNonDefault,
   recursiveUnwrap: recursiveUnwrap,
@@ -41,6 +42,50 @@ function shouldSendLength(type) {
     case kind.UNION:
     case kind.OPTIONAL:
       return true;
+    default:
+      return false;
+  }
+}
+
+/**
+ * Determines if the type contains a any or type object, recursively within
+ * it.
+ * @private
+ * @param {module:vanadium.vdl.Type} type The type.
+ * @return {boolean} true if the type contains an any or type object.
+ */
+function hasAnyOrTypeObject(type) {
+  return hasAnyOrTypeObjectInternal(type, new Set());
+}
+
+function hasAnyOrTypeObjectInternal(type, seen) {
+  if (seen.has(type)) {
+    return false;
+  }
+  seen.add(type);
+
+  switch (type.kind) {
+    case kind.TYPEOBJECT:
+    case kind.ANY:
+      return true;
+    case kind.OPTIONAL:
+    case kind.LIST:
+    case kind.ARRAY:
+      return hasAnyOrTypeObjectInternal(type.elem, seen);
+    case kind.SET:
+      return hasAnyOrTypeObjectInternal(type.key, seen);
+    case kind.MAP:
+      return hasAnyOrTypeObjectInternal(type.key, seen) ||
+        hasAnyOrTypeObjectInternal(type.elem, seen);
+    case kind.UNION:
+    case kind.STRUCT:
+      for (var f = 0; f < type.fields.length; f++) {
+        var field = type.fields[f];
+        if (hasAnyOrTypeObjectInternal(field.type, seen)) {
+          return true;
+        }
+      }
+      return false;
     default:
       return false;
   }

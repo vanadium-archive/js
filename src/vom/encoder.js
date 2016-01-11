@@ -26,26 +26,33 @@ var wiretype = require('../gen-vdl/v.io/v23/vom');
 var endByte = unwrap(wiretype.WireCtrlEnd);
 var nilByte = unwrap(wiretype.WireCtrlNil);
 
+var versions = require('./versions.js');
+
 require('../vdl/es6-shim');
 
 /**
  * Create an encoder that manages the transmission and marshaling of typed
  * values to the other side of a connection.
- * @param {module:vanadium.vom.ByteArrayMessageWriter} messageWriter The
+ * @param {module:vanadium.vom.ByteMessageWriter} messageWriter The
  * message writer to write to.
  * @param {module:vanadim.vom.TypeEncoder} typeEncoder If set, the passed
  * in type encoder will be used and the type messages will not appear in
  * messageWriter's output.
+ * @param {number} version vom version (e.g. 0x80, 0x81, ...)
  * @constructor
  * @memberof module:vanadium.vom
  */
-function Encoder(messageWriter, typeEncoder) {
+function Encoder(messageWriter, typeEncoder, version) {
   this._messageWriter = messageWriter;
   if (typeEncoder) {
     this._typeEncoder = typeEncoder;
   } else {
     this._typeEncoder = new TypeEncoder(messageWriter);
   }
+  if (!version) {
+    version = versions.defaultVersion;
+  }
+  this._version = version;
 }
 
 /**
@@ -62,10 +69,12 @@ Encoder.prototype.encode = function(val, type) {
   val = canonicalize.fill(val, type);
 
   var typeId = this._typeEncoder.encodeType(type);
-  var writer = new RawVomWriter();
+  this._typeIds = [];
+  var writer = new RawVomWriter(this._version);
   this._encodeValue(val, type, writer, false);
   this._messageWriter.writeValueMessage(typeId,
-    typeUtil.shouldSendLength(type), writer.getBytes());
+    typeUtil.shouldSendLength(type), typeUtil.hasAnyOrTypeObject(type),
+    this._typeIds, writer.getBytes());
 };
 
 Encoder.prototype._encodeValue = function(v, t, writer, omitEmpty) {
@@ -95,6 +104,10 @@ Encoder.prototype._encodeValue = function(v, t, writer, omitEmpty) {
       }
       writer.writeUint(v);
       return true;
+    case kind.INT8:
+      if (this._version === versions.version80) {
+        throw new Error('int8 is not supported in VOM version 0x80');
+      } // jshint ignore:line
     case kind.INT16:
     case kind.INT32:
     case kind.INT64:
@@ -160,7 +173,11 @@ Encoder.prototype._encodeValue = function(v, t, writer, omitEmpty) {
       if (typeId === BootstrapTypes.definitions.ANY.id && omitEmpty) {
         return false;
       }
-      writer.writeUint(typeId);
+      if (this._version === versions.version80) {
+        writer.writeUint(typeId);
+      } else {
+        writer.writeUint(this._addTypeId(typeId));
+      }
       return true;
     default:
       throw new Error('Unknown kind ' + t.kind);
@@ -232,7 +249,7 @@ Encoder.prototype._encodeStruct = function(v, t, writer, omitEmpty) {
   if (omitEmpty && !hasWrittenFields) {
     return false;
   }
-  writer.writeByte(endByte);
+  writer.writeControlByte(endByte);
   return true;
 };
 
@@ -255,7 +272,7 @@ Encoder.prototype._encodeOptional = function(v, t, writer, omitEmpty) {
     if (omitEmpty) {
       return false;
     }
-    writer.writeByte(nilByte);
+    writer.writeControlByte(nilByte);
     return true;
   }
   this._encodeValue(v, t.elem, writer, false);
@@ -267,12 +284,16 @@ Encoder.prototype._encodeAny = function(v, writer, omitEmpty) {
     if (omitEmpty) {
       return false;
     }
-    writer.writeByte(nilByte);
+    writer.writeControlByte(nilByte);
     return true;
   }
   var t = guessType(v);
   var typeId = this._typeEncoder.encodeType(t);
-  writer.writeUint(typeId);
+  if (this._version === versions.version80) {
+    writer.writeUint(typeId);
+  } else {
+    writer.writeUint(this._addTypeId(typeId));
+  }
   this._encodeValue(v, t, writer, false);
   return true;
 };
@@ -299,4 +320,14 @@ Encoder.prototype._encodeUnion = function(v, t, writer, omitEmpty) {
     }
   }
   throw new Error('Union did not encode properly. Received: ' + stringify(v));
+};
+
+Encoder.prototype._addTypeId = function(typeId) {
+  var index = this._typeIds.indexOf(typeId);
+  if (index !== -1) {
+    return index;
+  }
+  index = this._typeIds.length;
+  this._typeIds.push(typeId);
+  return index;
 };

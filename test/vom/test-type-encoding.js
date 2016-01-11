@@ -16,8 +16,8 @@ var Promise = require('./../../src/lib/promise');
 var TypeEncoder = require('./../../src/vom/type-encoder.js');
 var TypeDecoder = require('./../../src/vom/type-decoder.js');
 
-var ByteArrayMessageWriter = require(
-    './../../src/vom/byte-array-message-writer.js');
+var ByteMessageWriter = require(
+    './../../src/vom/byte-message-writer.js');
 var RawVomReader = require('./../../src/vom/raw-vom-reader.js');
 
 /**
@@ -177,7 +177,7 @@ function encodeDecodeType(t, test, expected) {
   // If the expected result is not given, use the test value instead.
   expected = expected || test;
 
-  var writer = new ByteArrayMessageWriter();
+  var writer = new ByteMessageWriter();
   var typeEncoder = new TypeEncoder(writer);
   var id = typeEncoder.encodeType(test);
 
@@ -245,7 +245,7 @@ test('type encoding encode errors', function(t) {
     if (badTypes.hasOwnProperty(testName)) {
       var test = badTypes[testName];
 
-      var writer = new ByteArrayMessageWriter();
+      var writer = new ByteMessageWriter();
       var typeEncoder = new TypeEncoder(writer);
       t.throws(
         typeEncoder.encodeType.bind(typeEncoder, test),

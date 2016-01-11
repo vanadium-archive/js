@@ -67,6 +67,10 @@ var bootstrapTypes = {
     id: unwrap(wiretype.WireIdUint64).toNativeNumberApprox(),
     type: types.UINT64
   },
+  INT8: {
+    id: unwrap(wiretype.WireIdInt8).toNativeNumberApprox(),
+    type: types.INT8
+  },
   INT16: {
     id: unwrap(wiretype.WireIdInt16).toNativeNumberApprox(),
     type: types.INT16

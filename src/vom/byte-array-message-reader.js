@@ -11,62 +11,17 @@
 module.exports = ByteArrayMessageReader;
 
 var RawVomReader = require('./raw-vom-reader.js');
-var TypeUtil = require('../vdl/type-util.js');
-
+var ByteMessageReader = require('./byte-message-reader.js');
+var inherits = require('inherits');
 
 /**
  * Create a VOM message reader backed by a byte array.
- * @param {Uint8Array|RawVomReader} bytes The byte array.
+ * @param {Uint8Array} bytes The byte array.
  * @constructor
  * @memberof module:vanadium.vom
  */
 function ByteArrayMessageReader(bytes) {
-  if (!(bytes instanceof RawVomReader)) {
-    this.rawReader = new RawVomReader(bytes);
-  } else {
-    this.rawReader = bytes;
-  }
-
-  this._headerPromise = this.rawReader.readByte().then(function(b) {
-    if (b !== 0x80) {
-      throw new Error('Improperly formatted bytes. Must start with 0x80 ' + b);
-    }
-  });
+ ByteMessageReader.call(this, new RawVomReader(bytes));
 }
 
-/**
- * Get the the type of the next value message.
- * @private
- * @param {TypeDecoder} typeDecoder The current type decoder.
- * @return {Promise<Type>} The type of the next message or null if the stream
- * has ended.
- */
-ByteArrayMessageReader.prototype.nextMessageType = function(typeDecoder) {
-  var bamr = this;
-  return this._headerPromise.then(function() {
-    return bamr.rawReader.readInt().then(function(typeId) {
-      if (typeId < 0) {
-        // Type message.  We add the type to the typeDecoder and continue
-        // reading trying to find a value message.
-        return  bamr.rawReader.readUint().then(function(len) {
-          return bamr.rawReader._readRawBytes(len);
-        }).then(function(body) {
-          return typeDecoder.defineType(-typeId, body);
-        }).then(function() {
-          return bamr.nextMessageType(typeDecoder);
-        });
-      }
-      return typeDecoder.lookupType(typeId).then(function (type) {
-        if (TypeUtil.shouldSendLength(type)) {
-          return bamr.rawReader.readUint().then(function() {
-            return type;
-          });
-        }
-        return type;
-      });
-    }, function(err) {
-      // Hopefull this is an eof.
-      return null;
-    });
-  });
-};
+inherits(ByteArrayMessageReader, ByteMessageReader);

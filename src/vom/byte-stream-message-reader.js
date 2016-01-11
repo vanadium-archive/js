@@ -10,9 +10,10 @@
 
 module.exports = ByteStreamMessageReader;
 
+var ByteMessageReader = require('./byte-message-reader.js');
 var StreamReader = require('./stream-reader.js');
 var RawVomReader = require('./raw-vom-reader.js');
-var TypeUtil = require('../vdl/type-util.js');
+var inherits = require('inherits');
 
 /**
  * Create a VOM message reader backed by a byte stream.
@@ -20,52 +21,12 @@ var TypeUtil = require('../vdl/type-util.js');
  * @memberof module:vanadium.vom
  */
 function ByteStreamMessageReader() {
-  this.rawReader = new RawVomReader(new StreamReader());
-  // Consume the header byte.
-  this.headerPromise = this.rawReader.readByte(1).then(function(byte) {
-    if (byte !== 0x80) {
-      throw new Error('Improperly formatted bytes. Must start with 0x80');
-    }
-  });
+  this._streamReader = new StreamReader();
+  ByteMessageReader.call(this, new RawVomReader(this._streamReader));
 }
 
-/**
- * Get the the type of the next value message.
- * @private
- * @param {TypeDecoder} typeDecoder The current type decoder.
- * @return {Promise<Type>} The type of the next message or null if the stream
- * has ended.
- */
-ByteStreamMessageReader.prototype.nextMessageType = function(typeDecoder) {
-  var bsmr = this;
-  return this.headerPromise.then(function() {
-    return bsmr.rawReader.readInt();
-  }).then(function(typeId) {
-    if (typeId < 0) {
-      // Type message.  We add the type to the typeDecoder and continue reading
-      // trying to find a value message.
-      return  bsmr.rawReader.readUint().then(function(len) {
-        return bsmr.rawReader._readRawBytes(len);
-      }).then(function(body) {
-        return typeDecoder.defineType(-typeId, body);
-      }).then(function() {
-        return bsmr.nextMessageType(typeDecoder);
-      });
-    }
-    return typeDecoder.lookupType(typeId).then(function(type) {
-      if (TypeUtil.shouldSendLength(type)) {
-        return bsmr.rawReader.readUint().then(function() {
-          return type;
-        });
-      }
-      return type;
-    });
-  }, function(err) {
-    // Hopefull this is an eof.
-    return null;
-  });
-};
+inherits(ByteStreamMessageReader, ByteMessageReader);
 
 ByteStreamMessageReader.prototype.addBytes = function(bytes) {
-  this.rawReader._reader.addBytes(bytes);
+  this._streamReader.addBytes(bytes);
 };

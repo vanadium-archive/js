@@ -21,9 +21,9 @@ var TypeEncoder = require('../vom/type-encoder');
 var Decoder = require('../vom/decoder');
 var TypeDecoder = require('../vom/type-decoder');
 var RawVomReader = require('../vom/raw-vom-reader');
+var ByteMessageReader = require('../vom/byte-message-reader');
+var ByteMessageWriter = require('../vom/byte-message-writer');
 var ByteStreamMessageReader = require('../vom/byte-stream-message-reader');
-var ByteStreamMessageWriter = require('../vom/byte-stream-message-writer');
-var ByteArrayMessageReader = require('../vom/byte-array-message-reader');
 var TaskSequence = require('../lib/task-sequence');
 var promiseWhile = require('../lib/async-helper').promiseWhile;
 
@@ -57,7 +57,7 @@ function Proxy(senderPromise) {
   });
   this.senderPromise = senderPromise;
   this.incomingRequestHandlers = {};
-  this._typeWriter = new ByteStreamMessageWriter();
+  this._typeWriter = new ByteMessageWriter();
   this.typeEncoder = new TypeEncoder(this._typeWriter,
                                      this._writeTypeMessage.bind(this));
   this.typeDecoder = new TypeDecoder();
@@ -110,7 +110,7 @@ Proxy.prototype._parseAndHandleMessage = function(message) {
     }
 
     return reader.readUint().then(function(type) {
-      var decoder = new Decoder(new ByteArrayMessageReader(reader));
+      var decoder = new Decoder(new ByteMessageReader(reader));
       handlerState._tasks.addTask(proxy.processRead.bind(proxy, messageId,
                                                          type,
                                                          handlerState.handler,
@@ -261,8 +261,9 @@ Proxy.prototype.sendRequest = function(message, type, handler, id) {
 };
 
 Proxy.prototype._writeTypeMessage = function() {
-  this.sendRequest(byteUtil.bytes2Hex(this._typeWriter.consumeBytes()),
+  this.sendRequest(byteUtil.bytes2Hex(this._typeWriter.getBytes()),
                     Outgoing.TYPE_MESSAGE, null, 0);
+  this._typeWriter.reset();
 };
 
 Proxy.prototype.cleanup = function() {

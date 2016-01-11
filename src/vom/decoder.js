@@ -23,6 +23,7 @@ var Promise = require('../lib/promise');
 var TaskSequence = require('../lib/task-sequence');
 var promiseFor = require('../lib/async-helper').promiseFor;
 var promiseWhile = require('../lib/async-helper').promiseWhile;
+var versions = require('./versions');
 
 var endByte = unwrap(wiretype.WireCtrlEnd);
 var nilByte = unwrap(wiretype.WireCtrlNil);
@@ -111,6 +112,7 @@ Decoder.prototype._decodeUnwrappedValue = function(t, reader) {
       return reader.readUint();
     case kind.UINT64:
       return reader.readBigUint();
+    case kind.INT8:
     case kind.INT16:
     case kind.INT32:
       return reader.readInt();
@@ -153,7 +155,12 @@ Decoder.prototype._decodeUnwrappedValue = function(t, reader) {
       var decoder = this;
       var typeId;
       return reader.readUint().then(function(tId) {
-        typeId = tId;
+        var mr = decoder._messageReader;
+        if (mr._version === versions.version80) {
+          typeId = tId;
+        } else {
+          typeId = mr._typeIds[tId];
+        }
         return decoder._typeDecoder.lookupType(typeId);
       }).then(function(type) {
         if (type === undefined) {
@@ -186,8 +193,8 @@ Decoder.prototype._decodeList = function(t, reader) {
 
 Decoder.prototype._decodeArray = function(t, reader) {
   var decoder = this;
-  // Consume the zero byte at the beginning of the array.
-  return reader.readByte().then(function(b) {
+  // Consume the zero length at the beginning of the array.
+  return reader.readUint().then(function(b) {
     if (b !== 0) {
       throw new Error('Unexpected length ' + b);
     }
@@ -305,7 +312,7 @@ Decoder.prototype._decodeOptional = function(t, reader) {
   return reader.peekByte().then(function(isNil) {
     if (isNil === nilByte) {
       // We don't have to wait for the read to finish.
-      reader.readByte();
+      reader.tryReadControlByte();
       return null;
     }
     return decoder._decodeValue(t.elem, reader, false);
@@ -324,7 +331,12 @@ Decoder.prototype._decodeAny = function(reader) {
     }
     var typeId;
     return reader.readUint().then(function(tId) {
-      typeId = tId;
+      var mr = decoder._messageReader;
+      if (mr._version === versions.version80) {
+        typeId = tId;
+      } else {
+        typeId = mr._typeIds[tId];
+      }
       return decoder._typeDecoder.lookupType(typeId);
     }).then(function(type) {
       if (type === undefined) {

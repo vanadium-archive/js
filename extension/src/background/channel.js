@@ -81,7 +81,7 @@ RpcChannel.prototype.performRpc = function(type, val, callback) {
 };
 
 RpcChannel.prototype._sendVomEncodedMessage = function(msg) {
-  var writer = new vom.ByteArrayMessageWriter();
+  var writer = new vom.ByteMessageWriter();
   var enc = new vom.Encoder(writer);
   enc.encode(msg);
   var encodedBytes = writer.getBytes();

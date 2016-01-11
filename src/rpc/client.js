@@ -38,7 +38,7 @@ var verror = require('../gen-vdl/v.io/v23/verror');
 var vlog = require('../lib/vlog');
 var SharedContextKeys = require('../runtime/shared-context-keys');
 var vtrace = require('../vtrace');
-var ByteArrayMessageWriter = require('../vom/byte-array-message-writer');
+var ByteMessageWriter = require('../vom/byte-message-writer');
 var BlessingsId =
   require('../gen-vdl/v.io/x/ref/services/wspr/internal/principal').BlessingsId;
 var Encoder = require('../vom/encoder');
@@ -314,7 +314,7 @@ OutstandingRPC.prototype.constructMessage = function() {
     }
   };
 
-  var writer = new ByteArrayMessageWriter();
+  var writer = new ByteMessageWriter();
   var encoder = new Encoder(writer, this._typeEncoder);
   encoder.encode(jsonMessage, RpcRequest.prototype._type);
   for (var i = 0; i < this._args.length; i++) {

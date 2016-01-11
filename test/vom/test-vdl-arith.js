@@ -34,7 +34,7 @@ test('method signature encode-decode match', function(assert) {
                     _serviceDescription;
 
     // Encode the signature using the type defined in VDL-generated .js file
-    var writer = new vom.ByteArrayMessageWriter();
+    var writer = new vom.ByteMessageWriter();
     var encoder = new vom.Encoder(writer);
     encoder.encode(signature, IfaceSigType.prototype._type);
     var sigEncode = writer.getBytes();
@@ -52,7 +52,7 @@ test('method signature encode-decode match', function(assert) {
       var wrappedSignature = new IfaceSigType(signature);
 
       // Encode the signature as a wrapped struct.
-      var writer = new vom.ByteArrayMessageWriter();
+      var writer = new vom.ByteMessageWriter();
       var encoder = new vom.Encoder(writer);
       encoder.encode(wrappedSignature);
       var sigEncode = writer.getBytes();

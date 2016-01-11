@@ -12,6 +12,7 @@ var BigInt = require('./../../src/vdl/big-int.js');
 var RawVomWriter = require('./../../src/vom/raw-vom-writer');
 var RawVomReader = require('./../../src/vom/raw-vom-reader');
 var Promise = require('../../src/lib/promise');
+var versions = require('./../../src/vom/versions.js');
 
 test('Reading and writing big uint', function(t) {
   var testVals = [
@@ -223,6 +224,7 @@ test('Reading and writing bool', function(t) {
     var rw = new RawVomWriter();
     rw.writeBool(testVal);
     var rr = new RawVomReader(rw.getBytes());
+    rr._version = Promise.resolve(versions.version80);
     promises.push(rr.readBool().then(function(result) {
     t.equals(result, testVal, 'expected ' + testVal + ' got ' + result);
     }));

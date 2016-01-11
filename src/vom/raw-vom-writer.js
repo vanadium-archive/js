@@ -13,15 +13,21 @@ module.exports = RawVomWriter;
 var BigInt = require('../vdl/big-int.js');
 var BinaryWriter = require('./binary-writer.js');
 var ByteUtil = require('../vdl/byte-util.js');
+var versions = require('./versions.js');
 
 /**
  * RawVomWriter writes VOM primitive values (numbers, strings, bools) to a
  * buffer.
+ * @param {number} version vom version (e.g. 0x80, 0x81, ...)
  * @constructor
  * @private
  */
-function RawVomWriter() {
+function RawVomWriter(version) {
   this._writer = new BinaryWriter();
+  if (!version) {
+    version = versions.defaultVersion;
+  }
+  this._version = version;
 }
 
 /**
@@ -119,17 +125,31 @@ RawVomWriter.prototype.writeString = function(v) {
  */
 RawVomWriter.prototype.writeBool = function(v) {
   if (v) {
-    this._writer.writeByte(1);
+    this.writeByte(1);
   } else {
-    this._writer.writeByte(0);
+    this.writeByte(0);
   }
 };
 
 /**
  * Writes a single VOM byte.
+ * This may be written as a uint so that byte flags can be put in its place.
+ * (byte lists are not written with this function but rather _writeRawBytes).
  * @param {byte} v The byte.
  */
 RawVomWriter.prototype.writeByte = function(v) {
+  if (this._version === versions.version80) {
+    this._writer.writeByte(v);
+  } else {
+    this.writeUint(v);
+  }
+};
+
+/**
+ * Writes a single VOM byte for a control code.
+ * @param {byte} v The byte.
+ */
+RawVomWriter.prototype.writeControlByte = function(v) {
   this._writer.writeByte(v);
 };
 

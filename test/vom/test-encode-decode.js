@@ -17,8 +17,8 @@ var stringify = require('./../../src/vdl/stringify.js');
 var canonicalize = require('./../../src/vdl/canonicalize.js');
 var Deferred = require('../../src/lib/deferred');
 
-var ByteArrayMessageWriter = require(
-    './../../src/vom/byte-array-message-writer.js');
+var ByteMessageWriter = require(
+    './../../src/vom/byte-message-writer.js');
 var ByteArrayMessageReader = require(
     './../../src/vom/byte-array-message-reader.js');
 
@@ -1036,7 +1036,7 @@ NamedUintConstructor.prototype._wrappedType = true;
   test('encode and decode - ' + testCase.n, function(t) {
     var promises = [];
     function runTestCase(test, useCb) {
-      var messageWriter = new ByteArrayMessageWriter();
+      var messageWriter = new ByteMessageWriter();
       var encoder = new Encoder(messageWriter);
       encoder.encode(test.v, test.t); // encode to messageWriter
 
@@ -1265,7 +1265,7 @@ var IntList = registry.lookupOrCreateConstructor(new Type({
   }
 ].forEach(function(testCase) {
   test('encode error cases - ' + test.n, function(t) {
-    var messageWriter = new ByteArrayMessageWriter();
+    var messageWriter = new ByteMessageWriter();
     var encoder = new Encoder(messageWriter);
     t.throws(encoder.encode.bind(encoder, testCase.v, testCase.t),
              new RegExp('.*' + (testCase.e || '') + '.*'));

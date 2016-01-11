@@ -4,8 +4,8 @@
 
 var test = require('prova');
 
-var ByteArrayMessageWriter = require(
-    './../../src/vom/byte-array-message-writer');
+var ByteMessageWriter = require(
+    './../../src/vom/byte-message-writer');
 var ByteArrayMessageReader = require(
     './../../src/vom/byte-array-message-reader');
 var Encoder = require('./../../src/vom/encoder');
@@ -19,7 +19,7 @@ var expectedDate = new Date(1999, 9, 9, 9, 9, 999);
 
 function encodeDecodeDate(encodeType) {
   var input = expectedDate;
-  var messageWriter = new ByteArrayMessageWriter();
+  var messageWriter = new ByteMessageWriter();
   var encoder = new Encoder(messageWriter);
   encoder.encode(input, encodeType);
 

@@ -13,12 +13,14 @@ module.exports = RawVomReader;
 var BigInt = require('../vdl/big-int.js');
 var BinaryReader = require('./binary-reader.js');
 var ByteUtil = require('../vdl/byte-util.js');
+var versions = require('./versions.js');
 
 /**
  * RawVomReader reads VOM primitive values (numbers, strings, bools) from a
  * provided Uint8Array.
  * @private
  * @param {Uint8Array|StreamReader} arr The array to read from.
+ * @param {number} version vom version (e.g. 0x80, 0x81, ...)
  * @constructor
  */
 function RawVomReader(arr) {
@@ -67,7 +69,7 @@ RawVomReader.prototype.tryReadControlByte = function() {
     }
 
     if (firstByte > 0x7f && firstByte <= 0xef) {
-      return reader.readByte();
+      return reader._reader.readByte();
     }
     return null;
   });
@@ -153,7 +155,7 @@ RawVomReader.prototype.readString = function() {
  * @return {Promise<boolean>} The boolean that was read.
  */
 RawVomReader.prototype.readBool = function() {
-  return this._reader.readByte().then(function(b) {
+  return this.readByte().then(function(b) {
     if (b === 1) {
       return true;
     } else if (b === 0) {
@@ -169,7 +171,23 @@ RawVomReader.prototype.readBool = function() {
  * @return {Promise<byte>} The byte that was read.
  */
 RawVomReader.prototype.readByte = function() {
-  return this._reader.readByte();
+  var rawReader = this;
+  return this._version.then(function (version) {
+    if (version === versions.version80) {
+      return rawReader._reader.readByte();
+    } else {
+      return rawReader.readUint();
+    }
+  });
+};
+
+/**
+ * Reads a single VOM byte.
+ * @return {Promise<byte>} The byte that was read.
+ */
+RawVomReader.prototype.readVersionByte = function() {
+    this._version = this._reader.readByte();
+    return this._version;
 };
 
 /**
@@ -177,6 +195,8 @@ RawVomReader.prototype.readByte = function() {
  * @return {Promise<number>} The byte that was read.
  */
 RawVomReader.prototype.peekByte = function() {
+  // NOTE: this reads a byte rather than a uint because it is used
+  // for checking for flags.
   return this._reader.peekByte();
 };
 

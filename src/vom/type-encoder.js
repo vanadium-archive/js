@@ -25,7 +25,7 @@ var endByte = unwrap(wiretype.WireCtrlEnd);
  * Create a type encoder to help encode types and associate already sent types
  * to their type ids.
  * @constructor
- * @param {module:vanadium.vom.ByteArrayMessageWriter} messageWriter The message
+ * @param {module:vanadium.vom.ByteMessageWriter} messageWriter The message
  * writer to write to.
  * @param {function} flush A function that will be called every time a type
  * message has been written.  An example is to write copy the bytes in
@@ -47,6 +47,11 @@ function TypeEncoder(messageWriter, flush) {
  * @return {number} The type id of the encoded type.
  */
 TypeEncoder.prototype.encodeType = function(type) {
+  var pending = {};
+  return this._encodeType(type, pending);
+};
+
+TypeEncoder.prototype._encodeType = function(type, pending) {
   if (typeof type !== 'object') {
     throw new Error('Type must be an object, but instead had value ' + type);
   }
@@ -72,7 +77,7 @@ TypeEncoder.prototype.encodeType = function(type) {
   // This type wasn't in the cache. Update it, and encode the type.
   var typeId = this._nextId++;
   this._typeIds[stringifiedType] = typeId;
-  this._encodeWireType(type, typeId);
+  this._encodeWireType(type, typeId, pending);
   if (this._flush) {
     this._flush();
   }
@@ -93,6 +98,8 @@ var kindToBootstrapType = function(k) {
       return BootstrapTypes.definitions.UINT32;
     case kind.UINT64:
       return BootstrapTypes.definitions.UINT64;
+    case kind.INT8:
+      return BootstrapTypes.definitions.INT8;
     case kind.INT16:
       return BootstrapTypes.definitions.INT16;
     case kind.INT32:
@@ -122,8 +129,12 @@ var kindToBootstrapType = function(k) {
  * @param {MessageWriter} messageWriter the message writer.
  * @param {Type} type the type of the message.
  * @param {number} typeId the type id for the type.
+ * @param {Set} pending set of types that have been referenced but not sent.
  */
-TypeEncoder.prototype._encodeWireType = function(type, typeId) {
+TypeEncoder.prototype._encodeWireType = function(type, typeId, pending) {
+  var stringifiedType = stringify(type);
+  pending[stringifiedType] = true;
+
   var rawWriter = new RawVomWriter();
   var i;
   var elemId;
@@ -135,6 +146,7 @@ TypeEncoder.prototype._encodeWireType = function(type, typeId) {
     case kind.UINT16:
     case kind.UINT32:
     case kind.UINT64:
+    case kind.INT8:
     case kind.INT16:
     case kind.INT32:
     case kind.INT64:
@@ -154,7 +166,7 @@ TypeEncoder.prototype._encodeWireType = function(type, typeId) {
       rawWriter.writeByte(endByte);
       break;
     case kind.OPTIONAL:
-      elemId = this.encodeType(type.elem);
+      elemId = this._encodeType(type.elem, pending);
       rawWriter.writeUint(BootstrapTypes.unionIds.OPTIONAL_TYPE);
       if (type.name !== '') {
         rawWriter.writeUint(0);
@@ -178,7 +190,7 @@ TypeEncoder.prototype._encodeWireType = function(type, typeId) {
       rawWriter.writeByte(endByte);
       break;
     case kind.ARRAY:
-      elemId = this.encodeType(type.elem);
+      elemId = this._encodeType(type.elem, pending);
       rawWriter.writeUint(BootstrapTypes.unionIds.ARRAY_TYPE);
       if (type.name !== '') {
         rawWriter.writeUint(0);
@@ -191,7 +203,7 @@ TypeEncoder.prototype._encodeWireType = function(type, typeId) {
       rawWriter.writeByte(endByte);
       break;
     case kind.LIST:
-      elemId = this.encodeType(type.elem);
+      elemId = this._encodeType(type.elem, pending);
       rawWriter.writeUint(BootstrapTypes.unionIds.LIST_TYPE);
       if (type.name !== '') {
         rawWriter.writeUint(0);
@@ -202,7 +214,7 @@ TypeEncoder.prototype._encodeWireType = function(type, typeId) {
       rawWriter.writeByte(endByte);
       break;
     case kind.SET:
-      keyId = this.encodeType(type.key);
+      keyId = this._encodeType(type.key, pending);
       rawWriter.writeUint(BootstrapTypes.unionIds.SET_TYPE);
       if (type.name !== '') {
         rawWriter.writeUint(0);
@@ -213,8 +225,8 @@ TypeEncoder.prototype._encodeWireType = function(type, typeId) {
       rawWriter.writeByte(endByte);
       break;
     case kind.MAP:
-      keyId = this.encodeType(type.key);
-      elemId = this.encodeType(type.elem);
+      keyId = this._encodeType(type.key, pending);
+      elemId = this._encodeType(type.elem, pending);
       rawWriter.writeUint(BootstrapTypes.unionIds.MAP_TYPE);
       if (type.name !== '') {
         rawWriter.writeUint(0);
@@ -232,7 +244,7 @@ TypeEncoder.prototype._encodeWireType = function(type, typeId) {
       for (i = 0; i < type.fields.length; i++) {
         fieldInfo.push({
           name: util.capitalize(type.fields[i].name),
-          id: this.encodeType(type.fields[i].type)
+          id: this._encodeType(type.fields[i].type, pending)
         });
       }
       if (type.kind === kind.STRUCT) {
@@ -260,5 +272,42 @@ TypeEncoder.prototype._encodeWireType = function(type, typeId) {
     default:
       throw new Error('encodeWireType with unknown kind: ' + type.kind);
   }
-  this._messageWriter.writeTypeMessage(typeId, rawWriter.getBytes());
+
+  delete pending[stringifiedType];
+  var seen = {};
+  var isIncomplete = _typeIncomplete(type, pending, seen);
+  this._messageWriter.writeTypeMessage(typeId, rawWriter.getBytes(),
+    isIncomplete);
 };
+
+function _typeIncomplete(type, pending, seen) {
+  var stringifiedType = stringify(type);
+  if (seen.hasOwnProperty(stringifiedType)) {
+    return false;
+  }
+  seen[stringifiedType] = true;
+  if (pending.hasOwnProperty(stringifiedType)) {
+    return true;
+  }
+  switch (type.kind) {
+    case kind.OPTIONAL:
+    case kind.ARRAY:
+    case kind.LIST:
+      return _typeIncomplete(type.elem, pending, seen);
+    case kind.SET:
+    return _typeIncomplete(type.key, pending, seen);
+    case kind.MAP:
+    return _typeIncomplete(type.key, pending, seen) ||
+      _typeIncomplete(type.elem, pending, seen);
+    case kind.STRUCT:
+    case kind.UNION:
+      for (var i = 0; i < type.fields.length; i++) {
+        if (_typeIncomplete(type.fields[i].type, pending, seen)) {
+          return true;
+        }
+      }
+      return false;
+    default:
+      return false;
+  }
+}
