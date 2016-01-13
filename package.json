@@ -13,7 +13,7 @@
     "es6-shim": "^0.20.2",
     "inherits": "~2.0.1",
     "format": "~0.2.1",
-    "randombytes": "~2.0.1",
+    "randombytes": "2.0.1",
     "domready": "~1.0.7",
     "es6-promise": "~2.1.1"
   },
