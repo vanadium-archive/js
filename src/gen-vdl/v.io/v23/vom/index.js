@@ -46,13 +46,13 @@ _type3.name = "";
 _type3.elem = _typewireField;
 _typeControlKind.kind = vdl.kind.ENUM;
 _typeControlKind.name = "v.io/v23/vom.ControlKind";
-_typeControlKind.labels = ["Nil", "End"];
+_typeControlKind.labels = ["Nil", "End", "IncompleteType"];
 _typeDumpAtom.kind = vdl.kind.STRUCT;
 _typeDumpAtom.name = "v.io/v23/vom.DumpAtom";
 _typeDumpAtom.fields = [{name: "Kind", type: _typeDumpKind}, {name: "Bytes", type: _type1}, {name: "Data", type: _typePrimitive}, {name: "Debug", type: vdl.types.STRING}];
 _typeDumpKind.kind = vdl.kind.ENUM;
 _typeDumpKind.name = "v.io/v23/vom.DumpKind";
-_typeDumpKind.labels = ["Version", "Control", "MsgId", "TypeMsg", "ValueMsg", "MsgLen", "TypeId", "PrimValue", "ByteLen", "ValueLen", "Index", "WireTypeIndex"];
+_typeDumpKind.labels = ["Version", "Control", "MsgId", "TypeMsg", "ValueMsg", "MsgLen", "TypeIdsLen", "TypeId", "PrimValue", "ByteLen", "ValueLen", "Index", "WireTypeIndex"];
 _typePrimitive.kind = vdl.kind.UNION;
 _typePrimitive.name = "v.io/v23/vom.Primitive";
 _typePrimitive.fields = [{name: "PBool", type: vdl.types.BOOL}, {name: "PByte", type: vdl.types.BYTE}, {name: "PUint", type: vdl.types.UINT64}, {name: "PInt", type: vdl.types.INT64}, {name: "PFloat", type: vdl.types.FLOAT64}, {name: "PString", type: vdl.types.STRING}, {name: "PControl", type: _typeControlKind}];
@@ -113,6 +113,7 @@ _typewireUnion.freeze();
 module.exports.ControlKind = {
   NIL: canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeControlKind))('Nil', true), _typeControlKind),
   END: canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeControlKind))('End', true), _typeControlKind),
+  INCOMPLETE_TYPE: canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeControlKind))('IncompleteType', true), _typeControlKind),
 };
 module.exports.DumpAtom = (vdl.registry.lookupOrCreateConstructor(_typeDumpAtom));
 module.exports.DumpKind = {
@@ -122,6 +123,7 @@ module.exports.DumpKind = {
   TYPE_MSG: canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeDumpKind))('TypeMsg', true), _typeDumpKind),
   VALUE_MSG: canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeDumpKind))('ValueMsg', true), _typeDumpKind),
   MSG_LEN: canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeDumpKind))('MsgLen', true), _typeDumpKind),
+  TYPE_IDS_LEN: canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeDumpKind))('TypeIdsLen', true), _typeDumpKind),
   TYPE_ID: canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeDumpKind))('TypeId', true), _typeDumpKind),
   PRIM_VALUE: canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeDumpKind))('PrimValue', true), _typeDumpKind),
   BYTE_LEN: canonicalize.reduce(new (vdl.registry.lookupOrCreateConstructor(_typeDumpKind))('ByteLen', true), _typeDumpKind),
