@@ -11,6 +11,7 @@ var test = require('prova');
 var stringify = require('./../../src/vdl/stringify.js');
 var types = require('./../../src/vdl/types.js');
 var kind = require('./../../src/vdl/kind.js');
+var wiretype = require('../../src/gen-vdl/v.io/v23/vom');
 var Promise = require('./../../src/lib/promise');
 
 var TypeEncoder = require('./../../src/vom/type-encoder.js');
@@ -30,8 +31,8 @@ function TypeMessageReader(bytes) {
   this.rawReader = new RawVomReader(bytes);
   // consume the header byte.
   this.rawReader._readRawBytes(1);
-  if (header !== 0x80) {
-    throw new Error('Improperly formatted bytes. Must start with 0x80');
+  if (header !== 0x80 && header !== 0x81) {
+    throw new Error('Improperly formatted bytes. Must start with 0x80 or 0x81');
   }
 }
 
@@ -40,7 +41,18 @@ function TypeMessageReader(bytes) {
  */
 TypeMessageReader.prototype.nextMessage = function(typeDecoder) {
   var reader = this;
-  return this.rawReader.readInt().then(function(typeId) {
+  return reader.rawReader.tryReadControlByte().then(function(ctrl) {
+    // NOTE: In the tests using this reader, types are read in order. This
+    // could potentially lead to hangs but doesn't because of the particular
+    // test cases chosen. This isn't an issue and in the non-test implementation
+    // because the type building algorithm is different.
+    // TODO(bprosnitz) The tests should probably be changed to reuse the
+    // same type building logic of the implementation in the future.
+    if (ctrl && ctrl !== wiretype.WireCtrlTypeIncomplete.val) {
+      throw new Error('received unknown control byte: 0x' + ctrl.toString(16));
+    }
+    return reader.rawReader.readInt();
+  }).then(function(typeId) {
     if (typeId >= 0) {
       throw new Error('Value messages not implemented.');
     }
