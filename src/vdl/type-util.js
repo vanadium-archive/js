@@ -11,7 +11,8 @@ var kind = require('./kind.js');
 
 module.exports = {
   shouldSendLength: shouldSendLength,
-  hasAnyOrTypeObject: hasAnyOrTypeObject,
+  hasAny: hasAny,
+  hasTypeObject: hasTypeObject,
   unwrap: unwrap,
   unwrapNonDefault: unwrapNonDefault,
   recursiveUnwrap: recursiveUnwrap,
@@ -48,17 +49,58 @@ function shouldSendLength(type) {
 }
 
 /**
- * Determines if the type contains a any or type object, recursively within
- * it.
+ * Determines if the type contains an any, recursively within it.
  * @private
  * @param {module:vanadium.vdl.Type} type The type.
  * @return {boolean} true if the type contains an any or type object.
  */
-function hasAnyOrTypeObject(type) {
-  return hasAnyOrTypeObjectInternal(type, new Set());
+function hasAny(type) {
+  return hasAnyInternal(type, new Set());
 }
 
-function hasAnyOrTypeObjectInternal(type, seen) {
+function hasAnyInternal(type, seen) {
+  if (seen.has(type)) {
+    return false;
+  }
+  seen.add(type);
+
+  switch (type.kind) {
+    case kind.ANY:
+      return true;
+    case kind.OPTIONAL:
+    case kind.LIST:
+    case kind.ARRAY:
+      return hasAnyInternal(type.elem, seen);
+    case kind.SET:
+      return hasAnyInternal(type.key, seen);
+    case kind.MAP:
+      return hasAnyInternal(type.key, seen) ||
+        hasAnyInternal(type.elem, seen);
+    case kind.UNION:
+    case kind.STRUCT:
+      for (var f = 0; f < type.fields.length; f++) {
+        var field = type.fields[f];
+        if (hasAnyInternal(field.type, seen)) {
+          return true;
+        }
+      }
+      return false;
+    default:
+      return false;
+  }
+}
+
+/**
+ * Determines if the type contains a type object, recursively within it.
+ * @private
+ * @param {module:vanadium.vdl.Type} type The type.
+ * @return {boolean} true if the type contains an any or type object.
+ */
+function hasTypeObject(type) {
+  return hasTypeObjectInternal(type, new Set());
+}
+
+function hasTypeObjectInternal(type, seen) {
   if (seen.has(type)) {
     return false;
   }
@@ -66,22 +108,21 @@ function hasAnyOrTypeObjectInternal(type, seen) {
 
   switch (type.kind) {
     case kind.TYPEOBJECT:
-    case kind.ANY:
       return true;
     case kind.OPTIONAL:
     case kind.LIST:
     case kind.ARRAY:
-      return hasAnyOrTypeObjectInternal(type.elem, seen);
+      return hasTypeObjectInternal(type.elem, seen);
     case kind.SET:
-      return hasAnyOrTypeObjectInternal(type.key, seen);
+      return hasTypeObjectInternal(type.key, seen);
     case kind.MAP:
-      return hasAnyOrTypeObjectInternal(type.key, seen) ||
-        hasAnyOrTypeObjectInternal(type.elem, seen);
+      return hasTypeObjectInternal(type.key, seen) ||
+        hasTypeObjectInternal(type.elem, seen);
     case kind.UNION:
     case kind.STRUCT:
       for (var f = 0; f < type.fields.length; f++) {
         var field = type.fields[f];
-        if (hasAnyOrTypeObjectInternal(field.type, seen)) {
+        if (hasTypeObjectInternal(field.type, seen)) {
           return true;
         }
       }

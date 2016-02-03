@@ -7,9 +7,8 @@ var test = require('prova');
 var typeUtil = require('../../src/vdl/type-util.js');
 var vdl = require('../../src/vdl');
 
-test('has any or type object', function(t) {
+test('has any', function(t) {
   var has = [
-    vdl.types.TYPEOBJECT,
     vdl.types.ANY,
     {
       kind: vdl.kind.LIST,
@@ -20,6 +19,7 @@ test('has any or type object', function(t) {
     vdl.types.UINT32,
     vdl.types.BOOL,
     vdl.types.STRING,
+    vdl.types.TYPEOBJECT,
     {
       kind: vdl.kind.STRUCT,
       name: 'aname',
@@ -36,12 +36,51 @@ test('has any or type object', function(t) {
   ];
 
   has.forEach(function(val) {
-    t.ok(typeUtil.hasAnyOrTypeObject(val),
-      JSON.stringify(val)+' should have any or type object');
+    t.ok(typeUtil.hasAny(val),
+      JSON.stringify(val)+' should have any');
   });
   doesntHave.forEach(function(val) {
-    t.notOk(typeUtil.hasAnyOrTypeObject(val),
-      JSON.stringify(val)+' shouldn\'t have any or type object');
+    t.notOk(typeUtil.hasAny(val),
+      JSON.stringify(val)+' shouldn\'t have any');
+  });
+  t.end();
+});
+
+test('has typeobject', function(t) {
+  var has = [
+    vdl.types.TYPEOBJECT,
+    {
+      kind: vdl.kind.LIST,
+      elem: vdl.types.TYPEOBJECT
+    }
+  ];
+  var doesntHave = [
+    vdl.types.UINT32,
+    vdl.types.BOOL,
+    vdl.types.STRING,
+    vdl.types.ANY,
+    {
+      kind: vdl.kind.STRUCT,
+      name: 'aname',
+      fields: [
+        {
+          name: 'field1',
+          type: {
+            kind: vdl.kind.LIST,
+            elem: vdl.types.INT32
+          }
+        }
+      ]
+    }
+  ];
+
+  has.forEach(function(val) {
+    t.ok(typeUtil.hasTypeObject(val),
+      JSON.stringify(val)+' should have typeobject');
+  });
+  doesntHave.forEach(function(val) {
+    t.notOk(typeUtil.hasTypeObject(val),
+      JSON.stringify(val)+' shouldn\'t have typeobject');
   });
   t.end();
 });

@@ -337,6 +337,14 @@ Decoder.prototype._decodeAny = function(reader) {
       } else {
         typeId = mr._typeIds[tId];
       }
+    }).then(function() {
+      var mr = decoder._messageReader;
+      if (mr._version !== versions.version80) {
+        return reader.readUint().then(function(anyLenIndex) {
+          // ignore since we don't have raw bytes in js.
+        });
+      }
+    }).then(function() {
       return decoder._typeDecoder.lookupType(typeId);
     }).then(function(type) {
       if (type === undefined) {

@@ -41,6 +41,7 @@ function ByteMessageReader(rawReader) {
  */
 ByteMessageReader.prototype.nextMessageType = function(typeDecoder) {
   this._typeIds = [];
+  this._anyLens = [];
   var bsmr = this;
   return this.headerPromise.then(function() {
     return bsmr.rawReader.tryReadControlByte();
@@ -68,7 +69,7 @@ ByteMessageReader.prototype.nextMessageType = function(typeDecoder) {
     return typeDecoder.lookupType(typeId).then(function(type) {
       var next = Promise.resolve();
       if (bsmr._version !== versions.version80 &&
-        TypeUtil.hasAnyOrTypeObject(type)) {
+        (TypeUtil.hasAny(type) || TypeUtil.hasTypeObject(type))) {
         next = bsmr.rawReader.readUint().then(function(typeIdLen) {
           var next = Promise.resolve();
           var addTypeId = function() {
@@ -80,6 +81,22 @@ ByteMessageReader.prototype.nextMessageType = function(typeDecoder) {
             next = next.then(addTypeId);
           }
           return next;
+        });
+      }
+      if (bsmr._version !== versions.version80 && TypeUtil.hasAny(type)) {
+        next = next.then(function() {
+            return bsmr.rawReader.readUint().then(function(anyLensLen) {
+              var next = Promise.resolve();
+              var addAnyLen = function() {
+                return bsmr.rawReader.readUint().then(function(len) {
+                  bsmr._anyLens.push(len);
+                });
+              };
+              for (var i = 0; i < anyLensLen; i++) {
+                next = next.then(addAnyLen);
+              }
+              return next;
+          });
         });
       }
       return next.then(function() {

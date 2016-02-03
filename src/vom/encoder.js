@@ -70,11 +70,13 @@ Encoder.prototype.encode = function(val, type) {
 
   var typeId = this._typeEncoder.encodeType(type);
   this._typeIds = [];
+  this._anyLens = [];
   var writer = new RawVomWriter(this._version);
   this._encodeValue(val, type, writer, false);
   this._messageWriter.writeValueMessage(typeId,
-    typeUtil.shouldSendLength(type), typeUtil.hasAnyOrTypeObject(type),
-    this._typeIds, writer.getBytes());
+    typeUtil.shouldSendLength(type), typeUtil.hasAny(type),
+    typeUtil.hasTypeObject(type), this._typeIds, this._anyLens,
+    writer.getBytes());
 };
 
 Encoder.prototype._encodeValue = function(v, t, writer, omitEmpty) {
@@ -289,12 +291,21 @@ Encoder.prototype._encodeAny = function(v, writer, omitEmpty) {
   }
   var t = guessType(v);
   var typeId = this._typeEncoder.encodeType(t);
+  var anyLenIndex;
+  var startPos;
   if (this._version === versions.version80) {
     writer.writeUint(typeId);
   } else {
     writer.writeUint(this._addTypeId(typeId));
+    anyLenIndex = this._nextAnyLenIndex();
+    writer.writeUint(anyLenIndex);
+    startPos = writer.getPos();
   }
   this._encodeValue(v, t, writer, false);
+  if (this._version !== versions.version80) {
+    var endPos = writer.getPos();
+    this._anyLens[anyLenIndex] = endPos - startPos;
+  }
   return true;
 };
 
@@ -329,5 +340,11 @@ Encoder.prototype._addTypeId = function(typeId) {
   }
   index = this._typeIds.length;
   this._typeIds.push(typeId);
+  return index;
+};
+
+Encoder.prototype._nextAnyLenIndex = function() {
+  var index = this._anyLens.length;
+  this._anyLens.push(0);
   return index;
 };

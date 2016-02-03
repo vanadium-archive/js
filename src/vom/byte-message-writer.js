@@ -22,7 +22,7 @@ var wiretype = require('../gen-vdl/v.io/v23/vom');
  */
 function ByteMessageWriter(version) {
   if (!version) {
-    version = versions.version80;
+    version = versions.defaultVersion;
   }
   this._version = version;
   this.rawWriter = new RawVomWriter();
@@ -35,21 +35,29 @@ function ByteMessageWriter(version) {
  * @param {number} typeId The type ID of the message.
  * @param {boolean} sendLength true if the message length should be sent in the
  * header, false otherwise.
- * @param {boolean} hasAnyOrTypeObject true if the message contains an any
- * or a type object, false otherwise.
+ * @param {boolean} hasAny true if the message contains an any, false otherwise.
+ * @param {boolean} hasTypeObject true if the message contains a type object,
+ * false otherwise.
  * @param {Array.<number>} typeIds a list of referenced type ids, in order.
  * @param {Uint8Array} message The body of the message.
  */
 ByteMessageWriter.prototype.writeValueMessage = function(
-  typeId, sendLength, hasAnyOrTypeObject, typeIds, message) {
+  typeId, sendLength, hasAny, hasTypeObject, typeIds, anyLens, message) {
   if (typeId <= 0) {
     throw new Error('Type ids should be positive integers.');
   }
   this.rawWriter.writeInt(typeId);
-  if (this._version !== versions.version80 && hasAnyOrTypeObject) {
+  var i;
+  if (this._version !== versions.version80 && (hasAny || hasTypeObject)) {
     this.rawWriter.writeUint(typeIds.length);
-    for (var i = 0; i < typeIds.length; i++) {
+    for (i = 0; i < typeIds.length; i++) {
       this.rawWriter.writeUint(typeIds[i]);
+    }
+  }
+  if (this._version !== versions.version80 && hasAny) {
+    this.rawWriter.writeUint(anyLens.length);
+    for (i = 0; i < anyLens.length; i++) {
+      this.rawWriter.writeUint(anyLens[i]);
     }
   }
   if (sendLength) {
