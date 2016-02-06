@@ -4,11 +4,11 @@
 /**
  * @summary Namespace security provides an API for the Vanadium security
  * concepts defined in
- * {@link https://github.com/vanadium/docs/blob/master/concepts/security.md}.
+ * {@link https://vanadium.github.io/concepts/security.html}.
  * @description
  * <p>Namespace security provides an API for the Vanadium security concepts
  * defined in
- * {@link https://github.com/vanadium/docs/blob/master/concepts/security.md}.
+ * {@link https://vanadium.github.io/concepts/security.html}.
  * </p>
  *
  * <p>The primitives and APIs defined in this package enable bi-directional,

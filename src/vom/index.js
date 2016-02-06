@@ -9,7 +9,7 @@
  * <p> Namespace vom implements Vanadium Object Marshaling, a serialization
  * protocol.</p>
  * <p>For the concept doc see
- * {@link https://github.com/vanadium/docs/blob/master/concepts/rpc.md#vom}
+ * {@link https://vanadium.github.io/concepts/rpc.html#vom}
  * </p>
  * <p>Vom is used in Vanadium to enable interchange of user-defined data
  * structures across networks, languages and storage systems.</p>

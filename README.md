@@ -22,7 +22,7 @@ in both [Node.js] and browsers. Therefore, specific build and testing steps
 have been designed in the project to ensure this goal.
 
 When run in a browser, `vanadium.js` expects that the [vanadium
-extension](https://github.com/vanadium/docs/blob/master/tools/vanadium-chrome-extension.md)
+extension](https://vanadium.github.io/tools/vanadium-chrome-extension.html)
 will be installed.
 
 ## Bugs and feature requests

@@ -4,8 +4,8 @@
 
 var extensionId = 'jcaelnibllfoobpedofhlaobfcoknpap';
 module.exports = {
-  extensionDocsUrl: ('https://github.com/vanadium/docs/blob/master/tools/' +
-                     'vanadium-chrome-extension.md'),
+  extensionDocsUrl: ('https://vanadium.github.io/tools/' +
+                     'vanadium-chrome-extension.html'),
   extensionId: extensionId,
   extensionUrl: 'https://chrome.google.com/webstore/detail/' + extensionId
 };
