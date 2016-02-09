@@ -10,6 +10,6 @@
  module.exports = {
    version80: 0x80,
    version81: 0x81,
-   defaultVersion: 0x80,
+   defaultVersion: 0x81,
    allowedVersions: [0x80, 0x81]
  };
