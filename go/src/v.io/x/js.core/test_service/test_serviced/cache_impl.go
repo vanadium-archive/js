@@ -13,8 +13,8 @@ import (
 
 	"v.io/v23/context"
 	"v.io/v23/rpc"
-	"v.io/v23/vdl"
 	"v.io/v23/verror"
+	"v.io/v23/vom"
 	"v.io/x/js.core/test_service"
 )
 
@@ -25,18 +25,18 @@ var errIndexOutOfBounds = verror.Register(pkgPath+".errIndexOutOfBounds", verror
 // A simple in-memory implementation of a Cache service.
 type cacheImpl struct {
 	mu             sync.Mutex
-	cache          map[string]*vdl.Value
+	cache          map[string]*vom.RawBytes
 	mostRecent     test_service.KeyValuePair
 	lastUpdateTime time.Time
 }
 
 // NewCached returns a new implementation of CacheServerMethods.
 func NewCached() test_service.CacheServerMethods {
-	return &cacheImpl{cache: make(map[string]*vdl.Value)}
+	return &cacheImpl{cache: make(map[string]*vom.RawBytes)}
 }
 
 // Set sets a value for a key.  This should never return an error.
-func (c *cacheImpl) Set(ctx *context.T, _ rpc.ServerCall, key string, value *vdl.Value) error {
+func (c *cacheImpl) Set(ctx *context.T, _ rpc.ServerCall, key string, value *vom.RawBytes) error {
 	c.mu.Lock()
 	ctx.VI(0).Info("Set called with %v", key)
 	c.cache[key] = value
@@ -48,7 +48,7 @@ func (c *cacheImpl) Set(ctx *context.T, _ rpc.ServerCall, key string, value *vdl
 
 // Get returns the value for a key.  If the key is not in the map, it returns
 // an error.
-func (c *cacheImpl) Get(ctx *context.T, _ rpc.ServerCall, key string) (*vdl.Value, error) {
+func (c *cacheImpl) Get(ctx *context.T, _ rpc.ServerCall, key string) (*vom.RawBytes, error) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 	if value, ok := c.cache[key]; ok {
@@ -133,7 +133,7 @@ func (c *cacheImpl) GetAsError(_ *context.T, _ rpc.ServerCall, key string) (stor
 }
 
 // AsMap returns the full contents of the cache as a map.
-func (c *cacheImpl) AsMap(*context.T, rpc.ServerCall) (map[string]*vdl.Value, error) {
+func (c *cacheImpl) AsMap(*context.T, rpc.ServerCall) (map[string]*vom.RawBytes, error) {
 	return c.cache, nil
 }
 
