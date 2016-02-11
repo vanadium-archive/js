@@ -1,5 +1,4 @@
 /.jiri
-#TODO(nlacasse): Get rid of .v23 below once v23->jiri transition is complete.
 coverage
 dist
 docs
@@ -17,6 +16,3 @@ go/bin
 xunit.xml
 tmp
 .idea
-
-# Vanadium
-/.v23
