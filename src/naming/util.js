@@ -123,9 +123,6 @@ function blessingNamesFromAddress(addr) {
 
   var blessingNameField = 0;
   switch(epversion) {
-    case 5:
-      blessingNameField = 5;
-      break;
     case 6:
       blessingNameField = 6;
       break;
