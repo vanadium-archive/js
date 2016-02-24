@@ -13,6 +13,7 @@ import (
 	"v.io/v23/context"
 	"v.io/v23/rpc"
 	"v.io/v23/vdl"
+	"v.io/v23/vom"
 
 	// VDL user imports
 	"v.io/v23/security"
@@ -21,7 +22,7 @@ import (
 
 type TestCaveatData struct {
 	A string
-	B *vdl.Value // Use any for value so that we can confirm VDL is being used properly.
+	B *vom.RawBytes // Use any for value so that we can confirm VDL is being used properly.
 }
 
 func (TestCaveatData) __VDLReflect(struct {
@@ -154,7 +155,7 @@ var descInvokableTestMethod = rpc.InterfaceDesc{
 // InvokeMethodWithCaveatedIdentityClientMethods is the client interface
 // containing InvokeMethodWithCaveatedIdentity methods.
 type InvokeMethodWithCaveatedIdentityClientMethods interface {
-	Invoke(_ *context.T, name string, cavDesc security.CaveatDescriptor, cavParam *vdl.Value, _ ...rpc.CallOpt) error
+	Invoke(_ *context.T, name string, cavDesc security.CaveatDescriptor, cavParam *vom.RawBytes, _ ...rpc.CallOpt) error
 }
 
 // InvokeMethodWithCaveatedIdentityClientStub adds universal methods to InvokeMethodWithCaveatedIdentityClientMethods.
@@ -172,7 +173,7 @@ type implInvokeMethodWithCaveatedIdentityClientStub struct {
 	name string
 }
 
-func (c implInvokeMethodWithCaveatedIdentityClientStub) Invoke(ctx *context.T, i0 string, i1 security.CaveatDescriptor, i2 *vdl.Value, opts ...rpc.CallOpt) (err error) {
+func (c implInvokeMethodWithCaveatedIdentityClientStub) Invoke(ctx *context.T, i0 string, i1 security.CaveatDescriptor, i2 *vom.RawBytes, opts ...rpc.CallOpt) (err error) {
 	err = v23.GetClient(ctx).Call(ctx, c.name, "Invoke", []interface{}{i0, i1, i2}, nil, opts...)
 	return
 }
@@ -180,7 +181,7 @@ func (c implInvokeMethodWithCaveatedIdentityClientStub) Invoke(ctx *context.T, i
 // InvokeMethodWithCaveatedIdentityServerMethods is the interface a server writer
 // implements for InvokeMethodWithCaveatedIdentity.
 type InvokeMethodWithCaveatedIdentityServerMethods interface {
-	Invoke(_ *context.T, _ rpc.ServerCall, name string, cavDesc security.CaveatDescriptor, cavParam *vdl.Value) error
+	Invoke(_ *context.T, _ rpc.ServerCall, name string, cavDesc security.CaveatDescriptor, cavParam *vom.RawBytes) error
 }
 
 // InvokeMethodWithCaveatedIdentityServerStubMethods is the server interface containing
@@ -218,7 +219,7 @@ type implInvokeMethodWithCaveatedIdentityServerStub struct {
 	gs   *rpc.GlobState
 }
 
-func (s implInvokeMethodWithCaveatedIdentityServerStub) Invoke(ctx *context.T, call rpc.ServerCall, i0 string, i1 security.CaveatDescriptor, i2 *vdl.Value) error {
+func (s implInvokeMethodWithCaveatedIdentityServerStub) Invoke(ctx *context.T, call rpc.ServerCall, i0 string, i1 security.CaveatDescriptor, i2 *vom.RawBytes) error {
 	return s.impl.Invoke(ctx, call, i0, i1, i2)
 }
 
@@ -243,7 +244,7 @@ var descInvokeMethodWithCaveatedIdentity = rpc.InterfaceDesc{
 			InArgs: []rpc.ArgDesc{
 				{"name", ``},     // string
 				{"cavDesc", ``},  // security.CaveatDescriptor
-				{"cavParam", ``}, // *vdl.Value
+				{"cavParam", ``}, // *vom.RawBytes
 			},
 		},
 	},
