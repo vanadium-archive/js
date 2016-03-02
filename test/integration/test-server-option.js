@@ -75,34 +75,34 @@ test('Test IsLeaf=False Server Option', function(t) {
   });
 });
 
-//test('Test ServesMountTable=True Server Option', function(t) {
-//  var serverOption = vanadium.rpc.serverOption({
-//    servesMountTable: true
-//  });
-//  var name = 'testing/serverOption/ServesMountTableTrue';
-//
-//  var servObj = {
-//    name: name,
-//    dispatcher: dispatcher,
-//    serverOption: serverOption
-//  };
-//
-//  serve(servObj, function(err, res) {
-//    t.error(err);
-//
-//    var rt = res.runtime;
-//    var ns = rt.getNamespace();
-//    var stream = ns.glob(rt.getContext(), name).stream;
-//    stream.on('data', function(mp) {
-//      t.error(err);
-//
-//      t.equal(mp.isLeaf, false, 'Glob must indicate server is not a leaf');
-//      t.equal(mp.servesMountTable, true,
-//        'Glob must indicate server is a mounttable');
-//      res.end(t);
-//    });
-//  });
-//});
+test('Test ServesMountTable=True Server Option', function(t) {
+  var serverOption = vanadium.rpc.serverOption({
+    servesMountTable: true
+  });
+  var name = 'testing/serverOption/ServesMountTableTrue';
+
+  var servObj = {
+    name: name,
+    dispatcher: dispatcher,
+    serverOption: serverOption
+  };
+
+  serve(servObj, function(err, res) {
+    t.error(err);
+
+    var rt = res.runtime;
+    var ns = rt.getNamespace();
+    var stream = ns.glob(rt.getContext(), name).stream;
+    stream.on('data', function(mp) {
+      t.error(err);
+
+      t.equal(mp.isLeaf, false, 'Glob must indicate server is not a leaf');
+      t.equal(mp.servesMountTable, true,
+        'Glob must indicate server is a mounttable');
+      res.end(t);
+    });
+  });
+});
 
 test('Test ServesMountTable=false server option', function(t) {
   var serverOption = vanadium.rpc.serverOption({
@@ -133,33 +133,33 @@ test('Test ServesMountTable=false server option', function(t) {
   });
 });
 
-//test('Test ServesMountTable=ture and IsLeaf=true server option',
-//  function(t) {
-//    var serverOption = vanadium.rpc.serverOption({
-//      servesMountTable: true,
-//      isLeaf: true
-//    });
-//    var name = 'testing/serverOption/Both';
-//
-//    var servObj = {
-//      name: name,
-//      dispatcher: dispatcher,
-//      serverOption: serverOption
-//    };
-//
-//    serve(servObj, function(err, res) {
-//      t.error(err);
-//
-//      var rt = res.runtime;
-//      var ns = rt.getNamespace();
-//      var stream = ns.glob(rt.getContext(), name).stream;
-//      stream.on('data', function(mp) {
-//        t.error(err);
-//
-//        t.equal(mp.isLeaf, true, 'Glob must indicate server is a leaf');
-//        t.equal(mp.servesMountTable, true,
-//          'Glob must indicate server is a mounttable');
-//        res.end(t);
-//      });
-//    });
-//  });
+test('Test ServesMountTable=ture and IsLeaf=true server option',
+  function(t) {
+    var serverOption = vanadium.rpc.serverOption({
+      servesMountTable: true,
+      isLeaf: true
+    });
+    var name = 'testing/serverOption/Both';
+
+    var servObj = {
+      name: name,
+      dispatcher: dispatcher,
+      serverOption: serverOption
+    };
+
+    serve(servObj, function(err, res) {
+      t.error(err);
+
+      var rt = res.runtime;
+      var ns = rt.getNamespace();
+      var stream = ns.glob(rt.getContext(), name).stream;
+      stream.on('data', function(mp) {
+        t.error(err);
+
+        t.equal(mp.isLeaf, true, 'Glob must indicate server is a leaf');
+        t.equal(mp.servesMountTable, true,
+          'Glob must indicate server is a mounttable');
+        res.end(t);
+      });
+    });
+  });

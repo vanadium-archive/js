@@ -69,11 +69,6 @@ Namespace.prototype.resolveToMountTable = function(ctx, serverCall, name) {
 };
     
       
-Namespace.prototype.shallowResolve = function(ctx, serverCall, name) {
-  throw new Error('Method ShallowResolve not implemented');
-};
-    
-      
 Namespace.prototype.flushCacheEntry = function(ctx, serverCall, name) {
   throw new Error('Method FlushCacheEntry not implemented');
 };
@@ -214,27 +209,6 @@ Namespace.prototype._serviceDescription = {
     {
     name: 'ResolveToMountTable',
     doc: "// ResolveToMountTable resolves a name to the address of the mounttable\n// directly hosting it.",
-    inArgs: [{
-      name: 'name',
-      doc: "",
-      type: vdl.types.STRING
-    },
-    ],
-    outArgs: [{
-      name: '',
-      doc: "",
-      type: _type1
-    },
-    ],
-    inStream: null,
-    outStream: null,
-    tags: []
-  },
-    
-      
-    {
-    name: 'ShallowResolve',
-    doc: "// ShallowResolve resolves the object name into its mounted servers.  It is the same\n// as Resolve except when mounttables are stacked below the same mount point.  For example,\n// if service D is mounted onto /MTA/a/b and /MTA/a/b is mounted onto /MTB/x/y then\n// Resolve(/MTB/x/y) will return a pointer to D while ShallowResolve(/MTB/x/y) will\n// return a pointer to /MTA/a/b.",
     inArgs: [{
       name: 'name',
       doc: "",
