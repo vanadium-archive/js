@@ -18,6 +18,9 @@ import (
 	_ "v.io/v23/vdlroot/time"
 )
 
+func __VDLEnsureNativeBuilt_native() {
+}
+
 // NativeTestClientMethods is the client interface
 // containing NativeTest methods.
 type NativeTestClientMethods interface {

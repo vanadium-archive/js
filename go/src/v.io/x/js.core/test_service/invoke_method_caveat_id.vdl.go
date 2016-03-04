@@ -30,8 +30,77 @@ func (TestCaveatData) __VDLReflect(struct {
 }) {
 }
 
+func (m *TestCaveatData) FillVDLTarget(t vdl.Target, tt *vdl.Type) error {
+
+	if __VDLType_invoke_method_caveat_id_v_io_x_js_core_test_service_TestCaveatData == nil || __VDLTypeinvoke_method_caveat_id0 == nil {
+		panic("Initialization order error: types generated for FillVDLTarget not initialized. Consider moving caller to an init() block.")
+	}
+	fieldsTarget1, err := t.StartFields(tt)
+	if err != nil {
+		return err
+	}
+
+	var2 := (m.A == "")
+	if !var2 {
+		keyTarget3, fieldTarget4, err := fieldsTarget1.StartField("A")
+		if err != vdl.ErrFieldNoExist && err != nil {
+			return err
+		}
+		if err != vdl.ErrFieldNoExist {
+			if err := fieldTarget4.FromString(string(m.A), vdl.StringType); err != nil {
+				return err
+			}
+			if err := fieldsTarget1.FinishField(keyTarget3, fieldTarget4); err != nil {
+				return err
+			}
+		}
+	}
+	var5 := (m.B == (*vom.RawBytes)(nil))
+	if !var5 {
+		keyTarget6, fieldTarget7, err := fieldsTarget1.StartField("B")
+		if err != vdl.ErrFieldNoExist && err != nil {
+			return err
+		}
+		if err != vdl.ErrFieldNoExist {
+
+			if m.B == nil {
+				if err := fieldTarget7.FromNil(vdl.AnyType); err != nil {
+					return err
+				}
+			} else {
+				if err := m.B.FillVDLTarget(fieldTarget7, vdl.AnyType); err != nil {
+					return err
+				}
+			}
+			if err := fieldsTarget1.FinishField(keyTarget6, fieldTarget7); err != nil {
+				return err
+			}
+		}
+	}
+	if err := t.FinishFields(fieldsTarget1); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *TestCaveatData) MakeVDLTarget() vdl.Target {
+	return nil
+}
+
+func (m *TestCaveatData) IsZero() bool {
+
+	var1 := (*m == TestCaveatData{})
+	return var1
+}
+
 func init() {
 	vdl.Register((*TestCaveatData)(nil))
+}
+
+var __VDLTypeinvoke_method_caveat_id0 *vdl.Type = vdl.TypeOf((*TestCaveatData)(nil))
+var __VDLType_invoke_method_caveat_id_v_io_x_js_core_test_service_TestCaveatData *vdl.Type = vdl.TypeOf(TestCaveatData{})
+
+func __VDLEnsureNativeBuilt_invoke_method_caveat_id() {
 }
 
 var ConditionallyValidatingTestCaveat = security.CaveatDescriptor{

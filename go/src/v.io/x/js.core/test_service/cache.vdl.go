@@ -25,6 +25,40 @@ func (KeyPageResult) __VDLReflect(struct {
 }) {
 }
 
+func (m KeyPageResult) FillVDLTarget(t vdl.Target, tt *vdl.Type) error {
+
+	listTarget1, err := t.StartList(__VDLType_cache_v_io_x_js_core_test_service_KeyPageResult, 10)
+	if err != nil {
+		return err
+	}
+	for i, elem3 := range m {
+		elemTarget2, err := listTarget1.StartElem(i)
+		if err != nil {
+			return err
+		}
+		if err := elemTarget2.FromString(string(elem3), vdl.StringType); err != nil {
+			return err
+		}
+		if err := listTarget1.FinishElem(elemTarget2); err != nil {
+			return err
+		}
+	}
+	if err := t.FinishList(listTarget1); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m KeyPageResult) MakeVDLTarget() vdl.Target {
+	return nil
+}
+
+func (m KeyPageResult) IsZero() bool {
+
+	var1 := (m == KeyPageResult{})
+	return var1
+}
+
 // KeyValuePair is a representation of a cached key and value pair.
 type KeyValuePair struct {
 	Key   string
@@ -36,9 +70,79 @@ func (KeyValuePair) __VDLReflect(struct {
 }) {
 }
 
+func (m *KeyValuePair) FillVDLTarget(t vdl.Target, tt *vdl.Type) error {
+
+	if __VDLType_cache_v_io_x_js_core_test_service_KeyValuePair == nil || __VDLTypecache0 == nil {
+		panic("Initialization order error: types generated for FillVDLTarget not initialized. Consider moving caller to an init() block.")
+	}
+	fieldsTarget1, err := t.StartFields(tt)
+	if err != nil {
+		return err
+	}
+
+	var2 := (m.Key == "")
+	if !var2 {
+		keyTarget3, fieldTarget4, err := fieldsTarget1.StartField("Key")
+		if err != vdl.ErrFieldNoExist && err != nil {
+			return err
+		}
+		if err != vdl.ErrFieldNoExist {
+			if err := fieldTarget4.FromString(string(m.Key), vdl.StringType); err != nil {
+				return err
+			}
+			if err := fieldsTarget1.FinishField(keyTarget3, fieldTarget4); err != nil {
+				return err
+			}
+		}
+	}
+	var5 := (m.Value == (*vom.RawBytes)(nil))
+	if !var5 {
+		keyTarget6, fieldTarget7, err := fieldsTarget1.StartField("Value")
+		if err != vdl.ErrFieldNoExist && err != nil {
+			return err
+		}
+		if err != vdl.ErrFieldNoExist {
+
+			if m.Value == nil {
+				if err := fieldTarget7.FromNil(vdl.AnyType); err != nil {
+					return err
+				}
+			} else {
+				if err := m.Value.FillVDLTarget(fieldTarget7, vdl.AnyType); err != nil {
+					return err
+				}
+			}
+			if err := fieldsTarget1.FinishField(keyTarget6, fieldTarget7); err != nil {
+				return err
+			}
+		}
+	}
+	if err := t.FinishFields(fieldsTarget1); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *KeyValuePair) MakeVDLTarget() vdl.Target {
+	return nil
+}
+
+func (m *KeyValuePair) IsZero() bool {
+
+	var1 := (*m == KeyValuePair{})
+	return var1
+}
+
 func init() {
 	vdl.Register((*KeyPageResult)(nil))
 	vdl.Register((*KeyValuePair)(nil))
+}
+
+var __VDLTypecache0 *vdl.Type = vdl.TypeOf((*KeyValuePair)(nil))
+var __VDLType_cache_v_io_x_js_core_test_service_KeyPageResult *vdl.Type = vdl.TypeOf(KeyPageResult{})
+var __VDLType_cache_v_io_x_js_core_test_service_KeyValuePair *vdl.Type = vdl.TypeOf(KeyValuePair{})
+
+func __VDLEnsureNativeBuilt_cache() {
 }
 
 // CacheClientMethods is the client interface

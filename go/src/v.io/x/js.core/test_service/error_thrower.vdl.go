@@ -14,6 +14,9 @@ import (
 	"v.io/v23/rpc"
 )
 
+func __VDLEnsureNativeBuilt_error_thrower() {
+}
+
 // ErrorThrowerClientMethods is the client interface
 // containing ErrorThrower methods.
 //

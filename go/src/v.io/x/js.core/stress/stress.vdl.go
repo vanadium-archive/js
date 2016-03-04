@@ -31,8 +31,85 @@ func (StressResults) __VDLReflect(struct {
 }) {
 }
 
+func (m *StressResults) FillVDLTarget(t vdl.Target, tt *vdl.Type) error {
+
+	if __VDLType_stress_v_io_x_js_core_stress_StressResults == nil || __VDLTypestress0 == nil {
+		panic("Initialization order error: types generated for FillVDLTarget not initialized. Consider moving caller to an init() block.")
+	}
+	fieldsTarget1, err := t.StartFields(tt)
+	if err != nil {
+		return err
+	}
+
+	var2 := (m.Iterations == int64(0))
+	if !var2 {
+		keyTarget3, fieldTarget4, err := fieldsTarget1.StartField("Iterations")
+		if err != vdl.ErrFieldNoExist && err != nil {
+			return err
+		}
+		if err != vdl.ErrFieldNoExist {
+			if err := fieldTarget4.FromInt(int64(m.Iterations), vdl.Int64Type); err != nil {
+				return err
+			}
+			if err := fieldsTarget1.FinishField(keyTarget3, fieldTarget4); err != nil {
+				return err
+			}
+		}
+	}
+	var5 := (m.Qps == float64(0))
+	if !var5 {
+		keyTarget6, fieldTarget7, err := fieldsTarget1.StartField("Qps")
+		if err != vdl.ErrFieldNoExist && err != nil {
+			return err
+		}
+		if err != vdl.ErrFieldNoExist {
+			if err := fieldTarget7.FromFloat(float64(m.Qps), vdl.Float64Type); err != nil {
+				return err
+			}
+			if err := fieldsTarget1.FinishField(keyTarget6, fieldTarget7); err != nil {
+				return err
+			}
+		}
+	}
+	var8 := (m.MsecsPerRpc == float64(0))
+	if !var8 {
+		keyTarget9, fieldTarget10, err := fieldsTarget1.StartField("MsecsPerRpc")
+		if err != vdl.ErrFieldNoExist && err != nil {
+			return err
+		}
+		if err != vdl.ErrFieldNoExist {
+			if err := fieldTarget10.FromFloat(float64(m.MsecsPerRpc), vdl.Float64Type); err != nil {
+				return err
+			}
+			if err := fieldsTarget1.FinishField(keyTarget9, fieldTarget10); err != nil {
+				return err
+			}
+		}
+	}
+	if err := t.FinishFields(fieldsTarget1); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *StressResults) MakeVDLTarget() vdl.Target {
+	return nil
+}
+
+func (m *StressResults) IsZero() bool {
+
+	var1 := (*m == StressResults{})
+	return var1
+}
+
 func init() {
 	vdl.Register((*StressResults)(nil))
+}
+
+var __VDLTypestress0 *vdl.Type = vdl.TypeOf((*StressResults)(nil))
+var __VDLType_stress_v_io_x_js_core_stress_StressResults *vdl.Type = vdl.TypeOf(StressResults{})
+
+func __VDLEnsureNativeBuilt_stress() {
 }
 
 // StressClientMethods is the client interface

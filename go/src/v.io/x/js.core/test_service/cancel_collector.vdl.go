@@ -14,6 +14,9 @@ import (
 	"v.io/v23/rpc"
 )
 
+func __VDLEnsureNativeBuilt_cancel_collector() {
+}
+
 // CancelCollectorClientMethods is the client interface
 // containing CancelCollector methods.
 //
