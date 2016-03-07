@@ -53,12 +53,6 @@ func (m KeyPageResult) MakeVDLTarget() vdl.Target {
 	return nil
 }
 
-func (m KeyPageResult) IsZero() bool {
-
-	var1 := (m == KeyPageResult{})
-	return var1
-}
-
 // KeyValuePair is a representation of a cached key and value pair.
 type KeyValuePair struct {
 	Key   string
@@ -80,41 +74,35 @@ func (m *KeyValuePair) FillVDLTarget(t vdl.Target, tt *vdl.Type) error {
 		return err
 	}
 
-	var2 := (m.Key == "")
-	if !var2 {
-		keyTarget3, fieldTarget4, err := fieldsTarget1.StartField("Key")
-		if err != vdl.ErrFieldNoExist && err != nil {
+	keyTarget2, fieldTarget3, err := fieldsTarget1.StartField("Key")
+	if err != vdl.ErrFieldNoExist && err != nil {
+		return err
+	}
+	if err != vdl.ErrFieldNoExist {
+		if err := fieldTarget3.FromString(string(m.Key), vdl.StringType); err != nil {
 			return err
 		}
-		if err != vdl.ErrFieldNoExist {
-			if err := fieldTarget4.FromString(string(m.Key), vdl.StringType); err != nil {
-				return err
-			}
-			if err := fieldsTarget1.FinishField(keyTarget3, fieldTarget4); err != nil {
-				return err
-			}
+		if err := fieldsTarget1.FinishField(keyTarget2, fieldTarget3); err != nil {
+			return err
 		}
 	}
-	var5 := (m.Value == (*vom.RawBytes)(nil))
-	if !var5 {
-		keyTarget6, fieldTarget7, err := fieldsTarget1.StartField("Value")
-		if err != vdl.ErrFieldNoExist && err != nil {
-			return err
-		}
-		if err != vdl.ErrFieldNoExist {
+	keyTarget4, fieldTarget5, err := fieldsTarget1.StartField("Value")
+	if err != vdl.ErrFieldNoExist && err != nil {
+		return err
+	}
+	if err != vdl.ErrFieldNoExist {
 
-			if m.Value == nil {
-				if err := fieldTarget7.FromNil(vdl.AnyType); err != nil {
-					return err
-				}
-			} else {
-				if err := m.Value.FillVDLTarget(fieldTarget7, vdl.AnyType); err != nil {
-					return err
-				}
-			}
-			if err := fieldsTarget1.FinishField(keyTarget6, fieldTarget7); err != nil {
+		if m.Value == nil {
+			if err := fieldTarget5.FromNil(vdl.AnyType); err != nil {
 				return err
 			}
+		} else {
+			if err := m.Value.FillVDLTarget(fieldTarget5, vdl.AnyType); err != nil {
+				return err
+			}
+		}
+		if err := fieldsTarget1.FinishField(keyTarget4, fieldTarget5); err != nil {
+			return err
 		}
 	}
 	if err := t.FinishFields(fieldsTarget1); err != nil {
@@ -125,12 +113,6 @@ func (m *KeyValuePair) FillVDLTarget(t vdl.Target, tt *vdl.Type) error {
 
 func (m *KeyValuePair) MakeVDLTarget() vdl.Target {
 	return nil
-}
-
-func (m *KeyValuePair) IsZero() bool {
-
-	var1 := (*m == KeyValuePair{})
-	return var1
 }
 
 func init() {

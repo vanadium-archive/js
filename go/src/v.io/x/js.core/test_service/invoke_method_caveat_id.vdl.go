@@ -40,41 +40,35 @@ func (m *TestCaveatData) FillVDLTarget(t vdl.Target, tt *vdl.Type) error {
 		return err
 	}
 
-	var2 := (m.A == "")
-	if !var2 {
-		keyTarget3, fieldTarget4, err := fieldsTarget1.StartField("A")
-		if err != vdl.ErrFieldNoExist && err != nil {
+	keyTarget2, fieldTarget3, err := fieldsTarget1.StartField("A")
+	if err != vdl.ErrFieldNoExist && err != nil {
+		return err
+	}
+	if err != vdl.ErrFieldNoExist {
+		if err := fieldTarget3.FromString(string(m.A), vdl.StringType); err != nil {
 			return err
 		}
-		if err != vdl.ErrFieldNoExist {
-			if err := fieldTarget4.FromString(string(m.A), vdl.StringType); err != nil {
-				return err
-			}
-			if err := fieldsTarget1.FinishField(keyTarget3, fieldTarget4); err != nil {
-				return err
-			}
+		if err := fieldsTarget1.FinishField(keyTarget2, fieldTarget3); err != nil {
+			return err
 		}
 	}
-	var5 := (m.B == (*vom.RawBytes)(nil))
-	if !var5 {
-		keyTarget6, fieldTarget7, err := fieldsTarget1.StartField("B")
-		if err != vdl.ErrFieldNoExist && err != nil {
-			return err
-		}
-		if err != vdl.ErrFieldNoExist {
+	keyTarget4, fieldTarget5, err := fieldsTarget1.StartField("B")
+	if err != vdl.ErrFieldNoExist && err != nil {
+		return err
+	}
+	if err != vdl.ErrFieldNoExist {
 
-			if m.B == nil {
-				if err := fieldTarget7.FromNil(vdl.AnyType); err != nil {
-					return err
-				}
-			} else {
-				if err := m.B.FillVDLTarget(fieldTarget7, vdl.AnyType); err != nil {
-					return err
-				}
-			}
-			if err := fieldsTarget1.FinishField(keyTarget6, fieldTarget7); err != nil {
+		if m.B == nil {
+			if err := fieldTarget5.FromNil(vdl.AnyType); err != nil {
 				return err
 			}
+		} else {
+			if err := m.B.FillVDLTarget(fieldTarget5, vdl.AnyType); err != nil {
+				return err
+			}
+		}
+		if err := fieldsTarget1.FinishField(keyTarget4, fieldTarget5); err != nil {
+			return err
 		}
 	}
 	if err := t.FinishFields(fieldsTarget1); err != nil {
@@ -85,12 +79,6 @@ func (m *TestCaveatData) FillVDLTarget(t vdl.Target, tt *vdl.Type) error {
 
 func (m *TestCaveatData) MakeVDLTarget() vdl.Target {
 	return nil
-}
-
-func (m *TestCaveatData) IsZero() bool {
-
-	var1 := (*m == TestCaveatData{})
-	return var1
 }
 
 func init() {
