@@ -6,6 +6,10 @@ WSPR_ROOT := $(JIRI_ROOT)/release/go/src/v.io/x/ref/services/wspr
 SHELL := /bin/bash -e -o pipefail
 .DEFAULT_GOAL := all
 
+# NOTE: we run npm using 'node npm' to avoid relying on the shebang line in the
+# npm script, which can exceed the Linux shebang length limit on Jenkins.
+NPM := $(NODE_DIR)/bin/npm
+
 JS_FILES = $(shell find src -name "*.js" -o -name "*.css")
 
 define BROWSERIFY
@@ -147,8 +151,8 @@ clean:
 	@$(RM) -fr vanadium.zip build build-test
 
 node_modules: package.json | check-that-npm-is-in-path
-	@npm prune
-	@npm install --quiet
+	@node $(NPM) prune
+	@node $(NPM) install --quiet
 
 check-that-npm-is-in-path:
 	@which npm > /dev/null || { echo "npm is not in the path. Did you remember to run 'jiri profile install v23:nodejs'?"; exit 1; }

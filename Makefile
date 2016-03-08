@@ -15,6 +15,10 @@ SHELL := /bin/bash -e -o pipefail
 
 UNAME := $(shell uname)
 
+# NOTE: we run npm using 'node npm' to avoid relying on the shebang line in the
+# npm script, which can exceed the Linux shebang length limit on Jenkins.
+NPM := $(NODE_DIR)/bin/npm
+
 .DEFAULT_GOAL := all
 
 # Default browserify options: create a standalone bundle, and use sourcemaps.
@@ -294,7 +298,7 @@ docs-template: node_modules node_modules/ink-docstrap/node_modules/grunt node_mo
 	make docs
 
 node_modules/ink-docstrap/node_modules/grunt:
-	cd ${DOCSTRAP_LOC}; npm install
+	cd ${DOCSTRAP_LOC}; node $(NPM) install
 
 node_modules/ink-docstrap/bower_components:
 	cd ${DOCSTRAP_LOC}; ${NODE_BIN}/bower install
@@ -317,8 +321,8 @@ deploy-docs-staging: docs
 
 node_modules: package.json  check-that-npm-is-in-path
 ifndef NONPMUPDATE
-	@npm prune
-	@npm install --quiet || (rm -fr $(HOME)/.npm && npm install --quiet)
+	@node $(NPM) prune
+	@node $(NPM) install --quiet || (rm -fr $(HOME)/.npm && node $(NPM) install --quiet)
 	@touch node_modules
 endif
 
