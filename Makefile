@@ -1,4 +1,4 @@
-NODE_DIR := $(shell jiri v23-profile list --info Target.InstallationDir nodejs)
+NODE_DIR := $(shell jiri profile list --info Target.InstallationDir v23:nodejs)
 PATH := node_modules/.bin:$(NODE_DIR)/bin:$(PATH)
 
 NODE_BIN := $(JIRI_ROOT)/release/javascript/core/node_modules/.bin
@@ -323,7 +323,7 @@ ifndef NONPMUPDATE
 endif
 
 check-that-npm-is-in-path:
-	@which npm > /dev/null || { echo "npm is not in the path. Did you remember to run 'jiri v23-profile install nodejs'?"; exit 1; }
+	@which npm > /dev/null || { echo "npm is not in the path. Did you remember to run 'jiri profile install v23:nodejs'?"; exit 1; }
 
 .PHONY: all build clean dependency-check lint test
 .PHONY: test-integration test-integration-node test-integration-browser

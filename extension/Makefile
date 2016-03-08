@@ -1,4 +1,4 @@
-NODE_DIR := $(shell jiri v23-profile list --info Target.InstallationDir nodejs)
+NODE_DIR := $(shell jiri profile list --info Target.InstallationDir v23:nodejs)
 PATH := node_modules/.bin:${NODE_DIR}/bin:$(PATH)
 VDLPATH := $(JIRI_ROOT)/release/go/src
 VDLROOT := $(JIRI_ROOT)/release/go/src/v.io/v23/vdlroot
@@ -20,7 +20,7 @@ endef
 
 define COMPILE-NACL-PLUGIN
 	mkdir -p $(dir $2)
-	unset GOARCH GOOS; jiri -v go -v --profiles=nacl --target=amd64p32-nacl build -v -o $2 $1
+	unset GOARCH GOOS; jiri -v go -v --profiles=v23:nacl --target=amd64p32-nacl build -v -o $2 $1
 endef
 
 all: vanadium.zip
@@ -151,7 +151,7 @@ node_modules: package.json | check-that-npm-is-in-path
 	@npm install --quiet
 
 check-that-npm-is-in-path:
-	@which npm > /dev/null || { echo "npm is not in the path. Did you remember to run 'jiri v23-profile install nodejs'?"; exit 1; }
+	@which npm > /dev/null || { echo "npm is not in the path. Did you remember to run 'jiri profile install v23:nodejs'?"; exit 1; }
 
 .PHONY: all build build-dev clean dependency-check gen-vdl lint
 
