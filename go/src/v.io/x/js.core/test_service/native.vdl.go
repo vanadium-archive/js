@@ -8,13 +8,10 @@
 package test_service
 
 import (
-	// VDL system imports
+	"time"
 	"v.io/v23"
 	"v.io/v23/context"
 	"v.io/v23/rpc"
-
-	// VDL user imports
-	"time"
 	_ "v.io/v23/vdlroot/time"
 )
 

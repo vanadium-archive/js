@@ -8,15 +8,12 @@
 package stress
 
 import (
-	// VDL system imports
+	"time"
 	"v.io/v23"
 	"v.io/v23/context"
 	"v.io/v23/rpc"
-	"v.io/v23/vdl"
-
-	// VDL user imports
-	"time"
 	"v.io/v23/security/access"
+	"v.io/v23/vdl"
 	_ "v.io/v23/vdlroot/time"
 )
 
