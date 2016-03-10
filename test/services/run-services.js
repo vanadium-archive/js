@@ -99,7 +99,8 @@ Runner.prototype._setup = function(cb) {
     }
     runner.env.V23_CREDENTIALS = path.resolve('tmp/test-credentials');
     service('principal')
-      .exec('create -overwrite ' + runner.env.V23_CREDENTIALS + ' test',
+      .exec('create -with-passphrase=false -overwrite ' +
+             runner.env.V23_CREDENTIALS + ' test',
 	          function(err, stdout, stderr) {
               if (err) {
                 return runner.emit('error', err);
