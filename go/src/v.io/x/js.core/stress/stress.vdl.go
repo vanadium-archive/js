@@ -8,6 +8,7 @@
 package stress
 
 import (
+	"fmt"
 	"time"
 	"v.io/v23"
 	"v.io/v23/context"
@@ -29,7 +30,6 @@ func (StressResults) __VDLReflect(struct {
 }
 
 func (m *StressResults) FillVDLTarget(t vdl.Target, tt *vdl.Type) error {
-
 	if __VDLType_stress_v_io_x_js_core_stress_StressResults == nil || __VDLTypestress0 == nil {
 		panic("Initialization order error: types generated for FillVDLTarget not initialized. Consider moving caller to an init() block.")
 	}
@@ -81,6 +81,40 @@ func (m *StressResults) FillVDLTarget(t vdl.Target, tt *vdl.Type) error {
 }
 
 func (m *StressResults) MakeVDLTarget() vdl.Target {
+	return &StressResultsTarget{Value: m}
+}
+
+type StressResultsTarget struct {
+	Value *StressResults
+	vdl.TargetBase
+	vdl.FieldsTargetBase
+}
+
+func (t *StressResultsTarget) StartFields(tt *vdl.Type) (vdl.FieldsTarget, error) {
+	if !vdl.Compatible(tt, __VDLType_stress_v_io_x_js_core_stress_StressResults) {
+		return nil, fmt.Errorf("type %v incompatible with %v", tt, __VDLType_stress_v_io_x_js_core_stress_StressResults)
+	}
+	return t, nil
+}
+func (t *StressResultsTarget) StartField(name string) (key, field vdl.Target, _ error) {
+	switch name {
+	case "Iterations":
+		val, err := &vdl.Int64Target{Value: &t.Value.Iterations}, error(nil)
+		return nil, val, err
+	case "Qps":
+		val, err := &vdl.Float64Target{Value: &t.Value.Qps}, error(nil)
+		return nil, val, err
+	case "MsecsPerRpc":
+		val, err := &vdl.Float64Target{Value: &t.Value.MsecsPerRpc}, error(nil)
+		return nil, val, err
+	default:
+		return nil, nil, fmt.Errorf("field %s not in struct %v", name, __VDLType_stress_v_io_x_js_core_stress_StressResults)
+	}
+}
+func (t *StressResultsTarget) FinishField(_, _ vdl.Target) error {
+	return nil
+}
+func (t *StressResultsTarget) FinishFields(_ vdl.FieldsTarget) error {
 	return nil
 }
 

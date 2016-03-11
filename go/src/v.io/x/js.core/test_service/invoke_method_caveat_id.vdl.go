@@ -8,6 +8,8 @@
 package test_service
 
 import (
+	"fmt"
+	"reflect"
 	"v.io/v23"
 	"v.io/v23/context"
 	"v.io/v23/rpc"
@@ -28,7 +30,6 @@ func (TestCaveatData) __VDLReflect(struct {
 }
 
 func (m *TestCaveatData) FillVDLTarget(t vdl.Target, tt *vdl.Type) error {
-
 	if __VDLType_invoke_method_caveat_id_v_io_x_js_core_test_service_TestCaveatData == nil || __VDLTypeinvoke_method_caveat_id0 == nil {
 		panic("Initialization order error: types generated for FillVDLTarget not initialized. Consider moving caller to an init() block.")
 	}
@@ -75,6 +76,37 @@ func (m *TestCaveatData) FillVDLTarget(t vdl.Target, tt *vdl.Type) error {
 }
 
 func (m *TestCaveatData) MakeVDLTarget() vdl.Target {
+	return &TestCaveatDataTarget{Value: m}
+}
+
+type TestCaveatDataTarget struct {
+	Value *TestCaveatData
+	vdl.TargetBase
+	vdl.FieldsTargetBase
+}
+
+func (t *TestCaveatDataTarget) StartFields(tt *vdl.Type) (vdl.FieldsTarget, error) {
+	if !vdl.Compatible(tt, __VDLType_invoke_method_caveat_id_v_io_x_js_core_test_service_TestCaveatData) {
+		return nil, fmt.Errorf("type %v incompatible with %v", tt, __VDLType_invoke_method_caveat_id_v_io_x_js_core_test_service_TestCaveatData)
+	}
+	return t, nil
+}
+func (t *TestCaveatDataTarget) StartField(name string) (key, field vdl.Target, _ error) {
+	switch name {
+	case "A":
+		val, err := &vdl.StringTarget{Value: &t.Value.A}, error(nil)
+		return nil, val, err
+	case "B":
+		val, err := vdl.ReflectTarget(reflect.ValueOf(&t.Value.B))
+		return nil, val, err
+	default:
+		return nil, nil, fmt.Errorf("field %s not in struct %v", name, __VDLType_invoke_method_caveat_id_v_io_x_js_core_test_service_TestCaveatData)
+	}
+}
+func (t *TestCaveatDataTarget) FinishField(_, _ vdl.Target) error {
+	return nil
+}
+func (t *TestCaveatDataTarget) FinishFields(_ vdl.FieldsTarget) error {
 	return nil
 }
 

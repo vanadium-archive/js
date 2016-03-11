@@ -8,7 +8,9 @@
 package test_service
 
 import (
+	"fmt"
 	"io"
+	"reflect"
 	"v.io/v23"
 	"v.io/v23/context"
 	"v.io/v23/rpc"
@@ -24,13 +26,12 @@ func (KeyPageResult) __VDLReflect(struct {
 }) {
 }
 
-func (m KeyPageResult) FillVDLTarget(t vdl.Target, tt *vdl.Type) error {
-
+func (m *KeyPageResult) FillVDLTarget(t vdl.Target, tt *vdl.Type) error {
 	listTarget1, err := t.StartList(__VDLType_cache_v_io_x_js_core_test_service_KeyPageResult, 10)
 	if err != nil {
 		return err
 	}
-	for i, elem3 := range m {
+	for i, elem3 := range *m {
 		elemTarget2, err := listTarget1.StartElem(i)
 		if err != nil {
 			return err
@@ -48,7 +49,29 @@ func (m KeyPageResult) FillVDLTarget(t vdl.Target, tt *vdl.Type) error {
 	return nil
 }
 
-func (m KeyPageResult) MakeVDLTarget() vdl.Target {
+func (m *KeyPageResult) MakeVDLTarget() vdl.Target {
+	return &KeyPageResultTarget{Value: m}
+}
+
+type KeyPageResultTarget struct {
+	Value *KeyPageResult
+	vdl.TargetBase
+	vdl.ListTargetBase
+}
+
+func (t *KeyPageResultTarget) StartList(tt *vdl.Type, len int) (vdl.ListTarget, error) {
+	if !vdl.Compatible(tt, __VDLType_cache_v_io_x_js_core_test_service_KeyPageResult) {
+		return nil, fmt.Errorf("type %v incompatible with %v", tt, __VDLType_cache_v_io_x_js_core_test_service_KeyPageResult)
+	}
+	return t, nil
+}
+func (t *KeyPageResultTarget) StartElem(index int) (elem vdl.Target, _ error) {
+	return &vdl.StringTarget{Value: &(*t.Value)[index]}, error(nil)
+}
+func (t *KeyPageResultTarget) FinishElem(elem vdl.Target) error {
+	return nil
+}
+func (t *KeyPageResultTarget) FinishList(elem vdl.ListTarget) error {
 	return nil
 }
 
@@ -64,7 +87,6 @@ func (KeyValuePair) __VDLReflect(struct {
 }
 
 func (m *KeyValuePair) FillVDLTarget(t vdl.Target, tt *vdl.Type) error {
-
 	if __VDLType_cache_v_io_x_js_core_test_service_KeyValuePair == nil || __VDLTypecache0 == nil {
 		panic("Initialization order error: types generated for FillVDLTarget not initialized. Consider moving caller to an init() block.")
 	}
@@ -111,6 +133,37 @@ func (m *KeyValuePair) FillVDLTarget(t vdl.Target, tt *vdl.Type) error {
 }
 
 func (m *KeyValuePair) MakeVDLTarget() vdl.Target {
+	return &KeyValuePairTarget{Value: m}
+}
+
+type KeyValuePairTarget struct {
+	Value *KeyValuePair
+	vdl.TargetBase
+	vdl.FieldsTargetBase
+}
+
+func (t *KeyValuePairTarget) StartFields(tt *vdl.Type) (vdl.FieldsTarget, error) {
+	if !vdl.Compatible(tt, __VDLType_cache_v_io_x_js_core_test_service_KeyValuePair) {
+		return nil, fmt.Errorf("type %v incompatible with %v", tt, __VDLType_cache_v_io_x_js_core_test_service_KeyValuePair)
+	}
+	return t, nil
+}
+func (t *KeyValuePairTarget) StartField(name string) (key, field vdl.Target, _ error) {
+	switch name {
+	case "Key":
+		val, err := &vdl.StringTarget{Value: &t.Value.Key}, error(nil)
+		return nil, val, err
+	case "Value":
+		val, err := vdl.ReflectTarget(reflect.ValueOf(&t.Value.Value))
+		return nil, val, err
+	default:
+		return nil, nil, fmt.Errorf("field %s not in struct %v", name, __VDLType_cache_v_io_x_js_core_test_service_KeyValuePair)
+	}
+}
+func (t *KeyValuePairTarget) FinishField(_, _ vdl.Target) error {
+	return nil
+}
+func (t *KeyValuePairTarget) FinishFields(_ vdl.FieldsTarget) error {
 	return nil
 }
 
