@@ -115,6 +115,7 @@ func (t *StressResultsTarget) FinishField(_, _ vdl.Target) error {
 	return nil
 }
 func (t *StressResultsTarget) FinishFields(_ vdl.FieldsTarget) error {
+
 	return nil
 }
 

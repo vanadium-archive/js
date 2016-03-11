@@ -107,6 +107,7 @@ func (t *TestCaveatDataTarget) FinishField(_, _ vdl.Target) error {
 	return nil
 }
 func (t *TestCaveatDataTarget) FinishFields(_ vdl.FieldsTarget) error {
+
 	return nil
 }
 

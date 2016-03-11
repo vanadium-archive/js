@@ -72,6 +72,7 @@ func (t *KeyPageResultTarget) FinishElem(elem vdl.Target) error {
 	return nil
 }
 func (t *KeyPageResultTarget) FinishList(elem vdl.ListTarget) error {
+
 	return nil
 }
 
@@ -164,6 +165,7 @@ func (t *KeyValuePairTarget) FinishField(_, _ vdl.Target) error {
 	return nil
 }
 func (t *KeyValuePairTarget) FinishFields(_ vdl.FieldsTarget) error {
+
 	return nil
 }
 
