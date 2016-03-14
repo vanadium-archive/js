@@ -57,8 +57,10 @@ func (m *KeyPageResult) MakeVDLTarget() vdl.Target {
 	return &KeyPageResultTarget{Value: m}
 }
 
+// KeyPageResult
 type KeyPageResultTarget struct {
-	Value *KeyPageResult
+	Value      *KeyPageResult
+	elemTarget vdl.StringTarget
 	vdl.TargetBase
 	vdl.ListTargetBase
 }
@@ -70,7 +72,9 @@ func (t *KeyPageResultTarget) StartList(tt *vdl.Type, len int) (vdl.ListTarget, 
 	return t, nil
 }
 func (t *KeyPageResultTarget) StartElem(index int) (elem vdl.Target, _ error) {
-	return &vdl.StringTarget{Value: &(*t.Value)[index]}, error(nil)
+	t.elemTarget.Value = &(*t.Value)[index]
+	target, err := &t.elemTarget, error(nil)
+	return target, err
 }
 func (t *KeyPageResultTarget) FinishElem(elem vdl.Target) error {
 	return nil
@@ -142,7 +146,9 @@ func (m *KeyValuePair) MakeVDLTarget() vdl.Target {
 }
 
 type KeyValuePairTarget struct {
-	Value *KeyValuePair
+	Value     *KeyValuePair
+	keyTarget vdl.StringTarget
+
 	vdl.TargetBase
 	vdl.FieldsTargetBase
 }
@@ -156,11 +162,12 @@ func (t *KeyValuePairTarget) StartFields(tt *vdl.Type) (vdl.FieldsTarget, error)
 func (t *KeyValuePairTarget) StartField(name string) (key, field vdl.Target, _ error) {
 	switch name {
 	case "Key":
-		val, err := &vdl.StringTarget{Value: &t.Value.Key}, error(nil)
-		return nil, val, err
+		t.keyTarget.Value = &t.Value.Key
+		target, err := &t.keyTarget, error(nil)
+		return nil, target, err
 	case "Value":
-		val, err := vdl.ReflectTarget(reflect.ValueOf(&t.Value.Value))
-		return nil, val, err
+		target, err := vdl.ReflectTarget(reflect.ValueOf(&t.Value.Value))
+		return nil, target, err
 	default:
 		return nil, nil, fmt.Errorf("field %s not in struct %v", name, __VDLType_v_io_x_js_core_test_service_KeyValuePair)
 	}
@@ -234,7 +241,9 @@ func (m *TestCaveatData) MakeVDLTarget() vdl.Target {
 }
 
 type TestCaveatDataTarget struct {
-	Value *TestCaveatData
+	Value   *TestCaveatData
+	aTarget vdl.StringTarget
+
 	vdl.TargetBase
 	vdl.FieldsTargetBase
 }
@@ -248,11 +257,12 @@ func (t *TestCaveatDataTarget) StartFields(tt *vdl.Type) (vdl.FieldsTarget, erro
 func (t *TestCaveatDataTarget) StartField(name string) (key, field vdl.Target, _ error) {
 	switch name {
 	case "A":
-		val, err := &vdl.StringTarget{Value: &t.Value.A}, error(nil)
-		return nil, val, err
+		t.aTarget.Value = &t.Value.A
+		target, err := &t.aTarget, error(nil)
+		return nil, target, err
 	case "B":
-		val, err := vdl.ReflectTarget(reflect.ValueOf(&t.Value.B))
-		return nil, val, err
+		target, err := vdl.ReflectTarget(reflect.ValueOf(&t.Value.B))
+		return nil, target, err
 	default:
 		return nil, nil, fmt.Errorf("field %s not in struct %v", name, __VDLType_v_io_x_js_core_test_service_TestCaveatData)
 	}

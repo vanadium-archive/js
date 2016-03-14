@@ -85,7 +85,10 @@ func (m *StressResults) MakeVDLTarget() vdl.Target {
 }
 
 type StressResultsTarget struct {
-	Value *StressResults
+	Value             *StressResults
+	iterationsTarget  vdl.Int64Target
+	qpsTarget         vdl.Float64Target
+	msecsPerRpcTarget vdl.Float64Target
 	vdl.TargetBase
 	vdl.FieldsTargetBase
 }
@@ -99,14 +102,17 @@ func (t *StressResultsTarget) StartFields(tt *vdl.Type) (vdl.FieldsTarget, error
 func (t *StressResultsTarget) StartField(name string) (key, field vdl.Target, _ error) {
 	switch name {
 	case "Iterations":
-		val, err := &vdl.Int64Target{Value: &t.Value.Iterations}, error(nil)
-		return nil, val, err
+		t.iterationsTarget.Value = &t.Value.Iterations
+		target, err := &t.iterationsTarget, error(nil)
+		return nil, target, err
 	case "Qps":
-		val, err := &vdl.Float64Target{Value: &t.Value.Qps}, error(nil)
-		return nil, val, err
+		t.qpsTarget.Value = &t.Value.Qps
+		target, err := &t.qpsTarget, error(nil)
+		return nil, target, err
 	case "MsecsPerRpc":
-		val, err := &vdl.Float64Target{Value: &t.Value.MsecsPerRpc}, error(nil)
-		return nil, val, err
+		t.msecsPerRpcTarget.Value = &t.Value.MsecsPerRpc
+		target, err := &t.msecsPerRpcTarget, error(nil)
+		return nil, target, err
 	default:
 		return nil, nil, fmt.Errorf("field %s not in struct %v", name, __VDLType_v_io_x_js_core_stress_StressResults)
 	}
