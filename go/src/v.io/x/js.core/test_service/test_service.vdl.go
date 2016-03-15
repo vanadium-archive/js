@@ -66,6 +66,7 @@ type KeyPageResultTarget struct {
 }
 
 func (t *KeyPageResultTarget) StartList(tt *vdl.Type, len int) (vdl.ListTarget, error) {
+
 	if !vdl.Compatible(tt, __VDLType_v_io_x_js_core_test_service_KeyPageResult) {
 		return nil, fmt.Errorf("type %v incompatible with %v", tt, __VDLType_v_io_x_js_core_test_service_KeyPageResult)
 	}
@@ -154,6 +155,7 @@ type KeyValuePairTarget struct {
 }
 
 func (t *KeyValuePairTarget) StartFields(tt *vdl.Type) (vdl.FieldsTarget, error) {
+
 	if !vdl.Compatible(tt, __VDLType_v_io_x_js_core_test_service_KeyValuePair) {
 		return nil, fmt.Errorf("type %v incompatible with %v", tt, __VDLType_v_io_x_js_core_test_service_KeyValuePair)
 	}
@@ -249,6 +251,7 @@ type TestCaveatDataTarget struct {
 }
 
 func (t *TestCaveatDataTarget) StartFields(tt *vdl.Type) (vdl.FieldsTarget, error) {
+
 	if !vdl.Compatible(tt, __VDLType_v_io_x_js_core_test_service_TestCaveatData) {
 		return nil, fmt.Errorf("type %v incompatible with %v", tt, __VDLType_v_io_x_js_core_test_service_TestCaveatData)
 	}

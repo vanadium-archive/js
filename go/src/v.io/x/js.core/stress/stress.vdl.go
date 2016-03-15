@@ -94,6 +94,7 @@ type StressResultsTarget struct {
 }
 
 func (t *StressResultsTarget) StartFields(tt *vdl.Type) (vdl.FieldsTarget, error) {
+
 	if !vdl.Compatible(tt, __VDLType_v_io_x_js_core_stress_StressResults) {
 		return nil, fmt.Errorf("type %v incompatible with %v", tt, __VDLType_v_io_x_js_core_stress_StressResults)
 	}
