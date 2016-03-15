@@ -18,6 +18,11 @@ import (
 	_ "v.io/v23/vdlroot/time"
 )
 
+var _ = __VDLInit() // Must be first; see __VDLInit comments for details.
+
+//////////////////////////////////////////////////
+// Type definitions
+
 type StressResults struct {
 	Iterations  int64
 	Qps         float64
@@ -30,9 +35,6 @@ func (StressResults) __VDLReflect(struct {
 }
 
 func (m *StressResults) FillVDLTarget(t vdl.Target, tt *vdl.Type) error {
-	if __VDLType_v_io_x_js_core_stress_StressResults == nil || __VDLType0 == nil {
-		panic("Initialization order error: types generated for FillVDLTarget not initialized. Consider moving caller to an init() block.")
-	}
 	fieldsTarget1, err := t.StartFields(tt)
 	if err != nil {
 		return err
@@ -43,7 +45,7 @@ func (m *StressResults) FillVDLTarget(t vdl.Target, tt *vdl.Type) error {
 		return err
 	}
 	if err != vdl.ErrFieldNoExist {
-		if err := fieldTarget3.FromInt(int64(m.Iterations), vdl.Int64Type); err != nil {
+		if err := fieldTarget3.FromInt(int64(m.Iterations), tt.NonOptional().Field(0).Type); err != nil {
 			return err
 		}
 		if err := fieldsTarget1.FinishField(keyTarget2, fieldTarget3); err != nil {
@@ -55,7 +57,7 @@ func (m *StressResults) FillVDLTarget(t vdl.Target, tt *vdl.Type) error {
 		return err
 	}
 	if err != vdl.ErrFieldNoExist {
-		if err := fieldTarget5.FromFloat(float64(m.Qps), vdl.Float64Type); err != nil {
+		if err := fieldTarget5.FromFloat(float64(m.Qps), tt.NonOptional().Field(1).Type); err != nil {
 			return err
 		}
 		if err := fieldsTarget1.FinishField(keyTarget4, fieldTarget5); err != nil {
@@ -67,7 +69,7 @@ func (m *StressResults) FillVDLTarget(t vdl.Target, tt *vdl.Type) error {
 		return err
 	}
 	if err != vdl.ErrFieldNoExist {
-		if err := fieldTarget7.FromFloat(float64(m.MsecsPerRpc), vdl.Float64Type); err != nil {
+		if err := fieldTarget7.FromFloat(float64(m.MsecsPerRpc), tt.NonOptional().Field(2).Type); err != nil {
 			return err
 		}
 		if err := fieldsTarget1.FinishField(keyTarget6, fieldTarget7); err != nil {
@@ -95,8 +97,8 @@ type StressResultsTarget struct {
 
 func (t *StressResultsTarget) StartFields(tt *vdl.Type) (vdl.FieldsTarget, error) {
 
-	if !vdl.Compatible(tt, __VDLType_v_io_x_js_core_stress_StressResults) {
-		return nil, fmt.Errorf("type %v incompatible with %v", tt, __VDLType_v_io_x_js_core_stress_StressResults)
+	if ttWant := vdl.TypeOf((*StressResults)(nil)).Elem(); !vdl.Compatible(tt, ttWant) {
+		return nil, fmt.Errorf("type %v incompatible with %v", tt, ttWant)
 	}
 	return t, nil
 }
@@ -115,7 +117,7 @@ func (t *StressResultsTarget) StartField(name string) (key, field vdl.Target, _ 
 		target, err := &t.msecsPerRpcTarget, error(nil)
 		return nil, target, err
 	default:
-		return nil, nil, fmt.Errorf("field %s not in struct %v", name, __VDLType_v_io_x_js_core_stress_StressResults)
+		return nil, nil, fmt.Errorf("field %s not in struct v.io/x/js.core/stress.StressResults", name)
 	}
 }
 func (t *StressResultsTarget) FinishField(_, _ vdl.Target) error {
@@ -126,15 +128,8 @@ func (t *StressResultsTarget) FinishFields(_ vdl.FieldsTarget) error {
 	return nil
 }
 
-func init() {
-	vdl.Register((*StressResults)(nil))
-}
-
-var __VDLType0 *vdl.Type = vdl.TypeOf((*StressResults)(nil))
-var __VDLType_v_io_x_js_core_stress_StressResults *vdl.Type = vdl.TypeOf(StressResults{})
-
-func __VDLEnsureNativeBuilt() {
-}
+//////////////////////////////////////////////////
+// Interface definitions
 
 // StressClientMethods is the client interface
 // containing Stress methods.
@@ -264,4 +259,30 @@ var descStress = rpc.InterfaceDesc{
 			Tags: []*vdl.Value{vdl.ValueOf(access.Tag("Read"))},
 		},
 	},
+}
+
+var __VDLInitCalled bool
+
+// __VDLInit performs vdl initialization.  It is safe to call multiple times.
+// If you have an init ordering issue, just insert the following line verbatim
+// into your source files in this package, right after the "package foo" clause:
+//
+//    var _ = __VDLInit()
+//
+// The purpose of this function is to ensure that vdl initialization occurs in
+// the right order, and very early in the init sequence.  In particular, vdl
+// registration and package variable initialization needs to occur before
+// functions like vdl.TypeOf will work properly.
+//
+// This function returns a dummy value, so that it can be used to initialize the
+// first var in the file, to take advantage of Go's defined init order.
+func __VDLInit() struct{} {
+	if __VDLInitCalled {
+		return struct{}{}
+	}
+
+	// Register types.
+	vdl.Register((*StressResults)(nil))
+
+	return struct{}{}
 }

@@ -22,6 +22,11 @@ import (
 	"v.io/v23/vom"
 )
 
+var _ = __VDLInit() // Must be first; see __VDLInit comments for details.
+
+//////////////////////////////////////////////////
+// Type definitions
+
 // KeyPageResult is a page of 10 keys.
 type KeyPageResult [10]string
 
@@ -31,7 +36,7 @@ func (KeyPageResult) __VDLReflect(struct {
 }
 
 func (m *KeyPageResult) FillVDLTarget(t vdl.Target, tt *vdl.Type) error {
-	listTarget1, err := t.StartList(__VDLType_v_io_x_js_core_test_service_KeyPageResult, 10)
+	listTarget1, err := t.StartList(tt, 10)
 	if err != nil {
 		return err
 	}
@@ -40,7 +45,7 @@ func (m *KeyPageResult) FillVDLTarget(t vdl.Target, tt *vdl.Type) error {
 		if err != nil {
 			return err
 		}
-		if err := elemTarget2.FromString(string(elem3), vdl.StringType); err != nil {
+		if err := elemTarget2.FromString(string(elem3), tt.NonOptional().Elem()); err != nil {
 			return err
 		}
 		if err := listTarget1.FinishElem(elemTarget2); err != nil {
@@ -67,8 +72,8 @@ type KeyPageResultTarget struct {
 
 func (t *KeyPageResultTarget) StartList(tt *vdl.Type, len int) (vdl.ListTarget, error) {
 
-	if !vdl.Compatible(tt, __VDLType_v_io_x_js_core_test_service_KeyPageResult) {
-		return nil, fmt.Errorf("type %v incompatible with %v", tt, __VDLType_v_io_x_js_core_test_service_KeyPageResult)
+	if ttWant := vdl.TypeOf((*KeyPageResult)(nil)); !vdl.Compatible(tt, ttWant) {
+		return nil, fmt.Errorf("type %v incompatible with %v", tt, ttWant)
 	}
 	return t, nil
 }
@@ -97,9 +102,6 @@ func (KeyValuePair) __VDLReflect(struct {
 }
 
 func (m *KeyValuePair) FillVDLTarget(t vdl.Target, tt *vdl.Type) error {
-	if __VDLType_v_io_x_js_core_test_service_KeyValuePair == nil || __VDLType0 == nil {
-		panic("Initialization order error: types generated for FillVDLTarget not initialized. Consider moving caller to an init() block.")
-	}
 	fieldsTarget1, err := t.StartFields(tt)
 	if err != nil {
 		return err
@@ -110,7 +112,7 @@ func (m *KeyValuePair) FillVDLTarget(t vdl.Target, tt *vdl.Type) error {
 		return err
 	}
 	if err != vdl.ErrFieldNoExist {
-		if err := fieldTarget3.FromString(string(m.Key), vdl.StringType); err != nil {
+		if err := fieldTarget3.FromString(string(m.Key), tt.NonOptional().Field(0).Type); err != nil {
 			return err
 		}
 		if err := fieldsTarget1.FinishField(keyTarget2, fieldTarget3); err != nil {
@@ -124,11 +126,11 @@ func (m *KeyValuePair) FillVDLTarget(t vdl.Target, tt *vdl.Type) error {
 	if err != vdl.ErrFieldNoExist {
 
 		if m.Value == nil {
-			if err := fieldTarget5.FromNil(vdl.AnyType); err != nil {
+			if err := fieldTarget5.FromNil(tt.NonOptional().Field(1).Type); err != nil {
 				return err
 			}
 		} else {
-			if err := m.Value.FillVDLTarget(fieldTarget5, vdl.AnyType); err != nil {
+			if err := m.Value.FillVDLTarget(fieldTarget5, tt.NonOptional().Field(1).Type); err != nil {
 				return err
 			}
 		}
@@ -156,8 +158,8 @@ type KeyValuePairTarget struct {
 
 func (t *KeyValuePairTarget) StartFields(tt *vdl.Type) (vdl.FieldsTarget, error) {
 
-	if !vdl.Compatible(tt, __VDLType_v_io_x_js_core_test_service_KeyValuePair) {
-		return nil, fmt.Errorf("type %v incompatible with %v", tt, __VDLType_v_io_x_js_core_test_service_KeyValuePair)
+	if ttWant := vdl.TypeOf((*KeyValuePair)(nil)).Elem(); !vdl.Compatible(tt, ttWant) {
+		return nil, fmt.Errorf("type %v incompatible with %v", tt, ttWant)
 	}
 	return t, nil
 }
@@ -171,7 +173,7 @@ func (t *KeyValuePairTarget) StartField(name string) (key, field vdl.Target, _ e
 		target, err := vdl.ReflectTarget(reflect.ValueOf(&t.Value.Value))
 		return nil, target, err
 	default:
-		return nil, nil, fmt.Errorf("field %s not in struct %v", name, __VDLType_v_io_x_js_core_test_service_KeyValuePair)
+		return nil, nil, fmt.Errorf("field %s not in struct v.io/x/js.core/test_service.KeyValuePair", name)
 	}
 }
 func (t *KeyValuePairTarget) FinishField(_, _ vdl.Target) error {
@@ -193,9 +195,6 @@ func (TestCaveatData) __VDLReflect(struct {
 }
 
 func (m *TestCaveatData) FillVDLTarget(t vdl.Target, tt *vdl.Type) error {
-	if __VDLType_v_io_x_js_core_test_service_TestCaveatData == nil || __VDLType1 == nil {
-		panic("Initialization order error: types generated for FillVDLTarget not initialized. Consider moving caller to an init() block.")
-	}
 	fieldsTarget1, err := t.StartFields(tt)
 	if err != nil {
 		return err
@@ -206,7 +205,7 @@ func (m *TestCaveatData) FillVDLTarget(t vdl.Target, tt *vdl.Type) error {
 		return err
 	}
 	if err != vdl.ErrFieldNoExist {
-		if err := fieldTarget3.FromString(string(m.A), vdl.StringType); err != nil {
+		if err := fieldTarget3.FromString(string(m.A), tt.NonOptional().Field(0).Type); err != nil {
 			return err
 		}
 		if err := fieldsTarget1.FinishField(keyTarget2, fieldTarget3); err != nil {
@@ -220,11 +219,11 @@ func (m *TestCaveatData) FillVDLTarget(t vdl.Target, tt *vdl.Type) error {
 	if err != vdl.ErrFieldNoExist {
 
 		if m.B == nil {
-			if err := fieldTarget5.FromNil(vdl.AnyType); err != nil {
+			if err := fieldTarget5.FromNil(tt.NonOptional().Field(1).Type); err != nil {
 				return err
 			}
 		} else {
-			if err := m.B.FillVDLTarget(fieldTarget5, vdl.AnyType); err != nil {
+			if err := m.B.FillVDLTarget(fieldTarget5, tt.NonOptional().Field(1).Type); err != nil {
 				return err
 			}
 		}
@@ -252,8 +251,8 @@ type TestCaveatDataTarget struct {
 
 func (t *TestCaveatDataTarget) StartFields(tt *vdl.Type) (vdl.FieldsTarget, error) {
 
-	if !vdl.Compatible(tt, __VDLType_v_io_x_js_core_test_service_TestCaveatData) {
-		return nil, fmt.Errorf("type %v incompatible with %v", tt, __VDLType_v_io_x_js_core_test_service_TestCaveatData)
+	if ttWant := vdl.TypeOf((*TestCaveatData)(nil)).Elem(); !vdl.Compatible(tt, ttWant) {
+		return nil, fmt.Errorf("type %v incompatible with %v", tt, ttWant)
 	}
 	return t, nil
 }
@@ -267,7 +266,7 @@ func (t *TestCaveatDataTarget) StartField(name string) (key, field vdl.Target, _
 		target, err := vdl.ReflectTarget(reflect.ValueOf(&t.Value.B))
 		return nil, target, err
 	default:
-		return nil, nil, fmt.Errorf("field %s not in struct %v", name, __VDLType_v_io_x_js_core_test_service_TestCaveatData)
+		return nil, nil, fmt.Errorf("field %s not in struct v.io/x/js.core/test_service.TestCaveatData", name)
 	}
 }
 func (t *TestCaveatDataTarget) FinishField(_, _ vdl.Target) error {
@@ -278,20 +277,8 @@ func (t *TestCaveatDataTarget) FinishFields(_ vdl.FieldsTarget) error {
 	return nil
 }
 
-func init() {
-	vdl.Register((*KeyPageResult)(nil))
-	vdl.Register((*KeyValuePair)(nil))
-	vdl.Register((*TestCaveatData)(nil))
-}
-
-var __VDLType0 *vdl.Type = vdl.TypeOf((*KeyValuePair)(nil))
-var __VDLType1 *vdl.Type = vdl.TypeOf((*TestCaveatData)(nil))
-var __VDLType_v_io_x_js_core_test_service_KeyPageResult *vdl.Type = vdl.TypeOf(KeyPageResult{})
-var __VDLType_v_io_x_js_core_test_service_KeyValuePair *vdl.Type = vdl.TypeOf(KeyValuePair{})
-var __VDLType_v_io_x_js_core_test_service_TestCaveatData *vdl.Type = vdl.TypeOf(TestCaveatData{})
-
-func __VDLEnsureNativeBuilt() {
-}
+//////////////////////////////////////////////////
+// Const definitions
 
 var ConditionallyValidatingTestCaveat = security.CaveatDescriptor{
 	Id: uniqueid.Id{
@@ -312,8 +299,11 @@ var ConditionallyValidatingTestCaveat = security.CaveatDescriptor{
 		238,
 		255,
 	},
-	ParamType: vdl.TypeOf(TestCaveatData{}),
+	ParamType: vdl.TypeOf((*TestCaveatData)(nil)).Elem(),
 }
+
+//////////////////////////////////////////////////
+// Interface definitions
 
 // CacheClientMethods is the client interface
 // containing Cache methods.
@@ -1728,4 +1718,32 @@ var descNativeTest = rpc.InterfaceDesc{
 			},
 		},
 	},
+}
+
+var __VDLInitCalled bool
+
+// __VDLInit performs vdl initialization.  It is safe to call multiple times.
+// If you have an init ordering issue, just insert the following line verbatim
+// into your source files in this package, right after the "package foo" clause:
+//
+//    var _ = __VDLInit()
+//
+// The purpose of this function is to ensure that vdl initialization occurs in
+// the right order, and very early in the init sequence.  In particular, vdl
+// registration and package variable initialization needs to occur before
+// functions like vdl.TypeOf will work properly.
+//
+// This function returns a dummy value, so that it can be used to initialize the
+// first var in the file, to take advantage of Go's defined init order.
+func __VDLInit() struct{} {
+	if __VDLInitCalled {
+		return struct{}{}
+	}
+
+	// Register types.
+	vdl.Register((*KeyPageResult)(nil))
+	vdl.Register((*KeyValuePair)(nil))
+	vdl.Register((*TestCaveatData)(nil))
+
+	return struct{}{}
 }
