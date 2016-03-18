@@ -277,6 +277,13 @@ func (t *TestCaveatDataTarget) FinishFields(_ vdl.FieldsTarget) error {
 	return nil
 }
 
+// Create zero values for each type.
+var (
+	__VDLZeroKeyPageResult  = KeyPageResult{}
+	__VDLZeroKeyValuePair   = KeyValuePair{}
+	__VDLZeroTestCaveatData = TestCaveatData{}
+)
+
 //////////////////////////////////////////////////
 // Const definitions
 
