@@ -13,11 +13,12 @@ import (
 	"v.io/x/ref/lib/flags"
 	"v.io/x/ref/lib/signals"
 	_ "v.io/x/ref/runtime/factories/generic"
+	"v.io/x/ref/test"
 )
 
 func main() {
 	flags.SetDefaultHostPort("127.0.0.1:0")
-	ctx, shutdown := v23.Init()
+	ctx, shutdown := test.V23Init()
 	defer shutdown()
 
 	ctx, s, err := v23.WithNewDispatchingServer(ctx, "test_service", NewDispatcher())
