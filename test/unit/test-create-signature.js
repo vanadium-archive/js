@@ -5,7 +5,7 @@
 /**
  * @fileoverview Tests of generating signature with multiple descriptions
  */
-var test = require('prova');
+var test = require('tape');
 var createSignature = require('../../src/vdl/create-signature');
 var vdl = require('../../src/vdl');
 var stringify = require('../../src/vdl/stringify');

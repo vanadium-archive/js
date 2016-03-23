@@ -8,7 +8,7 @@
  * Tests of the shallow convertTonative are performed in canonicalize.
  */
 
-var test = require('prova');
+var test = require('tape');
 
 var registry = require('./../../src/vdl/registry.js');
 var types = require('./../../src/vdl/types.js');

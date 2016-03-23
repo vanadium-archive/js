@@ -6,7 +6,7 @@
  * @fileoverview Tests of signature generation.
  */
 
-var test = require('prova');
+var test = require('tape');
 var Interface = require('../../src/vdl/interface');
 var vdl = require('../../src/vdl');
 var stringify = require('../../src/vdl/stringify');

@@ -6,7 +6,7 @@
  * @fileoverview Tests create-constructor.js
  */
 
-var test = require('prova');
+var test = require('tape');
 
 var BigInt = require('./../../src/vdl/big-int.js');
 var createConstructor = require('./../../src/vdl/create-constructor.js');

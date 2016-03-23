@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-var test = require('prova');
+var test = require('tape');
 var verror = require('../../src/gen-vdl/v.io/v23/verror');
 var ec = require('../../src/vdl/error-conversion');
 var types = require('../../src/vdl/types');

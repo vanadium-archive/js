@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-var test = require('prova');
+var test = require('tape');
 var names = require('../../src/naming/util');
 var ep = '@6@tcp@127.0.0.1:22@@@@@s@dev.v.io:blessing,v.io:blessing:b2@@';
 var rootedEp = '/' + ep;

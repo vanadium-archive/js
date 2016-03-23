@@ -6,7 +6,7 @@
  * @fileoverview Tests for toString in type.js and types.js
  */
 
-var test = require('prova');
+var test = require('tape');
 var testCases = require('./type-test-cases.js');
 
 var Type = require('./../../src/vdl/type.js');

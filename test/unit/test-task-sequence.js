@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-var test = require('prova');
+var test = require('tape');
 var Promise = require('../../src/lib/promise');
 var TaskSequence = require('../../src/lib/task-sequence');
 var promiseFor = require('../../src/lib/async-helper').promiseFor;

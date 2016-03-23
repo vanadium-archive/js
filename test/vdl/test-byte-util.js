@@ -6,7 +6,7 @@
  * @fileoverview Tests for byte util.
  */
 
-var test = require('prova');
+var test = require('tape');
 
 var ByteUtil = require('./../../src/vdl/byte-util.js');
 

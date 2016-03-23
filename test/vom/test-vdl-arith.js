@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-var test = require('prova');
+var test = require('tape');
 var vom = require('../../src/vom');
 var IfaceSigType =
   require('../../src/gen-vdl/v.io/v23/vdlroot/signature').Interface;

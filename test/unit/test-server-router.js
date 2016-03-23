@@ -6,7 +6,7 @@
  * @fileoveriew Tests server_router.js.
  */
 
-var test = require('prova');
+var test = require('tape');
 var Router = require('../../src/rpc/server-router');
 var Server = require('../../src/rpc/server');
 var Outgoing = require('../../src/proxy/message-type').Outgoing;

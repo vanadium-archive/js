@@ -6,7 +6,7 @@
  * @fileoverview Tests for stream reader.
  */
 
-var test = require('prova');
+var test = require('tape');
 
 var StreamReader = require('./../../src/vom/stream-reader.js');
 var ByteUtil = require('./../../src/vdl/byte-util.js');

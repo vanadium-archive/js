@@ -6,7 +6,7 @@
  * @fileoverview Tests for TypeEncoder and TypeDecoder.
  */
 
-var test = require('prova');
+var test = require('tape');
 
 var stringify = require('./../../src/vdl/stringify.js');
 var types = require('./../../src/vdl/types.js');

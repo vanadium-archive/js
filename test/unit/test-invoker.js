@@ -9,7 +9,7 @@
  * compatible with that expected by the JavaScript signature generator.
  */
 
-var test = require('prova');
+var test = require('tape');
 var Invoker = require('../../src/invocation/invoker.js');
 var Context = require('../../src/context').Context;
 var vdl = require('../../src/vdl');

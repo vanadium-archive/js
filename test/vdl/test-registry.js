@@ -6,7 +6,7 @@
  * @fileoverview Tests for registry.js
  */
 
-var test = require('prova');
+var test = require('tape');
 
 var registry = require('./../../src/vdl/registry.js');
 var registryMultipleRequire = require('./../../src/vdl/registry.js');

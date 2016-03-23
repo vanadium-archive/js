@@ -8,7 +8,7 @@
  * cache signatures per object name in JavaScript.
  * Scope of the cache is per proxy connection.
  */
-var test = require('prova');
+var test = require('tape');
 var context = require('../../src/context');
 var createMockProxy = require('./mock-proxy');
 var Outgoing = require('../../src/proxy/message-type').Outgoing;

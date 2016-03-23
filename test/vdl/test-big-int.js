@@ -6,7 +6,7 @@
  * @fileoverview Tests for BigInt.
  */
 
-var test = require('prova');
+var test = require('tape');
 
 var BigInt = require('./../../src/vdl/big-int.js');
 

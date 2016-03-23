@@ -6,7 +6,7 @@
  * @fileoverview Tests for the uniqueid library.
  */
 
-var test = require('prova');
+var test = require('tape');
 var uniqueid = require('../../src/lib/uniqueid');
 var vdl = require('../../src/gen-vdl/v.io/v23/uniqueid');
 var typeutil = require('../../src/vdl/type-util');

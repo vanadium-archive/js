@@ -6,7 +6,7 @@
  * @fileoverview Tests for stringify.js
  */
 
-var test = require('prova');
+var test = require('tape');
 
 var stringify = require('./../../src/vdl/stringify.js');
 

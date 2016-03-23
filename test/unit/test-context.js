@@ -6,7 +6,7 @@
  * @fileoverview Tests for the context library.
  */
 
-var test = require('prova');
+var test = require('tape');
 var context = require('../../src/context');
 var verror = require('../../src/gen-vdl/v.io/v23/verror');
 

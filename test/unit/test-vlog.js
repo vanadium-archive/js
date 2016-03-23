@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-var test = require('prova');
+var test = require('tape');
 var vlog = require('../../src/lib/vlog').logger;
 var Vlog = require('../../src/lib/vlog').Vlog;
 var levels = require('../../src/lib/vlog').levels;

@@ -3,7 +3,7 @@
 // license that can be found in the LICENSE file.
 
 
-var test = require('prova');
+var test = require('tape');
 var permissionsAuthorizer =
   require('../../src/security/access/permissions-authorizer');
 var access = require('../../src/gen-vdl/v.io/v23/security/access');

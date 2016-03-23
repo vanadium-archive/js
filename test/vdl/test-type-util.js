@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-var test = require('prova');
+var test = require('tape');
 
 var typeUtil = require('../../src/vdl/type-util.js');
 var vdl = require('../../src/vdl');

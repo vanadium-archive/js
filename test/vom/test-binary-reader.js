@@ -6,7 +6,7 @@
  * @fileoverview Tests for binary reader.
  */
 
-var test = require('prova');
+var test = require('tape');
 
 var BinaryReader = require('./../../src/vom/binary-reader.js');
 var ByteUtil = require('./../../src/vdl/byte-util.js');

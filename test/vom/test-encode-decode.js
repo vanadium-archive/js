@@ -6,7 +6,7 @@
  * @fileoverview Tests of VOM encoding and decoding.
  */
 
-var test = require('prova');
+var test = require('tape');
 
 var kind = require('./../../src/vdl/kind.js');
 var registry = require('./../../src/vdl/registry.js');

@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-var test = require('prova');
+var test = require('tape');
 var types = require('../../src/vdl/types');
 var kind = require('../../src/vdl/kind');
 var vdlSecurity = require('../vdl-out/v.io/v23/security');

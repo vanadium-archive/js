@@ -6,7 +6,7 @@
  * @fileoverview Tests for the vtrace library.
  */
 
-var test = require('prova');
+var test = require('tape');
 var context = require('../../src/context');
 var vtrace = require('../../src/vtrace');
 var vdl = require('../../src/gen-vdl/v.io/v23/vtrace');

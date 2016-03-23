@@ -6,7 +6,7 @@
  * @fileoverview Tests for encoder and decoder compatibility.
  */
 
-var test = require('prova');
+var test = require('tape');
 
 var testdata80 = require('../vdl-out/v.io/v23/vom/testdata/data80');
 var testdata81 = require('../vdl-out/v.io/v23/vom/testdata/data81');

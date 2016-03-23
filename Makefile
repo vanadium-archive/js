@@ -1,13 +1,11 @@
-NODE_DIR := $(shell jiri profile list --info Target.InstallationDir v23:nodejs)
-PATH := node_modules/.bin:$(NODE_DIR)/bin:$(PATH)
+NODE_BIN := $(shell jiri profile env --profiles=v23:base,v23:nodejs NODE_BIN=)
+PATH := node_modules/.bin:$(NODE_BIN):$(PATH)
 
-NODE_BIN := $(JIRI_ROOT)/release/javascript/core/node_modules/.bin
-GOPATH := $(JIRI_ROOT)/release/javascript/core/go
-GOBIN := $(JIRI_ROOT)/release/javascript/core/go/bin
+NODE_MODULES_BIN := $(JIRI_ROOT)/release/javascript/core/node_modules/.bin
 VDLPATH := $(JIRI_ROOT)/release/go/src:$(GOPATH)/src
 VDLROOT := $(JIRI_ROOT)/release/go/src/v.io/v23/vdlroot
 VGO := GOPATH="$(GOPATH)" VDLPATH="$(VDLPATH)" jiri go
-GO_FILES := $(shell find go/src $(JIRI_ROOT)/release/go/src/v.io -name "*.go")
+GO_FILES := $(shell find $(JIRI_ROOT)/release/go/src/v.io -name "*.go")
 
 NODE_MODULE_JS_FILES := $(shell find node_modules -name *.js | sed 's/ /\\ /')
 
@@ -17,56 +15,11 @@ UNAME := $(shell uname)
 
 # NOTE: we run npm using 'node npm' to avoid relying on the shebang line in the
 # npm script, which can exceed the Linux shebang length limit on Jenkins.
-NPM := $(NODE_DIR)/bin/npm
+NPM := $(NODE_BIN)/npm
 
 .DEFAULT_GOAL := all
 
-# Default browserify options: create a standalone bundle, and use sourcemaps.
-BROWSERIFY_OPTS := --standalone vanadium --debug
-# Names that should not be mangled by minification.
-RESERVED_NAMES := 'context,ctx,callback,cb,$$stream,serverCall'
-# Don't mangle RESERVED_NAMES, and screw ie8.
-MANGLE_OPTS := --mangle [--except $(RESERVED_NAMES) --screw_ie8 ]
-# Don't remove unused variables from function arguments, which could mess up signatures.
-# Also don't evaulate constant expressions, since we rely on them to conditionally require modules only in node.
-COMPRESS_OPTS := --compress [ --no-unused --no-evaluate ]
-
-# Browserify and extract sourcemap, but do not minify.
-define BROWSERIFY
-	mkdir -p $(dir $2)
-	browserify $1 $(BROWSERIFY_OPTS) | exorcist $2.map > $2
-endef
-
-# Browserify, minify, and extract sourcemap.
-define BROWSERIFY-MIN
-	mkdir -p $(dir $2)
-	browserify $1 $(BROWSERIFY_OPTS) --g [ uglifyify $(MANGLE_OPTS) $(COMPRESS_OPTS) ] | exorcist $2.map > $2
-endef
-
-# When running browser tests on non-Darwin machines, set the --headless flag.
-# This uses Xvfb underneath the hood (inside prova => browser-launcher =>
-# headless), which is not supported on OS X.
-# See: https://github.com/kesla/node-headless/
-ifndef NOHEADLESS
-	ifneq ($(UNAME),Darwin)
-		HEADLESS := --headless
-	endif
-endif
-
-ifdef STOPONFAIL
-	STOPONFAIL := --stopOnFirstFailure
-endif
-
-ifndef NOTAP
-	TAP := --tap
-endif
-
-ifndef NOQUIT
-	QUIT := --quit
-endif
-
 ifdef XUNIT
-	TAP := --tap # TAP must be set for xunit to work
 	OUTPUT_TRANSFORM := tap-xunit
 endif
 
@@ -78,50 +31,19 @@ ifdef NODE_OUTPUT
 	NODE_OUTPUT_LOCAL := | tee $(NODE_OUTPUT_LOCAL)
 endif
 
-ifdef BROWSER_OUTPUT
-	BROWSER_OUTPUT_LOCAL = $(BROWSER_OUTPUT)
-	ifdef OUTPUT_TRANSFORM
-		BROWSER_OUTPUT_LOCAL := >($(OUTPUT_TRANSFORM) --package=javascript.browser > $(BROWSER_OUTPUT_LOCAL))
-	endif
-	BROWSER_OUTPUT_LOCAL := | tee $(BROWSER_OUTPUT_LOCAL)
-endif
-
-PROVA_OPTS := --includeFilenameAsPackage $(TAP) $(QUIT) $(STOPONFAIL)
-
-BROWSER_OPTS := --browser --transform envify --launch chrome $(HEADLESS)
-
 JS_SRC_FILES = $(shell find src -name "*.js" | sed 's/ /\\ /')
-
-# Common services needed for all integration tests. Must be a comma-seperated
-# string with no spaces.
-COMMON_SERVICES := "test_serviced"
-
-LOADTEST_SERVICE := "stressd"
 
 all: gen-vdl lint build docs
 
-build: dist docs extension/vanadium.zip
-
-dist/vanadium.js: src/vanadium.js $(JS_SRC_FILES) $(NODE_MODULES_JS_FILES) | node_modules
-	$(call BROWSERIFY,$<,$@)
-
-dist/vanadium.min.js: src/vanadium.js $(JS_SRC_FILES) $(NODE_MODULES_JS_FILES) | node_modules
-	$(call BROWSERIFY-MIN,$<,$@)
-
-dist: dist/vanadium.js dist/vanadium.min.js
-
-extension/vanadium.zip: node_modules
-	$(MAKE) -C extension vanadium.zip
+build: docs
 
 test-precheck: gen-vdl-test node_modules lint dependency-check
 
-test: test-unit test-integration test-vdl test-vom
+test: test-unit test-vdl test-vom
 
-test-vdl: test-vdl-node test-vdl-browser
+test-vdl: test-vdl-node
 
 # This generates the VDL files and asks git if there are any changed files.
-# We don't have to check the extension since it does not check in VDL files.
-#
 # The alternative is to use the vdl audit command, but that requires checking
 # after both vdl commands in gen-vdl-impl as opposed to a single git status.
 test-vdl-audit: gen-vdl
@@ -132,7 +54,7 @@ test-vdl-audit: gen-vdl
 	  exit 1; \
 	fi
 
-test-vom: test-vom-node test-vom-browser
+test-vom: test-vom-node
 
 # This generates the output of the vdl files in src/gen-vdl/v.io/<package-path>
 # The command will generate all the dependent files as well.
@@ -143,8 +65,8 @@ gen-vdl: gen-vdl-impl
 # This generates the output of the vdl files in test/vdl-out/gen-vdl/v.io/<package-path>
 # The command will generate all the dependent files as well.
 gen-vdl-test: JS_VDL_DIR := "$(JIRI_ROOT)/release/javascript/core/test/vdl-out"
-gen-vdl-test: EXTRA_VDL_PATHS := "javascript-test/..." "v.io/x/js.core/..."
-gen-vdl-test: VDLPATH := "$(JIRI_ROOT)/release/go/src:$(JIRI_ROOT)/release/javascript/core/test/vdl-in/src:$(JIRI_ROOT)/release/javascript/core/go/src"
+gen-vdl-test: EXTRA_VDL_PATHS := "javascript-test/..."
+gen-vdl-test: VDLPATH := "$(JIRI_ROOT)/release/go/src:$(JIRI_ROOT)/release/javascript/core/test/vdl-in/src"
 gen-vdl-test: JS_VDL_PATH_TO_CORE := "../../src"
 gen-vdl-test: gen-vdl-impl
 
@@ -187,86 +109,32 @@ ifndef NOVDLGEN
 endif
 
 test-vdl-node: test-precheck
-	prova test/vdl/test-*.js $(PROVA_OPTS) $(NODE_OUTPUT_LOCAL)
-
-test-vdl-browser: test-precheck
-	prova test/vdl/test-*.js $(PROVA_OPTS) $(BROWSER_OPTS) $(BROWSER_OUTPUT_LOCAL)
+	tape test/vdl/test-*.js $(NODE_OUTPUT_LOCAL)
 
 test-vom-node: test-precheck
-	prova test/vom/test-*.js $(PROVA_OPTS) $(NODE_OUTPUT_LOCAL)
+	tape test/vom/test-*.js $(NODE_OUTPUT_LOCAL)
 
-test-vom-browser: test-precheck
-	prova test/vom/test-*.js $(PROVA_OPTS) $(BROWSER_OPTS) $(BROWSER_OUTPUT_LOCAL)
-
-test-unit: test-unit-node test-unit-browser
+test-unit: test-unit-node
 
 test-unit-node: test-precheck
-	prova test/unit/test-*.js $(PROVA_OPTS) $(NODE_OUTPUT_LOCAL)
-
-test-unit-browser: test-precheck
-	prova test/unit/test-*.js $(PROVA_OPTS) $(BROWSER_OPTS) $(BROWSER_OUTPUT_LOCAL)
-
-test-integration: lint test-integration-node test-integration-browser
-
-test-integration-node: test-precheck go/bin
-	node test/integration/runner.js --services=$(COMMON_SERVICES) -- \
-	prova test/integration/test-*.js $(PROVA_OPTS) $(NODE_OUTPUT_LOCAL)
-
-test-integration-browser: test-precheck go/bin
-	node test/integration/runner.js --services=$(COMMON_SERVICES) -- \
-	make test-integration-browser-runner
-
-test-integration-browser-runner: BROWSER_OPTS := --options="--load-extension=$(PWD)/extension/build-test/,--ignore-certificate-errors,--enable-logging=stderr" $(BROWSER_OPTS)
-test-integration-browser-runner:
-	@$(RM) -fr extension/build-test
-	$(MAKE) -C extension build-test
-	prova test/integration/test-*.js --log=./tmp/chrome.log $(PROVA_OPTS) $(BROWSER_OPTS) $(BROWSER_OUTPUT_LOCAL) $(SAVE_CHROME_LOGS)
-
-test-load-node: test-precheck go/bin
-	node test/integration/runner.js --services=$(LOADTEST_SERVICE)  -- \
-	prova test/load/test-*.js $(PROVA_OPTS) $(NODE_OUTPUT_LOCAL)
-
-
-test-load-browser: test-precheck go/bin
-	node test/integration/runner.js --services=$(LOADTEST_SERVICE)  -- \
-	make test-load-browser-runner
-
-test-load-browser-runner: BROWSER_OPTS := --options="--load-extension=$(PWD)/extension/build-test/,--ignore-certificate-errors,--enable-logging=stderr" $(BROWSER_OPTS)
-test-load-browser-runner:
-	@$(RM) -fr extension/build-test
-	$(MAKE) -C extension build-test
-	prova test/load/test-*.js --log=./tmp/chrome.log $(PROVA_OPTS) $(BROWSER_OPTS) $(BROWSER_OUTPUT_LOCAL) $(SAVE_CHROME_LOGS)
-
-
-
-
-go/bin: $(GO_FILES)
-	@$(VGO) build -o $(GOBIN)/servicerunner -a -tags wspr v.io/x/ref/cmd/servicerunner
-	@$(VGO) build -o $(GOBIN)/principal v.io/x/ref/cmd/principal
-	@$(VGO) build -o $(GOBIN)/test_serviced v.io/x/js.core/test_service/test_serviced
-	@$(VGO) build -o $(GOBIN)/stressd v.io/x/js.core/stress/stressd
+	tape test/unit/test-*.js $(NODE_OUTPUT_LOCAL)
 
 lint: node_modules
 ifdef NOLINT
 	@echo "Skipping lint - disabled by NOLINT environment variable"
 else
 	jshint .
-	$(MAKE) -C extension lint
 endif
 
 dependency-check: node_modules
 	dependency-check package.json --entry src/vanadium.js
 
 clean:
-	@$(RM) -fr dist
 	@$(RM) -fr docs
-	@$(RM) -fr go/bin
-	@$(RM) -fr go/pkg
 	@$(RM) -fr node_modules
 	@$(RM) -fr npm-debug.log
 	@$(RM) -fr tmp
 	@$(RM) -fr xunit.xml
-	$(MAKE) -C extension clean
 
 DOCSTRAP_LOC:= node_modules/ink-docstrap
 docs: $(JS_SRC_FILES) jsdocs/docstrap-template/compiled/site.vanadium.css | node_modules
@@ -291,7 +159,7 @@ docs-template: node_modules node_modules/ink-docstrap/node_modules/grunt node_mo
 	# Copy our raw LESS style assets to docstrap
 	cp -f jsdocs/docstrap-template/styles/*.* ${DOCSTRAP_LOC}/styles
 	# Rebuilt the styles
-	cd ${DOCSTRAP_LOC}; ${NODE_BIN}/grunt less
+	cd ${DOCSTRAP_LOC}; ${NODE_MODULES_BIN}/grunt less
 	# Copy back the compiled style file from docstrap
 	cp -f ${DOCSTRAP_LOC}/template/static/styles/site.cosmo.css jsdocs/docstrap-template/compiled/site.vanadium.css
 	# Rebuild docs
@@ -301,7 +169,7 @@ node_modules/ink-docstrap/node_modules/grunt:
 	cd ${DOCSTRAP_LOC}; node $(NPM) install
 
 node_modules/ink-docstrap/bower_components:
-	cd ${DOCSTRAP_LOC}; ${NODE_BIN}/bower install
+	cd ${DOCSTRAP_LOC}; ${NODE_MODULES_BIN}/bower install
 
 # serve-docs
 #
@@ -330,14 +198,12 @@ check-that-npm-is-in-path:
 	@which npm > /dev/null || { echo "npm is not in the path. Did you remember to run 'jiri profile install v23:nodejs'?"; exit 1; }
 
 .PHONY: all build clean dependency-check lint test
-.PHONY: test-integration test-integration-node test-integration-browser
-.PHONY: test-unit test-unit-node test-unit-browser
+.PHONY: test-unit test-unit-node
 .PHONY: check-that-npm-is-in-path
 .PHONY: gen-vdl gen-vdl-test gen-vdl-test-expected gen-vdl-impl gen-vdl-test-expected-impl
 
 # Prevent the tests from running in parallel, which causes problems because it
 # starts multiple instances of the services at once, and also because it
 # interleaves the test output.
-.NOTPARALLEL: test-integration test-integration-browser test-integration-node
-.NOTPARALLEL: test-unit test-unit-node test-unit-browser
-.NOTPARALLEL: test-vdl test-vdl-node test-vdl-browser
+.NOTPARALLEL: test-unit test-unit-node
+.NOTPARALLEL: test-vdl test-vdl-node

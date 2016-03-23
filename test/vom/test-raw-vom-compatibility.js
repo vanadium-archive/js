@@ -6,7 +6,7 @@
  * @fileoverview Tests compatibility with go.
  */
 
-var test = require('prova');
+var test = require('tape');
 
 var BigInt = require('./../../src/vdl/big-int.js');
 var RawVomWriter = require('./../../src/vom/raw-vom-writer');

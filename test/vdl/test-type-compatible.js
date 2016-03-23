@@ -6,7 +6,7 @@
  * @fileoverview Tests for type conversion compatibility.
  */
 
-var test = require('prova');
+var test = require('tape');
 
 var kind = require('./../../src/vdl/kind.js');
 var Type = require('./../../src/vdl/type.js');

@@ -3,7 +3,7 @@
 // license that can be found in the LICENSE file.
 
 
-var test = require('prova');
+var test = require('tape');
 var Deferred = require('../../src/lib/deferred');
 
 test('var deferred = new Deferred() - success', function(assert) {

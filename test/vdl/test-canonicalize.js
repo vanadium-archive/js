@@ -6,7 +6,7 @@
  * @fileoverview Tests for canonicalize.js
  */
 
-var test = require('prova');
+var test = require('tape');
 
 var BigInt = require('./../../src/vdl/big-int.js');
 var Complex = require('./../../src/vdl/complex.js');

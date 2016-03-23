@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-var test = require('prova');
+var test = require('tape');
 var BlessingsCache = require('../../src/security/blessings-cache');
 var principal =
   require('../../src/gen-vdl/v.io/x/ref/services/wspr/internal/principal');
